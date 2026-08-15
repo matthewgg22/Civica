@@ -52,7 +52,7 @@ describe("Oregon unsourced/simplified axes stay honest", () => {
     // ORS 411.119(1) is a real, currently-operative opt-out (unlike AZ's
     // conditional ban); the narrow discretionary suspension path doesn't
     // change the base-case answer for most OR drug-felony households.
-    expect(statePolicyFor("OR", ASOF).drug_felony_ban).toBe(false);
+    expect(statePolicyFor("OR", ASOF).drug_felony_ban).toBe("none");
   });
 
   it("ABAWD waiver flag is false — real exempt areas are 5 Tribal jurisdictions, not counties", () => {

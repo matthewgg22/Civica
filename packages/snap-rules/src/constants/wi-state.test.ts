@@ -64,7 +64,7 @@ describe("Wisconsin unsourced/simplified axes stay honest", () => {
     // can't express — same under-claim reasoning as AZ's/FL's/PA's entries:
     // most affected people (conviction 5+ years old, or a passed test) face
     // no restriction, so `true` would wrongly deny that majority.
-    expect(statePolicyFor("WI", ASOF).drug_felony_ban).toBe(false);
+    expect(statePolicyFor("WI", ASOF).drug_felony_ban).toBe("modified");
   });
 
   it("ABAWD waiver flag is false — the WI corpus pack found NO confirmed currently-waived county", () => {

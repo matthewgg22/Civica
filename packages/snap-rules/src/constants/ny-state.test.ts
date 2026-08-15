@@ -72,7 +72,7 @@ describe("New York unsourced/simplified axes stay honest", () => {
     // Corroborated by multiple independent secondary sources, NOT verified
     // against a primary OTDA source this pass — the NY corpus pack itself
     // never addressed this topic. See the states.ts NY block comment.
-    expect(statePolicyFor("NY", ASOF).drug_felony_ban).toBe(false);
+    expect(statePolicyFor("NY", ASOF).drug_felony_ban).toBe("none");
   });
 
   it("ABAWD waiver flag is false — statewide operation since 3/1/2026, only 2 reservations exempt", () => {

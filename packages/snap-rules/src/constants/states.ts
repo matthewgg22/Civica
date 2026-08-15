@@ -133,6 +133,37 @@ import { Decimal } from "../decimal";
 export type BBCEFPLBasis = "federal_fiscal_year" | "calendar_year" | null;
 export type AllotmentTier = "48" | "AK";
 
+// Issue #805: a plain boolean can't express a real drug-felony policy —
+// most states in this file that carry `false` are a genuine "modified"
+// ban (a real, conditional restriction: FL's trafficking-only trigger,
+// PA's treatment-compliance condition, AZ's drug-testing-agreement
+// pathway, WI's time-boxed test sanction, AK's rehabilitation carve-out,
+// KS's treatment-conditioned rule), not an actual full opt-out — the
+// boolean flattened both to `false` because `true` would wrongly deny
+// every drug-felony household in a state whose statute protects most of
+// them. This widening makes that real distinction queryable instead of
+// pushing it into a comment only a human reading the source can find.
+//
+//   "none"        — verified, no state-imposed restriction beyond the
+//                    federal baseline (a genuine opt-out or a policy that
+//                    never restricted eligibility to begin with).
+//   "modified"     — a real, conditional restriction exists (treatment
+//                    compliance, drug-testing agreement, offense-severity
+//                    tier, time-boxed sanction, etc.) that this engine
+//                    does not yet model at the FACTS level. Gates the
+//                    same way "none" does today (fails open, does not
+//                    disqualify) until the engine gains the facts needed
+//                    to evaluate the actual condition — this widening
+//                    only fixes what the value CLAIMS, not what the gate
+//                    DOES. See gates/disqualifications.ts.
+//   "full"         — the unmodified federal lifetime ban applies.
+//   "unconfirmed"  — no citation exists in this file or a merged corpus
+//                    pack for this state's drug-felony policy at all
+//                    (distinct from "modified" or "none", which both have
+//                    a citation). Behaves like "none"/"modified" at the
+//                    gate (fails open) but is honestly NOT a finding.
+export type DrugFelonyBanStatus = "none" | "modified" | "full" | "unconfirmed";
+
 // Issue #806: reuses the exact effective-dated-snapshot pattern
 // federal-tables.ts already proved for federal figures
 // (FederalTableSnapshot { effective_start, effective_end, ... }) — not a
@@ -155,7 +186,7 @@ export interface StatePolicy {
   /** Per-tier SUA values; null = not authored, callers MUST NOT trust. */
   sua_by_tier: { HCSUA: Decimal; LUA: Decimal; phone: Decimal; none: Decimal } | null;
   allotment_tier: AllotmentTier;
-  drug_felony_ban: boolean;
+  drug_felony_ban: DrugFelonyBanStatus;
   abawd_waiver_avail: boolean;
   rmp_operated: boolean;
 }
@@ -185,7 +216,11 @@ const STATES: Record<string, StatePolicy[]> = {
         none: new Decimal("0"),
       },
       allotment_tier: "48",
-      drug_felony_ban: false,
+      // No citation found in this file or a merged corpus pack for CA's
+      // drug-felony policy. Issue #805 migration: preserved existing `false`
+      // behavior (fails open, does not disqualify) but honestly labeled
+      // unconfirmed rather than inventing a "none" finding with no source.
+      drug_felony_ban: "unconfirmed",
       // DELIBERATELY `true`, and deliberately imprecise. California DOES hold
       // waivers — but only in 7 of 58 counties (Colusa, Imperial, Tulare,
       // Alpine, Merced, Monterey, Plumas; ACL 25-79 + 26-15, through
@@ -221,7 +256,11 @@ const STATES: Record<string, StatePolicy[]> = {
         none: new Decimal("0"),
       },
       allotment_tier: "48",
-      drug_felony_ban: false,
+      // Full opt-out — the MA corpus pack's adversarial refute pass checked
+      // the drug-felony opt-out language against OLGT 2024-45's exact
+      // wording (drug-felony policy clarification) and it matched; zero
+      // corrections needed.
+      drug_felony_ban: "none",
       // MA holds NO geographic ABAWD waiver: the statewide waiver expired
       // 2025-06-30 (DTA OLGTM-2025-31) and none was reinstated for FY26. With
       // the waiver-availability rule now live (#608), this correctly stops an
@@ -268,7 +307,7 @@ const STATES: Record<string, StatePolicy[]> = {
         none: new Decimal("0"),
       },
       allotment_tier: "48",
-      drug_felony_ban: true,
+      drug_felony_ban: "full",
       abawd_waiver_avail: false,
       rmp_operated: false,
     },
@@ -304,7 +343,11 @@ const STATES: Record<string, StatePolicy[]> = {
         none: new Decimal("0"),
       },
       allotment_tier: "48",
-      drug_felony_ban: false,
+      // No citation found in this file or a merged corpus pack for WA's
+      // drug-felony policy. Issue #805 migration: preserved existing `false`
+      // behavior (fails open, does not disqualify) but honestly labeled
+      // unconfirmed rather than inventing a "none" finding with no source.
+      drug_felony_ban: "unconfirmed",
       abawd_waiver_avail: true,
       rmp_operated: true,
     },
@@ -340,7 +383,11 @@ const STATES: Record<string, StatePolicy[]> = {
         none: new Decimal("0"),
       },
       allotment_tier: "48",
-      drug_felony_ban: false,
+      // No citation found in this file or a merged corpus pack for GA's
+      // drug-felony policy. Issue #805 migration: preserved existing `false`
+      // behavior (fails open, does not disqualify) but honestly labeled
+      // unconfirmed rather than inventing a "none" finding with no source.
+      drug_felony_ban: "unconfirmed",
       abawd_waiver_avail: false,
       rmp_operated: false,
     },
@@ -363,19 +410,20 @@ const STATES: Record<string, StatePolicy[]> = {
   // null — a genuine, logged verification gap, see the PA entry's own
   // comment for exactly what was and wasn't found.
   //
-  // DRUG FELONY BAN (#619, sourced 2026-08-11): all four now stay `false` for
-  // a REASON, not as a default. Two distinct reasons, and the distinction
-  // matters to anyone reading the value:
-  //   • IL and OH are VERIFIED FULL OPT-OUTS — `false` is the correct answer,
-  //     confirmed against primary statute text. Nothing pending.
-  //   • FL and PA are MODIFIED bans, which this boolean cannot express. FL
+  // DRUG FELONY BAN (#619, sourced 2026-08-11; re-typed #805): two distinct
+  // classifications for these four states, the distinction matters to
+  // anyone reading the value:
+  //   • IL and OH are VERIFIED FULL OPT-OUTS — drug_felony_ban: "none" is
+  //     the correct answer, confirmed against primary statute text.
+  //   • FL and PA are MODIFIED bans — drug_felony_ban: "modified". FL
   //     denies only trafficking convictions; PA conditions eligibility on
-  //     treatment compliance. Flipping either to `true` would disqualify every
-  //     drug-felony household in the state, including the large majority the
-  //     statute protects. `false` under-claims a narrow real ban rather than
-  //     over-applying it — the #614 RMP discipline, and the direction-of-error
-  //     rule in #608: never deny on data the type cannot represent.
-  //     A richer type is filed separately; see each state's comment.
+  //     treatment compliance. Neither should gate as "full" (that would
+  //     disqualify every drug-felony household in the state, including the
+  //     large majority the statute protects) — the #614 RMP discipline, and
+  //     the direction-of-error rule in #608: never deny on data the engine
+  //     cannot yet evaluate. As of #805, the type CAN express this
+  //     distinction; the gate's BEHAVIOR for "modified" still fails open
+  //     (same as before) until the engine models the actual condition.
   //
   // STILL NOT SOURCED — deliberately left permissive rather than guessed:
   //   • abawd_waiver_avail: true is a FAIL-OPEN default, not a finding. A
@@ -437,9 +485,10 @@ const STATES: Record<string, StatePolicy[]> = {
       // says nothing about SNAP or about convictions — verified 2026-08-11.
       // A secondary source's citation was program-mismatched; check the statute.
       //
-      // Stays false because `true` would deny all drug-felony households, not
-      // just the trafficking subset the statute actually excludes.
-      drug_felony_ban: false,
+      // Issue #805: re-typed to "modified" — same gate behavior (fails open)
+      // as before; `full` would deny all drug-felony households, not just
+      // the trafficking subset the statute actually excludes.
+      drug_felony_ban: "modified",
       abawd_waiver_avail: true,
       rmp_operated: false,
     },
@@ -477,7 +526,7 @@ const STATES: Record<string, StatePolicy[]> = {
       // strings. (Illinois cash assistance is separate and DOES restrict Class X
       // and Class 1 drug felonies — do not carry that across; this field is
       // SNAP-only.) `false` here is a finding, not a fail-open default.
-      drug_felony_ban: false,
+      drug_felony_ban: "none",
       // !!! CORRECTED 2026-08-11 (#701), was `true` !!! Illinois' STATEWIDE
       // ABAWD work-requirement waiver ended per an IDHS Policy Memo, "End of
       // Waiver for Time-Limited SNAP Benefits and Changes to Exemptions for
@@ -588,9 +637,12 @@ const STATES: Record<string, StatePolicy[]> = {
       // a TANF-only section (see FL above), and PA's 2018 drug-felony policy
       // change was reported under TANF.
       //
-      // `false` regardless: a conditional ban cannot be expressed by this
-      // boolean, and `true` would deny every PA drug-felony household outright.
-      drug_felony_ban: false,
+      // Issue #805: was a plain `false` this boolean couldn't distinguish from
+      // a genuine opt-out; now labeled "modified" to match the documented
+      // real-but-unconfirmed-details conditional ban above. Gate behavior is
+      // unchanged (fails open, same as before) until this engine models the
+      // treatment-compliance condition at the facts level.
+      drug_felony_ban: "modified",
       abawd_waiver_avail: true,
       rmp_operated: false,
     },
@@ -637,7 +689,7 @@ const STATES: Record<string, StatePolicy[]> = {
       // meets all other eligibility requirements." Names SNAP explicitly (via
       // the Food and Nutrition Act, 7 U.S.C. 2011 et seq.) and attaches no
       // drug-specific condition. `false` is a finding, not a fail-open default.
-      drug_felony_ban: false,
+      drug_felony_ban: "none",
       abawd_waiver_avail: true,
       rmp_operated: false,
     },
@@ -712,7 +764,7 @@ const STATES: Record<string, StatePolicy[]> = {
       // Disqualifications") has no drug-felony-conviction category at all,
       // confirming the repeal is fully reflected in current policy. `false`
       // here is a finding, not a fail-open default.
-      drug_felony_ban: false,
+      drug_felony_ban: "none",
       // Michigan DOES hold real ABAWD/TLFA waivers as of build (unlike GA,
       // which holds none) — effective 12/1/2025, 15 counties (Alcona, Alger,
       // Arenac, Cheboygan, Iosco, Iron, Luce, Mackinac, Montmorency, Oceana,
@@ -804,8 +856,10 @@ const STATES: Record<string, StatePolicy[]> = {
       // against an OTDA primary source in this pass — the NY corpus pack
       // itself (built 2026-08-07) never addressed this topic, a real gap in
       // that pack worth a follow-up). Consistent with every other Northeast/
-      // progressive-policy state already in this file (IL, NV, MA all `false`).
-      drug_felony_ban: false,
+      // progressive-policy state already in this file (IL, NV, MA all "none").
+      // Kept as "none" rather than "unconfirmed" since a real (if secondary)
+      // citation exists — but the primary-source gap above still stands.
+      drug_felony_ban: "none",
       // FALSE is the affirmatively correct current finding, not a fail-open
       // default: FNS terminated NY's waiver 11/2/2025 (25-ADM-03-P);
       // litigation reinstated it through 2/28/2026 for every county except
@@ -879,7 +933,7 @@ const STATES: Record<string, StatePolicy[]> = {
       // now-repealed condition as current policy; the NV corpus pack caught
       // this before drafting anything (see PROVENANCE.md). `false` here is a
       // finding against the CURRENT statute, not a fail-open default.
-      drug_felony_ban: false,
+      drug_felony_ban: "none",
       // Nevada's statewide ABAWD waiver (02/01/2025-01/31/2026) was NOT
       // renewed — "Nevada's statewide ABAWD waiver was terminated FY2026"
       // (E&P MS B-470.1.2). But UNLIKE NY's post-expiration picture (2 tiny
@@ -948,8 +1002,9 @@ const STATES: Record<string, StatePolicy[]> = {
       // real ban is the lesser harm"), `false` is chosen deliberately: setting
       // `true` would deny every AZ drug-felony household, including everyone
       // who qualifies for removal, which #608 forbids. This is a genuine
-      // under-claim, not a fail-open default.
-      drug_felony_ban: false,
+      // under-claim, not a fail-open default. Issue #805: re-typed to
+      // "modified" — same gate behavior (fails open) as before.
+      drug_felony_ban: "modified",
       // Arizona's fixed 1/1/2025-12/31/2027 ABAWD clock currently has 7 real
       // waived areas (CNAP FAA2.M.09.B): Yuma County, plus 6 Tribal/
       // Reservation/Trust-Land areas (Cocopah, Hualapai, Maricopa/Ak-Chin,
@@ -1003,7 +1058,7 @@ const STATES: Record<string, StatePolicy[]> = {
       // evidence of trading SNAP for drugs) — evidence-specific enough that it
       // does not change the base-case answer for the vast majority of OR
       // drug-felony households.
-      drug_felony_ban: false,
+      drug_felony_ban: "none",
       // Oregon's ABAWD exempt areas are 5 NAMED TRIBAL jurisdictions (not
       // counties) — Burns Paiute, Confederated Tribes of Siletz Indians,
       // Coquille, Cow Creek Band of Umpqua, Klamath Tribes (OAR 461-135-0520).
@@ -1059,7 +1114,8 @@ const STATES: Record<string, StatePolicy[]> = {
       // `true` would wrongly deny that majority, so `false` is the deliberate
       // choice — this boolean cannot express a time-boxed, test-conditional
       // sanction any more than it can express AZ's treatment-conditional one.
-      drug_felony_ban: false,
+      // Issue #805: re-typed to "modified" — same gate behavior as before.
+      drug_felony_ban: "modified",
       // The WI corpus pack explicitly could not find any currently-waived
       // Wisconsin county in the handbook text itself ("this pack did not find
       // specific currently-waived Wisconsin counties in the handbook text
@@ -1116,9 +1172,9 @@ const STATES: Record<string, StatePolicy[]> = {
       // pack's own adversarial refute pass caught and disproved this against
       // the Combined Manual's primary text before drafting anything. Unlike
       // AZ's/WI's judgment-call `false` (a real conditional restriction the
-      // boolean can't express), MN's `false` is a clean, unconditional finding
+      // boolean can't express), MN's finding is a clean, unconditional one
       // — the same shape as IL's and NV's entries above.
-      drug_felony_ban: false,
+      drug_felony_ban: "none",
       // The MN corpus pack's own supplement is explicit: "treat Minnesota as
       // PRESUMPTIVELY UNWAIVED... pending direct confirmation" — two access
       // barriers (a DHS bot-detection wall, a USDA ZIP-only waiver archive)
@@ -1155,7 +1211,15 @@ const STATES: Record<string, StatePolicy[]> = {
         none: new Decimal("0"),
       },
       allotment_tier: "48",
-      drug_felony_ban: false,
+      // MODIFIED, not the "banned for life" a 2022 secondary source claimed —
+      // per the KS corpus pack (packages/demeter-engine/src/states/ks/
+      // PROVENANCE.md), the actual rule is treatment-conditioned. This
+      // classification is ported from the corpus finding; this entry's own
+      // label ("Non-BBCE archetype") shows the rest of the entry is still an
+      // illustrative placeholder, not independently re-verified for the
+      // engine the way the Tranche-1/MI/NY/NV/AZ/OR/WI/MN entries above are —
+      // flagging for the same kind of audit AK's stale bbce got (#804).
+      drug_felony_ban: "modified",
       abawd_waiver_avail: false,
       rmp_operated: false,
     },
@@ -1206,7 +1270,14 @@ const STATES: Record<string, StatePolicy[]> = {
         none: new Decimal("0"),
       },
       allotment_tier: "AK",
-      drug_felony_ban: false,
+      // MODIFIED — per the AK corpus pack (packages/demeter-engine/src/
+      // states/ak/PROVENANCE.md, Finding 2), a rehabilitation-pathway
+      // carve-out under AS 47.27.015: disqualification does not apply if the
+      // person demonstrates satisfactory probation/parole completion,
+      // treatment participation, or reentry-plan compliance. This
+      // classification is independent of the bbce/asset_waiver correction
+      // tracked separately in #804 — do not conflate the two when fixing #804.
+      drug_felony_ban: "modified",
       abawd_waiver_avail: true,
       rmp_operated: false,
     },

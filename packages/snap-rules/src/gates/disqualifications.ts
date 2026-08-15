@@ -7,7 +7,9 @@
 //                                      state data-match procedure: 7 CFR 272.17]
 //   "ipv:tier1" / "ipv:tier2"       → member excluded; whole HH ineligible if no others remain [7 CFR 273.16]
 //   "fleeing_felon"                 → member ineligible; whole HH ineligible if no others remain [7 CFR 273.11(n)]
-//   "drug_felony"                   → STATE OPTION: ineligible only when policy.drug_felony_ban === true [7 CFR 273.11(m)]
+//   "drug_felony"                   → STATE OPTION: ineligible only when policy.drug_felony_ban === "full" [7 CFR 273.11(m)].
+//                                     "modified"/"unconfirmed" both fail open (same as the old
+//                                     `false`) until this engine models the actual condition — see #805.
 //
 // Variant flags processed here too:
 //   active_warrant === true         → fleeing_felon disqualification fires (P52 axis)
@@ -60,13 +62,19 @@ export function evaluateDisqualifications(
         };
       }
       if (tag === "drug_felony") {
-        if (policy.drug_felony_ban) {
+        // Only "full" disqualifies. "modified" is a real, conditional
+        // restriction this engine does not yet evaluate at the facts level
+        // (see #805) — failing open here is deliberate, not a gap being
+        // papered over: denying every "modified" household would be wrong
+        // for the majority the actual statute protects. "unconfirmed" fails
+        // open for the same under-claim-is-the-lesser-harm reason.
+        if (policy.drug_felony_ban === "full") {
           return {
             passes: false,
             reason: `drug_felony_state_ban [7 CFR 273.11(m)]: ${m.member_id}`,
           };
         }
-        // No state ban → not disqualifying.
+        // No full state ban → not disqualifying.
         continue;
       }
 
