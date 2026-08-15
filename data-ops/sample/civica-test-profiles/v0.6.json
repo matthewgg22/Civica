@@ -412,6 +412,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -578,6 +583,11 @@
           "benefit": 298
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -785,6 +795,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -930,6 +945,11 @@
           "benefit": 298
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -1110,6 +1130,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -1284,6 +1309,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -1441,6 +1471,11 @@
           "benefit": 286
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -1634,6 +1669,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -1804,6 +1844,11 @@
           "benefit": 472
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -1997,6 +2042,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -2151,6 +2201,11 @@
           "benefit": 24
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -2310,6 +2365,11 @@
           "benefit": 298
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -2525,6 +2585,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
         "NC": {
           "verdict": "DENY",
           "eligible": false,
@@ -2698,6 +2763,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
         "NC": {
           "verdict": "DENY",
           "eligible": false,
@@ -2847,6 +2917,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
         "NC": {
           "verdict": "DENY",
           "eligible": false,
@@ -2992,6 +3067,11 @@
           "benefit": null
         },
         "PA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -3151,6 +3231,11 @@
           "benefit": null
         },
         "PA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -3346,6 +3431,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
         "NC": {
           "verdict": "DENY",
           "eligible": false,
@@ -3501,6 +3591,11 @@
           "benefit": null
         },
         "PA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -3662,6 +3757,11 @@
           "benefit": null
         },
         "PA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -3854,6 +3954,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -4024,6 +4129,11 @@
           "benefit": 496
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -4215,6 +4325,11 @@
           "eligible": true,
           "benefit": 176
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -4398,6 +4513,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -4555,6 +4675,11 @@
           "benefit": 298
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -4743,6 +4868,11 @@
           "benefit": 327
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -4944,6 +5074,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -5122,6 +5257,11 @@
           "benefit": 424
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -5324,6 +5464,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -5515,6 +5660,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -5687,6 +5837,11 @@
           "eligible": true,
           "benefit": 177
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -5834,6 +5989,11 @@
           "benefit": null
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -5996,6 +6156,11 @@
           "benefit": 298
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -6231,6 +6396,11 @@
           "benefit": 298
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -6617,6 +6787,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -6772,6 +6947,11 @@
           "benefit": null
         },
         "PA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -6946,6 +7126,11 @@
           "benefit": 520
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -7409,6 +7594,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -7552,6 +7742,11 @@
           "benefit": 298
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -7725,6 +7920,11 @@
           "benefit": 546
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -8128,6 +8328,11 @@
           "benefit": 544
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -9003,6 +9208,11 @@
           "eligible": true,
           "benefit": 203
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -9268,6 +9478,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -9516,6 +9731,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -9694,6 +9914,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -9853,6 +10078,11 @@
           "benefit": 546
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -10044,6 +10274,11 @@
           "eligible": true,
           "benefit": 785
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -10227,6 +10462,11 @@
           "benefit": 785
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
@@ -10418,6 +10658,11 @@
           "eligible": true,
           "benefit": 639
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -10605,6 +10850,11 @@
           "eligible": true,
           "benefit": 459
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -10788,6 +11038,11 @@
           "benefit": 279
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 279
@@ -10980,6 +11235,11 @@
           "eligible": true,
           "benefit": 155
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 155
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -11133,6 +11393,11 @@
           "benefit": 298
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -11294,6 +11559,11 @@
           "eligible": true,
           "benefit": 212
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -11447,6 +11717,11 @@
           "benefit": 104
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 104
@@ -11608,6 +11883,11 @@
           "eligible": true,
           "benefit": 32
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -11761,6 +12041,11 @@
           "benefit": 24
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 24
@@ -11952,6 +12237,11 @@
           "eligible": true,
           "benefit": 459
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -12135,6 +12425,11 @@
           "benefit": 591
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 591
@@ -12329,6 +12624,11 @@
           "eligible": true,
           "benefit": 459
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -12500,6 +12800,11 @@
           "benefit": 546
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 546
@@ -12757,6 +13062,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -12925,6 +13235,11 @@
           "benefit": 112
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 112
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 112
@@ -13117,6 +13432,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -13300,6 +13620,11 @@
           "benefit": 416
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 416
@@ -13491,6 +13816,11 @@
           "eligible": true,
           "benefit": 471
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -13674,6 +14004,11 @@
           "benefit": 591
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 591
@@ -13865,6 +14200,11 @@
           "eligible": true,
           "benefit": 639
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -14052,6 +14392,11 @@
           "eligible": true,
           "benefit": 639
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -14235,6 +14580,11 @@
           "benefit": 639
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 639
@@ -14429,6 +14779,11 @@
           "eligible": true,
           "benefit": 308
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -14615,6 +14970,11 @@
           "benefit": 429
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 429
@@ -14809,6 +15169,11 @@
           "eligible": true,
           "benefit": 477
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -14995,6 +15360,11 @@
           "benefit": 669
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 669
@@ -15189,6 +15559,11 @@
           "eligible": true,
           "benefit": 785
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -15375,6 +15750,11 @@
           "benefit": 785
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
@@ -15730,6 +16110,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -15958,6 +16343,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -16141,6 +16531,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -16291,6 +16686,11 @@
           "benefit": 298
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -16462,6 +16862,11 @@
           "eligible": true,
           "benefit": 203
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -16625,6 +17030,11 @@
           "benefit": 298
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -16884,6 +17294,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -17029,6 +17444,11 @@
           "benefit": null
         },
         "PA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -17192,6 +17612,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -17351,6 +17776,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -17496,6 +17926,11 @@
           "benefit": null
         },
         "PA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -17679,6 +18114,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -17849,6 +18289,11 @@
           "benefit": 544
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
@@ -18028,6 +18473,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -18187,6 +18637,11 @@
           "eligible": true,
           "benefit": null
         },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -18342,6 +18797,11 @@
           "benefit": 298
         },
         "PA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
