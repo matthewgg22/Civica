@@ -5552,6 +5552,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-weight: 600; color: var(--demeter-terracotta-deep); margin-bottom: 0.4rem;
   text-decoration: underline; text-underline-offset: 3px;
 }
+/* THE WHOLE CARD IS THE LINK, but nothing on it looked like one beside the
+   underline on the heading — every external link on this page carries its
+   own ↗, and these full-card links carried no equivalent mark at all. A
+   plain arrow, not ↗: this navigates WITHIN the site, not out of it. */
+.dmx__outlink-label::after { content: " →"; }
 /* THE TWO CALLS TO ACTION ARE WHEAT. They were white cards with an underlined
    terracotta heading — the same treatment as every other card on a page made
    of cards, so the one thing the page is trying to get someone to do looked
@@ -5565,6 +5570,15 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx--fearscta .dmx__outlink {
   background: var(--demeter-wheat); border-color: transparent;
 }
+/* NARROWER STILL than the general .dmx__outlink cap, and for a different
+   reason: this card and .dmnow right below it sit directly under the hero
+   text, which wraps at .dmo__h1's 20ch / .dmo__lede's 52ch — roughly 600-
+   625px measured. At the general 40rem (640px) cap, this card's own right
+   edge sat 40-60px past the text above it, a ragged edge that read as the
+   card not belonging to the column it was in rather than as a card that was
+   simply narrower than the page. Matched to the hero column's own width
+   instead of an independent value. */
+.dmx--askcta .dmx__outlink { max-width: 36rem; }
 .dmx--askcta .dmx__outlink:hover,
 .dmx--fearscta .dmx__outlink:hover { filter: brightness(0.96); border-color: transparent; }
 .dmx--askcta .dmx__outlink-label,
@@ -5921,11 +5935,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   margin: 1.5rem 0 0; padding: 1rem 1.2rem;
   border-left: 3px solid var(--demeter-terracotta-deep);
   background: var(--demeter-card); border-radius: 0 12px 12px 0;
-  /* NARROWER, on direct feedback, matching .dmx--askcta .dmx__outlink beside
+  /* NARROWER, on direct feedback, matching .dmx--askcta .dmx__outlink above
      it — the body text already stopped at 62ch (.dmnow__body) but the tinted
      background kept going, leaving a wide plain band next to two short
-     lines and a pair of links. */
-  max-width: 40rem;
+     lines and a pair of links. 36rem (not the CTA's original 40rem) so this
+     box's own right edge lines up with the CTA's and with the hero text
+     above both of them, instead of each picking a slightly different width
+     and leaving a ragged, unaligned right edge down the column. */
+  max-width: 36rem;
 }
 .dmnow__label {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -5984,6 +6001,8 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: 1.15rem; font-weight: 600; color: var(--demeter-ink);
 }
+/* Same click affordance as .dmx__outlink-label — see that rule's comment. */
+.dmfear__ctalabel::after { content: " →"; }
 .dmfear__ctanote {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.82rem; color: var(--demeter-ink); opacity: 0.75;
