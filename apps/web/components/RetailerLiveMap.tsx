@@ -5,9 +5,9 @@
 // The old one was an SVG illustration of a single sentence ("the card works
 // almost everywhere") with no way to go from "everywhere" to "near me" except
 // a text list underneath it. This is one map doing both jobs: it opens showing
-// the same state-by-density tint the illustration did, and when a ZIP search
-// returns stores, it drops pins for them and flies in to show the actual
-// neighbourhood — the "close-up" a political map cannot give.
+// which states are covered, and when a search returns stores, it drops pins
+// for them and flies in to show the actual neighbourhood — the "close-up" a
+// political map cannot give.
 //
 // PLAIN LEAFLET, not react-leaflet. React 19 here would be fighting
 // react-leaflet's peer range for no real benefit — Leaflet's own imperative
@@ -41,15 +41,16 @@ import statesGeo from "../lib/us-states-geo.json";
 // below and only ever touched inside an effect, after mount.
 import "leaflet/dist/leaflet.css";
 
-/** Same four-step, log-ish ramp as the static map — the raw range is 93 (USVI)
- *  to 30,180 (CA), and a linear scale would paint 45 states identically. */
-function tint(n: number | undefined): string {
-  if (!n) return "#EFEBE4";
-  if (n >= 10000) return "#B4542F";
-  if (n >= 4000) return "#D08A66";
-  if (n >= 1200) return "#E4B49B";
-  return "#F0D6C6";
-}
+// ONE TONE, not a four-step ramp by count. The ramp shaded California,
+// Texas, New York and Florida darkest — which is just the four most populous
+// states, restated as a map, on live feedback that pointed out exactly this:
+// a reader sees a map that LOOKS like access varies by state and has no way
+// to tell that what actually varies is population. The honest claim this
+// section makes is "covered, everywhere" — a single tone for every state in
+// the topology says exactly that and nothing more. Real variation in access
+// is what the search below is for; it answers a specific place, not a
+//50-state guess dressed as data.
+const COVERED_FILL = "#E4B49B";
 
 // Contiguous US, roughly — the default view. A raw-GeoJSON map cannot inset
 // Alaska and Hawaii the way the old Albers illustration did (that projection
@@ -62,21 +63,31 @@ const CONUS_BOUNDS: [[number, number], [number, number]] = [
   [49.5, -66.9],
 ];
 
-// Above this zoom the state tint fades out — see the comment where it is
+// Above this zoom the coverage tint fades out — see the comment where it is
 // used. CONUS's own fitBounds lands around zoom 4; a searched neighbourhood
 // lands around 12-14 (flyToBounds below caps at 14). 7 is comfortably past
 // "browsing the country," before a single state has filled the whole screen.
 const STATE_TINT_MAX_ZOOM = 7;
 
+// SLOW. Was 0.6s and read as a snap rather than a flight — live feedback
+// called it "way too fast," and against Leaflet's default easing 0.6s barely
+// registers as motion at all before it is over. This is close to the pace
+// the rest of the product settled on for anything that carries someone's
+// attention across a change (the streaming text reveal, the mode-toggle
+// slide): slow enough to watch, not slow enough to wait on.
+const FLY_DURATION_S = 1.8;
+
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 export interface RetailerLiveMapProps {
-  retailersByState: Record<string, number>;
   /** The current search result, or null when nothing has been searched yet /
    *  the last search found nothing. Coordinates are filtered to non-null
    *  before this is called — see RetailerSearch. */
   stores: RetailerHit[] | null;
 }
 
-export function RetailerLiveMap({ retailersByState, stores }: RetailerLiveMapProps) {
+export function RetailerLiveMap({ stores }: RetailerLiveMapProps) {
   const elRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const stateLayerRef = useRef<LeafletGeoJSON | null>(null);
@@ -84,7 +95,7 @@ export function RetailerLiveMap({ retailersByState, stores }: RetailerLiveMapPro
 
   // MOUNT ONCE. Leaflet owns the DOM node it is given and re-creating the map
   // on every re-render would tear down and rebuild tiles for no reason — only
-  // the two layers below need to react to prop changes.
+  // the marker layer below needs to react to prop changes.
   useEffect(() => {
     if (!elRef.current || mapRef.current) return;
     let cancelled = false;
@@ -110,23 +121,19 @@ export function RetailerLiveMap({ retailersByState, stores }: RetailerLiveMapPro
       }).addTo(map);
 
       const stateLayer = L.geoJSON(statesGeo as GeoJSON.FeatureCollection, {
-        style: (f) => ({
-          fillColor: tint(retailersByState[String(f?.properties?.code)]),
-          fillOpacity: 0.85,
-          color: "#FBFAF8",
-          weight: 1,
-        }),
+        style: { fillColor: COVERED_FILL, fillOpacity: 0.85, color: "#FBFAF8", weight: 1 },
       }).addTo(map);
       stateLayerRef.current = stateLayer;
 
-      // FADES OUT ONCE ZOOMED IN. Only found by rendering it: a "close-up"
-      // fitBounds after a search sits entirely INSIDE one state's polygon, so
-      // that polygon's fill covers the whole viewport — the tint meant to say
-      // "more stores in California" instead hid every street, every tile, and
-      // every pin under a flat terracotta rectangle. The density read is a
-      // national-scale fact; past a city-scale zoom it has nothing left to
-      // say and was only in the way. Toggled on 'zoomend' rather than removed
-      // once, so zooming back out for a second search brings it straight back.
+      // FADES OUT ONCE ZOOMED IN, SMOOTHLY. Only found by rendering it: a
+      // "close-up" fitBounds after a search sits entirely INSIDE one state's
+      // polygon, so that polygon's fill covers the whole viewport — hiding
+      // every street, every tile, and every pin under a flat tint. The
+      // coverage read is a national-scale fact; past a city-scale zoom it has
+      // nothing left to say and was only in the way. The FADE itself is a
+      // plain CSS transition on the SVG path (see globals.css) — the earlier
+      // version toggled the value instantly, which read as the map cutting
+      // from a colour illustration to a plain one rather than revealing it.
       const setStateLayerForZoom = () => {
         const visible = map.getZoom() <= STATE_TINT_MAX_ZOOM;
         stateLayer.setStyle({ fillOpacity: visible ? 0.85 : 0, opacity: visible ? 1 : 0 });
@@ -142,7 +149,7 @@ export function RetailerLiveMap({ retailersByState, stores }: RetailerLiveMapPro
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- retailersByState is static per page load; stores is handled below
+  }, []);
 
   // MARKERS follow the search. Runs whenever `stores` changes; harmless if the
   // map has not finished mounting yet (the effect above will not have set
@@ -155,30 +162,48 @@ export function RetailerLiveMap({ retailersByState, stores }: RetailerLiveMapPro
     if (!stores || stores.length === 0) return;
 
     void import("leaflet").then((L) => {
+      // The settle-in animation lives on the INNER `.dmret__pin-in` div, not
+      // on this element — see the comment in globals.css. Leaflet positions
+      // `.dmret__pin` itself with its own transform on every pan/zoom, and a
+      // CSS animation touching `transform` on that same element would fight
+      // it for the marker's actual screen position.
       const pin = L.divIcon({
         className: "dmret__pin",
-        html: `<svg width="22" height="28" viewBox="0 0 22 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        html: `<div class="dmret__pin-in"><svg width="22" height="28" viewBox="0 0 22 28" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M11 27C11 27 20 17.5 20 11C20 5.5 16 1 11 1C6 1 2 5.5 2 11C2 17.5 11 27 11 27Z"
             fill="#8E3A26" stroke="#FBFAF8" stroke-width="1.5"/>
           <circle cx="11" cy="11" r="3.5" fill="#FBFAF8"/>
-        </svg>`,
+        </svg></div>`,
         iconSize: [22, 28],
         iconAnchor: [11, 27],
       });
 
       const points: [number, number][] = [];
+      let index = 0;
       for (const s of stores) {
         if (s.lat == null || s.lon == null) continue;
         points.push([s.lat, s.lon]);
-        L.marker([s.lat, s.lon], { icon: pin, keyboard: false })
+        const marker = L.marker([s.lat, s.lon], { icon: pin, keyboard: false })
           .bindPopup(`<strong>${escapeHtml(s.name)}</strong><br>${escapeHtml(s.address)}`)
           .addTo(layer);
+        // STAGGERED, not all forty at once. `getElement()` only resolves once
+        // Leaflet has actually inserted the marker's node, which `.addTo()`
+        // above guarantees synchronously for a fresh (non-clustered) marker.
+        // Capped so a full 40-result search still finishes settling in under
+        // half a second rather than visibly crawling in one at a time.
+        const el = marker.getElement();
+        if (el && !prefersReducedMotion()) {
+          el.style.setProperty("--dmret-pin-delay", `${Math.min(index * 16, 380)}ms`);
+        }
+        index += 1;
       }
       if (points.length > 0) {
+        const reduced = prefersReducedMotion();
         map.flyToBounds(points as unknown as L.LatLngBoundsExpression, {
           padding: [32, 32],
           maxZoom: 14,
-          duration: 0.6,
+          duration: reduced ? 0 : FLY_DURATION_S,
+          animate: !reduced,
         });
       }
     });

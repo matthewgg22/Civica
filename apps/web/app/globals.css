@@ -5720,6 +5720,16 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   width: 100%; height: 360px; border-radius: 14px; overflow: hidden;
   border: 1px solid var(--demeter-rule);
   background: var(--demeter-paper); /* shows while tiles are still loading */
+  /* STICKY on desktop. The results list beside it can run far longer than
+     360px — a real search on a common ZIP returns dozens of stores — and a
+     fixed-height map anchored to the TOP of a long list left a wide band of
+     empty page beside everything past the map's own bottom edge. Pinning it
+     means the map stays in view for exactly as long as there is a list to
+     read beside it, rather than being scrolled past in the first few rows.
+     `top` clears the sticky nav bar plus a little air. Cancelled on the
+     narrow layout below, where the map stacks above the list instead of
+     beside it and sticky would just pin it uselessly off-screen. */
+  position: sticky; top: 5.5rem;
 }
 /* Leaflet's own chrome, restrained to the page's palette rather than left at
    its library defaults (a saturated blue focus ring, black-on-white
@@ -5736,13 +5746,56 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: 0.88rem; color: var(--demeter-ink); line-height: 1.5;
 }
+/* THE COVERAGE TINT FADES, it does not cut. The earlier version toggled
+   fill-opacity straight from 0.85 to 0 the instant a zoomend fired, which
+   read as the map jump-cutting from an illustration to a plain one rather
+   than revealing what was under it — live feedback called this jarring, and
+   watching it back made the complaint obvious. SVG presentation attributes
+   changed via JS still participate in a CSS transition in every evergreen
+   browser, so the fix is declarative: Leaflet keeps calling setStyle exactly
+   as before, the browser now eases between the two values on its own. */
+.dmret__livemap path.leaflet-interactive {
+  transition: fill-opacity 500ms ease, opacity 500ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dmret__livemap path.leaflet-interactive { transition: none; }
+}
 /* THE PIN. Leaflet's div-icon wrapper adds no chrome of its own by default,
    but reset explicitly rather than trust that — an inline SVG pin sitting
    inside an unexpected box is exactly the kind of thing only rendering it
-   catches. */
-.dmret__pin { background: none; border: none; }
+   catches.
+   IT SETTLES IN rather than appearing — forty results used to populate in
+   one instant, flat frame, which read as the map glitching rather than
+   updating. `--dmret-pin-delay` is set per-marker from JS (see
+   RetailerLiveMap.tsx) so results cascade in left-to-right/first-to-last
+   instead of blinking on as one block.
+   THE ANIMATION LIVES ON AN INNER WRAPPER, not on `.dmret__pin` itself.
+   `.dmret__pin` IS the element Leaflet positions with its own inline
+   `transform: translate3d(...)` on every pan/zoom — a CSS animation that also
+   touches `transform` on that same element wins over Leaflet's inline style
+   for the duration (and, ending on `transform: none`, permanently after),
+   which stacked every marker at the container's origin instead of its own
+   lat/lng. Only found by actually reading marker positions off a rendered
+   page, not by reasoning about the CSS. Animating `.dmret__pin-in` — a plain
+   child div with no positioning role of its own — gets the same visible
+   settle-in with nothing left to fight Leaflet over. */
+.dmret__pin {
+  background: none; border: none;
+}
+.dmret__pin-in {
+  animation: dmPinIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--dmret-pin-delay, 0ms);
+}
+@keyframes dmPinIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.7); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dmret__pin-in { animation: none; }
+}
 
-/* The ZIP lookup. The map above it is the claim; this is the answer. */
+/* The location lookup — a ZIP is enough, a full address also works. The map
+   above it is the claim; this is the answer. */
 .dmret__search { margin: 1.25rem 0 0; }
 .dmret__label {
   display: block; margin-bottom: 0.4rem;
@@ -5801,8 +5854,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
      afford to be a little shorter — nothing beside it is setting its height
      anymore. It comes last in DOM order (it is aria-hidden, so that carries
      no accessibility cost either way) — the search form and results list are
-     the task; the map is what someone scrolls to once they have them. */
-  .dmret__livemap { height: 280px; }
+     the task; the map is what someone scrolls to once they have them.
+     Sticky is a DESKTOP fix for a wide gap beside a long list; stacked, there
+     is no gap to fix, and a sticky map here would just pin itself uselessly
+     partway down the page as the list scrolls past above it. */
+  .dmret__livemap { height: 280px; position: static; }
 }
 
 /* "I need food this week." Quiet but unmissable — a tinted band, not a card in
