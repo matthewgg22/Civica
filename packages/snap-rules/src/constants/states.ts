@@ -1339,6 +1339,187 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // New Jersey — DHS/DFD (NJ SNAP). Backfilled from the adversarially-built
+  // Demeter corpus pack (packages/demeter-engine/src/states/nj/,
+  // PROVENANCE.md), the same "translate the corpus's already-cited
+  // findings into the engine's stricter typed shape" build this plan
+  // document's §5 describes — not a fresh from-zero fetch. NJ was a
+  // genuine blank slate: no prior StatePolicy entry, no discrepancy to
+  // reconcile against existing engine work.
+  //
+  // BBCE: N.J.A.C. 10:87-2.36, "Expanded Categorical Eligibility" — a flat
+  // 185% FPL gross-income screen (NOT 200%, unlike most other BBCE states
+  // in this file) conferred via a brochure given at application (10:87-
+  // 2.36's own text), waiving the net income test; resources are "not to
+  // be considered." bbce_fpl_basis is federal_fiscal_year: 10:87-2.36's
+  // dollar figures are published on the same FFY26 (10/1/2025-9/30/2026)
+  // cycle as every other axis below, confirmed by the corpus pack's own
+  // FFY26 income chart. A separate, narrower N.J.A.C. 10:87-2.32 pathway
+  // (WFNJ/TANF/SSI cat-elig) also exists but isn't separately modeled here
+  // — same "general BBCE screen is the modeled path, a narrower cat-elig
+  // pathway isn't" pattern several other states in this file already
+  // accept (e.g. NV's ECE vs its base-categorical path).
+  //
+  // asset_waiver: true — 10:87-4.1(b) exempts expanded-cat-elig households
+  // (nearly everyone, given the 185% screen above) from the resource test
+  // entirely; the tested minority (IPV-disqualified, work-noncompliant, or
+  // elderly/disabled households over 185% FPL on the net-only path) still
+  // faces the FEDERAL $3,000/$4,500 limit — this engine always reads that
+  // from federal-tables.ts, so no NJ-specific resource dollar figure needs
+  // to be authored here even though NJ's OWN un-amended regulation text
+  // (10:87-4.11) still prints the stale pre-2009 $2,000/$3,000 figures
+  // (corpus pack Finding 4 — a codification lag in NJ's own printed text,
+  // not a live policy divergence; DFD's public messaging already states
+  // the correct current $3,000/$4,500).
+  //
+  // sua_by_tier: null — genuinely unconfirmed, same discipline as PA's and
+  // MN's null entries above, NOT a guess. The corpus pack's own build
+  // could independently corroborate only ONE of the three federally-
+  // required tiers, and only secondarily: NJ's HCSUA is reported at $977/
+  // month (up from $878, eff. 10/1/2025) by a NJ Medicaid Communication
+  // (No. 25-07) that references DFD's own SNAP figures — but the
+  // Communication's own source PDF could not be independently fetched (two
+  // nj.gov URL variants both 404'd, even via curl with a browser User-
+  // Agent). NJ's LUA and UTA/phone dollar figures were not located at all
+  // in that pass. `sua_by_tier` is a single object requiring all four
+  // slots (HCSUA/LUA/phone/none) — authoring HCSUA alone and guessing the
+  // other two would be worse than the honest null, so this stays null
+  // until a working primary source for all three tiers is reached.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT, not a fail-open
+  // default. N.J.A.C. 10:87-3.18's own official History note (fetched
+  // directly from the current codified manual) confirms the FORMER 10:87-
+  // 3.18 provision ("Individuals convicted of use, possession, or
+  // distribution of controlled substances") "was repealed" by R.2012
+  // d.031, eff. 2/6/2012 — the section number was later reused for an
+  // unrelated duplicate-participation rule, and the current manual
+  // contains no drug-felony disqualification provision anywhere. The
+  // underlying statutory authority is N.J.S.A. 44:10-48(d)(1) (the
+  // WorkFirst New Jersey Act's opt-out under 21 U.S.C. § 862a(d)(1)(A)),
+  // corroborated via the Collateral Consequences Resource Center's
+  // national 50-state survey (a specialized legal-research org that
+  // quotes state statutes directly) since Justia/FindLaw both 403'd the
+  // raw statute text even via curl with a browser User-Agent — a real,
+  // logged re-verification gap (see the corpus pack's freshness.json), but
+  // the finding itself rests on two independent, mutually-corroborating
+  // sources (the regulation's own History note + the statute-quoting
+  // secondary source), not one. No waiting period, no treatment-compliance
+  // condition, no felony-class carve-out — the cleanest of the three
+  // drug-felony postures this file documents (full ban / modified ban /
+  // full opt-out).
+  //
+  // abawd_waiver_avail: true — New Jersey currently holds a REAL, time-
+  // bound ABAWD geographic waiver in Cape May County and Camden City,
+  // effective 2/1/2026 through 1/31/2027 (DFD's "Federal Changes to SNAP"
+  // page + USDA's own FY2026 waiver-approval letter, dated 2/10/2026, both
+  // independently fetched by the corpus pack — Cape May 10.8% and Camden
+  // City 10.5% three-month-average unemployment, both over the 7 CFR
+  // 273.24(f) 10% threshold). Every other NJ county is time-limited as of
+  // 2/1/2026 (DFD's own page: "New Jersey was under a waiver for all
+  // counties except Morris through January 31, 2026. As of February 1,
+  // 2026, only Camden City and Cape May County are under a time limit
+  // waiver.").
+  //
+  // DELIBERATELY NOT given a real per-county lookup (unlike CA's/MA's
+  // WAIVER_COUNTIES_BY_STATE entries in work-requirements/waiver-
+  // counties.ts) despite the waiver geography being well-documented and
+  // narrow: Cape May County is a whole county (a clean FIPS match) but
+  // Camden City is a SUB-COUNTY MUNICIPALITY inside the much larger Camden
+  // County — the existing lookup is keyed by county-level "SSCCC" FIPS
+  // only (see waiver-counties.ts's own doc-comment), which has no way to
+  // represent "this one city, not the rest of its county." Adding Camden
+  // COUNTY's FIPS to a set would wrongly extend the waiver-exemption
+  // finding to the ~500K residents of Camden County who are NOT actually
+  // in the waived city; adding ONLY Cape May's FIPS to a partial set would
+  // be actively WORSE than no set at all — `areaOffersNoWaiver` in
+  // gates/abawd.ts treats a county absent from an authored set as an
+  // AFFIRMATIVE "not waived" (`!countySet.has(countyFips)` → true), which
+  // would wrongly and confidently DENY the real Camden City exemption for
+  // any household reporting Camden County's FIPS, converting today's
+  // honest "unknown, fall back to the permissive state default" into a
+  // false negative. `true` here follows the same "wrongly denying food is
+  // the worse error" reasoning as CA's/MI's/NV's/AZ's entries above: it
+  // over-approves ABAWD households in NJ's other 19 counties, at the cost
+  // of never wrongly stripping the two genuinely-waived areas' exemption.
+  // A future fix needs a Census PLACE-level (not county-level) lookup
+  // mechanism this schema doesn't have yet — a different, larger gap than
+  // "just add NJ to the existing Set," flagged rather than worked around;
+  // see issue #825.
+  //
+  // rmp_operated: false — confirmed absent from USDA FNA's own official
+  // RMP state list (fetched live by the corpus pack, page updated
+  // 8/7/2026 — lists AZ/CA/IL(Cook+Franklin only)/MD/MA/MI/NY/RI/VA, no
+  // NJ). New Jersey has repeatedly INTRODUCED, and left to die, an RMP
+  // bill in three separate legislative sessions (A2892 2020-21, S1163/
+  // A1460 2022, S3983 pending as of the corpus pack's build) — several
+  // third-party explainer sites describe the bill's proposed program in
+  // the present tense, which the corpus pack traced as the likely source
+  // of a widespread "NJ has RMP" secondary-source error. `false` is a
+  // verified current-law finding, not a fail-open default, and needs
+  // re-checking if S3983 is ever enacted (corpus pack freshness.json).
+  //
+  // TWO SCHEMA GAPS this entry cannot express — both real, both
+  // corpus-documented, neither silently dropped (see issue #824, matching
+  // how NY's multi-tier BBCE and WI's multi-tier SUA gaps above are
+  // documented as accepted limitations rather than worked around):
+  //   1. Boats and motor homes as a counted resource. N.J.A.C. 10:87-
+  //      4.3(a)4 / 4.8(a)3 exclude ordinary vehicles but COUNT recreational
+  //      vehicles (boats, motor homes) at fair-market NADA value unless
+  //      the vehicle is the household's primary residence — a real
+  //      contrast with the "all vehicles excluded" rule this file's other
+  //      states implicitly assume. `Facts` has no per-asset-type
+  //      breakdown at all (`assets` is a single flat number or a
+  //      "n/a:*" sentinel — facts.ts's own doc-comment), and no
+  //      `StatePolicy` axis exists for a vehicle-treatment rule either —
+  //      this isn't a per-state value this file's schema can carry, it's
+  //      a Facts-shape gap shared by every state. Zero of this fixture's
+  //      92 profiles model a boat/motor-home resource, so this has no
+  //      practical effect on NJ's oracle coverage today, but a real New
+  //      Jersey household with one would be silently under-counted.
+  //   2. Child support paid as an income EXCLUSION, not an ordinary
+  //      deduction. N.J.A.C. 10:87-5.9 places legally-obligated child
+  //      support (including vendor payments and arrearages) under
+  //      "Identification of income exclusions" (7 CFR 273.9(c) mechanism,
+  //      subtracted from GROSS income before any test) rather than the
+  //      "Identification of income deductions" mechanism (7 CFR
+  //      273.9(d)(5), subtracted from NET income only, after the gross
+  //      test already ran) this file's other child-support-documenting
+  //      states use. `benefit-calc.ts` implements ONLY the ordinary-
+  //      deduction mechanism engine-wide (`facts.deductions.
+  //      child_support_paid` is summed into `otherDeductions`, applied
+  //      after `aggregateIncomeForCalc`'s gross total is already fixed —
+  //      see benefit-calc.ts's own math-summary comment) — there is no
+  //      per-state axis or Facts field this StatePolicy entry could set
+  //      to switch that mechanism, so this is a shared architecture gap,
+  //      not something a single state's entry can fix. Exactly one of
+  //      this fixture's 92 profiles (A08) carries a nonzero
+  //      `child_support_paid` ($300); A08's NJ oracle entry was computed
+  //      using the engine's standard ordinary-deduction mechanic (same as
+  //      every other state) rather than inventing NJ-specific EID/gross-
+  //      exclusion mechanics the corpus pack itself did not fully specify
+  //      (it does not say whether NJ's exclusion also changes the base
+  //      the 20% earned-income deduction applies to) — A08's VERDICT is
+  //      unaffected either way (gross income is far under any BBCE
+  //      threshold with or without the $300), only a benefit-dollar
+  //      question remains genuinely open.
+  NJ: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "NJ",
+      label: "New Jersey / DHS-DFD",
+      bbce: true,
+      bbce_threshold_pct: 185,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: true,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
