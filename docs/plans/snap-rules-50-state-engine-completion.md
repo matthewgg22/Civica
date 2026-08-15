@@ -224,4 +224,14 @@ oracle-authoring → #804 (AK correction + oracle rebuild) → individual tier �
 report back before merge — this "go" authorizes starting the work, not silently merging
 all of it.
 
-- **#805 (drug_felony_ban enum)** — in progress.
+- **#805 (drug_felony_ban enum)** — widened `StatePolicy.drug_felony_ban` from
+  `boolean` to `"none" | "modified" | "full" | "unconfirmed"`, migrated all 18 existing
+  entries from citations already in this file or a merged corpus `PROVENANCE.md` (no new
+  research): none = MA/IL/OH/MI/NY/NV/OR/MN, modified = FL/PA/AZ/WI/KS/AK, full = TX,
+  unconfirmed = CA/WA/GA (genuinely no citation found anywhere in the repo for these
+  three). Gate behavior in `disqualifications.ts` unchanged (`"full"` disqualifies, same
+  as old `true`; everything else fails open, same as old `false`) — this fixed what the
+  value *claims*, not what the gate *does*. 279/279 snap-rules tests + 44/47
+  profile-harness tests (3 pre-existing skips) passing, `tsc --noEmit` clean. PR
+  [#807](https://github.com/matthewgg22/Civica/pull/807), CI running, awaiting merge
+  go-ahead.
