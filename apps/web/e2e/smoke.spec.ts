@@ -271,6 +271,37 @@ test.describe("growth surfaces", () => {
     await expect(page.getByLabel(/Organization name/)).toBeVisible();
     await expect(page.getByRole("button", { name: "Sign on" })).toBeVisible();
   });
+
+  // THE GAP THIS PINS: until this page existed, the only feedback mechanism
+  // on the entire product was a thumbs up/down on one specific chat answer —
+  // there was nowhere to report a bug, suggest something, or say anything
+  // general about the site at all. Reachable from every Demeter surface's
+  // footer, same as /verify and /supporters.
+  test("the footer links to /feedback, and the form submits", async ({ page }) => {
+    await page.goto("/screen/ask");
+    const link = page.locator(".dmft").getByRole("link", { name: "Feedback" });
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute("href", "/feedback");
+    await link.click();
+    await expect(page).toHaveURL(/\/feedback$/);
+    await expect(page.getByRole("heading", { name: "Feedback", exact: true })).toBeVisible();
+
+    await page.route("**/api/site-feedback", (route) =>
+      route.fulfill({ json: { ok: true } }),
+    );
+    await page.getByLabel(/Your message/).fill("The map is great, thanks!");
+    await page.getByRole("button", { name: "Send feedback" }).click();
+    await expect(page.getByRole("heading", { name: "Thank you" })).toBeVisible();
+  });
+
+  // A non-English page must still be able to reach the form — the link just
+  // isn't itself translated to a /es/feedback URL yet (no localized route;
+  // same treatment as /privacy, see DemeterFooter's own comment on why).
+  test("the feedback link works from a localized page too, unprefixed", async ({ page }) => {
+    await page.goto("/es/screen/ask");
+    const link = page.locator(".dmft").getByRole("link", { name: "Comentarios" });
+    await expect(link).toHaveAttribute("href", "/feedback");
+  });
 });
 
 // The live retailer map (replaced a static SVG choropleth on direct feedback
