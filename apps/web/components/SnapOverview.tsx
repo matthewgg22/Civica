@@ -497,6 +497,20 @@ export function SnapTimeline({ lang = "en" }: { lang?: AnswerLang }) {
       <ol className="dmtl">
         {c.timeline.map((step) => (
           <li className="dmtl__step" key={step.t}>
+            {/* THE MARKER IS A DRAWING, not a numbered dot. Five steps, five
+                illustrations, in the house line-art. Decorative on purpose:
+                the step's heading and its date sit immediately beside it and
+                say everything the picture does, so alt text would be a second
+                announcement of the same beat and a stray tab stop in a list a
+                screen reader already numbers "3 of 5". */}
+            <Image
+              className="dmtl__mark"
+              src={`/timeline/${step.img}.png`}
+              alt=""
+              aria-hidden
+              width={128}
+              height={128}
+            />
             <span className="dmtl__when">{step.when}</span>
             <div className="dmtl__body">
               <h3 className="dmx__h3">{step.t}</h3>

@@ -126,7 +126,10 @@ export interface PageCopy {
    *  the dollar figures, which vary and change every October. */
   timelineH2: string;
   timelineBody: string;
-  timeline: { when: string; t: string; d: string }[];
+  /** `img` names a file in public/timeline/ — the step's illustration. Five
+   *  steps, five drawings, so the marker is a picture of the moment rather
+   *  than a numbered dot. */
+  timeline: { when: string; t: string; d: string; img: string }[];
   timelineNote: string;
   /** The graphite footer. `footerDisclaimer` is the load-bearing one: it is the
    *  last thing anyone reads before acting on an answer, so it says plainly
@@ -331,36 +334,45 @@ const en: PageCopy = {
   timelineH2: "What happens after you apply",
   timelineBody:
     "The deadlines below are federal, so they hold in every state. Your agency may move faster; it is not allowed to move slower without telling you why.",
+  // FIVE STEPS, IN THE ORDER THEY HAPPEN. Was six, with the seven-day
+  // expedited route sitting FOURTH — after the ten-day verification step it
+  // actually precedes. Someone out of food this week met the paperwork before
+  // the fast track, which is the wrong way round for the reader who needs it
+  // most. It is now second, where it belongs on the clock.
+  //
+  // The interview and the verification requests merged: they are one exchange
+  // from the applicant's side — the agency asks, you answer — and splitting
+  // them spent two of six columns on the same beat.
   timeline: [
     {
       when: "Day 0",
       t: "You file",
       d: "The date you file is what counts. Benefits are figured from it, not from the day you finish.",
-    },
-    {
-      when: "Within days",
-      t: "The interview",
-      d: "Nobody is approved without one. Usually a phone call. Missing it is not a denial on its own.",
-    },
-    {
-      when: "At least 10 days",
-      t: "What you have to prove",
-      d: "The agency asks for what it cannot verify itself. You get at least 10 days to produce it.",
+      img: "1-file",
     },
     {
       when: "By day 7",
       t: "If you have almost nothing coming in",
-      d: "Almost nothing coming in? Benefits can arrive within a week. It is the same application.",
+      d: "Benefits can arrive within a week. Same application — say so when you file.",
+      img: "2-fast",
+    },
+    {
+      when: "Within days",
+      t: "The interview, and what you prove",
+      d: "Usually a phone call, and nobody is approved without one. The agency then asks for what it cannot check itself; you get at least 10 days.",
+      img: "3-proof",
     },
     {
       when: "By day 30",
       t: "The decision",
       d: "Thirty days from filing, the agency must approve or deny — and say why if it denies.",
+      img: "4-decision",
     },
     {
       when: "Then, ongoing",
       t: "Benefits, and keeping them",
       d: "Benefits land monthly on an EBT card. Recertify before your period runs out.",
+      img: "5-ongoing",
     },
   ],
   timelineNote:
@@ -571,31 +583,31 @@ const es: PageCopy = {
       when: "Día 0",
       t: "Presentas la solicitud",
       d: "La fecha en que presentas es la que cuenta. Los beneficios se calculan desde ahí.",
-    },
-    {
-      when: "En pocos días",
-      t: "La entrevista",
-      d: "Nadie es aprobado sin ella. Suele ser una llamada. Perderla no es, por sí sola, una denegación.",
-    },
-    {
-      when: "Al menos 10 días",
-      t: "Lo que tienes que comprobar",
-      d: "La agencia pide lo que no puede verificar sola. Tienes al menos 10 días para entregarlo.",
+      img: "1-file",
     },
     {
       when: "Antes del día 7",
       t: "Si casi no tienes nada entrando",
-      d: "¿Casi nada entrando? Los beneficios pueden llegar en una semana. Es la misma solicitud.",
+      d: "Los beneficios pueden llegar en una semana. Es la misma solicitud — dilo al presentarla.",
+      img: "2-fast",
+    },
+    {
+      when: "En pocos días",
+      t: "La entrevista, y lo que compruebas",
+      d: "Suele ser una llamada, y nadie es aprobado sin ella. Después la agencia pide lo que no puede verificar sola; tienes al menos 10 días.",
+      img: "3-proof",
     },
     {
       when: "Antes del día 30",
       t: "La decisión",
       d: "A los treinta días, la agencia debe aprobar o denegar — y decir por qué si deniega.",
+      img: "4-decision",
     },
     {
       when: "Después, de forma continua",
       t: "Los beneficios, y cómo conservarlos",
       d: "Los beneficios llegan cada mes a una tarjeta EBT. Recertifica antes de que termine tu período.",
+      img: "5-ongoing",
     },
   ],
   timelineNote:
@@ -807,31 +819,31 @@ const vi: PageCopy = {
       when: "Ngày 0",
       t: "Bạn nộp đơn",
       d: "Ngày bạn nộp mới là ngày được tính. Trợ cấp tính từ mốc đó, không phải khi bạn điền xong.",
-    },
-    {
-      when: "Trong vài ngày",
-      t: "Buổi phỏng vấn",
-      d: "Không ai được duyệt mà bỏ bước này. Thường là một cuộc gọi. Lỡ hẹn không phải là bị từ chối.",
-    },
-    {
-      when: "Ít nhất 10 ngày",
-      t: "Những gì bạn phải chứng minh",
-      d: "Cơ quan chỉ hỏi những gì họ không tự xác minh được. Bạn có ít nhất 10 ngày để nộp.",
+      img: "1-file",
     },
     {
       when: "Trước ngày thứ 7",
       t: "Nếu bạn gần như không có nguồn thu nào",
-      d: "Gần như không có thu nhập? Trợ cấp có thể đến trong một tuần. Vẫn là đơn đó.",
+      d: "Trợ cấp có thể đến trong một tuần. Vẫn là đơn đó — hãy nói rõ khi nộp.",
+      img: "2-fast",
+    },
+    {
+      when: "Trong vài ngày",
+      t: "Phỏng vấn, và những gì bạn chứng minh",
+      d: "Thường là một cuộc gọi, và không ai được duyệt mà bỏ bước này. Sau đó cơ quan hỏi những gì họ không tự xác minh được; bạn có ít nhất 10 ngày.",
+      img: "3-proof",
     },
     {
       when: "Trước ngày thứ 30",
       t: "Quyết định",
       d: "Ba mươi ngày kể từ khi nộp, cơ quan phải duyệt hoặc từ chối — và nêu rõ lý do.",
+      img: "4-decision",
     },
     {
       when: "Sau đó, lâu dài",
       t: "Nhận trợ cấp, và giữ được nó",
       d: "Trợ cấp vào thẻ EBT hằng tháng. Hãy tái chứng nhận trước khi hết kỳ hạn.",
+      img: "5-ongoing",
     },
   ],
   timelineNote:
@@ -1042,31 +1054,31 @@ const zh: PageCopy = {
       when: "第 0 天",
       t: "您递交申请",
       d: "递交那天才是起算日。补助从那天开始计算，而不是您填完表格的那天。",
-    },
-    {
-      when: "几天之内",
-      t: "面谈",
-      d: "没有面谈就不会获批。通常只是一通电话。错过面谈本身并不等于被拒。",
-    },
-    {
-      when: "至少 10 天",
-      t: "您需要提供的证明",
-      d: "机构只会索取它无法自行核实的部分。提出要求后，您至少有 10 天时间提交。",
+      img: "1-file",
     },
     {
       when: "第 7 天之前",
       t: "如果您几乎没有任何进项",
-      d: "几乎没有进项？补助最快可在一周内到账，用的还是同一份申请。",
+      d: "补助最快可在一周内到账，用的还是同一份申请——递交时说明情况即可。",
+      img: "2-fast",
+    },
+    {
+      when: "几天之内",
+      t: "面谈，以及您要提供的证明",
+      d: "通常只是一通电话，没有面谈就不会获批。之后机构会索取它无法自行核实的部分；您至少有 10 天时间提交。",
+      img: "3-proof",
     },
     {
       when: "第 30 天之前",
       t: "作出决定",
-      d: "自递交起三十天内，机构必须批准或拒绝——若拒绝，还要说明原因。",
+      d: "自递交起三十天内，机构必须批准或拒绝——拒绝时必须说明理由。",
+      img: "4-decision",
     },
     {
       when: "之后，持续进行",
-      t: "领取补助，以及如何保住它",
-      d: "补助每月存入 EBT 卡。请在认证期满前办理复审。",
+      t: "领取补助，并保住它",
+      d: "补助每月打入 EBT 卡。请在认证期结束前完成重新认证。",
+      img: "5-ongoing",
     },
   ],
   timelineNote:
