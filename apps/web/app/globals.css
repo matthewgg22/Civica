@@ -5069,6 +5069,55 @@ html {
 }
 .vpage__foot p + p { margin-top: 0.9rem; }
 
+/* /feedback's form. Same idle/busy/done/error shape and honeypot pattern as
+   SupporterSignOn, but themed on the Demeter tokens (--demeter-*) rather than
+   the older shared --civica-* ones .ssignon still uses — this page is new,
+   not legacy, and every other Demeter surface it's linked from already made
+   that switch. Inputs reuse .dmret__input/.dmret__go's own values (border,
+   radius, min-height) rather than inventing a second input style. */
+.fbform { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; max-width: 34rem; }
+.fbform__title {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.3rem; font-weight: 600; color: var(--demeter-ink); margin: 0 0 0.4rem;
+}
+.fbform__body {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.6; color: var(--demeter-body); margin: 0; max-width: 52ch;
+}
+.fbform__field { display: flex; flex-direction: column; gap: 0.4rem; }
+.fbform__label {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; letter-spacing: 0.04em; font-weight: 600; color: var(--demeter-ink);
+}
+.fbform__field input,
+.fbform__field select,
+.fbform__field textarea {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 1rem; min-height: 48px; padding: 0.6rem 0.9rem;
+  border: 1px solid var(--demeter-rule-strong); border-radius: 12px;
+  background: var(--demeter-card); color: var(--demeter-ink);
+}
+.fbform__field textarea { min-height: auto; resize: vertical; }
+.fbform__field input:focus-visible,
+.fbform__field select:focus-visible,
+.fbform__field textarea:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.fbform__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.fbform__error {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.88rem; color: var(--demeter-terracotta-deep);
+  background: var(--demeter-card); border: 1px solid var(--demeter-terracotta);
+  border-radius: 10px; padding: 0.7rem 0.9rem;
+}
+.fbform__submit {
+  align-self: flex-start;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.95rem; font-weight: 600; min-height: 48px; padding: 0 1.5rem;
+  border: 0; border-radius: 12px; cursor: pointer;
+  background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
+}
+.fbform__submit:disabled { opacity: 0.45; cursor: default; }
+.fbform__submit:hover:not(:disabled) { background: var(--demeter-terracotta); }
+
 /* ── Demeter identity tokens (Demeter AI Design Spec, Turn 3 — "sibling not
    twin") ──────────────────────────────────────────────────────────────
    Scoped to .screening* — NOT the shared --civica-* tokens, which the older
