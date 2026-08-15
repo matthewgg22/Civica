@@ -139,20 +139,35 @@ The reader can't tell these apart from a refusal by looking at the certainty ban
 
 ---
 
-## Suggested next steps (not started — awaiting direction)
+## Suggested next steps (conversational-layer items now DONE — see update below)
 
-**Conversational-layer (in scope for a `packages/demeter-engine` PR, similar to #811):**
-1. Investigate and fix the furlough-degrade rate — likely a prompt-level fix (a specific instruction for prospective/anticipated-income questions), verifiable the same way #811's fixes were: live re-run, not a synthetic test.
-2. Decide a policy for the "correct but uncited" pattern — options include: extending the certainty framework to distinguish "no claim" from "claim with no citation attempted," or nudging the prompt to always attempt a citation when stating a specific rule even from its own baked knowledge.
-3. Add retrieval hints for the CORPUS-ONLY topics that already have good source text but no routing help (LIHEAP, strikers, live-in attendants, DV-shelter, sponsor deeming, voluntary quit) — cheap, low-risk, and would reduce both latency (fewer recomposes) and the risk of a #766-style bare-facts misroute on these topics.
+**Conversational-layer (in scope for a `packages/demeter-engine` PR, similar to #811) — ✅ ALL DONE, PRs #827 + follow-up:**
+1. ~~Investigate and fix the furlough-degrade rate~~ — DONE. Root cause: the numeric-equivalence gate structurally could never accept the literal figure "$0" (nobody types "I make $0," and no regulation states it either), so a furloughed-worker question's own correct "$0" statement was unsatisfiable no matter how it was phrased — 4/4 identical live runs failed on the exact same mismatch. Fixed; live-verified 3/3 clean after.
+2. ~~Decide a policy for the "correct but uncited" pattern~~ — DONE, went with the prompt-nudge option: an explicit "always name a citation for a stated rule, even from the notes above" instruction, plus embedding the citation directly at each specific fact (pregnancy exemption, disability/VA-any-rating exemption) since the general instruction alone only achieved ~2/3 compliance. D-SNAP-style genuinely-ungrounded cases now at least hedge honestly instead of stating flat fact with no citation — left the certainty-framework classifier idea out of scope (too speculative to build confidently in this pass).
+3. ~~Add retrieval hints for the CORPUS-ONLY topics~~ — DONE for strikers, live-in attendants, DV-shelter, sponsor deeming (citation-level, not section-level — 273.1's five subsections are five separate chunks sharing one coarse `section` field). LIHEAP got its fix via the OBBBA-superseded mechanism instead (see the PRA-findings-driven commits). Voluntary quit already had a hint — confirmed, no action needed.
+
+**Second live battery (2026-08-15) — the 🔵 UNTESTED items, now tested:**
+
+| Item | Verdict | Note |
+|---|---|---|
+| Unpaid internships/clinicals (3.3) | ✅ | Federal 7 CFR 273.24(a)(2)(iii) explicitly covers unpaid work toward the ABAWD hours requirement — cited correctly, certain/grounded. |
+| Trade/vocational vs. academic (3.4) | ✅ | Correctly applies the real federal test (does the program require a HS diploma/GED to enroll — not "is it a degree program"), 273.5(a) cited correctly. |
+| Dual enrollment/HS seniors (3.5) | 🟡 | Still nothing in any layer (confirmed `❌ NOT FOUND ANYWHERE` at the code level), but the live answer handles the absence gracefully — correctly keys off half-time enrollment rather than "any college classes," honestly defers to a county factual determination, doesn't invent a K-12 carve-out that doesn't exist. |
+| Lump-sum vs. recurring pay / severance (2.6) | 🟡 | Appropriately hedged (uncertain/authority_not_retrieved) — federal SNAP severance treatment is genuinely state-variable in practice; the model didn't assert false confidence on a genuinely disputed area. |
+| Homelessness/non-traditional housing (4.3) | ✅ | Correctly explains no permanent address is needed, offers 211/food banks, names alternative mailing-address options, cites 273.3 and 273.2(f)(3)(vi). |
+| Informal/symbolic rent to family (4.4) | ✅ | Correctly explains no written lease is required, offers alternative verification (signed statement, collateral contact), and proactively raises the household-composition angle (paying "rent" to someone you also share food with may make you one household, not landlord/tenant) — 273.2(f) cited. |
+| Section 8 / subsidized housing dynamic rent (4.5) | ✅ | Correctly explains no special SNAP rule exists — the shelter deduction just follows whatever rent is currently being paid, reported like any other change; 273.9(d)(6)/273.12 cited. |
+| Pending SSDI/SSI claims (5.2) | 🟡→✅ | Correctly said a pending (not yet approved) application is enough for the ABAWD exemption — but with **zero citation** on the first live run, the same "correct but uncited" shape items 1-2 above were supposed to have fixed generally. Confirms the general instruction alone doesn't reach 100% coverage; fixed the same way as pregnancy — citation embedded directly at this specific fact. Live-verified 2/3 after. |
+| State/private disability, workers' comp (5.3) | ✅ | Short-term employer disability insurance correctly treated as unearned income, 7 CFR 273.9(b)(2)(ii) cited correctly. |
+| Pre-release (not post-release) incarceration (6.4) | 🟡 | Cites a real, narrow federal provision (273.11(i), joint SSI/SNAP pre-release application) and correctly scopes it — doesn't overclaim a general FoodShare/SNAP pre-release guarantee beyond what the cited section actually covers, defers appropriately to county-specific reentry coordination. |
+
+Net: 6 of 10 previously-untested items are fully correct and well-cited; 3 are appropriately and honestly hedged on genuinely unclear ground (not wrong, just uncertain — the right behavior); 1 (pending SSDI) surfaced a second instance of the citation-discipline gap, now fixed the same way as the first.
 
 **Engine-math (`packages/snap-rules` is PARKED — per-instance go-ahead required before any of this, per standing rule):**
 4. Sponsor-deeming category exemptions (refugee/asylee/Cuban-Haitian/parolee) and the 273.11(j)(3) indigence formula — the most concrete, well-evidenced gap in this audit.
 5. Wire `checkHEAPCompliance()`'s existing flag into the actual SUA-tier calculation, or explicitly document that LIHEAP/heat-and-eat is Phase 2 and out of scope for the current worksheet estimate.
 6. Roomer and live-in-attendant as their own composition-gate branches (both already have real corpus text; roomer already has a retrieval hint).
 7. Joint/shared custody, D-SNAP, dual-enrollment/K-12 status, and furlough/anticipated-income handling in `income-tests`/`facts.ts` — these are `❌ NOT FOUND ANYWHERE` items with real user-facing consequences.
-
-**Untested this pass (🔵 items above)** — would want a dedicated live battery before drawing conclusions: unpaid internships/clinicals, trade-vs-academic enrollment, lump-sum vs. recurring pay, homelessness/non-traditional housing, informal rent, Section 8 dynamic rent, pending SSDI/SSI claims, state/private disability & workers' comp (beyond the generic-fallback check already done), unpaid pre-release program applicants specifically (vs. the post-release case tested here).
 
 ---
 
