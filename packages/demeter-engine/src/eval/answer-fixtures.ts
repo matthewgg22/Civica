@@ -29,6 +29,15 @@ export const ANSWER_FIXTURES: AnswerFixture[] = [
     badTrips: "mentioned",
   },
   {
+    id: "abawd-pregnancy-exemption",
+    retrievedCitations: ["7 CFR 273.24"],
+    good: "No — being pregnant exempts you from the ABAWD work-requirement time limit (7 CFR 273.24), effective the month your pregnancy is confirmed through the month of birth. Verify with your county if anything about your situation seems unusual.",
+    // States the real rule but cites nothing — the exact live-QA finding
+    // this gold case guards: a correct claim with no way to check it.
+    bad: "No — being pregnant exempts you from having to meet SNAP work requirements while you're expecting.",
+    badTrips: "citedExpected",
+  },
+  {
     id: "public-charge-defer",
     retrievedCitations: ["8 CFR 212.21 (DHS public-charge rule)"],
     good: "SNAP is not counted in the public-charge test — that's a DHS rule (8 CFR 212.21), and food assistance is explicitly excluded. Applying for citizen children doesn't affect it. Confirm current USCIS guidance for the specific situation.",
