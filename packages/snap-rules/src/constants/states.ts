@@ -1668,6 +1668,218 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Virginia — VDSS / Local Departments of Social Services (LDSS). Third
+  // "individual tier" build (docs/plans/snap-rules-50-state-engine-
+  // completion.md §6, after NC and NJ) — a genuine blank slate, no prior
+  // StatePolicy or oracle coverage existed. Every axis below is TRANSLATED
+  // from the already-cited primary-source findings in the merged Demeter
+  // corpus pack (packages/demeter-engine/src/states/va/PROVENANCE.md +
+  // supplements.json), built and merged 2026-08-11 — re-verification, not
+  // fresh research; see that pack's own Sources table for the underlying
+  // fetch method (direct curl w/ browser User-Agent of VDSS's complete SNAP
+  // Manual PDF + pdftotext -layout, plus direct fetches of Va. Code
+  // §§ 63.2-505.2/63.2-801 at law.lis.virginia.gov and USDA's FY2025-2029
+  // ABAWD waiver index — every source hit a clean HTTP 200 on the first
+  // attempt, a genuine negative result worth noting given how many prior
+  // states in this file hit bot-mitigation walls).
+  //
+  // BBCE (VA SNAP Manual Part II.G.3; Va. Code § 63.2-801(B)): a flat 200%
+  // FPL screen conferred via a TANF-funded-service notice printed on the
+  // application itself — same low-friction conferral-vehicle family as
+  // NC's FNS 220.02(E) notice. bbce_fpl_basis: "federal_fiscal_year" — the
+  // corpus pack's dollar figures (Transmittal #36, 10/25) are captioned
+  // "effective October 1, 2025," the same FFY framing NC/WI/CA/FL/AZ/OR/
+  // post-BBCE-AK already use in this file. THIS PACK'S STRUCTURAL FINDING,
+  // genuinely unusual in this roster: Virginia's 200% threshold AND its
+  // no-asset-limit rule are written DIRECTLY INTO STATUTE (Va. Code
+  // § 63.2-801(B): the State Board of Social Services shall "(ii) set the
+  // gross income eligibility standard for SNAP benefits at 200 percent of
+  // the federal poverty guidelines, and (iii) not impose an asset limit for
+  // eligibility for SNAP benefits," "to the extent authorized by federal
+  // law and regulations") — every other BBCE state in this file sets its
+  // threshold through agency policy/regulation alone (NJ's N.J.A.C.
+  // 10:87-2.36, NC's FNS manual section, etc.); reversing or narrowing
+  // Virginia's BBCE posture would require a General Assembly statutory
+  // amendment, a meaningfully higher bar than an agency rulemaking change.
+  //
+  // asset_waiver: true — VA SNAP Manual Part IX.B states plainly "the
+  // resource limits do not apply to categorically eligible households or
+  // members, including those who meet BBCE requirements" — the same full
+  // waiver breadth every BBCE state in this file already models (the
+  // tested minority still faces the federal $3,000/$4,500 limit, read from
+  // federal-tables.ts, same as every state above). Separately, Part IX.C.1.c
+  // creates a narrow exception that reaches EVEN BBCE households: $4,500+
+  // single-game lottery/gambling winnings cause outright ineligibility —
+  // this is the SAME federal lottery/gambling disqualification
+  // (7 CFR 273.11(r)) `gates/disqualifications.ts` already enforces
+  // state-agnostically via the `disqual: ["lottery"]` tag, so no
+  // Virginia-specific modeling was needed for this axis.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL STATUTORY OPT-OUT, not a
+  // fail-open default. Va. Code § 63.2-505.2, fetched directly from
+  // law.lis.virginia.gov: "A person who is otherwise eligible to receive
+  // food stamp benefits shall be exempt from the application of § 115(a)
+  // of the federal Personal Responsibility and Work Opportunity
+  // Reconciliation Act of 1996... and shall not be denied such assistance
+  // solely because he has been convicted of a drug-related felony." The
+  // statute's own History note shows it originated in 2005 (c. 576) as a
+  // narrower, modified-ban version and was AMENDED in 2020 (cc. 221, 361)
+  // to its current full-opt-out form — corroborated by contemporaneous
+  // Virginia Mercury/VPM coverage of 2020 legislation ending Virginia's
+  // SNAP/TANF drug-felony bans effective July 1, 2020. VA's SNAP Manual
+  // contains no drug-felony disqualification provision anywhere in the
+  // 33,000+ lines the corpus pack fetched and searched, consistent with the
+  // statute. No waiting period, no treatment-compliance condition, no
+  // felony-class carve-out — the cleanest of the postures this file
+  // documents, matching NJ's/IL's/OH's/MI's/NV's/OR's/MN's "none" shape,
+  // though on a distinct statutory timeline (2020, not NJ's 2012 or MI's
+  // 2021).
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero
+  // finding, not a fail-open default, and — unlike CA's/MI's/NV's/AZ's
+  // permissive `true` entries above — genuinely simple: Virginia holds NO
+  // waiver ANYWHERE in the Commonwealth today, so there is no county-level
+  // nuance a per-county lookup (`work-requirements/waiver-counties.ts`)
+  // would need to represent (that pattern exists for CA/MA precisely
+  // because THEY have a real subset of waived counties this boolean can't
+  // express; Virginia's real answer needs no subset at all). VA SNAP Manual
+  // Appendix I ("Localities Whose Residents Are Exempted from the Work
+  // Requirement") is a historical table: STATEWIDE exemption April
+  // 2020–June 2023, narrowing lists of specific waived localities through
+  // June 2025 (including Brunswick, Buchanan, Danville, Dinwiddie,
+  // Greensville/Emporia, Hopewell, Petersburg, Sussex, and others across two
+  // periods), then, as of July 2025: "No exempt areas." Independently
+  // corroborated against a SECOND source: USDA's own official ABAWD Time
+  // Limit Waivers FY2025-2029 index (fetched directly, page updated
+  // 7/22/2026) confirms Virginia is ABSENT from the list of states that
+  // submitted ANY waiver request for FY2025 or FY2026 — a list that
+  // includes 20+ other states and DC. Two independent sources agree. This
+  // is a real, fairly recent reversal from Virginia's own multi-year waiver
+  // history (both dense Northern-Virginia/DC-suburb counties and rural
+  // Southside/Appalachian counties — several of which appear repeatedly on
+  // the pre-2025 waived-locality list above — are currently subject to the
+  // standard 3-in-36-month time limit with no exception), worth flagging
+  // clearly since a reader relying on that older history could easily
+  // assume some Virginia locality is still covered. None is, as of this
+  // build. (The corpus pack separately flags that VA SNAP Manual Appendix
+  // I's own footnote is STALE — it still says "except... over age 54"
+  // where Part XV.A's own body text correctly states the current
+  // post-OBBBA 18-64 range — an internal-document inconsistency, not a
+  // live divergence; this engine's own ABAWD gate already applies the
+  // correct 18-64 ceiling post-OBBBA via its own dated cutoff, unaffected
+  // either way.)
+  //
+  // rmp_operated: true — Virginia's Restaurant Meals Program (VRMP) is
+  // real, current, and — unusually — STATUTORILY MANDATED for every
+  // locality, not a local-option or agency-discretion program: Va. Code
+  // § 63.2-801(A), fetched directly, states "[SNAP] program shall include
+  // participation in the Restaurant Meals Program" as part of a program "in
+  // which each political subdivision in the Commonwealth shall
+  // participate." Confirmed through a THIRD independent source: SB1020
+  // (2025 session), enacted as Chapter 321, effective July 1, 2025,
+  // separately required VDSS to report to the Governor and General Assembly
+  // on VRMP's implementation by December 1, 2025 — confirming VRMP is a
+  // live, actively-monitored, and quite RECENT program (about one year old
+  // as of this pack's build), not a longstanding fixture. Virginia is named
+  // on USDA's own official RMP state list alongside AZ/CA/IL(Cook+Franklin
+  // only)/MD/MA/MI/NY/RI — a direct CONTRAST with this file's NJ entry,
+  // where a similarly-worded bill has died in committee three separate
+  // legislative sessions without ever being enacted.
+  //
+  // allotment_tier: "48" — no Virginia-specific elevated max-allotment
+  // schedule found; VA's own manual states the Standard Deduction
+  // ($209/$223/$261/$299), Maximum Excess Shelter Deduction ($744), and
+  // Homeless Shelter Allowance ($198.99) figures IDENTICALLY to
+  // federal-tables.ts's FY26 snapshot — the same "shared source, so the
+  // allotment table isn't independently elevated either" signal NC's entry
+  // above uses.
+  //
+  // sua_by_tier — A GENUINELY DIFFERENT SCHEMA-MISMATCH SHAPE than every
+  // other gap this file has documented: not a state that publishes a real
+  // standard this engine's schema has no SLOT for (IL's Single Utility,
+  // OH's Single SUA, NV's IUA, MI's water/sewer/cooking-fuel/trash, WI's
+  // four unmapped standards), but a state whose utility-standard structure
+  // is FLATTER than usual on BOTH axes at once. VA SNAP Manual
+  // Part X.A.4.e-f sets a utility standard of $375/month for a residence of
+  // 1-3 persons and $476/month for 4+ (SIZE-SCALED, like NC's SUA, but only
+  // TWO bands where NC scales continuously across five) — and,
+  // structurally, Virginia publishes only TWO utility-allowance tiers
+  // TOTAL, not three: the single "utility standard" already bundles
+  // heat/cooling, electricity, gas, water, sewerage, septic maintenance,
+  // garbage collection, AND the basic telephone service fee together (Part
+  // X.A.4.e) — there is no intermediate "non-heating, multiple other
+  // utilities" tier the way NC's BUA, WI's LUA, or a typical three-tier
+  // state's LUA provides. A household not entitled to the utility standard
+  // (no separately identifiable heating/cooling expense) either uses actual
+  // costs, or — if its ONLY utility expense is a telephone — claims the
+  // separate flat telephone standard of $54/month (Part X.A.4.f).
+  //
+  // HCSUA maps VA's 1-3-person band ($375) directly — chosen under the
+  // SAME reasoning AZ's entry above uses for its own genuinely 2-banded
+  // ("1-3 participants vs 4+") SUA/LUA ladder: this schema has no household-
+  // size dimension, so the more common 1-3-person band is encoded and a 4+
+  // household's real $476 figure is UNDER-STATED by $101/month here.
+  // Independently verified: of the 92 oracle profiles, exactly 6 are 4+
+  // person households on the HCSUA tier (A04, D08, P60, MX2, P64, P65) —
+  // none of their verdicts flip as a result (all are comfortably within the
+  // 200% BBCE income screen either way), only their benefit-dollar figure
+  // is under-stated relative to VA's real $476 figure.
+  //
+  // phone maps VA's flat $54/month telephone standard directly — a clean
+  // 1:1 fit, no approximation.
+  //
+  // LUA is the genuinely NOVEL gap: unlike every prior "missing tier" this
+  // file has documented, this is not a case where Virginia publishes a
+  // real standard this schema merely has no slot for — Virginia's own
+  // policy has NO utility standard at all for a household with electric/gas
+  // costs but no heating/cooling expense (this engine's LUA-tier scenario,
+  // `determineSUATier`'s LIMITED branch). Per Part X.A.4.e-f, that exact
+  // household would use ACTUAL documented utility costs in real VA
+  // practice — a mechanism this engine's `Facts` shape does not carry (no
+  // "actual utility cost" field distinct from a named tier standard),
+  // making this a genuine Facts-shape gap, not a per-state value this
+  // engine can correctly express, the same category of accepted limitation
+  // as NJ's boat/motor-home and child-support-exclusion gaps (#824) above.
+  // Rather than fabricate a number with no VA citation behind it, LUA is
+  // set to $0 — the same "no fabrication" discipline this file applies
+  // everywhere else — which UNDER-STATES (never over-states) the excess-
+  // shelter deduction for a household in this exact fact pattern, the
+  // conservative direction of error. Independently verified this affects
+  // exactly 2 of the 92 oracle profiles (A02-elderly-woman-ssi-only,
+  // A09-lpr-40-quarters-low-income — both authored with `sua_tier: "LUA"`
+  // in the base v0.6 fixture); NEITHER profile's VERDICT is affected (both
+  // clear VA's 200% BBCE screen, or are pure-SSI categorically eligible,
+  // regardless of shelter-deduction size), only their benefit-dollar
+  // figure is lower than it would be under a state with a real LUA-
+  // equivalent standard (A02: $170 here vs. $288 under NC's $392 LUA on the
+  // identical facts; A09: similarly lower). Flagged here rather than
+  // silently guessed — a future Facts-shape extension carrying a real
+  // "actual utility cost" field (the same class of fix NJ's #824 needs for
+  // its own gap) would be the correct long-term resolution, not a per-state
+  // engine value.
+  VA: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "VA",
+      label: "Virginia / VDSS",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("375"),
+        LUA: new Decimal("0"),
+        phone: new Decimal("54"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: true,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
