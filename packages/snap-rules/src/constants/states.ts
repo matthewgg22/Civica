@@ -1880,6 +1880,205 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: true,
     },
   ],
+
+  // Missouri — DSS / Family Support Division (FSD). Sixth "individual
+  // tier" build (docs/plans/snap-rules-50-state-engine-completion.md §6,
+  // after NC/NJ/VA; TN's and IN's builds are separate, concurrently-
+  // in-flight PRs not touched here) — a genuine blank slate, no prior
+  // StatePolicy or oracle coverage existed. Every axis below is
+  // TRANSLATED from the already-cited primary-source findings in the
+  // merged Demeter corpus pack (packages/demeter-engine/src/states/mo/
+  // PROVENANCE.md + supplements.json), built 2026-08-11 — re-verification,
+  // not fresh research; see that pack's own Sources table for the
+  // underlying fetch method (direct curl w/ browser User-Agent of 18
+  // dssmanuals.mo.gov SNAP-manual subsections + the DSS SNAP Program
+  // Changes Flyer PDF, dated 10/2025, via pdftotext -layout, plus a
+  // direct fetch of RSMo § 208.247 at revisor.mo.gov — seventeen of
+  // eighteen manual subsections and the statute all hit a clean HTTP 200;
+  // only the resource-limit subsection was gated, see asset_waiver below).
+  //
+  // bbce: false — THIS PACK'S FLAGSHIP FINDING, a genuine secondary-source
+  // CORRECTION, not a confirmation: several SNAP-benefit calculator sites
+  // assert "Missouri uses BBCE at 200% FPL with no asset limit for most
+  // households." Missouri's own current income-limit table (MO IM Manual
+  // 1115.099.00, cross-checked against the DSS SNAP Program Changes Flyer
+  // dated 10/2025) publishes EXACTLY two income-limit columns — 130% FPL
+  // gross, 100% FPL net — with no higher BBCE-style percentage anywhere.
+  // Missouri is corroborated as one of a small non-BBCE minority (per
+  // secondary research referencing USDA's own BBCE state list, alongside
+  // AR/KS/MS/NE/SD/UT/WY). This is Missouri's own analog to Indiana's/
+  // Kansas's no-BBCE archetype in this file, but sharper: this pack found
+  // and DISPROVED an actively wrong, specific, numbered claim (200% FPL)
+  // rather than merely confirming an already-accurate absence.
+  //
+  // bbce_fpl_basis: null — no BBCE tier exists to have a basis.
+  //
+  // asset_waiver: false — Missouri's general applicant population still
+  // faces the federal resource test (read from federal-tables.ts:
+  // $3,000/$4,500, same figures MO IM Manual 1110.005.00 corroborates —
+  // see below). A GENUINE THIRD categorical-eligibility structural
+  // pattern this file has not yet documented, distinct from both the
+  // "Basic CE" (IN's narrow TANF/SSI-cash-only pathway) and the BBCE
+  // pattern (a universal TANF-funded informational pamphlet reaching ALL
+  // applicants, raising the effective income ceiling for everyone): MO IM
+  // Manual 1135.035.00 extends categorical eligibility to households where
+  // a member receives or is AUTHORIZED to receive specific TANF-funded
+  // "special support services" (Child Care assistance, Community
+  // Partnerships job-placement programs including the Missouri Mentoring
+  // program) — broader than Basic CE (not limited to actual cash
+  // recipients), but SERVICES-CONDITIONED rather than a blanket
+  // income-ceiling raise: it requires ACTUAL receipt of or authorization
+  // for a genuine named service, not mere application. This schema has no
+  // slot for "services-conditioned CE" as a distinct axis from BBCE — the
+  // CE-qualified subset of households genuinely does skip the
+  // resource/gross/net tests (MO IM Manual 1135.035.00: "do not have to
+  // meet resource limits, gross income limits, or net income limits at
+  // all"), but that subset is a conditional, per-household fact this
+  // engine's federal `cat_elig: "pure_SSI"/"pure_PA"/"pure_TANF"` path
+  // already carries state-independently (gates/categorical.ts) — MO's
+  // services-conditioned members are additive to that federal set, not
+  // modeled as a separate axis. `asset_waiver: false` correctly describes
+  // the general (non-cat-elig) population, the same "state-wide boolean
+  // answers the general case, per-household cat-elig facts answer the
+  // narrow case" split every other state in this file already accepts.
+  //
+  // Resource limit ($3,000/$4,500) — MO IM Manual 1110.005.00 returned a
+  // PASSWORD-PROTECTED WALL on every direct-fetch attempt (page-specific,
+  // not site-wide: the sibling Vehicles subsection in the same chapter
+  // rendered cleanly), so this pack's own figure rests on convergent
+  // secondary corroboration (Missouri Budget Project's 2025 SNAP
+  // overview), not Missouri's own primary text. Immaterial to this
+  // engine regardless: the dollar figure is the plain federal standard
+  // (federal-tables.ts's `assetLimitFor`, not a per-state StatePolicy
+  // field), and MO's secondary-sourced figure matches it exactly — this
+  // gap affects confidence in the corpus pack's own citation, not any
+  // value encoded here.
+  //
+  // Vehicles — MO IM Manual 1110.020.10: "Exclude the value of all
+  // vehicles" (car, truck, motorcycle, ATV, camper, trailer, motor home,
+  // boat) — a genuinely BROADER blanket exclusion than any prior state in
+  // this file (e.g. IN's hybrid rule: ordinary vehicles exempt, boats/
+  // campers counted at equity value). Not modeled: this schema has no
+  // asset-type breakdown (`Facts.assets` is a single flat total), the
+  // same already-filed Facts-shape gap as #824 — not re-filed here, MO's
+  // situation is the same category of gap, not a new one.
+  //
+  // sua_by_tier — POPULATED with disclosed confidence, not null. MO IM
+  // Manual 1115.035.25.15 publishes four flat utility standards: SUA
+  // (full heat/cool) $495, Non-Heating/Cooling Standard (NHCS, 2+
+  // non-heat utilities) $363, Lower Utility Allowance (LUA, exactly ONE
+  // qualifying utility expense) $158, Telephone Standard $79 — dated to
+  // IM-50 (Sept 2024, FFY2025); despite a targeted search this pack could
+  // NOT locate a confirmed FFY2026 update to these four specific figures,
+  // even though Missouri's OTHER FFY2026 figures (Standard Deduction,
+  // Excess Shelter cap, Homeless Deduction — see allotment_tier below)
+  // ARE independently confirmed current via the same 10/2025 Flyer. This
+  // is a real "sourced but possibly one FY stale" figure, not a "no
+  // figure exists at all" gap (PA's/NJ's/MN's null discipline) — the same
+  // distinction MA's entry above already draws (PENDING VERIFICATION,
+  // still populated) — so populated with the disclosed staleness risk
+  // named here rather than blocking benefit computation entirely.
+  //
+  // A GENUINE NAMING-COLLISION MAPPING TRAP: Missouri's OWN "LUA" label
+  // ($158, exactly one utility) is NOT what this schema's `LUA` field
+  // holds below. Mirroring Ohio's precedent (this file's OH entry: Ohio's
+  // own "LUA" = 2+ utilities, mapped; Ohio's separately-named "Single
+  // Standard Utility Allowance" = exactly one utility, UNMAPPED and
+  // disclosed) — this schema's `LUA` slot functionally represents "the
+  // tier a household with SOME non-heat utility burden reaches" via
+  // `determineSUATier`'s single LIMITED branch (`has_electric_or_gas ===
+  // "yes"`, no distinction of utility COUNT). Missouri's NHCS ($363, 2+
+  // utilities) is the functional match for that branch — mapped to LUA
+  // below — NOT Missouri's own literally-named "LUA" ($158, exactly one
+  // utility), which is the genuinely UNMAPPED, disclosed 4th tier (same
+  // "real figure, no reachable branch" treatment as OH's $108 Single SUA
+  // and IL's $78 Single Utility). A household whose real MO tier is the
+  // $158 one-utility LUA gets computed at $363 here instead — an
+  // over-statement in that specific subset, the same direction of
+  // approximation error OH's identical 4-tier collapse already accepts
+  // for the same structural reason (the engine cannot distinguish utility
+  // COUNT, only utility PRESENCE, so an exact fit for both of MO's two
+  // real non-heat tiers is not achievable with this schema).
+  //
+  // phone: $79 — Missouri's Telephone Standard, a clean 1:1 fit.
+  //
+  // Child support — MO IM Manual 1115.035.20 ("Child Support Exclusion,"
+  // not "deduction") is an income EXCLUSION applied even to the gross
+  // 130% FPL test itself (7 CFR 273.9(c)), matching this file's VA/NJ/IL
+  // pattern — NOT the ordinary post-gross deduction (7 CFR 273.9(d)(5))
+  // this engine implements engine-wide (benefit-calc.ts). Same already-
+  // filed Facts-shape/mechanism gap as #824 (NJ's entry above), not a new
+  // one — exactly one of the 92 oracle profiles (A08) carries a nonzero
+  // `child_support_paid` ($300); its MO oracle entry uses the engine's
+  // standard ordinary-deduction mechanic since A08's verdict is
+  // unaffected either way, the same acceptance NJ's A08 entry already
+  // documents.
+  //
+  // allotment_tier: "48" — no Missouri-specific elevated max-allotment
+  // schedule found; MO's own Standard Deduction ($209/$209/$209/$223/
+  // $261/$299), Excess Shelter cap ($744), and Homeless Standard
+  // Deduction ($198.99) — all confirmed current for FFY2026 via the
+  // 10/2025 DSS Flyer — match federal-tables.ts's FY26 snapshot exactly,
+  // the same "shared source" signal NC's/VA's entries above use.
+  //
+  // drug_felony_ban: "modified" — Missouri's own statute, RSMo § 208.247,
+  // was fetched DIRECTLY AND IN FULL from revisor.mo.gov with NO access
+  // barrier (a genuine plus over IN's equivalent statute, which needed
+  // secondary corroboration because its lookup site was an unexecutable
+  // client-side app). Together with its implementing manual section (MO
+  // IM Manual 1105.015.10.35.10), the exemption from the federal lifetime
+  // ban requires ALL FOUR of: (1) DBH-approved substance-abuse treatment
+  // participation/waitlist/completion/provider-certified-not-needed; (2)
+  // compliance with all court/DBH/probation-parole obligations; (3) no
+  // ADDITIONAL controlled-substance conviction within one year of the
+  // original; AND (4) — the sharpest contrast with this file's other
+  // modified-ban states — demonstrating sobriety via VOLUNTARY URINALYSIS
+  // TESTING that the statute and manual both specify is PARTICIPANT-PAID
+  // ("The FSD will not pay for the urinalysis testing") and cannot be
+  // self-administered. Genuinely STRICTER than IN's modified ban (which
+  // requires neither drug testing nor treatment). Gate behavior unchanged
+  // (fails open, same as every other "modified" entry) until this engine
+  // models the actual condition — see #805.
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY-SOURCED, currently-zero
+  // finding from THREE convergent sources, though Missouri's own manual
+  // is SILENT on waiver status (unlike VA's manual, which affirmatively
+  // states "No exempt areas," a slightly weaker evidentiary posture than
+  // VA's entry above, still preferred over guessing): USDA's own Time
+  // Limit Waivers FY2025-2029 index (no Missouri entry), the independent
+  // abawdmap.us aggregator ("No waiver — rule applies" for Missouri), and
+  // Missouri's own current statewide unemployment rate (3.7%, well under
+  // the 10% federal waiver-eligibility threshold). No county-level lookup
+  // needed — a real answer of "nowhere" has no county-level nuance to
+  // represent, the same VA-empty-set reasoning this file already uses.
+  //
+  // rmp_operated: false — Missouri is absent from USDA's own current
+  // "States that Operate a Restaurant Meals Program" list (the same
+  // 9-jurisdiction list this file's other RMP findings corroborate).
+  // Notable color: Missouri's legislature has introduced an RMP bill in
+  // at least four consecutive sessions (2022-2025) — none has passed,
+  // the same repeated-dead-bill pattern this file's NJ entry documents.
+  MO: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "MO",
+      label: "Missouri / DSS — Family Support Division",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: {
+        HCSUA: new Decimal("495"),
+        LUA: new Decimal("363"),
+        phone: new Decimal("79"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
