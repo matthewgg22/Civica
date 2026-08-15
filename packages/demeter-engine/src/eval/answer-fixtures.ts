@@ -38,6 +38,15 @@ export const ANSWER_FIXTURES: AnswerFixture[] = [
     badTrips: "citedExpected",
   },
   {
+    id: "abawd-pending-disability-exemption",
+    retrievedCitations: ["7 CFR 273.24"],
+    good: "Yes — having applied for disability benefits, even before a decision, is enough to exempt you from the ABAWD work requirement (7 CFR 273.24). It doesn't change your income until SSDI is actually approved and paid. Confirm this exemption is noted on your case with your county SNAP agency.",
+    // Same shape as the pregnancy fixture above — states the real rule,
+    // cites nothing.
+    bad: "Yes — a pending SSDI application is enough on its own to exempt you from the work requirement while you wait for a decision.",
+    badTrips: "citedExpected",
+  },
+  {
     id: "public-charge-defer",
     retrievedCitations: ["8 CFR 212.21 (DHS public-charge rule)"],
     good: "SNAP is not counted in the public-charge test — that's a DHS rule (8 CFR 212.21), and food assistance is explicitly excluded. Applying for citizen children doesn't affect it. Confirm current USCIS guidance for the specific situation.",

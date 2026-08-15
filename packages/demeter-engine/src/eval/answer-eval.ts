@@ -121,6 +121,17 @@ export const ANSWER_GOLD: AnswerExpectation[] = [
     mustDisclaim: true,
   },
   {
+    // Same shape, second untested-batch live QA (2026-08-15): a pending
+    // (not yet approved) SSDI application correctly exempts someone from
+    // ABAWD, stated with zero citation. Same fix pattern — embedded
+    // "(7 CFR 273.24)" directly at the disability-benefits-exemption
+    // clause in both prompts, alongside the pregnancy one already there.
+    id: "abawd-pending-disability-exemption",
+    question: "I applied for SSDI three months ago and I'm still waiting to hear back. Does that pending application help me with SNAP at all?",
+    expectCitation: "273.24",
+    mustDisclaim: true,
+  },
+  {
     id: "public-charge-defer",
     question: "Will applying for SNAP hurt my client's immigration status or count as public charge?",
     mustMention: "not counted",
