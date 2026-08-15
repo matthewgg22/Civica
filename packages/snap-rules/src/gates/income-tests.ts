@@ -41,7 +41,7 @@ export function grossIncomeTest(facts: Facts, state: string, asOf: Date): Income
   // (Read A — see facts.aggregateIncomeForCalc).
   const size = eligibleHouseholdSize(facts, asOf);
   const fpl = fplMonthly(size, asOf);
-  const policy = statePolicyFor(state);
+  const policy = statePolicyFor(state, asOf);
 
   // BBCE raises the threshold; non-BBCE uses 130% federal.
   let ratio = GROSS_INCOME_TEST_RATIO;

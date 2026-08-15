@@ -33,7 +33,7 @@ export interface EngineParams {
 
 export function getEngineParams(state: string, asOf: Date): EngineParams {
   const fed = snapshotFor(asOf);
-  const stPol = statePolicyFor(state);
+  const stPol = statePolicyFor(state, asOf);
   const sd: Record<string, number> = {};
   for (let n = 1; n <= 8; n++) {
     sd[String(n)] = standardDeductionForKey(n, asOf).toNumber();

@@ -36,7 +36,7 @@ import {
 import { assetTest } from "./gates/asset-test";
 import { computeBenefit } from "./benefit-calc";
 import { Decimal } from "./decimal";
-import { statePolicyFor, UnknownStateError } from "./constants/states";
+import { statePolicyFor, UnknownStateError, NoStatePolicyForDateError } from "./constants/states";
 
 export type Verdict = "APPROVE" | "DENY";
 
@@ -79,11 +79,22 @@ export function composeVerdict(facts: Facts, state: string, asOf: Date): Verdict
   // ── State policy ─────────────────────────────────────────────────────
   let policy;
   try {
-    policy = statePolicyFor(state);
+    policy = statePolicyFor(state, asOf);
   } catch (err) {
     if (err instanceof UnknownStateError) {
       return {
         not_implemented_surfaces: ["state-policy-not-loaded"],
+        reason: err.message,
+      };
+    }
+    // Issue #806: same graceful SKIP as UnknownStateError above — a date
+    // this engine has no snapshot for is "I can't grade this," not a bug
+    // to throw on. Should not occur today (every state's placeholder range
+    // is 2020-2099) but will become reachable once a state gains a second,
+    // narrower-dated entry.
+    if (err instanceof NoStatePolicyForDateError) {
+      return {
+        not_implemented_surfaces: ["state-policy-not-loaded-for-date"],
         reason: err.message,
       };
     }

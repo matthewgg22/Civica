@@ -28,7 +28,7 @@ export function evaluateDisqualifications(
   state: string,
   asOf: Date,
 ): DisqualResult {
-  const policy = statePolicyFor(state);
+  const policy = statePolicyFor(state, asOf);
   const disqualifiedIds: string[] = [];
 
   // Variant flag — variants can flip whether the fleeing-felon tag fires.

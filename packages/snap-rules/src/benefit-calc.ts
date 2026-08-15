@@ -82,7 +82,7 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
   const incAgg = aggregateIncomeForCalc(facts, asOf);
   const size = eligibleHouseholdSize(facts, asOf);
   const isED = hasElderlyOrDisabled(facts);
-  const policy = statePolicyFor(state);
+  const policy = statePolicyFor(state, asOf);
 
   const gross = new Decimal(incAgg.gross_total);
   const earned = new Decimal(incAgg.earned_total);

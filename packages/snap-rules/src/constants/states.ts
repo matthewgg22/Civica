@@ -133,7 +133,19 @@ import { Decimal } from "../decimal";
 export type BBCEFPLBasis = "federal_fiscal_year" | "calendar_year" | null;
 export type AllotmentTier = "48" | "AK";
 
+// Issue #806: reuses the exact effective-dated-snapshot pattern
+// federal-tables.ts already proved for federal figures
+// (FederalTableSnapshot { effective_start, effective_end, ... }) — not a
+// new idea, just extending one that already exists. Before this, a real
+// dated policy change (e.g. AK's BBCE adoption 7/1/2025, #804) required a
+// silent in-place edit with no record of what was true before, and no way
+// to correctly replay a determination for a household that applied before
+// the change. Data-integrity rule mirrors federal-tables.ts's own: never
+// edit a published snapshot after its effective_end passes — add a new
+// dated entry instead.
 export interface StatePolicy {
+  effective_start: Date;
+  effective_end: Date;
   state_code: string;
   label: string;
   bbce: boolean;
@@ -148,98 +160,120 @@ export interface StatePolicy {
   rmp_operated: boolean;
 }
 
-const STATES: Record<string, StatePolicy> = {
-  CA: {
-    state_code: "CA",
-    label: "California / LA County",
-    bbce: true,
-    bbce_threshold_pct: 200,
-    bbce_fpl_basis: "federal_fiscal_year",
-    asset_waiver: true,
-    sua_by_tier: {
-      HCSUA: new Decimal("663"),
-      LUA: new Decimal("170"),
-      phone: new Decimal("20"),
-      none: new Decimal("0"),
+// Every entry below is currently a SINGLE snapshot spanning 2020-01-01 to
+// 2099-12-31 — a deliberate placeholder range wide enough to cover any
+// realistic determination date without changing today's behavior at all.
+// This migration is data-shape-only: no state's actual policy VALUES
+// changed. A state whose policy genuinely changed on a real date (like
+// AK's BBCE, #804) should get a SECOND entry with a real effective_start/
+// effective_end pair instead of the placeholder being edited in place.
+const STATES: Record<string, StatePolicy[]> = {
+  CA: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "CA",
+      label: "California / LA County",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("663"),
+        LUA: new Decimal("170"),
+        phone: new Decimal("20"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: false,
+      // DELIBERATELY `true`, and deliberately imprecise. California DOES hold
+      // waivers — but only in 7 of 58 counties (Colusa, Imperial, Tulare,
+      // Alpine, Merced, Monterey, Plumas; ACL 25-79 + 26-15, through
+      // 2026-10-31). Statewide time limits otherwise resumed 2026-06-01
+      // (ACL 25-93).
+      //
+      // A state-level boolean cannot express "7 of 58", so both values are
+      // wrong — the question is which way. `true` over-approves the 51
+      // time-limited counties; `false` would DENY the 7 genuinely waived ones.
+      // Wrongly denying food is the worse error, so we keep the permissive
+      // value until Facts carries county_fips and the county waiver list
+      // (CA_WAIVER_COUNTY_FIPS, already used by enrollment-api) can be read
+      // here. Do not "fix" this to false without that layer.
+      abawd_waiver_avail: true,
+      rmp_operated: true,
     },
-    allotment_tier: "48",
-    drug_felony_ban: false,
-    // DELIBERATELY `true`, and deliberately imprecise. California DOES hold
-    // waivers — but only in 7 of 58 counties (Colusa, Imperial, Tulare,
-    // Alpine, Merced, Monterey, Plumas; ACL 25-79 + 26-15, through
-    // 2026-10-31). Statewide time limits otherwise resumed 2026-06-01
-    // (ACL 25-93).
-    //
-    // A state-level boolean cannot express "7 of 58", so both values are
-    // wrong — the question is which way. `true` over-approves the 51
-    // time-limited counties; `false` would DENY the 7 genuinely waived ones.
-    // Wrongly denying food is the worse error, so we keep the permissive
-    // value until Facts carries county_fips and the county waiver list
-    // (CA_WAIVER_COUNTY_FIPS, already used by enrollment-api) can be read
-    // here. Do not "fix" this to false without that layer.
-    abawd_waiver_avail: true,
-    rmp_operated: true,
-  },
-  MA: {
-    state_code: "MA",
-    label: "Massachusetts / DTA",
-    bbce: true,
-    bbce_threshold_pct: 200,
-    bbce_fpl_basis: "calendar_year",
-    asset_waiver: true,
-    sua_by_tier: {
-      HCSUA: new Decimal("914"),
-      LUA: new Decimal("556"),
-      phone: new Decimal("64"),
-      none: new Decimal("0"),
+  ],
+
+  MA: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "MA",
+      label: "Massachusetts / DTA",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "calendar_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("914"),
+        LUA: new Decimal("556"),
+        phone: new Decimal("64"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: false,
+      // MA holds NO geographic ABAWD waiver: the statewide waiver expired
+      // 2025-06-30 (DTA OLGTM-2025-31) and none was reinstated for FY26. With
+      // the waiver-availability rule now live (#608), this correctly stops an
+      // area-based exemption from being honored anywhere in Massachusetts.
+      abawd_waiver_avail: false,
+      rmp_operated: false,
     },
-    allotment_tier: "48",
-    drug_felony_ban: false,
-    // MA holds NO geographic ABAWD waiver: the statewide waiver expired
-    // 2025-06-30 (DTA OLGTM-2025-31) and none was reinstated for FY26. With
-    // the waiver-availability rule now live (#608), this correctly stops an
-    // area-based exemption from being honored anywhere in Massachusetts.
-    abawd_waiver_avail: false,
-    rmp_operated: false,
-  },
-  TX: {
-    state_code: "TX",
-    label: "BBCE-165 archetype (e.g. TX)",
-    bbce: true,
-    bbce_threshold_pct: 165,
-    bbce_fpl_basis: "federal_fiscal_year",
-    asset_waiver: true,
-    // Texas FY26 utility standards — TWH A-1429; 1 TAC §372.410.
-    //
-    // Texas names its middle tier the BASIC Utility Allowance (BUA), not the
-    // federal "Limited" (LUA), but the role is identical: utility costs that
-    // don't qualify for the heating/cooling standard. determineSUATier's
-    // FULL/LIMITED/TELEPHONE/NONE ladder is state-neutral, so the mapping is
-    // SUA→HCSUA, BUA→LUA, telephone→phone.
-    //
-    // These standards are MANDATORY in Texas — 1 TAC §372.410(6) bars a
-    // deduction for actual utility expenses, so a household cannot elect its
-    // real bills the way it can in some states.
-    //
-    // Source: the adversarially verified TX state pack
-    // (packages/demeter-engine/src/states/tx/) — refute gate 72 claims, 61
-    // confirmed / 11 corrected / 0 fabricated, with live re-fetch preferred
-    // over curated extracts. Values are pinned by a cross-check test so the
-    // pack and the engine cannot drift apart.
-    //
-    // EXPIRES 2026-09-30 (October COLA): re-verify A-1429 and C-121 before
-    // quoting any Texas dollar amount for FY27.
-    sua_by_tier: {
-      HCSUA: new Decimal("445"),
-      LUA: new Decimal("400"),
-      phone: new Decimal("62"),
-      none: new Decimal("0"),
+  ],
+
+  TX: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "TX",
+      label: "BBCE-165 archetype (e.g. TX)",
+      bbce: true,
+      bbce_threshold_pct: 165,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      // Texas FY26 utility standards — TWH A-1429; 1 TAC §372.410.
+      //
+      // Texas names its middle tier the BASIC Utility Allowance (BUA), not the
+      // federal "Limited" (LUA), but the role is identical: utility costs that
+      // don't qualify for the heating/cooling standard. determineSUATier's
+      // FULL/LIMITED/TELEPHONE/NONE ladder is state-neutral, so the mapping is
+      // SUA→HCSUA, BUA→LUA, telephone→phone.
+      //
+      // These standards are MANDATORY in Texas — 1 TAC §372.410(6) bars a
+      // deduction for actual utility expenses, so a household cannot elect its
+      // real bills the way it can in some states.
+      //
+      // Source: the adversarially verified TX state pack
+      // (packages/demeter-engine/src/states/tx/) — refute gate 72 claims, 61
+      // confirmed / 11 corrected / 0 fabricated, with live re-fetch preferred
+      // over curated extracts. Values are pinned by a cross-check test so the
+      // pack and the engine cannot drift apart.
+      //
+      // EXPIRES 2026-09-30 (October COLA): re-verify A-1429 and C-121 before
+      // quoting any Texas dollar amount for FY27.
+      sua_by_tier: {
+        HCSUA: new Decimal("445"),
+        LUA: new Decimal("400"),
+        phone: new Decimal("62"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: true,
+      abawd_waiver_avail: false,
+      rmp_operated: false,
     },
-    allotment_tier: "48",
-    drug_felony_ban: true,
-    abawd_waiver_avail: false,
-    rmp_operated: false,
-  },
+  ],
+
   // Washington — Basic Food. State-administered, BBCE 200%, no Standard
   // Medical Deduction, 12-month certifications only, WASHCAP for SSI
   // households.
@@ -253,24 +287,29 @@ const STATES: Record<string, StatePolicy> = {
   //
   // Source: the adversarially verified WA state pack
   // (packages/demeter-engine/src/states/wa/). Pinned by a parity test.
-  WA: {
-    state_code: "WA",
-    label: "Washington / DSHS — Basic Food",
-    bbce: true,
-    bbce_threshold_pct: 200,
-    bbce_fpl_basis: "federal_fiscal_year",
-    asset_waiver: true,
-    sua_by_tier: {
-      HCSUA: new Decimal("515"),
-      LUA: new Decimal("406"),
-      phone: new Decimal("58"),
-      none: new Decimal("0"),
+  WA: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "WA",
+      label: "Washington / DSHS — Basic Food",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("515"),
+        LUA: new Decimal("406"),
+        phone: new Decimal("58"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: false,
+      abawd_waiver_avail: true,
+      rmp_operated: true,
     },
-    allotment_tier: "48",
-    drug_felony_ban: false,
-    abawd_waiver_avail: true,
-    rmp_operated: true,
-  },
+  ],
+
   // Georgia — the "BBCE is not income relief" case: TCOS categorical
   // eligibility keeps the gross screen at the FEDERAL 130% for regular
   // households (§3210), with a 200% screen only where every adult member is
@@ -284,24 +323,29 @@ const STATES: Record<string, StatePolicy> = {
   //
   // Source: the adversarially verified GA state pack (refute gate: 84 claims,
   // 79 confirmed / 5 corrected / 0 fabricated). Pinned by a parity test.
-  GA: {
-    state_code: "GA",
-    label: "Georgia / DFCS",
-    bbce: true,
-    bbce_threshold_pct: 130,
-    bbce_fpl_basis: "federal_fiscal_year",
-    asset_waiver: false,
-    sua_by_tier: {
-      HCSUA: new Decimal("405"),
-      LUA: new Decimal("358"),
-      phone: new Decimal("47"),
-      none: new Decimal("0"),
+  GA: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "GA",
+      label: "Georgia / DFCS",
+      bbce: true,
+      bbce_threshold_pct: 130,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: false,
+      sua_by_tier: {
+        HCSUA: new Decimal("405"),
+        LUA: new Decimal("358"),
+        phone: new Decimal("47"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: false,
+      abawd_waiver_avail: false,
+      rmp_operated: false,
     },
-    allotment_tier: "48",
-    drug_felony_ban: false,
-    abawd_waiver_avail: false,
-    rmp_operated: false,
-  },
+  ],
+
   // ── Tranche 1 (docs/plans/state-coverage-framework-2026-08.md) ──────────
   // FL, IL, PA and OH are the four states that, with CA/TX/NY/GA, put >50% of
   // national SNAP issuance behind the engine.
@@ -360,42 +404,47 @@ const STATES: Record<string, StatePolicy> = {
   // FL names its middle tier the Basic Utility Allowance (BUA), same role
   // as TX's BUA / other states' LUA — a household billed for 2+ non-heat
   // utilities. SUA→HCSUA, BUA→LUA, telephone standard→phone.
-  FL: {
-    state_code: "FL",
-    label: "Florida / DCF",
-    bbce: true,
-    bbce_threshold_pct: 200,
-    bbce_fpl_basis: "federal_fiscal_year",
-    asset_waiver: true,
-    sua_by_tier: {
-      HCSUA: new Decimal("426"),
-      LUA: new Decimal("340"),
-      phone: new Decimal("49"),
-      none: new Decimal("0"),
+  FL: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "FL",
+      label: "Florida / DCF",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("426"),
+        LUA: new Decimal("340"),
+        phone: new Decimal("49"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      // FL is a MODIFIED ban, not an opt-out and not a full ban. Fla. Stat.
+      // § 414.095(1) (2025 edition, flsenate.gov, read 2026-08-11): Florida
+      // "opts out of the provision of Pub. L. No. 104-193, s. 115" and provides
+      // that "[b]enefits may not be denied to an individual solely based on a
+      // felony drug conviction, unless the conviction is for trafficking
+      // pursuant to s. 893.135." Trafficking → ineligible for food assistance;
+      // every other felony drug conviction → eligible, conditioned on meeting
+      // program/treatment requirements. § 414.095 governs BOTH temporary cash
+      // assistance and food assistance, which is what makes it the right cite.
+      //
+      // CAUTION for whoever revisits this: the widely-linked Public Health Law
+      // Center map cites Fla. Stat. § 414.0652 for Florida. That section is
+      // TANF drug SCREENING (positive test → 1-year TANF ineligibility) and
+      // says nothing about SNAP or about convictions — verified 2026-08-11.
+      // A secondary source's citation was program-mismatched; check the statute.
+      //
+      // Stays false because `true` would deny all drug-felony households, not
+      // just the trafficking subset the statute actually excludes.
+      drug_felony_ban: false,
+      abawd_waiver_avail: true,
+      rmp_operated: false,
     },
-    allotment_tier: "48",
-    // FL is a MODIFIED ban, not an opt-out and not a full ban. Fla. Stat.
-    // § 414.095(1) (2025 edition, flsenate.gov, read 2026-08-11): Florida
-    // "opts out of the provision of Pub. L. No. 104-193, s. 115" and provides
-    // that "[b]enefits may not be denied to an individual solely based on a
-    // felony drug conviction, unless the conviction is for trafficking
-    // pursuant to s. 893.135." Trafficking → ineligible for food assistance;
-    // every other felony drug conviction → eligible, conditioned on meeting
-    // program/treatment requirements. § 414.095 governs BOTH temporary cash
-    // assistance and food assistance, which is what makes it the right cite.
-    //
-    // CAUTION for whoever revisits this: the widely-linked Public Health Law
-    // Center map cites Fla. Stat. § 414.0652 for Florida. That section is
-    // TANF drug SCREENING (positive test → 1-year TANF ineligibility) and
-    // says nothing about SNAP or about convictions — verified 2026-08-11.
-    // A secondary source's citation was program-mismatched; check the statute.
-    //
-    // Stays false because `true` would deny all drug-felony households, not
-    // just the trafficking subset the statute actually excludes.
-    drug_felony_ban: false,
-    abawd_waiver_avail: true,
-    rmp_operated: false,
-  },
+  ],
+
   // Illinois is BBCE at 165% — the same "BBCE is not a boolean" case as TX.
   //
   // Utility standards: IDHS WAG 13-01-08-b (The Utility Allowance), MR
@@ -404,53 +453,58 @@ const STATES: Record<string, StatePolicy> = {
   // IL's "Single Utility" tier ($78, one non-heat/non-phone utility) has
   // no slot in this engine's {HCSUA, LUA, phone} shape — undermodeled the
   // same way as OH's identically-named tier (see OH's own comment).
-  IL: {
-    state_code: "IL",
-    label: "Illinois / IDHS",
-    bbce: true,
-    bbce_threshold_pct: 165,
-    bbce_fpl_basis: "federal_fiscal_year",
-    asset_waiver: true,
-    sua_by_tier: {
-      HCSUA: new Decimal("546"),
-      LUA: new Decimal("457"),
-      phone: new Decimal("67"),
-      none: new Decimal("0"),
+  IL: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "IL",
+      label: "Illinois / IDHS",
+      bbce: true,
+      bbce_threshold_pct: 165,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("546"),
+        LUA: new Decimal("457"),
+        phone: new Decimal("67"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      // VERIFIED FULL OPT-OUT — 305 ILCS 5/1-10(c), read 2026-08-11 against the
+      // primary text at ilga.gov: "Persons shall not be determined ineligible
+      // for food stamps provided under this Code based upon a conviction of any
+      // felony…". Unconditional for SNAP, with no treatment or compliance
+      // strings. (Illinois cash assistance is separate and DOES restrict Class X
+      // and Class 1 drug felonies — do not carry that across; this field is
+      // SNAP-only.) `false` here is a finding, not a fail-open default.
+      drug_felony_ban: false,
+      // !!! CORRECTED 2026-08-11 (#701), was `true` !!! Illinois' STATEWIDE
+      // ABAWD work-requirement waiver ended per an IDHS Policy Memo, "End of
+      // Waiver for Time-Limited SNAP Benefits and Changes to Exemptions for
+      // SNAP Work Requirements" (dated 10/16/2025, dhs.state.il.us item=175082):
+      // "Illinois' Work Requirement waiver is ending in November 2025. The
+      // first potential countable month for [ABAWDs] who are not exempt or
+      // meeting the SNAP Work Requirement is December 2025." Corroborated by
+      // WAG 03-16-00 ("...their place of residence is in an unwaived county")
+      // and the active fixed 3-year ABAWD clock (01/01/2024–12/31/2026,
+      // WAG 03-16-04) already assigning countable months. Same bug class as
+      // MA's entry above — a stale `true` tells an ABAWD-subject household
+      // they hold a waiver exemption that no longer exists.
+      // NOT YET CONFIRMED: whether Illinois has since obtained any NEWER,
+      // county-level waivers post-November-2025 (the CA/#614 pattern — losing
+      // a statewide waiver doesn't preclude narrower ones). This pass found no
+      // current IL county-waiver list; re-verify against the FNS quarterly
+      // ABAWD waiver file or a newer IDHS Manual Release before assuming this
+      // stays a flat `false` forever.
+      abawd_waiver_avail: false,
+      // RMP runs in Cook and Franklin counties ONLY — a state-level boolean
+      // cannot say that, so it stays false until county granularity exists
+      // (#614). False under-claims a real program rather than over-claiming it
+      // statewide.
+      rmp_operated: false,
     },
-    allotment_tier: "48",
-    // VERIFIED FULL OPT-OUT — 305 ILCS 5/1-10(c), read 2026-08-11 against the
-    // primary text at ilga.gov: "Persons shall not be determined ineligible
-    // for food stamps provided under this Code based upon a conviction of any
-    // felony…". Unconditional for SNAP, with no treatment or compliance
-    // strings. (Illinois cash assistance is separate and DOES restrict Class X
-    // and Class 1 drug felonies — do not carry that across; this field is
-    // SNAP-only.) `false` here is a finding, not a fail-open default.
-    drug_felony_ban: false,
-    // !!! CORRECTED 2026-08-11 (#701), was `true` !!! Illinois' STATEWIDE
-    // ABAWD work-requirement waiver ended per an IDHS Policy Memo, "End of
-    // Waiver for Time-Limited SNAP Benefits and Changes to Exemptions for
-    // SNAP Work Requirements" (dated 10/16/2025, dhs.state.il.us item=175082):
-    // "Illinois' Work Requirement waiver is ending in November 2025. The
-    // first potential countable month for [ABAWDs] who are not exempt or
-    // meeting the SNAP Work Requirement is December 2025." Corroborated by
-    // WAG 03-16-00 ("...their place of residence is in an unwaived county")
-    // and the active fixed 3-year ABAWD clock (01/01/2024–12/31/2026,
-    // WAG 03-16-04) already assigning countable months. Same bug class as
-    // MA's entry above — a stale `true` tells an ABAWD-subject household
-    // they hold a waiver exemption that no longer exists.
-    // NOT YET CONFIRMED: whether Illinois has since obtained any NEWER,
-    // county-level waivers post-November-2025 (the CA/#614 pattern — losing
-    // a statewide waiver doesn't preclude narrower ones). This pass found no
-    // current IL county-waiver list; re-verify against the FNS quarterly
-    // ABAWD waiver file or a newer IDHS Manual Release before assuming this
-    // stays a flat `false` forever.
-    abawd_waiver_avail: false,
-    // RMP runs in Cook and Franklin counties ONLY — a state-level boolean
-    // cannot say that, so it stays false until county granularity exists
-    // (#614). False under-claims a real program rather than over-claiming it
-    // statewide.
-    rmp_operated: false,
-  },
+  ],
+
   // Pennsylvania utility standards — !!! PENDING PRIMARY-SOURCE VERIFICATION,
   // same status as MA's SUA gap when it was blocked (see MA's own comment
   // above for that resolution once it lands). sua_by_tier stays null; the
@@ -507,36 +561,41 @@ const STATES: Record<string, StatePolicy> = {
   // services.dpw.state.pa.us session, or a direct call to PA DHS's
   // Statewide Customer Service Center (1-877-395-8930), to get the current
   // OIM bulletin/notice.
-  PA: {
-    state_code: "PA",
-    label: "Pennsylvania / DHS",
-    bbce: true,
-    bbce_threshold_pct: 200,
-    bbce_fpl_basis: "federal_fiscal_year",
-    asset_waiver: true,
-    sua_by_tier: null,
-    allotment_tier: "48",
-    // MODIFIED ban, and the ONLY one of the four whose primary text could not
-    // be read. The Public Health Law Center map (secondary) reports a modified
-    // ban at 62 Pa. Stat. § 432.24 — eligibility conditioned on court-ordered
-    // treatment compliance and periodic screening, with a tiered penalty for
-    // failed tests. Primary text NOT verified: palegis.us's statute viewer
-    // returns only its navigation shell to automated fetch (2026-08-11), and
-    // legis.state.pa.us now 301s there.
-    //
-    // TWO things therefore remain UNCONFIRMED for PA, and neither should be
-    // asserted downstream: (a) the exact conditions, and (b) whether § 432.24
-    // reaches SNAP at all or only cash assistance. (b) is a live doubt, not
-    // pedantry — the same secondary source's Florida citation turned out to be
-    // a TANF-only section (see FL above), and PA's 2018 drug-felony policy
-    // change was reported under TANF.
-    //
-    // `false` regardless: a conditional ban cannot be expressed by this
-    // boolean, and `true` would deny every PA drug-felony household outright.
-    drug_felony_ban: false,
-    abawd_waiver_avail: true,
-    rmp_operated: false,
-  },
+  PA: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "PA",
+      label: "Pennsylvania / DHS",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      // MODIFIED ban, and the ONLY one of the four whose primary text could not
+      // be read. The Public Health Law Center map (secondary) reports a modified
+      // ban at 62 Pa. Stat. § 432.24 — eligibility conditioned on court-ordered
+      // treatment compliance and periodic screening, with a tiered penalty for
+      // failed tests. Primary text NOT verified: palegis.us's statute viewer
+      // returns only its navigation shell to automated fetch (2026-08-11), and
+      // legis.state.pa.us now 301s there.
+      //
+      // TWO things therefore remain UNCONFIRMED for PA, and neither should be
+      // asserted downstream: (a) the exact conditions, and (b) whether § 432.24
+      // reaches SNAP at all or only cash assistance. (b) is a live doubt, not
+      // pedantry — the same secondary source's Florida citation turned out to be
+      // a TANF-only section (see FL above), and PA's 2018 drug-felony policy
+      // change was reported under TANF.
+      //
+      // `false` regardless: a conditional ban cannot be expressed by this
+      // boolean, and `true` would deny every PA drug-felony household outright.
+      drug_felony_ban: false,
+      abawd_waiver_avail: true,
+      rmp_operated: false,
+    },
+  ],
+
   // Ohio is BBCE at the FEDERAL 130% — categorical eligibility that waives the
   // asset test without raising the income screen, the same archetype as
   // Georgia. Worth knowing before anyone assumes BBCE means 200%.
@@ -554,31 +613,36 @@ const STATES: Record<string, StatePolicy> = {
   // select via Facts.shelter.sua_tier; $108 is real but unreachable until
   // that enum grows a fifth value. Documented rather than silently
   // dropped, same discipline as AK's unmapped 5 non-Central regions (#631).
-  OH: {
-    state_code: "OH",
-    label: "Ohio / ODJFS",
-    bbce: true,
-    bbce_threshold_pct: 130,
-    bbce_fpl_basis: "federal_fiscal_year",
-    asset_waiver: true,
-    sua_by_tier: {
-      HCSUA: new Decimal("766"),
-      LUA: new Decimal("479"),
-      phone: new Decimal("46"),
-      none: new Decimal("0"),
+  OH: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "OH",
+      label: "Ohio / ODJFS",
+      bbce: true,
+      bbce_threshold_pct: 130,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("766"),
+        LUA: new Decimal("479"),
+        phone: new Decimal("46"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      // VERIFIED FULL OPT-OUT — Ohio Rev. Code § 5101.84 (eff. Oct 16, 2009),
+      // read 2026-08-11 against the primary text at codes.ohio.gov: "An
+      // individual otherwise ineligible for aid … because of paragraph (a) of
+      // 21 U.S.C. 862a is eligible for the aid or benefits if the individual
+      // meets all other eligibility requirements." Names SNAP explicitly (via
+      // the Food and Nutrition Act, 7 U.S.C. 2011 et seq.) and attaches no
+      // drug-specific condition. `false` is a finding, not a fail-open default.
+      drug_felony_ban: false,
+      abawd_waiver_avail: true,
+      rmp_operated: false,
     },
-    allotment_tier: "48",
-    // VERIFIED FULL OPT-OUT — Ohio Rev. Code § 5101.84 (eff. Oct 16, 2009),
-    // read 2026-08-11 against the primary text at codes.ohio.gov: "An
-    // individual otherwise ineligible for aid … because of paragraph (a) of
-    // 21 U.S.C. 862a is eligible for the aid or benefits if the individual
-    // meets all other eligibility requirements." Names SNAP explicitly (via
-    // the Food and Nutrition Act, 7 U.S.C. 2011 et seq.) and attaches no
-    // drug-specific condition. `false` is a finding, not a fail-open default.
-    drug_felony_ban: false,
-    abawd_waiver_avail: true,
-    rmp_operated: false,
-  },
+  ],
+
   // Michigan — backfilled from the adversarially-verified Demeter corpus pack
   // (packages/demeter-engine/src/states/mi/, PROVENANCE.md) rather than a
   // #619-style Tranche-1 fetch; different provenance trail, same rigor.
@@ -618,58 +682,63 @@ const STATES: Record<string, StatePolicy> = {
   // $994/$1,183/$1,421/$1,571/$1,789 for HH 1-8 — identical to the federal
   // 48-contiguous-state table (allotment_tier: "48" is correct; Michigan
   // does not run its own schedule).
-  MI: {
-    state_code: "MI",
-    label: "Michigan / MDHHS",
-    bbce: true,
-    bbce_threshold_pct: 200,
-    bbce_fpl_basis: "federal_fiscal_year",
-    asset_waiver: true,
-    sua_by_tier: {
-      HCSUA: new Decimal("682"),
-      LUA: new Decimal("181"),
-      phone: new Decimal("31"),
-      none: new Decimal("0"),
+  MI: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "MI",
+      label: "Michigan / MDHHS",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("682"),
+        LUA: new Decimal("181"),
+        phone: new Decimal("31"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      // VERIFIED FULL OPT-OUT — 2020 PA 392 (Senate Bill 1006, signed Jan.
+      // 2021) amended MCL 400.10b to add: "This subsection does not apply to
+      // an individual applying for food assistance if he or she has an
+      // outstanding felony warrant for a violation of part 74 of the public
+      // health code, 1978 PA 368, MCL 333.7401 to 333.7461" — i.e. a
+      // drug-related felony warrant is explicitly carved OUT of Michigan's
+      // felony-warrant assistance bar. MCL 400.10b's own History line confirms
+      // the amendment: "Am. 2020, Act 392, Imd. Eff. Jan. 4, 2021." Michigan's
+      // PRIOR rule disqualified anyone with 2+ drug-felony convictions; PA 392
+      // repealed it, and the current BEM 203 ("Criminal Justice
+      // Disqualifications") has no drug-felony-conviction category at all,
+      // confirming the repeal is fully reflected in current policy. `false`
+      // here is a finding, not a fail-open default.
+      drug_felony_ban: false,
+      // Michigan DOES hold real ABAWD/TLFA waivers as of build (unlike GA,
+      // which holds none) — effective 12/1/2025, 15 counties (Alcona, Alger,
+      // Arenac, Cheboygan, Iosco, Iron, Luce, Mackinac, Montmorency, Oceana,
+      // Ogemaw, Oscoda, Presque Isle, Roscommon, Schoolcraft) and 6 cities (Bay
+      // City, Detroit, Eastpointe, Flint, Jackson, Saginaw) are waived; every
+      // other county/city is TLFA-subject. A state-level boolean cannot express
+      // "15 of 83 counties + 6 cities," so `true` is both the CA-style
+      // permissive fallback AND, unlike CA, an affirmatively correct "this
+      // state currently holds waivers somewhere" finding — it is the FALLBACK
+      // ONLY for when a household's county/city isn't known; no
+      // MI_WAIVER_COUNTY_FIPS lookup exists yet (the CA/#614 pattern), so this
+      // boolean is consulted for every Michigan household today, not just the
+      // unknown-county case. Source: BEM 620, "TLFA Locations."
+      abawd_waiver_avail: true,
+      // Michigan's RMP is a genuine STATEWIDE program (like CA's AB 942
+      // mandate), NOT county-restricted the way IL's is (Cook/Franklin only,
+      // hence IL's `false`). Eligibility is gated by household composition
+      // (every group member must be elderly 60+, disabled, homeless, or an
+      // eligible recipient's spouse — BAM 119), not geography: any restaurant
+      // meeting the state's authorization criteria anywhere in Michigan may
+      // participate. `true` is correct as a state-level boolean under the same
+      // reasoning as CA's entry above.
+      rmp_operated: true,
     },
-    allotment_tier: "48",
-    // VERIFIED FULL OPT-OUT — 2020 PA 392 (Senate Bill 1006, signed Jan.
-    // 2021) amended MCL 400.10b to add: "This subsection does not apply to
-    // an individual applying for food assistance if he or she has an
-    // outstanding felony warrant for a violation of part 74 of the public
-    // health code, 1978 PA 368, MCL 333.7401 to 333.7461" — i.e. a
-    // drug-related felony warrant is explicitly carved OUT of Michigan's
-    // felony-warrant assistance bar. MCL 400.10b's own History line confirms
-    // the amendment: "Am. 2020, Act 392, Imd. Eff. Jan. 4, 2021." Michigan's
-    // PRIOR rule disqualified anyone with 2+ drug-felony convictions; PA 392
-    // repealed it, and the current BEM 203 ("Criminal Justice
-    // Disqualifications") has no drug-felony-conviction category at all,
-    // confirming the repeal is fully reflected in current policy. `false`
-    // here is a finding, not a fail-open default.
-    drug_felony_ban: false,
-    // Michigan DOES hold real ABAWD/TLFA waivers as of build (unlike GA,
-    // which holds none) — effective 12/1/2025, 15 counties (Alcona, Alger,
-    // Arenac, Cheboygan, Iosco, Iron, Luce, Mackinac, Montmorency, Oceana,
-    // Ogemaw, Oscoda, Presque Isle, Roscommon, Schoolcraft) and 6 cities (Bay
-    // City, Detroit, Eastpointe, Flint, Jackson, Saginaw) are waived; every
-    // other county/city is TLFA-subject. A state-level boolean cannot express
-    // "15 of 83 counties + 6 cities," so `true` is both the CA-style
-    // permissive fallback AND, unlike CA, an affirmatively correct "this
-    // state currently holds waivers somewhere" finding — it is the FALLBACK
-    // ONLY for when a household's county/city isn't known; no
-    // MI_WAIVER_COUNTY_FIPS lookup exists yet (the CA/#614 pattern), so this
-    // boolean is consulted for every Michigan household today, not just the
-    // unknown-county case. Source: BEM 620, "TLFA Locations."
-    abawd_waiver_avail: true,
-    // Michigan's RMP is a genuine STATEWIDE program (like CA's AB 942
-    // mandate), NOT county-restricted the way IL's is (Cook/Franklin only,
-    // hence IL's `false`). Eligibility is gated by household composition
-    // (every group member must be elderly 60+, disabled, homeless, or an
-    // eligible recipient's spouse — BAM 119), not geography: any restaurant
-    // meeting the state's authorization criteria anywhere in Michigan may
-    // participate. `true` is correct as a state-level boolean under the same
-    // reasoning as CA's entry above.
-    rmp_operated: true,
-  },
+  ],
+
   // New York — OTDA. The hardest schema fit in this file: NY runs THREE
   // simultaneous BBCE income tiers (200% aged/disabled or dependent-care,
   // 150% earned-income, 130% default — 18 NYCRR §387.14, directive lineage
@@ -707,51 +776,56 @@ const STATES: Record<string, StatePolicy> = {
   // heating/cooling expense directly. This engine's sua.ts tier-selection
   // logic predates that distinction for every state, not just NY — a
   // pre-existing engine-wide gap, out of scope for this entry.
-  NY: {
-    state_code: "NY",
-    label: "New York / OTDA",
-    bbce: true,
-    bbce_threshold_pct: 130,
-    bbce_fpl_basis: "federal_fiscal_year",
-    // Resource test is eliminated for categorically eligible households
-    // (07-ADM-09, eff. 1/1/2008) — nearly every NY household. It survives
-    // only for sanctioned/IPV households and aged/disabled households over
-    // 200% FPL on the federal net-only path — the same "asset_waiver: true
-    // is the general case, a documented minority still gets tested" shape
-    // as CA/MA/TX/WA/GA/FL/IL/MI above.
-    asset_waiver: true,
-    sua_by_tier: {
-      HCSUA: new Decimal("877"),
-      LUA: new Decimal("355"),
-      phone: new Decimal("32"),
-      none: new Decimal("0"),
+  NY: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "NY",
+      label: "New York / OTDA",
+      bbce: true,
+      bbce_threshold_pct: 130,
+      bbce_fpl_basis: "federal_fiscal_year",
+      // Resource test is eliminated for categorically eligible households
+      // (07-ADM-09, eff. 1/1/2008) — nearly every NY household. It survives
+      // only for sanctioned/IPV households and aged/disabled households over
+      // 200% FPL on the federal net-only path — the same "asset_waiver: true
+      // is the general case, a documented minority still gets tested" shape
+      // as CA/MA/TX/WA/GA/FL/IL/MI above.
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("877"),
+        LUA: new Decimal("355"),
+        phone: new Decimal("32"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      // New York has fully opted out of the federal drug-felony ban (multiple
+      // independent secondary sources agree; NOT independently confirmed
+      // against an OTDA primary source in this pass — the NY corpus pack
+      // itself (built 2026-08-07) never addressed this topic, a real gap in
+      // that pack worth a follow-up). Consistent with every other Northeast/
+      // progressive-policy state already in this file (IL, NV, MA all `false`).
+      drug_felony_ban: false,
+      // FALSE is the affirmatively correct current finding, not a fail-open
+      // default: FNS terminated NY's waiver 11/2/2025 (25-ADM-03-P);
+      // litigation reinstated it through 2/28/2026 for every county except
+      // Saratoga; but the CURRENT status (GIS 26DC012, confirmed as of this
+      // pack's 2026-08-07 build) is that the time limit operates in ALL 58
+      // districts since March 1, 2026 — only the Tuscarora Nation Reservation
+      // and Poospatuck (State) Reservation remain waived, through 2/28/2027.
+      // Unlike CA's or MI's entries above (where the waived exceptions are a
+      // meaningful fraction of counties, justifying a permissive `true`
+      // fallback), NY's waived area is two tiny reservations out of 58
+      // districts — `false` is the correct general-case default here. No
+      // NY_WAIVER_COUNTY_FIPS lookup exists for the reservation carve-out.
+      abawd_waiver_avail: false,
+      // New York is confirmed on USDA FNA's own "States that Operate a
+      // Restaurant Meals Program" list (fetched live via curl this session for
+      // the WI/MN packs) — a genuine statewide program, not county-restricted.
+      rmp_operated: true,
     },
-    allotment_tier: "48",
-    // New York has fully opted out of the federal drug-felony ban (multiple
-    // independent secondary sources agree; NOT independently confirmed
-    // against an OTDA primary source in this pass — the NY corpus pack
-    // itself (built 2026-08-07) never addressed this topic, a real gap in
-    // that pack worth a follow-up). Consistent with every other Northeast/
-    // progressive-policy state already in this file (IL, NV, MA all `false`).
-    drug_felony_ban: false,
-    // FALSE is the affirmatively correct current finding, not a fail-open
-    // default: FNS terminated NY's waiver 11/2/2025 (25-ADM-03-P);
-    // litigation reinstated it through 2/28/2026 for every county except
-    // Saratoga; but the CURRENT status (GIS 26DC012, confirmed as of this
-    // pack's 2026-08-07 build) is that the time limit operates in ALL 58
-    // districts since March 1, 2026 — only the Tuscarora Nation Reservation
-    // and Poospatuck (State) Reservation remain waived, through 2/28/2027.
-    // Unlike CA's or MI's entries above (where the waived exceptions are a
-    // meaningful fraction of counties, justifying a permissive `true`
-    // fallback), NY's waived area is two tiny reservations out of 58
-    // districts — `false` is the correct general-case default here. No
-    // NY_WAIVER_COUNTY_FIPS lookup exists for the reservation carve-out.
-    abawd_waiver_avail: false,
-    // New York is confirmed on USDA FNA's own "States that Operate a
-    // Restaurant Meals Program" list (fetched live via curl this session for
-    // the WI/MN packs) — a genuine statewide program, not county-restricted.
-    rmp_operated: true,
-  },
+  ],
+
   // Nevada — DSS (renamed from DWSS; legacy dwss.nv.gov paths still appear in
   // the agency's own site assets). A much cleaner schema fit than NY: flat
   // 200% BBCE (no tiers) and a genuine 4-tier utility ladder that maps onto
@@ -772,60 +846,65 @@ const STATES: Record<string, StatePolicy> = {
   // water/sewer/cooking-fuel/trash standards (see the MI comment above): a
   // Nevada household billed for exactly one utility OTHER than telephone
   // loses that deduction under this engine until the schema grows a 5th slot.
-  NV: {
-    state_code: "NV",
-    label: "Nevada / DSS",
-    bbce: true,
-    bbce_threshold_pct: 200,
-    bbce_fpl_basis: "federal_fiscal_year",
-    // "Do not apply the SNAP resource test to households that have been
-    // determined categorically eligible... It is not necessary to request or
-    // verify resources" (E&P MS A-521) — a full verification waiver, not
-    // merely a higher limit, for both the base categorical group and ECE.
-    // Non-categorically-eligible households still face $3,000/$4,500
-    // (E&P MS A-520) — same "asset_waiver: true is the general case, a
-    // documented minority still gets tested" shape as every state above.
-    asset_waiver: true,
-    sua_by_tier: {
-      HCSUA: new Decimal("446"),
-      LUA: new Decimal("361"),
-      phone: new Decimal("52"),
-      none: new Decimal("0"),
+  NV: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "NV",
+      label: "Nevada / DSS",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      // "Do not apply the SNAP resource test to households that have been
+      // determined categorically eligible... It is not necessary to request or
+      // verify resources" (E&P MS A-521) — a full verification waiver, not
+      // merely a higher limit, for both the base categorical group and ECE.
+      // Non-categorically-eligible households still face $3,000/$4,500
+      // (E&P MS A-520) — same "asset_waiver: true is the general case, a
+      // documented minority still gets tested" shape as every state above.
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("446"),
+        LUA: new Decimal("361"),
+        phone: new Decimal("52"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      // VERIFIED FULL OPT-OUT — NRS 422A.345, checked against the Nevada
+      // Legislature's own codified statute text (leg.state.nv.us), not a
+      // secondary summary: "all persons domiciled in this State are exempt
+      // from the application of 21 U.S.C. § 862a(a)." A 2021 amendment (ch.
+      // 73, AB 138) REMOVED a prior condition requiring substance-use-disorder
+      // treatment participation — an initial secondary source described that
+      // now-repealed condition as current policy; the NV corpus pack caught
+      // this before drafting anything (see PROVENANCE.md). `false` here is a
+      // finding against the CURRENT statute, not a fail-open default.
+      drug_felony_ban: false,
+      // Nevada's statewide ABAWD waiver (02/01/2025-01/31/2026) was NOT
+      // renewed — "Nevada's statewide ABAWD waiver was terminated FY2026"
+      // (E&P MS B-470.1.2). But UNLIKE NY's post-expiration picture (2 tiny
+      // reservations out of 58 districts), Nevada's post-expiration waived-area
+      // list (eff. 2/1/2026, E&P MS B-472) is a genuinely substantial set: 11
+      // named Tribal/Reservation areas (Battle Mountain, Campbell Ranch,
+      // Dresslerville Colony, Elko Colony, Fort McDermitt, Las Vegas Indian
+      // Colony, Lovelock Indian Colony, Pyramid Lake Paiute Reservation,
+      // Reno-Sparks Indian Colony, Stewart Community, Walker River Reservation,
+      // Yerington Colony) PLUS all of Mineral County. No NV_WAIVER_COUNTY_FIPS
+      // lookup exists, so this boolean is consulted for every Nevada household
+      // today, not just an unknown-area fallback — same shape as MI's entry
+      // above. `true` is chosen under the same "wrongly denying food is the
+      // worse error" reasoning MI and CA use: it over-approves ABAWD households
+      // OUTSIDE the waived areas (including Nevada's population centers,
+      // Clark/Washoe counties, which are NOT on the waived list) rather than
+      // risk denying the real households inside 12 currently-waived areas.
+      abawd_waiver_avail: true,
+      // Confirmed ABSENT from USDA FNA's own national Restaurant Meals Program
+      // page (fetched fresh by the NV corpus pack, updated the same week) —
+      // lists AZ, CA, IL (Cook/Franklin only), MD, MA, MI, NY, RI, VA; no NV.
+      rmp_operated: false,
     },
-    allotment_tier: "48",
-    // VERIFIED FULL OPT-OUT — NRS 422A.345, checked against the Nevada
-    // Legislature's own codified statute text (leg.state.nv.us), not a
-    // secondary summary: "all persons domiciled in this State are exempt
-    // from the application of 21 U.S.C. § 862a(a)." A 2021 amendment (ch.
-    // 73, AB 138) REMOVED a prior condition requiring substance-use-disorder
-    // treatment participation — an initial secondary source described that
-    // now-repealed condition as current policy; the NV corpus pack caught
-    // this before drafting anything (see PROVENANCE.md). `false` here is a
-    // finding against the CURRENT statute, not a fail-open default.
-    drug_felony_ban: false,
-    // Nevada's statewide ABAWD waiver (02/01/2025-01/31/2026) was NOT
-    // renewed — "Nevada's statewide ABAWD waiver was terminated FY2026"
-    // (E&P MS B-470.1.2). But UNLIKE NY's post-expiration picture (2 tiny
-    // reservations out of 58 districts), Nevada's post-expiration waived-area
-    // list (eff. 2/1/2026, E&P MS B-472) is a genuinely substantial set: 11
-    // named Tribal/Reservation areas (Battle Mountain, Campbell Ranch,
-    // Dresslerville Colony, Elko Colony, Fort McDermitt, Las Vegas Indian
-    // Colony, Lovelock Indian Colony, Pyramid Lake Paiute Reservation,
-    // Reno-Sparks Indian Colony, Stewart Community, Walker River Reservation,
-    // Yerington Colony) PLUS all of Mineral County. No NV_WAIVER_COUNTY_FIPS
-    // lookup exists, so this boolean is consulted for every Nevada household
-    // today, not just an unknown-area fallback — same shape as MI's entry
-    // above. `true` is chosen under the same "wrongly denying food is the
-    // worse error" reasoning MI and CA use: it over-approves ABAWD households
-    // OUTSIDE the waived areas (including Nevada's population centers,
-    // Clark/Washoe counties, which are NOT on the waived list) rather than
-    // risk denying the real households inside 12 currently-waived areas.
-    abawd_waiver_avail: true,
-    // Confirmed ABSENT from USDA FNA's own national Restaurant Meals Program
-    // page (fetched fresh by the NV corpus pack, updated the same week) —
-    // lists AZ, CA, IL (Cook/Franklin only), MD, MA, MI, NY, RI, VA; no NV.
-    rmp_operated: false,
-  },
+  ],
+
   // Arizona — DES/FAA. A NEW kind of schema mismatch: Arizona's SUA and LUA
   // are SIZE-BANDED (1-3 participants vs. 4+), the only state in this file
   // with a household-size dimension in its utility ladder — every other
@@ -837,50 +916,55 @@ const STATES: Record<string, StatePolicy> = {
   // a household billed for exactly one non-heating, non-telephone utility
   // has no confirmed tier at all (the AZ corpus pack explicitly declined to
   // guess which one applies) and falls through to NONE here.
-  AZ: {
-    state_code: "AZ",
-    label: "Arizona / DES-FAA",
-    bbce: true,
-    bbce_threshold_pct: 200,
-    bbce_fpl_basis: "federal_fiscal_year",
-    // "Maximum NA resource limits do not apply to NA budgetary units that
-    // meet Basic or Expanded Categorical Eligibility requirements" (CNAP
-    // FAA6.J.06.B) — full waiver for the categorically-eligible majority;
-    // $3,000/$4,500 for the tested minority, same shape as every state above.
-    asset_waiver: true,
-    sua_by_tier: {
-      HCSUA: new Decimal("323"),
-      LUA: new Decimal("149"),
-      phone: new Decimal("44"),
-      none: new Decimal("0"),
+  AZ: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "AZ",
+      label: "Arizona / DES-FAA",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      // "Maximum NA resource limits do not apply to NA budgetary units that
+      // meet Basic or Expanded Categorical Eligibility requirements" (CNAP
+      // FAA6.J.06.B) — full waiver for the categorically-eligible majority;
+      // $3,000/$4,500 for the tested minority, same shape as every state above.
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("323"),
+        LUA: new Decimal("149"),
+        phone: new Decimal("44"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      // Arizona ENFORCES the federal drug-felony ban — the AZ corpus pack found
+      // no opt-out statute (two candidate citations, ARS 46-215 and ARS 46-201,
+      // were BOTH checked directly against the Legislature's own text and
+      // neither covers controlled substances) — but the ban carries a real,
+      // genuine CONDITIONAL removal pathway: sign a drug-testing agreement and
+      // meet one of five treatment/compliance conditions. Per this file's
+      // established rule for a modified/conditional ban the boolean can't
+      // express (see FL's and PA's entries above — "under-claiming a narrow
+      // real ban is the lesser harm"), `false` is chosen deliberately: setting
+      // `true` would deny every AZ drug-felony household, including everyone
+      // who qualifies for removal, which #608 forbids. This is a genuine
+      // under-claim, not a fail-open default.
+      drug_felony_ban: false,
+      // Arizona's fixed 1/1/2025-12/31/2027 ABAWD clock currently has 7 real
+      // waived areas (CNAP FAA2.M.09.B): Yuma County, plus 6 Tribal/
+      // Reservation/Trust-Land areas (Cocopah, Hualapai, Maricopa/Ak-Chin,
+      // Salt River, San Carlos, Pascua Yaqui). No AZ_WAIVER_COUNTY_FIPS lookup
+      // exists, so — same reasoning as NV's and MI's entries above — `true`
+      // avoids wrongly denying the real households inside those 7 areas, at
+      // the cost of over-approving ABAWD households elsewhere in the state.
+      abawd_waiver_avail: true,
+      // Confirmed on USDA FNA's own national Restaurant Meals Program page —
+      // one of only 9 states nationally (AZ, CA, IL Cook/Franklin only, MD, MA,
+      // MI, NY, RI, VA) — genuine statewide operation, not county-restricted.
+      rmp_operated: true,
     },
-    allotment_tier: "48",
-    // Arizona ENFORCES the federal drug-felony ban — the AZ corpus pack found
-    // no opt-out statute (two candidate citations, ARS 46-215 and ARS 46-201,
-    // were BOTH checked directly against the Legislature's own text and
-    // neither covers controlled substances) — but the ban carries a real,
-    // genuine CONDITIONAL removal pathway: sign a drug-testing agreement and
-    // meet one of five treatment/compliance conditions. Per this file's
-    // established rule for a modified/conditional ban the boolean can't
-    // express (see FL's and PA's entries above — "under-claiming a narrow
-    // real ban is the lesser harm"), `false` is chosen deliberately: setting
-    // `true` would deny every AZ drug-felony household, including everyone
-    // who qualifies for removal, which #608 forbids. This is a genuine
-    // under-claim, not a fail-open default.
-    drug_felony_ban: false,
-    // Arizona's fixed 1/1/2025-12/31/2027 ABAWD clock currently has 7 real
-    // waived areas (CNAP FAA2.M.09.B): Yuma County, plus 6 Tribal/
-    // Reservation/Trust-Land areas (Cocopah, Hualapai, Maricopa/Ak-Chin,
-    // Salt River, San Carlos, Pascua Yaqui). No AZ_WAIVER_COUNTY_FIPS lookup
-    // exists, so — same reasoning as NV's and MI's entries above — `true`
-    // avoids wrongly denying the real households inside those 7 areas, at
-    // the cost of over-approving ABAWD households elsewhere in the state.
-    abawd_waiver_avail: true,
-    // Confirmed on USDA FNA's own national Restaurant Meals Program page —
-    // one of only 9 states nationally (AZ, CA, IL Cook/Franklin only, MD, MA,
-    // MI, NY, RI, VA) — genuine statewide operation, not county-restricted.
-    rmp_operated: true,
-  },
+  ],
+
   // Oregon — ODHS. Flat 200% BBCE (Information and Referral Services
   // pamphlet conferral, OAR 461-135-0505), no tiering. SUA is a genuine
   // 4-tier ladder that maps cleanly: FUA→HCSUA, LUA→LUA, TUA→phone — the
@@ -892,47 +976,52 @@ const STATES: Record<string, StatePolicy> = {
   // prior PERMANENT version, so the values themselves are not expected to
   // change on expiration, but the citation needs re-verification after that
   // date regardless (see the OR corpus pack's freshness.json).
-  OR: {
-    state_code: "OR",
-    label: "Oregon / ODHS",
-    bbce: true,
-    bbce_threshold_pct: 200,
-    bbce_fpl_basis: "federal_fiscal_year",
-    // "Categorically eligible filing groups are 'presumed to meet' resource,
-    // income, and adjusted-income requirements" (OAR 461-135-0505) — full
-    // waiver for the BBCE majority; $3,000/$4,500 for the tested minority.
-    asset_waiver: true,
-    sua_by_tier: {
-      HCSUA: new Decimal("515"),
-      LUA: new Decimal("404"),
-      phone: new Decimal("81"),
-      none: new Decimal("0"),
+  OR: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "OR",
+      label: "Oregon / ODHS",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      // "Categorically eligible filing groups are 'presumed to meet' resource,
+      // income, and adjusted-income requirements" (OAR 461-135-0505) — full
+      // waiver for the BBCE majority; $3,000/$4,500 for the tested minority.
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("515"),
+        LUA: new Decimal("404"),
+        phone: new Decimal("81"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      // Oregon opts out of the federal drug-felony ban (ORS 411.119(1)) — a
+      // GENUINE, currently-operative opt-out, not a modified ban requiring the
+      // FL/PA/AZ under-claim treatment. DHS retains a narrow discretionary
+      // SUSPENSION path (trafficking conviction + active supervision +
+      // evidence of trading SNAP for drugs) — evidence-specific enough that it
+      // does not change the base-case answer for the vast majority of OR
+      // drug-felony households.
+      drug_felony_ban: false,
+      // Oregon's ABAWD exempt areas are 5 NAMED TRIBAL jurisdictions (not
+      // counties) — Burns Paiute, Confederated Tribes of Siletz Indians,
+      // Coquille, Cow Creek Band of Umpqua, Klamath Tribes (OAR 461-135-0520).
+      // A separate 7-county "discretionary exemption" mechanism exists but is
+      // explicitly NOT an area waiver — the OR corpus pack's own supplement
+      // warns "Do not describe these seven counties as 'waived.'" Given the
+      // real area exemption covers only 5 tribal jurisdictions (not a
+      // meaningful fraction of Oregon's 36 counties), `false` follows the same
+      // reasoning as NY's entry above rather than NV's/AZ's/MI's `true`.
+      abawd_waiver_avail: false,
+      // Confirmed ABSENT from USDA FNA's national RMP list. A pilot (SB 1585,
+      // 2024) is authorized but ODHS's own status page says it is still in
+      // development with no target launch date — a live freshness risk, not a
+      // settled fact the way most other `false` entries in this file are.
+      rmp_operated: false,
     },
-    allotment_tier: "48",
-    // Oregon opts out of the federal drug-felony ban (ORS 411.119(1)) — a
-    // GENUINE, currently-operative opt-out, not a modified ban requiring the
-    // FL/PA/AZ under-claim treatment. DHS retains a narrow discretionary
-    // SUSPENSION path (trafficking conviction + active supervision +
-    // evidence of trading SNAP for drugs) — evidence-specific enough that it
-    // does not change the base-case answer for the vast majority of OR
-    // drug-felony households.
-    drug_felony_ban: false,
-    // Oregon's ABAWD exempt areas are 5 NAMED TRIBAL jurisdictions (not
-    // counties) — Burns Paiute, Confederated Tribes of Siletz Indians,
-    // Coquille, Cow Creek Band of Umpqua, Klamath Tribes (OAR 461-135-0520).
-    // A separate 7-county "discretionary exemption" mechanism exists but is
-    // explicitly NOT an area waiver — the OR corpus pack's own supplement
-    // warns "Do not describe these seven counties as 'waived.'" Given the
-    // real area exemption covers only 5 tribal jurisdictions (not a
-    // meaningful fraction of Oregon's 36 counties), `false` follows the same
-    // reasoning as NY's entry above rather than NV's/AZ's/MI's `true`.
-    abawd_waiver_avail: false,
-    // Confirmed ABSENT from USDA FNA's national RMP list. A pilot (SB 1585,
-    // 2024) is authorized but ODHS's own status page says it is still in
-    // development with no target launch date — a live freshness risk, not a
-    // settled fact the way most other `false` entries in this file are.
-    rmp_operated: false,
-  },
+  ],
+
   // Wisconsin — DHS/FoodShare. Flat 200% BBCE (Job Center of Wisconsin
   // notice, FSH 4.2.1), but EBD households over 200% FPG get an even MORE
   // generous pathway (no gross test at all, only 100% net) not modelled
@@ -944,45 +1033,50 @@ const STATES: Record<string, StatePolicy> = {
   // TUA (trash, $28) — a Wisconsin household billed for exactly one of those
   // four loses that deduction entirely under this engine, a materially
   // bigger gap than the single-tier gaps other states in this file carry.
-  WI: {
-    state_code: "WI",
-    label: "Wisconsin / DHS — FoodShare",
-    bbce: true,
-    bbce_threshold_pct: 200,
-    bbce_fpl_basis: "federal_fiscal_year",
-    asset_waiver: true,
-    sua_by_tier: {
-      HCSUA: new Decimal("553"),
-      LUA: new Decimal("385"),
-      phone: new Decimal("31"),
-      none: new Decimal("0"),
+  WI: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "WI",
+      label: "Wisconsin / DHS — FoodShare",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("553"),
+        LUA: new Decimal("385"),
+        phone: new Decimal("31"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      // Wisconsin requires a ONE-TIME drug test (not an ongoing regime) for a
+      // qualifying conviction within the last 5 years, with a 12-month
+      // sanction on FAILURE (FSH 3.20.1) — genuine disqualifying teeth for a
+      // narrow subset (recent conviction + failed/refused test), but the
+      // majority of affected people (conviction 5+ years old, or a passed
+      // test) face no restriction at all. Same FL/PA/AZ under-claim reasoning:
+      // `true` would wrongly deny that majority, so `false` is the deliberate
+      // choice — this boolean cannot express a time-boxed, test-conditional
+      // sanction any more than it can express AZ's treatment-conditional one.
+      drug_felony_ban: false,
+      // The WI corpus pack explicitly could not find any currently-waived
+      // Wisconsin county in the handbook text itself ("this pack did not find
+      // specific currently-waived Wisconsin counties in the handbook text
+      // itself") — unlike NV/AZ (confirmed real waived areas) or OR/NY
+      // (confirmed narrow/no waiver), Wisconsin's status is simply UNCONFIRMED.
+      // Absent any confirmed waiver, `false` is the honest default (same as
+      // MA's entry above: no evidence of a current waiver defaults to none).
+      abawd_waiver_avail: false,
+      // Confirmed ABSENT from USDA FNA's national RMP list via direct curl
+      // (not the AI-summarized WebFetch that produced false positives for
+      // other states this session). Do not confuse with WI's separate
+      // group-meal-site/shelter/Meals-on-Wheels provision, which is real but
+      // is not the federal Restaurant Meals Program.
+      rmp_operated: false,
     },
-    allotment_tier: "48",
-    // Wisconsin requires a ONE-TIME drug test (not an ongoing regime) for a
-    // qualifying conviction within the last 5 years, with a 12-month
-    // sanction on FAILURE (FSH 3.20.1) — genuine disqualifying teeth for a
-    // narrow subset (recent conviction + failed/refused test), but the
-    // majority of affected people (conviction 5+ years old, or a passed
-    // test) face no restriction at all. Same FL/PA/AZ under-claim reasoning:
-    // `true` would wrongly deny that majority, so `false` is the deliberate
-    // choice — this boolean cannot express a time-boxed, test-conditional
-    // sanction any more than it can express AZ's treatment-conditional one.
-    drug_felony_ban: false,
-    // The WI corpus pack explicitly could not find any currently-waived
-    // Wisconsin county in the handbook text itself ("this pack did not find
-    // specific currently-waived Wisconsin counties in the handbook text
-    // itself") — unlike NV/AZ (confirmed real waived areas) or OR/NY
-    // (confirmed narrow/no waiver), Wisconsin's status is simply UNCONFIRMED.
-    // Absent any confirmed waiver, `false` is the honest default (same as
-    // MA's entry above: no evidence of a current waiver defaults to none).
-    abawd_waiver_avail: false,
-    // Confirmed ABSENT from USDA FNA's national RMP list via direct curl
-    // (not the AI-summarized WebFetch that produced false positives for
-    // other states this session). Do not confuse with WI's separate
-    // group-meal-site/shelter/Meals-on-Wheels provision, which is real but
-    // is not the federal Restaurant Meals Program.
-    rmp_operated: false,
-  },
+  ],
+
   // Minnesota — DCYF (Combined Manual still hosted on the legacy DHS
   // system). Flat 200% BBCE (Domestic Violence Information Brochure
   // DHS-3477, CM 0013.06) — but MN's BBCE exempts a unit from BOTH the asset
@@ -998,65 +1092,75 @@ const STATES: Record<string, StatePolicy> = {
   // PA's entry above: SUA stays null until a working primary source is
   // reached, not guessed from a secondary figure this pack explicitly
   // declined to trust (~$235/month electric-only, unconfirmed).
-  MN: {
-    state_code: "MN",
-    label: "Minnesota / DCYF",
-    bbce: true,
-    bbce_threshold_pct: 200,
-    bbce_fpl_basis: "federal_fiscal_year",
-    // "CE and BBCE units are NOT subject to a net income test" (CM 0013.06)
-    // — full waiver, stronger than the asset-only waiver most states above
-    // use; non-categorically-eligible units still face $3,000/$4,500.
-    asset_waiver: true,
-    sua_by_tier: null,
-    allotment_tier: "48",
-    // GENUINE clean full opt-out — "End any disqualifications for someone
-    // who was disqualified for Cash programs or SNAP as a drug felon prior
-    // to 08/01/2023" and "Do not deny or terminate assistance for a person
-    // who tests positive" (CM 0011.27.03, issue-dated 11/2024). This
-    // corrects a widely-repeated FALSE secondary-source claim that Minnesota
-    // imposes a lifetime ban after 2 failed drug tests — the MN corpus
-    // pack's own adversarial refute pass caught and disproved this against
-    // the Combined Manual's primary text before drafting anything. Unlike
-    // AZ's/WI's judgment-call `false` (a real conditional restriction the
-    // boolean can't express), MN's `false` is a clean, unconditional finding
-    // — the same shape as IL's and NV's entries above.
-    drug_felony_ban: false,
-    // The MN corpus pack's own supplement is explicit: "treat Minnesota as
-    // PRESUMPTIVELY UNWAIVED... pending direct confirmation" — two access
-    // barriers (a DHS bot-detection wall, a USDA ZIP-only waiver archive)
-    // blocked independent confirmation of current status. `false` follows
-    // the pack's own stated instruction rather than assume either direction.
-    abawd_waiver_avail: false,
-    // Confirmed ABSENT from USDA FNA's national RMP list (reused from the
-    // same-session direct-curl fetch the WI pack used). Minnesota
-    // legislation (HF 3855/SF 4135) proposing an RMP has not been enacted —
-    // a live legislative risk, not a settled fact.
-    rmp_operated: false,
-  },
+  MN: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "MN",
+      label: "Minnesota / DCYF",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      // "CE and BBCE units are NOT subject to a net income test" (CM 0013.06)
+      // — full waiver, stronger than the asset-only waiver most states above
+      // use; non-categorically-eligible units still face $3,000/$4,500.
+      asset_waiver: true,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      // GENUINE clean full opt-out — "End any disqualifications for someone
+      // who was disqualified for Cash programs or SNAP as a drug felon prior
+      // to 08/01/2023" and "Do not deny or terminate assistance for a person
+      // who tests positive" (CM 0011.27.03, issue-dated 11/2024). This
+      // corrects a widely-repeated FALSE secondary-source claim that Minnesota
+      // imposes a lifetime ban after 2 failed drug tests — the MN corpus
+      // pack's own adversarial refute pass caught and disproved this against
+      // the Combined Manual's primary text before drafting anything. Unlike
+      // AZ's/WI's judgment-call `false` (a real conditional restriction the
+      // boolean can't express), MN's `false` is a clean, unconditional finding
+      // — the same shape as IL's and NV's entries above.
+      drug_felony_ban: false,
+      // The MN corpus pack's own supplement is explicit: "treat Minnesota as
+      // PRESUMPTIVELY UNWAIVED... pending direct confirmation" — two access
+      // barriers (a DHS bot-detection wall, a USDA ZIP-only waiver archive)
+      // blocked independent confirmation of current status. `false` follows
+      // the pack's own stated instruction rather than assume either direction.
+      abawd_waiver_avail: false,
+      // Confirmed ABSENT from USDA FNA's national RMP list (reused from the
+      // same-session direct-curl fetch the WI pack used). Minnesota
+      // legislation (HF 3855/SF 4135) proposing an RMP has not been enacted —
+      // a live legislative risk, not a settled fact.
+      rmp_operated: false,
+    },
+  ],
+
   // Kansas utility standards — KEESM §7226 (Shelter Costs), rev. 07-26,
   // confirmed live 2026-08-09 at content.dcf.ks.gov/EES/KEESM/Current/keesm7226.htm.
   // Unlike TX/WA (mandatory standards, no election), KEESM does not state
   // households must use the standard over actual costs — treated as the
   // ordinary SNAP default (household may elect either) absent a stated
   // mandatory-standard clause.
-  KS: {
-    state_code: "KS",
-    label: "Non-BBCE archetype (e.g. KS)",
-    bbce: false,
-    bbce_fpl_basis: null,
-    asset_waiver: false,
-    sua_by_tier: {
-      HCSUA: new Decimal("469"),
-      LUA: new Decimal("345"),
-      phone: new Decimal("44"),
-      none: new Decimal("0"),
+  KS: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "KS",
+      label: "Non-BBCE archetype (e.g. KS)",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: {
+        HCSUA: new Decimal("469"),
+        LUA: new Decimal("345"),
+        phone: new Decimal("44"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: false,
+      abawd_waiver_avail: false,
+      rmp_operated: false,
     },
-    allotment_tier: "48",
-    drug_felony_ban: false,
-    abawd_waiver_avail: false,
-    rmp_operated: false,
-  },
+  ],
+
   // Alaska utility standards — a genuinely different SHAPE than every other
   // state modeled here, not just different numbers.
   //
@@ -1086,23 +1190,27 @@ const STATES: Record<string, StatePolicy> = {
   // it has its own tier). If AK's actual LUA-equivalent determination
   // combines these differently, every region needs the same correction,
   // not just Central — see ak-utility-regions.ts's own caveat.
-  AK: {
-    state_code: "AK",
-    label: "Alaska (non-BBCE, higher allotments)",
-    bbce: false,
-    bbce_fpl_basis: null,
-    asset_waiver: false,
-    sua_by_tier: {
-      HCSUA: new Decimal("625"),
-      LUA: new Decimal("254"),
-      phone: new Decimal("26"),
-      none: new Decimal("0"),
+  AK: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "AK",
+      label: "Alaska (non-BBCE, higher allotments)",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: {
+        HCSUA: new Decimal("625"),
+        LUA: new Decimal("254"),
+        phone: new Decimal("26"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "AK",
+      drug_felony_ban: false,
+      abawd_waiver_avail: true,
+      rmp_operated: false,
     },
-    allotment_tier: "AK",
-    drug_felony_ban: false,
-    abawd_waiver_avail: true,
-    rmp_operated: false,
-  },
+  ],
 };
 
 export class UnknownStateError extends Error {
@@ -1111,8 +1219,25 @@ export class UnknownStateError extends Error {
   }
 }
 
-export function statePolicyFor(state: string): StatePolicy {
-  const p = STATES[state];
-  if (!p) throw new UnknownStateError(state);
-  return p;
+// Issue #806: the date-lookup counterpart to federal-tables.ts's
+// NoTableForDateError — distinct from UnknownStateError (the state has no
+// StatePolicy AT ALL) because this case means the state IS registered but
+// no snapshot covers the requested date, which should never happen today
+// (every state's placeholder range is 2020-2099) but will once a state
+// gains a second, narrower-dated entry.
+export class NoStatePolicyForDateError extends Error {
+  constructor(state: string, asOf: Date) {
+    super(
+      `No StatePolicy snapshot for ${state} covers ${asOf.toISOString().slice(0, 10)}. Add a dated entry for that period before running determinations.`,
+    );
+  }
+}
+
+export function statePolicyFor(state: string, asOf: Date): StatePolicy {
+  const snapshots = STATES[state];
+  if (!snapshots) throw new UnknownStateError(state);
+  for (const s of snapshots) {
+    if (asOf >= s.effective_start && asOf <= s.effective_end) return s;
+  }
+  throw new NoStatePolicyForDateError(state, asOf);
 }
