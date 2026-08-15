@@ -85,14 +85,17 @@ export default async function ScreenAskPage({
     <main className="dmpage">
       <DemeterNav />
       <div className="dmpage__inner">
-        <SnapOrientation states={VERIFIED_STATES} />
-        {/* High, and not behind a click: SNAP takes at least seven days even
-            when it is urgent. */}
-        <SnapFoodNow />
+        <SnapOrientation />
         {/* The composer, the state picker and the suggested questions all live
             on /chat now. This page explains and hands over; it does not start
-            the conversation and then forward it. */}
+            the conversation and then forward it. First action before the
+            urgent-need aside, on direct feedback — most readers are not in a
+            food emergency, and the tool this whole page leads to should not
+            follow a callout aimed at the ones who are. */}
         <SnapAskCta state={initialState} />
+        {/* Still high, and not behind a click: SNAP takes at least seven days
+            even when it is urgent. */}
+        <SnapFoodNow />
         <SnapDetail states={VERIFIED_STATES} />
         {/* Last: the fears are the final thing between reading and acting. */}
         <SnapFears />
