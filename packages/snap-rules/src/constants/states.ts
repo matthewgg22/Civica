@@ -1880,6 +1880,191 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: true,
     },
   ],
+
+  // Indiana — FSSA / Division of Family Resources (DFR). Fourth "individual
+  // tier" build (docs/plans/snap-rules-50-state-engine-completion.md §6,
+  // after NC, NJ, VA) — a genuine blank slate, no prior StatePolicy or
+  // oracle coverage existed. Every axis below is TRANSLATED from the
+  // already-cited primary-source findings in the merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/in/PROVENANCE.md + supplements.json),
+  // built 2026-08-11 — re-verification, not fresh research; see that pack's
+  // own Sources table for the underlying fetch method (direct curl w/
+  // browser User-Agent of eight FSSA DFR Program Policy Manual chapter PDFs,
+  // every single fetch a clean HTTP 200 — no bot-mitigation wall for
+  // Indiana's own program manual, a genuine contrast with the statute-text
+  // barrier disclosed below).
+  //
+  // bbce: false — THIS FILE'S FLAGSHIP FINDING for Indiana, and a genuine
+  // MINORITY position in this roster (most already-built states have
+  // adopted some form of BBCE): IN PPM 3010.05.00 (Income Standards) states
+  // plainly that SNAP's maximum gross income amounts are based on the plain
+  // 130% FPL / 100% FPL federal test, with no elevated BBCE percentage
+  // anywhere. Independently cross-checked against IN PPM 2414.10.05
+  // (Categorical Eligibility), which defines categorical eligibility ONLY
+  // as the narrow "Basic CE" pathway (every AG member certified SSI and/or
+  // TANF) — no expanded/broad-based pathway is described anywhere in
+  // Chapter 2400 or Chapter 3000. This is a CONFIRMATION of a claim several
+  // SNAP-calculator/explainer sites already make about Indiana, verified
+  // against Indiana's own primary source rather than repeated unchecked
+  // (corpus pack Finding 1). Because bbce is false, bbce_threshold_pct is
+  // omitted entirely and bbce_fpl_basis is null — the same non-BBCE shape
+  // this file's KS entry already established.
+  //
+  // asset_waiver: false — Indiana's narrow Basic CE (SSI/TANF-only)
+  // households ARE exempt from the resource test, but that exemption flows
+  // from ordinary federal categorical eligibility (7 CFR 273.2(j)), not a
+  // BBCE-driven full waiver, and reaches only the narrow SSI/TANF-only
+  // minority. The general-case NPA household faces IN PPM 3005.05.00's
+  // plain federal $3,000 (standard) / $4,500 (elderly-or-disabled) resource
+  // limit, effective 10/01/2024 — read from federal-tables.ts, same as
+  // every state above. Same "the general case is asset-tested" posture
+  // KS's own bbce:false entry already uses in this file.
+  //
+  // sua_by_tier — FULLY POPULATED, not null: a genuine contrast with this
+  // file's PA/NJ/MN null entries. IN PPM 3020.00.00's four flat-dollar
+  // (non-size-scaled) utility tiers are all current, dated 10/01/2025, and
+  // independently cross-checked TWO ways before trusting them (corpus pack
+  // adversarial refute pass): against the SAME manual's own prior-period
+  // column (5/1/2024-9/30/2025: $473/$276/$60/$35), confirming a clean
+  // COLA-style step rather than an isolated, unverifiable figure; and
+  // against VA's own already-independently-confirmed current FFY2026
+  // Standard Deduction figures ($209/$209/$209/$223/$261/$299), which match
+  // Indiana's IN PPM 3025.10.00 figures exactly — a genuine positive signal
+  // Indiana's manual is current, not stale, the OPPOSITE of the gap this
+  // file's PA/NJ entries disclose for the same class of figures. HCSUA maps
+  // IN's SUA 1 (heating/cooling, for AGs with a heating/cooling expense or
+  // that receive/expect LIHEAP) at $486; LUA maps SUA 2 (non-heating, for
+  // AGs with 2+ of: non-heat electricity/fuel, water, sewer, trash, or
+  // telephone) at $283; phone maps SUA 4 (telephone-only) at $36 — all
+  // clean 1:1 fits, not approximations. SUA 3 (single utility, $62, for AGs
+  // with EXACTLY ONE utility expense other than heating/cooling or
+  // telephone) has NO slot in this schema's {HCSUA, LUA, phone, none}
+  // shape — the same documented gap as IL's Single Utility ($78), OH's
+  // Single SUA ($108), NV's IUA ($77), and AZ's undermodeled one-utility
+  // case: an Indiana household in that exact fact pattern falls through to
+  // NONE ($0) and loses the deduction entirely until the schema grows a
+  // fifth tier.
+  //
+  // allotment_tier: "48" — no Indiana-specific elevated max-allotment
+  // schedule found; IN's own manual's Standard Deduction ($209/$209/$209/
+  // $223/$261/$299), Excess Shelter Expense Deduction cap ($744, IN PPM
+  // 3025.15.00), and Homeless Shelter Deduction ($198.99, IN PPM
+  // 3025.15.05) all reproduce federal-tables.ts's FY26 snapshot exactly —
+  // the same "shared source, so the allotment table isn't independently
+  // elevated either" signal NC's and VA's entries above use.
+  //
+  // drug_felony_ban: "modified" — Ind. Code Ann. § 12-14-30-3, a genuine
+  // opt-out from the federal LIFETIME drug-felony ban effective 1/1/2020,
+  // conditioned on completion of, or current compliance with, court-ordered
+  // probation, parole, community corrections, or a reentry court program.
+  // Per the Network for Public Health Law's own coded 50-state survey table
+  // (independently parsed from the fetched PDF by the corpus pack), Indiana
+  // requires NEITHER drug testing NOR drug treatment as a condition —
+  // narrower than TN's own modified ban in this file, which conditions
+  // eligibility on substance-abuse-treatment participation. "modified", not
+  // "none", because ongoing compliance IS a live, real condition this
+  // engine does not yet evaluate at the facts level (#805's rule) — the
+  // same FL/PA/AZ/WI/KS under-claim-is-the-lesser-harm reasoning: setting
+  // "full" would deny every Indiana drug-felony household, including the
+  // majority who are compliant or already completed supervision.
+  // DISCLOSED ACCESS BARRIER, same discipline as this file's PA drug-felony
+  // entry: Indiana's own statute-lookup site (iga.in.gov) returned HTTP 200
+  // but delivered only a bare client-side React SPA shell — no
+  // server-rendered statutory text this pack's/this engine's fetch tooling
+  // could read. Two third-party mirrors also failed outright (law.justia.com
+  // HTTP 403; casetext.com HTTP 410, Gone) on every attempt (multiple
+  // User-Agents, both http/https). This finding instead rests on THREE
+  // convergent, independently-fetched sources (Indiana's own FSSA FAQ page;
+  // the Public Health Law Center's Indiana entry; the Network for Public
+  // Health Law's compiled 50-state survey), not Indiana's own primary
+  // statutory text — disclosed plainly, not smoothed over (corpus pack
+  // Findings 0 and 4).
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero
+  // finding, not a fail-open default. IN PPM 2438.17.05 states plainly,
+  // regarding waivered labor surplus areas, "there are currently no such
+  // designations" — independently cross-checked against USDA's own
+  // official ABAWD Time Limit Waivers FY2025-2029 index AND the independent
+  // abawdmap.us aggregator (both fetched directly by the corpus pack,
+  // 2026-08-11), both corroborating zero active Indiana waivers. No
+  // IN_WAIVER_COUNTY_FIPS lookup is needed or would be meaningful — a
+  // genuinely empty statewide set needs no county-level nuance, the same
+  // "zero is the real, complete state-level answer" shape as this file's
+  // MA/NC/VA entries, not a permissive CA/MI/NV/AZ-style fallback papering
+  // over real waived counties this engine can't yet look up. Indiana's own
+  // manual also confirms the CURRENT post-OBBBA 18-64 ABAWD age range
+  // ("as of 7/4/2025") and the OBBBA tribal-member (IHCIA) exemptions —
+  // genuinely current, a notable contrast with this roster's TN pack, where
+  // two separate documents both repeated a stale 18-49 range.
+  //
+  // rmp_operated: false — Indiana is absent from USDA's own current
+  // official "States that Operate a Restaurant Meals Program" list (AZ, CA,
+  // IL Cook/Franklin only, MD, MA, NY, RI, MI, VA — no IN), and the corpus
+  // pack found no pending Indiana RMP bill in the Indiana General Assembly.
+  //
+  // NOT REPRESENTABLE IN THIS SCHEMA — a real, corpus-documented gap, not
+  // silently dropped: Indiana's vehicle-resource rule is a genuine HYBRID
+  // this roster has not seen combined in one state before — IN PPM
+  // 2615.60.10 gives a BLANKET exclusion for ordinary vehicles used for
+  // household transportation ("exempt, regardless of value, licensing
+  // status, or condition," the same pattern this file's VA/NC entries
+  // document), but IN PPM 2615.60.25 separately COUNTS recreational
+  // vehicles — "campers, trailers, and boats" — at current equity value
+  // unless the vehicle serves as the AG's actual home (the same pattern
+  // this roster's TN corpus pack documents for boats/recreational
+  // property). This is the SAME pre-existing schema gap already filed as
+  // #824 (Facts.assets is a single flat number with no per-asset-type
+  // breakdown, and no StatePolicy axis exists for a vehicle-treatment
+  // rule) — not re-filed here, just newly confirmed present for Indiana.
+  // Zero of this fixture's 92 profiles model a boat/camper/trailer
+  // resource, so this has no practical effect on IN's oracle coverage
+  // today. (Separately, informational only, no direct engine axis: IN's
+  // Elderly Simplified Application Project offers a 36-month certification
+  // period for all-elderly/disabled AGs — the LONGEST such period this
+  // roster has documented; this engine does not model certification-period
+  // length at all, for any state.)
+  //
+  // Oracle cross-validation: KS is Indiana's closest axis-twin among
+  // registered states — identical bbce:false, bbce_threshold_pct:
+  // undefined, bbce_fpl_basis: null, asset_waiver: false, drug_felony_ban:
+  // "modified", abawd_waiver_avail: false, allotment_tier: "48", and
+  // rmp_operated: false (differing only in the SUA dollar figures and
+  // label). An independent Python calculator was cross-validated 92/92
+  // exact match (verdict AND benefit) reproducing KS's already-graded
+  // expected_by_state.KS oracle under KS's own policy params, PLUS all 37
+  // non-`expected_by_state` variant rows (the same #636 discipline NC's and
+  // VA's builds used), before trusting it for Indiana. Indiana's own 92
+  // verdicts came back IDENTICAL to KS's on every profile (0 divergence) —
+  // expected, since every axis controlling verdict is identical between the
+  // two states; only the benefit-dollar figures differ, driven by the SUA
+  // value differences. Two of the 37 variant rows
+  // (M23-variable-gig-income-anticipation's "averaged" and
+  // "recent_high_month" variants) needed an IN-specific `verdict_by_state`
+  // override, matching KS's own DENY value there exactly (both are
+  // non-BBCE federal-130%-gross-test states, so both deny where BBCE states
+  // above 130% approve) — every other variant row uses the shared default
+  // `verdict`, no divergence found.
+  IN: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "IN",
+      label: "Indiana / FSSA-DFR",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: {
+        HCSUA: new Decimal("486"),
+        LUA: new Decimal("283"),
+        phone: new Decimal("36"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
