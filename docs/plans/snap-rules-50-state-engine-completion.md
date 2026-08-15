@@ -245,7 +245,36 @@ all of it.
   real blast radius beyond the package. `composeVerdict` gracefully catches the new
   `NoStatePolicyForDateError` the same way it already caught `UnknownStateError`. 279/279
   snap-rules tests + 44/47 profile-harness tests (3 pre-existing skips) passing, `tsc
-  --noEmit` clean. Built independently off `origin/codex/rebuild-feb18` (predates #807) —
-  will need a rebase against #807 once that merges, same N-way pattern the corpus expansion
-  used repeatedly. PR [#808](https://github.com/matthewgg22/Civica/pull/808), CI running,
-  awaiting merge go-ahead.
+  --noEmit` clean. Built independently off `origin/codex/rebuild-feb18` (predates #807).
+
+  **#807 merged 2026-08-15; #806 rebased against it — a NEW engine-specific rebase lesson,
+  distinct from every corpus-batch rebase this expansion has hit so far.** `states.ts`'s
+  reindentation (every field gained 2 spaces when wrapped in an array) meant git's line-diff
+  conflicted on nearly the entire file — resolving that via inline conflict markers would
+  have been extremely error-prone. Fix: regenerated the array-wrapped structure directly
+  from #807's ALREADY-MERGED `states.ts` (preserving its enum values) rather than
+  hand-resolving each conflict block. **Caught a real, easy-to-miss bug in doing so**:
+  `verdict.ts` and `gates/disqualifications.ts` auto-merged CLEANLY with no conflict markers
+  at all — but silently kept the PRE-#807 gate logic (`if (policy.drug_felony_ban)`, a
+  boolean-truthy check) instead of #807's `if (policy.drug_felony_ban === "full")`, because
+  #806 had only touched the `statePolicyFor(state)` call on a neighboring line, not the gate
+  check itself. Combined with #807's string-enum values, the STALE boolean check would have
+  disqualified every household in every state with ANY `drug_felony_ban` classification
+  (`"none"`, `"modified"`, `"unconfirmed"` all being non-empty strings) — a severe, silent
+  regression that a clean auto-merge and passing typecheck would NOT have caught, since
+  `policy.drug_felony_ban` still type-checks as truthy-testable. Caught only by explicitly
+  re-reading the gate logic after the merge rather than trusting "no conflict = correct."
+  **Lesson for any future engine-side rebase** (distinct from the corpus's answer-eval.ts
+  lesson): when two branches touch the SAME function from different angles (one touches the
+  call, one touches what's inside the call's result), a clean git auto-merge is not proof of
+  correctness — explicitly diff the merged file's LOGIC against both parent branches' intent,
+  not just against conflict-marker absence. Also caught and fixed a related process mistake:
+  my first resolution attempt was a plain commit (one parent), not a real merge — which would
+  have made the PR diff misleadingly re-show all of #807's changes as new. Fixed by resetting
+  and redoing as a proper two-parent merge commit before pushing.
+
+  Reconciliation verified: `tsc --noEmit` clean, 279/279 snap-rules tests + 44/47
+  profile-harness tests (3 pre-existing skips) passing, three-dot diff against origin
+  correctly scoped to #806's real incremental changes only. PR
+  [#808](https://github.com/matthewgg22/Civica/pull/808), CI running, awaiting merge
+  go-ahead.

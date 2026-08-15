@@ -19,24 +19,24 @@ const ASOF = new Date("2026-08-11");
 
 describe("New York — BBCE screens at the DEFAULT 130% tier only (200%/150% not modeled)", () => {
   it("bbce_threshold_pct is 130 — the general tier, same accepted-limitation shape as GA/IL", () => {
-    const p = statePolicyFor("NY");
+    const p = statePolicyFor("NY", ASOF);
     expect(p.bbce).toBe(true);
     expect(p.bbce_threshold_pct).toBe(130);
     expect(p.bbce_fpl_basis).toBe("federal_fiscal_year");
   });
 
   it("asset test is waived for the categorically-eligible majority", () => {
-    expect(statePolicyFor("NY").asset_waiver).toBe(true);
+    expect(statePolicyFor("NY", ASOF).asset_waiver).toBe(true);
   });
 
   it("uses the 48-state allotment table", () => {
-    expect(statePolicyFor("NY").allotment_tier).toBe("48");
+    expect(statePolicyFor("NY", ASOF).allotment_tier).toBe("48");
   });
 });
 
 describe("New York SUA — Rest-of-State values, NOT NYC or Nassau-Suffolk", () => {
   it("pins the Rest-of-State dollar figures (GIS 25DC059, eff. 10/1/2025)", () => {
-    const p = statePolicyFor("NY");
+    const p = statePolicyFor("NY", ASOF);
     expect(p.sua_by_tier).not.toBeNull();
     expect(p.sua_by_tier!.HCSUA.toNumber()).toBe(877);
     expect(p.sua_by_tier!.LUA.toNumber()).toBe(355);
@@ -61,7 +61,7 @@ describe("New York SUA — Rest-of-State values, NOT NYC or Nassau-Suffolk", () 
     // engine will UNDER-compute the shelter deduction for NYC/Nassau-Suffolk
     // households. Pinning the wrong-region values here would silently hide
     // a regression that "fixes" this into an equally-wrong different number.
-    const p = statePolicyFor("NY");
+    const p = statePolicyFor("NY", ASOF);
     expect(p.sua_by_tier!.HCSUA.toNumber()).not.toBe(1062);
     expect(p.sua_by_tier!.HCSUA.toNumber()).not.toBe(988);
   });
@@ -72,7 +72,7 @@ describe("New York unsourced/simplified axes stay honest", () => {
     // Corroborated by multiple independent secondary sources, NOT verified
     // against a primary OTDA source this pass — the NY corpus pack itself
     // never addressed this topic. See the states.ts NY block comment.
-    expect(statePolicyFor("NY").drug_felony_ban).toBe("none");
+    expect(statePolicyFor("NY", ASOF).drug_felony_ban).toBe("none");
   });
 
   it("ABAWD waiver flag is false — statewide operation since 3/1/2026, only 2 reservations exempt", () => {
@@ -80,10 +80,10 @@ describe("New York unsourced/simplified axes stay honest", () => {
     // waived, so the permissive fallback matters), NY's waived area is two
     // tiny reservations out of 58 districts — `false` is the correct
     // general-case default, not a fail-open guess.
-    expect(statePolicyFor("NY").abawd_waiver_avail).toBe(false);
+    expect(statePolicyFor("NY", ASOF).abawd_waiver_avail).toBe(false);
   });
 
   it("RMP is true — New York is on USDA FNA's own Restaurant Meals Program state list", () => {
-    expect(statePolicyFor("NY").rmp_operated).toBe(true);
+    expect(statePolicyFor("NY", ASOF).rmp_operated).toBe(true);
   });
 });

@@ -46,7 +46,11 @@ const WAIVER_EXEMPTION_REASONS = new Set(["waiver", "waiver_county", "waived_are
  * affirmatively resolve returns false, so the exemption stands. Stripping
  * an exemption denies food, and we will not do that on an unresolved case.
  */
-function areaOffersNoWaiver(state: string | undefined, countyFips: string | undefined): boolean {
+function areaOffersNoWaiver(
+  state: string | undefined,
+  countyFips: string | undefined,
+  asOf: Date,
+): boolean {
   if (!state) return false;
   const countySet = waiverCountiesFor(state);
   if (countyFips && countySet) {
@@ -57,9 +61,9 @@ function areaOffersNoWaiver(state: string | undefined, countyFips: string | unde
     return !countySet.has(countyFips);
   }
   try {
-    return statePolicyFor(state).abawd_waiver_avail === false;
+    return statePolicyFor(state, asOf).abawd_waiver_avail === false;
   } catch {
-    return false; // UnknownStateError — stay conservative
+    return false; // UnknownStateError / NoStatePolicyForDateError — stay conservative
   }
 }
 
@@ -87,7 +91,7 @@ export function evaluateAbawd(facts: Facts, asOf: Date, state?: string): AbawdRe
   // a waiver (7 CFR 273.24(f)). Optional + fail-open: omit `state` (and/or
   // county_fips), or pass a state that isn't registered, and nothing
   // changes. See #608, #614.
-  const noWaiverHere = areaOffersNoWaiver(state, facts.county_fips);
+  const noWaiverHere = areaOffersNoWaiver(state, facts.county_fips, asOf);
   // Post-OBBBA the veteran_homeless exemption is gone.
   const veteranHomelessExempt = asOf < OBBBA_EFFECTIVE;
   // Post-OBBBA the age ceiling is 64 (was 49/54 prior).
