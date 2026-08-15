@@ -7644,6 +7644,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmst__scope-agency {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.76rem; line-height: 1.45; color: var(--demeter-muted);
+  /* Some states' agency field is a compound name ("Department of
+     Transitional Assistance (DTA), Executive Office of Health and Human
+     Services (EOHHS)") that ran past two lines and crowded the confirmation
+     card (real feedback, 2026-08-15). Clamped rather than shortened at the
+     data level — the full name still exists (it is what the disclaimer link
+     and the pack itself carry), this only caps how much of it prints here. */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .dmst__scope-portal {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;

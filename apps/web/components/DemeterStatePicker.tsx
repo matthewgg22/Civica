@@ -189,21 +189,19 @@ export function DemeterStatePicker({
           Naming the real agency is also what makes an answer feel like it came
           from somewhere rather than from a model — the same reason the picker
           rows carry it. */}
+      {/* "Apply at {portal} ↗" used to live here too, stacked under the agency
+          line. Moved down next to "How we verify" (DemeterChat's side rail) —
+          both are standing, secondary facts about the same scope rather than
+          something to act on the moment you pick a state, and the two lines
+          here were crowding the confirmation card (real feedback,
+          2026-08-15). agency alone is capped at two lines (see
+          .dmst__scope-agency) since some states' full agency name is long
+          enough to run past that on its own. */}
       {selected && !open && (
         <div className="dmst__scope">
           <span className="dmst__scope-agency">
             {copy.scopeAgency}: {selected.agency}
           </span>
-          {selected.portal && (
-            <a
-              className="dmst__scope-portal"
-              href={selected.portal.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {copy.scopeApply} {selected.portal.name} ↗
-            </a>
-          )}
         </div>
       )}
       {napSelected && !open && (

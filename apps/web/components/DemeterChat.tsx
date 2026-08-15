@@ -1214,13 +1214,14 @@ export function DemeterChat({
     // send would silently hold a stale copy with no warning.
   }, [input, busy, messages, state, lang, t, refreshWorksheet, resetInputHeight, worksheetMode, drawStream]);
 
+  /** The pack for whichever state is selected, or null on the federal floor.
+   *  agencyHref (the disclaimer's link) and the "Apply at {portal}" link
+   *  next to "How we verify" both read off this — one lookup, not two. */
+  const selectedPack = state ? states.find((x) => x.code === state) ?? null : null;
   /** The agency the disclaimer points at. Their own state's, once one is set —
    *  a generic "your state agency" is exactly the sort of advice that sounds
    *  complete and leaves someone with nowhere to go. */
-  const agencyHref = (() => {
-    const pack = state ? states.find((x) => x.code === state) ?? null : null;
-    return pack?.portal?.url ?? "/verify";
-  })();
+  const agencyHref = selectedPack?.portal?.url ?? "/verify";
 
   const hasChat = messages.length > 0;
   /** At least one answer has finished. The mode offer waits for this: before an
@@ -1246,8 +1247,11 @@ export function DemeterChat({
    *  conversation is a bigger loss than not getting a structured estimate,
    *  so it is worth mentioning sooner. A real 15-turn conversation with real
    *  content in it never once saw this (#833 audit, 2026-08-15) — the Save
-   *  button existed the whole time, tucked in the side panel. */
-  const SAVE_NUDGE_AFTER_TURNS = 4;
+   *  button existed the whole time, tucked in the side panel. Started at 4;
+   *  real feedback the same day was that it fired too soon (felt like
+   *  turn 4-5 of an ordinary conversation, not yet "long enough to lose"),
+   *  so raised to 8. */
+  const SAVE_NUDGE_AFTER_TURNS = 8;
   const showSaveNudge =
     !busy && !conversationSaved && !saveNudgeDismissed && answeredCount >= SAVE_NUDGE_AFTER_TURNS;
 
@@ -1261,8 +1265,19 @@ export function DemeterChat({
   // modes do different things with what you type — one gathers it into a
   // document, one deliberately does not — and the box you type into was the
   // one place that never said which was happening.
+  //
+  // t.inputPlaceholder is a FIRST-TIME invitation ("Happy to answer any
+  // questions about SNAP…") — right for an empty box, and wrong for turn 8:
+  // real feedback (2026-08-15) was that it read as though Demeter had
+  // forgotten the conversation was already going, every time the last answer
+  // didn't end in a specific question to fall back on. Once there IS a chat,
+  // a shorter, conversation-aware line takes its place instead.
   const standingPrompt =
-    worksheetMode === "estimate" ? t.inputPlaceholderEstimate : t.inputPlaceholder;
+    worksheetMode === "estimate"
+      ? t.inputPlaceholderEstimate
+      : hasChat
+        ? t.inputPlaceholderContinue
+        : t.inputPlaceholder;
   const composerPrompt =
     (lastAssistant ? pendingQuestion(lastAssistant) : null) ?? standingPrompt;
 
@@ -1829,8 +1844,23 @@ export function DemeterChat({
               )}
             </div>
           )}
-          {/* Underneath both, quieter than either: this is the standing promise
-              about how answers are checked, not something you do right now. */}
+          {/* Underneath both, quieter than either: these are standing facts
+              about the current scope, not something you do right now. "Apply
+              at {portal}" used to sit right under the state picker, stacked
+              with the agency line — moved here (real feedback, 2026-08-15)
+              since both this and "How we verify" are the same kind of thing:
+              a fact about where this answer comes from / where to check it,
+              not an action for the moment you pick a state. */}
+          {selectedPack?.portal && (
+            <a
+              className="demeter__how"
+              href={selectedPack.portal.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t.picker.scopeApply} {selectedPack.portal.name} ↗
+            </a>
+          )}
           <a className="demeter__how" href="/verify">
             {t.howWeVerify}
           </a>
