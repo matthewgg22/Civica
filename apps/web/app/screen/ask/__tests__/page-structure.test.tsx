@@ -99,15 +99,18 @@ describe("the states-verified count — DC/Guam/USVI are not states", () => {
     expect(otherCount).toBe(3);
   });
 
-  it("the hero badge counts actual states only, and names DC/territories separately", () => {
-    render(<SnapOrientation states={VERIFIED_STATES} />);
-    expect(screen.getByText(`${actualStateCount} States verified`)).toBeTruthy();
-    // The old, wrong count must not appear anywhere on the page.
-    expect(screen.queryByText(`${VERIFIED_STATES.length} States verified`)).toBeNull();
-    expect(screen.getByText(PAGE_COPY.en.statesAlsoVerified)).toBeTruthy();
-  });
+  it("the trust list — not the hero bar — carries the flags, counted on actual states only, in every language", () => {
+    // The flags used to live in a `.dmo__states` aside beside the h1
+    // (SnapOrientation), moved down into this trust-list row on direct
+    // feedback: fifty flags ahead of a single word of orientation buried the
+    // actual claim, and the trust list already exists to make it once there
+    // is something to trust yet. Rendering SnapOrientation with no `states`
+    // prop at all (it no longer accepts one) is itself part of the pin — a
+    // stale caller passing `states` again would be a TypeScript error, not a
+    // silently-ignored prop.
+    render(<SnapOrientation />);
+    expect(screen.queryByText(/States verified/)).toBeNull();
 
-  it("the trust list counts actual states only, in every language", () => {
     for (const lang of ANSWER_LANGS) {
       const c = PAGE_COPY[lang];
       const { container, unmount } = render(<SnapDetail states={VERIFIED_STATES} lang={lang} />);
