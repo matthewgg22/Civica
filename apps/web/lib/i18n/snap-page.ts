@@ -151,6 +151,10 @@ export interface PageCopy {
   navQuestions: string;
   footerPrivacy: string;
   footerSupporters: string;
+  /** /feedback — general product/site feedback, distinct from the per-answer
+   *  thumbs in the chat. Added 2026-08-15: there was no footer link, and no
+   *  page, for anything other than rating one specific answer. */
+  footerFeedback: string;
   footerDisclaimer: string;
   footerOrg: string;
   /** The coverage map's side panel. */
@@ -394,6 +398,7 @@ const en: PageCopy = {
   navQuestions: "Application questions",
   footerPrivacy: "Privacy",
   footerSupporters: "Supporters",
+  footerFeedback: "Feedback",
   footerDisclaimer:
     "Demeter gives information, not legal advice, and does not decide your case. Your state agency does. Always confirm before acting on an answer.",
   footerOrg: "Demeter AI is built by Civica.",
@@ -625,6 +630,7 @@ const es: PageCopy = {
   navQuestions: "Preguntas de la solicitud",
   footerPrivacy: "Privacidad",
   footerSupporters: "Patrocinadores",
+  footerFeedback: "Comentarios",
   footerDisclaimer:
     "Demeter da información, no asesoría legal, y no decide tu caso. Lo decide la agencia de tu estado. Confirma siempre antes de actuar según una respuesta.",
   footerOrg: "Demeter AI es un producto de Civica.",
@@ -857,6 +863,7 @@ const vi: PageCopy = {
   navQuestions: "Câu hỏi trên đơn",
   footerPrivacy: "Quyền riêng tư",
   footerSupporters: "Nhà tài trợ",
+  footerFeedback: "Phản hồi",
   footerDisclaimer:
     "Demeter cung cấp thông tin, không phải tư vấn pháp lý, và không quyết định hồ sơ của bạn. Cơ quan tiểu bang của bạn quyết định. Hãy luôn xác nhận trước khi hành động theo một câu trả lời.",
   footerOrg: "Demeter AI do Civica xây dựng.",
@@ -1088,6 +1095,7 @@ const zh: PageCopy = {
   navQuestions: "申请表问题",
   footerPrivacy: "隐私政策",
   footerSupporters: "支持者",
+  footerFeedback: "反馈",
   footerDisclaimer:
     "Demeter 提供信息，不提供法律建议，也不会决定您的申请结果。决定权在您所在州的机构。根据答案采取行动前请务必核实。",
   footerOrg: "Demeter AI 由 Civica 开发。",
