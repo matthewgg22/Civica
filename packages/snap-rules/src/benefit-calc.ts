@@ -20,7 +20,8 @@
 //     excess_shelter = max(0, shelter_amt - 0.5 * adj_income)
 //     if not E/D: excess_shelter = min(excess_shelter, shelter_cap)
 //   net        = max(0, adj_income - excess_shelter)
-//   max_allot  = maxAllotmentFor(size, asOf)
+//   max_allot  = maxAllotmentFor(size, asOf, state, county_fips) — AK
+//                zone-specific (#814), 48-contiguous for every other state
 //   benefit    = round(max_allot - 0.30 * net)            [273.10(e)(2)(ii)(A)]
 //   if size ≤ 2 and 0 < benefit < min_benefit:
 //     benefit = min_benefit                                [273.10(e)(2)(ii)(C)]
@@ -177,7 +178,11 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
 
   // Benefit calc.
   const thirtyPctNet = net.mul(0.30).roundDollar();
-  const maxAllot = maxAllotmentFor(size, asOf);
+  // #814: AK's real max allotment is zone-specific (Urban/Rural I/Rural
+  // II), meaningfully higher than the 48-contiguous table. Passing
+  // `state`/`facts.county_fips` here is a no-op for every other state —
+  // maxAllotmentFor only branches on state === "AK".
+  const maxAllot = maxAllotmentFor(size, asOf, state, facts.county_fips);
   let benefit = maxAllot.sub(thirtyPctNet);
   if (benefit.lt(ZERO)) benefit = ZERO;
   // Federal min-benefit floor for HH1-2 eligible households.
@@ -186,7 +191,9 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
   // for BBCE-conferred high-net cases (its gross test denies first).
   // BBCE-conferred HHs can land at benefit=0 by math and still be
   // eligible; the floor still applies.
-  const minBenefit = minimumBenefitFor(asOf);
+  // #814: AK's own minimum-benefit floor is also zone-specific and higher
+  // than the $24 FY26 federal default — same no-op-for-other-states shape.
+  const minBenefit = minimumBenefitFor(asOf, state, facts.county_fips);
   if (size <= 2 && benefit.gte(ZERO) && benefit.lt(minBenefit)) {
     benefit = minBenefit;
   }

@@ -157,3 +157,69 @@ describe("computeBenefit — AK real per-region SUA (#631)", () => {
     expect(heat.trace.state_sua_value).toBe(1107); // sanity: HCSUA tier still Northwest's heat figure
   });
 });
+
+describe("computeBenefit — AK real zone-based max allotment (#814)", () => {
+  // Zero income + zero rent/SUA isolates max_allotment_for_household_size:
+  // net income lands at exactly $0, so 30%-of-net is $0 and
+  // monthly_benefit === the zone's raw max allotment for that household
+  // size, with no other deduction math obscuring the comparison.
+  function zeroIncomeHousehold(size: number, countyFips?: string): Facts {
+    const household: Facts["household"] = Array.from({ length: size }, (_, i) => ({
+      member_id: `m${i + 1}`,
+      age: 35,
+      role: i === 0 ? "head" : "member",
+      immigration: "citizen",
+      work_class: "gen_work_subject",
+    }));
+    return {
+      household,
+      income: [],
+      shelter: { rent: 0, sua_tier: "none", sua_amount: 0, internet: 0, homeless_deduction: false },
+      deductions: { dependent_care: 0, medical_unreimbursed: 0, child_support_paid: 0 },
+      assets: 0,
+      cat_elig: "NPA",
+      ...(countyFips ? { county_fips: countyFips } : {}),
+    };
+  }
+
+  it("before #814 this silently returned the 48-contiguous $994 HH4 max for AK too — now returns AK's real Urban figure", () => {
+    const r = computeBenefit(zeroIncomeHousehold(4), "AK", ASOF); // no county_fips — Urban fallback
+    expect(r.max_allotment_for_household_size).toBe(1285);
+    expect(r.monthly_benefit).toBe(1285);
+    expect(r.max_allotment_for_household_size).toBeGreaterThan(994); // the #814 bug
+  });
+
+  it("Anchorage (02020, Urban) matches the no-county fallback exactly", () => {
+    const r = computeBenefit(zeroIncomeHousehold(4, "02020"), "AK", ASOF);
+    expect(r.max_allotment_for_household_size).toBe(1285);
+    expect(r.monthly_benefit).toBe(1285);
+  });
+
+  it("Copper River Census Area (02066, Rural I) computes a higher benefit than Urban for the identical household", () => {
+    const r = computeBenefit(zeroIncomeHousehold(4, "02066"), "AK", ASOF);
+    expect(r.max_allotment_for_household_size).toBe(1639);
+    expect(r.monthly_benefit).toBe(1639);
+  });
+
+  it("Bethel (02050, Rural II) computes the highest tier's benefit for the identical household", () => {
+    const r = computeBenefit(zeroIncomeHousehold(4, "02050"), "AK", ASOF);
+    expect(r.max_allotment_for_household_size).toBe(1995);
+    expect(r.monthly_benefit).toBe(1995);
+  });
+
+  it("a non-AK state with an AK-shaped countyFips is unaffected — this precision is AK-only", () => {
+    const r = computeBenefit(zeroIncomeHousehold(4, "02050"), "TX", ASOF);
+    expect(r.max_allotment_for_household_size).toBe(994); // TX's own 48-contiguous figure, not Bethel's
+  });
+
+  it("AK's own zone-based minimum-benefit floor applies for HH1-2, not the $24 federal default", () => {
+    // A household of 1 with heavy deductions can land benefit below the
+    // minimum-benefit floor; the floor should be the AK ZONE's floor.
+    const facts: Facts = {
+      ...zeroIncomeHousehold(1, "02050"), // Bethel, Rural II — $48 floor
+      income: [{ member: "m1", type: "wages", amount: 50, anticipation: "averaged" }],
+    };
+    const r = computeBenefit(facts, "AK", ASOF);
+    expect(r.monthly_benefit).toBeGreaterThanOrEqual(48);
+  });
+});
