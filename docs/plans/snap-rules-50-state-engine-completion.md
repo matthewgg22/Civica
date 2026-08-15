@@ -31,14 +31,14 @@ at all; today, most do.
 this plan's own individual-tier landings)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **24 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
-MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO.
+states.ts`) exists for **25 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
+MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
 engine against — has full 92-case coverage (minus TN's 3 deliberately-unauthored
-genuinely-indeterminate profiles, see below) for **22 of those 24**: CA, WA, TX, NY, GA,
-MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO clear CLEAN (129/0/0 or a
+genuinely-indeterminate profiles, see below) for **23 of those 25**: CA, WA, TX, NY, GA,
+MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD clear CLEAN (129/0/0 or a
 documented pre-existing partial); PA, NJ, and TN also have all 92 (or 89, for TN) rows
 authored, per the execution log's PA/NJ/TN entries below, but all three grade 34/0/95 —
 most of their profiles legitimately SKIP on the null-SUA gap, not a coverage gap, so none
@@ -62,10 +62,10 @@ One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
   the engine today and, if used for a real determination, would wrongly deny categorical
   eligibility to AK households between 130%–200% FPL.
 
-**29 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
-AL, AR, CO, CT, DC, DE, GU, HI, IA, ID, KY, LA, MD, ME, MS, MT, ND, NE, NH,
-NM, OK, RI, SC, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, and MO — the first six
-"individual tier" states, §6 — are DONE; see the execution log's NC/NJ/VA/TN/IN/MO
+**28 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
+AL, AR, CO, CT, DC, DE, GU, HI, IA, ID, KY, LA, ME, MS, MT, ND, NE, NH,
+NM, OK, RI, SC, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, and MD — the first seven
+"individual tier" states, §6 — are DONE; see the execution log's NC/NJ/VA/TN/IN/MO/MD
 entries.)
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
@@ -192,7 +192,7 @@ exists and only oracle authoring is outstanding):
    eligibility outcomes across a large share of the profile set — treat as a full rebuild,
    not a one-line patch, precisely because it's already shipped and wrong)
 3. Individual tier (~4M+ population): ~~NC~~ (done), ~~NJ~~ (done), ~~VA~~ (done),
-   ~~TN~~ (done), ~~IN~~ (done), ~~MO~~ (done), MD, CO, SC, AL, LA, KY, OK
+   ~~TN~~ (done), ~~IN~~ (done), ~~MO~~ (done), ~~MD~~ (done), CO, SC, AL, LA, KY, OK
 4. Schema step: extend `AllotmentTier` for HI/GU (own small PR, own go-ahead)
 5. HI, GU (now unblocked)
 6. Batch tier (<4M population, N≤3 per batch): CT, UT, IA, AR / MS, NM, NE / ID, WV, NH /
@@ -936,3 +936,114 @@ all of it.
   `packages/demeter-engine` (MO's corpus was already complete and out of scope) or any
   other state's `StatePolicy`/oracle coverage, including TN's or IN's in-flight PRs. PR
   [#835](https://github.com/matthewgg22/Civica/pull/835), awaiting merge go-ahead.
+
+- **MD (individual tier, §6 step 3, seventh state after NC/NJ/VA/TN/IN/MO)** — built
+  Maryland's `StatePolicy` entry AND full 92-profile oracle coverage from scratch (MD had
+  neither before this PR), translating MD's already-merged Demeter corpus pack
+  (`packages/demeter-engine/src/states/md/`, PROVENANCE.md + supplements.json +
+  freshness.json, built 2026-08-11) into the engine's stricter typed shape per §5's
+  process.
+
+  `bbce: true` / `bbce_threshold_pct: 200` / `bbce_fpl_basis: federal_fiscal_year` —
+  CONFIRMED, not corrected: unlike this file's own MO entry (which DISPROVED a wrong
+  secondary-source BBCE claim), this pack independently checked the same kind of
+  widely-repeated claim against Maryland's own primary source (MD SNAP Manual Section
+  115.2(F)) and found it accurate, cross-validated against the October 2025 DHS Income
+  Guidelines and FIA Action Transmittal AT 26-05. `asset_waiver: true` follows directly —
+  Maryland's own manual instructs caseworkers that the resource test is, in practice,
+  never actually applied to a BBCE-covered household ("you should not have any
+  non-categorically eligible SNAP households," stated in three separate sections).
+  `allotment_tier: "48"` — MD's own Standard Deduction ($209/$209/$209/$223/$261/$299),
+  Excess Shelter cap ($744), and Homeless Shelter Allowance ($198.99), all confirmed
+  current for FFY2026 via MD SNAP Manual Section 600 and independently cross-validated by
+  AT 26-05, match `federal-tables.ts`'s FY26 snapshot exactly — the same shared-source
+  signal NC's/VA's/MO's entries already use.
+
+  `drug_felony_ban: "modified"` — this pack's flagship finding, and a genuine THREE-TIER
+  structure that directly CONTRADICTS a specific, widely-repeated secondary-source claim
+  that Maryland "eliminated drug testing requirements" for drug-felony SNAP applicants.
+  TIER 1 (Section 100.62(H)): volume-dealer/drug-kingpin convictions, no stated time
+  limit. TIER 2, genuinely broader (Section 100.7(J)): manufacture/distribution/
+  possession-with-intent-to-distribute convictions after July 1, 2000 carry a one-year
+  disqualification PLUS two years of MANDATORY substance-abuse testing and treatment —
+  directly contradicting the "eliminated testing" secondary claim. TIER 3 (implicit):
+  simple possession is untouched by either provision. "Modified" is the correct
+  classification per #805's rule; gate behavior unchanged (fails open, same as every
+  other "modified" entry) until the engine models the actual condition. `abawd_waiver_
+  avail: false` — the CLEANEST, most current primary source this pack's researcher found
+  anywhere: FIA Action Transmittal AT 26-09 (issued 10/16/2025) asks and answers directly,
+  "Q7. Does Maryland DHS still have an ABAWD waiver? A7. No," with no county-level
+  distinction anywhere in Maryland's own text — same uniform-statewide-zero-waiver shape
+  as this file's VA/MO/TN entries, no county lookup needed.
+
+  `rmp_operated: true` — Maryland IS on USDA's own RMP state list (already cited in this
+  file's own TN entry above: "AZ/CA/IL(Cook+Franklin only)/MD/MA/MI/NY/RI/VA"). NOT a
+  first for this file — five other already-registered states (CA, GA, FL, NV, VA) already
+  carry `rmp_operated: true`; the task brief that prompted this build's premise ("every
+  state built so far is `false`") does not match what's actually in `states.ts` and is
+  noted here rather than silently repeated. Distinctively, Maryland's RMP is established
+  DIRECTLY BY STATE STATUTE (Md. Code, Human Services § 5-505, fetched with no access
+  barrier) rather than only administrative adoption of 7 CFR 274.7(g) — though Maryland's
+  own DHS page discloses the program is an expanding county-by-county pilot, not yet fully
+  statewide. `rmp_operated` has no consumer anywhere in `verdict.ts` or `benefit-calc.ts`
+  (grep-confirmed) — purely informational, so the geographic-rollout nuance has zero
+  effect on oracle coverage.
+
+  `sua_by_tier` — FULLY POPULATED, not null: HCSUA $572 / LUA $350 / phone $40, all from
+  MD SNAP Manual Section 600, independently cross-validated by AT 26-05 — clean 1:1 fits
+  for this schema's three tiers, no OH/MO-style naming-collision trap. NOT modeled (a
+  disclosed, out-of-schema mechanism, same class of gap as NJ's/MO's/TN's already-accepted
+  Facts-shape limits, not re-filed as a new issue per this task's own instruction): Md.
+  Code, Human Services § 5-501(d) establishes a Maryland-specific state-funded top-up — a
+  household with a member 60 (statute) or 62 (the manual's own cross-reference; the
+  corpus pack disclosed this internal discrepancy rather than resolving it) or older whose
+  federal benefit would compute under $50/month gets a state supplement bringing it to
+  $50, distinct from the plain federal $24 minimum `minimumBenefitFor()` already applies.
+  No engine axis exists for a composition-conditioned minimum-benefit floor (only AK's
+  zone-based floor varies by state today, and that varies by geography, not household age
+  composition). Also disclosed, and immaterial regardless: a genuine internal contradiction
+  within Maryland's OWN currently-published manual on the (rarely-reached, since BBCE
+  waives it) resource limit — Section 200 states $2,250/$3,250, Section 600 states the
+  current-federal-matching $3,000/$4,500 — not a stale-vs-current gap like MO's SUA
+  finding, but two sections of the same live document disagreeing with each other.
+
+  Oracle: built a fresh, independent Python calculator (not derived from engine output,
+  per #636) directly from `verdict.ts`/`benefit-calc.ts`/`gates/{income-tests,asset-test,
+  abawd,student,composition,immigration,disqualifications,categorical}.ts`/`facts.ts`/
+  `constants/federal-tables.ts`'s own read source (not just their doc-comments), mirroring
+  every gate and the benefit-calc formula exactly, including `decimal.ts`'s half-up
+  (`roundDollar`), floor (`floorDollar`), and ceiling (`ceilDollar`) rounding conventions.
+  Cross-validated BEFORE trusting it for MD: 92/92 exact match (verdict AND benefit)
+  reproducing VA's already-graded oracle under VA's own `StatePolicy` params — VA is MD's
+  closest structural axis-twin in this file (identical bbce/200%/federal_fiscal_year,
+  identical asset_waiver, identical abawd_waiver_avail, identical allotment_tier; both
+  need the full shelter/SUA/benefit pathway exercised, unlike NJ's/PA's/TN's null-SUA-
+  blocked entries; the only math-relevant difference is the SUA dollar figures themselves,
+  since `drug_felony_ban` and `rmp_operated` have no verdict/benefit-math consumer,
+  grep-confirmed against `verdict.ts`/`disqualifications.ts`/`benefit-calc.ts`). Also
+  checked all 37 rows across the 18 non-`expected_by_state` variant profiles (facts_patch
+  A/B pairs) for an MD-specific `verdict_by_state` override, the same discipline every
+  prior state's build used — found ZERO divergence from the shared default verdict for MD
+  (matching NC's/VA's zero-override result, not MO's one-override `M23` finding — MD's
+  bbce/200%/federal_fiscal_year axes are identical to VA's, so MD's computed verdicts are
+  IDENTICAL to VA's across all 92 base profiles and all 37 variant rows, confirmed
+  explicitly, differing only in benefit dollar amount where SUA values diverge and the
+  household isn't shelter-capped). Authored all 92 `expected_by_state.MD` entries:
+  80 APPROVE / 12 DENY (the same DENY set as VA's, since both states share every
+  financial-gate-relevant axis).
+
+  Verification: `/profile-simulation state=MD` — 129/129 PASS, 0 FAIL, 0 SKIP (clean,
+  matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/IN/MO's bar, not PA's/NJ's/
+  TN's/MN's SKIP-heavy shape). Every other registered state's harness run reconfirmed
+  unchanged from its documented baseline, all 24 pre-existing states checked individually
+  (not spot-checked): CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO all 129/0/0;
+  NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 — every one identical to its
+  pre-MD documented baseline, zero regressions. `tsc --noEmit -p packages/snap-rules`
+  clean, 323/323 snap-rules tests pass (0 new — a schema-conformant pure addition needed
+  no new unit tests), 44/47 profile-harness tests pass (3 pre-existing skips). Did not
+  touch `packages/demeter-engine` (MD's corpus was already complete and out of scope) or
+  any other state's `StatePolicy`/oracle coverage. No new GitHub issue filed — every gap
+  found (the $50 elderly state-supplement mechanism, the two internal manual
+  contradictions, the drug-felony date inconsistency) is a per-state disclosed gap of an
+  already-documented class (#824-style Facts-shape/mechanism gaps), not a new engine
+  architecture gap, per this task's own instruction. PR TBD, awaiting merge go-ahead.
