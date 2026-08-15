@@ -122,8 +122,8 @@ describe("Tranche 1 drug felony bans are sourced, not defaulted", () => {
     //     stamps … based upon a conviction of any felony", unconditional.
     // OH: Ohio Rev. Code 5101.84 — 21 U.S.C. 862a(a) does not apply.
     // Both read against primary statute text on 2026-08-11.
-    expect(statePolicyFor("IL").drug_felony_ban).toBe(false);
-    expect(statePolicyFor("OH").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("IL").drug_felony_ban).toBe("none");
+    expect(statePolicyFor("OH").drug_felony_ban).toBe("none");
   });
 
   it("FL and PA are MODIFIED bans the boolean cannot express, so it under-claims", () => {
@@ -133,7 +133,7 @@ describe("Tranche 1 drug felony bans are sourced, not defaulted", () => {
     // would disqualify every drug-felony household in the state, including
     // the majority each statute protects — the direction of error that #608
     // forbids. Under-claiming a narrow real ban is the lesser harm.
-    expect(statePolicyFor("FL").drug_felony_ban).toBe(false);
-    expect(statePolicyFor("PA").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("FL").drug_felony_ban).toBe("modified");
+    expect(statePolicyFor("PA").drug_felony_ban).toBe("modified");
   });
 });

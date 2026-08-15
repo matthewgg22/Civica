@@ -58,7 +58,7 @@ describe("Arizona unsourced/simplified axes stay honest", () => {
     // treatment/compliance conditions) that this boolean cannot express —
     // same FL/PA under-claim reasoning: `true` would deny everyone who
     // qualifies for removal too. See the states.ts AZ block comment.
-    expect(statePolicyFor("AZ").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("AZ").drug_felony_ban).toBe("modified");
   });
 
   it("ABAWD waiver flag is true — 7 real currently-waived areas exist (Yuma County + 6 Tribal areas)", () => {
