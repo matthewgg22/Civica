@@ -28,6 +28,21 @@ import { StateFlag } from "./StateFlag";
 import { UsCoverageMap } from "./UsCoverageMap";
 import { SnapRetailerMap } from "./SnapRetailerMap";
 
+/** The three verified codes in VERIFIED_STATES that are not states — DC is a
+ *  federal district, Guam and the U.S. Virgin Islands are territories. Both
+ *  places below used to fold all of them into "{53} States verified", which
+ *  was accurate about the count and wrong about the word. Splitting on this
+ *  set keeps the "states" count and label actually true, without dropping
+ *  DC/GU/VI from the page — they get their own, correctly-named mention. */
+const NON_STATE_CODES = new Set(["DC", "GU", "VI"]);
+
+function splitJurisdictions(states: PackMeta[]) {
+  return {
+    actualStates: states.filter((s) => !NON_STATE_CODES.has(s.code)),
+    otherJurisdictions: states.filter((s) => NON_STATE_CODES.has(s.code)),
+  };
+}
+
 /** REQUIRED VERBATIM by FNS wherever an organisation outside USDA uses the SNAP
  *  logo. Not our sentence to reword, and deliberately NOT in the localized copy
  *  table — a mandated legal notice that can be translated is a mandated legal
@@ -107,6 +122,7 @@ export function SnapOrientation({
   states?: PackMeta[];
 }) {
   const c = PAGE_COPY[lang];
+  const { actualStates, otherJurisdictions } = splitJurisdictions(states);
   return (
     // TWO COLUMNS. Measured at 1440: a single left-aligned column left 579px of
     // the 1180px container empty — 49% of the page width, at the very top.
@@ -132,15 +148,29 @@ export function SnapOrientation({
       {states.length > 0 && (
         <aside className="dmo__states" aria-label={c.trust[2]?.t}>
           <p className="dmo__states-label">
-            {states.length} {c.trust[2]?.t}
+            {actualStates.length} {c.trust[2]?.t}
           </p>
           <ul className="dmo__states-grid">
-            {states.map((s) => (
+            {actualStates.map((s) => (
               <li key={s.code}>
                 <StateFlag code={s.code} />
               </li>
             ))}
           </ul>
+          {/* DC/GU/VI get their own line and their own small grid, not folded
+              into the count above — see splitJurisdictions. */}
+          {otherJurisdictions.length > 0 && (
+            <>
+              <p className="dmo__states-also">{c.statesAlsoVerified}</p>
+              <ul className="dmo__states-grid">
+                {otherJurisdictions.map((s) => (
+                  <li key={s.code}>
+                    <StateFlag code={s.code} />
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
           <p className="dmo__states-note">{c.trust[3]?.d}</p>
         </aside>
       )}
@@ -162,6 +192,7 @@ export function SnapOrientation({
  *  bar. */
 export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?: AnswerLang }) {
   const c = PAGE_COPY[lang];
+  const { actualStates, otherJurisdictions } = splitJurisdictions(states);
   return (
     <>
       {/* Trust, relocated from the old lede. Same four claims, same words. */}
@@ -174,10 +205,17 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
             <div className="dmx__trustrow" key={row.t}>
               {/* The third row counts the packs, so its term carries the
                   number and its detail lists the codes — everything else is
-                  static copy. */}
-              <dt>{i === 2 ? `${states.length} ${row.t}` : row.t}</dt>
+                  static copy. Counted on actual STATES only now — DC/GU/VI are
+                  real, verified jurisdictions but not states, and folding them
+                  into this count made the label wrong even though the number
+                  was right. They still get named, just not as one of the 50. */}
+              <dt>{i === 2 ? `${actualStates.length} ${row.t}` : row.t}</dt>
               <dd>
-                {i === 2 ? `${states.map((s) => s.code).join(" · ")} — ${row.d}` : row.d}
+                {i === 2
+                  ? `${actualStates.map((s) => s.code).join(" · ")} — ${row.d}${
+                      otherJurisdictions.length > 0 ? ` ${c.statesAlsoVerified}` : ""
+                    }`
+                  : row.d}
               </dd>
             </div>
           ))}

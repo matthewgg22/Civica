@@ -5710,6 +5710,20 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   border-top: 1px solid var(--demeter-rule);
   font-size: 0.74rem; line-height: 1.5;
 }
+/* THE MAP COLUMN, not the map itself, carries the sticky positioning. The
+   results list beside it can run far longer than the map is tall — a real
+   search on a common ZIP returns dozens of stores — and pinning ONLY the map
+   left a wide band of plain background sitting under it once it had stuck:
+   the map is a fixed height, the list is not, and nothing else lived in that
+   column to meet it. `.dmret__mapcol` wraps the map AND the "another way to
+   check" panel below it, so the two stick and unstick TOGETHER — the panel
+   fills exactly the space that used to be empty. `top` clears the sticky nav
+   bar plus a little air. Cancelled on the narrow layout below, where the
+   column stacks above the list instead of beside it and sticky would just
+   pin it uselessly off-screen. */
+.dmret__mapcol {
+  position: sticky; top: 5.5rem;
+}
 /* THE LIVE MAP. Was an SVG that sized itself off its own viewBox; Leaflet
    needs an explicit pixel height on its container instead — a slippy map has
    no intrinsic aspect ratio, it is a viewport onto something much bigger.
@@ -5720,16 +5734,23 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   width: 100%; height: 360px; border-radius: 14px; overflow: hidden;
   border: 1px solid var(--demeter-rule);
   background: var(--demeter-paper); /* shows while tiles are still loading */
-  /* STICKY on desktop. The results list beside it can run far longer than
-     360px — a real search on a common ZIP returns dozens of stores — and a
-     fixed-height map anchored to the TOP of a long list left a wide band of
-     empty page beside everything past the map's own bottom edge. Pinning it
-     means the map stays in view for exactly as long as there is a list to
-     read beside it, rather than being scrolled past in the first few rows.
-     `top` clears the sticky nav bar plus a little air. Cancelled on the
-     narrow layout below, where the map stacks above the list instead of
-     beside it and sticky would just pin it uselessly off-screen. */
-  position: sticky; top: 5.5rem;
+}
+/* THE PANEL UNDER THE MAP. A permanent link, not a fallback that only shows
+   up when a search comes up empty — the map's own 40-result cap and the
+   40-mile-wide world outside a 10-mile radius query both mean "not here"
+   sometimes really is "try somewhere else," and USDA's own locator is that
+   somewhere else. Filling the space sticky positioning would otherwise leave
+   blank is a side effect of adding this, not the reason for it. */
+.dmret__more {
+  margin: 0.85rem 0 0; padding: 0.85rem 1rem;
+  border: 1px solid var(--demeter-rule); border-radius: 12px;
+  background: var(--demeter-paper);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; color: var(--demeter-muted); line-height: 1.5;
+}
+.dmret__more a {
+  color: var(--demeter-terracotta-deep); text-decoration: underline;
+  text-underline-offset: 2px; font-weight: 600;
 }
 /* Leaflet's own chrome, restrained to the page's palette rather than left at
    its library defaults (a saturated blue focus ring, black-on-white
@@ -5856,9 +5877,10 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
      no accessibility cost either way) — the search form and results list are
      the task; the map is what someone scrolls to once they have them.
      Sticky is a DESKTOP fix for a wide gap beside a long list; stacked, there
-     is no gap to fix, and a sticky map here would just pin itself uselessly
-     partway down the page as the list scrolls past above it. */
-  .dmret__livemap { height: 280px; position: static; }
+     is no gap to fix, and a sticky map+panel here would just pin themselves
+     uselessly partway down the page as the list scrolls past above them. */
+  .dmret__mapcol { position: static; }
+  .dmret__livemap { height: 280px; }
 }
 
 /* "I need food this week." Quiet but unmissable — a tinted band, not a card in
@@ -6924,6 +6946,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmo__states-grid {
   list-style: none; margin: 0 0 1rem; padding: 0;
   display: flex; flex-wrap: wrap; gap: 0.45rem;
+}
+/* DC/Guam/USVI's own line — smaller and unlabelled-as-"states" on purpose,
+   sitting between the 50-state grid and the note. Same family as
+   .dmo__states-label but not shouting: it is a footnote to the count above,
+   not a second headline. */
+.dmo__states-also {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; color: var(--demeter-muted); margin: -0.4rem 0 0.6rem;
 }
 .dmo__states-note {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
