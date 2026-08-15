@@ -5687,10 +5687,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 
 /* Where the card works. The sentence carries the fact; the map is the picture
-   of it, so text leads and the map takes the space left over. */
+   of it, so text leads and the map takes the space left over.
+   START, not centre: the map is a fixed-height box now, and once a search
+   returns a long results list the text column can run well past it — centring
+   a fixed box against a growing one drifts it away from the heading it
+   belongs beside. */
 .dmret {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
-  gap: clamp(1rem, 3vw, 2.5rem); align-items: center; margin: 2rem 0 0;
+  gap: clamp(1rem, 3vw, 2.5rem); align-items: start; margin: 2rem 0 0;
 }
 .dmret__text .dmx__body { margin-bottom: 0.5rem; }
 /* A CITATION, not a second paragraph. .dmx__note was already smaller and
@@ -5706,7 +5710,37 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   border-top: 1px solid var(--demeter-rule);
   font-size: 0.74rem; line-height: 1.5;
 }
-.dmret__svg { width: 100%; height: auto; display: block; }
+/* THE LIVE MAP. Was an SVG that sized itself off its own viewBox; Leaflet
+   needs an explicit pixel height on its container instead — a slippy map has
+   no intrinsic aspect ratio, it is a viewport onto something much bigger.
+   360px is enough room to tell CONUS from a fitted close-up once a search
+   flies in, without letting the map outgrow the text column beside it on a
+   normal-height search result. */
+.dmret__livemap {
+  width: 100%; height: 360px; border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--demeter-rule);
+  background: var(--demeter-paper); /* shows while tiles are still loading */
+}
+/* Leaflet's own chrome, restrained to the page's palette rather than left at
+   its library defaults (a saturated blue focus ring, black-on-white
+   attribution) — the one place on the page that would otherwise look like an
+   embedded widget instead of part of it. */
+.dmret__livemap .leaflet-control-zoom a {
+  color: var(--demeter-ink); border-color: var(--demeter-rule) !important;
+}
+.dmret__livemap .leaflet-control-attribution {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.68rem; background: rgba(247, 246, 244, 0.85);
+}
+.dmret__livemap .leaflet-popup-content {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.88rem; color: var(--demeter-ink); line-height: 1.5;
+}
+/* THE PIN. Leaflet's div-icon wrapper adds no chrome of its own by default,
+   but reset explicitly rather than trust that — an inline SVG pin sitting
+   inside an unexpected box is exactly the kind of thing only rendering it
+   catches. */
+.dmret__pin { background: none; border: none; }
 
 /* The ZIP lookup. The map above it is the claim; this is the answer. */
 .dmret__search { margin: 1.25rem 0 0; }
@@ -5763,6 +5797,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 @media (max-width: 860px) {
   .dmret { grid-template-columns: 1fr; }
+  /* Stacked below the text and results now rather than beside them, so it can
+     afford to be a little shorter — nothing beside it is setting its height
+     anymore. It comes last in DOM order (it is aria-hidden, so that carries
+     no accessibility cost either way) — the search form and results list are
+     the task; the map is what someone scrolls to once they have them. */
+  .dmret__livemap { height: 280px; }
 }
 
 /* "I need food this week." Quiet but unmissable — a tinted band, not a card in
