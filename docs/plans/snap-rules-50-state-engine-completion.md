@@ -408,3 +408,76 @@ all of it.
   build any part of HI's `StatePolicy`, corpus registration, or oracle coverage (out of
   scope; only the table SHAPE is HI-ready). PR
   [#819](https://github.com/matthewgg22/Civica/pull/819), awaiting merge go-ahead.
+
+- **NJ (individual tier, §6 step 3)** — built New Jersey's `StatePolicy` entry AND full
+  92-profile oracle coverage from scratch (NJ had neither before this PR), translating
+  NJ's already-merged Demeter corpus pack (`packages/demeter-engine/src/states/nj/`,
+  PROVENANCE.md) into the engine's stricter typed shape per §5's process. bbce: true,
+  bbce_threshold_pct: **185** (N.J.A.C. 10:87-2.36's Expanded Categorical Eligibility —
+  notably lower than most other BBCE-200 states in this file), bbce_fpl_basis:
+  federal_fiscal_year, asset_waiver: true (10:87-4.1(b)), allotment_tier: "48",
+  drug_felony_ban: "none" (a VERIFIED full opt-out — N.J.A.C. 10:87-3.18's own History
+  note confirms the drug-felony provision's 2012 repeal, corroborated by N.J.S.A.
+  44:10-48(d)(1) via the Collateral Consequences Resource Center's national survey since
+  Justia/FindLaw both 403'd the raw statute text), abawd_waiver_avail: true (NJ holds a
+  real, time-bound waiver in Cape May County + Camden City through 1/31/2027 — chosen
+  permissive under the same "wrongly denying food is the worse error" reasoning CA's/
+  MI's/NV's/AZ's entries use), rmp_operated: false (confirmed absent from USDA's own RMP
+  list; NJ has left an RMP bill to die in three separate legislative sessions).
+  sua_by_tier: **null** — same disclosed-gap discipline as PA's and MN's null entries:
+  the corpus pack could only secondarily corroborate ONE of the three required tiers
+  (HCSUA $977, via a NJ Medicaid Communication referencing DFD's figures, not
+  independently fetchable) and could not locate NJ's LUA or UTA/phone figures at all.
+
+  Deliberately did NOT build a real per-county ABAWD lookup for NJ (unlike CA's/MA's
+  `WAIVER_COUNTIES_BY_STATE` entries) despite the waiver geography being well-documented:
+  Cape May County is a clean county-FIPS match but Camden City is a SUB-COUNTY
+  MUNICIPALITY inside the much larger Camden County — the existing lookup is keyed by
+  county-level FIPS only, which cannot represent "this one city, not the rest of its
+  county," and a partial/wrong Set would have been actively worse than the honest
+  fallback (would confidently DENY Camden City's real exemption for any household
+  reporting Camden County's FIPS). Filed as
+  [#825](https://github.com/matthewgg22/Civica/issues/825) rather than building an
+  inaccurate lookup to close it quietly.
+
+  Two genuinely novel corpus findings — NJ counts boats/motor homes as a resource at
+  fair-market value (a real exception to the usual all-vehicle exclusion), and NJ treats
+  legally-obligated child support as an income EXCLUSION rather than an ordinary
+  deduction — have **no representable slot in the current schema at all** (a `Facts`-shape
+  gap, not a per-state value): `Facts.assets` has no per-asset-type breakdown, and
+  `benefit-calc.ts` implements only the ordinary-deduction child-support mechanism,
+  engine-wide, with no per-state axis to switch it. Documented inline in NJ's entry
+  (same "accepted limitation" treatment as NY's multi-tier BBCE and WI's multi-tier SUA
+  gaps) and filed as
+  [#824](https://github.com/matthewgg22/Civica/issues/824) rather than silently ignored
+  or worked around. Zero of the 92 v0.6 profiles model a boat/motor-home resource
+  (no practical effect); exactly one profile (A08) carries a nonzero
+  `child_support_paid` ($300) — its NJ oracle entry uses the engine's standard
+  ordinary-deduction mechanic since A08's verdict is unaffected either way and the
+  corpus pack doesn't fully specify NJ's exclusion mechanics (whether it also changes
+  the base the 20% earned-income deduction applies to).
+
+  Independent calculator built fresh in Python from the CFR rules + the actual
+  `packages/snap-rules` source read (not derived by running the engine and copying
+  output), per #636. Cross-validated before trusting it for NJ: 92/92 exact match
+  (verdict AND benefit) reproducing WI's already-graded oracle under WI's exact policy
+  params, and 34/34 exact match reproducing PA's already-graded oracle (PA being NJ's
+  true structural near-twin — same null-SUA architecture) under PA's params. All 92
+  `expected_by_state.NJ` entries authored into `data-ops/sample/civica-test-profiles/
+  v0.6.json`: 34 profiles (`sua_tier === "none"` or `homeless_deduction`) got a real
+  computed benefit; the other 58 (blocked by the null-SUA gap, same as PA) got an
+  independently-computed verdict only (benefit: null), proven SUA-invariant via a
+  12-point $0–$1,500 sweep per profile (0 of 58 were genuinely indeterminate — same
+  clean result PA and AK found). Two expected, explained state-axis-sensitive
+  divergences from WI/PA: `M12-abawd-in-a-waived-area` (APPROVE for NJ, matching PA's
+  `abawd_waiver_avail: true`, vs WI's DENY under `false`) and
+  `MX4-bbce-max-income-with-any-benefit` (DENY for NJ under the 185% threshold — this
+  profile is deliberately engineered to sit just under WI's/PA's 200%, and $4,440 clears
+  185%'s $4,109 HH3 threshold by exactly $2 under). Verification:
+  `/profile-simulation state=NJ` — 34 PASS / 0 FAIL / 95 SKIP (of 129), every SKIP
+  attributable to the documented null-SUA gap, no PARAMS_MISMATCH — matching PA's exact
+  shape. Confirmed zero regression: every other registered state's harness run unchanged
+  from its documented baseline (CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS all 129/0/0; PA
+  34/0/95; NY 127/2/0; AZ 128/1/0; MN 0/0/129 — all pre-existing, none newly introduced).
+  `tsc --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass, 44/47
+  profile-harness tests pass (3 pre-existing skips). PR TBD, awaiting merge go-ahead.
