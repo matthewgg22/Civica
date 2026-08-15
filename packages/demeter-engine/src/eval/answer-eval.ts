@@ -870,6 +870,20 @@ export const MA_GOLD: AnswerExpectation[] = [
     mustMention: "36",
     mustDisclaim: true,
   },
+  {
+    // Guards a live conversational-QA finding: a real multi-turn transcript
+    // used "BBCE" twice — "a rule called BBCE" then "the higher BBCE limit" —
+    // without ever saying what the acronym stands for or does, exactly the
+    // violation the "explain it in the same sentence" prompt rule exists to
+    // prevent for ABAWD/expedited service. This question is chosen because
+    // it asks about the BBCE mechanism directly, so an answer that mentions
+    // the term at all is very likely to reach for it here.
+    id: "ma-bbce-explained",
+    question: "Why is Massachusetts' SNAP income limit higher than the federal 130% line?",
+    state: "MA",
+    mustMention: "broad",
+    mustDisclaim: true,
+  },
 ];
 
 export const NV_GOLD: AnswerExpectation[] = [
