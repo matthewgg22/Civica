@@ -125,8 +125,13 @@
 // picked; they are NOT yet legal-policy-reviewed. Triple-check finding:
 // docs/findings/2026-06-02-snap-source-citation-triple-check.md.
 //
-// Other states (TX/KS/AK) are policy archetypes used by the fixture; their
-// SUA values are illustrative until the FNS-published values are loaded.
+// #864: TX and AK are no longer "archetype" placeholders — both now carry
+// real, per-axis-cited StatePolicy entries (TX's SUA values are the
+// adversarially verified TX state pack's; AK's own build closed #804/
+// #807-819). KS remains the one genuinely placeholder-style entry in this
+// file — its own doc-comment says so explicitly (label "Non-BBCE archetype
+// (e.g. KS)"; SUA/other axes not independently re-verified for the engine
+// the way the states built this session are).
 
 import { Decimal } from "../decimal";
 
@@ -295,36 +300,101 @@ const STATES: Record<string, StatePolicy[]> = {
     },
   ],
 
+  // Texas — HHSC SNAP, Texas Works Handbook (TWH) / 1 TAC Chapter 372. Per-axis
+  // citations below; #864 corrected two uncited, wrong values inherited from
+  // this file's pre-53-jurisdiction-build "archetype" era (asset_waiver and
+  // drug_felony_ban) and brought the rest of this block up to the same
+  // per-axis citation standard the ~35 states built this session use.
+  //
+  // bbce / bbce_threshold_pct / bbce_fpl_basis — TWH A-1341: Texas reaches BBCE
+  // via TANF non-cash (TANF-NC), gross income at or below 165% FPL,
+  // federal-fiscal-year basis (dollar table lives in TWH C-121, October
+  // cycle). Independently corroborated by USDA's own live BBCE chart
+  // (fns-prod.azureedge.us/snap/broad-based-categorical-eligibility, fetched
+  // live 2026-08-16): Texas row lists "165%" gross income limit. Source: the
+  // adversarially verified TX state pack
+  // (packages/demeter-engine/src/states/tx/supplements.json).
+  //
+  // asset_waiver — FALSE, CORRECTED #864 (was wrongly `true`, uncited).
+  // TWH A-1220: "A household is not eligible for benefits if the total value
+  // of countable resources (liquid resources and excess vehicle value) is
+  // over $5,000" — Texas KEEPS a resource test under BBCE; categorical
+  // eligibility does not remove it (TWH A-1238; 1 TAC §372.355; Tex. Hum. Res.
+  // Code §33.021). Independently corroborated by USDA's own live BBCE chart
+  // (fns-prod.azureedge.us/snap/broad-based-categorical-eligibility, fetched
+  // live 2026-08-16): Texas row lists "Asset limit of $5,000 (excludes 1
+  // vehicle up to $22,000 & includes excess vehicle value)" — the same
+  // BBCE-with-an-asset-limit fact pattern as this file's IN and NE entries
+  // (asset_waiver: false). BBCE and asset_waiver are independent axes; Texas
+  // is BBCE-165 but NOT asset-waived.
+  //
+  // sua_by_tier — Texas FY26 utility standards, TWH A-1429; 1 TAC §372.410.
+  // Texas names its middle tier the BASIC Utility Allowance (BUA), not the
+  // federal "Limited" (LUA), but the role is identical: utility costs that
+  // don't qualify for the heating/cooling standard. determineSUATier's
+  // FULL/LIMITED/TELEPHONE/NONE ladder is state-neutral, so the mapping is
+  // SUA→HCSUA, BUA→LUA, telephone→phone. These standards are MANDATORY in
+  // Texas — 1 TAC §372.410(6) bars a deduction for actual utility expenses,
+  // so a household cannot elect its real bills the way it can in some
+  // states. Source: the adversarially verified TX state pack
+  // (packages/demeter-engine/src/states/tx/) — refute gate 72 claims, 61
+  // confirmed / 11 corrected / 0 fabricated, with live re-fetch preferred
+  // over curated extracts. Values are pinned by a cross-check test so the
+  // pack and the engine cannot drift apart. EXPIRES 2026-09-30 (October
+  // COLA): re-verify A-1429 and C-121 before quoting any Texas dollar amount
+  // for FY27.
+  //
+  // allotment_tier — "48": Texas is a contiguous-US state; the standard
+  // federal max-allotment table applies (federal-tables.ts). No elevated
+  // table exists for Texas the way AK/HI/GU/VI have their own.
+  //
+  // drug_felony_ban — "modified", CORRECTED #864 (was wrongly `full`,
+  // uncited). Texas Human Resources Code §33.018(a): "21 U.S.C. Section
+  // 862a(a)(2) does not apply in determining the eligibility of any person
+  // for the supplemental nutrition assistance program" — a general opt-out
+  // of the federal lifetime ban. §33.018(b) re-triggers the federal ban only
+  // for a person convicted of, and released on parole or placed on community
+  // supervision for, a controlled-substance felony who then violates a
+  // condition of that parole/supervision (two-year ineligibility from the
+  // violation finding). §33.018(c) re-triggers permanently on a subsequent
+  // felony conviction regardless of its elements. Fetched live 2026-08-16 via
+  // law.justia.com and codes.findlaw.com (both mirror the statute text
+  // verbatim). Independently confirmed by USDA's own State Options Report,
+  // 17th Edition (data reference period October 2024), page 129, Texas
+  // profile: "Drug Felony Disqualifications — Modified disqualification."
+  // PDF fetched live 2026-08-16 at fna-bwbufwdzbabpezgc.z01.azurefd.us/sites/
+  // default/files/resource-files/snap-stateOptionsReport-17edition-120925.pdf.
+  // This is a textbook "modified" ban (opts out generally, re-triggers only
+  // on a parole/supervision violation or subsequent felony) — not the
+  // unmodified federal "full" ban this entry wrongly carried.
+  //
+  // abawd_waiver_avail — false: TWH C-331, "ABAWD waiver counties table —
+  // currently 'None'" (packages/demeter-engine/src/states/tx/authorities.json)
+  // — no active statewide or county ABAWD waiver disclosed by the TX state
+  // pack.
+  //
+  // rmp_operated — false: Texas is absent from USDA FNA's own current
+  // Restaurant Meals Program state list (Arizona, Maryland, New York,
+  // California, Massachusetts, Rhode Island, Illinois [Cook/Franklin only],
+  // Michigan, Virginia — cross-checked against this file's SC/MO/IN/TN
+  // entries' own independent fetches of the same list). No RMP mention in
+  // the TX state pack.
+  //
+  // Oracle note (#864): correcting drug_felony_ban and asset_waiver changes
+  // TX's expected_by_state verdicts for the drug-felony-flag and
+  // asset-holding profiles — see data-ops/sample/civica-test-profiles/
+  // v0.6.json's TX rows, rebuilt via an independent calculation (#636
+  // methodology), not copied from engine output.
   TX: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
       effective_end: new Date(Date.UTC(2099, 11, 31)),
       state_code: "TX",
-      label: "BBCE-165 archetype (e.g. TX)",
+      label: "Texas / HHSC SNAP",
       bbce: true,
       bbce_threshold_pct: 165,
       bbce_fpl_basis: "federal_fiscal_year",
-      asset_waiver: true,
-      // Texas FY26 utility standards — TWH A-1429; 1 TAC §372.410.
-      //
-      // Texas names its middle tier the BASIC Utility Allowance (BUA), not the
-      // federal "Limited" (LUA), but the role is identical: utility costs that
-      // don't qualify for the heating/cooling standard. determineSUATier's
-      // FULL/LIMITED/TELEPHONE/NONE ladder is state-neutral, so the mapping is
-      // SUA→HCSUA, BUA→LUA, telephone→phone.
-      //
-      // These standards are MANDATORY in Texas — 1 TAC §372.410(6) bars a
-      // deduction for actual utility expenses, so a household cannot elect its
-      // real bills the way it can in some states.
-      //
-      // Source: the adversarially verified TX state pack
-      // (packages/demeter-engine/src/states/tx/) — refute gate 72 claims, 61
-      // confirmed / 11 corrected / 0 fabricated, with live re-fetch preferred
-      // over curated extracts. Values are pinned by a cross-check test so the
-      // pack and the engine cannot drift apart.
-      //
-      // EXPIRES 2026-09-30 (October COLA): re-verify A-1429 and C-121 before
-      // quoting any Texas dollar amount for FY27.
+      asset_waiver: false,
       sua_by_tier: {
         HCSUA: new Decimal("445"),
         LUA: new Decimal("400"),
@@ -332,7 +402,7 @@ const STATES: Record<string, StatePolicy[]> = {
         none: new Decimal("0"),
       },
       allotment_tier: "48",
-      drug_felony_ban: "full",
+      drug_felony_ban: "modified",
       abawd_waiver_avail: false,
       rmp_operated: false,
     },
@@ -3029,12 +3099,16 @@ const STATES: Record<string, StatePolicy[]> = {
   // opting out of it under § 862a(d)(1) — corroborated by two independent
   // secondary aggregators (Network for Public Health Law's 50-state survey
   // explicitly codes SC as "kept full federal ban," no statute cited;
-  // Prison Policy Initiative, Feb. 2026). SC and Guam are the only two US
-  // jurisdictions in this posture nationwide, per PROVENANCE.md Finding 2 —
-  // matching this file's existing precedent that "full" means the
-  // unmodified federal ban applies (#805), not a state-enacted trigger.
-  // This makes SC only the SECOND state in this file (after TX) to carry
-  // "full" rather than "none"/"modified"/"unconfirmed."
+  // Prison Policy Initiative, Feb. 2026). SC's own PROVENANCE.md Finding 2
+  // (authored before this file's TX and Guam entries were corrected/built)
+  // named SC and Guam as the only two full-ban jurisdictions nationwide —
+  // now SUPERSEDED within this file: Guam's own entry (built this session)
+  // independently sourced `drug_felony_ban: "modified"`, and #864 corrected
+  // TX's own entry from an uncited `"full"` to `"modified"` (Tex. Hum. Res.
+  // Code §33.018 opts out of the federal ban generally). "Full" still means
+  // the unmodified federal ban applies (#805), not a state-enacted trigger.
+  // As of #864, SC is the SOLE `"full"` entry in this file — verified by
+  // grep across every registered state's `drug_felony_ban` value.
   //
   // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero
   // finding: independent ABAWDMap.us aggregator states "No waiver — rule
@@ -3098,13 +3172,19 @@ const STATES: Record<string, StatePolicy[]> = {
   // to find it already reflected in SC's own manual by then.
   //
   // Oracle: SC's closest structural axis-twin among all 26 already-
-  // registered states is TEXAS — matching 6 of 7 comparison axes exactly
-  // (bbce: true, asset_waiver: true, drug_felony_ban: "full" [the ONLY
-  // other "full" entry in this file], abawd_waiver_avail: false,
-  // allotment_tier: "48", rmp_operated: false), differing only in
-  // bbce_threshold_pct (TX 165 vs SC 130) — a stronger match than any
-  // 130%-threshold state in this file (OH/GA/NY all differ on
-  // asset_waiver, drug_felony_ban, or rmp_operated, each only 5/7). Built a
+  // registered states was TEXAS AT THE TIME THIS ORACLE WAS BUILT — matching
+  // 6 of 7 comparison axes exactly (bbce: true, asset_waiver: true,
+  // drug_felony_ban: "full" [the ONLY other "full" entry in this file at
+  // that time], abawd_waiver_avail: false, allotment_tier: "48",
+  // rmp_operated: false), differing only in bbce_threshold_pct (TX 165 vs SC
+  // 130) — a stronger match than any 130%-threshold state in this file
+  // (OH/GA/NY all differ on asset_waiver, drug_felony_ban, or rmp_operated,
+  // each only 5/7). #864 later corrected TX's own asset_waiver and
+  // drug_felony_ban (both were wrong, uncited) — this paragraph documents
+  // the historical cross-validation process only; it does not affect SC's
+  // own independently-calculated oracle values below, and SC is now the
+  // sole "full" entry in this file (see the drug_felony_ban comment above).
+  // Built a
   // fresh, independent Python calculator (not derived from engine output,
   // per #636) directly from verdict.ts/benefit-calc.ts/gates/{income-tests,
   // asset-test,abawd,student,composition,immigration,disqualifications,
