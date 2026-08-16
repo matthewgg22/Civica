@@ -3506,6 +3506,210 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Vermont (batch tier 6, §6 step 6 — VT/WY/DC, first of three; VT/WY/DC
+  // were all in-flight in the SAME worktree as this build, appended
+  // one-at-a-time: OK -> VT -> WY -> DC) — built Vermont's StatePolicy
+  // entry AND full 92-profile oracle coverage from scratch (VT had neither
+  // before this PR), translating VT's already-merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/vt/, PROVENANCE.md + supplements.json
+  // + freshness.json, built 2026-08-12) into the engine's stricter typed
+  // shape per §5's process.
+  //
+  // bbce: true, bbce_threshold_pct: 185, bbce_fpl_basis: federal_fiscal_year
+  // — DCF's own Income Guidelines table (published "October 2025," the
+  // FFY2026 cycle) states an Expanded Gross Monthly Income limit at 185%
+  // FPL ($2,413 HH1, $4,957 HH4, +$848/additional), and DCF's own live
+  // 3SquaresVT consumer page confirms a household is categorically
+  // eligible — clearing BOTH gross and net income tests — at or below that
+  // 185% figure. 185% matches NJ's threshold exactly (this file's only
+  // other 185% state), a genuinely lower BBCE ceiling than the 200%
+  // majority in this file (CA/MA/WA/OR/WI/NC/VA/IN/MO/MD/CO/SC/LA/TN).
+  //
+  // A STRUCTURAL FINDING this file had not yet recorded: Vermont runs a
+  // SECOND, entirely independent categorical-eligibility route — a
+  // household with children that received the Vermont Earned Income Tax
+  // Credit in the 12 months before applying is ALSO categorically eligible,
+  // regardless of the 185% gross test. This is the same BBCE-family
+  // "TANF-funded service confers cat-elig" mechanism NC's/VA's/DC's/OK's
+  // entries in this file already use, but routed through Vermont's OWN
+  // state EITC program rather than a federal TANF-services notice — a
+  // genuinely distinct trigger this schema has no second axis to encode.
+  // Not representable: `StatePolicy` has exactly one bbce_threshold_pct
+  // slot, so this second route is disclosed here rather than silently
+  // dropped or double-counted. Zero of the 92 v0.6 profiles model a
+  // VT-EITC-received household with children above 185% FPL gross income
+  // (the only shape where this gap would change a verdict), independently
+  // verified — no oracle-authoring consequence today, but a real future
+  // gap once a profile tests that specific combination.
+  //
+  // asset_waiver: true — DCF's own page: a household clearing either
+  // cat-elig route "does not have to pass either the gross or net income
+  // test," the same "categorically eligible households face no resource
+  // test" shape every other BBCE state in this file encodes as
+  // asset_waiver: true. A household that clears NEITHER route (exceeds
+  // 185% FPL AND has no EITC-linked child) can still qualify with
+  // resources considered ONLY if it includes a member 60+ or disabled —
+  // that narrower non-cat-elig track's $4,500 limit matches the current
+  // federal FY2026 COLA-adjusted E/D ceiling exactly (`asset_limit_
+  // elderly_disabled` in federal-tables.ts), so the engine's own federal
+  // fallback already produces the right number for any household that
+  // ever reaches the (state-wide-waived-when-cat-elig, federal-otherwise)
+  // asset gate — no VT-specific override needed beyond the waiver flag
+  // itself, the same reasoning this file's NJ/VA/NC/TX/CA entries already
+  // rely on.
+  //
+  // sua_by_tier — FULLY POPULATED, not null: DCF's own dated 10/30/2025
+  // legislative slide deck (Deputy Commissioner + Food and Nutrition
+  // Program Director, submitted directly to the Vermont Legislature)
+  // states three current utility-allowance tiers effective 10/1/2025
+  // (FFY2026): Standard Utility Allowance (heating/cooling) $1,096/mo,
+  // Basic Utility Allowance (2+ non-heating utilities) $311/mo, and a
+  // telephone-only allowance of $37/mo. HCSUA -> $1,096 (SUA), LUA -> $311
+  // (BUA — same naming-translation convention TX's/OK's entries in this
+  // file already use for a "Basic" middle tier), phone -> $37. DISCLOSED,
+  // not silently trusted at full confidence: this pack's own freshness.json
+  // flags these three figures as resting on a SINGLE primary document (the
+  // slide deck) rather than independently cross-verified against a second,
+  // fully separate published DCF COLA notice — unlike VT's own
+  // independently-cross-checked income-limit figures. Treated as
+  // authoritative here (DCF's own dated, named, official legislative
+  // testimony is a strong primary source) but the single-sourcing is
+  // disclosed rather than hidden.
+  //
+  // allotment_tier: "48" — no Vermont-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL STATUTORY OPT-OUT, and one of
+  // the earliest and cleanest in this file: 33 V.S.A. § 1203a states in
+  // full, "An individual domiciled in Vermont shall be exempt from the
+  // disqualification provided for in 21 U.S.C. § 862a," added by 2009 No. 1
+  // (Sp. Sess.), § E.323.2 — on the books since 2009, earlier than NJ's
+  // 2012 repeal, VA's 2020 amendment, or OK's 1997 session law. Independently
+  // corroborated by the Collateral Consequences Resource Center's 50-state
+  // survey, which categorizes Vermont as "Fully Opted Out" for both SNAP
+  // and TANF — a case where a minority-position claim (a clean,
+  // unconditional full opt-out) is confirmed by BOTH the primary statutory
+  // text AND a specialized secondary source, not resting on either alone.
+  //
+  // abawd_waiver_avail: false — DCF's own live Understanding 3SquaresVT
+  // Work Rules page AND DCF's own dated 10/30/2025 legislative slide deck
+  // INDEPENDENTLY confirm the current post-OBBBA criteria (18-64 age range,
+  // child-under-14 exemption, homeless/veteran/foster-care exemptions
+  // removed, new Indian/Urban Indian/California Indian exemption added).
+  // USDA FNS's own ABAWD Time Limit Waivers FY2025-2029 index shows NO
+  // Vermont entry anywhere — not even a lapsed one, a stronger negative
+  // finding than several other states in this file whose absence reflects
+  // only the current FY (Vermont has no PAST entry either). No county-level
+  // lookup needed — a uniform statewide zero-waiver shape, same as this
+  // file's VA/MO/TN/MD/CO/SC/LA/OK entries.
+  //
+  // rmp_operated: false — DCF's own dated 2/19/2025 legislative report
+  // confirms Vermont currently operates NO formal Restaurant Meals Program
+  // (DCF opposed 2024's S.215, citing cost). Disclosed, not modeled (no
+  // engine consumer exists for this axis, grep-confirmed, same as every
+  // other state's entry): Vermont is genuinely unusual among this file's
+  // "no RMP" states — it is one of only FIVE states nationally authorized
+  // to issue SNAP benefits as unrestricted CASH (not EBT) to households
+  // where every member is 65+ and/or receiving SSI, and 43% of Vermont's
+  // entire 3SquaresVT caseload (16,823 of 39,112 households, per DCF's own
+  // report) already receives benefits this way — a completely separate
+  // mechanism from RMP with no representable slot in this schema (the
+  // engine models neither a cash-out benefit-delivery mode nor its
+  // restaurant-spending consequence), disclosed here rather than silently
+  // folded into the RMP boolean.
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824, newly confirmed present for
+  // Vermont: no engine axis exists for VT's genuinely long elderly/disabled
+  // certification track (up to 36 months, "3SquaresVT in a SNAP!," no
+  // interim report) vs. the standard 12-month track with a month-5 interim
+  // report — an informational/certification-period gap, not a
+  // verdict/benefit-consequential one, matching this file's OK/LA/SC
+  // certification-period disclosures.
+  //
+  // Oracle: VT's closest structural axis-twin among all 29 already-
+  // registered states is WISCONSIN — matching bbce: true,
+  // bbce_fpl_basis: federal_fiscal_year, asset_waiver: true,
+  // allotment_tier: "48", abawd_waiver_avail: false, rmp_operated: false,
+  // differing only in bbce_threshold_pct (WI 200 vs VT 185), drug_felony_ban
+  // (WI "modified" vs VT "none" — no verdict/benefit consequence,
+  // grep-confirmed: only "full" disqualifies), and the SUA dollar figures.
+  // Built a fresh, independent Python calculator (not derived from engine
+  // output, per #636) directly from verdict.ts/benefit-calc.ts/gates/
+  // {income-tests,asset-test,abawd,student,composition,immigration,
+  // disqualifications,categorical}.ts/facts.ts/constants/federal-tables.ts's
+  // own read source (not just their doc-comments), mirroring every gate and
+  // the benefit-calc formula exactly, including decimal.ts's half-up
+  // (roundDollar), floor (floorDollar), and ceiling (ceilDollar) rounding
+  // conventions. Cross-validated BEFORE trusting it for VT: 92/92 exact
+  // match (verdict AND benefit) reproducing WI's already-graded oracle
+  // under WI's own StatePolicy params, PLUS all 37 non-expected_by_state
+  // variant rows (0 mismatches) — 129/129 total. ALSO cross-validated
+  // 129/129 against OK's already-graded oracle (OK's own params) and 129/129
+  // against NJ's already-graded oracle (34 PASS / 0 FAIL / 95 SKIP under
+  // NJ's null-SUA gap — NJ shares VT's exact 185% threshold, a useful
+  // second cross-check on the BBCE-percentage-sensitive gate specifically,
+  // even though NJ's own null SUA means it can't validate the benefit-calc
+  // pathway the way WI's non-null SUA does) — all three cross-checks passed
+  // before applying VT's own policy params. Also checked all 37 rows across
+  // the 18 non-expected_by_state variant profiles directly under VT's own
+  // params for a VT-specific verdict_by_state override, the same discipline
+  // every prior state's build used — found ZERO divergence from the shared
+  // default verdict (matching NC's/VA's/MD's/CO's/LA's zero-override
+  // result), so no override was authored. Authored all 92
+  // expected_by_state.VT entries: 79 APPROVE / 13 DENY — one MORE deny than
+  // this file's 200%-BBCE states' typical 12-DENY set (D03-D10 minus D01/D02,
+  // M12, M19, S01, S04 — the shared non-financial-gate/E-D-income-gate DENY
+  // set every BBCE state in this file shares), because MX4-bbce-max-income-
+  // with-any-benefit ($4,440 HH3) clears every 200% state's threshold but
+  // falls just short of VT's lower 185% ($4,109 HH3) — the SAME MX4 result
+  // this file's NJ entry already found under its own identical 185%
+  // threshold, an independent confirmation the divergence is real policy
+  // consequence, not a calculator bug.
+  //
+  // Verification: `/profile-simulation state=VT` — 129/129 PASS, 0 FAIL,
+  // 0 SKIP (clean, matching every 129/0/0-grade state in this file, not
+  // PA's/NJ's/TN's/MN's SKIP-heavy shape — VT's real, current SUA figures
+  // mean it did not need the null-SUA fallback). Every other registered
+  // state's harness run reconfirmed unchanged from its documented baseline
+  // (full per-state confirmation in this build's PR description and the
+  // plan doc's execution-log entry). `tsc --noEmit -p packages/snap-rules`
+  // clean, 323/323 snap-rules tests pass (0 new — a schema-conformant pure
+  // addition needed no new unit tests), 44/47 profile-harness tests pass (3
+  // pre-existing skips). Did not touch `packages/demeter-engine` (VT's
+  // corpus was already complete and out of scope) or any other state's
+  // StatePolicy/oracle coverage. No new GitHub issue filed — the VT-EITC
+  // second-cat-elig-route gap and the 36-month certification-period gap are
+  // both per-state disclosed gaps of an already-documented class (#824-style
+  // Facts-shape/mechanism gaps, or a genuine schema-slot-count limitation
+  // this file already discloses inline rather than files an issue for,
+  // matching TN's dual-BBCE-family precedent), not a new engine architecture
+  // gap, per this task's own instruction. This is the first of three
+  // batch-tier-6 jurisdictions (VT, then WY, then DC) built in this same
+  // worktree/PR, one at a time, each appended after the previous.
+  VT: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "VT",
+      label: "Vermont / DCF — 3SquaresVT",
+      bbce: true,
+      bbce_threshold_pct: 185,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("1096"),
+        LUA: new Decimal("311"),
+        phone: new Decimal("37"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
