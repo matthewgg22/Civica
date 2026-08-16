@@ -3866,9 +3866,9 @@
           "benefit": null
         },
         "OH": {
-          "verdict": "DENY",
-          "eligible": false,
-          "benefit": null
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
         },
         "MI": {
           "verdict": "APPROVE",
@@ -7310,9 +7310,9 @@
           "benefit": 83
         },
         "OH": {
-          "verdict": "DENY",
-          "eligible": false,
-          "benefit": null
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 149
         },
         "MI": {
           "verdict": "APPROVE",
@@ -8374,9 +8374,9 @@
           "benefit": 256
         },
         "OH": {
-          "verdict": "DENY",
-          "eligible": false,
-          "benefit": null
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 256
         },
         "MI": {
           "verdict": "APPROVE",
@@ -9073,9 +9073,9 @@
           "benefit": 327
         },
         "OH": {
-          "verdict": "DENY",
-          "eligible": false,
-          "benefit": null
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 327
         },
         "MI": {
           "verdict": "APPROVE",
@@ -11214,9 +11214,9 @@
           "reason": "no IL ABAWD waiver \u2014 statewide waiver ended Nov 2025 (IDHS memo 10/16/2025), 3-of-36 clock exhausted [7 CFR 273.24]"
         },
         "OH": {
-          "verdict": "APPROVE",
-          "eligible": true,
-          "benefit": 298
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         },
         "MI": {
           "verdict": "APPROVE",
@@ -13668,7 +13668,7 @@
               "income.0.amount": 1800
             },
             "verdict": "APPROVE",
-            "note": "$1,800 gross HH1: clears 200% ($2,610) and both TX's and IL's 165% ($2,153); denied under the federal 130% screen ($1,696-97) \u2014 KS/OH/GA (GA's regular-household screen stays federal 130% under TCOS categorical eligibility, same archetype as OH). AK cleared the federal-130 group before 7/1/2025 (#804); it is BBCE-200 (like CA/MA/TX/FL) effective 7/1/2025 and now clears here too.",
+            "note": "$1,800 gross HH1: clears 200% ($2,610) and both TX's and IL's 165% ($2,153); denied under the federal 130% screen ($1,696-97) \u2014 KS/GA (GA's regular-household screen stays federal 130% under TCOS categorical eligibility). OH was corrected to 200% BBCE (#751) and clears here too. AK cleared the federal-130 group before 7/1/2025 (#804); it is BBCE-200 (like CA/MA/TX/FL) effective 7/1/2025 and now clears here too.",
             "verdict_by_state": {
               "CA": "APPROVE",
               "MA": "APPROVE",
@@ -13676,7 +13676,7 @@
               "KS": "DENY",
               "AK": "APPROVE",
               "IL": "APPROVE",
-              "OH": "DENY",
+              "OH": "APPROVE",
               "GA": "DENY",
               "FL": "APPROVE",
               "MO": "DENY",
@@ -13700,7 +13700,7 @@
               "income.0.amount": 2200
             },
             "verdict": "APPROVE",
-            "note": "$2,200 gross HH1: clears only the 200% screen ($2,610). BBCE is not a boolean \u2014 TX and IL (both 165%, $2,153) deny; OH and GA (both federal 130%, $1,696-97) deny too (#609). AK is BBCE-200 effective 7/1/2025 (#804) and clears here too, same as CA/MA/TX/FL.",
+            "note": "$2,200 gross HH1: clears only the 200% screen ($2,610). BBCE is not a boolean \u2014 TX and IL (both 165%, $2,153) deny; GA (federal 130%, $1,696-97) denies too (#609). OH was corrected to 200% BBCE (#751) and clears here too. AK is BBCE-200 effective 7/1/2025 (#804) and clears here too, same as CA/MA/TX/FL.",
             "verdict_by_state": {
               "CA": "APPROVE",
               "MA": "APPROVE",
@@ -13708,7 +13708,7 @@
               "KS": "DENY",
               "AK": "APPROVE",
               "IL": "DENY",
-              "OH": "DENY",
+              "OH": "APPROVE",
               "GA": "DENY",
               "FL": "APPROVE",
               "MO": "DENY",
@@ -16598,9 +16598,9 @@
           "benefit": 24
         },
         "OH": {
-          "verdict": "DENY",
-          "eligible": false,
-          "benefit": null
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 42
         },
         "MI": {
           "verdict": "APPROVE",
@@ -19880,9 +19880,9 @@
           "benefit": 155
         },
         "OH": {
-          "verdict": "DENY",
-          "eligible": false,
-          "benefit": null
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 155
         },
         "MI": {
           "verdict": "APPROVE",
@@ -23754,9 +23754,9 @@
           "benefit": null
         },
         "OH": {
-          "verdict": "DENY",
-          "eligible": false,
-          "benefit": null
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 112
         },
         "MI": {
           "verdict": "APPROVE",
@@ -24117,9 +24117,9 @@
           "benefit": null
         },
         "OH": {
-          "verdict": "DENY",
-          "eligible": false,
-          "benefit": null
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 0
         },
         "MI": {
           "verdict": "APPROVE",
