@@ -96,15 +96,16 @@ describe("Tranche 1 SUA — FL/IL/OH sourced, PA a logged verification gap (#619
 });
 
 describe("Tranche 1 unsourced axes stay honest", () => {
-  it("PA's ABAWD waiver flag stays fail-open — still unsourced", () => {
-    // A wrong `false` STRIPS a claimed waiver exemption (gates/abawd.ts reads
-    // false as "we affirmatively know this area holds no waiver") and denies
-    // food. Sourcing passes have failed to produce a citable FY26 answer for
-    // PA, so it stays true. See the states.ts block comment for why the real
-    // fix is county sets, not a boolean flip. OH moved out of this group
-    // (#752) and FL moved out of this group (#708) — both flags are now
-    // SOURCED false, see the dedicated tests below.
-    expect(statePolicyFor("PA", ASOF).abawd_waiver_avail, "PA waiver flag").toBe(true);
+  it("PA's ABAWD waiver flag is now false (#878) — matches the government's own tracker, not this file's retired fail-open default", () => {
+    // Was fail-open `true` (no citable FY26 primary-source answer for PA's
+    // real waiver footprint). Per #878's user-authorized standing policy,
+    // the state-level fallback (gates/abawd.ts, consulted only when
+    // county_fips is unknown) now matches abawdmap.us's own tracker answer
+    // ("no statewide waiver — rule applies") instead of guessing permissive.
+    // OH moved to sourced false via #752, FL via #708 — both dedicated
+    // tests below; PA joins them via #878's tracker-matching policy instead
+    // of a state-specific primary-source find.
+    expect(statePolicyFor("PA", ASOF).abawd_waiver_avail, "PA waiver flag").toBe(false);
   });
 
   it("Florida's ABAWD waiver flag is SOURCED false — no FY25/FY26 waiver response on file (#708)", () => {
