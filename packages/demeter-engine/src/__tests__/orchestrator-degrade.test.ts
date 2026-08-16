@@ -21,6 +21,7 @@ vi.mock("@anthropic-ai/sdk", () => ({
 
 import { answerQuestion, type AnswerFrame } from "../orchestrator";
 import type { MaeAuditRecord } from "../audit";
+import { degradeLeads } from "../lang";
 
 // A fabricated authority no verifier pass will accept.
 const FABRICATED = "under 7 CFR 999.99 your benefits double every month. ";
@@ -222,5 +223,89 @@ describe("answerQuestion verifier ladder", () => {
     const text = frames.filter((f) => f.type === "delta").map((f) => f.text).join("");
     expect(text).not.toContain("$12,345");
     expect(outcomes).toEqual(["recomposed"]);
+  });
+
+  // Regression, 2026-08-16: the retry's own corrective instruction used to be
+  // ONE citation-shaped message ("cite only the sources provided") regardless
+  // of which gate actually aborted the stream — so a numeric mismatch was
+  // told to fix a citation problem it didn't have, got no real information to
+  // self-correct with, and reliably reached for the same unverifiable figure
+  // again on the retry too. This asserts the retry call actually receives
+  // guidance matched to what really failed.
+  describe("the retry's corrective instruction is failure-specific", () => {
+    function correctiveTextSentToRetry(): string {
+      const call = sdk.create.mock.calls[0]?.[0] as
+        | { system?: Array<{ text: string }> }
+        | undefined;
+      const blocks = call?.system ?? [];
+      return blocks[blocks.length - 1]?.text ?? "";
+    }
+
+    it("a citation-only failure gets citation guidance, not numeric guidance", async () => {
+      sdk.stream.mockReturnValue(fakeStream(Array(12).fill(FABRICATED))); // no $ figures at all
+      sdk.create.mockResolvedValue({
+        content: [{ type: "text", text: "Honest retry: the sources do not cover this." }],
+        usage: { input_tokens: 80, output_tokens: 20 },
+      });
+      await collect(baseRequest(audits, outcomes));
+
+      const corrective = correctiveTextSentToRetry();
+      expect(corrective).toContain("cited a source that is not in the provided source text");
+      expect(corrective).not.toContain("dollar amount or percentage");
+    });
+
+    it("a numeric-only failure gets numeric guidance, not citation guidance", async () => {
+      // No citation at all in this text — only an unverifiable dollar figure.
+      sdk.stream.mockReturnValue(
+        fakeStream(Array(12).fill("The limit is $12,345 a month for everyone. ")),
+      );
+      sdk.create.mockResolvedValue({
+        content: [{ type: "text", text: "The provided sources don't cover that figure." }],
+        usage: { input_tokens: 80, output_tokens: 20 },
+      });
+      await collect(baseRequest(audits, outcomes));
+
+      const corrective = correctiveTextSentToRetry();
+      expect(corrective).toContain("dollar amount or percentage");
+      expect(corrective).toContain("×4.3");
+      expect(corrective).not.toContain("cited a source that is not in the provided source text");
+    });
+  });
+
+  // Regression, 2026-08-16: a real transcript got the DEGRADE_AGAIN
+  // paragraph (already a REWORDED repeat) a second time — three identical-
+  // feeling refusals in the same conversation. A bare "has this degraded
+  // before?" boolean can only ever pick DEGRADE vs DEGRADE_AGAIN, so a third
+  // occurrence got DEGRADE_AGAIN's own text verbatim again.
+  it("degrading a THIRD time in one conversation escalates past DEGRADE_AGAIN, not repeats it", async () => {
+    // Two prior assistant turns already carrying a real degrade — one from
+    // each tier, exactly like a genuine conversation history would.
+    const priorDegradeMessages = degradeLeads("en")
+      .slice(0, 2)
+      .map((lead) => ({ role: "assistant" as const, content: `${lead} (rest of the refusal.)` }));
+
+    sdk.stream.mockReturnValue(fakeStream(Array(12).fill(FABRICATED)));
+    sdk.create.mockResolvedValue({
+      content: [{ type: "text", text: FABRICATED }], // retry ALSO fails → degrades again
+      usage: { input_tokens: 80, output_tokens: 20 },
+    });
+
+    const frames = await collect({
+      ...baseRequest(audits, outcomes),
+      messages: [
+        { role: "user", content: "first question" },
+        ...priorDegradeMessages,
+        { role: "user", content: "I get 150 a day for 4 days a week" },
+      ],
+    });
+
+    const text = frames.filter((f) => f.type === "delta").map((f) => f.text).join("");
+    expect(outcomes).toEqual(["degraded"]);
+    // NOT DEGRADE_AGAIN's lead a second time — that's the exact bug.
+    expect(text).not.toContain(degradeLeads("en")[1]);
+    // The escalation tier's own lead, pointing at the estimate tool instead
+    // of repeating a refusal.
+    expect(text).toContain(degradeLeads("en")[2]);
+    expect(text).toMatch(/build my estimate/i);
   });
 });
