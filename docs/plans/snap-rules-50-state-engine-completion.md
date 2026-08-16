@@ -1346,4 +1346,5 @@ all of it.
   vehicle exclusion, the 12-month certification period) is a per-state disclosed gap of an
   already-documented class (#824-style Facts-shape/mechanism gaps, or the GA-precedent
   "sub-screen not yet modelled" acceptance), not a new engine architecture gap, per this
-  task's own instruction. PR TBD, awaiting merge go-ahead.
+  task's own instruction. PR [#848](https://github.com/matthewgg22/Civica/pull/848),
+  awaiting merge go-ahead.
