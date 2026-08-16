@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  fplMonthly,
-  NoFplTableForRegionError,
-} from "../src/constants/federal-tables";
+import { fplMonthly } from "../src/constants/federal-tables";
 
 // #812: federal-tables.ts used to apply the single 48-contiguous+DC HHS
 // poverty guideline to every state, including AK (and future HI), which
@@ -78,8 +75,40 @@ describe("fplMonthly per-region FPL table (#812)", () => {
     expect(fplMonthly(4, FY25, "AK").toNumber()).toBe(3250); // ceil(39000/12)
   });
 
-  it("throws a clear, distinguishable error for HI (not yet sourced, not a silent contiguous copy)", () => {
-    expect(() => fplMonthly(1, FY26, "HI")).toThrow(NoFplTableForRegionError);
+  it("uses HI's own, higher HHS guideline and its ceiling rounding convention, FY26 (#861)", () => {
+    // 2025 HHS Poverty Guidelines for Hawaii (Federal Register Vol. 90
+    // No. 11, Jan 17, 2025, 90 FR 5917): $17,990 first person, $6,330
+    // each additional. HI's own convention is ceiling, same as AK's —
+    // confirmed against USDA FNS's own FY2026 COLA memo's published
+    // HI-specific income-eligibility table (see federal-tables.ts's
+    // fpl_by_region.hi doc-comment for the full reconciliation).
+    expect(fplMonthly(1, FY26, "HI").toNumber()).toBe(1500);
+    expect(fplMonthly(2, FY26, "HI").toNumber()).toBe(2027);
+    expect(fplMonthly(3, FY26, "HI").toNumber()).toBe(2555);
+    expect(fplMonthly(4, FY26, "HI").toNumber()).toBe(3082);
+    expect(fplMonthly(5, FY26, "HI").toNumber()).toBe(3610);
+    expect(fplMonthly(6, FY26, "HI").toNumber()).toBe(4137);
+    expect(fplMonthly(7, FY26, "HI").toNumber()).toBe(4665);
+    expect(fplMonthly(8, FY26, "HI").toNumber()).toBe(5192);
+  });
+
+  it("uses HI's own guideline for FY25 too (2024 HHS Poverty Guidelines for Hawaii, 89 FR 2961-63)", () => {
+    // $17,310 first person, $6,190 each additional.
+    expect(fplMonthly(1, FY25, "HI").toNumber()).toBe(1443); // ceil(17310/12)
+    expect(fplMonthly(4, FY25, "HI").toNumber()).toBe(2990); // ceil(35880/12)
+  });
+
+  it("is strictly higher than the 48-contiguous table at every household size (HI can only loosen, never tighten, eligibility)", () => {
+    for (let size = 1; size <= 8; size++) {
+      const hi = fplMonthly(size, FY26, "HI").toNumber();
+      const contiguous = fplMonthly(size, FY26, "CA").toNumber();
+      expect(hi, `HH${size}`).toBeGreaterThan(contiguous);
+    }
+  });
+
+  it("GU uses the plain contiguous table — confirmed NOT elevated (#861), unlike HI/AK", () => {
+    expect(fplMonthly(1, FY26, "GU").toNumber()).toBe(fplMonthly(1, FY26, "CA").toNumber());
+    expect(fplMonthly(4, FY26, "GU").toNumber()).toBe(fplMonthly(4, FY26, "CA").toNumber());
   });
 
   it("treats state lookup case-insensitively", () => {

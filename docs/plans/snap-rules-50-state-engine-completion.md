@@ -22,25 +22,30 @@ at all; today, most do.
 ```
    CORPUS (packages/demeter-engine)        ENGINE (packages/snap-rules)
    "what does Mae say about this state"    "what does the calculator DO for this state"
-   53 / 53 jurisdictions          ────▶     30 / 53 jurisdictions have StatePolicy
-                                            30 / 53 have oracle expectations authored
-                                            25 / 30 grade fully CLEAN (129/0/0 or a
-                                              documented pre-existing partial); 4 more
-                                              (PA/NJ/TN/VI) grade 34/0/95 on the
+   53 / 53 jurisdictions          ────▶     53 / 53 jurisdictions have StatePolicy
+                                            53 / 53 have oracle expectations authored
+                                            25 / 32 grade fully CLEAN (129/0/0 or a
+                                              documented pre-existing partial); 6 more
+                                              (PA/NJ/TN/VI/HI/GU) grade 34/0/95 on the
                                               disclosed null-SUA gap; MN is 0/0/129
                                               (structurally blocked, no rows gradeable)
 ```
+
+**§5 is DONE — HI and GU (#861) are built, completing the ENTIRE original
+53-jurisdiction plan scope except MN (still blocked on its own separate null-SUA gap, §6
+step 7).** See the execution log's HI/GU entries below.
 
 ## 2. Current state of the calculator (verified against `origin/codex/rebuild-feb18`, plus
 this plan's own individual-tier and batch-tier landings)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **51 states/jurisdictions**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV,
-AZ, OR, WI, MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK, ME, RI, MT, AL,
-KY, CT, UT, IA, AR, MS, NM, NE, ID, WV, NH, DE, SD, ND, VT, WY, DC, VI. The individual tier
-(§6 step 3) is CLOSED at 13/13; every planned batch-tier segment (CT/UT/IA/AR, MS/NM/NE,
-ID/WV/NH, ME/RI/MT, DE/SD/ND, VT/WY/DC, and now VI's solo entry) is DONE, built and merged
-per the execution log's entries below.
+states.ts`) exists for **all 53 states/jurisdictions**: CA, WA, TX, NY, GA, MI, IL, FL, MA,
+NV, AZ, OR, WI, MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK, ME, RI, MT,
+AL, KY, CT, UT, IA, AR, MS, NM, NE, ID, WV, NH, DE, SD, ND, VT, WY, DC, VI, HI, GU. The
+individual tier (§6 step 3) is CLOSED at 13/13; every planned batch-tier segment (CT/UT/
+IA/AR, MS/NM/NE, ID/WV/NH, ME/RI/MT, DE/SD/ND, VT/WY/DC, and VI's solo entry) is DONE; the
+§4 schema step is DONE for VI/HI/GU (#860/#861); HI and GU themselves (§5, the final two
+jurisdictions) are DONE, built and merged per the execution log's entries below.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
@@ -141,7 +146,7 @@ else depends on it sooner.
 
 ## 4. A schema gap the plan needs to name up front
 
-**STATUS: DONE for VI. HI/GU remain open, separate future work (§5).**
+**STATUS: DONE for VI, HI, and GU. §4/§5 fully closed.**
 
 `AllotmentTier` (`packages/snap-rules/src/constants/states.ts`) was originally a closed
 union of exactly `"48" | "AK"`. **HI and Guam both need a real elevated-allotment tier the
@@ -172,11 +177,27 @@ zero mismatches against the engine's own post-fix output, cross-validated agains
 quoted table). VI's own $586 maximum shelter deduction (vs. federal FY26's $744) remains a
 DISCLOSED, UNFIXED gap — `shelterCapFor()` has no per-state override slot at all (not even
 for AK); #858 itself frames this as the non-material side of the gap since it under-caps
-rather than over-caps. HI and GU still have **no** `StatePolicy` entry at all and were NOT
-built in this PR — they remain entirely separate future work (§5), each needing its own
-go-ahead, and will need their own `"HI"`/`"GU"` `AllotmentTier` values (plus their own
-`hi-allotment-table.ts`/`gu-allotment-table.ts` modules) added when actually built, not
-before.
+rather than over-caps.
+
+**Resolved for HI and GU** (schema-extension + build PR, closes #861 — the final §5 step):
+`AllotmentTier` widened again to `"48" | "AK" | "VI" | "HI" | "GU"`;
+`packages/snap-rules/src/constants/hi-allotment-table.ts` / `gu-allotment-table.ts` (new
+modules, same flat shape as VI's — neither jurisdiction has a zone/county axis) carry both
+jurisdictions' real max-allotment + minimum-benefit figures, sourced verbatim from USDA
+FNS's own FY2026 COLA memo (quoted in full in #861); `federal-tables.ts`'s
+`maxAllotmentFor`/`minimumBenefitFor` both gained `state === "HI"`/`state === "GU"`
+branches. A SECOND, distinct gap #861 also closed: HI's own income-eligibility FPL
+guideline is genuinely elevated too (unlike VI's, which tracks the 48-contiguous table) —
+`federal-tables.ts`'s `fpl_by_region.hi` slot, `null` since #812, is now populated for both
+FY25 and FY26. GU's income-eligibility limits are confirmed NOT elevated (USDA's own COLA
+memo groups Guam with the 48-contiguous/DC/VI table) — no `fpl_by_region` entry needed for
+GU. Both jurisdictions' `StatePolicy` entries and full 92+37-row oracle coverage were built
+in the same PR (see the execution log's HI/GU entries below for the full build, including
+GU's BBCE-percentage resolution — 165%, resolving a gap the GU corpus pack explicitly left
+unconfirmed — via the same USDA BBCE page #858 already established as this file's primary
+source for this axis). Both jurisdictions' own elevated standard deduction / shelter cap
+remain DISCLOSED, UNFIXED gaps, same shape as VI's/AK's own — `standardDeductionFor()`/
+`shelterCapFor()` have no per-state override slot at all.
 
 ## 5. Per-state build process (mirrors the corpus pipeline; different verification step)
 
@@ -258,10 +279,11 @@ exists and only oracle authoring is outstanding):
    `"VI"`, and its 34 real-engine-gradeable oracle rows backfilled with real benefit
    dollars. HI/GU's own tier values (`"HI"`/`"GU"`) were deliberately NOT added — no table,
    no consumer, no `StatePolicy` entry to feed — that remains step 5's own separate work.
-5. HI, GU (now unblocked on the schema mechanism per step 4's VI fix — the same
-   `AllotmentTier`-widening pattern is proven; still need their own `"HI"`/`"GU"` tier
-   values, their own allotment-table modules, and their own `StatePolicy` entries built
-   from scratch, each requiring its own go-ahead)
+5. ~~HI, GU~~ (done — #861, the same `AllotmentTier`-widening pattern step 4 proved for VI,
+   now with their own `"HI"`/`"GU"` tier values, their own allotment-table modules, their
+   own `StatePolicy` entries built from scratch, and full 92+37-row oracle coverage — see
+   the execution log's HI/GU entries below. **§5 is CLOSED — this was the final
+   individually-scoped jurisdiction work in the plan.**)
 6. Batch tier (<4M population, N≤3 per batch): ~~CT, UT, IA, AR~~ (done — first batch-tier
    segment, see the execution log's CT/UT/IA/AR entries below) / ~~MS, NM, NE~~ (done —
    second batch-tier segment, see the execution log's MS/NM/NE entries below) /
@@ -273,9 +295,9 @@ exists and only oracle authoring is outstanding):
    final entry, see VI's own execution-log entry and issue #858). **The batch tier is
    CLOSED — every planned segment has landed.**
 7. MN, once a real SUA figure is sourced (may unblock independently of this sequencing —
-   revisit whenever that specific gap closes). HI and GU remain blocked on the
-   `AllotmentTier` schema extension (§4) — the only other still-unstarted engine work now
-   that the batch tier is fully closed.
+   revisit whenever that specific gap closes). **This is now the ONLY remaining item in the
+   entire plan** — HI and GU (§5) are done (#861), completing every other jurisdiction of
+   the original 53-jurisdiction scope.
 
 ## 7. Governance — carried forward unchanged
 
@@ -3528,4 +3550,162 @@ all of it.
   is a genuine new engine mechanism, not just a per-state data addition). `pnpm test`
   (profile-harness): 44/47 passing (3 pre-existing skips, unchanged). Did not touch HI's or
   GU's `StatePolicy` (neither exists) or any other state's `StatePolicy`/oracle coverage.
-  PR TBD, awaiting merge go-ahead.
+  PR [#860](https://github.com/matthewgg22/Civica/pull/860), **merged**.
+
+- **HI, GU (#861) — StatePolicy + full oracle authoring, the final two jurisdictions of the
+  original 53-jurisdiction plan scope (§5)** — both built in the same PR, following the same
+  process §5 established (steps 1-6) and mirroring #860's own VI-scoped schema-extension
+  shape (step 4) since both jurisdictions needed the exact same class of fix VI did.
+
+  **Research findings, filed as issue
+  [#861](https://github.com/matthewgg22/Civica/issues/861) BEFORE any engine edit**, per
+  CLAUDE.md's "Engine-math: file issue first" rule and this project's own established
+  discipline (#805/#806/#814/#853/#858 all filed before their respective fixes). Fetched
+  USDA FNS's own FY2026 SNAP COLA memorandum directly (the SAME primary document #858/#860
+  sourced VI's table from) — HI's real max-allotment table is ~70% higher than the
+  48-contiguous table at every household size (HI $506/$929/$1,334/$1,689/$2,010/$2,415/
+  $2,668/$3,040, +$371/additional), GU's is ~47% higher ($439/$806/$1,157/$1,465/$1,743/
+  $2,095/$2,315/$2,637, +$322/additional) — both with real, elevated minimum allotments too
+  ($41 HI, $35 GU vs. the federal $24 default). A SECOND, distinct gap surfaced during this
+  research and closed in the same issue/PR: HI's own income-ELIGIBILITY guideline (not just
+  its benefit-calculation figures) is also genuinely elevated —
+  `federal-tables.ts`'s `fpl_by_region.hi` slot, left `null` since #812 ("HI has no
+  StatePolicy registered yet"), needed real data. Sourced HI's annual guideline directly
+  from the SAME HHS Federal Register notices #812 used for AK (FY26: $17,990/$6,330 from 90
+  FR 5917; FY25: $17,310/$6,190 from 89 FR 2961-63) and confirmed HI's own monthly-rounding
+  convention is CEILING, same as AK's, by reproducing USDA's FY2026 COLA memo's own
+  published HI-specific income-eligibility table exactly at all 8 household sizes across all
+  three FPL columns (100%/130%/165%) — 0 mismatches. GU's income-eligibility limits, by
+  contrast, are CONFIRMED NOT elevated — the same COLA memo groups Guam into the single
+  "48 States, D.C., Guam, Virgin Islands" eligibility column — an asymmetric structure both
+  jurisdictions' own Demeter corpus packs independently found and flagged. A THIRD finding:
+  independently resolved GU's own BBCE gross-income percentage, which the GU corpus pack
+  explicitly left unconfirmed ("secondary sources this pack found disagree with each other —
+  one states 165% FPL, another states 200% FPL, neither independently verified against a
+  Guam-specific primary text"). Fetched USDA's own current, live Broad-Based Categorical
+  Eligibility page (the SAME primary source #858's VI entry and ~45 other already-registered
+  BBCE states already cite for this exact axis) — resolves definitively to **165%**, cross-
+  checked for reliability against ~45 other states' own already-registered values from the
+  same page (0 discrepancies) before trusting it for GU's genuinely disputed figure.
+
+  **Implementation** (mirroring #860's VI pattern exactly): `AllotmentTier` widened again to
+  `"48" | "AK" | "VI" | "HI" | "GU"`; new `hi-allotment-table.ts` / `gu-allotment-table.ts`
+  modules (flat, no zone/county axis — confirmed by reading the primary source in full, not
+  assumed); `federal-tables.ts`'s `maxAllotmentFor`/`minimumBenefitFor` gained
+  `state === "HI"`/`state === "GU"` branches; `fpl_by_region.hi` populated for both FY25 and
+  FY26 snapshots. Both jurisdictions' own elevated standard deduction ($295-344 HI, $420-598
+  GU vs. federal $209-299) and maximum excess shelter deduction ($1,003 HI, $873 GU vs.
+  federal $744) remain DISCLOSED, UNFIXED gaps — `standardDeductionFor()`/`shelterCapFor()`
+  have no per-state override slot at all, not even for AK; both work in the household's
+  favor if left unfixed (under-state rather than over-state the deduction).
+
+  **StatePolicy axes** (translated from each jurisdiction's already-merged Demeter corpus
+  pack per §5 step 1, re-verified against primary sources for the allotment/FPL/BBCE-percent
+  axes as detailed above): HI — `bbce: true`, `bbce_threshold_pct: 200`,
+  `bbce_fpl_basis: "federal_fiscal_year"`, `asset_waiver: true`, `sua_by_tier: null`
+  (Hawaii Administrative Rules § 17-676-73 confirms a genuinely different per-utility-type
+  SUA structure the schema's {HCSUA,LUA,phone,none} quad can't hold, and no current dollar
+  figures were locatable for it either), `allotment_tier: "HI"`, `drug_felony_ban:
+  "modified"` (Haw. Rev. Stat. § 346-53.3 conditions the federal ban's carve-out on
+  treatment compliance), `abawd_waiver_avail: false` (HI absent from USDA's own current
+  ABAWD waiver index despite a favorable noncontiguous-state threshold), `rmp_operated:
+  false`. GU — `bbce: true`, `bbce_threshold_pct: 165` (resolved this build, see above),
+  `bbce_fpl_basis: "federal_fiscal_year"`, `asset_waiver: true`, `sua_by_tier: null` (USDA's
+  own State Options Report confirms "Mandatory SUAs" as the structure but no dollar figure
+  was locatable), `allotment_tier: "GU"`, `drug_felony_ban: "modified"` (USDA's own State
+  Options Report's plain characterization; Guam's own enabling statute defining the exact
+  modification terms remains an unresolved, disclosed gap the corpus pack itself flagged),
+  `abawd_waiver_avail: false` (a disclosed judgment call resolving a genuine tension the
+  corpus pack itself flagged: USDA's Oct-2024-dated State Options Report shows a statewide
+  waiver, but DPHSS's own LIVE, later-dated Jan-2026 FAQ describes active enforcement with no
+  mention of one — chose the live materials as authoritative, same reasoning #858's VI entry
+  used for an identical tension), `rmp_operated: false` (Guam's own RMP-enabling bill, No.
+  78-38, remains pending, not enacted).
+
+  **Oracle (#636 methodology)**: built ONE fresh, independent Python calculator (not derived
+  from engine output), parameterized per-state, directly from verdict.ts/benefit-calc.ts/
+  gates/{income-tests,asset-test,abawd,student,composition,immigration,disqualifications,
+  categorical}.ts/facts.ts/constants/federal-tables.ts's own read logic — mirroring every
+  gate and the benefit-calc formula exactly, including decimal.ts's half-up (roundDollar),
+  floor (floorDollar), and ceiling (ceilDollar) rounding conventions. Cross-validated BEFORE
+  trusting it for either HI or GU: identified HI's closest axis-twin as WI (bbce/200%/
+  federal_fiscal_year/asset_waiver/drug_felony_ban "modified"/abawd_waiver_avail all
+  identical) and GU's as IL (bbce_threshold_pct 165%/asset_waiver/abawd_waiver_avail
+  identical — drug_felony_ban differs in label only, "none" vs. "modified," but both gate
+  identically per #805 since only "full" ever disqualifies) — reproduced WI's AND IL's own
+  already-graded, FULLY REAL (non-null-SUA) 129/129-row oracles EXACTLY, both verdict AND
+  benefit, 0 mismatches for either, the strongest available check (full benefit-dollar
+  arithmetic, not just gates) — well beyond the minimum 92/92 verdict-only bar.
+
+  Applied each jurisdiction's own params to all 92 base + 37 variant rows. GU's verdict set
+  is IDENTICAL to IL's at every one of the 129 rows (0 diffs) — expected, since GU's
+  income-eligibility limits are confirmed unelevated (same contiguous FPL table as IL) and
+  every other verdict-relevant axis matches functionally; only benefit dollar amounts
+  differ. HI's verdict set is IDENTICAL to WI's at all 92 base profiles (HI's higher FPL
+  threshold flipped none of WI's income-based DENYs — every one sits far enough above even
+  HI's higher ceiling to be unaffected, the same directional-only-loosening finding
+  #804/#815/#819 established for AK's own FPL correction) but found exactly ONE flip among
+  the 37 variant rows: `P56-new-job-partial-first-paycheck-vs-anticipated
+  [ongoing_anticipated]` (HH3, gross $4,500) — WI's stored DENY reflects the
+  200%-of-contiguous-FPL HH3 threshold ($4,442); HI's own real 200%-of-HI-FPL HH3 threshold
+  is $5,110, so $4,500 clears it, APPROVE for HI. Same profile, same reasoning shape as
+  #804/#815's AK M23/P56 flip — added an explicit `HI: APPROVE` override to that variant's
+  `verdict_by_state` map, following that established pattern. (A second, unrelated
+  `verdict_by_state` addition was needed for GU on a DIFFERENT variant —
+  `M23-variable-gig-income-anticipation[recent_high_month]` — where the row's shared default
+  `verdict` assumes a 200%-BBCE state; GU, like IL/TX, is a 165%-BBCE state and needed its
+  own explicit `GU: DENY` override for the same structural reason IL's/TX's overrides
+  already existed, not a genuine flip.)
+
+  Checked all 37 rows across the 18 non-`expected_by_state` variant profiles for HI/GU
+  overrides beyond the two above: all 18 variant profiles' BASE facts use `sua_tier:
+  "HCSUA"` (never "none", never `homeless_deduction`), so every row hits both jurisdictions'
+  null-SUA engine-SKIP regardless of any override authored — same discipline this file's
+  PA/NJ/TN/VI entries already established. Authored all 92 `expected_by_state.HI` (80
+  APPROVE / 12 DENY, identical DENY set to WI's own) and `expected_by_state.GU` (77 APPROVE
+  / 15 DENY, identical DENY set to IL's own) entries. `benefit`: real computed dollar figure
+  for the 34-row real-engine-gradeable subset (`shelter.sua_tier === "none"` or
+  `homeless_deduction === true`) every null-SUA state in this file shares; `null` for the
+  other 58 base + 37 variant rows (blocked by the null-SUA composer-level SKIP) — the
+  verdict authored for those rows is still the best-available documented answer (not graded
+  by the harness either way), computed the same way for the large majority (BBCE conferral
+  makes verdict independent of the actual SUA dollar amount whenever the household clears
+  the gross test) with one small, disclosed exception: the rare E/D-household-not-BBCE-
+  conferred row where a real net test would run uses WI's/IL's own real-SUA-computed result
+  as the best-available proxy, since HI's/GU's own SUA figure is unconfirmed — disclosed
+  here, matching this build's documentation-only framing; affects zero actually-graded rows.
+
+  Illustrative before/after dollar figures (48-contiguous default vs. each jurisdiction's
+  real table, same net-income inputs):
+
+  | Profile | HH size | HI benefit | GU benefit | 48-contiguous (for comparison) |
+  |---|---|---|---|---|
+  | A05 (homeless, zero income) | 1 | $506 | $439 | $298 |
+  | M11 (low income, no shelter) | 2 | $560 | $437 | $177 |
+  | M03 (gross just under 130%) | 3 | $725 | $548 | $176 |
+  | P57 (roomer, shared housing) | 1 | $411 | $344 | $203 |
+
+  **Verification**: `/profile-simulation state=HI` and `state=GU` — both **34 PASS / 0 FAIL
+  / 95 SKIP** (of 129: 92 base + 37 variant), matching PA's/NJ's/TN's/VI's exact SKIP-heavy
+  shape. Full sweep of all 51 OTHER registered jurisdictions run before and after —
+  **identical totals across every single one, zero regressions**: 129/0/0 (CA, WA, TX, GA,
+  MI, IL, FL, MA, NV, OR, WI, OH, KS, AK, NC, VA, IN, MO, MD, CO, SC, LA, OK, ME, RI, MT, KY,
+  IA, AR, NM, NE, NH, SD, ND, VT, WY — 36 states); 127/2/0 (NY, pre-known); 128/1/0 (AZ, CT,
+  pre-known); 34/0/95 (PA, NJ, TN, AL, UT, MS, ID, WV, DE, DC, VI — pre-existing null-SUA
+  gate); 0/0/129 (MN, pre-existing). **AK and VI specifically double-checked unchanged**
+  (129/0/0 and 34/0/95 respectively) since HI's/GU's new branches sit directly next to
+  theirs in `maxAllotmentFor`/`minimumBenefitFor`/`fpl_by_region`. `tsc --noEmit -p
+  packages/snap-rules` clean. `pnpm test` (snap-rules): 354/354 passing (23 new — 20 in
+  `src/constants/federal-tables.test.ts` for the HI/GU `maxAllotmentFor`/
+  `minimumBenefitFor`/`fplMonthly` branches, mirroring VI's/AK's own coverage shape, plus 3
+  replacing a now-stale `test/federal-tables.test.ts` assertion that HI throws
+  `NoFplTableForRegionError` — that assertion was correct before this PR and is now
+  incorrect by construction, replaced with real HI-region assertions). `pnpm test`
+  (profile-harness): 44/47 passing (3 pre-existing skips, unchanged).
+
+  **This completes the ENTIRE original 53-jurisdiction plan scope** except MN, which remains
+  blocked on its own separate, unrelated null-SUA structural gap (§6 step 7) — the corpus
+  (`packages/demeter-engine`) and the engine (`packages/snap-rules`) now cover the same
+  53/53 jurisdictions for the first time since this plan began. PR TBD, reporting back for
+  review per standing `packages/snap-rules` governance (ask before every state/batch/schema
+  change) — not merging on completion alone.

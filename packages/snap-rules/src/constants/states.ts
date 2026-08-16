@@ -135,14 +135,28 @@ export type BBCEFPLBasis = "federal_fiscal_year" | "calendar_year" | null;
 // table is genuinely elevated above the 48-contiguous default, the same
 // class of gap AK's "AK" tier already models (packages/snap-rules/src/
 // constants/vi-allotment-table.ts + federal-tables.ts's maxAllotmentFor/
-// minimumBenefitFor state==="VI" branches). HI and GU are the SAME class
-// of gap (plan doc §4) but are NOT added here — neither has a StatePolicy
-// entry yet, and adding a tier value with no table behind it and no
-// consumer would be exactly the kind of unused-surface-area drift this
-// file's own discipline avoids elsewhere. Add "HI"/"GU" (plus their own
-// {hi,gu}-allotment-table.ts modules and federal-tables.ts branches) when
-// those states are actually built (plan doc §5), not before.
-export type AllotmentTier = "48" | "AK" | "VI";
+// minimumBenefitFor state==="VI" branches). HI and GU were the SAME class
+// of gap (plan doc §4) but were deliberately NOT added in that PR — neither
+// had a StatePolicy entry yet, and adding a tier value with no table behind
+// it and no consumer would have been exactly the kind of unused-surface-area
+// drift this file's own discipline avoids elsewhere.
+//
+// #861: HI and GU are now built (plan doc §5, the final two jurisdictions of
+// the original 53-jurisdiction scope). Widened again to add "HI" | "GU" —
+// same mechanism, own real tables (packages/snap-rules/src/constants/
+// hi-allotment-table.ts, gu-allotment-table.ts — both flat, no zone/county
+// axis, confirmed by reading USDA's own FY2026 COLA memo in full: neither
+// jurisdiction has an urban/rural subdivision the way AK does) +
+// federal-tables.ts's maxAllotmentFor/minimumBenefitFor gaining
+// state==="HI"/"GU" branches mirroring the existing AK/VI ones. HI's income-
+// ELIGIBILITY guideline is ALSO genuinely elevated (a second, distinct gap —
+// federal-tables.ts's fpl_by_region.hi slot, null since #812, is populated by
+// the same #861 fix). GU's income-eligibility limits are confirmed NOT
+// elevated (USDA's own COLA memo groups Guam with the 48-contiguous/DC/VI
+// table) — only GU's benefit-calculation figures (max allotment, standard
+// deduction, shelter cap) are territory-elevated, an asymmetric structure
+// both jurisdictions' corpus packs independently found.
+export type AllotmentTier = "48" | "AK" | "VI" | "HI" | "GU";
 
 // Issue #805: a plain boolean can't express a real drug-felony policy —
 // most states in this file that carry `false` are a genuine "modified"
@@ -7834,6 +7848,477 @@ const STATES: Record<string, StatePolicy[]> = {
       sua_by_tier: null,
       allotment_tier: "VI",
       drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
+  // ── HAWAII (#861) ──────────────────────────────────────────────────────
+  // The final individual jurisdiction of the original 53-jurisdiction plan
+  // scope (docs/plans/snap-rules-50-state-engine-completion.md §5), built
+  // alongside GU. Both required the #861 schema step (AllotmentTier widened
+  // to add "HI"/"GU", mirroring #858/#860's VI precedent) before either
+  // could be built — see states.ts's AllotmentTier doc-comment above.
+  //
+  // Every axis below is TRANSLATED from the already-merged Demeter corpus
+  // pack's already-cited findings (packages/demeter-engine/src/states/hi/
+  // PROVENANCE.md + supplements.json, built 2026-08-12) into the engine's
+  // stricter typed shape, per plan doc §5 step 1 — re-verification against
+  // the corpus's own primary sources, not fresh research, EXCEPT for the
+  // allotment/FPL-table axes (independently re-sourced this build, since the
+  // corpus pack explicitly deferred those to "a future packages/snap-rules
+  // build," see below) and the BBCE percentage cross-check (independently
+  // re-confirmed via a second primary source this build, see bbce below).
+  //
+  // bbce: true, bbce_threshold_pct: 200 — Hawaii DHS BESSD's own current
+  // SNAP consumer page (effective 10/1/2025, humanservices.hawaii.gov/
+  // bessd/snap/) lists a "200% FPL (BBCE)" gross-income column directly
+  // (e.g. $3,000/month for HH1). Independently cross-checked this build
+  // against USDA FNS's own current, live Broad-Based Categorical
+  // Eligibility page (fns.usda.gov/snap/broad-based-categorical-eligibility,
+  // mirror fns-prod.azureedge.us/snap/broad-based-categorical-eligibility —
+  // the SAME primary source this file's ~45 other BBCE states, and #858's
+  // VI entry, already cite for this exact axis): Hawaii listed with "All
+  // households" categorically eligible, gross income limit "200%," asset
+  // limit "No limit on assets" — confirming both bbce_threshold_pct AND
+  // asset_waiver independently, not merely restating the corpus's own
+  // finding. See #861 for the full cross-check (reproduced ~45 other
+  // already-registered states' own bbce_threshold_pct/asset_waiver values
+  // from this SAME page with zero discrepancies before trusting it here).
+  //
+  // bbce_fpl_basis: "federal_fiscal_year" — Hawaii DHS's own page is
+  // captioned "effective 10/1/2025," the same FFY framing this file's
+  // CA/NC/VA/AK(post-BBCE)/OK/VI entries already use.
+  //
+  // A genuinely more aggressive BBCE implementation than this file's other
+  // BBCE-200 states (disclosed, not modeled as a separate axis — see
+  // "engine behavior already matches" note below): Hawaii DHS's own page
+  // states directly, "As of February 1, 2025, under BBCE households are
+  // also not subject to the net income test" — a full waiver of BOTH the
+  // gross AND net income tests for BBCE-conferred households, not merely an
+  // elevated gross ceiling with the ordinary net test still applying after
+  // deductions. VERIFIED this requires NO engine change: `verdict.ts`
+  // already implements exactly this rule for EVERY bbce:true state
+  // (`bbceConferred` — set the moment a household clears the (possibly
+  // elevated) gross test in a BBCE state — bypasses BOTH the gross-test
+  // block's alternate paths AND the net-income-test call entirely). Hawaii
+  // DHS's own text is simply describing, in plain language, the SAME
+  // universal BBCE mechanism this engine has modeled since before this
+  // build — not a Hawaii-specific gap to close.
+  //
+  // asset_waiver: true — confirmed above (both HI DHS's own page and
+  // USDA's own BBCE page independently state "unlimited"/"No limit on
+  // assets" for HI's "All households" BBCE tier).
+  //
+  // sua_by_tier: null — a disclosed gap, same discipline as PA's/NJ's/TN's/
+  // MN's/VI's null entries. Hawaii Administrative Rules § 17-676-73
+  // confirms a genuinely different STRUCTURE (individually-calculated
+  // per-utility-type standard allowances — sewer/trash, water,
+  // electricity/gas, mandatory telephone — rather than a single flat or
+  // two/three-tier SUA/LUA split this schema's {HCSUA, LUA, phone, none}
+  // quad is shaped for), and the corpus pack explicitly could not locate
+  // current dollar figures for any of those four individual standards in a
+  // single dated HI DHS document. USDA's own 17th-edition State Options
+  // Report corroborates the STRUCTURAL finding: Hawaii's "Treatment of
+  // Utility Expenses" policy option is "SUAs not mandatory" (re-confirmed
+  // this build via a direct fetch of that report's own Hawaii profile
+  // page) — consistent with there being no single mandatory flat figure to
+  // encode even before the dollar-amount gap.
+  //
+  // allotment_tier: "HI" — Hawaii is one of USDA's small set of
+  // jurisdictions (with Alaska, Guam, and the Virgin Islands) using a
+  // non-48-contiguous SNAP maximum-allotment table. #861 independently
+  // re-sourced the exact current figures directly from USDA FNS's own
+  // FY2026 SNAP Cost-of-Living Adjustments memorandum (usda.gov/sites/
+  // default/files/guidance-documents/fns.snap-cola-fy26memo.pdf — the SAME
+  // primary document #858/#860 sourced VI's table from) — HI's real table
+  // is ~70% higher than the 48-contiguous table at every household size
+  // (HI $506/$929/$1,334/$1,689/$2,010/$2,415/$2,668/$3,040, +$371/
+  // additional vs. federal-tables.ts's FY26 $298/$546/$785/$994/$1,183/
+  // $1,421/$1,571/$1,789, +$218/additional), plus a real $41 minimum
+  // allotment (vs. the federal $24 default) — both now carried in
+  // packages/snap-rules/src/constants/hi-allotment-table.ts, wired through
+  // federal-tables.ts's maxAllotmentFor/minimumBenefitFor via new
+  // state==="HI" branches (#861). The corpus pack's own "max-allotment-cola"
+  // finding, sourced from the SAME USDA table, independently corroborated
+  // this figure (HH4 $1,689) before this build re-fetched and re-verified
+  // the full HH1-8 table directly.
+  //
+  // A SECOND, genuinely distinct gap #861 also closed: Hawaii's own HHS
+  // poverty guideline (the income-ELIGIBILITY axis, not the benefit-
+  // calculation axis above) is ALSO materially elevated above the
+  // 48-contiguous table — unlike VI, whose income limits track the
+  // ordinary 48-contiguous guideline exactly (see VI's entry above).
+  // federal-tables.ts's `FederalTableSnapshot.fpl_by_region.hi` slot
+  // existed since #812 but was left `null` ("HI has no StatePolicy
+  // registered yet") — #861 populates it with HI's real annual guideline
+  // (FY26: $17,990 first person, +$6,330 each additional, from the 2025
+  // HHS Federal Register notice, 90 FR 5917 — the SAME notice #812 used
+  // for AK's figure) and confirms HI's own rounding convention is CEILING,
+  // same as AK's, by reproducing USDA's own FY2026 COLA memo's published
+  // HI-specific income-eligibility table exactly at all 8 household sizes
+  // across all three columns (100%/130%/165% FPL) — 0 mismatches. This is
+  // a verdict-affecting fix (gates/income-tests.ts), not merely cosmetic —
+  // HI households are entitled to a materially higher income ceiling than
+  // the 48-contiguous table would give them.
+  //
+  // What this does NOT fix (disclosed, matching #858's own VI framing):
+  // HI's own table also carries a higher Standard Deduction ($295 sizes
+  // 1-4, $300 size 5, $344 size 6+ vs. federal FY26's $209/$223/$261/$299)
+  // and a higher Maximum Excess Shelter Deduction ($1,003 vs. federal
+  // FY26's $744). `standardDeductionFor()`/`shelterCapFor()` have no
+  // per-state override slot at all, not even for AK — extending them is a
+  // separate, larger schema change out of scope for #861. Both gaps work
+  // in the household's favor if left unfixed (they UNDER-state the
+  // deduction, not over-state it).
+  //
+  // drug_felony_ban: "modified" — Haw. Rev. Stat. § 346-53.3 conditions the
+  // federal drug-felony ban's carve-out on treatment compliance: the
+  // federal ban "shall not apply in Hawaii to persons who are complying
+  // with treatment or who have not refused or failed to comply with
+  // treatment" — a real, conditional restriction (someone who HAS refused
+  // or failed treatment compliance remains subject to the federal ban),
+  // the same #805 "modified" classification this file's FL/PA/AZ/WI/KS/AK
+  // entries already use, not an unconditional full opt-out several
+  // secondary sources incorrectly describe. Disclosed gap the corpus pack
+  // itself flagged: both law.justia.com and capitol.hawaii.gov returned
+  // HTTP 403 to every direct-fetch attempt, so this statute's exact text
+  // rests on a WebSearch/Justia-excerpt corroboration rather than a
+  // directly-fetched primary document — does not affect the "modified"
+  // classification either way (per #805, only "full" ever gates).
+  //
+  // abawd_waiver_avail: false — an affirmative, current-materials-based
+  // finding, not a fail-open default. USDA FNA's own current ABAWD Time
+  // Limit Waivers FY2025-2029 state-response index does NOT list Hawaii
+  // among the states that submitted a waiver request for FY2025 or FY2026
+  // — despite federal law giving Hawaii (and Alaska) a more favorable
+  // noncontiguous-state waiver threshold (1.5x the national average
+  // unemployment rate, vs. the mainland's flat 10% floor) than the
+  // mainland, Hawaii simply has not requested one. Hawaii DHS's own
+  // OBBBA/ABAWD FAQ (posted 10/9/2025) corroborates active post-OBBBA
+  // enforcement with no mention of an area-wide waiver.
+  //
+  // rmp_operated: false — confirmed ABSENT from USDA FNA's own current
+  // Restaurant Meals Program state-operator list (nine listed
+  // states/jurisdictions: AZ, MD, NY, CA, MA, RI, IL Cook/Franklin only,
+  // MI, VA — Hawaii is not among them), a genuine secondary-source
+  // correction the corpus pack made (several aggregators wrongly list
+  // Hawaii as an RMP state).
+  //
+  // ── Oracle (#636 methodology) ────────────────────────────────────────
+  // HI's closest structural axis-twin among already-registered states is
+  // WI: identical bbce (true), bbce_threshold_pct (200), bbce_fpl_basis
+  // (federal_fiscal_year), asset_waiver (true), drug_felony_ban
+  // ("modified"), abawd_waiver_avail (false), rmp_operated (false) — every
+  // axis matches except allotment_tier (differs by construction) and
+  // sua_by_tier (WI real, HI null). Built a fresh, independent Python
+  // calculator (not derived from engine output) directly from
+  // verdict.ts/benefit-calc.ts/gates/{income-tests,asset-test,abawd,
+  // student,composition,immigration,disqualifications,categorical}.ts/
+  // facts.ts/constants/federal-tables.ts's own read logic, mirroring every
+  // gate and the benefit-calc formula exactly (including decimal.ts's
+  // half-up roundDollar / floorDollar / ceilDollar conventions). Cross-
+  // validated BEFORE trusting it for HI: reproduced WI's AND IL's own
+  // already-graded, FULLY REAL (non-null-SUA) oracles — 129/129 exact
+  // match on BOTH verdict AND benefit for each, the strongest available
+  // check (full benefit-dollar arithmetic, not just gates), not merely the
+  // minimum 92/92 verdict-only bar.
+  //
+  // Applied HI's own params (bbce_threshold_pct 200 identical to WI, but
+  // fpl_by_region ELEVATED unlike WI's plain contiguous table) to all 92
+  // base + 37 variant rows: HI's verdict set is IDENTICAL to WI's at every
+  // one of the 92 base profiles (HI's higher FPL threshold did not flip
+  // any of WI's income-based DENYs — every income DENY in this profile set
+  // sits far enough above even HI's higher ceiling that the elevation
+  // makes no difference, the same directional-only-loosening finding
+  // #804/#815/#819 established for AK's own FPL correction). Found exactly
+  // ONE flip among the 37 variant rows — `P56-new-job-partial-first-
+  // paycheck-vs-anticipated[ongoing_anticipated]` (HH3, gross $4,500): WI's
+  // stored DENY reflects the 200%-of-contiguous-FPL HH3 threshold ($4,442);
+  // HI's own real 200%-of-HI-FPL HH3 threshold is $5,110 (ceil($30,650/12)
+  // x2), so $4,500 clears it — APPROVE for HI. Same profile, same
+  // reasoning shape as #804/#815's AK M23/P56 flip; added an explicit
+  // `HI: APPROVE` override to that variant's `verdict_by_state` map,
+  // following that established pattern.
+  //
+  // Checked all 37 rows across the 18 non-`expected_by_state` variant
+  // profiles for an HI-specific override beyond the one above: all 18
+  // variant profiles' BASE facts use `sua_tier: "HCSUA"` (never "none",
+  // never `homeless_deduction`), meaning every row hits HI's null-SUA
+  // engine-SKIP regardless of any override authored — same reasoning
+  // this file's PA/NJ/TN/VI entries already established for their own
+  // null-SUA variant rows. The P56 override above is authored anyway
+  // (documentation of the true expected answer), same discipline as
+  // VI's/PA's/NJ's/TN's own blocked-row verdicts, even though the harness
+  // never reaches it while HI's SUA remains unsourced.
+  //
+  // Authored all 92 `expected_by_state.HI` entries: 80 APPROVE / 12 DENY —
+  // the SAME DENY set as WI's own (D08/D10/D03/D04/D05/D06/D07/D09/M12/
+  // M19/S01/S04), confirming no base-profile flip occurred. `benefit`: real
+  // computed dollar figure for the 34 profiles whose `shelter.sua_tier` is
+  // "none" or `homeless_deduction: true` (the same 34-row subset PA's/NJ's/
+  // TN's/VI's null-SUA entries already established as real-engine-
+  // gradeable); `null` for the other 58 (blocked by the null-SUA
+  // composer-level SKIP, same as VI's/PA's/NJ's/TN's shape) — the verdict
+  // authored for those 58 (plus the 37 variant rows) is still the best-
+  // available correct answer (documentation only, not graded), computed
+  // the SAME way as the 34 gradeable rows since BBCE conferral makes
+  // verdict independent of the actual SUA dollar amount for the large
+  // majority of rows; the small subset where an E/D household's net test
+  // genuinely runs (not BBCE-conferred, since grossTestApplies is false
+  // for E/D households and bbceConferred is therefore never set) uses WI's
+  // own real-SUA-computed result as the best-available documented proxy —
+  // disclosed here since HI's own SUA dollar figure remains unconfirmed,
+  // though this affects zero actually-graded rows (all such rows are
+  // forced SKIP by the null-SUA gate regardless of what's authored).
+  //
+  // Verification: `/profile-simulation state=HI` — 34 PASS / 0 FAIL / 95
+  // SKIP (of 129: 92 base + 37 variant), matching PA's/NJ's/TN's/VI's exact
+  // SKIP-heavy shape. Every other registered jurisdiction's harness run
+  // reconfirmed unchanged from its documented baseline; AK and VI
+  // specifically double-checked unchanged (129/129 and 34/0/95
+  // respectively) since HI's new branches sit directly next to theirs in
+  // maxAllotmentFor/minimumBenefitFor/fpl_by_region. `tsc --noEmit -p
+  // packages/snap-rules` clean, 354/354 snap-rules tests pass (23 new),
+  // 44/47 profile-harness tests pass (3 pre-existing skips). Filed as issue
+  // #861 before any of this file's HI-scoped edits, per CLAUDE.md's
+  // "Engine-math: file issue first" rule.
+  HI: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "HI",
+      label: "Hawaii / DHS-BESSD",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: null,
+      allotment_tier: "HI",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
+  // ── GUAM (#861) ────────────────────────────────────────────────────────
+  // Built alongside HI — see HI's entry above for the shared #861 schema
+  // step's own doc-comment. This is the LAST jurisdiction of the original
+  // 53-jurisdiction plan scope (docs/plans/snap-rules-50-state-engine-
+  // completion.md §5) — completing the entire plan except MN, still
+  // blocked on its own separate null-SUA gap (plan doc §6 step 7).
+  //
+  // Every axis below is TRANSLATED from the already-merged Demeter corpus
+  // pack's already-cited findings (packages/demeter-engine/src/states/gu/
+  // PROVENANCE.md + supplements.json, built 2026-08-12) into the engine's
+  // stricter typed shape, per plan doc §5 step 1, EXCEPT the allotment-
+  // table axis (independently re-sourced this build) and the BBCE
+  // percentage — the corpus pack EXPLICITLY left this one unresolved
+  // ("this pack could NOT independently locate Guam's own specific BBCE
+  // gross-income percentage... secondary sources this pack found disagree
+  // with each other (one states 165% FPL, another states 200% FPL, neither
+  // independently verified against a Guam-specific primary text")).
+  //
+  // bbce: true — USDA's own SNAP State Options Report, 17th Edition
+  // (re-fetched and re-confirmed this build via a working Azure CDN
+  // mirror), lists Guam's own reported "BBCE" policy-option selection
+  // plainly on its dedicated State Agency Profile page.
+  //
+  // bbce_threshold_pct: 165 — #861 RESOLVES the corpus's own disclosed
+  // 165%-vs-200% ambiguity via a primary source the corpus pack did not
+  // reach: USDA FNS's own current, live Broad-Based Categorical
+  // Eligibility page (fns.usda.gov/snap/broad-based-categorical-
+  // eligibility, mirror fns-prod.azureedge.us/snap/broad-based-
+  // categorical-eligibility — the SAME page #858's VI entry and this
+  // file's ~45 other BBCE states already cite for this exact axis) lists
+  // Guam plainly: "All households," asset limit "No limit on assets,"
+  // gross income limit "165%." Independently traced the competing 165%
+  // claim's OWN source this build: fetched the secondary aggregator
+  // (snapscreener.com) both conflicting web claims trace back to directly
+  // — it cites NO primary source at all for its figure, unlike USDA's own
+  // official table. Cross-checked USDA's BBCE page's reliability against
+  // ~45 other already-registered states' own bbce_threshold_pct/
+  // asset_waiver values from the SAME page with zero discrepancies (e.g.
+  // New Jersey 185%, Georgia 130% + asset_waiver:false, Indiana $5,000 +
+  // asset_waiver:false, Nebraska $25,000 liquid assets + asset_waiver:
+  // false, Texas $5,000 + asset_waiver:false — all match this file's
+  // already-registered entries exactly) before trusting it to resolve
+  // Guam's own genuinely disputed figure. See #861 for the full table.
+  //
+  // bbce_fpl_basis: "federal_fiscal_year" — USDA's FY2026 COLA memo (the
+  // same document sourcing the allotment table below) is captioned
+  // "October 1, 2025, to September 30, 2026," the standard FFY framing.
+  //
+  // asset_waiver: true — confirmed via the SAME USDA BBCE page above
+  // ("No limit on assets" for Guam's "All households" tier) — resolves a
+  // gap the corpus pack itself did NOT explicitly confirm (its own
+  // supplement text discusses the FEDERAL-BASELINE $3,000/$4,500 asset
+  // limits, not whether BBCE-conferred GU households get a waiver from
+  // them — the corpus's Finding 0 doesn't make this specific claim; #861's
+  // BBCE-page fetch is the actual primary confirmation of this axis).
+  //
+  // sua_by_tier: null — a disclosed gap, same discipline as PA's/NJ's/
+  // TN's/MN's/VI's/HI's null entries. USDA's own State Options Report
+  // confirms Guam uses "Mandatory SUAs" (a flat allowance, not itemized
+  // actual costs) — a STRUCTURE finding — but neither the corpus pack nor
+  // this build's independent re-check located Guam's own specific
+  // Heating/Cooling Standard Utility Allowance (or any other tier's)
+  // dollar figure in any source.
+  //
+  // allotment_tier: "GU" — Guam is one of USDA's small set of
+  // jurisdictions (with Alaska, Hawaii, and the Virgin Islands) using a
+  // non-48-contiguous SNAP maximum-allotment table — but, genuinely
+  // UNLIKE HI/AK, this elevation applies ONLY to Guam's benefit-
+  // calculation figures, NOT its income-eligibility limits (see below) —
+  // an asymmetric structure both this build and GU's own corpus pack
+  // independently found and treat as the flagship finding for this
+  // jurisdiction. #861 independently re-sourced the exact current figures
+  // directly from USDA FNS's own FY2026 SNAP Cost-of-Living Adjustments
+  // memorandum (the SAME primary document #858/#860 sourced VI's table
+  // from, and this build sourced HI's from) — GU's real table is ~47%
+  // higher than the 48-contiguous table at every household size (GU
+  // $439/$806/$1,157/$1,465/$1,743/$2,095/$2,315/$2,637, +$322/additional
+  // vs. federal-tables.ts's FY26 $298/$546/$785/$994/$1,183/$1,421/
+  // $1,571/$1,789, +$218/additional), plus a real $35 minimum allotment
+  // (vs. the federal $24 default) — both now carried in packages/
+  // snap-rules/src/constants/gu-allotment-table.ts, wired through
+  // federal-tables.ts's maxAllotmentFor/minimumBenefitFor via new
+  // state==="GU" branches (#861). The corpus pack's own "income-and-
+  // benefit-cola" finding, sourced from the SAME USDA memo, independently
+  // corroborated this figure (HH4 $1,465) before this build re-fetched and
+  // re-verified the full HH1-8 table directly.
+  //
+  // CONFIRMED: GU's income-ELIGIBILITY guideline is NOT elevated — the
+  // SAME USDA FY2026 COLA memo groups "48 States, D.C., Guam, Virgin
+  // Islands" into ONE shared Net/Gross Income Eligibility Standards
+  // column, identical dollar figures at every household size. No
+  // `fpl_by_region` entry exists for GU as a result — `fplRegionForState`
+  // in federal-tables.ts only special-cases AK and HI; GU correctly falls
+  // through to the `contiguous` table already, same as VI. GU's corpus
+  // pack independently found and flagged this exact asymmetry as its own
+  // flagship finding, corroborating rather than merely restating this
+  // build's own primary-source read of the same memo.
+  //
+  // What this does NOT fix (disclosed, matching #858's own VI framing):
+  // GU's own table also carries a higher Standard Deduction ($420 sizes
+  // 1-3, $445 size 4, $522 size 5, $598 size 6+ vs. federal FY26's
+  // $209/$223/$261/$299) and a higher Maximum Excess Shelter Deduction
+  // ($873 vs. federal FY26's $744). `standardDeductionFor()`/
+  // `shelterCapFor()` have no per-state override slot at all — extending
+  // them is a separate, larger schema change out of scope for #861. Both
+  // gaps work in the household's favor if left unfixed.
+  //
+  // drug_felony_ban: "modified" — USDA's own SNAP State Options Report
+  // (17th Edition) lists Guam's own reported policy selection plainly as
+  // "Modified disqualification" on its State Agency Profile page. Disclosed
+  // gap the corpus pack itself flagged: it could not locate Guam's own
+  // enabling statute defining the EXACT modification terms (attempted a
+  // specific referenced bill, Bill No. 20-37, which 404'd) and explicitly
+  // declined to repeat either of two mutually contradictory secondary-
+  // source claims it found (one describing a full opt-out, another
+  // describing a full lifetime ban) — neither traces to a primary
+  // Guam-authored legal text. Does not affect the "modified" classification
+  // either way (per #805, only "full" ever gates, and USDA's own
+  // characterization is the most authoritative primary source located).
+  //
+  // abawd_waiver_avail: false — a disclosed judgment call resolving a
+  // genuine tension the corpus pack itself flagged rather than silently
+  // picking a side: USDA's SNAP State Options Report (17th Edition, data
+  // reference period October 2024) shows Guam holding a "Statewide ABAWD
+  // time limit waiver" as of that reference period — but Guam DPHSS's own
+  // LIVE, LATER-DATED "SNAP FAQ_001" press release (January 23, 2026)
+  // describes ACTIVE post-OBBBA work-requirement enforcement effective
+  // 1/1/2026 with a real termination consequence for non-compliance, and
+  // makes NO mention of any current area waiver. Chose DPHSS's own live,
+  // later-dated enforcement FAQ as authoritative for CURRENT status over
+  // the stale October-2024 federal snapshot — the SAME "new work rules now
+  // apply supersedes an older positive federal report" reasoning #858's VI
+  // entry used for its own identical tension (VI's SOR entry vs. VI DHS's
+  // own live OBBBA materials). The corpus pack itself flags this reading
+  // as likely-but-not-certain (it could not locate a document stating in
+  // so many words that the prior waiver was formally ended) — disclosed
+  // here rather than presented as settled.
+  //
+  // rmp_operated: false — Guam Legislature Bill No. 78-38 (COR), the
+  // "Meals for At-Risk Households Act of 2025," which would establish a
+  // Restaurant Meals Program for Guam, remains in SESSION status with no
+  // Public Law number (confirmed via the corpus pack's direct fetch of the
+  // Legislature's own bill-tracking page) — a genuinely live pending item,
+  // not enacted. `false` is correct today; re-verify if this bill passes.
+  //
+  // ── Oracle (#636 methodology) ────────────────────────────────────────
+  // GU's closest structural axis-twin among already-registered states is
+  // IL: identical bbce_threshold_pct (165), asset_waiver (true),
+  // abawd_waiver_avail (false) — a FUNCTIONALLY exact match despite IL's
+  // drug_felony_ban being "none" rather than GU's "modified," since #805's
+  // gate only distinguishes "full" from everything else ("none" and
+  // "modified" behave identically — both fail open). Built a fresh,
+  // independent Python calculator (not derived from engine output)
+  // directly from verdict.ts/benefit-calc.ts/gates/{income-tests,
+  // asset-test,abawd,student,composition,immigration,disqualifications,
+  // categorical}.ts/facts.ts/constants/federal-tables.ts's own read logic,
+  // mirroring every gate and the benefit-calc formula exactly (same
+  // calculator built for HI's entry, parameterized per-state — see HI's
+  // entry above for the shared cross-validation: reproduced WI's AND IL's
+  // own already-graded, FULLY REAL 129/129-row oracles, both verdict AND
+  // benefit, 0 mismatches, before trusting the calculator for either HI or
+  // GU).
+  //
+  // Applied GU's own params to all 92 base + 37 variant rows: GU's verdict
+  // set is IDENTICAL to IL's at EVERY one of the 129 rows (0 diffs) — the
+  // expected result given GU's income-eligibility limits are confirmed
+  // flat/unelevated (same contiguous FPL table as IL) and every other
+  // verdict-relevant axis matches functionally. Only the BENEFIT dollar
+  // amounts differ (GU's elevated allotment_tier vs. IL's federal "48").
+  //
+  // Checked all 37 rows across the 18 non-`expected_by_state` variant
+  // profiles: all 18 variant profiles' BASE facts use `sua_tier: "HCSUA"`,
+  // meaning every row hits GU's null-SUA engine-SKIP regardless of any
+  // override — no GU-specific override needed (unlike HI's one P56
+  // exception, since GU's fpl_by_region is unelevated, there is no
+  // threshold-driven flip possible for GU at all).
+  //
+  // Authored all 92 `expected_by_state.GU` entries: 77 APPROVE / 15 DENY —
+  // the SAME DENY set as IL's own (D01/D08/D10/D03/D04/D05/D06/D07/D09/
+  // M12/M19/MX3/MX4/S01/S04), confirming zero divergence from IL.
+  // `benefit`: real computed dollar figure for the same 34-row
+  // real-engine-gradeable subset PA's/NJ's/TN's/VI's/HI's null-SUA entries
+  // already established; `null` for the other 58 base + 37 variant rows
+  // (documented best-available verdict authored anyway, using IL's own
+  // real-SUA-computed result as the best-available proxy for the small
+  // subset where an E/D household's net test genuinely runs and isn't
+  // BBCE-conferred-skipped — disclosed here, matching HI's entry above;
+  // affects zero actually-graded rows).
+  //
+  // Verification: `/profile-simulation state=GU` — 34 PASS / 0 FAIL / 95
+  // SKIP (of 129: 92 base + 37 variant), matching PA's/NJ's/TN's/VI's/HI's
+  // exact SKIP-heavy shape. Every other registered jurisdiction's harness
+  // run reconfirmed unchanged from its documented baseline; AK, VI, and HI
+  // specifically double-checked unchanged since GU's new branches sit
+  // directly next to theirs in maxAllotmentFor/minimumBenefitFor. `tsc
+  // --noEmit -p packages/snap-rules` clean, 354/354 snap-rules tests pass
+  // (23 new, shared with HI's fix), 44/47 profile-harness tests pass (3
+  // pre-existing skips). Filed as issue #861 before any of this file's
+  // GU-scoped edits, per CLAUDE.md's "Engine-math: file issue first" rule.
+  //
+  // This is the LAST jurisdiction of the original 53-jurisdiction plan
+  // scope (docs/plans/snap-rules-50-state-engine-completion.md §5/§6) —
+  // see that doc's own updated execution log for the full completion
+  // note. Only MN remains outside this build's scope, blocked on its own
+  // separate, unrelated null-SUA structural gap (plan doc §6 step 7).
+  GU: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "GU",
+      label: "Guam / DPHSS-BES",
+      bbce: true,
+      bbce_threshold_pct: 165,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: null,
+      allotment_tier: "GU",
+      drug_felony_ban: "modified",
       abawd_waiver_avail: false,
       rmp_operated: false,
     },

@@ -15,6 +15,8 @@
 import { Decimal } from "../decimal";
 import { akAllotmentZoneFor, AK_URBAN } from "./ak-allotment-zones";
 import { VI_ALLOTMENT_TABLE } from "./vi-allotment-table";
+import { HI_ALLOTMENT_TABLE } from "./hi-allotment-table";
+import { GU_ALLOTMENT_TABLE } from "./gu-allotment-table";
 
 // ─── Per-region FPL table (#812) ───────────────────────────────────────────
 //
@@ -101,11 +103,20 @@ export interface FederalTableSnapshot {
   /**
    * Per-region FPL table axis (#812). `contiguous` is the 48-contiguous +
    * DC table this snapshot always had. `ak` carries Alaska's real, higher
-   * HHS guideline. `hi` is `null` — Hawaii has NO StatePolicy registered in
-   * constants/states.ts yet (a future HI build), so there is no real
-   * consumer for this slot today; it is left `null` (NOT a copy of the
-   * contiguous figures) rather than silently wrong, and fplMonthly() below
-   * throws a clear error if it's ever reached before HI is sourced.
+   * HHS guideline. `hi` (#861) carries Hawaii's own real, higher HHS
+   * guideline — populated now that HI's `StatePolicy` is registered
+   * (constants/states.ts). Sourced from the SAME HHS Federal Register
+   * notices #812 used for AK (each notice publishes 48-contiguous, AK, AND
+   * HI guidelines together); HI's own monthly-rounding convention is
+   * CEILING, same as AK's, confirmed by reproducing USDA's own FY2026 COLA
+   * memo's published HI-specific income-eligibility table exactly at all 8
+   * household sizes across all three FPL columns (100%/130%/165%) — see
+   * fplMonthly()'s comment below. GU needs no entry here at all: its own
+   * income-eligibility limits are confirmed NOT elevated (identical to the
+   * 48-contiguous table per that same COLA memo), an asymmetric structure
+   * both HI's and GU's corpus packs independently found — GU correctly
+   * falls through to `contiguous` via fplRegionForState below, same as
+   * every other non-AK/non-HI jurisdiction including VI.
    */
   fpl_by_region: {
     contiguous: RegionalFplTable;
@@ -140,9 +151,10 @@ const FY25: FederalTableSnapshot = {
   effective_end: new Date(Date.UTC(2025, 8, 30)),
   // HHS 2024 Poverty Guidelines (Federal Register Vol. 89 No. 11, Jan 17,
   // 2024, 89 FR 2961-63 — govinfo.gov/content/pkg/FR-2024-01-17/pdf/2024-
-  // 00796.pdf). Per-region (#812): 48 contiguous + DC, Alaska, Hawaii are
-  // published together in the same notice; AK's guideline is materially
-  // higher ($18,810/$6,730 vs $15,060/$5,380).
+  // 00796.pdf). Per-region (#812/#861): 48 contiguous + DC, Alaska, Hawaii
+  // are published together in the same notice; AK's and HI's guidelines are
+  // materially higher than the contiguous table ($18,810/$6,730 AK,
+  // $17,310/$6,190 HI, vs $15,060/$5,380 contiguous).
   fpl_by_region: {
     contiguous: {
       fpl_annual_first_person: new Decimal("15060"),
@@ -154,7 +166,19 @@ const FY25: FederalTableSnapshot = {
       fpl_annual_each_additional: new Decimal("6730"),
       monthly_rounding: "ceiling",
     },
-    hi: null, // not yet sourced — HI has no StatePolicy registered (#812 scope note)
+    // #861: sourced directly from the SAME 2024 HHS notice (govinfo.gov
+    // FR-2024-01-17/pdf/2024-00796.pdf), "2024 Poverty Guidelines for
+    // Hawaii" table: $17,310 first person, +$6,190 each additional.
+    // Rounding convention presumed CEILING (same as AK's, established via
+    // FY26's own cross-check below) — not independently reconciled against
+    // a published FY25 HI monthly table (none located), same disclosed
+    // assumption AK's own FY25 entry made before any FY-specific check
+    // existed for AK either.
+    hi: {
+      fpl_annual_first_person: new Decimal("17310"),
+      fpl_annual_each_additional: new Decimal("6190"),
+      monthly_rounding: "ceiling",
+    },
   },
   // FNS FY25 COLA memo (effective 10/01/2024).
   max_allotment: new Map<number, Decimal>([
@@ -196,10 +220,10 @@ const FY26: FederalTableSnapshot = {
   effective_end: new Date(Date.UTC(2026, 8, 30)),
   // HHS 2025 Poverty Guidelines (Federal Register Vol. 90 No. 11, Jan 17,
   // 2025, 90 FR 5917 — govinfo.gov/content/pkg/FR-2025-01-17/pdf/2025-
-  // 01377.pdf). Per-region (#812): AK's guideline is materially higher
-  // ($19,550/$6,880 vs the contiguous table's $15,660/$5,500 below — see
-  // RegionalFplTable's doc-comment for the derivation + AK-vs-published-
-  // table reconciliation).
+  // 01377.pdf). Per-region (#812/#861): AK's and HI's guidelines are
+  // materially higher than the contiguous table's $15,660/$5,500 below —
+  // see RegionalFplTable's doc-comment for the derivation + AK-vs-published-
+  // table reconciliation.
   // Monthly HH1 (contiguous) = $15,660/12 ≈ $1,305 (the value cited in the
   // fixture's meta.params.fpl[1]).
   fpl_by_region: {
@@ -213,7 +237,25 @@ const FY26: FederalTableSnapshot = {
       fpl_annual_each_additional: new Decimal("6880"),
       monthly_rounding: "ceiling",
     },
-    hi: null, // not yet sourced — HI has no StatePolicy registered (#812 scope note)
+    // #861: sourced directly from the SAME 2025 HHS notice (90 FR 5917),
+    // "2025 Poverty Guidelines for Hawaii" table: $17,990 first person,
+    // +$6,330 each additional. Monthly-rounding convention CEILING,
+    // confirmed by reproducing USDA FNS's own FY2026 COLA memo's published
+    // HI-specific Net/Gross/165%-FPL income-eligibility tables EXACTLY at
+    // all 8 household sizes across all three columns — e.g. HH1 net:
+    // ceil($17,990/12) = $1,500, matching the memo's published figure
+    // exactly (floor would give $1,499, off by $1, the same order of drift
+    // AK's floor-vs-ceiling reconciliation caught). HH4 net: ceil($36,980/
+    // 12) = $3,082, matches. All 8 sizes × 3 columns reconciled with 0
+    // mismatches — the strongest possible confirmation short of HI DHS
+    // republishing its own guideline separately (it does not; HI DHS's
+    // consumer page states these SAME dollar figures directly, corroborating
+    // the federal notice rather than contradicting it).
+    hi: {
+      fpl_annual_first_person: new Decimal("17990"),
+      fpl_annual_each_additional: new Decimal("6330"),
+      monthly_rounding: "ceiling",
+    },
   },
   // FNS FY26 COLA memo.
   max_allotment: new Map<number, Decimal>([
@@ -303,11 +345,11 @@ export function snapshotFor(asOf: Date): FederalTableSnapshot {
  * the monthly step so all derived thresholds match the FNS-published
  * rounding convention.
  *
- * AK uses its OWN annual guideline and its OWN rounding convention
- * (ceiling, not floor) — see RegionalFplTable's doc-comment for the full
- * AK-vs-published-table reconciliation. HI has no table sourced yet and
- * throws NoFplTableForRegionError if ever reached (no HI StatePolicy
- * exists to reach it today).
+ * AK and HI (#861) each use their OWN annual guideline and their OWN
+ * rounding convention (ceiling, not floor) — see RegionalFplTable's
+ * doc-comment for the full AK-vs-published-table and HI-vs-published-table
+ * reconciliations. Every other state, including GU (confirmed NOT
+ * elevated — see gu-allotment-table.ts), uses the `contiguous` table.
  */
 export function fplMonthly(size: number, asOf: Date, state: string): Decimal {
   const s = snapshotFor(asOf);
@@ -357,6 +399,13 @@ export function standardDeductionFor(size: number, asOf: Date): Decimal {
  * `countyFips` is accepted but unused for VI, same call shape as every
  * other non-AK state.
  *
+ * Hawaii and Guam (#861): both jurisdictions' real FNS maximum allotments
+ * are ALSO genuinely elevated — HI ~70% above the 48-contiguous table, GU
+ * ~47% — and, like VI, both are single FLAT tables with no zone geography
+ * (packages/snap-rules/src/constants/hi-allotment-table.ts,
+ * gu-allotment-table.ts, both sourced from USDA FNS's own FY2026 COLA
+ * memo). `countyFips` is accepted but unused for both, same shape as VI.
+ *
  * The `s.max_allotment` national snapshot lookup below is intentionally
  * UNCHANGED and still runs for every non-AK/non-VI state (and is still
  * what validates `asOf` falls within a loaded fiscal year via
@@ -392,6 +441,28 @@ export function maxAllotmentFor(size: number, asOf: Date, state?: string, county
     throw new Error(`No max_allotment for size ${size} (VI)`);
   }
 
+  if (state === "HI") {
+    const exactHi = HI_ALLOTMENT_TABLE.max_allotment.get(size);
+    if (exactHi) return exactHi;
+    const largestHi = Math.max(...HI_ALLOTMENT_TABLE.max_allotment.keys());
+    if (size > largestHi) {
+      const baseHi = HI_ALLOTMENT_TABLE.max_allotment.get(largestHi)!;
+      return baseHi.add(HI_ALLOTMENT_TABLE.max_allotment_each_additional.mul(size - largestHi));
+    }
+    throw new Error(`No max_allotment for size ${size} (HI)`);
+  }
+
+  if (state === "GU") {
+    const exactGu = GU_ALLOTMENT_TABLE.max_allotment.get(size);
+    if (exactGu) return exactGu;
+    const largestGu = Math.max(...GU_ALLOTMENT_TABLE.max_allotment.keys());
+    if (size > largestGu) {
+      const baseGu = GU_ALLOTMENT_TABLE.max_allotment.get(largestGu)!;
+      return baseGu.add(GU_ALLOTMENT_TABLE.max_allotment_each_additional.mul(size - largestGu));
+    }
+    throw new Error(`No max_allotment for size ${size} (GU)`);
+  }
+
   const exact = s.max_allotment.get(size);
   if (exact) return exact;
   const largest = Math.max(...s.max_allotment.keys());
@@ -413,16 +484,19 @@ export function shelterCapFor(asOf: Date): Decimal {
 
 /**
  * Federal minimum-benefit floor (HH1-2 eligible households), 48-contiguous
- * default unless `state === "AK"` or `state === "VI"`. #814: Alaska sets
- * its OWN, higher, zone-specific minimum-benefit floor ($31 Urban / $39
+ * default unless `state === "AK"`, `"VI"`, `"HI"`, or `"GU"`. #814: Alaska
+ * sets its OWN, higher, zone-specific minimum-benefit floor ($31 Urban / $39
  * Rural I / $48 Rural II FY26, vs. the $24 national default) per the same
  * USDA FNS "MINIMUM SNAP ALLOTMENTS" table ak-allotment-zones.ts's
  * max-allotment figures are sourced from. Same two-tier county_fips →
  * zone resolution as maxAllotmentFor above. #858: VI's own published
  * minimum allotment is also elevated ($31 for a 1-2 person HH, same
  * dollar figure as AK's Urban floor, coincidentally) — vi-allotment-
- * table.ts's single flat table, no county_fips involved. `state`/
- * `countyFips` change nothing for any other state.
+ * table.ts's single flat table, no county_fips involved. #861: HI's ($41)
+ * and GU's ($35) own published minimum allotments are also elevated, same
+ * single-flat-table shape as VI, sourced from the SAME "MINIMUM SNAP
+ * ALLOTMENTS" section of USDA FNS's FY2026 COLA memo. `state`/`countyFips`
+ * change nothing for any other state.
  */
 export function minimumBenefitFor(asOf: Date, state?: string, countyFips?: string): Decimal {
   const s = snapshotFor(asOf);
@@ -432,6 +506,12 @@ export function minimumBenefitFor(asOf: Date, state?: string, countyFips?: strin
   }
   if (state === "VI") {
     return VI_ALLOTMENT_TABLE.minimum_benefit;
+  }
+  if (state === "HI") {
+    return HI_ALLOTMENT_TABLE.minimum_benefit;
+  }
+  if (state === "GU") {
+    return GU_ALLOTMENT_TABLE.minimum_benefit;
   }
   return s.minimum_benefit;
 }
