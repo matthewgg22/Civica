@@ -216,6 +216,18 @@ export type DrugFelonyBanStatus = "none" | "modified" | "full" | "unconfirmed";
 // the change. Data-integrity rule mirrors federal-tables.ts's own: never
 // edit a published snapshot after its effective_end passes — add a new
 // dated entry instead.
+// #830: `bbceConferred` in verdict.ts unconditionally skips the net-income
+// test for every BBCE/ECE state once the (possibly raised) gross screen
+// clears — correct for most BBCE states, but WRONG for a real minority
+// (TN/CT/KY confirmed, each independently) whose own manuals keep a net-
+// income ceiling ON TOP of the BBCE gross screen instead of waiving it.
+// `undefined`/`null` (every state below except TN/CT/KY) preserves today's
+// behavior byte-for-byte: BBCE-conferred households skip the net test.
+// Non-null means the net test still runs after BBCE gross conferral, at
+// this ratio (as a % of FPL) instead of being skipped. Same "widen the
+// schema once, migrate every existing entry to the value that preserves
+// current behavior" pattern as `AllotmentTier` (#858/#861) and
+// `DrugFelonyBanStatus` (#805) before it.
 export interface StatePolicy {
   effective_start: Date;
   effective_end: Date;
@@ -223,6 +235,7 @@ export interface StatePolicy {
   label: string;
   bbce: boolean;
   bbce_threshold_pct?: number;
+  bbce_net_ceiling_pct?: number | null;
   bbce_fpl_basis: BBCEFPLBasis;
   asset_waiver: boolean;
   /** Per-tier SUA values; null = not authored, callers MUST NOT trust. */
@@ -2687,6 +2700,15 @@ const STATES: Record<string, StatePolicy[]> = {
   // ORDINARY passenger vehicles (TDHS's separate "Treatment of Vehicles"
   // procedure document could not be located) — not assumed to follow the
   // boat rule.
+  // #830 fix: TN's own TN Rule 1240-01-14-.15(2)/(3) (amended 1/15/2026,
+  // effective 4/15/2026) requires Expanded Categorical Eligibility
+  // households to clear BOTH gross ≤ 200% FPL AND net ≤ 100% FPL — the
+  // ordinary federal net-income standard, simply never waived the way most
+  // BBCE states waive it. `bbce_net_ceiling_pct: 100` makes verdict.ts
+  // enforce the net test after BBCE gross conferral instead of skipping it.
+  // See this file's TN entry's original comment block (below) and
+  // packages/demeter-engine/src/states/tn/PROVENANCE.md Finding 1 for the
+  // full citation chain.
   TN: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
@@ -2695,6 +2717,7 @@ const STATES: Record<string, StatePolicy[]> = {
       label: "Tennessee / TDHS",
       bbce: true,
       bbce_threshold_pct: 200,
+      bbce_net_ceiling_pct: 100,
       bbce_fpl_basis: "federal_fiscal_year",
       asset_waiver: true,
       sua_by_tier: null,
@@ -4845,6 +4868,28 @@ const STATES: Record<string, StatePolicy[]> = {
   // documented class (#824/#825-style Facts-shape/mechanism gaps, or
   // NY-precedent multi-tier-BBCE accepted limitations), not a new engine
   // architecture gap, per this build's own instructions.
+  // #830 fix: live-fetched KY's own current DFS Operations Manual Volume 2
+  // (chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf, converted via
+  // `pdftotext -layout`) and confirmed directly, not via a secondary
+  // source: MS 3160.A.3.b (R. 6/30/26 – OMTL-630) — "ECE households must be
+  // under the net income for their household size" — on top of the
+  // 130%/200% dual-track gross ceiling this entry's `bbce_threshold_pct:
+  // 130` already models (KY's own manual: only households in which ALL
+  // members are elderly/disabled get the elevated 200% gross door; every
+  // other ECE household stays at the ordinary 130% gross ceiling — see
+  // this state's original comment block below for the full dual-track
+  // citation). MS 3175.B (R. 6/30/26 – OMTL-671) confirms the same rule a
+  // second, independent time: "Expanded categorically eligible (ECE)
+  // households ... may not have income in excess of the 200 percent
+  // Federal Poverty Level (FPL) income limit and must be under the net
+  // income eligibility standard for their household size." MS 3175.A
+  // draws the contrast explicitly for plain CE (not ECE): "The gross and
+  // net income limits do not apply to CE households" — the SAME CE-vs-ECE
+  // split TN's and CT's #830 findings already established, now confirmed
+  // a third, independent time directly against KY's own current manual
+  // text (not inferred from a corpus pack summary). `bbce_net_ceiling_pct:
+  // 100` is the ordinary federal net-income standard KY's own manual
+  // cites — not an elevated state-specific figure.
   KY: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
@@ -4853,6 +4898,7 @@ const STATES: Record<string, StatePolicy[]> = {
       label: "Kentucky / CHFS-DCBS",
       bbce: true,
       bbce_threshold_pct: 130,
+      bbce_net_ceiling_pct: 100,
       bbce_fpl_basis: "federal_fiscal_year",
       asset_waiver: true,
       sua_by_tier: {
@@ -5026,6 +5072,13 @@ const STATES: Record<string, StatePolicy[]> = {
   // pre-existing engine-gap fail — not a coverage gap). Every other
   // registered state's harness run reconfirmed unchanged from its
   // documented baseline.
+  // #830 fix: this state's own original comment block above already
+  // documented the finding in full (CT DSS's ECE-excludes list omits the
+  // net income limit that RCE's own list explicitly includes) and flagged
+  // the exact 128 PASS / 1 FAIL harness shape this created. `bbce_net_
+  // ceiling_pct: 100` closes the gap that comment predicted — the ordinary
+  // federal net-income standard, applied instead of skipped, per CT DSS's
+  // own current Tables/explainer pages cited above.
   CT: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
@@ -5034,6 +5087,7 @@ const STATES: Record<string, StatePolicy[]> = {
       label: "Connecticut / DSS",
       bbce: true,
       bbce_threshold_pct: 200,
+      bbce_net_ceiling_pct: 100,
       bbce_fpl_basis: "federal_fiscal_year",
       asset_waiver: true,
       sua_by_tier: {
