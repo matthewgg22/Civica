@@ -4,12 +4,10 @@ import { computeBenefit } from "../benefit-calc";
 import type { Facts } from "../facts";
 
 // Minnesota (issue #730, sixth and last of the six-state gap tracked in
-// #732). Source: packages/demeter-engine/src/states/mn/{pack,supplements}.json.
-//
-// MN's SUA is DELIBERATELY null, following the exact PA precedent in
-// tranche1-states.test.ts: the MN corpus pack's own build could not confirm
-// a current dollar figure against a primary source, so this engine fails
-// loudly on a shelter deduction rather than inventing one.
+// #732; SUA gap subsequently closed by #747). Source:
+// packages/demeter-engine/src/states/mn/{pack,supplements}.json plus the
+// direct-PDF + EPM Appendix F sourcing chain documented in this file's own
+// states.ts comment above the MN entry.
 
 const ASOF = new Date("2026-08-11");
 
@@ -23,15 +21,17 @@ describe("Minnesota — flat 200% BBCE, exempt from BOTH asset and net income te
   });
 });
 
-describe("Minnesota has NO authored SUA — a logged verification gap, not an oversight", () => {
-  it("sua_by_tier stays null until a working primary source is reached", () => {
-    expect(
-      statePolicyFor("MN", ASOF).sua_by_tier,
-      "MN's Combined Manual utility-deduction section text was not captured this pass; both a USDA FY26 SUA PDF and a DHS page returned access-denied — see the states.ts comment for what was tried",
-    ).toBeNull();
+describe("Minnesota SUA — RESOLVED (#747): real FFY26 figures, computeBenefit no longer throws", () => {
+  it("sua_by_tier carries MN's real FFY26 HCSUA/electric/phone figures", () => {
+    const p = statePolicyFor("MN", ASOF);
+    expect(p.sua_by_tier).not.toBeNull();
+    expect(p.sua_by_tier!.HCSUA.toString()).toBe("667");
+    expect(p.sua_by_tier!.LUA.toString()).toBe("235");
+    expect(p.sua_by_tier!.phone.toString()).toBe("62");
+    expect(p.sua_by_tier!.none.toString()).toBe("0");
   });
 
-  it("MN fails LOUDLY on a shelter deduction rather than inventing one", () => {
+  it("MN now computes a real shelter deduction instead of throwing", () => {
     const facts = {
       household: [{ member_id: "m1", role: "head", age: 40, work_class: "gen_work_subject" }],
       income: [],
@@ -40,9 +40,9 @@ describe("Minnesota has NO authored SUA — a logged verification gap, not an ov
       assets: 0,
       cat_elig: "none",
     } as unknown as Facts;
-    // The #436 invariant: an unauthored SUA must throw, never silently
-    // substitute zero or another state's value.
-    expect(() => computeBenefit(facts, "MN", ASOF)).toThrow(/SUA not authored/);
+    expect(() => computeBenefit(facts, "MN", ASOF)).not.toThrow();
+    const detail = computeBenefit(facts, "MN", ASOF);
+    expect(detail.trace.state_sua_value).toBe(667);
   });
 });
 

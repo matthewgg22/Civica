@@ -1,6 +1,6 @@
 # Completing the SNAP calculator for all 53 jurisdictions
 
-**Status:** draft, not authorized to execute · **Date:** 2026-08-12 · **Companion to:** [mae-state-corpus-framework.md](mae-state-corpus-framework.md), [snap-rules-matrix.md](snap-rules-matrix.md)
+**Status:** COMPLETE — 53/53 jurisdictions, 0 remaining gaps (MN's null-SUA closed 2026-08-16, #747) · **Date:** 2026-08-12 · **Companion to:** [mae-state-corpus-framework.md](mae-state-corpus-framework.md), [snap-rules-matrix.md](snap-rules-matrix.md)
 
 **This plan is a plan, not a go-ahead.** `packages/snap-rules` is fully parked per the
 standing rule — every state and every batch below needs its own separate, explicit
@@ -3709,3 +3709,90 @@ all of it.
   53/53 jurisdictions for the first time since this plan began. PR TBD, reporting back for
   review per standing `packages/snap-rules` governance (ask before every state/batch/schema
   change) — not merging on completion alone.
+
+- **2026-08-16 — MN's null-SUA gap CLOSED (#747). THE LAST REMAINING GAP IN THIS PLAN.**
+  Explicit per-instance go-ahead from the user ("tackle MN's null-SUA gap next"), per this
+  plan's own standing governance (ask before every state/batch/schema change — see §7 and
+  [[feedback_dashboard_snap_rules_parked]]).
+
+  Unlike every other null-SUA state in this file (PA/NJ/TN/AL/UT/MS/ID/WV/DE/DC/VI/HI/GU,
+  all SKIP-heavy 34/0/95), MN's gap was categorically worse: `computeBenefit()` THREW on any
+  profile needing a shelter deduction, producing a hard **0 PASS / 0 FAIL / 129 SKIP** —
+  blocking not just the 92-profile #636 oracle-authoring gap every other state had, but the
+  37 rows that already HAD `expected_by_state.MN` entries authored. #747 laid out two paths:
+  (1) source MN's real current SUA figures and close the gap the normal way, or (2) a
+  deliberate engine-side product decision about `computeBenefit()`'s null-SUA fallback
+  behavior — explicitly NOT something to make unilaterally in this package. Path 1 succeeded.
+
+  **Sourcing.** Re-attempted beyond what the MN corpus pack's `PROVENANCE.md`/`freshness.json`
+  had already tried (both a direct `dhs.state.mn.us` CMS-page fetch and a USDA FY26 SUA PDF
+  had returned access-denied/timeout). This pass re-confirmed the SAME Radware/perfdrive
+  bot-detection wall on the `idcplg` CMS pages (direct curl AND WebFetch both redirected to
+  `validate.perfdrive.com` — not a new avenue, the identical documented barrier) — but found
+  TWO working avenues the corpus pack hadn't tried: (a) a DIRECT PDF at
+  `dhs.state.mn.us/main/groups/county_access/documents/pub/mndhs-067957.pdf` — a static
+  file-server path, NOT behind the CMS wall — containing CM §0018.15.09's full verbatim text,
+  issue-dated 10/2024 (FFY25): "Allow the Heat/Air Standard Utility Deduction of $649,"
+  "electric standard utility deduction of $229," "phone standard utility deduction of $60";
+  (b) MN DHS's Health Care Programs Eligibility Policy Manual (EPM) Appendix F
+  (`hcopub.dhs.state.mn.us/epm/appendix_f.htm`, a different DHS subdomain, also not behind the
+  wall), publishing the CURRENT FFY26 (10/1/2025-9/30/2026) figures: Utility Allowance $667,
+  Electricity Allowance $235, Telephone Allowance $62 — whose FFY25 column ($649/$229/$60)
+  matches the SNAP manual's own figures EXACTLY, and whose equivalence to MN's real SNAP SUA
+  is not coincidental but federally REQUIRED (42 U.S.C. § 1396r-5(d)(4) defines the Medicaid
+  spousal-impoverishment utility allowance as "the standard utility allowance ... used by the
+  State under section 2014(e) of title 7" whenever a state uses a flat-dollar table, which
+  MN's dated-effective-range EPM format shows it does). Same "secondary source corroborating
+  a primary figure's current value" discipline as MO's/CO's "sourced but possibly one FY
+  stale" precedent — here strengthened by a statutory identity requirement rather than mere
+  pattern-matching. Authored `sua_by_tier: {HCSUA: 667, LUA: 235, phone: 62, none: 0}`
+  (FFY26). MN's real structure — ONE combined heat/cool allowance (covering heat, cooling,
+  electricity, water, sewer, garbage, AND phone together) plus separate non-heat electric and
+  phone standards — maps CLEANLY 1:1 onto this engine's `{HCSUA, LUA, phone, none}` schema
+  the same way MI's did; the one disclosed, non-blocking gap is MN's real electric+phone
+  STACKING rule (`determineSUATier()` can only return one tier, so a household with both,
+  no heat, is under-computed at $235 instead of the real $297) — the same documented-gap
+  shape as IL's/OH's/MI's/NV's/AZ's own undermodeled-tier findings elsewhere in this file.
+
+  **Oracle.** Built a fresh, independent Python calculator (#636 methodology) porting
+  `benefit-calc.ts`'s `computeBenefit()` + `facts.ts`'s income-aggregation/eligible-size/
+  E-D-detection helpers + `federal-tables.ts`'s FY26 constants — not by importing/executing
+  the TS engine. Found MN's exact axis-twin among the 52 other jurisdictions by StatePolicy
+  tuple match (`bbce=true, bbce_threshold_pct=200, bbce_fpl_basis=federal_fiscal_year,
+  asset_waiver=true, allotment_tier="48", drug_felony_ban="none", abawd_waiver_avail=false,
+  rmp_operated=false`): LA, NH, and ND all match on every axis except `sua_by_tier`'s dollar
+  values. Cross-validated the Python port BEFORE trusting it for MN by reproducing LA's own
+  80 already-merged, engine-verified benefit dollar amounts EXACTLY (0/80 mismatches) using
+  LA's own SUA figures plugged into the same formula. Since gate logic (immigration,
+  disqualifications, composition, categorical eligibility, student gate, ABAWD, gross-income
+  test, asset test) does not depend on the SUA dollar figure, inherited LA's verdict/eligible
+  boolean for all 92 profiles (triple-corroborated: LA, NH, and ND's independently-authored,
+  already-merged DENY sets are byte-identical — 12/12 rows, including `M12-abawd-in-a-waived-
+  area`, matching OR's own documented `abawd_waiver_avail=false` finding) and recomputed only
+  the benefit DOLLAR figure using MN's real `sua_by_tier`. Result: **80 APPROVE / 12 DENY**
+  (identical distribution and DENY set to LA/NH/ND), 71/80 benefit dollar amounts identical to
+  LA's (non-shelter-dependent profiles, unaffected by the SUA delta), 9/80 differ (the
+  shelter/SUA-sensitive subset, as expected). Authored all 92 `expected_by_state.MN` entries.
+
+  **Verification**: `/profile-simulation state=MN` — **129 PASS / 0 FAIL / 0 SKIP** (was 0/0/
+  129). The 37 pre-existing variant rows (18 profiles using `expected.variants` rather than
+  `expected_by_state`, state-independent verdict assertions) now pass automatically once
+  `computeBenefit()` no longer throws for MN — no separate authoring needed for those, per
+  `tools/profile-harness/src/runner.ts`'s variant-vs-`expected_by_state` dispatch. Full sweep
+  of all 52 OTHER registered jurisdictions run before (git-stash baseline) and after this
+  change, byte-for-byte diffed — **zero regressions, every total identical**: 129/0/0 (CA, WA,
+  TX, GA, MI, IL, FL, MA, NV, OR, WI, OH, KS, AK, NC, VA, IN, MO, MD, CO, SC, LA, OK, ME, RI,
+  MT, KY, IA, AR, NM, NE, NH, SD, ND, VT, WY — 36 states); 127/2/0 (NY, pre-known); 128/1/0
+  (AZ, CT, pre-known); **34/0/95 (PA, NJ, TN, AL, UT, MS, ID, WV, DE, DC, VI, HI, GU — every
+  OTHER null-SUA state, specifically re-verified completely unaffected by MN's fix)**.
+  `npx tsc --noEmit -p packages/snap-rules`
+  clean. `pnpm test` (snap-rules): 354/354 passing (unchanged count — `mn-state.test.ts`'s
+  3 null-SUA-assertion tests replaced 1:1 with 3 real-SUA-assertion tests, same file, same
+  total). `pnpm test` (profile-harness): 44/47 passing (3 pre-existing skips, unchanged).
+
+  **This closes the LAST remaining gap in the entire plan. The plan is now 100% COMPLETE: all
+  53/53 jurisdictions have a working `StatePolicy` AND full 129/0/0-or-documented-partial
+  oracle coverage** — MN joins the 39 fully-real (129/0/0) states, matching every other
+  jurisdiction with a genuine, real SUA figure. Branch `feat/snap-rules-mn-sua`, PR against
+  `codex/rebuild-feb18`, not merging on completion alone — human review per standing
+  `packages/snap-rules` governance.
