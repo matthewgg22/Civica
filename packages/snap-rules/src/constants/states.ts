@@ -3260,6 +3260,270 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Kentucky (individual tier, §6 step 3, eleventh state after NC/NJ/VA/TN/
+  // IN/MO/MD/CO/SC/LA) — built Kentucky's `StatePolicy` entry AND full
+  // 92-profile oracle coverage from scratch (KY had neither before this PR),
+  // translating KY's already-merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/ky/, PROVENANCE.md + supplements.json
+  // + authorities.json, built 2026-08-12) into the engine's stricter typed
+  // shape per §5's process. At this build's start, two OTHER individual-tier
+  // builds were concurrently in-flight, NOT yet merged: Alabama (AL, state
+  // #10, PR open, based on an older commit before SC merged) and Louisiana
+  // (LA, state #11, PR #847, based on the current SC-merged tip). LA merged
+  // (PR #847) partway through this build's session; this entry was rebased
+  // onto the LA-merged tip and appended after LA's entry below, not after
+  // SC's. AL's work was NOT touched or coordinated with — it remains open; a
+  // human reconciles the eventual rebase chain (same MO-vs-TN/IN pattern this
+  // project has used before).
+  //
+  // bbce: true / bbce_threshold_pct: 130 / bbce_fpl_basis:
+  // federal_fiscal_year — Kentucky's own term is "Expanded Categorical
+  // Eligibility" (ECE), not BBCE, but the underlying federal authority
+  // (7 CFR 273.2(j)) is the same. KY OM Vol. 2 MS 3160/MS 3175/MS 5200
+  // (effective 10/1/2025, FFY2026) document a GENUINE DUAL-TRACK income
+  // ceiling this pack's own PROVENANCE.md (Finding 6) flags as a THIRD
+  // ECE/BBCE variant this roster has not seen before — neither Louisiana's
+  // flat-200% shape nor Alabama's described dual-track shape: non-elderly/
+  // non-disabled ECE households stay capped at the ORDINARY 130% FPL gross
+  // ceiling (no income expansion at all vs. a non-ECE household), while ONLY
+  // households in which EVERY member is elderly or disabled get the raised
+  // 200% FPL ceiling. This schema's single scalar `bbce_threshold_pct`
+  // cannot express a composition-conditioned dual ceiling — the SAME
+  // accepted-limitation shape this file's NY entry already established
+  // ("bbce_threshold_pct is set to 130, the DEFAULT/general tier... the
+  // higher tier... is NOT modeled here... the safer direction of error for
+  // THIS schema gap specifically"). `130` is chosen for the identical
+  // reason: it is the ceiling that actually binds for the vast majority of
+  // KY ECE households (every household that is NOT all-elderly/disabled),
+  // and under-approving the narrow all-elderly/disabled 200% population is
+  // the safer-direction error (a false negative the corpus/chatbot layer can
+  // still catch by citing KY's real 200% tier in text) rather than
+  // over-approving every ordinary household at a ceiling KY's own manual
+  // does not actually grant them. Independent verification: none of this
+  // fixture's 92 base profiles model an all-elderly/disabled multi-member
+  // household at an income level between 130% and 200% FPL, so this gap has
+  // zero effect on KY's oracle coverage today.
+  //
+  // asset_waiver: true — MS 3175 confirms BOTH ECE tracks "meet all
+  // eligibility factors listed above except for SSN information," resources
+  // being one of the waived factors — a full resource-test waiver for the
+  // ECE majority, not merely a higher limit. (Separately, KY's narrower
+  // "Categorically Eligible," CE, non-ECE, path — KTAP/Kinship/WIN/FAST/SSI
+  // recipients — waives BOTH income and resources with no percentage-of-FPL
+  // calculation at all; MS 5000's tested $3,000/$4,500 minority applies only
+  // to households that are neither CE nor ECE.)
+  //
+  // sua_by_tier — FULLY POPULATED, not null, a clean case: MS 5490/5498 (R.
+  // 10/1/25, FFY2026) publish a flat Standard Utility Allowance ($388/mo,
+  // regardless of household size, for any household with a heating/cooling
+  // cost), a Basic Utility Allowance ($331/mo, 2+ non-heating utilities),
+  // and a standalone Telephone Standard ($64/mo). These map cleanly onto
+  // this schema's three tiers by FUNCTION: SUA -> HCSUA, BUA -> LUA (BUA is
+  // ALREADY a 2+-utility standard by KY's own definition, so — like SC's
+  // entry above — no naming-collision trap where the schema's LUA slot maps
+  // to a differently-scoped 1-utility tier), Telephone Standard -> phone.
+  // KY's flat, size-invariant SUA means (unlike NC's/VA's size-banded
+  // standards) there is no household-size approximation to disclose here.
+  //
+  // allotment_tier: "48" — KY's own Standard Deduction ($209/$209/$209/
+  // $223/$261/$299, MS 5400) and capped excess shelter deduction ($744, MS
+  // 5400) match federal-tables.ts's FY26 snapshot exactly, the same
+  // shared-source signal NC's/VA's/MO's/MD's/CO's/SC's entries use. KY's own
+  // asset limits ($3,000/$4,500, MS 5000, R. 10/1/24) also match — though
+  // PROVENANCE.md Finding 2 discloses KY's own CONSUMER-FACING SNAP page
+  // currently states a stale, one-COLA-cycle-old pair ($2,250/$3,500,
+  // roughly FFY2019-2020) that the pack treats as a genuine staleness
+  // finding on KY's own website, not as the operative figure — the more
+  // recently and more specifically dated MS 5000 policy manual controls,
+  // and (per asset_waiver above) resources are waived for the vast majority
+  // of KY households regardless.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL STATUTORY OPT-OUT, and a
+  // genuine roster FIRST: PROVENANCE.md Finding 0 reports NO HTTP access
+  // barrier of any kind on chfs.ky.gov / apps.legislature.ky.gov /
+  // benefind.ky.gov, including a direct, successful full-text read of the
+  // opt-out statute itself (KRS 205.2005, eff. 6/29/2021, 2021 Ky. Acts ch.
+  // 182, sec. 4) from Kentucky's own legislature.ky.gov database — a
+  // departure from the Justia-403 pattern this roster has hit repeatedly for
+  // equivalent statutes in LA/VA/IN/MO/MD/CO/SC/AL. The statute reads in
+  // full: "Pursuant to 21 U.S.C. sec. 862a(d)(1), all individuals residing
+  // in Kentucky shall be exempt from the application of 21 U.S.C. sec.
+  // 862a(a))." Independently corroborated by omission: KY's own CURRENT
+  // disqualification lists (MS 3455, R. 8/1/26; MS 5520, R. 4/1/2021) carry
+  // no drug-felony category among the reasons a member can be disqualified.
+  // DISCLOSED, not silently dropped: two internal manual artifacts (MS 5040,
+  // dated 2010; MS 7070, dated 4/1/2021, three months before the opt-out
+  // took effect) still reference drug-felony language — PROVENANCE.md
+  // Finding 3 treats both as stale, unscrubbed artifacts inside an otherwise
+  // current (2025-2026-dated) manual, not evidence of an active ban, since
+  // KY's own MOST RECENTLY DATED disqualification lists control and match
+  // the statute.
+  //
+  // SEPARATE FINDING, NOT MODELED (no engine axis or `disqual` tag exists
+  // for it, and not a per-state value this StatePolicy schema can express):
+  // Kentucky ALSO actively disqualifies SNAP members $500+ delinquent on
+  // legally-obligated child support THEY OWE (MS 2380/2385, both R.
+  // 6/1/26), identified via an automated match against the Kentucky
+  // Automated Support and Enforcement System (KASES) — an entirely
+  // different, optional state-welfare-reform mechanism from the federal
+  // drug-felony ban, and (per PROVENANCE.md) "not something this pack found
+  // explicitly documented in this roster's prior states' packs." `Facts`
+  // has no field for a member's child-support-arrearage amount, and
+  // `gates/disqualifications.ts`'s `member.disqual[]` tag vocabulary
+  // (lottery / ipv / fleeing_felon / drug_felony) has no slot for it either
+  // — this is a genuinely new disqualification-MECHANISM gap, not a dollar-
+  // figure or schema-mapping gap like this file's other disclosed axes.
+  // Treated the same way as SC's vehicle-per-licensed-driver /
+  // SMED / certification-period findings immediately above (an
+  // already-documented CLASS of "no representable slot" gap, per this
+  // build's own instructions) rather than filed as a new issue: zero of
+  // this fixture's 92 profiles model a child-support-arrearage scenario (no
+  // `Facts` field exists to encode one), so it has no practical effect on
+  // KY's oracle coverage today, and a real KY household with $500+ in
+  // arrears would be silently NOT disqualified by this engine until a
+  // future build adds the mechanism.
+  //
+  // abawd_waiver_avail: false — PROVENANCE.md Finding 4 (flagship,
+  // time-sensitive): as of this build, ALL 120 Kentucky counties became
+  // ABAWD-subject effective 11/1/2025, but a narrow FIVE-COUNTY Appalachian
+  // waiver (Elliott, Lewis, Magoffin, Martin, Wolfe) took effect 12/1/2025 —
+  // both dates stated in direct sequence on KY's own current consumer SNAP
+  // page. A state-level boolean cannot express "5 of 120 counties," and no
+  // KY_WAIVER_COUNTY_FIPS lookup exists (no county-level authored set the
+  // way CA's/MA's ABAWD gate can consult) — `false` follows the SAME
+  // reasoning as NY's/OR's/VA's/MO's/TN's/MD's/CO's/SC's entries: a waiver
+  // covering a small minority of counties (5 of 120, ~4%) makes `false` the
+  // correct GENERAL-CASE default, unlike CA's/MI's/NV's/AZ's entries where
+  // the waived fraction is large enough to justify the permissive `true`
+  // fallback instead. PROVENANCE.md also discloses a genuine, unresolved
+  // CONFLICT worth flagging for future re-verification: ABAWDMap.us (an
+  // independent aggregator, "last verified June 16, 2026," 5-7 months AFTER
+  // KY's own December 2025 waiver announcement) states "No waiver — rule
+  // applies" statewide and does not reflect this 5-county waiver at all —
+  // this pack's own build treats KY's own, more recently and more
+  // specifically dated primary source as authoritative, the same
+  // discipline this roster's other aggregator-conflict findings use.
+  //
+  // rmp_operated: false — confirmed ABSENT from USDA FNA's own current
+  // Restaurant Meals Program state list (Arizona, Maryland, New York,
+  // California, Massachusetts, Rhode Island, Illinois [Cook/Franklin only],
+  // Michigan, Virginia — cross-checked against this file's MO/IN/TN/SC
+  // entries' own independent fetches of the same list, page dated updated
+  // 8/7/2026). PROVENANCE.md also independently confirms no active
+  // hot-foods disaster waiver of any kind as of this pack's fetch date (two
+  // recent KY disaster waivers were both narrow 10-day-reporting waivers for
+  // power-outage food loss, not hot-foods purchase waivers, and both had
+  // already expired).
+  //
+  // Also disclosed, and NOT modeled (immaterial to every oracle profile,
+  // same "no representable slot" class as SC's/NJ's per-state findings
+  // above): Kentucky's expedited-service processing standard is 5 calendar
+  // days (MS 6400/6430/6450), faster than the federal 7-day ceiling this
+  // engine does not model timing for at all; Kentucky assigns a genuinely
+  // tri-tier certification-period structure (4/12/36 months, MS 6600) with
+  // no engine axis for certification-period length, matching CO's/SC's
+  // already-disclosed gap; Kentucky's own consumer-facing EBT-card name
+  // finding (PROVENANCE.md Finding 5, no distinctive brand — a corrected,
+  // NOT a novel, finding) has no engine consumer at all.
+  //
+  // Oracle: KY's closest structural axis-twin among all 27 already-
+  // registered states (NOT AL or LA, neither merged as of this build) is
+  // NEW YORK — matching ALL 6 axes that materially affect grading exactly
+  // (bbce: true, bbce_threshold_pct: 130, asset_waiver: true,
+  // drug_felony_ban: "none", abawd_waiver_avail: false, allotment_tier:
+  // "48"), differing only in rmp_operated (NY true vs KY false) — which has
+  // NO consumer anywhere in verdict.ts or benefit-calc.ts (grep-confirmed,
+  // same as every other state's entry in this file), making NY a
+  // practically EXACT match, stronger than any twin this roster has used
+  // (SC's own TX twin differed on bbce_threshold_pct, a materially
+  // consequential axis; KY's only difference from NY is inert). Built a
+  // fresh, independent Python calculator (not derived from engine output,
+  // per #636) directly from verdict.ts/benefit-calc.ts/gates/{income-tests,
+  // asset-test,abawd,student,composition,immigration,disqualifications,
+  // categorical}.ts/facts.ts/constants/federal-tables.ts's own read source
+  // (not just their doc-comments), mirroring every gate and the
+  // benefit-calc formula exactly, including decimal.ts's half-up
+  // (roundDollar), floor (floorDollar), and ceiling (ceilDollar) rounding
+  // conventions. Cross-validated BEFORE trusting it for KY: 92/92 exact
+  // match (verdict AND benefit) reproducing NY's already-authored
+  // expected_by_state.NY oracle under NY's own StatePolicy params. Of the
+  // 37 non-expected_by_state variant rows, 35/37 matched NY's existing
+  // verdict_by_state entries or shared default exactly; the remaining 2
+  // (M23-variable-gig-income-anticipation's two variants) are NOT
+  // calculator errors — NY's own build never authored an NY-specific
+  // verdict_by_state override for M23, and the calculator's computed DENY
+  // for NY under NY's real 130% params is independently corroborated by
+  // EVERY other already-authored 130%-threshold state's own override on
+  // the same two rows (OH/GA/KS/MO/IN/SC all DENY, per those states'
+  // already-merged verdict_by_state blocks) — a cross-check that
+  // CONFIRMS rather than undermines the calculator, and a pre-existing gap
+  // in NY's own coverage that is out of scope for this KY-only build.
+  //
+  // As a second, independent sanity check (not a formal cross-validation,
+  // since none is KY's structural twin), compared KY's own computed 92-
+  // profile DENY set (20 of 92) against OH's, GA's, and SC's already-graded
+  // oracles, each varying from KY on exactly one comparison axis: KY's DENY
+  // set is OH's DENY set PLUS exactly M12-abawd-in-a-waived-area (explained
+  // by abawd_waiver_avail: false vs OH's true); KY's DENY set is GA's DENY
+  // set MINUS exactly D02-over-asset-limit-non-bbce and
+  // M02-assets-3-500-asset-test-flip (explained by asset_waiver: true vs
+  // GA's false); KY's DENY set is SC's DENY set MINUS exactly
+  // M29-drug-felony-individual-state-option (explained by drug_felony_ban:
+  // "none" vs SC's "full") — zero unexplained divergence in any of the
+  // three comparisons, each triangulating a different axis independently.
+  //
+  // Also checked all 37 rows across the 18 non-expected_by_state variant
+  // profiles (facts_patch A/B pairs) for a KY-specific verdict_by_state
+  // override, the same discipline every prior state's build used: found
+  // exactly ONE real divergence (matching MO's/SC's one-profile-two-variant
+  // precedent, not NC's/VA's/MD's/CO's zero-override result) —
+  // M23-variable-gig-income-anticipation's two variants ($1,800 and $2,200
+  // gross HH1) both clear a 200%/165% BBCE screen but fail KY's effective
+  // 130% ECE screen for the identical reason OH/GA/KS/MO/IN/SC already
+  // fail — authored "KY": "DENY" into both variants' verdict_by_state
+  // blocks. Authored all 92 expected_by_state.KY entries: 72 APPROVE / 20
+  // DENY.
+  //
+  // Verification: `/profile-simulation state=KY` — 129/129 PASS, 0 FAIL, 0
+  // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC's bar, not PA's/NJ's/TN's/MN's SKIP-heavy shape — KY's
+  // real, current, non-null SUA figures mean it did not need PA's/NJ's/
+  // TN's null-SUA fallback). Every other registered state's harness run
+  // reconfirmed unchanged from its documented baseline. `tsc --noEmit -p
+  // packages/snap-rules` clean, 323/323 snap-rules tests pass (0 new — a
+  // schema-conformant pure addition needed no new unit tests), 44/47
+  // profile-harness tests pass (3 pre-existing skips). Did not touch
+  // `packages/demeter-engine` (KY's corpus was already complete and out of
+  // scope), AL's or LA's concurrently-in-flight, not-yet-merged work, or any
+  // other state's `StatePolicy`/oracle coverage. No new GitHub issue filed —
+  // the child-support-arrearage disqualification-mechanism gap and every
+  // other finding above is a per-state disclosed gap of an already-
+  // documented class (#824/#825-style Facts-shape/mechanism gaps, or
+  // NY-precedent multi-tier-BBCE accepted limitations), not a new engine
+  // architecture gap, per this build's own instructions.
+  KY: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "KY",
+      label: "Kentucky / CHFS-DCBS",
+      bbce: true,
+      bbce_threshold_pct: 130,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("388"),
+        LUA: new Decimal("331"),
+        phone: new Decimal("64"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
