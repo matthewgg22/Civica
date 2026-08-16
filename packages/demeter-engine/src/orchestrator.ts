@@ -270,9 +270,9 @@ export function stripAppendedTrailer(text: string): string {
 function degradedAnswer(
   _retrievedBlock: string,
   lang: AnswerLang = "en",
-  repeated = false,
+  priorDegrades = 0,
 ): string {
-  const { lead, tail } = degradeWrapper(lang, repeated);
+  const { lead, tail } = degradeWrapper(lang, priorDegrades);
   return `${lead}\n\n${tail}`;
 }
 
@@ -387,6 +387,15 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   // --- Attempt 1: stream with incremental verification ----------------------
   let aborted = false;
   let emittedAny = false;
+  // WHICH check failed, not just that one did. The retry below used to send a
+  // single corrective prompt written for citation failures ("cite only the
+  // sources provided") regardless of which gate actually aborted the stream —
+  // so a NUMERIC mismatch retried with guidance about an unrelated problem,
+  // and predictably tried the same unverifiable figure again. Tracked as two
+  // booleans (not exclusive) because a single draft can legitimately trip
+  // both in the same checkpoint.
+  let abortedOnCitation = false;
+  let abortedOnNumeric = false;
   {
     const stream = client.messages.stream({ ...generation, messages }, { signal });
     let sinceVerify = 0;
@@ -401,8 +410,12 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
           if (sinceVerify >= VERIFY_INTERVAL_CHARS) {
             sinceVerify = 0;
             const checks = verifyCitations(answerText, retrievedCitations, state, retrievedText);
-            if (hasUnrecognized(checks) || !numbersOk(answerText)) {
+            const citationBad = hasUnrecognized(checks);
+            const numericBad = !numbersOk(answerText);
+            if (citationBad || numericBad) {
               aborted = true;
+              abortedOnCitation ||= citationBad;
+              abortedOnNumeric ||= numericBad;
               stream.abort();
               break;
             }
@@ -418,8 +431,12 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
         usageIn += final.usage.input_tokens;
         usageOut += final.usage.output_tokens;
         finalChecks = verifyCitations(answerText, retrievedCitations, state, retrievedText);
-        if (hasUnrecognized(finalChecks) || !numbersOk(answerText)) {
+        const citationBadFinal = hasUnrecognized(finalChecks);
+        const numericBadFinal = !numbersOk(answerText);
+        if (citationBadFinal || numericBadFinal) {
           aborted = true; // failed on the last unverified tail
+          abortedOnCitation ||= citationBadFinal;
+          abortedOnNumeric ||= numericBadFinal;
         } else {
           if (buffered) {
             emittedAny = true;
@@ -447,10 +464,37 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   if (aborted) {
     yield { type: "recompose" };
     outcome = "recomposed";
-    const corrective =
-      "IMPORTANT: your previous draft cited a source that is not in the provided " +
-      "source text. Answer again citing ONLY the sources provided above. If the " +
-      "sources don't cover the question, say so plainly instead of citing anything else.";
+    // FAILURE-SPECIFIC, not one generic message for both gates. This used to
+    // be a single citation-shaped corrective sent regardless of which check
+    // actually failed — a numeric mismatch got told to "cite only the
+    // sources provided", advice that doesn't address a bad number at all, so
+    // the retry had no real information to correct itself with and
+    // predictably reached for the same unverifiable figure again. Real
+    // finding, 2026-08-16: a cash-paid housekeeper's weekly income
+    // conversion aborted attempt 1 AND attempt 2 for this exact reason
+    // before the numeric-check gate itself was fixed to accept it.
+    const correctiveParts: string[] = [];
+    if (abortedOnCitation) {
+      correctiveParts.push(
+        "your previous draft cited a source that is not in the provided source text. " +
+          "Answer again citing ONLY the sources provided above. If the sources don't " +
+          "cover the question, say so plainly instead of citing anything else.",
+      );
+    }
+    if (abortedOnNumeric) {
+      correctiveParts.push(
+        "your previous draft stated a dollar amount or percentage that could not be " +
+          "verified — it did not appear in the provided source text or the engine's " +
+          "live parameters, and it was not something the person themselves stated, a " +
+          "straightforward restatement or sum/difference of their own figures, or the " +
+          "standard weekly-to-monthly (×4.3) or biweekly-to-monthly (×2.15) conversion " +
+          "(7 CFR 273.10(c)(2)). Answer again using ONLY a figure you can trace to one " +
+          "of those. If you cannot state a specific number this way, do not compute " +
+          "one — describe what you can determine in words instead, or ask for the exact " +
+          "figure you need.",
+      );
+    }
+    const corrective = "IMPORTANT: " + correctiveParts.join(" SEPARATELY: ");
     const retrySystem = [...systemBlocks, { type: "text" as const, text: corrective }];
     let retryText = "";
     try {
@@ -481,11 +525,15 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
       answerText = degradedAnswer(
         formatRetrievedSources(chunks, state),
         lang,
-        // Has this conversation already had one of these? If so, do not hand
-        // back the same paragraph — see DEGRADE_AGAIN in lang.ts.
-        messages.some(
+        // HOW MANY TIMES, not just whether. A boolean could only ever pick
+        // between DEGRADE and DEGRADE_AGAIN — so a THIRD (or fourth, fifth…)
+        // degrade in the same conversation kept getting DEGRADE_AGAIN's
+        // reworded refusal verbatim again, which is exactly the "still not
+        // listening" failure DEGRADE_AGAIN itself exists to avoid, just one
+        // repeat later. See DEGRADE_ESCALATE in lang.ts.
+        messages.filter(
           (m) => m.role === "assistant" && degradeLeads(lang).some((l) => m.content.includes(l)),
-        ),
+        ).length,
       );
       finalChecks = verifyCitations(answerText, retrievedCitations, state, retrievedText);
       yield { type: "delta", text: answerText };

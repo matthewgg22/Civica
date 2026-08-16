@@ -249,14 +249,51 @@ const DEGRADE_AGAIN: Record<AnswerLang, { lead: string; tail: string }> = {
   },
 };
 
-/** `repeated` — has this conversation already degraded at least once? */
-export function degradeWrapper(lang: AnswerLang, repeated = false): { lead: string; tail: string } {
-  return (repeated ? DEGRADE_AGAIN : DEGRADE)[lang];
+// A THIRD repeat is a different failure again, not just DEGRADE_AGAIN said a
+// third time. DEGRADE_AGAIN already varies the wording once — but it is still
+// a REFUSAL, repeated, and a real transcript hit it three times in a row
+// verbatim (2026-08-16 audit: a cash-paid housekeeper's income kept failing
+// the numeric gate no matter how much more detail she gave). Repeating even
+// the varied refusal a second time reads the same as the first repeat did —
+// a machine still not listening, just with different words for it. Past this
+// point the honest move is to stop trying to land a number in the chat at
+// all and point at the one thing on this page that actually can: the
+// estimate tool, which computes from the real engine rather than free-text
+// arithmetic the numeric gate has to keep re-checking.
+const DEGRADE_ESCALATE: Record<AnswerLang, { lead: string; tail: string }> = {
+  en: {
+    lead: "A specific number is still the sticking point, and repeating myself isn't going to change that.",
+    tail: "This page has a \"Build my estimate\" option above the message box that works out a real figure using the actual SNAP formula, not the same math we've been circling in chat — that's worth switching to for the number itself. Everything else — what the application asks, which documents to gather, how the interview works — I can still walk you through right here, no number required.",
+  },
+  es: {
+    lead: "Una cifra concreta sigue siendo el obstáculo, y repetirme no va a cambiar eso.",
+    tail: "Esta página tiene una opción \"Calcular mi estimado\" arriba del cuadro de mensajes que calcula una cifra real usando la fórmula real de SNAP, no las mismas cuentas que hemos estado dando vueltas en el chat — vale la pena cambiar a eso para obtener el número. Todo lo demás — qué pide la solicitud, qué documentos reunir, cómo funciona la entrevista — te lo puedo explicar aquí mismo, sin necesidad de un número.",
+  },
+  vi: {
+    lead: "Một con số cụ thể vẫn là điểm mắc kẹt, và việc tôi lặp lại sẽ không thay đổi được điều đó.",
+    tail: "Trang này có tùy chọn \"Ước tính của tôi\" ở phía trên ô nhắn tin, tính ra một con số thật bằng công thức SNAP thực sự, chứ không phải phép tính chúng ta cứ loanh quanh trong đoạn chat này — đáng để chuyển sang đó để lấy con số. Còn lại — đơn hỏi gì, cần chuẩn bị giấy tờ nào, buổi phỏng vấn ra sao — tôi vẫn có thể hướng dẫn bạn ngay tại đây, không cần con số.",
+  },
+  zh: {
+    lead: "具体数字始终是卡住的地方，我重复同样的话也不会改变这一点。",
+    tail: "这个页面在输入框上方有一个\"估算我的金额\"选项，会用真正的 SNAP 公式算出实际数字，而不是我们在这段对话里一直打转的算法——值得切换过去获取这个数字。其余的——申请表会问什么、需要准备哪些材料、面谈怎么进行——我仍然可以在这里带您了解，不需要数字。",
+  },
+};
+
+/** `priorDegrades` — how many times has THIS conversation already degraded
+ *  before now? 0 → DEGRADE (first time). 1 → DEGRADE_AGAIN (one repeat,
+ *  reworded). 2+ → DEGRADE_ESCALATE (stop repeating a refusal and point at
+ *  the estimate tool instead) — was a bare boolean until a real transcript
+ *  hit DEGRADE_AGAIN itself three times running, proving "reworded once" was
+ *  not enough for a THIRD occurrence. */
+export function degradeWrapper(lang: AnswerLang, priorDegrades = 0): { lead: string; tail: string } {
+  if (priorDegrades <= 0) return DEGRADE[lang];
+  if (priorDegrades === 1) return DEGRADE_AGAIN[lang];
+  return DEGRADE_ESCALATE[lang];
 }
 
 /** The lead sentences, for spotting a prior degrade in a transcript. */
 export function degradeLeads(lang: AnswerLang): string[] {
-  return [DEGRADE[lang].lead, DEGRADE_AGAIN[lang].lead];
+  return [DEGRADE[lang].lead, DEGRADE_AGAIN[lang].lead, DEGRADE_ESCALATE[lang].lead];
 }
 
 // ── Chrome copy: citation trailer + freshness footer ────────────────────────
