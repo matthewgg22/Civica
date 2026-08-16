@@ -83,3 +83,57 @@ describe("minimumBenefitFor — non-AK regression and AK zone-based (#814)", () 
     expect(minimumBenefitFor(FY26, "AK", "02050").toNumber()).toBe(48);
   });
 });
+
+// #858: VI's real max-allotment table is genuinely elevated (~28.5-28.9%
+// above the 48-contiguous table at every household size, per USVI DHS's
+// own FY2026 table) — but, UNLIKE AK, it is a single FLAT table with no
+// zone/county axis at all. These tests confirm the new state === "VI"
+// branch and, critically, that every other state (including AK, whose
+// branch sits right next to VI's in the same functions) is unaffected.
+describe("maxAllotmentFor — VI flat table (#858)", () => {
+  it("VI's real max allotment, HH1-8 — verbatim from USVI DHS's FY2026 table", () => {
+    expect(maxAllotmentFor(1, FY26, "VI").toNumber()).toBe(383);
+    expect(maxAllotmentFor(2, FY26, "VI").toNumber()).toBe(703);
+    expect(maxAllotmentFor(3, FY26, "VI").toNumber()).toBe(1009);
+    expect(maxAllotmentFor(4, FY26, "VI").toNumber()).toBe(1278);
+    expect(maxAllotmentFor(5, FY26, "VI").toNumber()).toBe(1521);
+    expect(maxAllotmentFor(6, FY26, "VI").toNumber()).toBe(1827);
+    expect(maxAllotmentFor(7, FY26, "VI").toNumber()).toBe(2019);
+    expect(maxAllotmentFor(8, FY26, "VI").toNumber()).toBe(2300);
+  });
+
+  it("a countyFips passed alongside VI changes nothing — VI's table has no zone/county axis", () => {
+    expect(maxAllotmentFor(1, FY26, "VI", "02020").toNumber()).toBe(383); // 02020 is Anchorage, AK — must be ignored for VI
+    expect(maxAllotmentFor(1, FY26, "VI", undefined).toNumber()).toBe(383);
+  });
+
+  it("HH9 (beyond the published HH8 table) extrapolates via VI's own each-additional figure ($281)", () => {
+    expect(maxAllotmentFor(9, FY26, "VI").toNumber()).toBe(2300 + 281);
+  });
+
+  it("is strictly higher than the 48-contiguous table at every household size (VI can only loosen, never tighten, benefit ceilings)", () => {
+    for (let size = 1; size <= 8; size++) {
+      const vi = maxAllotmentFor(size, FY26, "VI").toNumber();
+      const contiguous = maxAllotmentFor(size, FY26, "TX").toNumber();
+      expect(vi, `HH${size}`).toBeGreaterThan(contiguous);
+    }
+  });
+
+  it("AK's branch is unaffected by VI's addition — Anchorage (02020, Urban) still $385", () => {
+    expect(maxAllotmentFor(1, FY26, "AK", "02020").toNumber()).toBe(385);
+  });
+});
+
+describe("minimumBenefitFor — VI flat table (#858)", () => {
+  it("VI's real minimum allotment is $31 (vs. the $24 federal default)", () => {
+    expect(minimumBenefitFor(FY26, "VI").toNumber()).toBe(31);
+  });
+
+  it("a countyFips passed alongside VI changes nothing", () => {
+    expect(minimumBenefitFor(FY26, "VI", "02050").toNumber()).toBe(31); // 02050 is Bethel, AK — must be ignored for VI
+  });
+
+  it("AK's branch is unaffected by VI's addition — Bethel (02050, Rural II) still $48", () => {
+    expect(minimumBenefitFor(FY26, "AK", "02050").toNumber()).toBe(48);
+  });
+});

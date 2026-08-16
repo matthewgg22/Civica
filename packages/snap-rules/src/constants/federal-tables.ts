@@ -14,6 +14,7 @@
 
 import { Decimal } from "../decimal";
 import { akAllotmentZoneFor, AK_URBAN } from "./ak-allotment-zones";
+import { VI_ALLOTMENT_TABLE } from "./vi-allotment-table";
 
 // ─── Per-region FPL table (#812) ───────────────────────────────────────────
 //
@@ -347,12 +348,22 @@ export function standardDeductionFor(size: number, asOf: Date): Decimal {
  * pattern benefit-calc.ts already uses for AK's SUA (#631) and the ABAWD
  * gate already uses for CA's waiver counties (#614).
  *
+ * Virgin Islands (#858): VI's real FNS maximum allotments are also
+ * genuinely elevated above the 48-contiguous table — but, UNLIKE AK, VI's
+ * real table is a single FLAT national-territory table with no zone
+ * geography at all (packages/snap-rules/src/constants/
+ * vi-allotment-table.ts, sourced from USVI DHS's own FY2026 table). When
+ * `state === "VI"`, this resolves straight to that one table —
+ * `countyFips` is accepted but unused for VI, same call shape as every
+ * other non-AK state.
+ *
  * The `s.max_allotment` national snapshot lookup below is intentionally
- * UNCHANGED and still runs for every non-AK state (and is still what
- * validates `asOf` falls within a loaded fiscal year via snapshotFor,
- * which the AK zone table doesn't duplicate — ak-allotment-zones.ts has
- * only one FY26 figure set today, the same simplification AK's other
- * StatePolicy fields already accept, see states.ts's AK entries).
+ * UNCHANGED and still runs for every non-AK/non-VI state (and is still
+ * what validates `asOf` falls within a loaded fiscal year via
+ * snapshotFor, which neither the AK zone table nor the VI table
+ * duplicates — both have only one FY26 figure set today, the same
+ * simplification AK's other StatePolicy fields already accept, see
+ * states.ts's AK/VI entries).
  */
 export function maxAllotmentFor(size: number, asOf: Date, state?: string, countyFips?: string): Decimal {
   const s = snapshotFor(asOf); // still validates asOf has a loaded fiscal year, for every state
@@ -368,6 +379,17 @@ export function maxAllotmentFor(size: number, asOf: Date, state?: string, county
       return baseAk.add(zone.max_allotment_each_additional.mul(size - largestAk));
     }
     throw new Error(`No max_allotment for size ${size} (AK zone ${zone.zone})`);
+  }
+
+  if (state === "VI") {
+    const exactVi = VI_ALLOTMENT_TABLE.max_allotment.get(size);
+    if (exactVi) return exactVi;
+    const largestVi = Math.max(...VI_ALLOTMENT_TABLE.max_allotment.keys());
+    if (size > largestVi) {
+      const baseVi = VI_ALLOTMENT_TABLE.max_allotment.get(largestVi)!;
+      return baseVi.add(VI_ALLOTMENT_TABLE.max_allotment_each_additional.mul(size - largestVi));
+    }
+    throw new Error(`No max_allotment for size ${size} (VI)`);
   }
 
   const exact = s.max_allotment.get(size);
@@ -391,19 +413,25 @@ export function shelterCapFor(asOf: Date): Decimal {
 
 /**
  * Federal minimum-benefit floor (HH1-2 eligible households), 48-contiguous
- * default unless `state === "AK"`. #814: Alaska sets its OWN, higher,
- * zone-specific minimum-benefit floor ($31 Urban / $39 Rural I / $48 Rural
- * II FY26, vs. the $24 national default) per the same USDA FNS "MINIMUM
- * SNAP ALLOTMENTS" table ak-allotment-zones.ts's max-allotment figures are
- * sourced from. Same two-tier county_fips → zone resolution as
- * maxAllotmentFor above; `state`/`countyFips` change nothing for any other
- * state.
+ * default unless `state === "AK"` or `state === "VI"`. #814: Alaska sets
+ * its OWN, higher, zone-specific minimum-benefit floor ($31 Urban / $39
+ * Rural I / $48 Rural II FY26, vs. the $24 national default) per the same
+ * USDA FNS "MINIMUM SNAP ALLOTMENTS" table ak-allotment-zones.ts's
+ * max-allotment figures are sourced from. Same two-tier county_fips →
+ * zone resolution as maxAllotmentFor above. #858: VI's own published
+ * minimum allotment is also elevated ($31 for a 1-2 person HH, same
+ * dollar figure as AK's Urban floor, coincidentally) — vi-allotment-
+ * table.ts's single flat table, no county_fips involved. `state`/
+ * `countyFips` change nothing for any other state.
  */
 export function minimumBenefitFor(asOf: Date, state?: string, countyFips?: string): Decimal {
   const s = snapshotFor(asOf);
   if (state === "AK") {
     const zone = akAllotmentZoneFor(countyFips) ?? AK_URBAN;
     return zone.minimum_benefit;
+  }
+  if (state === "VI") {
+    return VI_ALLOTMENT_TABLE.minimum_benefit;
   }
   return s.minimum_benefit;
 }
