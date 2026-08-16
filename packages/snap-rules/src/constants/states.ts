@@ -3908,6 +3908,178 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: true,
     },
   ],
+
+  // Montana — built from packages/demeter-engine/src/states/mt/
+  // (PROVENANCE.md + supplements.json, corpus built 2026-08-12). MT was a
+  // genuine blank slate: no StatePolicy, no oracle coverage at all before
+  // this entry. Third and final state in batch-tier segment 4.
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis:
+  // "federal_fiscal_year" — MT's own SNAP 304-1 (Categorical and Expanded
+  // Categorical Eligibility) names Expanded Categorical Eligibility (ECE)
+  // directly at 200% FPG, gross-income-only, no resource test — a clean
+  // fit for this engine's existing BBCE mechanism. A SEPARATE Traditional
+  // Categorical Eligibility (CE) path covers TANF/Tribal TANF/SSI cash
+  // recipients (no income or resource test at all — the same federal pure-
+  // cash path this engine already models via facts.cat_elig). A household
+  // that is neither CE nor ECE falls back to "regular" rules: the plain
+  // federal 130%/100% FPG tests plus a real $3,000/$4,500 resource limit.
+  // SNAP 001 (effective 10/01/2025-09/30/2026) confirms current FFY2026
+  // figures, an FFY (not calendar-year) cycle.
+  //
+  // asset_waiver: true — flows from the ECE finding above: ECE households
+  // face no resource test at all. Same blanket-`true`-for-the-BBCE-
+  // majority-population simplification this file's other BBCE states
+  // already use; the narrower "regular" track still faces the real
+  // $3,000/$4,500 limit.
+  //
+  // sua_by_tier — a genuine FOUR-real-tier structure this build discloses
+  // rather than silently collapses: SNAP 602-4 (effective 10/01/2025)
+  // publishes a Standard Utility Allowance (SUA, $799/mo, heating/cooling),
+  // a Limited Utility Allowance (LUA, $267/mo, 2+ non-heat utilities), a
+  // separate One Utility Allowance (OUA, $116/mo, exactly ONE non-heat
+  // utility), and a standalone Telephone Allowance ($34/mo). This schema's
+  // three real tiers (HCSUA/LUA/phone) derive from `determineSUATier`'s
+  // single LIMITED branch (`has_electric_or_gas === "yes"`, no distinction
+  // of utility COUNT) — the SAME naming-collision mapping trap this file's
+  // OH/MO/CO entries already document. MT's own $267 LUA (2+ non-heat
+  // utilities) maps to this schema's `LUA` slot, NOT MT's own differently-
+  // scoped $116 OUA (exactly one utility) tier, which is the disclosed,
+  // unmapped 4th tier — same treatment as OH's $108 Single SUA, IL's $78
+  // Single Utility, MO's $158 one-utility tier, and CO's own $69 OUA.
+  // HCSUA -> $799 (SUA); phone -> $34; none -> $0.
+  //
+  // allotment_tier: "48" — no Montana-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "modified" — a genuine, disclosed CORRECTION of a
+  // widely-repeated secondary-source oversimplification: a Propel guide
+  // states flatly "Montana won't disqualify you because of a drug felony,"
+  // but MT DPHHS's own SNAP manual text — appearing consistently, word-for-
+  // word, across three separate sections (SNAP 001, SNAP 304-1, SNAP
+  // 602-4) — disqualifies a person convicted after 08/22/96 of a federal or
+  // state drug felony "AND not complying with conditions of supervision."
+  // This is a real, conditional restriction (not a full opt-out like ME's/
+  // RI's, and not simply "no restriction" like the secondary source
+  // claimed) that this engine does not yet model at the facts level — gate
+  // behavior unchanged (fails open, same as every other "modified" entry
+  // in this file, per #805 — see gates/disqualifications.ts). No standalone
+  // Montana Code Annotated statute for this specific condition was found in
+  // Title 53, Ch. 2, Part 9 — the modifier is implemented through DPHHS
+  // policy/administrative rule, not a legislative opt-out, a structural
+  // detail worth distinguishing from a legislatively-enacted opt-out like
+  // NH's or ME's own statutory opt-outs.
+  //
+  // abawd_waiver_avail: false — the CLEANEST, most directly-confirmed
+  // waiver-status statement this file has recorded for any state: MT
+  // DPHHS's own SNAP 802-1 (ABAWD Geographic Waiver, effective 11/01/2025)
+  // states in full, "As of 11/01/2025, there are no areas within Montana
+  // with approved ABAWD geographic waivers" — a plain, unambiguous,
+  // directly-fetched primary-source statement, not an inference drawn from
+  // a federal waiver index's lack of a current entry the way several other
+  // states in this file (including ME's and RI's own entries above) had to
+  // rely on. No county-level lookup needed or added (waiverCountiesFor only
+  // covers CA/MA today; a uniform-statewide-zero-waiver answer, confirmed
+  // this cleanly, has no county-level nuance for a lookup to represent).
+  //
+  // rmp_operated: false — Montana does NOT operate a Restaurant Meals
+  // Program (absent from the corpus pack's independently-corroborated
+  // 9-state RMP list), though it DOES carry the standard, much narrower
+  // federal congregate/meal-delivery-service provision for elderly/SSI
+  // households (SNAP 0-3) — a distinction the corpus pack draws explicitly
+  // so the two are never conflated. Disclosed, immaterial regardless:
+  // `rmp_operated` has no consumer anywhere in verdict.ts or
+  // benefit-calc.ts (grep-confirmed, same as every other state's entry in
+  // this file).
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824-style, newly confirmed present
+  // for Montana: the OUA/one-utility-vs-LUA/two-utility naming-collision
+  // gap (see sua_by_tier above) and the DPHHS-policy-not-statute drug-
+  // felony supervision-compliance condition (see drug_felony_ban above)
+  // have no Facts-level axis to hold their full nuance. Genuinely and
+  // honestly DISCLOSED as unverified, not guessed: the corpus pack did not
+  // find MT's current homeless-shelter-deduction or excess-shelter-cap
+  // dollar figures published anywhere in SNAP 602-4's own text (it states
+  // both are "updated each year by 09/01" without stating the current
+  // numbers) — immaterial to this engine, since both figures are FEDERAL,
+  // shared constants this engine already reads from federal-tables.ts, not
+  // a per-state StatePolicy axis, so this gap required no encoding
+  // decision here.
+  //
+  // Oracle: MT's closest structural axis-twin among all 31 already-
+  // registered states, on every verdict-and-benefit-consequential axis, is
+  // COLORADO — a FULL match (bbce: true, bbce_threshold_pct: 200,
+  // bbce_fpl_basis: "federal_fiscal_year", asset_waiver: true,
+  // drug_felony_ban: "modified", abawd_waiver_avail: false, allotment_tier:
+  // "48", rmp_operated: false) — literally identical policy shape modulo
+  // SUA dollar figures, a stronger match than any state in this batch
+  // besides ME's own MA twin. Built a fresh, independent Python calculator
+  // (not derived from engine output, per #636) directly from verdict.ts/
+  // benefit-calc.ts/gates/{income-tests,asset-test,abawd,student,
+  // composition,immigration,disqualifications,categorical}.ts/facts.ts/
+  // constants/federal-tables.ts's own read source, mirroring every gate and
+  // the benefit-calc formula exactly, including decimal.ts's half-up
+  // (roundDollar) and floor (floorDollar) rounding conventions — the SAME
+  // calculator built for ME and reused for RI, reused/parameterized again
+  // for MT per this batch's authorization. Cross-validated BEFORE trusting
+  // it for MT: 129/129 exact match (verdict AND benefit, all 92 base
+  // profiles plus all 37 non-expected_by_state variant rows) reproducing
+  // CO's already-graded oracle under CO's own StatePolicy params. Also
+  // checked all 37 rows across the 18 non-expected_by_state variant
+  // profiles directly under MT's own params for an MT-specific
+  // verdict_by_state override — found ZERO divergence from the shared
+  // default verdict. Authored all 92 expected_by_state.MT entries: 80
+  // APPROVE / 12 DENY — identical DENY set to ME's (both 200%-BBCE states
+  // sharing every other verdict-consequential axis), differing from RI's
+  // 79/13 only in the MX4 profile RI's lower 185% threshold denies and MT's
+  // 200% approves.
+  //
+  // Verification: `/profile-simulation state=MT` — 129/129 PASS, 0 FAIL, 0
+  // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA/OK/ME/RI's bar, not PA's/NJ's/TN's/MN's SKIP-heavy
+  // shape — MT's real, current SUA figures mean it did not need PA's/NJ's/
+  // TN's null-SUA fallback). Every other registered state's harness run
+  // reconfirmed unchanged from its documented baseline: CA/WA/TX/GA/MI/IL/
+  // FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC/LA/OK/ME/RI all 129/0/0;
+  // NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 — every one
+  // identical to its pre-MT documented baseline, zero regressions. `tsc
+  // --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass
+  // (0 new — a schema-conformant pure addition needed no new unit tests),
+  // 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  // packages/demeter-engine (MT's corpus was already complete and out of
+  // scope) or any other state's StatePolicy/oracle coverage. No new GitHub
+  // issue filed — every gap found (the OUA/LUA naming-collision gap, the
+  // DPHHS-policy-not-statute drug-felony condition, the unpublished
+  // homeless-deduction/shelter-cap MT figures which are moot since those
+  // are federal shared constants here) is a per-state disclosed gap of an
+  // already-documented class (#824-style Facts-shape/mechanism gaps, or
+  // the OH/MO/CO-precedented naming-collision class), per this task's own
+  // instruction. This is the third and FINAL state in batch-tier segment 4
+  // (§6 step 6) — ME and RI are both already committed in this same
+  // worktree/branch above.
+  MT: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "MT",
+      label: "Montana / DPHHS — Human and Community Services Division (HCSD)",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("799"),
+        LUA: new Decimal("267"),
+        phone: new Decimal("34"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
