@@ -66,18 +66,30 @@ export function netIncomeTest(
   netMonthly: Decimal,
   asOf: Date,
   state: string,
+  // #830: most BBCE/ECE states waive the net test entirely once the
+  // (possibly raised) gross screen clears — verdict.ts never calls this
+  // function for those households at all. A minority (TN/CT/KY confirmed)
+  // keep a net-income ceiling on top of their BBCE gross screen instead;
+  // for those, verdict.ts DOES call this function even for a BBCE-conferred
+  // household and passes `policy.bbce_net_ceiling_pct` converted to a
+  // ratio here. `undefined` (every other call site) preserves today's
+  // federal-floor ratio exactly.
+  ratioOverride?: Decimal,
 ): IncomeTestResult {
   // 7 CFR 273.11(c)(1)(i)(B): net-test FPL also uses eligible-only size.
   const size = eligibleHouseholdSize(facts, asOf);
   const fpl = fplMonthly(size, asOf, state);
-  const threshold = fpl.mul(NET_INCOME_TEST_RATIO).roundDollar();
+  const ratio = ratioOverride ?? NET_INCOME_TEST_RATIO;
+  const threshold = fpl.mul(ratio).roundDollar();
   const actual = netMonthly.roundDollar();
   const passes = actual.lte(threshold);
   return {
     passes,
     threshold: threshold.toNumber(),
     actual: actual.toNumber(),
-    reason: passes ? undefined : "net_income_over_100pct_fpl [7 CFR 273.9(a)(2)]",
+    reason: passes
+      ? undefined
+      : `net_income_over_${ratio.mul(100).toNumber()}pct_fpl [7 CFR 273.9(a)(2)]`,
   };
 }
 

@@ -216,13 +216,38 @@ export type DrugFelonyBanStatus = "none" | "modified" | "full" | "unconfirmed";
 // the change. Data-integrity rule mirrors federal-tables.ts's own: never
 // edit a published snapshot after its effective_end passes — add a new
 // dated entry instead.
+// #830: `bbceConferred` in verdict.ts unconditionally skips the net-income
+// test for every BBCE/ECE state once the (possibly raised) gross screen
+// clears — correct for most BBCE states, but WRONG for a real minority
+// (TN/CT/KY confirmed, each independently) whose own manuals keep a net-
+// income ceiling ON TOP of the BBCE gross screen instead of waiving it.
+// `undefined`/`null` (every state below except TN/CT/KY) preserves today's
+// behavior byte-for-byte: BBCE-conferred households skip the net test.
+// Non-null means the net test still runs after BBCE gross conferral, at
+// this ratio (as a % of FPL) instead of being skipped. Same "widen the
+// schema once, migrate every existing entry to the value that preserves
+// current behavior" pattern as `AllotmentTier` (#858/#861) and
+// `DrugFelonyBanStatus` (#805) before it.
 export interface StatePolicy {
   effective_start: Date;
   effective_end: Date;
   state_code: string;
   label: string;
+  /**
+   * In practice this no longer means "does this state have some form of
+   * Broad-Based Categorical Eligibility" — it means "does this state's BBCE
+   * work the specific way verdict.ts's bundled categorical-eligibility logic
+   * already expects" (a flat elevated-income-ceiling + full resource-test
+   * waiver, conferred via a TANF-funded informational notice). States with a
+   * real BBCE-like program whose mechanism doesn't fit that bundled shape —
+   * e.g. Idaho, Oklahoma, Nebraska, all encoded `false` this session even
+   * though each has some genuine elevated-eligibility pathway — end up
+   * mischaracterized as "no BBCE" rather than "BBCE, but not this shape."
+   * This is a known architectural gap, tracked (not fixed here) as #853.
+   */
   bbce: boolean;
   bbce_threshold_pct?: number;
+  bbce_net_ceiling_pct?: number | null;
   bbce_fpl_basis: BBCEFPLBasis;
   asset_waiver: boolean;
   /** Per-tier SUA values; null = not authored, callers MUST NOT trust. */
@@ -2744,6 +2769,15 @@ const STATES: Record<string, StatePolicy[]> = {
   // ORDINARY passenger vehicles (TDHS's separate "Treatment of Vehicles"
   // procedure document could not be located) — not assumed to follow the
   // boat rule.
+  // #830 fix: TN's own TN Rule 1240-01-14-.15(2)/(3) (amended 1/15/2026,
+  // effective 4/15/2026) requires Expanded Categorical Eligibility
+  // households to clear BOTH gross ≤ 200% FPL AND net ≤ 100% FPL — the
+  // ordinary federal net-income standard, simply never waived the way most
+  // BBCE states waive it. `bbce_net_ceiling_pct: 100` makes verdict.ts
+  // enforce the net test after BBCE gross conferral instead of skipping it.
+  // See this file's TN entry's original comment block (below) and
+  // packages/demeter-engine/src/states/tn/PROVENANCE.md Finding 1 for the
+  // full citation chain.
   TN: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
@@ -2752,6 +2786,7 @@ const STATES: Record<string, StatePolicy[]> = {
       label: "Tennessee / TDHS",
       bbce: true,
       bbce_threshold_pct: 200,
+      bbce_net_ceiling_pct: 100,
       bbce_fpl_basis: "federal_fiscal_year",
       asset_waiver: true,
       sua_by_tier: null,
@@ -4902,6 +4937,28 @@ const STATES: Record<string, StatePolicy[]> = {
   // documented class (#824/#825-style Facts-shape/mechanism gaps, or
   // NY-precedent multi-tier-BBCE accepted limitations), not a new engine
   // architecture gap, per this build's own instructions.
+  // #830 fix: live-fetched KY's own current DFS Operations Manual Volume 2
+  // (chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf, converted via
+  // `pdftotext -layout`) and confirmed directly, not via a secondary
+  // source: MS 3160.A.3.b (R. 6/30/26 – OMTL-630) — "ECE households must be
+  // under the net income for their household size" — on top of the
+  // 130%/200% dual-track gross ceiling this entry's `bbce_threshold_pct:
+  // 130` already models (KY's own manual: only households in which ALL
+  // members are elderly/disabled get the elevated 200% gross door; every
+  // other ECE household stays at the ordinary 130% gross ceiling — see
+  // this state's original comment block below for the full dual-track
+  // citation). MS 3175.B (R. 6/30/26 – OMTL-671) confirms the same rule a
+  // second, independent time: "Expanded categorically eligible (ECE)
+  // households ... may not have income in excess of the 200 percent
+  // Federal Poverty Level (FPL) income limit and must be under the net
+  // income eligibility standard for their household size." MS 3175.A
+  // draws the contrast explicitly for plain CE (not ECE): "The gross and
+  // net income limits do not apply to CE households" — the SAME CE-vs-ECE
+  // split TN's and CT's #830 findings already established, now confirmed
+  // a third, independent time directly against KY's own current manual
+  // text (not inferred from a corpus pack summary). `bbce_net_ceiling_pct:
+  // 100` is the ordinary federal net-income standard KY's own manual
+  // cites — not an elevated state-specific figure.
   KY: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
@@ -4910,6 +4967,7 @@ const STATES: Record<string, StatePolicy[]> = {
       label: "Kentucky / CHFS-DCBS",
       bbce: true,
       bbce_threshold_pct: 130,
+      bbce_net_ceiling_pct: 100,
       bbce_fpl_basis: "federal_fiscal_year",
       asset_waiver: true,
       sua_by_tier: {
@@ -5083,6 +5141,13 @@ const STATES: Record<string, StatePolicy[]> = {
   // pre-existing engine-gap fail — not a coverage gap). Every other
   // registered state's harness run reconfirmed unchanged from its
   // documented baseline.
+  // #830 fix: this state's own original comment block above already
+  // documented the finding in full (CT DSS's ECE-excludes list omits the
+  // net income limit that RCE's own list explicitly includes) and flagged
+  // the exact 128 PASS / 1 FAIL harness shape this created. `bbce_net_
+  // ceiling_pct: 100` closes the gap that comment predicted — the ordinary
+  // federal net-income standard, applied instead of skipped, per CT DSS's
+  // own current Tables/explainer pages cited above.
   CT: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
@@ -5091,6 +5156,7 @@ const STATES: Record<string, StatePolicy[]> = {
       label: "Connecticut / DSS",
       bbce: true,
       bbce_threshold_pct: 200,
+      bbce_net_ceiling_pct: 100,
       bbce_fpl_basis: "federal_fiscal_year",
       asset_waiver: true,
       sua_by_tier: {
@@ -5789,25 +5855,54 @@ const STATES: Record<string, StatePolicy[]> = {
   // federal E/D-uncapped rule regardless of state (benefit-calc.ts), so
   // this is not a gap this StatePolicy entry needs to carry.
   //
-  // drug_felony_ban: "modified" — a genuinely DISCLOSED SCOPE AMBIGUITY,
-  // not a clean opt-out: N.M. Stat. Ann. §27-2B-11(C) (fetched via two
-  // independently-convergent secondary/quasi-primary mirrors — Public
-  // Health Law Center, FindLaw — after both law.justia.com (403) and
-  // nmonesource.com, New Mexico's own official statute host (404), failed)
-  // invokes the FULL federal opt-out provision (21 U.S.C. §862a(d)(1)(A))
-  // but narrows its own scope to convictions "on the basis of...
-  // DISTRIBUTION of a controlled substance" specifically — NOT the federal
-  // ban's full possession/use/distribution scope. Public Health Law
-  // Center's OWN analysis independently makes the identical observation,
-  // describing the possession/use scope as genuinely open, not resolved.
-  // "Modified" (a real, conditional/narrower-than-full restriction this
-  // engine does not yet model at the facts level) is the correct #805
-  // classification — NOT "none" (a broader "fully opted out" secondary
-  // characterization the corpus pack found but explicitly declined to
-  // adopt as settled, given the statute's own narrower quoted text).
-  // Because only "full" disqualifies at today's gate (#805), this
-  // classification has zero effect on NM's computed oracle relative to a
-  // hypothetical "none" or "unconfirmed" entry.
+  // drug_felony_ban: "none" — RECLASSIFIED from "modified" on re-audit
+  // under the standing ambiguity-default rule (genuinely ambiguous state
+  // drug-felony text now defaults to "none," the more permissive reading,
+  // rather than "modified" — the same rule applied to Utah's own
+  // similarly-worded statute above). The underlying textual ambiguity
+  // this entry originally flagged is real and unchanged: N.M. Stat. Ann.
+  // §27-2B-11(C) (fetched via two independently-convergent secondary/
+  // quasi-primary mirrors — Public Health Law Center, FindLaw — after
+  // both law.justia.com (403) and nmonesource.com, New Mexico's own
+  // official statute host (404), failed) invokes the FULL federal
+  // opt-out provision (21 U.S.C. §862a(d)(1)(A)) but narrows its own
+  // scope to convictions "on the basis of... DISTRIBUTION of a
+  // controlled substance" specifically — a plain reading leaves
+  // possession/use convictions textually unaddressed by that clause,
+  // which is the genuine two-reading ambiguity (does the omission mean
+  // the federal default ban still applies to possession/use, or was the
+  // "distribution" language just imprecise drafting for a broader
+  // opt-out). Public Health Law Center's own analysis independently
+  // flags the identical observation.
+  //
+  // What changed the call: re-verified live against USDA FNS's own SNAP
+  // State Options Report, 16th Edition (June 2024, fetched directly,
+  // govinfo-hosted PDF, no access barrier) — the authoritative federal
+  // survey compiled from each state agency's own self-reported policy
+  // elections, not a secondary aggregator. Its "Drug Felony
+  // Disqualifications" summary page lists New Mexico under "No
+  // disqualification (28)" (PRWORA Section 115 / 7 CFR 273.11(m)), NOT
+  // under "Modified disqualification (24)" — and NM's own individual
+  // state-profile page in the same report independently confirms it:
+  // "Drug Felony Disqualifications: No disqualification." Utah, this
+  // file's existing "none" precedent, appears in the SAME "No
+  // disqualification" list, cross-validating the report's reliability
+  // for this exact comparison. Two further independent secondary legal
+  // surveys corroborate: the Collateral Consequences Resource Center's
+  // 50-state SNAP/TANF drug-felony survey and the Network for Public
+  // Health Law's SNAP-ban issue brief both characterize New Mexico as
+  // having "fully opted out" for SNAP, while still separately noting the
+  // statute's narrower "distribution" text as a drafting curiosity, not
+  // as defeating the full-opt-out reading. Given the raw statutory text
+  // is genuinely ambiguous but the authoritative federal source (drawn
+  // from NM's own reporting to USDA) and every independent legal
+  // secondary source converge on "no disqualification" as the actual
+  // operative policy, "none" is both the standing-rule default AND the
+  // better-supported reading on the full evidence, not merely a
+  // tie-breaker. Because only "full" disqualifies at today's gate
+  // (#805), this reclassification has zero effect on NM's computed
+  // oracle relative to the prior "modified" entry — verified unchanged
+  // below.
   //
   // abawd_waiver_avail: true — a genuine, precisely-dated REFINEMENT: New
   // Mexico's ABAWD waiver footprint narrowed sharply (from 29 counties + 18
@@ -5851,12 +5946,18 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Oracle: NM's closest structural axis-twin among all 29 already-
   // registered states is OREGON — matching 6 of 7 comparison axes exactly
-  // (bbce: true, bbce_threshold_pct: 200, bbce_fpl_basis:
-  // federal_fiscal_year, asset_waiver: true, allotment_tier: "48",
-  // rmp_operated: false; drug_felony_ban differs, "modified" vs OR's
-  // "none", but has zero grading effect per #805), differing only in
-  // abawd_waiver_avail (NM: true, OR: false) — the one axis expected to
-  // produce a real, explainable divergence. Built a fresh, independent
+  // at the time this oracle was built (bbce: true, bbce_threshold_pct:
+  // 200, bbce_fpl_basis: federal_fiscal_year, asset_waiver: true,
+  // allotment_tier: "48", rmp_operated: false; drug_felony_ban differed,
+  // "modified" vs OR's "none", but had zero grading effect per #805 even
+  // then), differing only in abawd_waiver_avail (NM: true, OR: false) at
+  // the time this oracle was originally built — the one axis expected to
+  // produce a real, explainable divergence. Two later corrections (NM's
+  // drug_felony_ban reclassified to "none" by the ambiguity-default review,
+  // and abawd_waiver_avail flipped to false by #878's tracker-reconciliation
+  // sweep) now make NM and OR an exact 7-of-7 match on every StatePolicy
+  // axis — the M12 divergence this oracle documents below no longer
+  // applies; NM's DENY set is now identical to OR's. Built a fresh, independent
   // Python calculator (not derived from engine output, per #636) directly
   // from verdict.ts/benefit-calc.ts/gates/{income-tests,asset-test,abawd,
   // student,composition,immigration,disqualifications,categorical}.ts/
@@ -5921,7 +6022,14 @@ const STATES: Record<string, StatePolicy[]> = {
         none: new Decimal("0"),
       },
       allotment_tier: "48",
-      drug_felony_ban: "modified",
+      // drug_felony_ban corrected to "none" by the drug-felony ambiguity-
+      // default review (2026-08-16): NM's §27-2B-11(C) opt-out is genuinely
+      // ambiguous (scoped to "distribution" convictions only, leaving
+      // possession/use textually unaddressed), resolved via USDA FNS's SNAP
+      // State Options Report (16th Ed., June 2024), which lists NM under
+      // "No disqualification" — the same bucket as Utah, this file's
+      // existing "none" precedent for a comparably ambiguous statute.
+      drug_felony_ban: "none",
       // CORRECTED (#878, 2026-08-16): was `true`. The block comment above
       // this entry documents NM's real, narrow waiver footprint — HCA's own
       // "Keep Your Benefits, NM!" page states the new statewide work rules

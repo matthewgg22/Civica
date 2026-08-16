@@ -194,10 +194,23 @@ export function composeVerdict(facts: Facts, state: string, asOf: Date): Verdict
   const detail = computeBenefit(facts, state, asOf);
   trace.benefit_calc = detail;
 
-  // Net income test — skipped for cat-elig path AND BBCE-conferred HHs.
-  // Federal floor applies only to non-cat-elig, non-BBCE households.
-  if (!cat.skip_gross_test && !bbceConferred) {
-    const net = netIncomeTest(facts, new Decimal(detail.net_monthly_income), asOf, state);
+  // Net income test — skipped for cat-elig path AND (most) BBCE-conferred
+  // HHs. Federal floor applies to non-cat-elig, non-BBCE households.
+  //
+  // #830: a real minority of BBCE/ECE states (TN/CT/KY confirmed) do NOT
+  // waive the net test just because the household cleared the raised gross
+  // screen — their own manuals keep a net-income ceiling on top of it
+  // (e.g. KY MS 3175.B distinguishes plain CE, where "gross and net income
+  // limits do not apply," from ECE, which "must be under the net income
+  // eligibility standard"). `policy.bbce_net_ceiling_pct` (null/undefined
+  // for every other state) is how that minority opts back into the net
+  // test even when BBCE-conferred.
+  const enforceNetDespiteBbce = bbceConferred && policy.bbce_net_ceiling_pct != null;
+  if (!cat.skip_gross_test && (!bbceConferred || enforceNetDespiteBbce)) {
+    const netRatio = enforceNetDespiteBbce
+      ? new Decimal(policy.bbce_net_ceiling_pct!).div(100)
+      : undefined;
+    const net = netIncomeTest(facts, new Decimal(detail.net_monthly_income), asOf, state, netRatio);
     trace.net_income_test = net;
     if (!net.passes) {
       return { verdict: "DENY", benefit: null, reason: net.reason, trace };
