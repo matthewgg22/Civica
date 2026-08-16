@@ -134,7 +134,7 @@
     },
     "params": {
       "fy": "2026",
-      "note": "⚠ illustrative FY2026 values; confirm max-allotment & SD by size from FNS COLA memo",
+      "note": "\u26a0 illustrative FY2026 values; confirm max-allotment & SD by size from FNS COLA memo",
       "tolerance": 58,
       "sd": {
         "1": 209,
@@ -214,7 +214,7 @@
           "8": 2314
         }
       },
-      "fpl_basis": "FLOOR(annual FPL / 12) before applying BBCE/130%/100% multipliers — the FNS/CalFresh published convention. Reconciled to CDSS ACIN I-46-25 (FFY2026) Attachment I; HALF_UP rounding here drifts +$1 at HH2/3/5/6/7/8 and breaks the published table (#606)."
+      "fpl_basis": "FLOOR(annual FPL / 12) before applying BBCE/130%/100% multipliers \u2014 the FNS/CalFresh published convention. Reconciled to CDSS ACIN I-46-25 (FFY2026) Attachment I; HALF_UP rounding here drifts +$1 at HH2/3/5/6/7/8 and breaks the published table (#606)."
     },
     "tolerances": {
       "verdict": "exact_match",
@@ -225,7 +225,7 @@
     "how_to_use": "Facts are state-independent. Pick a state from expected_by_state to run; A/B rows: apply expected.variants[k].facts_patch then assert verdict. requires[] lists engine surfaces so a partial engine can skip unbuilt ones. integrity rows: feed agency_keyed, assert qc_should_flag.",
     "caveats": [
       "Benefits computed by an INDEPENDENT oracle from facts (four-eyes), not citeable as PER; reconcile params.sd/allotment with production before trusting $.",
-      "SUA pinned to production for CA (663/170/20) and MA (914/556/64). TX/KS/AK SUA still illustrative — those states' expected_by_state benefits are null until production values land.",
+      "SUA pinned to production for CA (663/170/20) and MA (914/556/64). TX/KS/AK SUA still illustrative \u2014 those states' expected_by_state benefits are null until production values land.",
       "Generic dependent ages synthesized where unpinned; oracle/citation policy-sourced, never regenerate from the engine.",
       "compute_benefit applies the homeless-deduction substitute ($198.99 FY26) per 7 CFR 273.9(d)(6)(i) when shelter.homeless_deduction=true."
     ]
@@ -476,6 +476,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 759
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 759
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 759
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 759
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 759
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 759
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 759
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 759
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 759
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -706,6 +756,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -969,6 +1069,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 804
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 804
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 804
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 804
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 804
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 804
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 804
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 804
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 804
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -1175,6 +1325,56 @@
           "benefit": 298
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -1414,6 +1614,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 546
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 478
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 541
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 492
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 499
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -1648,6 +1898,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 546
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -1869,6 +2169,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 282
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 252
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 258
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 269
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 250
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 276
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 170
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -2118,6 +2468,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -2352,6 +2752,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 472
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 472
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 472
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 472
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 472
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 472
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 472
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 472
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 400
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -2601,6 +3051,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 783
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 783
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 783
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 783
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 783
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 783
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 783
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 783
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 783
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -2814,6 +3314,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 56
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 56
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 56
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 33
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -2917,7 +3467,7 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null,
-          "reason": "countable resources over the federal limit — GA does not waive the asset test [7 CFR 273.8]"
+          "reason": "countable resources over the federal limit \u2014 GA does not waive the asset test [7 CFR 273.8]"
         },
         "FL": {
           "verdict": "APPROVE",
@@ -3033,6 +3583,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -3304,6 +3904,56 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "MT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -3537,6 +4187,56 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "MT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -3746,6 +4446,56 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "MT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -3952,6 +4702,56 @@
           "benefit": null
         },
         "NH": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "MT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -4171,6 +4971,56 @@
           "benefit": null
         },
         "NH": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "MT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -4425,6 +5275,56 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "MT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -4641,6 +5541,56 @@
           "benefit": null
         },
         "NH": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "MT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -4862,6 +5812,56 @@
           "benefit": null
         },
         "NH": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "MT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -5108,6 +6108,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 191
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 191
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 191
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 159
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 173
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -5226,7 +6276,7 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null,
-          "reason": "countable resources over the federal limit — GA does not waive the asset test [7 CFR 273.8]"
+          "reason": "countable resources over the federal limit \u2014 GA does not waive the asset test [7 CFR 273.8]"
         },
         "FL": {
           "verdict": "APPROVE",
@@ -5342,6 +6392,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 496
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 496
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 496
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 496
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 496
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 496
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 496
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -5589,6 +6689,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 176
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
         }
       }
     },
@@ -5832,6 +6982,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 256
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 256
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 256
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 256
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 256
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 256
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -6053,6 +7253,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 255
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 268
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 276
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -6301,6 +7551,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 327
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 327
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 327
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 327
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 327
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 327
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -6558,6 +7858,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 423
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 340
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 423
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 403
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 353
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 423
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 423
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 361
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 423
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -6800,6 +8150,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 424
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 401
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 424
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 424
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 414
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 424
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 424
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 422
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 424
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -7058,6 +8458,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 687
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 687
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 687
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 687
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 687
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 687
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 687
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 687
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 687
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -7309,6 +8759,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -7541,6 +9041,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 177
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
         }
       }
     },
@@ -7609,7 +9159,7 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null,
-          "reason": "no MA geographic ABAWD waiver in FY26 — statewide waiver expired 2025-06-30 (DTA OLGTM-2025-31), so the area exemption cannot hold and the exhausted 3-of-36 clock denies [7 CFR 273.24]"
+          "reason": "no MA geographic ABAWD waiver in FY26 \u2014 statewide waiver expired 2025-06-30 (DTA OLGTM-2025-31), so the area exemption cannot hold and the exhausted 3-of-36 clock denies [7 CFR 273.24]"
         },
         "TX": {
           "verdict": "DENY",
@@ -7646,7 +9196,7 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null,
-          "reason": "no IL ABAWD waiver — statewide waiver ended Nov 2025 (IDHS memo 10/16/2025), 3-of-36 clock exhausted [7 CFR 273.24]"
+          "reason": "no IL ABAWD waiver \u2014 statewide waiver ended Nov 2025 (IDHS memo 10/16/2025), 3-of-36 clock exhausted [7 CFR 273.24]"
         },
         "OH": {
           "verdict": "APPROVE",
@@ -7749,6 +9299,56 @@
           "benefit": null
         },
         "NH": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "MT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -7974,6 +9574,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -8269,6 +9919,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -8559,7 +10259,7 @@
         "agency_keyed": "prorate_ineligible_income",
         "qc_should_flag": true,
         "error_element": "proration",
-        "reason": "Per 7 CFR 273.11(c)(1)(i), max-allotment / SD / FPL use ELIGIBLE-only HH size (size=2, kids only) for the undoc parent + 2 citizen kids case. Per 7 CFR 273.11(c)(3)(i)(A) count-all (CA election), the parent's $2000 wages count in full. Correct: $352. Prior expected $591 was authored against the pre-#434 engine that incorrectly used full HH size=3 for max allotment — the engine bug, not a policy choice. Both CA and MA pin to FY26 shelter cap $744 → both compute to $352."
+        "reason": "Per 7 CFR 273.11(c)(1)(i), max-allotment / SD / FPL use ELIGIBLE-only HH size (size=2, kids only) for the undoc parent + 2 citizen kids case. Per 7 CFR 273.11(c)(3)(i)(A) count-all (CA election), the parent's $2000 wages count in full. Correct: $352. Prior expected $591 was authored against the pre-#434 engine that incorrectly used full HH size=3 for max allotment \u2014 the engine bug, not a policy choice. Both CA and MA pin to FY26 shelter cap $744 \u2192 both compute to $352."
       },
       "expected_by_state": {
         "CA": {
@@ -8711,6 +10411,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 352
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 323
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 352
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 352
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 336
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 352
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 352
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 344
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 352
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -8927,6 +10677,56 @@
           "benefit": null
         },
         "NH": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "MT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -9164,6 +10964,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 520
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 520
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 520
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 520
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 520
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 520
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 520
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 520
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 520
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -9413,7 +11263,7 @@
               "income.0.amount": 1800
             },
             "verdict": "APPROVE",
-            "note": "$1,800 gross HH1: clears 200% ($2,610) and both TX's and IL's 165% ($2,153); denied under the federal 130% screen ($1,696-97) — KS/OH/GA (GA's regular-household screen stays federal 130% under TCOS categorical eligibility, same archetype as OH). AK cleared the federal-130 group before 7/1/2025 (#804); it is BBCE-200 (like CA/MA/TX/FL) effective 7/1/2025 and now clears here too.",
+            "note": "$1,800 gross HH1: clears 200% ($2,610) and both TX's and IL's 165% ($2,153); denied under the federal 130% screen ($1,696-97) \u2014 KS/OH/GA (GA's regular-household screen stays federal 130% under TCOS categorical eligibility, same archetype as OH). AK cleared the federal-130 group before 7/1/2025 (#804); it is BBCE-200 (like CA/MA/TX/FL) effective 7/1/2025 and now clears here too.",
             "verdict_by_state": {
               "CA": "APPROVE",
               "MA": "APPROVE",
@@ -9427,7 +11277,12 @@
               "MO": "DENY",
               "IN": "DENY",
               "SC": "DENY",
-              "ID": "DENY"
+              "ID": "DENY",
+              "AL": "DENY",
+              "AR": "DENY",
+              "KY": "DENY",
+              "OK": "DENY",
+              "UT": "DENY"
             }
           },
           "recent_high_month": {
@@ -9436,7 +11291,7 @@
               "income.0.amount": 2200
             },
             "verdict": "APPROVE",
-            "note": "$2,200 gross HH1: clears only the 200% screen ($2,610). BBCE is not a boolean — TX and IL (both 165%, $2,153) deny; OH and GA (both federal 130%, $1,696-97) deny too (#609). AK is BBCE-200 effective 7/1/2025 (#804) and clears here too, same as CA/MA/TX/FL.",
+            "note": "$2,200 gross HH1: clears only the 200% screen ($2,610). BBCE is not a boolean \u2014 TX and IL (both 165%, $2,153) deny; OH and GA (both federal 130%, $1,696-97) deny too (#609). AK is BBCE-200 effective 7/1/2025 (#804) and clears here too, same as CA/MA/TX/FL.",
             "verdict_by_state": {
               "CA": "APPROVE",
               "MA": "APPROVE",
@@ -9450,7 +11305,13 @@
               "MO": "DENY",
               "IN": "DENY",
               "SC": "DENY",
-              "ID": "DENY"
+              "ID": "DENY",
+              "AL": "DENY",
+              "AR": "DENY",
+              "IA": "DENY",
+              "KY": "DENY",
+              "OK": "DENY",
+              "UT": "DENY"
             }
           }
         }
@@ -9691,6 +11552,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -9895,6 +11806,56 @@
           "benefit": 298
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -10131,6 +12092,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 546
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -10255,7 +12266,7 @@
     {
       "id": "M28-10103-heat-and-eat-hcsua-post-obbba",
       "legacy_id": "M28",
-      "label": "§10103 heat-and-eat HCSUA (post-OBBBA)",
+      "label": "\u00a710103 heat-and-eat HCSUA (post-OBBBA)",
       "as_of_date": "2026-06-01",
       "facts": {
         "household": [
@@ -10594,6 +12605,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 544
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -10985,7 +13046,7 @@
               "deductions.medical_unreimbursed": 30
             },
             "verdict": "APPROVE",
-            "note": "under $35 floor per 7 CFR 273.9(d)(3) — engine zeros the deduction correctly; RE-AUTHOR: 'DENY' was unreachable because E/D household at $1250 RSDI lands net at $98 (CA) / $0 (MA), far under the $1305 net-test threshold even with no medical deduction. For a real medical-floor verdict-flip, RSDI must be tuned to ~$2070 so the household is marginally over 100% FPL net without the deduction. Tracking: #445",
+            "note": "under $35 floor per 7 CFR 273.9(d)(3) \u2014 engine zeros the deduction correctly; RE-AUTHOR: 'DENY' was unreachable because E/D household at $1250 RSDI lands net at $98 (CA) / $0 (MA), far under the $1305 net-test threshold even with no medical deduction. For a real medical-floor verdict-flip, RSDI must be tuned to ~$2070 so the household is marginally over 100% FPL net without the deduction. Tracking: #445",
             "verdict_by_state": {
               "GA": "APPROVE",
               "FL": "APPROVE",
@@ -11068,7 +13129,7 @@
               "income.0.type": "gift_cash"
             },
             "verdict": "APPROVE",
-            "note": "countable unearned per 7 CFR 273.9(b)(2) — engine correctly counts the cash gift; RE-AUTHOR: 'DENY' was unreachable because $400 unearned for HH1 is far below CA BBCE gross threshold ($2610) and any net threshold. For a real countable-vs-excluded verdict-flip, gift amount must be ~$3000+ to cross the CA gross test. Tracking: #446",
+            "note": "countable unearned per 7 CFR 273.9(b)(2) \u2014 engine correctly counts the cash gift; RE-AUTHOR: 'DENY' was unreachable because $400 unearned for HH1 is far below CA BBCE gross threshold ($2610) and any net threshold. For a real countable-vs-excluded verdict-flip, gift amount must be ~$3000+ to cross the CA gross test. Tracking: #446",
             "verdict_by_state": {
               "GA": "APPROVE",
               "FL": "APPROVE",
@@ -11525,6 +13586,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 203
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
         }
       }
     },
@@ -11624,7 +13735,7 @@
               "income.1.amount": 1500
             },
             "verdict": "DENY",
-            "note": "Wages tuned from 1200 to 1500 (2026-06-03) so that both CA HCSUA $663 and MA HCSUA $914 keep net > $1305 (100% FPL HH1) per 7 CFR 273.9(a)(2). At wages 1200, MA's higher SUA legitimately produced APPROVE — that's policy-correct, not engine drift, but the variant block has no per-state override. Tracking: #447",
+            "note": "Wages tuned from 1200 to 1500 (2026-06-03) so that both CA HCSUA $663 and MA HCSUA $914 keep net > $1305 (100% FPL HH1) per 7 CFR 273.9(a)(2). At wages 1200, MA's higher SUA legitimately produced APPROVE \u2014 that's policy-correct, not engine drift, but the variant block has no per-state override. Tracking: #447",
             "verdict_by_state": {
               "GA": "DENY",
               "FL": "DENY",
@@ -11845,6 +13956,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 77
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 77
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 77
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 52
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 66
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -12153,6 +14314,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 1284
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1284
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1284
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1284
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1284
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1284
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1284
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1284
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1284
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -12391,6 +14602,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -12614,6 +14875,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 546
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -12858,6 +15169,56 @@
           "benefit": 785
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
@@ -13108,6 +15469,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
         }
       }
     },
@@ -13352,6 +15763,56 @@
           "benefit": 639
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 639
@@ -13602,6 +16063,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 459
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
         }
       }
     },
@@ -13846,6 +16357,56 @@
           "benefit": 279
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 279
@@ -14097,6 +16658,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 155
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 155
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 155
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 155
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 155
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 155
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -14311,6 +16922,56 @@
           "benefit": 298
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -14531,6 +17192,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 212
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
         }
       }
     },
@@ -14745,6 +17456,56 @@
           "benefit": 104
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 104
@@ -14965,6 +17726,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 32
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
         }
       }
     },
@@ -15179,6 +17990,56 @@
           "benefit": 24
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 24
@@ -15429,6 +18290,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 459
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
         }
       }
     },
@@ -15673,6 +18584,56 @@
           "benefit": 591
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 591
@@ -15926,6 +18887,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 459
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
         }
       }
     },
@@ -16158,6 +19169,56 @@
           "benefit": 546
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 546
@@ -16474,6 +19535,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 1789
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1789
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1789
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1789
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1789
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1789
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1789
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1789
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1789
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -16706,6 +19817,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 112
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 112
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 112
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 112
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 112
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -16954,6 +20115,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 0
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 0
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 0
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -17198,6 +20409,56 @@
           "benefit": 416
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 416
@@ -17448,6 +20709,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 471
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
         }
       }
     },
@@ -17692,6 +21003,56 @@
           "benefit": 591
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 591
@@ -17942,6 +21303,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 639
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
         }
       }
     },
@@ -18189,6 +21600,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 639
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
         }
       }
     },
@@ -18433,6 +21894,56 @@
           "benefit": 639
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 639
@@ -18686,6 +22197,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 308
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
         }
       }
     },
@@ -18933,6 +22494,56 @@
           "benefit": 429
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 429
@@ -19186,6 +22797,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 477
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
         }
       }
     },
@@ -19433,6 +23094,56 @@
           "benefit": 669
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 669
@@ -19686,6 +23397,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
         }
       }
     },
@@ -19936,6 +23697,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
         }
       }
     },
@@ -20052,7 +23863,7 @@
               "income.0.type": "americorps_vista_counted"
             },
             "verdict": "APPROVE",
-            "note": "engine correctly counts the stipend per 7 CFR 273.9(c) exhaustive-exclusions clause + DVSA §404(g) prior-SNAP condition; RE-AUTHOR: 'DENY' was unreachable because $1500/mo for HH-2 is below both CA BBCE gross threshold ($3526) and 100% FPL net threshold ($1763). For a real count-vs-exclude verdict-flip, stipend must be ~$3800+. Tracking: #449",
+            "note": "engine correctly counts the stipend per 7 CFR 273.9(c) exhaustive-exclusions clause + DVSA \u00a7404(g) prior-SNAP condition; RE-AUTHOR: 'DENY' was unreachable because $1500/mo for HH-2 is below both CA BBCE gross threshold ($3526) and 100% FPL net threshold ($1763). For a real count-vs-exclude verdict-flip, stipend must be ~$3800+. Tracking: #449",
             "verdict_by_state": {
               "GA": "APPROVE",
               "FL": "APPROVE",
@@ -20347,6 +24158,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 716
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 581
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 716
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 645
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 595
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 716
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 716
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 602
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 716
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -20635,6 +24496,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 956
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 956
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 956
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 956
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 956
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 956
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 956
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 956
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 956
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -20878,6 +24789,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 546
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -21092,6 +25053,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -21316,6 +25327,56 @@
           "benefit": 203
         },
         "NH": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203.0
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "UT": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 203
@@ -21546,6 +25607,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 285
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -21861,6 +25972,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -22067,6 +26228,56 @@
           "benefit": null
         },
         "NH": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "MT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -22289,6 +26500,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -22508,6 +26769,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -22714,6 +27025,56 @@
           "benefit": null
         },
         "NH": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AL": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "CT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "KY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "ME": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "MT": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "OK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "RI": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "UT": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -22956,6 +27317,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -23190,6 +27601,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 544
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -23425,6 +27886,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 546
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -23644,6 +28155,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },
@@ -23863,6 +28424,56 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "AL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "AR": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "CT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "IA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "KY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "ME": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "MT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "OK": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "RI": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "UT": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     }

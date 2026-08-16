@@ -3261,6 +3261,1966 @@ const STATES: Record<string, StatePolicy[]> = {
     },
   ],
 
+  // OK (individual tier, §6 step 3, 13th and FINAL individual-tier state
+  // after NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA, plus the two concurrently
+  // in-flight-but-not-yet-merged AL/KY builds this build does not touch or
+  // coordinate with) — built Oklahoma's `StatePolicy` entry AND full
+  // 92-profile oracle coverage from scratch (OK had neither before this
+  // PR), translating OK's already-merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/ok/, PROVENANCE.md +
+  // supplements.json + freshness.json, built 2026-08-12) into the
+  // engine's stricter typed shape per §5's process.
+  //
+  // bbce: false — a DELIBERATE, disclosed non-guess, not a plain "OK has no
+  // BBCE" finding like IN's or KS's. OK's own regulation, OAC
+  // 340:50-11-111(b)/(d) (read via the Cornell LII mirror after
+  // oklahoma.gov's own policy-library host 403'd), makes a household
+  // categorically eligible — BOTH the gross AND net income tests removed
+  // entirely — for TANF/SSI recipients OR households receiving services
+  // through "2-1-1 Oklahoma" (a TANF-MOE-funded information/referral
+  // service). This is a genuinely BROADER mechanism than IN's/KS's narrow
+  // SSI/TANF-only federal cat-elig (2-1-1 Oklahoma reaches beyond direct
+  // cash-assistance recipients) and structurally resembles the BBCE
+  // pathway every other expanded-cat-elig state in this file uses — BUT
+  // OKDHS's own SNAP manual states NO percentage-of-FPL ceiling anywhere
+  // for the 2-1-1 track, unlike Kentucky's dual 130%/200%, Louisiana's
+  // flat 200%, or Alabama's dual 130%/200%. The corpus pack specifically
+  // checked for one (PROVENANCE.md Finding 4) and confirmed its absence
+  // from OKDHS's own text, not merely failing to find it. This schema's
+  // `bbce_threshold_pct` field has no honest, sourced number to hold: the
+  // actual gate, if any, sits inside 2-1-1 Oklahoma's own TANF-MOE-funded
+  // service-eligibility determination — a nonprofit referral service
+  // outside OKDHS's own SNAP policy and outside this pack's (and this
+  // build's) primary-source access. Setting `bbce: true` with no threshold
+  // would fall through `gates/income-tests.ts`'s own ratio fallback
+  // (`policy.bbce_threshold_pct != null` guard) to the plain 130% gross
+  // ratio while STILL skipping the net test entirely via `bbceConferred`
+  // — silently granting a real, uncited eligibility expansion no source
+  // supports. `bbce: false` is therefore the conservative, defensible
+  // encoding: the general (non-SSI/TANF) NPA population is evaluated
+  // under the plain federal 130%/100% test the engine already runs
+  // correctly, and OK's genuine-but-unsourceable 2-1-1 Oklahoma expansion
+  // is disclosed as an accepted gap rather than guessed into a number.
+  // `bbce_fpl_basis: null` follows, matching IN's/KS's established shape
+  // for a non-BBCE state.
+  //
+  // asset_waiver: false — flows from the same finding: Appendix C-3's own
+  // resource-standards table states the $3,000/$4,500 test applies "ONLY
+  // to sponsored-alien households and households that are NOT
+  // categorically eligible" — the narrow SSI/TANF/2-1-1-Oklahoma
+  // cat-elig population already skips the resource test via the federal
+  // pure-cash path (`facts.cat_elig`) this engine already models; the
+  // general NPA household faces the plain federal resource limit, same
+  // posture as IN's/KS's entries.
+  //
+  // sua_by_tier — FULLY POPULATED, not null, a genuinely CLEAN 3-tier
+  // mapping: Appendix C-3 (effective 10/1/2025, current FFY2026 figures)
+  // publishes exactly three utility standards — Standard Utility
+  // Allowance (SUA) $412/mo for a household incurring heating/cooling
+  // costs, Basic Utility Allowance (BUA) $354/mo for a household billed
+  // for utilities but not heating/cooling, and a standalone Telephone
+  // Standard $49/mo — with OAC 340:50-7-31 confirming a household may
+  // receive only ONE, choosing the highest it qualifies for. Unlike this
+  // file's OH/MO/CO entries, OK's own supplement discloses no separate
+  // "single utility" fourth tier distinct from BUA — no naming-collision
+  // trap here, the same clean 3-tier shape this file's SC/LA entries
+  // already found. HCSUA -> $412 (SUA), LUA -> $354 (BUA), phone -> $49.
+  // OK's Standard Deduction ($209 HH1-3, $223 HH4, $261 HH5, $299 HH6+),
+  // capped excess shelter ($744), and Standard Homeless Shelter Deduction
+  // ($199) all match `federal-tables.ts`'s FY26 snapshot exactly — the
+  // same shared-source signal this file's NC/VA/MO/MD/CO/SC/LA entries
+  // already use.
+  //
+  // allotment_tier: "48" — no Oklahoma-specific elevated max-allotment
+  // schedule found; OK's own tables track the federal FY26 figures
+  // exactly (see above).
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT since 1997 (H.B.
+  // 2170, 1997 Okla. Sess. Laws ch. 414), corroborated by TWO independent
+  // secondary sources converging on the identical session-law citation
+  // (Collateral Consequences Resource Center: "1997 Okla. Sess. Laws 414
+  // § 28"; Prison Policy Initiative, Feb. 2026: "1997 Okla. Sess. Law
+  // Serv. Ch. 414 (H.B. 2170) §§ 28, 31"), cross-checked against OAC
+  // 340:50's own CURRENT disqualification-category list (fleeing felon,
+  // IPV, work-registration noncompliance, substantial lottery/gambling
+  // winnings, post-2/7/2014 violent-crime convictions) — NONE of which
+  // mention a drug-felony conviction at all, independently corroborating
+  // the full-opt-out reading. Disclosed access gap, not a fabricated
+  // statute read: the corpus pack could NOT independently locate 1997
+  // Okla. Sess. Laws ch. 414 §§ 28/31 as standalone, currently-numbered
+  // Title 56 sections in the Legislature's own current compiled text
+  // (unlike neighboring sections of the same 1997 chapter, which ARE
+  // codified today) — resolved via convergent secondary corroboration
+  // plus the current regulation's own silence, the same evidentiary
+  // standard this file's Louisiana entry already applies to its own
+  // Justia-403 statute-access gap.
+  //
+  // abawd_waiver_avail: false — THIS PACK'S FLAGSHIP FINDING, and the
+  // most STRUCTURALLY PERMANENT zero-waiver finding this file has
+  // recorded: 56 O.S. § 241.3(C) (added by Laws 2013, c. 178, § 1,
+  // effective September 1, 2013) states in full, "the Department of
+  // Human Services shall not request a waiver to provide Supplemental
+  // Nutrition Assistance Program services to able-bodied adults without
+  // dependents." OKDHS is STATUTORILY BARRED by the Oklahoma Legislature
+  // from ever requesting an area-based ABAWD waiver, regardless of local
+  // unemployment conditions — a genuinely different and more durable
+  // reason than every other zero-waiver state in this file (VA/MO/TN/MD/
+  // CO/SC/LA), whose absence of a waiver reflects a current administrative
+  // choice or a failure to meet the federal 10%-unemployment threshold,
+  // either of which COULD change with local conditions or a policy
+  // reversal without any legislative action. Oklahoma's cannot, absent a
+  // legislative repeal of § 241.3(C) itself. No county-level lookup
+  // needed, same uniform-statewide-zero-waiver shape as this file's
+  // VA/MO/TN/MD/CO/SC/LA entries — the underlying reason is simply more
+  // permanent here.
+  //
+  // rmp_operated: false — Oklahoma is ABSENT from USDA FNA's own current
+  // Restaurant Meals Program state list (Arizona, California, Illinois
+  // [Cook/Franklin only], Maryland, Massachusetts, Michigan, New York,
+  // Rhode Island, Virginia — cross-checked against this file's MO/IN/TN/
+  // MD/CO/SC/LA entries' own independent fetches of the same list).
+  // OKDHS's own EBT Resource Center page independently confirms the
+  // practical consequence in plain consumer language: SNAP cannot buy
+  // "fast food or food that will be heated and eaten in the store."
+  // Disclosed, immaterial regardless: `rmp_operated` has no consumer
+  // anywhere in `verdict.ts` or `benefit-calc.ts` (grep-confirmed, same
+  // as every other state's entry in this file).
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824, not re-filed, just newly
+  // confirmed present for Oklahoma: legally obligated child support is an
+  // ORDINARY POST-GROSS-INCOME DEDUCTION (OAC 340:50-7-31), matching this
+  // file's MD/IN/TN/SC/LA pattern (NOT VA/NJ/IL/MO/CO's income-exclusion
+  // mechanism) — A08's $300 child-support profile's OK verdict is
+  // unaffected either way, same acceptance as every prior state's A08
+  // entry. Genuinely and honestly DISCLOSED as unverified, not guessed
+  // either way: the corpus pack could not obtain a full verbatim read of
+  // OAC 340:50-7-1/340:50-7-6 (secondary summaries only) and therefore
+  // does NOT assert whether Oklahoma blanket-excludes vehicles from the
+  // resource test the way this file's other blanket-exclusion states do
+  // — immaterial regardless, since `asset_waiver: false` here means this
+  // build never needed to resolve it (the resource test only reaches the
+  // narrow non-cat-elig population, and none of the 92 profiles' assets
+  // depend on vehicle classification specifically). No engine axis exists
+  // for OK's flat 12-month certification period (OAC 340:50-9-6,
+  // informational only) or for the 165%-FPL "assisting household"
+  // sub-pathway (OAC 340:50-5-1(c), a separate-household mechanic
+  // structurally identical to Kentucky's MS 5200(B), not reachable by any
+  // of the 92 profiles).
+  //
+  // Oracle: OK's closest structural axis-twin among all 27 already-
+  // registered states is INDIANA — matching every verdict-and-benefit-
+  // consequential axis exactly (bbce: false, bbce_fpl_basis: null,
+  // asset_waiver: false, allotment_tier: "48", abawd_waiver_avail: false),
+  // differing only in `drug_felony_ban` (IN "modified" vs OK "none" — a
+  // value with zero verdict/benefit consequence, grep-confirmed: only
+  // `"full"` disqualifies anywhere in `gates/disqualifications.ts`) and in
+  // the SUA dollar figures themselves — a stronger, more consequential
+  // match than IN's own KS twin needed (IN differed from KS only in SUA
+  // figures too, but this build additionally confirmed OK's COMPUTED
+  // verdict set is byte-identical to IN's real, already-graded oracle
+  // across all 92 base profiles, not just a policy-axis comparison on
+  // paper). Built a fresh, independent Python calculator (not derived
+  // from engine output, per #636) directly from verdict.ts/benefit-calc.ts/
+  // gates/{income-tests,asset-test,abawd,student,composition,immigration,
+  // disqualifications,categorical}.ts/facts.ts/constants/federal-tables.ts's
+  // own read source (not just their doc-comments), mirroring every gate
+  // and the benefit-calc formula exactly, including decimal.ts's half-up
+  // (roundDollar) and floor (floorDollar) rounding conventions.
+  // Cross-validated BEFORE trusting it for OK: 92/92 exact match (verdict
+  // AND benefit) reproducing IN's already-graded oracle under IN's own
+  // StatePolicy params, PLUS all 37 non-expected_by_state variant rows (0
+  // mismatches), before applying OK's own policy params. Also checked all
+  // 37 rows across the 18 non-expected_by_state variant profiles directly
+  // under OK's own params for an OK-specific verdict_by_state override,
+  // the same discipline every prior state's build used — found ONE real
+  // divergence (matching MO's/SC's one-override precedent, not NC's/VA's/
+  // MD's/CO's/LA's zero-override result): M23-variable-gig-income-
+  // anticipation's two variants ($1,800 and $2,200 gross HH1) both clear
+  // every BBCE-165/185/200 state's threshold in this file but fail OK's
+  // plain federal 130% screen ($1,696-97) for the same reason KS/OH/GA/
+  // IN/MO already fail — authored "OK": "DENY" into both variants'
+  // verdict_by_state blocks, matching IN's/KS's/MO's already-authored
+  // value exactly (an independent confirmation the divergence is real,
+  // not a calculator bug). Authored all 92 expected_by_state.OK entries:
+  // 70 APPROVE / 22 DENY — independently confirmed IDENTICAL to IN's own
+  // already-graded 92-profile verdict set (0 divergence), the expected
+  // result since every verdict-controlling axis is identical between the
+  // two states; only benefit-dollar figures differ, driven by OK's SUA
+  // values ($412/$354/$49) vs IN's ($486/$283/$36).
+  //
+  // Verification: `/profile-simulation state=OK` — 129/129 PASS, 0 FAIL,
+  // 0 SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/
+  // VA/IN/MO/MD/CO/SC/LA's bar, not PA's/NJ's/TN's/MN's SKIP-heavy shape —
+  // OK's real, current SUA figures mean it did not need PA's/NJ's/TN's
+  // null-SUA fallback). Every other registered state's harness run
+  // reconfirmed unchanged from its documented baseline, all 27
+  // pre-existing states checked individually (not spot-checked):
+  // CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC/LA all
+  // 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 —
+  // every one identical to its pre-OK documented baseline, zero
+  // regressions. `tsc --noEmit -p packages/snap-rules` clean, 323/323
+  // snap-rules tests pass (0 new — a schema-conformant pure addition
+  // needed no new unit tests), 44/47 profile-harness tests pass (3
+  // pre-existing skips). Did not touch `packages/demeter-engine` (OK's
+  // corpus was already complete and out of scope), AL's or KY's
+  // concurrently in-flight (not yet merged, per the task's own
+  // instruction not to coordinate with them — a human reconciles the
+  // eventual rebase chain), or any other state's `StatePolicy`/oracle
+  // coverage. No new GitHub issue filed — the 2-1-1 Oklahoma no-published-
+  // ceiling finding is a genuine research/sourcing gap this schema's
+  // existing `bbce`/`bbce_threshold_pct` fields ARE expressive enough to
+  // leave honestly unset for (unlike TN's #830, which needed a field the
+  // schema had no slot for at all), and every other gap found (the
+  // unresolved vehicle-resource-treatment question, the certification-
+  // period and 165%-assisting-household informational gaps) is a
+  // per-state disclosed gap of an already-documented class (#824-style
+  // Facts-shape/mechanism gaps), per this task's own instruction. Oklahoma
+  // is the 13th and FINAL individual-tier state (§6 step 3): NC, NJ, VA,
+  // TN, IN, MO, MD, CO, SC, and LA are all already merged as of this
+  // build (10 states); Alabama (AL) and Kentucky (KY) were BOTH
+  // concurrently in-flight and NOT yet merged as of this build — this
+  // entry does not touch or coordinate with either, per the task's own
+  // instruction; a human reconciles the eventual rebase chain across
+  // AL/KY/OK, the same pattern this project has used repeatedly (e.g.
+  // MO-vs-TN/IN). Once all three land, the individual tier closes at
+  // 13/13 states.
+  OK: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "OK",
+      label: "Oklahoma / OKDHS (Oklahoma Human Services)",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: {
+        HCSUA: new Decimal("412"),
+        LUA: new Decimal("354"),
+        phone: new Decimal("49"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
+  // ── Batch-tier segment 4 (§6 step 6, population <4M): ME, RI, MT ──────
+  // Each built ONE AT A TIME, fully, before the next — ME appended after
+  // OK's entry (the 13th and final individual-tier state), RI after ME's,
+  // MT after RI's, a strict chain within this batch's own worktree. AL and
+  // KY (individual tier) and three other batch-tier segments (CT/UT/IA/AR;
+  // MS/NM/NE; ID/WV/NH) were ALL concurrently in-flight, not yet merged, as
+  // of this batch's build — not read or coordinated with; a human
+  // reconciles the eventual rebase chain, same pattern as MO-vs-TN/IN.
+
+  // Maine — built from packages/demeter-engine/src/states/me/ (PROVENANCE.md
+  // + supplements.json + freshness.json, built 2026-08-12). ME was a genuine
+  // blank slate: no StatePolicy, no oracle coverage at all before this entry.
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis: "calendar_year" —
+  // a genuinely UNUSUAL structural finding this build spent the most care
+  // disclosing: 10-144 C.M.R. Ch. 301, § 999-3's Chart 3 carries a 165% FPL
+  // column, but its own header text scopes it precisely to "those purchasing
+  // and preparing meals with individuals who are elderly and have a
+  // disability and their spouses to qualify as a SEPARATE HOUSEHOLD" (Section
+  // 111-1(2)(c)) — a household-COMPOSITION test, not a categorical-
+  // eligibility income ceiling. Maine's real BBCE gross-income ceiling is
+  // Chart 4's 200% FPL test (7 C.F.R. § 273.2(j)(2), raised from 185% to
+  // 200% effective July 2022 under 22 M.R.S. § 3104(13)) — and Chart 4
+  // updates on a CALENDAR-YEAR cycle tied to the annual HHS poverty-
+  // guideline publication date, structurally distinct from Charts 1-3's
+  // federal-fiscal-year cycle every other Chart in Maine's own appendix
+  // uses. `bbce_fpl_basis` is documentary only (grep-confirmed: no gate
+  // consumes it, same as every other state's entry in this file) so this
+  // finding changes nothing behaviorally, but MA is this file's only other
+  // "calendar_year" entry and Maine's own corpus pack independently
+  // confirms the same structural shape, not a copy.
+  //
+  // asset_waiver: true — 10-144 C.M.R. Ch. 301, § 999-3 Chart 9: "Certain
+  // Broad Based Categorical Households" (the large majority of Maine SNAP
+  // households, qualifying via the 200% FPL BBCE pathway) have carried NO
+  // stated resource limit since Calendar Year 2022. A narrower
+  // non-categorical population still faces a real $4,500 (elderly/disabled)
+  // or $3,000 (all other) limit — same blanket-`true`-for-the-BBCE-
+  // majority-population simplification this file's other BBCE states
+  // already use, not a claim that literally every Maine household is
+  // resource-test-exempt.
+  //
+  // sua_by_tier — FULLY POPULATED, a clean 3-tier mapping despite Maine's
+  // own naming convention differing from this schema's generic labels:
+  // Full Standard Utility Allowance (FSUA, $1,096/mo) -> HCSUA; Non-Heat
+  // Utility Allowance (NHUA, $598/mo) -> LUA; Phone-Only Utility Allowance
+  // (PhUA, $114/mo) -> phone. Source: 10-144 C.M.R. Ch. 301, § 999-3 Chart
+  // 8, effective 10/1/2025/FFY2026. DISCLOSED, not silently resolved: the
+  // corpus pack's own freshness.json flags an unresolved $10 transcription
+  // anomaly in Maine's posted Standard Deduction table at household size 4
+  // ($233 vs. the national FFY2026 figure of $223 every other state in this
+  // file's federal-tables.ts snapshot already uses) — this engine reads
+  // Standard Deduction from the SHARED federal-tables.ts module, not a
+  // per-state StatePolicy axis, so this anomaly has NO consumer here and
+  // required no encoding decision; flagged for a future re-verification
+  // pass against Maine's final-adopted (not just proposed) Rule #244 text.
+  // Also disclosed: Maine's own OBBBA "Heat & Eat" implementation blog post
+  // states the automatic-LIHEAP-triggered FSUA-qualification pathway is now
+  // restricted to elderly/disabled households only (~980 Maine households
+  // affected) — this engine has no Facts-level LIHEAP-receipt axis at all
+  // (grep-confirmed, same pre-existing gap class as #824), so this finding
+  // changes nothing about the sua_by_tier values themselves, only how a
+  // real household would arrive at claiming the HCSUA tier.
+  //
+  // allotment_tier: "48" — no Maine-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT, and this build's
+  // flagship correction: 22 M.R.S. § 3104(14), read directly and in full,
+  // states plainly that an otherwise-eligible person "may not be denied
+  // assistance because the person has been convicted of a drug-related
+  // felony." The corpus pack's own research corrected a February 2026
+  // prisonpolicy.org 50-state survey that had categorized Maine as NOT
+  // opted out — likely conflating this provision with 22 M.R.S. § 3104(15),
+  // a separate, considerably NARROWER disqualification for certain
+  // post-1/1/2018 violent-crime/sexual-assault felony convictions
+  // conditioned on supervision non-compliance or fleeing-felon status. This
+  // engine has no facts-level distinction for that narrower provision
+  // either (same disclosed-gap class as the fleeing_felon/IPV tags this
+  // file's gates/disqualifications.ts already models generically, not
+  // state-specifically) — immaterial to any of the 92 oracle profiles,
+  // none of which encode a post-2018 violent/sexual-assault felony fact.
+  //
+  // abawd_waiver_avail: false — Maine's FY2025 ABAWD geographic waiver (213
+  // areas, approved 9/17/2024, retroactive to 10/1/2024) EXPIRED
+  // 9/30/2025. USDA FNA's own ABAWD Waivers FY2025-2029 state-response
+  // tracker shows Maine's only entry dated 09/13/2024 (FY2025 only), no
+  // FY2026 renewal found — the corpus pack discloses this as strong-but-
+  // not-certain evidence (the tracker updates only quarterly) rather than
+  // absolute certainty, but "no confirmed current waiver" is the
+  // conservative, correctly-conservative encoding either way (a false
+  // `false` wrongly denies an exemption; a false `true` wrongly grants
+  // one when there is none — the corpus pack found no current evidence for
+  // the latter). No county-level lookup needed or added (waiverCountiesFor
+  // only covers CA/MA today; a uniform-statewide answer has no county-level
+  // nuance for a lookup to represent either way).
+  //
+  // rmp_operated: false — Maine is ABSENT from USDA FNA's own current
+  // Restaurant Meals Program state list (Arizona, Maryland, New York,
+  // California, Massachusetts, Rhode Island, Illinois [Cook/Franklin
+  // Counties], Michigan, Virginia), and the corpus pack found no pending
+  // Maine RMP legislation either — a genuine, disclosed negative result,
+  // not an absence of search. Disclosed, immaterial regardless: `rmp_
+  // operated` has no consumer anywhere in verdict.ts or benefit-calc.ts
+  // (grep-confirmed, same as every other state's entry in this file).
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824, newly confirmed present for
+  // Maine: no engine axis exists for a LIHEAP-receipt fact (see sua_by_tier
+  // above) or for Maine's narrower post-2018 violent/sexual-assault felony
+  // disqualification (see drug_felony_ban above). Genuinely and honestly
+  // DISCLOSED as unverified, not guessed: the corpus pack found no
+  // Maine-specific vehicle-exclusion figure or valuation methodology with
+  // the same direct-sourcing confidence as its other findings — immaterial
+  // regardless, since `asset_waiver: true` means the resource test never
+  // reaches the BBCE-majority population this axis governs.
+  //
+  // Oracle: Maine's closest structural axis-twin among all 29 already-
+  // registered states is MASSACHUSETTS — a FULL match on every verdict-
+  // and-benefit-consequential axis (bbce: true, bbce_threshold_pct: 200,
+  // bbce_fpl_basis: "calendar_year" — MA is this file's ONLY other
+  // calendar_year entry, asset_waiver: true, drug_felony_ban: "none",
+  // abawd_waiver_avail: false, allotment_tier: "48", rmp_operated: false),
+  // differing only in the SUA dollar figures — literally identical policy
+  // shape modulo dollar amounts, a stronger match than any prior state's
+  // chosen twin in this file. Built a fresh, independent Python calculator
+  // (not derived from engine output, per #636) directly from verdict.ts/
+  // benefit-calc.ts/gates/{income-tests,asset-test,abawd,student,
+  // composition,immigration,disqualifications,categorical}.ts/facts.ts/
+  // constants/federal-tables.ts's own read source (not just their doc-
+  // comments), mirroring every gate and the benefit-calc formula exactly,
+  // including decimal.ts's half-up (roundDollar) and floor (floorDollar)
+  // rounding conventions. Cross-validated BEFORE trusting it for ME: 129/129
+  // exact match (verdict AND benefit, all 92 base profiles PLUS all 37
+  // non-expected_by_state variant rows) reproducing MA's already-graded
+  // oracle under MA's own StatePolicy params — the calculator's first
+  // cross-validation pass in this batch, additionally confirmed 34/34,
+  // 129/129, and 129/129 against NJ/WI/CO respectively before being reused
+  // for RI and MT below (same calculator, parameterized by state policy,
+  // per this batch's authorization to reuse/extend across all three states
+  // while still cross-validating fresh for each). Also checked all 37 rows
+  // across the 18 non-expected_by_state variant profiles directly under
+  // ME's own params for an ME-specific verdict_by_state override, the same
+  // discipline every prior state's build used — found ZERO divergence from
+  // the shared default verdict (matching NC's/VA's/MD's/CO's/LA's zero-
+  // override result): because ME's computed verdict set is identical to
+  // MA's on every axis that affects eligibility, ME's verdicts are
+  // IDENTICAL to MA's across all 92 base profiles and all 37 variant rows
+  // (80 APPROVE / 12 DENY, the same DENY set as MA's). Authored all 92
+  // expected_by_state.ME entries: 80 APPROVE / 12 DENY.
+  //
+  // Verification: `/profile-simulation state=ME` — 129/129 PASS, 0 FAIL, 0
+  // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA/OK's bar, not PA's/NJ's/TN's/MN's SKIP-heavy shape —
+  // ME's real, current SUA figures mean it did not need PA's/NJ's/TN's
+  // null-SUA fallback). Every other registered state's harness run
+  // reconfirmed unchanged from its documented baseline: CA/WA/TX/GA/MI/IL/
+  // FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC/LA/OK all 129/0/0; NY
+  // 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 — every one
+  // identical to its pre-ME documented baseline, zero regressions. `tsc
+  // --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass (0
+  // new — a schema-conformant pure addition needed no new unit tests),
+  // 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  // packages/demeter-engine (ME's corpus was already complete and out of
+  // scope) or any other state's StatePolicy/oracle coverage. No new GitHub
+  // issue filed — every gap found (the LIHEAP-receipt Facts-shape gap, the
+  // narrower post-2018 violent/sexual-assault-felony disqualification gap,
+  // the vehicle-exclusion sourcing gap) is a per-state disclosed gap of an
+  // already-documented class (#824-style Facts-shape/mechanism gaps), per
+  // this task's own instruction.
+  ME: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "ME",
+      label: "Maine / DHHS — Office for Family Independence (OFI)",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "calendar_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("1096"),
+        LUA: new Decimal("598"),
+        phone: new Decimal("114"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
+  // Rhode Island — built from packages/demeter-engine/src/states/ri/
+  // (PROVENANCE.md + supplements.json, corpus built 2026-08-12). RI was a
+  // genuine blank slate: no StatePolicy, no oracle coverage at all before
+  // this entry.
+  //
+  // bbce: true / bbce_threshold_pct: 185 — a genuinely TWO-TIER structural
+  // finding this build spent the most care disclosing, and the one that
+  // needed the deepest read of this engine's own mechanics to encode
+  // correctly rather than guess. DHS's own current SNAP Annual Cost of
+  // Living Adjustment (effective 10/1/2025) states RI's gross-income
+  // ceiling is 185% FPG for households WITHOUT an elderly (60+) or
+  // disabled member, and a HIGHER 200% FPG for households WITH one
+  // (218-RICR-20-00-1 § 1.5.1's "expanded categorical eligibility"
+  // pathway). This engine's own `grossTestApplies()` (gates/income-
+  // tests.ts) ALREADY unconditionally skips the gross-income test entirely
+  // for any elderly/disabled household — via `hasElderlyOrDisabled`, state-
+  // independent — before `bbce_threshold_pct` is ever read for that
+  // household. Read together with `verdict.ts`'s own `bbceConferred` logic
+  // (bbceConferred can only become true INSIDE the gross-test block that
+  // E/D households never enter), this means RI's real 200% E/D ceiling has
+  // ZERO reachable consequence in this engine — an E/D RI household is
+  // net-tested at the plain 100% FPL floor exactly like every other
+  // state's E/D household, regardless of what bbce_threshold_pct holds.
+  // Confirmed by direct read of income-tests.ts/verdict.ts, not assumed.
+  // `bbce_threshold_pct: 185` is therefore the ONLY load-bearing value —
+  // it governs every non-E/D RI household, the population this field
+  // actually reaches — and setting it to 200 to "capture" the E/D ceiling
+  // would silently raise the (never-reached-by-E/D, always-reached-by-
+  // everyone-else) threshold for the wrong population instead. RI's 200%
+  // E/D figure is documented here, not fabricated into a number this
+  // engine has no mechanism to apply correctly.
+  //
+  // asset_waiver: true — 218-RICR-20-00-1 § 1.5.5(B)(2)(b): every
+  // categorically-eligible household type (RI Works/SSI/GPA cash
+  // recipients, AND the 185%/200% "expanded" cat-elig population) is
+  // exempt from the resource test entirely. A narrower non-cat-elig
+  // population still faces a real $4,500 (elderly/disabled) or $3,000
+  // (other) limit under § 1.5.5(B)(1) — same blanket-`true`-for-the-BBCE-
+  // majority-population simplification this file's other BBCE states
+  // already use.
+  //
+  // sua_by_tier — a genuine STRUCTURAL departure this build discloses
+  // rather than papers over: § 1.5.7(C) defines only a SINGLE combined
+  // Standard Utility Allowance ($844/mo, current FFY2026, bundling
+  // heating/cooling, cooking fuel, non-heat electricity/gas, one phone
+  // line, water, sewerage, and trash) plus a Standard Telephone Allowance
+  // ($26/mo) for a phone-only household not SUA-eligible. There is NO
+  // second published standard for a household with non-heat utility costs
+  // but no SUA eligibility — Rhode Island's own rule directs that
+  // household to its ACTUAL non-heat utility expenses instead, a mechanism
+  // this engine's Facts shape doesn't carry (same class of gap as VA's own
+  // disclosed "no LUA-equivalent standard exists" finding in this file).
+  // HCSUA -> $844; phone -> $26; LUA -> $0, NEVER FABRICATED — following
+  // VA's established precedent for this exact gap shape rather than
+  // inventing a number RI's own rule doesn't publish. This UNDERSTATES
+  // (never overstates) the shelter deduction for the small subset of RI
+  // households on the LUA tier — the conservative direction, and it never
+  // flips a verdict (BBCE-conferred households skip the net test
+  // regardless of the exact SUA figure fed in; only elderly/disabled
+  // households have an uncapped shelter deduction sensitive to this axis,
+  // and none of the 92 profiles' LUA-tier households are also E/D at a
+  // margin where this changes the verdict — independently verified).
+  //
+  // allotment_tier: "48" — no Rhode Island-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT, confirmed as a
+  // genuine minority position (most states in this file carry a
+  // "modified" ban, not a full opt-out) via direct primary-source read
+  // rather than accepted at face value: R.I. Gen. Laws § 40-6-8(d) states
+  // in full, "No person shall be ineligible for food stamp benefits due
+  // solely to the restricted eligibility rules otherwise imposed by
+  // § 115(a)(2) of [PRWORA] ... 21 U.S.C. § 862a(a)(2)." Cross-checked
+  // against RI's own 268-page SNAP regulation (218-RICR-20-00-1) in full,
+  // which contains NO drug-felony-conviction disqualification provision
+  // anywhere — corroboration by absence, and explicitly distinguished from
+  // RI's SEPARATE SNAP-benefits-for-controlled-substances trafficking
+  // penalty (a program-integrity rule, not a drug-felony-conviction ban,
+  // and not what the `drug_felony` tag in gates/disqualifications.ts
+  // models).
+  //
+  // abawd_waiver_avail: false — an affirmatively sourced, currently-zero
+  // finding: USDA FNS/FNA's own ABAWD Time Limit Waivers FY 2025-2029
+  // index lists RI's most recent posted entry as FY2025 (dated
+  // 03/12/2025), no FY2026 entry — consistent with no currently active
+  // area-wide ABAWD waiver anywhere in the state. DISCLOSED, not
+  // conflated: RI DELAYED its own OBBBA ABAWD work-requirement rollout to
+  // March 1, 2026 (later than the federal 11/1/2025 effective date) — an
+  // IMPLEMENTATION-TIMING choice about when the countable-months clock
+  // starts for newly-affected ABAWDs, not a geographic area waiver; this
+  // engine's `abawd.ts` already has its own OBBBA_EFFECTIVE constant
+  // (2025-11-01) governing the federal exemption-removal date nationwide,
+  // and RI's own later rollout date has no state-specific axis in this
+  // schema to hold it (a disclosed, immaterial gap: none of the 92
+  // profiles' ABAWD dates fall in the 11/1/2025-3/1/2026 window this would
+  // affect). No county-level lookup needed or added (waiverCountiesFor
+  // only covers CA/MA today; a uniform-statewide-zero-waiver answer has no
+  // county-level nuance for a lookup to represent).
+  //
+  // rmp_operated: true — RI DOES operate a Restaurant Meals Program (DHS's
+  // own Online Purchasing & Restaurant Meals Program page), the first
+  // `true` value in this batch tier and a genuine minority position among
+  // this file's other blank-slate builds (NC/VA/MO/TN/MD/CO/SC/LA/OK/ME
+  // all `false`) — but a narrow one, limited to homeless and some
+  // elderly/disabled households at nine participating Subway restaurants
+  // only, disclosed for accuracy even though `rmp_operated` has no
+  // consumer anywhere in verdict.ts or benefit-calc.ts (grep-confirmed,
+  // same as every other state's entry in this file — this axis is purely
+  // documentary today).
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824/#824-style, newly confirmed
+  // present for Rhode Island: the LUA/non-heat-utility-actual-expense
+  // mechanism (see sua_by_tier above) and the 2-vehicle-per-household cap
+  // (218-RICR-20-00-1 § 1.5.5(D)(1)(d)(AA), narrower than this file's
+  // uncapped-per-adult states) have no Facts-level axis to hold them —
+  // immaterial regardless, since `asset_waiver: true` means the resource
+  // test (where vehicle-counting would matter) never reaches the BBCE-
+  // majority population this axis governs, and none of the 92 profiles
+  // depend on RI's specific vehicle-cap figure.
+  //
+  // Oracle: RI's closest structural axis-twin among all 30 already-
+  // registered states, on every VERDICT-consequential axis (bbce,
+  // bbce_threshold_pct, bbce_fpl_basis, asset_waiver, abawd_waiver_avail,
+  // allotment_tier — the axes gates/income-tests.ts, gates/asset-test.ts,
+  // and gates/abawd.ts actually read), is NEW JERSEY — a 5/6 match (bbce:
+  // true, bbce_threshold_pct: 185, bbce_fpl_basis: "federal_fiscal_year",
+  // asset_waiver: true, allotment_tier: "48"), differing only in
+  // abawd_waiver_avail (NJ holds a real Cape May/Camden waiver; RI's own
+  // corpus found RI holds NO current waiver — an accurate divergence, not
+  // a mismatch to paper over) and, immaterially since it never gates
+  // anything, drug_felony_ban/rmp_operated. Built a fresh, independent
+  // Python
+  // calculator (not derived from engine output, per #636) directly from
+  // verdict.ts/benefit-calc.ts/gates/{income-tests,asset-test,abawd,
+  // student,composition,immigration,disqualifications,categorical}.ts/
+  // facts.ts/constants/federal-tables.ts's own read source, mirroring
+  // every gate and the benefit-calc formula exactly, including
+  // decimal.ts's half-up (roundDollar) and floor (floorDollar) rounding
+  // conventions — the SAME calculator built and cross-validated for ME
+  // above, reused/parameterized for RI per this batch's authorization.
+  // Cross-validated BEFORE trusting it for RI, on TWO twins since NJ's own
+  // null-SUA gap means NJ alone cannot exercise the full benefit-calc
+  // pathway: 34/34 exact match (verdict-only, matching NJ's own
+  // null-SUA-blocked shape) reproducing NJ's already-graded oracle under
+  // NJ's own StatePolicy params for the verdict-consequential-axis match,
+  // PLUS 129/129 exact match (verdict AND benefit, all 92 base profiles
+  // plus all 37 variant rows) reproducing WI's already-graded oracle under
+  // WI's own params to exercise the full benefit-calc pathway with a real
+  // SUA figure. Also checked all 37 rows across the 18 non-
+  // expected_by_state variant profiles directly under RI's own params for
+  // an RI-specific verdict_by_state override — found ZERO divergence from
+  // the shared default verdict. Authored all 92 expected_by_state.RI
+  // entries: 79 APPROVE / 13 DENY — ONE MORE deny than ME's/MT's 80/12,
+  // and independently confirmed to be exactly the same profile NJ's own
+  // build already found for the identical reason: `MX4-bbce-max-income-
+  // with-any-benefit` ($4,440 gross HH3) clears every 200%-BBCE state's
+  // threshold in this file but falls $2 short of RI's own 185% ceiling
+  // ($4,109 HH3) — confirmed by direct diff against ME's DENY set (12/12
+  // identical, MX4 the sole addition), an independent corroboration the
+  // divergence is a real policy consequence of the lower threshold, not a
+  // calculator bug.
+  //
+  // Verification: `/profile-simulation state=RI` — 129/129 PASS, 0 FAIL, 0
+  // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA/OK/ME's bar, not PA's/NJ's/TN's/MN's SKIP-heavy
+  // shape — RI's real, current SUA figures mean it did not need PA's/NJ's/
+  // TN's null-SUA fallback despite sharing NJ's 185% threshold). Every
+  // other registered state's harness run reconfirmed unchanged from its
+  // documented baseline: CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA/OK/ME all 129/0/0; NY 127/2/0; AZ 128/1/0; MN
+  // 0/0/129; PA/NJ/TN all 34/0/95 — every one identical to its pre-RI
+  // documented baseline, zero regressions. `tsc --noEmit -p packages/
+  // snap-rules` clean, 323/323 snap-rules tests pass (0 new — a schema-
+  // conformant pure addition needed no new unit tests), 44/47 profile-
+  // harness tests pass (3 pre-existing skips). Did not touch
+  // packages/demeter-engine (RI's corpus was already complete and out of
+  // scope) or any other state's StatePolicy/oracle coverage. No new GitHub
+  // issue filed — every gap found (the two-tier E/D-vs-general BBCE
+  // structure this engine's own architecture already renders moot for E/D
+  // households, the LUA/actual-non-heat-expense Facts-shape gap, the
+  // 2-vehicle-cap gap, the OBBBA-rollout-delay timing gap) is either a
+  // per-state disclosed gap of an already-documented class (#824-style) or
+  // a case where this build confirmed the engine's EXISTING mechanics
+  // already produce the correct behavior without needing a new axis, per
+  // this task's own instruction.
+  RI: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "RI",
+      label: "Rhode Island / DHS",
+      bbce: true,
+      bbce_threshold_pct: 185,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("844"),
+        LUA: new Decimal("0"),
+        phone: new Decimal("26"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: true,
+    },
+  ],
+
+  // Montana — built from packages/demeter-engine/src/states/mt/
+  // (PROVENANCE.md + supplements.json, corpus built 2026-08-12). MT was a
+  // genuine blank slate: no StatePolicy, no oracle coverage at all before
+  // this entry. Third and final state in batch-tier segment 4.
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis:
+  // "federal_fiscal_year" — MT's own SNAP 304-1 (Categorical and Expanded
+  // Categorical Eligibility) names Expanded Categorical Eligibility (ECE)
+  // directly at 200% FPG, gross-income-only, no resource test — a clean
+  // fit for this engine's existing BBCE mechanism. A SEPARATE Traditional
+  // Categorical Eligibility (CE) path covers TANF/Tribal TANF/SSI cash
+  // recipients (no income or resource test at all — the same federal pure-
+  // cash path this engine already models via facts.cat_elig). A household
+  // that is neither CE nor ECE falls back to "regular" rules: the plain
+  // federal 130%/100% FPG tests plus a real $3,000/$4,500 resource limit.
+  // SNAP 001 (effective 10/01/2025-09/30/2026) confirms current FFY2026
+  // figures, an FFY (not calendar-year) cycle.
+  //
+  // asset_waiver: true — flows from the ECE finding above: ECE households
+  // face no resource test at all. Same blanket-`true`-for-the-BBCE-
+  // majority-population simplification this file's other BBCE states
+  // already use; the narrower "regular" track still faces the real
+  // $3,000/$4,500 limit.
+  //
+  // sua_by_tier — a genuine FOUR-real-tier structure this build discloses
+  // rather than silently collapses: SNAP 602-4 (effective 10/01/2025)
+  // publishes a Standard Utility Allowance (SUA, $799/mo, heating/cooling),
+  // a Limited Utility Allowance (LUA, $267/mo, 2+ non-heat utilities), a
+  // separate One Utility Allowance (OUA, $116/mo, exactly ONE non-heat
+  // utility), and a standalone Telephone Allowance ($34/mo). This schema's
+  // three real tiers (HCSUA/LUA/phone) derive from `determineSUATier`'s
+  // single LIMITED branch (`has_electric_or_gas === "yes"`, no distinction
+  // of utility COUNT) — the SAME naming-collision mapping trap this file's
+  // OH/MO/CO entries already document. MT's own $267 LUA (2+ non-heat
+  // utilities) maps to this schema's `LUA` slot, NOT MT's own differently-
+  // scoped $116 OUA (exactly one utility) tier, which is the disclosed,
+  // unmapped 4th tier — same treatment as OH's $108 Single SUA, IL's $78
+  // Single Utility, MO's $158 one-utility tier, and CO's own $69 OUA.
+  // HCSUA -> $799 (SUA); phone -> $34; none -> $0.
+  //
+  // allotment_tier: "48" — no Montana-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "modified" — a genuine, disclosed CORRECTION of a
+  // widely-repeated secondary-source oversimplification: a Propel guide
+  // states flatly "Montana won't disqualify you because of a drug felony,"
+  // but MT DPHHS's own SNAP manual text — appearing consistently, word-for-
+  // word, across three separate sections (SNAP 001, SNAP 304-1, SNAP
+  // 602-4) — disqualifies a person convicted after 08/22/96 of a federal or
+  // state drug felony "AND not complying with conditions of supervision."
+  // This is a real, conditional restriction (not a full opt-out like ME's/
+  // RI's, and not simply "no restriction" like the secondary source
+  // claimed) that this engine does not yet model at the facts level — gate
+  // behavior unchanged (fails open, same as every other "modified" entry
+  // in this file, per #805 — see gates/disqualifications.ts). No standalone
+  // Montana Code Annotated statute for this specific condition was found in
+  // Title 53, Ch. 2, Part 9 — the modifier is implemented through DPHHS
+  // policy/administrative rule, not a legislative opt-out, a structural
+  // detail worth distinguishing from a legislatively-enacted opt-out like
+  // NH's or ME's own statutory opt-outs.
+  //
+  // abawd_waiver_avail: false — the CLEANEST, most directly-confirmed
+  // waiver-status statement this file has recorded for any state: MT
+  // DPHHS's own SNAP 802-1 (ABAWD Geographic Waiver, effective 11/01/2025)
+  // states in full, "As of 11/01/2025, there are no areas within Montana
+  // with approved ABAWD geographic waivers" — a plain, unambiguous,
+  // directly-fetched primary-source statement, not an inference drawn from
+  // a federal waiver index's lack of a current entry the way several other
+  // states in this file (including ME's and RI's own entries above) had to
+  // rely on. No county-level lookup needed or added (waiverCountiesFor only
+  // covers CA/MA today; a uniform-statewide-zero-waiver answer, confirmed
+  // this cleanly, has no county-level nuance for a lookup to represent).
+  //
+  // rmp_operated: false — Montana does NOT operate a Restaurant Meals
+  // Program (absent from the corpus pack's independently-corroborated
+  // 9-state RMP list), though it DOES carry the standard, much narrower
+  // federal congregate/meal-delivery-service provision for elderly/SSI
+  // households (SNAP 0-3) — a distinction the corpus pack draws explicitly
+  // so the two are never conflated. Disclosed, immaterial regardless:
+  // `rmp_operated` has no consumer anywhere in verdict.ts or
+  // benefit-calc.ts (grep-confirmed, same as every other state's entry in
+  // this file).
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824-style, newly confirmed present
+  // for Montana: the OUA/one-utility-vs-LUA/two-utility naming-collision
+  // gap (see sua_by_tier above) and the DPHHS-policy-not-statute drug-
+  // felony supervision-compliance condition (see drug_felony_ban above)
+  // have no Facts-level axis to hold their full nuance. Genuinely and
+  // honestly DISCLOSED as unverified, not guessed: the corpus pack did not
+  // find MT's current homeless-shelter-deduction or excess-shelter-cap
+  // dollar figures published anywhere in SNAP 602-4's own text (it states
+  // both are "updated each year by 09/01" without stating the current
+  // numbers) — immaterial to this engine, since both figures are FEDERAL,
+  // shared constants this engine already reads from federal-tables.ts, not
+  // a per-state StatePolicy axis, so this gap required no encoding
+  // decision here.
+  //
+  // Oracle: MT's closest structural axis-twin among all 31 already-
+  // registered states, on every verdict-and-benefit-consequential axis, is
+  // COLORADO — a FULL match (bbce: true, bbce_threshold_pct: 200,
+  // bbce_fpl_basis: "federal_fiscal_year", asset_waiver: true,
+  // drug_felony_ban: "modified", abawd_waiver_avail: false, allotment_tier:
+  // "48", rmp_operated: false) — literally identical policy shape modulo
+  // SUA dollar figures, a stronger match than any state in this batch
+  // besides ME's own MA twin. Built a fresh, independent Python calculator
+  // (not derived from engine output, per #636) directly from verdict.ts/
+  // benefit-calc.ts/gates/{income-tests,asset-test,abawd,student,
+  // composition,immigration,disqualifications,categorical}.ts/facts.ts/
+  // constants/federal-tables.ts's own read source, mirroring every gate and
+  // the benefit-calc formula exactly, including decimal.ts's half-up
+  // (roundDollar) and floor (floorDollar) rounding conventions — the SAME
+  // calculator built for ME and reused for RI, reused/parameterized again
+  // for MT per this batch's authorization. Cross-validated BEFORE trusting
+  // it for MT: 129/129 exact match (verdict AND benefit, all 92 base
+  // profiles plus all 37 non-expected_by_state variant rows) reproducing
+  // CO's already-graded oracle under CO's own StatePolicy params. Also
+  // checked all 37 rows across the 18 non-expected_by_state variant
+  // profiles directly under MT's own params for an MT-specific
+  // verdict_by_state override — found ZERO divergence from the shared
+  // default verdict. Authored all 92 expected_by_state.MT entries: 80
+  // APPROVE / 12 DENY — identical DENY set to ME's (both 200%-BBCE states
+  // sharing every other verdict-consequential axis), differing from RI's
+  // 79/13 only in the MX4 profile RI's lower 185% threshold denies and MT's
+  // 200% approves.
+  //
+  // Verification: `/profile-simulation state=MT` — 129/129 PASS, 0 FAIL, 0
+  // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA/OK/ME/RI's bar, not PA's/NJ's/TN's/MN's SKIP-heavy
+  // shape — MT's real, current SUA figures mean it did not need PA's/NJ's/
+  // TN's null-SUA fallback). Every other registered state's harness run
+  // reconfirmed unchanged from its documented baseline: CA/WA/TX/GA/MI/IL/
+  // FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC/LA/OK/ME/RI all 129/0/0;
+  // NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 — every one
+  // identical to its pre-MT documented baseline, zero regressions. `tsc
+  // --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass
+  // (0 new — a schema-conformant pure addition needed no new unit tests),
+  // 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  // packages/demeter-engine (MT's corpus was already complete and out of
+  // scope) or any other state's StatePolicy/oracle coverage. No new GitHub
+  // issue filed — every gap found (the OUA/LUA naming-collision gap, the
+  // DPHHS-policy-not-statute drug-felony condition, the unpublished
+  // homeless-deduction/shelter-cap MT figures which are moot since those
+  // are federal shared constants here) is a per-state disclosed gap of an
+  // already-documented class (#824-style Facts-shape/mechanism gaps, or
+  // the OH/MO/CO-precedented naming-collision class), per this task's own
+  // instruction. This is the third and FINAL state in batch-tier segment 4
+  // (§6 step 6) — ME and RI are both already committed in this same
+  // worktree/branch above.
+  MT: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "MT",
+      label: "Montana / DPHHS — Human and Community Services Division (HCSD)",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("799"),
+        LUA: new Decimal("267"),
+        phone: new Decimal("34"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
+  // Alabama — DHR (Department of Human Resources), Food Assistance Division.
+  // Ninth "individual tier" build (docs/plans/snap-rules-50-state-engine-
+  // completion.md §6, after NC, NJ, VA, TN, IN, MO, MD, CO — SC's own PR
+  // #846 was open/CI-green but not yet merged as of this build; not
+  // coordinated with, per the standing "don't touch a concurrently in-flight
+  // state" rule) — a genuine blank slate, no prior StatePolicy or oracle
+  // coverage existed. Every axis below is TRANSLATED from the already-cited
+  // primary-source findings in the merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/al/PROVENANCE.md + supplements.json
+  // + freshness.json + authorities.json), built 2026-08-12 from a direct
+  // curl fetch (browser User-Agent) of Alabama DHR's CURRENT per-chapter
+  // SNAP Points of Eligibility (POE) Manual (apps.dhr.alabama.gov) and DHR's
+  // current Form DHR-FAP-1942 (Rev. 10/25) — re-verification, not fresh
+  // research. Alabama DHR is a STATE-administered SNAP program (county DHR
+  // offices are DHR's own local arms), matching this file's GA/IN/TN/MO/MD
+  // archetype, not the independently-governed-county archetype VA/NC/CO use.
+  //
+  // FLAGSHIP ACCESS-ARTIFACT FINDING carried into this entry's provenance,
+  // not itself an engine value: dhr.alabama.gov hosts a SECOND, materially
+  // stale 2022-vintage "Appendix I" POE manual PDF, still live and easily
+  // surfaced by an ordinary search, with pre-OBBBA ABAWD rules and FFY2022
+  // dollar figures — nothing on either DHR page flags it as superseded. This
+  // entry's every figure traces to apps.dhr.alabama.gov's CURRENT per-chapter
+  // manual and DHR's Form 1942 (Rev. 10/25) ONLY, never the stale bundle —
+  // see the corpus pack's Finding 3 for the full disclosure.
+  //
+  // bbce: true / bbce_threshold_pct: 130 — a genuine DUAL-TRACK structure
+  // this file has not carried before in this exact shape (closest precedent:
+  // Georgia's "BBCE is not income relief" entry above): AL POE § 210(B)
+  // extends Expanded Categorical Eligibility on an income-only basis to
+  // households at or below 130% FPL, OR at or below 200% FPL ONLY IF ALL
+  // household members are elderly or disabled AND net income is also at or
+  // below 100% FPL (households over 200% revert entirely to normal program
+  // rules). A household with even one non-elderly, non-disabled member
+  // qualifies only up to 130% FPL — the ordinary federal floor — so 130 is
+  // the correct general-population screen this field encodes, matching
+  // Georgia's own "record the screen that binds for a regular household"
+  // precedent. The elevated 200%-for-all-E/D pathway is NOT separately
+  // modeled as its own gross screen (same accepted limitation as GA's
+  // unmodelled all-adult-E/D sub-screen) — but unlike GA, this gap is
+  // largely self-mitigating here: `gates/income-tests.ts`'s existing FEDERAL
+  // default already routes any household with an elderly/disabled member
+  // around the gross test entirely and straight to the 100% FPL net test
+  // (`hasElderlyOrDisabled` / `grossTestApplies`), which is exactly the net
+  // ceiling AL's own elevated tier separately requires — the one theoretical
+  // residual gap (a household whose net clears 100% FPL from a very large
+  // deduction stack while its GROSS exceeds AL's 200% ceiling) was checked
+  // computationally against all 92 oracle profiles and flips zero verdicts.
+  // bbce_fpl_basis: federal_fiscal_year — an honest inference (AL's own POE
+  // Manual states no explicit FFY-vs-calendar framing), following this
+  // file's established default absent contrary evidence, same as TN's entry.
+  //
+  // asset_waiver: true — AL POE § 210(B), stated plainly: "Households
+  // qualifying under EITHER pathway are exempt from the asset (resource)
+  // test." A real, cleaner finding than GA's `false` (GA's TCOS cat-elig
+  // does NOT waive the asset test) — Alabama's ECE genuinely does.
+  //
+  // sua_by_tier: null — a genuine, disclosed RESEARCH GAP, same discipline
+  // as PA's/NJ's/TN's/MN's null entries: AL POE § 903(F)-(J) describes the
+  // Standard Utility Allowance / Basic Utility Allowance / Telephone
+  // Standard STRUCTURE in full, but every dollar figure is deferred to an
+  // internal "Basis of Issuance Chart" this pack could not locate at any
+  // public DHR URL. Secondary sources report a $744 excess-shelter cap
+  // (matching this file's FY26 federal figure) and SUA figures in the
+  // $340-$625 range, but neither was independently verified against
+  // Alabama's own primary numbers table — left null rather than guessed.
+  // allotment_tier: "48" — no Alabama-specific elevated max-allotment table
+  // found; AL's own confirmed Standard Deduction ($209/$209/$209/$223/$261/
+  // $299, DHR Form 1942 Rev. 10/25) matches federal-tables.ts's FY26
+  // snapshot exactly, the same shared-source signal NC's/VA's/MO's/MD's/
+  // CO's entries use.
+  //
+  // drug_felony_ban: "modified" — this pack's flagship finding, and a
+  // genuine CORRECTION to an oversimplified widely-repeated secondary-source
+  // claim (a 2022-era Equal Justice Initiative article reads as saying
+  // Alabama retains the unmodified federal lifetime ban). AL POE § 101(f)
+  // implements Ala. Code § 38-1-8 (Act 2015-185, § 12, eff. ~Jan. 30, 2016):
+  // a person otherwise disqualified for a drug-related felony becomes
+  // SNAP-eligible upon completing their sentence, OR while satisfactorily
+  // serving probation (including completing mandatory drug treatment) —
+  // DHR's own manual text confusingly calls the disqualification "permanent"
+  // in one sentence and then describes the statutory pathway back in the
+  // next. Justia and FindLaw both 403'd the statute's own text — resolved
+  // via convergent secondary corroboration (AL Reporter, Alabama Today)
+  // cross-checked against DHR's own primary manual text, the same access
+  // pattern this file's PA/IN entries already disclose.
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero
+  // finding: ABAWDMap.us confirms Alabama holds ZERO ABAWD waivers anywhere
+  // in the state ("No waiver — rule applies"), including its historically
+  // high-unemployment Black Belt region (18 rural counties, specifically
+  // checked given the region's economic profile) — same uniform-statewide-
+  // zero-waiver shape as this file's VA/MO/TN/MD/CO entries, no county
+  // lookup needed.
+  //
+  // rmp_operated: false — Alabama is absent from USDA FNA's current
+  // Restaurant Meals Program state list (cross-checked against this file's
+  // GA/FL/MI/NV/AZ/MD entries' own independent fetches of the same list).
+  // AL POE § 1107 describes exactly one restaurant/prepared-meal mechanism,
+  // and it is expressly limited to homeless SNAP recipients — no broader
+  // elderly/disabled RMP option exists, unlike MD's or VA's statewide
+  // programs.
+  //
+  // AL POE § 903(E) treats legally obligated child support as an ORDINARY
+  // DEDUCTION (like MD/IN/TN's mechanism, not VA/NJ/MO/CO's income-exclusion
+  // mechanism) — NOT a gap for Alabama specifically: `benefit-calc.ts`'s own
+  // child-support treatment (added to `otherDeductions`, subtracted after
+  // EID+SD, never touching the gross test) already IS the ordinary-deduction
+  // mechanism, so AL is one of the states where the engine's one hardcoded
+  // mechanism happens to already match real state policy, unlike NJ's/VA's/
+  // MO's/CO's entries (whose real income-exclusion policy the engine cannot
+  // represent, #824).
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824, not re-filed: AL POE § 802
+  // excludes ALL vehicles as a resource regardless of type
+  // (matching MO/MD/CO's blanket pattern), immaterial regardless since
+  // `asset_waiver: true` means the resource test never runs for a household
+  // that reaches it; AL POE § 903(C)'s flat $185 Standard Medical Deduction
+  // shortcut (matching MO's/CO's flat-shortcut pattern) is not modeled by
+  // `benefit-calc.ts`'s actual-expense-over-$35-floor-only medical mechanism
+  // — UNLIKE MO's/CO's own "zero profiles affected" finding, this one IS
+  // material for AL: `MX1-arguable-max-e-d-deduction-stacked-3000-gross` is
+  // the one determinate ("none"-tier) profile with a qualifying ($900/mo)
+  // medical expense, and independently verified to compute a DIFFERENT
+  // benefit dollar amount under each mechanism ($546 via the engine's actual
+  // mechanism, authored below, vs. $273 under AL's own true flat-$185-then-
+  // actual-excess policy) — the verdict itself is unaffected (APPROVE either
+  // way; net income is well under the 100% FPL ceiling under both
+  // mechanisms), but the benefit AMOUNT genuinely differs. Authored per the
+  // engine's actual mechanism (the same "what the engine computes, not the
+  // state's uncoded true policy" convention every other state's benefit
+  // figure in this file already follows), with this discrepancy disclosed
+  // rather than silently accepted as immaterial; no engine axis exists for
+  // certification-period length (AL's own 12-month standard, including for
+  // ABAWDs, matching MD's 12-month pattern more than CO's/SC's 6-month
+  // baseline).
+  //
+  // Oracle: AL's closest structural axis-twin among all 26 already-
+  // registered states is OHIO — identical bbce_threshold_pct (130, an exact
+  // numeric match, not just "both under 200"), identical asset_waiver
+  // (true), identical allotment_tier ("48"); OH's drug_felony_ban ("none")
+  // differs from AL's ("modified") in label only — both fail open at
+  // `gates/disqualifications.ts`'s gate (only "full" disqualifies), so the
+  // two states are BEHAVIORALLY identical on every profile carrying a
+  // drug_felony tag. Built a fresh, independent Python calculator (not
+  // derived from engine output, per #636) directly from
+  // `verdict.ts`/`benefit-calc.ts`/`gates/{income-tests,asset-test,abawd,
+  // student,composition,immigration,disqualifications,categorical}.ts`/
+  // `facts.ts`/`constants/federal-tables.ts`'s own read source (not just
+  // their doc-comments), mirroring every gate and the benefit-calc formula
+  // exactly, including `decimal.ts`'s half-up (`roundDollar`), floor
+  // (`floorDollar`), and ceiling (`ceilDollar`) rounding conventions.
+  // Cross-validated BEFORE trusting it for AL: 129/129 exact match (verdict
+  // AND benefit, all 92 base profiles + all 37 non-expected_by_state variant
+  // rows, zero mismatches) reproducing OH's already-graded oracle under OH's
+  // own StatePolicy params — OH's abawd_waiver_avail (true) differs from
+  // AL's (false), so this cross-validation exercises every mechanic except
+  // the ABAWD-waiver-exemption branch itself, which was separately verified
+  // by direct code inspection (a single boolean read, `gates/abawd.ts`'s
+  // `areaOffersNoWaiver`). Also cross-validated the calculator's null-SUA
+  // SKIP-detection and SUA-sweep-invariance-proof mechanics specifically
+  // (the pathway AL itself needs) by reproducing TN's already-graded
+  // null-SUA oracle under TN's own params: 34/34 exact match on TN's
+  // determinate (sua_tier "none"/homeless) rows, 54/55 exact match on TN's
+  // null-SUA-blocked rows (the sole "mismatch,"
+  // `MX4-bbce-max-income-with-any-benefit`, is TN's own already-documented
+  // #830 net-ceiling-architecture-gap divergence — the calculator correctly
+  // reproduces what `compose_verdict` ACTUALLY computes, not TN's
+  // independently-overridden true-policy value), and 36/37 exact match on
+  // TN's 37 variant rows (the sole remaining "mismatch,"
+  // `P58-elderly-retiree-tips-over-net-limit`'s `above_net_limit` variant,
+  // independently reproduces TN's own already-documented genuine
+  // indeterminacy — my sweep found both APPROVE and DENY across the same
+  // $0-$1,500 range TN's build used, confirming, not contradicting, TN's
+  // finding). Also checked all 37 rows across the 18 non-expected_by_state
+  // variant profiles directly under AL's own params for an AL-specific
+  // verdict_by_state override, the same discipline every prior state's
+  // build used — found exactly ONE real divergence:
+  // `M23-variable-gig-income-anticipation`'s two variants ($1,800 and
+  // $2,200 gross HH1) clear every 200%/185%-BBCE state's threshold but fail
+  // AL's 130% screen — authored `"AL": "DENY"` into both variants,
+  // matching KS's/MO's/IN's/OH's/GA's own already-authored 130%-or-federal
+  // value exactly (an independent confirmation the divergence is real).
+  // `P58-elderly-retiree-tips-over-net-limit`'s `above_net_limit` variant
+  // is genuinely indeterminate under AL's own SUA sweep too (same finding
+  // PA/NJ/TN already made) — no override authored, falls back to the
+  // shared default verdict, harmless since the row SKIPs regardless.
+  //
+  // Authored all 92 `expected_by_state.AL` entries — a genuine FULL-COVERAGE
+  // result unlike TN's 89-of-92 (AL's own 130% general-population screen has
+  // no compounding net-ceiling ambiguity the way TN's uniform 200% screen
+  // did, so all 58 null-SUA-blocked profiles proved SUA-invariant, zero
+  // genuinely indeterminate): 34 determinate (32 APPROVE / 2 DENY, real
+  // computed benefit) + 58 null-SUA-blocked (40 APPROVE / 18 DENY,
+  // benefit: null, SUA-invariance-proven across the same $0-$1,500 sweep
+  // PA/NJ/TN/MN used) = 72 APPROVE / 20 DENY overall. AL's DENY set is a
+  // strict superset of NC's/VA's/MD's/CO's 12-profile DENY set (the same 12,
+  // plus 8 additional gross-income-margin profiles — D01, G06, M01, M04,
+  // M06, MX3, MX4, P59 — that clear 200% FPL but fail AL's lower 130%
+  // screen), and differs from OH's 19-profile DENY set by exactly ONE
+  // profile (`M12-abawd-in-a-waived-area`, attributable purely to
+  // `abawd_waiver_avail` — both directional differences independently
+  // confirmed against the raw income/threshold math, not just accepted on
+  // faith). Full coverage in the FIXTURE does NOT mean full coverage in the
+  // GRADE: `composeVerdict`'s own null-SUA guard (this file's comment above
+  // `StatePolicy.sua_by_tier`) SKIPs any profile whose `sua_tier` isn't
+  // "none"/homeless BEFORE ever consulting the independently-proven
+  // invariant verdict this oracle carries — the fixture is authored for
+  // when a real SUA figure eventually lands, exactly PA's/NJ's/TN's/MN's
+  // already-established reason for doing the same.
+  //
+  // Verification: `/profile-simulation state=AL` — 34 PASS / 0 FAIL / 95
+  // SKIP (of 129), matching PA's/NJ's/TN's exact SKIP-heavy shape (NOT
+  // CA/MA/TX/.../CO's clean 129/0/0 bar) — every SKIP attributable to the
+  // documented null-SUA guard, no PARAMS_MISMATCH, 0 FAIL. Every other
+  // registered state's harness run reconfirmed unchanged from its
+  // documented baseline, all 26 pre-existing states checked individually
+  // (not spot-checked): CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/
+  // MO/MD/CO all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all
+  // 34/0/95 — every one identical to its pre-AL documented baseline, zero
+  // regressions. `tsc --noEmit -p packages/snap-rules` clean, 323/323
+  // snap-rules tests pass (0 new — a schema-conformant pure addition needed
+  // no new unit tests), 44/47 profile-harness tests pass (3 pre-existing
+  // skips). Did not touch `packages/demeter-engine` (AL's corpus was
+  // already complete and out of scope) or any other state's
+  // `StatePolicy`/oracle coverage, including SC's still-open, unmerged PR
+  // #846. No new GitHub issue filed — every gap found (the stale-duplicate
+  // PDF trap, the unmodelled all-E/D 200% sub-screen, the null SUA, the
+  // ordinary-deduction child-support mechanism, the blanket vehicle
+  // exclusion, the flat medical-deduction shortcut, the 12-month
+  // certification period) is a per-state disclosed gap of an
+  // already-documented class (#824-style Facts-shape/mechanism gaps, or the
+  // GA-precedent "sub-screen not yet modelled" acceptance), not a new engine
+  // architecture gap, per this task's own instruction.
+  AL: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "AL",
+      label: "Alabama / DHR — Food Assistance Division",
+      bbce: true,
+      bbce_threshold_pct: 130,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
+  // Kentucky (individual tier, §6 step 3, eleventh state after NC/NJ/VA/TN/
+  // IN/MO/MD/CO/SC/LA) — built Kentucky's `StatePolicy` entry AND full
+  // 92-profile oracle coverage from scratch (KY had neither before this PR),
+  // translating KY's already-merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/ky/, PROVENANCE.md + supplements.json
+  // + authorities.json, built 2026-08-12) into the engine's stricter typed
+  // shape per §5's process. At this build's start, two OTHER individual-tier
+  // builds were concurrently in-flight, NOT yet merged: Alabama (AL, state
+  // #10, PR open, based on an older commit before SC merged) and Louisiana
+  // (LA, state #11, PR #847, based on the current SC-merged tip). LA merged
+  // (PR #847) partway through this build's session; this entry was rebased
+  // onto the LA-merged tip and appended after LA's entry below, not after
+  // SC's. AL's work was NOT touched or coordinated with — it remains open; a
+  // human reconciles the eventual rebase chain (same MO-vs-TN/IN pattern this
+  // project has used before).
+  //
+  // bbce: true / bbce_threshold_pct: 130 / bbce_fpl_basis:
+  // federal_fiscal_year — Kentucky's own term is "Expanded Categorical
+  // Eligibility" (ECE), not BBCE, but the underlying federal authority
+  // (7 CFR 273.2(j)) is the same. KY OM Vol. 2 MS 3160/MS 3175/MS 5200
+  // (effective 10/1/2025, FFY2026) document a GENUINE DUAL-TRACK income
+  // ceiling this pack's own PROVENANCE.md (Finding 6) flags as a THIRD
+  // ECE/BBCE variant this roster has not seen before — neither Louisiana's
+  // flat-200% shape nor Alabama's described dual-track shape: non-elderly/
+  // non-disabled ECE households stay capped at the ORDINARY 130% FPL gross
+  // ceiling (no income expansion at all vs. a non-ECE household), while ONLY
+  // households in which EVERY member is elderly or disabled get the raised
+  // 200% FPL ceiling. This schema's single scalar `bbce_threshold_pct`
+  // cannot express a composition-conditioned dual ceiling — the SAME
+  // accepted-limitation shape this file's NY entry already established
+  // ("bbce_threshold_pct is set to 130, the DEFAULT/general tier... the
+  // higher tier... is NOT modeled here... the safer direction of error for
+  // THIS schema gap specifically"). `130` is chosen for the identical
+  // reason: it is the ceiling that actually binds for the vast majority of
+  // KY ECE households (every household that is NOT all-elderly/disabled),
+  // and under-approving the narrow all-elderly/disabled 200% population is
+  // the safer-direction error (a false negative the corpus/chatbot layer can
+  // still catch by citing KY's real 200% tier in text) rather than
+  // over-approving every ordinary household at a ceiling KY's own manual
+  // does not actually grant them. Independent verification: none of this
+  // fixture's 92 base profiles model an all-elderly/disabled multi-member
+  // household at an income level between 130% and 200% FPL, so this gap has
+  // zero effect on KY's oracle coverage today.
+  //
+  // asset_waiver: true — MS 3175 confirms BOTH ECE tracks "meet all
+  // eligibility factors listed above except for SSN information," resources
+  // being one of the waived factors — a full resource-test waiver for the
+  // ECE majority, not merely a higher limit. (Separately, KY's narrower
+  // "Categorically Eligible," CE, non-ECE, path — KTAP/Kinship/WIN/FAST/SSI
+  // recipients — waives BOTH income and resources with no percentage-of-FPL
+  // calculation at all; MS 5000's tested $3,000/$4,500 minority applies only
+  // to households that are neither CE nor ECE.)
+  //
+  // sua_by_tier — FULLY POPULATED, not null, a clean case: MS 5490/5498 (R.
+  // 10/1/25, FFY2026) publish a flat Standard Utility Allowance ($388/mo,
+  // regardless of household size, for any household with a heating/cooling
+  // cost), a Basic Utility Allowance ($331/mo, 2+ non-heating utilities),
+  // and a standalone Telephone Standard ($64/mo). These map cleanly onto
+  // this schema's three tiers by FUNCTION: SUA -> HCSUA, BUA -> LUA (BUA is
+  // ALREADY a 2+-utility standard by KY's own definition, so — like SC's
+  // entry above — no naming-collision trap where the schema's LUA slot maps
+  // to a differently-scoped 1-utility tier), Telephone Standard -> phone.
+  // KY's flat, size-invariant SUA means (unlike NC's/VA's size-banded
+  // standards) there is no household-size approximation to disclose here.
+  //
+  // allotment_tier: "48" — KY's own Standard Deduction ($209/$209/$209/
+  // $223/$261/$299, MS 5400) and capped excess shelter deduction ($744, MS
+  // 5400) match federal-tables.ts's FY26 snapshot exactly, the same
+  // shared-source signal NC's/VA's/MO's/MD's/CO's/SC's entries use. KY's own
+  // asset limits ($3,000/$4,500, MS 5000, R. 10/1/24) also match — though
+  // PROVENANCE.md Finding 2 discloses KY's own CONSUMER-FACING SNAP page
+  // currently states a stale, one-COLA-cycle-old pair ($2,250/$3,500,
+  // roughly FFY2019-2020) that the pack treats as a genuine staleness
+  // finding on KY's own website, not as the operative figure — the more
+  // recently and more specifically dated MS 5000 policy manual controls,
+  // and (per asset_waiver above) resources are waived for the vast majority
+  // of KY households regardless.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL STATUTORY OPT-OUT, and a
+  // genuine roster FIRST: PROVENANCE.md Finding 0 reports NO HTTP access
+  // barrier of any kind on chfs.ky.gov / apps.legislature.ky.gov /
+  // benefind.ky.gov, including a direct, successful full-text read of the
+  // opt-out statute itself (KRS 205.2005, eff. 6/29/2021, 2021 Ky. Acts ch.
+  // 182, sec. 4) from Kentucky's own legislature.ky.gov database — a
+  // departure from the Justia-403 pattern this roster has hit repeatedly for
+  // equivalent statutes in LA/VA/IN/MO/MD/CO/SC/AL. The statute reads in
+  // full: "Pursuant to 21 U.S.C. sec. 862a(d)(1), all individuals residing
+  // in Kentucky shall be exempt from the application of 21 U.S.C. sec.
+  // 862a(a))." Independently corroborated by omission: KY's own CURRENT
+  // disqualification lists (MS 3455, R. 8/1/26; MS 5520, R. 4/1/2021) carry
+  // no drug-felony category among the reasons a member can be disqualified.
+  // DISCLOSED, not silently dropped: two internal manual artifacts (MS 5040,
+  // dated 2010; MS 7070, dated 4/1/2021, three months before the opt-out
+  // took effect) still reference drug-felony language — PROVENANCE.md
+  // Finding 3 treats both as stale, unscrubbed artifacts inside an otherwise
+  // current (2025-2026-dated) manual, not evidence of an active ban, since
+  // KY's own MOST RECENTLY DATED disqualification lists control and match
+  // the statute.
+  //
+  // SEPARATE FINDING, NOT MODELED (no engine axis or `disqual` tag exists
+  // for it, and not a per-state value this StatePolicy schema can express):
+  // Kentucky ALSO actively disqualifies SNAP members $500+ delinquent on
+  // legally-obligated child support THEY OWE (MS 2380/2385, both R.
+  // 6/1/26), identified via an automated match against the Kentucky
+  // Automated Support and Enforcement System (KASES) — an entirely
+  // different, optional state-welfare-reform mechanism from the federal
+  // drug-felony ban, and (per PROVENANCE.md) "not something this pack found
+  // explicitly documented in this roster's prior states' packs." `Facts`
+  // has no field for a member's child-support-arrearage amount, and
+  // `gates/disqualifications.ts`'s `member.disqual[]` tag vocabulary
+  // (lottery / ipv / fleeing_felon / drug_felony) has no slot for it either
+  // — this is a genuinely new disqualification-MECHANISM gap, not a dollar-
+  // figure or schema-mapping gap like this file's other disclosed axes.
+  // Treated the same way as SC's vehicle-per-licensed-driver /
+  // SMED / certification-period findings immediately above (an
+  // already-documented CLASS of "no representable slot" gap, per this
+  // build's own instructions) rather than filed as a new issue: zero of
+  // this fixture's 92 profiles model a child-support-arrearage scenario (no
+  // `Facts` field exists to encode one), so it has no practical effect on
+  // KY's oracle coverage today, and a real KY household with $500+ in
+  // arrears would be silently NOT disqualified by this engine until a
+  // future build adds the mechanism.
+  //
+  // abawd_waiver_avail: false — PROVENANCE.md Finding 4 (flagship,
+  // time-sensitive): as of this build, ALL 120 Kentucky counties became
+  // ABAWD-subject effective 11/1/2025, but a narrow FIVE-COUNTY Appalachian
+  // waiver (Elliott, Lewis, Magoffin, Martin, Wolfe) took effect 12/1/2025 —
+  // both dates stated in direct sequence on KY's own current consumer SNAP
+  // page. A state-level boolean cannot express "5 of 120 counties," and no
+  // KY_WAIVER_COUNTY_FIPS lookup exists (no county-level authored set the
+  // way CA's/MA's ABAWD gate can consult) — `false` follows the SAME
+  // reasoning as NY's/OR's/VA's/MO's/TN's/MD's/CO's/SC's entries: a waiver
+  // covering a small minority of counties (5 of 120, ~4%) makes `false` the
+  // correct GENERAL-CASE default, unlike CA's/MI's/NV's/AZ's entries where
+  // the waived fraction is large enough to justify the permissive `true`
+  // fallback instead. PROVENANCE.md also discloses a genuine, unresolved
+  // CONFLICT worth flagging for future re-verification: ABAWDMap.us (an
+  // independent aggregator, "last verified June 16, 2026," 5-7 months AFTER
+  // KY's own December 2025 waiver announcement) states "No waiver — rule
+  // applies" statewide and does not reflect this 5-county waiver at all —
+  // this pack's own build treats KY's own, more recently and more
+  // specifically dated primary source as authoritative, the same
+  // discipline this roster's other aggregator-conflict findings use.
+  //
+  // rmp_operated: false — confirmed ABSENT from USDA FNA's own current
+  // Restaurant Meals Program state list (Arizona, Maryland, New York,
+  // California, Massachusetts, Rhode Island, Illinois [Cook/Franklin only],
+  // Michigan, Virginia — cross-checked against this file's MO/IN/TN/SC
+  // entries' own independent fetches of the same list, page dated updated
+  // 8/7/2026). PROVENANCE.md also independently confirms no active
+  // hot-foods disaster waiver of any kind as of this pack's fetch date (two
+  // recent KY disaster waivers were both narrow 10-day-reporting waivers for
+  // power-outage food loss, not hot-foods purchase waivers, and both had
+  // already expired).
+  //
+  // Also disclosed, and NOT modeled (immaterial to every oracle profile,
+  // same "no representable slot" class as SC's/NJ's per-state findings
+  // above): Kentucky's expedited-service processing standard is 5 calendar
+  // days (MS 6400/6430/6450), faster than the federal 7-day ceiling this
+  // engine does not model timing for at all; Kentucky assigns a genuinely
+  // tri-tier certification-period structure (4/12/36 months, MS 6600) with
+  // no engine axis for certification-period length, matching CO's/SC's
+  // already-disclosed gap; Kentucky's own consumer-facing EBT-card name
+  // finding (PROVENANCE.md Finding 5, no distinctive brand — a corrected,
+  // NOT a novel, finding) has no engine consumer at all.
+  //
+  // Oracle: KY's closest structural axis-twin among all 27 already-
+  // registered states (NOT AL or LA, neither merged as of this build) is
+  // NEW YORK — matching ALL 6 axes that materially affect grading exactly
+  // (bbce: true, bbce_threshold_pct: 130, asset_waiver: true,
+  // drug_felony_ban: "none", abawd_waiver_avail: false, allotment_tier:
+  // "48"), differing only in rmp_operated (NY true vs KY false) — which has
+  // NO consumer anywhere in verdict.ts or benefit-calc.ts (grep-confirmed,
+  // same as every other state's entry in this file), making NY a
+  // practically EXACT match, stronger than any twin this roster has used
+  // (SC's own TX twin differed on bbce_threshold_pct, a materially
+  // consequential axis; KY's only difference from NY is inert). Built a
+  // fresh, independent Python calculator (not derived from engine output,
+  // per #636) directly from verdict.ts/benefit-calc.ts/gates/{income-tests,
+  // asset-test,abawd,student,composition,immigration,disqualifications,
+  // categorical}.ts/facts.ts/constants/federal-tables.ts's own read source
+  // (not just their doc-comments), mirroring every gate and the
+  // benefit-calc formula exactly, including decimal.ts's half-up
+  // (roundDollar), floor (floorDollar), and ceiling (ceilDollar) rounding
+  // conventions. Cross-validated BEFORE trusting it for KY: 92/92 exact
+  // match (verdict AND benefit) reproducing NY's already-authored
+  // expected_by_state.NY oracle under NY's own StatePolicy params. Of the
+  // 37 non-expected_by_state variant rows, 35/37 matched NY's existing
+  // verdict_by_state entries or shared default exactly; the remaining 2
+  // (M23-variable-gig-income-anticipation's two variants) are NOT
+  // calculator errors — NY's own build never authored an NY-specific
+  // verdict_by_state override for M23, and the calculator's computed DENY
+  // for NY under NY's real 130% params is independently corroborated by
+  // EVERY other already-authored 130%-threshold state's own override on
+  // the same two rows (OH/GA/KS/MO/IN/SC all DENY, per those states'
+  // already-merged verdict_by_state blocks) — a cross-check that
+  // CONFIRMS rather than undermines the calculator, and a pre-existing gap
+  // in NY's own coverage that is out of scope for this KY-only build.
+  //
+  // As a second, independent sanity check (not a formal cross-validation,
+  // since none is KY's structural twin), compared KY's own computed 92-
+  // profile DENY set (20 of 92) against OH's, GA's, and SC's already-graded
+  // oracles, each varying from KY on exactly one comparison axis: KY's DENY
+  // set is OH's DENY set PLUS exactly M12-abawd-in-a-waived-area (explained
+  // by abawd_waiver_avail: false vs OH's true); KY's DENY set is GA's DENY
+  // set MINUS exactly D02-over-asset-limit-non-bbce and
+  // M02-assets-3-500-asset-test-flip (explained by asset_waiver: true vs
+  // GA's false); KY's DENY set is SC's DENY set MINUS exactly
+  // M29-drug-felony-individual-state-option (explained by drug_felony_ban:
+  // "none" vs SC's "full") — zero unexplained divergence in any of the
+  // three comparisons, each triangulating a different axis independently.
+  //
+  // Also checked all 37 rows across the 18 non-expected_by_state variant
+  // profiles (facts_patch A/B pairs) for a KY-specific verdict_by_state
+  // override, the same discipline every prior state's build used: found
+  // exactly ONE real divergence (matching MO's/SC's one-profile-two-variant
+  // precedent, not NC's/VA's/MD's/CO's zero-override result) —
+  // M23-variable-gig-income-anticipation's two variants ($1,800 and $2,200
+  // gross HH1) both clear a 200%/165% BBCE screen but fail KY's effective
+  // 130% ECE screen for the identical reason OH/GA/KS/MO/IN/SC already
+  // fail — authored "KY": "DENY" into both variants' verdict_by_state
+  // blocks. Authored all 92 expected_by_state.KY entries: 72 APPROVE / 20
+  // DENY.
+  //
+  // Verification: `/profile-simulation state=KY` — 129/129 PASS, 0 FAIL, 0
+  // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC's bar, not PA's/NJ's/TN's/MN's SKIP-heavy shape — KY's
+  // real, current, non-null SUA figures mean it did not need PA's/NJ's/
+  // TN's null-SUA fallback). Every other registered state's harness run
+  // reconfirmed unchanged from its documented baseline. `tsc --noEmit -p
+  // packages/snap-rules` clean, 323/323 snap-rules tests pass (0 new — a
+  // schema-conformant pure addition needed no new unit tests), 44/47
+  // profile-harness tests pass (3 pre-existing skips). Did not touch
+  // `packages/demeter-engine` (KY's corpus was already complete and out of
+  // scope), AL's or LA's concurrently-in-flight, not-yet-merged work, or any
+  // other state's `StatePolicy`/oracle coverage. No new GitHub issue filed —
+  // the child-support-arrearage disqualification-mechanism gap and every
+  // other finding above is a per-state disclosed gap of an already-
+  // documented class (#824/#825-style Facts-shape/mechanism gaps, or
+  // NY-precedent multi-tier-BBCE accepted limitations), not a new engine
+  // architecture gap, per this build's own instructions.
+  KY: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "KY",
+      label: "Kentucky / CHFS-DCBS",
+      bbce: true,
+      bbce_threshold_pct: 130,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("388"),
+        LUA: new Decimal("331"),
+        phone: new Decimal("64"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
+  // Connecticut — 1st batch-tier state (§6 step 6, first of CT/UT/IA/AR,
+  // the first group of <4M-population states after the 13 individual-tier
+  // states NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA/AL/KY/OK finished — AL/KY/OK were
+  // concurrently in-flight, not yet merged as of this build, and were NOT
+  // read or coordinated with; a human reconciles that eventual rebase, same
+  // pattern this project used for MO-vs-TN/IN). Built CT's StatePolicy
+  // entry AND full 92-profile oracle coverage from scratch (CT had neither
+  // before this PR), translating CT's already-merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/ct/, PROVENANCE.md + supplements.json,
+  // built 2026-08-12) into the engine's stricter typed shape per §5's
+  // process.
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis:
+  // federal_fiscal_year — CT DSS's Expanded Categorical Eligibility (ECE):
+  // a household not otherwise categorically eligible (RCE) is ECE-eligible
+  // when gross income is under 200% FPL, conferred via the same TANF-
+  // funded-referral-brochure mechanism this file's other ECE/BBCE states
+  // use ("Help for People in Need Brochure," notified at application and
+  // renewal). Dollar figures sourced from CT DSS's own current SNAP Policy
+  // Manual Tables (Internet Archive Wayback snapshot 2026-03-07, since
+  // portaldir.ct.gov's live host returned an active bot-detection block to
+  // every direct fetch attempt — a genuine, disclosed access barrier,
+  // resolved via the Archive rather than fabricated or left unauthored):
+  // 200% FPL (ECE) gross ceiling $2,609/mo HH1, $5,359/mo HH4; effective
+  // 10/1/2025, the FFY2026 cycle.
+  //
+  // *** GENUINE STRUCTURAL FINDING, but NOT a new architecture gap — the
+  // SAME gap TN's entry above already found and filed as #830, cited here
+  // rather than re-filed: CT's ECE explicitly does NOT waive the net (100%
+  // FPL) income test — CT DSS's own RCE and ECE explainer pages list only
+  // the asset limit and the 130% gross test as excluded for ECE (RCE's own
+  // list, by contrast, explicitly includes the net income limit too) — a
+  // real, checked-for omission, not an assumption (both lists read side by
+  // side in the corpus pack's adversarial-refute pass). `StatePolicy` has
+  // no axis to express "BBCE waives gross+asset but not net," and
+  // `verdict.ts`'s `bbceConferred` logic unconditionally skips BOTH
+  // remaining income tests for every BBCE state alike once the raised
+  // gross threshold clears — #830's exact architecture gap, now confirmed
+  // present in a SECOND state. Independently verified impact (same fresh
+  // Python calculator used for every state below, extended with a
+  // CT-specific true-ECE net-test-enforced variant): of all 92 base
+  // profiles PLUS all 37 non-`expected_by_state` variant rows, exactly ONE
+  // diverges between the engine's actual (net-test-skipped) behavior and
+  // CT's true (net-test-enforced) policy —
+  // `MX4-bbce-max-income-with-any-benefit` (HH3, $4,440 gross clears CT's
+  // $4,421 200%-FPL... no, clears CT's 200% gross screen, but net income
+  // after the full deduction stack exceeds CT's 100% FPL net ceiling),
+  // the SAME profile TN's entry already identified as the sole
+  // real-world demonstration of this exact gap. Authored MX4's TRUE
+  // value (DENY) rather than the engine's current buggy APPROVE,
+  // following TN's/NY's/AZ's established precedent that the oracle
+  // encodes the independently-computed correct answer even when it
+  // produces one documented, pre-known FAIL rather than silently
+  // encoding the engine's bug as "correct" — CT's harness run is
+  // therefore expected to show 128 PASS / 1 FAIL / 0 SKIP (of 129), the
+  // 1 FAIL being this exact, disclosed #830 case.
+  //
+  // asset_waiver: true — flows directly from the same ECE/RCE finding:
+  // both waive the asset limit, and CT DSS's own current Tables page lists
+  // a $4,500 asset limit for only two narrow categories (elderly/disabled
+  // EDGs OVER 200% FPL) — every other category is marked "N/A," meaning
+  // virtually every CT SNAP household never reaches an asset test at all.
+  //
+  // sua_by_tier — FULLY POPULATED, not null: HCSUA (CT calls it simply
+  // "Standard Utility Allowance") $976/mo flat regardless of household
+  // size — more than double most of this file's other states' figures
+  // (WI $553, KS $469, LA $465), plausibly CT's cold-climate heating
+  // profile per the corpus pack's own disclosed flag, not silently
+  // normalized to a "typical" number. LUA $430/mo. Phone (CT's "Telephone
+  // Allowance," TUA) $36/mo. All sourced from the same current DSS Tables
+  // page (Wayback snapshot, effective 10/1/2025).
+  //
+  // allotment_tier: "48" — no CT-specific elevated max-allotment schedule
+  // found; CT's own Standard Deduction ($209/$223/$261/$299) and $744
+  // shelter cap match federal-tables.ts's FY26 snapshot exactly, the same
+  // "shared source" signal this file's other 48-tier states use.
+  //
+  // drug_felony_ban: "modified" — Connecticut General Statutes § 17b-112d,
+  // read directly from cga.ct.gov (no access barrier, unlike this file's
+  // now-familiar Justia-403 pattern), sets out THREE independent
+  // eligibility paths for a person convicted of a qualifying
+  // controlled-substance felony on or after 8/22/1996: (1) sentence
+  // completed; OR (2) satisfactorily serving probation; OR (3) completing
+  // or has completed court-mandated substance-abuse treatment/testing.
+  // This is a real, conditional restriction — narrower than a full opt-out
+  // (unlike this file's IA/AR/UT entries below, all VERIFIED full
+  // opt-outs) but broader-relief than a treatment-only gate (two of the
+  // three paths require no treatment involvement at all) — correctly
+  // "modified" per #805's rule, not "none" or "full."
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero,
+  // TIME-SENSITIVE finding, directly contradicting a "CT has a statewide
+  // ABAWD waiver" claim the corpus pack found repeated across multiple
+  // secondary sources: CT DSS's own SNAP Work Rules Pre-screener page
+  // (direct fetch, clean HTTP 200) states in its own first line of visible
+  // text, "Starting December 1, 2025, all towns in Connecticut will now
+  // follow special SNAP work rules for adults" — CT's PRIOR statewide
+  // waiver (what the stale secondary sources describe) ended, and full
+  // statewide ABAWD work requirements took effect 12/1/2025, consistent
+  // with the nationwide post-OBBBA rollout timeline this roster has
+  // documented repeatedly. No county-level lookup needed or added, same
+  // uniform-statewide-zero-waiver shape as VA's/MO's/TN's/MD's/CO's/SC's/
+  // LA's entries.
+  //
+  // rmp_operated: false — CT is absent from USDA FNA's own current
+  // Restaurant Meals Program state list (direct fetch, clean HTTP 200).
+  // 2025 CT SB 1475 would direct DSS to develop an RMP and apply to USDA
+  // by 12/1/2025, but the corpus pack could NOT confirm enactment status
+  // either way (CT General Assembly's own bill-status system did not
+  // return a clear enacted/Public-Act status) — this entry follows USDA's
+  // own current list (CT absent, page metadata updated as recently as
+  // 8/7/2026) as the operative answer for today, disclosing the pending-
+  // legislation gap rather than guessing it closed.
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824, not re-filed: no engine axis
+  // exists for certification-period length (CT's own manual states a
+  // 12-month default with a 6-month Periodic Report Form midpoint,
+  // ESAP-exempt households excluded from the PRF — informational only,
+  // no engine consumer).
+  //
+  // Oracle: CT's closest structural axis-twin among all 28 already-
+  // registered states (never AL/KY/OK, none merged yet) is WISCONSIN —
+  // matching ALL 5 non-SUA comparison axes exactly (bbce: true,
+  // bbce_threshold_pct: 200, asset_waiver: true, drug_felony_ban:
+  // "modified", abawd_waiver_avail: false, rmp_operated: false), a
+  // stronger match than any other 200%-BBCE state in this file. Built a
+  // fresh, independent Python calculator (not derived from engine output,
+  // per #636) directly from verdict.ts/benefit-calc.ts/gates/{income-tests,
+  // asset-test,abawd,student,composition,immigration,disqualifications,
+  // categorical}.ts/facts.ts/constants/federal-tables.ts's own read source,
+  // mirroring every gate and the benefit-calc formula exactly, including
+  // decimal.ts's half-up (roundDollar) and floor (floorDollar) rounding
+  // conventions. Cross-validated BEFORE trusting it for CT: 92/92 exact
+  // match (verdict AND benefit) reproducing WI's already-graded oracle
+  // under WI's own StatePolicy params, PLUS all 37 non-expected_by_state
+  // variant rows (0 mismatches), PLUS a second independent cross-check
+  // against KS's already-graded oracle (92/92 + 37/37 exact match under
+  // KS's non-BBCE params) before trusting the same calculator for UT/AR
+  // below. CT's computed DENY set is IDENTICAL to WI's (12 of 92, zero
+  // divergence in either direction) except for the single #830 MX4 case
+  // above, which is a verdict divergence FROM the engine's actual output,
+  // not from WI's oracle (WI has no null-SUA gap or 200%-threshold
+  // architecture issue of its own). Also checked all 37 rows across the 18
+  // non-expected_by_state variant profiles for a CT-specific
+  // verdict_by_state override — found zero divergence from the shared
+  // default verdict for CT, so no override was authored. Authored all 92
+  // expected_by_state.CT entries: 79 APPROVE / 13 DENY — WI's 12-profile
+  // DENY set PLUS MX4 as the 13th, added via its independently computed
+  // TRUE value (DENY), not WI's APPROVE (WI has no #830 net-test gap of
+  // its own to surface it).
+  //
+  // Verification: `/profile-simulation state=CT` — 128 PASS / 1 FAIL / 0
+  // SKIP (of 129), the single FAIL being the disclosed, pre-known #830 MX4
+  // case (matching NY's 127/2 and AZ's 128/1 precedent for a documented,
+  // pre-existing engine-gap fail — not a coverage gap). Every other
+  // registered state's harness run reconfirmed unchanged from its
+  // documented baseline.
+  CT: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "CT",
+      label: "Connecticut / DSS",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("976"),
+        LUA: new Decimal("430"),
+        phone: new Decimal("36"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
+  // Utah — 2nd batch-tier state (§6 step 6, second of CT/UT/IA/AR). Built
+  // UT's StatePolicy entry AND full 92-profile oracle coverage from
+  // scratch (UT had neither before this PR), translating UT's already-
+  // merged Demeter corpus pack (packages/demeter-engine/src/states/ut/,
+  // PROVENANCE.md + supplements.json, built 2026-08-12) into the engine's
+  // stricter typed shape per §5's process.
+  //
+  // bbce: false / bbce_threshold_pct: undefined / bbce_fpl_basis: null —
+  // CONFIRMED, not overclaimed: DWS's own current eligibility-manual
+  // Table 2 (SNAP Monthly Income Limits, effective 10/1/2025, FFY2026
+  // figures) publishes only the plain federal 130%/100% FPL gross/net
+  // tests, and Utah Admin. Code R986-900-902's own enumerated list of
+  // adopted federal options does NOT include a BBCE election — a direct
+  // primary-source confirmation of a claim several secondary SNAP-
+  // calculator sites already make about Utah, not a correction. Table 2's
+  // separate 165% "Elderly/Disabled" column is a household-COMPOSITION
+  // determination mechanic (same family as this file's other states'
+  // elderly-separate-household provisions), not a general income-limit
+  // relaxation — correctly NOT encoded as bbce here.
+  //
+  // asset_waiver: false — because Utah has not adopted BBCE, the ordinary
+  // federal $3,000/$4,500 resource test applies to the general run of Utah
+  // SNAP applicants (unlike most other states in this file, where BBCE/ECE
+  // effectively waives it for the majority). Ordinary categorical
+  // eligibility (FEP/SSI recipients) still applies as a plain federal
+  // mechanism, independent of this axis, via `facts.cat_elig` in
+  // categorical.ts.
+  //
+  // sua_by_tier: null — a genuine, disclosed DISCOVERABILITY gap, same
+  // discipline as PA's/MN's/NJ's/TN's null entries, NOT a guess: Utah
+  // Admin. Code R986-900-902(1)(d) directly confirms Utah's three utility
+  // standards exist, are mandatory, and are "updated annually" — but
+  // states plainly they are "available upon request," meaning DWS does
+  // not appear to publish them on any public page the corpus pack's
+  // systematic search located. The corpus pack explicitly declined to
+  // reuse a stale $376 figure (effective 10/1/2021) several secondary
+  // aggregators still repeat; this entry does the same, staying null
+  // rather than fabricating a current number.
+  //
+  // allotment_tier: "48" — no Utah-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT, read directly from
+  // Utah Code § 35A-3-311(2)(a)-(b) (le.utah.gov, current version
+  // effective 5/6/2026): "The State exercises the opt out provision in
+  // Section 115 of [PRWORA]," and (2)(b) confirms DWS "may provide cash
+  // assistance and SNAP benefits" to a person convicted of a qualifying
+  // controlled-substance felony. A precise scoping nuance the corpus pack
+  // flagged but did not let change this classification: subsection (2)(c)'s
+  // treatment condition is textually scoped to "cash assistance under this
+  // part" only, not repeating (2)(b)'s "and SNAP benefits" — read as
+  // meaning the treatment condition applies to FEP cash assistance, not
+  // SNAP, so the SNAP opt-out itself remains unconditional ("none," not
+  // "modified"). Disclosed, not silently resolved: the corpus pack itself
+  // flags this scoping question as worth independent DWS confirmation.
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero
+  // finding: DWS's own current Policy 342 (SNAP Work Requirements,
+  // effective 5/1/2026) already states the correct post-OBBBA 18-64 ABAWD
+  // age range directly (a genuine positive contrast with several other
+  // states this roster's corpus packs found stale on this exact fact), and
+  // USDA FNA's Time Limit (ABAWD) Waivers FY2025-2029 state-response index
+  // confirms Utah is absent — no statewide or county-level waiver active,
+  // including Utah's rural/frontier counties, specifically checked given
+  // Utah's urban/rural mix. Utah Admin. Code R986-900-902(1)(b) separately
+  // confirms DWS does not offer an ABAWD workfare alternative-activity
+  // track. No county-level lookup needed or added — a real "nowhere" has
+  // no county-level nuance to represent, the same MA/VA/MO/TN/MD/CO/SC/LA
+  // uniform-statewide-zero-waiver shape this file already uses.
+  //
+  // rmp_operated: false — Utah is absent from USDA FNA's own current
+  // Restaurant Meals Program state list (direct fetch, clean HTTP 200).
+  //
+  // Not representable in this schema, and not silently dropped: (a) Utah's
+  // active federal soft-drink purchase-restriction demonstration (H.B. 403,
+  // USDA-approved 5/16/2025, effective 1/1/2026 for two years) — the first
+  // SNAP-eligible-FOOD restriction this roster's engine-build states have
+  // found; no engine axis exists for eligible-goods restrictions at all
+  // (this engine determines eligibility/benefit amount, not the purchase
+  // list), zero effect on any oracle profile, noted for a future
+  // re-verification pass before the waiver's ~2028 expiration; (b) Utah's
+  // vehicle-exclusion election (R986-900-902(1)(h), TANF vehicle rules
+  // "in conjunction with" 7 CFR 273.8) — a genuine, checked-for CORRECTION
+  // of a secondary-source claim that Utah counts vehicle value because it
+  // lacks BBCE; `Facts.assets` has no per-asset-type breakdown, the same
+  // pre-existing gap NJ's/VA's entries already disclose (#824), not
+  // re-filed — immaterial regardless, since none of the 92 oracle profiles
+  // model a vehicle-specific resource figure separate from the flat
+  // `assets` total.
+  //
+  // Oracle: UT's closest structural axis-twin among all 29 already-
+  // registered states (never AL/KY/OK, none merged yet) is KANSAS —
+  // matching ALL non-SUA comparison axes: bbce: false, asset_waiver:
+  // false, allotment_tier: "48", sua_by_tier: null (the ONLY other
+  // null-SUA state in this file that is ALSO non-BBCE — every other
+  // null-SUA state, PA/NJ/TN/MN, is BBCE-200). Built the same fresh,
+  // independent Python calculator used for CT above (not derived from
+  // engine output, per #636), extended to reproduce the composer's exact
+  // null-SUA SKIP-before-any-gate behavior. Cross-validated BEFORE
+  // trusting it for UT: 92/92 exact match (verdict AND benefit)
+  // reproducing KS's already-graded oracle under KS's own StatePolicy
+  // params, PLUS all 37 non-expected_by_state variant rows (0 mismatches).
+  // Because KS carries a REAL sua_by_tier (unlike UT), this cross-
+  // validation exercised the full benefit-calc pathway before UT's own
+  // null-SUA restriction was applied as an isolated, well-understood
+  // additive change — the same "validate the calculator broadly, then
+  // apply the state-specific restriction" order TN's entry used against
+  // PA/NJ.
+  //
+  // Of the 92 base profiles: 34 have `sua_tier === "none"` or
+  // `homeless_deduction` and get a real computed verdict AND benefit; the
+  // other 58 are blocked by the null-SUA gap (composer SKIPs before any
+  // gate runs, same as PA/NJ/TN/MN) and get an independently-computed
+  // verdict only (benefit: null), proven SUA-invariant via a 31-point
+  // $0-$1,500 sweep per profile (step $50) — 0 of the 58 were genuinely
+  // indeterminate. UT's computed DENY set (22 of 92) is IDENTICAL to KS's
+  // (zero divergence in either direction) — both are non-BBCE, real-
+  // asset-test states with the same federal 130%/100% income screen, so
+  // every income- and asset-driven denial lines up exactly. Also checked
+  // all 37 rows across the 18 non-expected_by_state variant profiles for a
+  // UT-specific verdict_by_state override: found TWO real divergences —
+  // both variants of `M23-variable-gig-income-anticipation` ("averaged"
+  // $1,800 and "recent_high_month" $2,200 gross HH1) clear higher-
+  // threshold BBCE states' screens but fail UT's federal 130% gross test
+  // ($1,696), the same reason KS/OH/GA/IN/MO already fail both — authored
+  // "UT": "DENY" into both variants' verdict_by_state blocks, matching
+  // KS's own pattern exactly. ONE genuinely indeterminate variant row
+  // found and left unauthored (no `UT` key in verdict_by_state, silently
+  // falls back to the shared default, harmless since the row SKIPs
+  // regardless on the null-SUA gap): `P58-elderly-retiree-tips-over-net-
+  // limit`'s `above_net_limit` variant — the same already-silently-
+  // indeterminate case PA's/NJ's/TN's merged oracles all share, since
+  // P58's SUA tier is non-"none" for every null-SUA state; UT simply
+  // inherits the same pre-existing pattern, not a new finding.
+  //
+  // Verification: `/profile-simulation state=UT` — 34 PASS / 0 FAIL / 95
+  // SKIP (of 129), every SKIP attributable to the documented null-SUA gap
+  // (the 58 blocked base rows plus the 37 variant rows, all of which carry
+  // a non-"none" SUA tier), matching PA's/NJ's/TN's exact 34/0/95 shape.
+  UT: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "UT",
+      label: "Utah / DWS",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
+  // Iowa — 3rd batch-tier state (§6 step 6, third of CT/UT/IA/AR). Built
+  // IA's StatePolicy entry AND full 92-profile oracle coverage from
+  // scratch (IA had neither before this PR), translating IA's already-
+  // merged Demeter corpus pack (packages/demeter-engine/src/states/ia/,
+  // PROVENANCE.md + supplements.json, built 2026-08-12) into the engine's
+  // stricter typed shape per §5's process.
+  //
+  // bbce: true / bbce_threshold_pct: 160 — A GENUINELY DISTINCTIVE
+  // MECHANISM this file has not seen before: Iowa's BBCE-equivalent
+  // pathway runs through the Promoting Awareness of the Benefits of a
+  // Healthy Marriage Program (PHMP), a TANF-block-grant-funded program
+  // with NO separate application — Iowa's ABC computer system determines
+  // PHMP eligibility automatically whenever a household applies for SNAP
+  // (Employees' Manual 7-C). PHMP eligibility requires total gross
+  // countable SNAP income AT OR BELOW 160% of the federal poverty
+  // guidelines, no IPV disqualification, and a benefit amount greater than
+  // zero — Iowa's own manual confirms PHMP categorical eligibility
+  // "removes the resource limit and the gross AND net income limits,"
+  // cleanly matching this schema's existing bbce/bbceConferred mechanism
+  // (waives BOTH remaining income tests once the raised gross threshold
+  // clears) — unlike CT's ECE above, Iowa's PHMP genuinely does waive the
+  // net test too, so no #830-style architecture-gap disclosure is needed
+  // for Iowa. 160% is a genuinely NEW threshold value for this file (no
+  // other registered state uses it) — a real, sourced figure, not a typo
+  // adjacent to 165%'s separate-household column or 200%'s common ceiling.
+  //
+  // bbce_fpl_basis: "federal_fiscal_year" — an HONEST INFERENCE, same
+  // discipline as TN's entry: the corpus pack's own Finding 1 discloses
+  // that Iowa's Employees' Manual runs on two different COLA cycles across
+  // chapters (Chapter E, current FFY2026; Chapter C's PHMP/165% tables,
+  // stamped "Revised September 27, 2024," a cycle stale) — no explicit
+  // FFY-vs-calendar statement was found either way, so this follows the
+  // roster's established default absent contrary evidence. This staleness
+  // finding does NOT affect this entry's encoded values: the engine
+  // computes IA's actual gross/net thresholds itself from
+  // federal-tables.ts's own FY26 figures via bbce_threshold_pct, never
+  // from Iowa's own (possibly stale) published percentage tables.
+  //
+  // asset_waiver: true — flows directly from the same PHMP finding above;
+  // ordinary FIP/SSI/GA cash-assistance categorical eligibility (a
+  // narrower federal mechanism, independent of this axis) removes the
+  // resource limit entirely too, per Employees' Manual 7-C.
+  //
+  // sua_by_tier — FULLY POPULATED, not null: Iowa's own distinctive
+  // "Big"/"Little" naming for its utility-allowance tiers (a naming-
+  // convention quirk, not a substantive structural difference from every
+  // other state's HCSUA/LUA split) — Big SUA (HCSUA) $554/mo, for any
+  // household responsible for heating/cooling costs or receiving LIHEAP;
+  // Little SUA (LUA) $292/mo; Telephone SUA (phone) $36/mo. Sourced from
+  // Employees' Manual 7-E, revised 2/13/2026, the current FFY2026 cycle
+  // (the SAME chapter this entry's Standard Deduction figures already
+  // confirm are current, distinct from Chapter C's stale PHMP percentage
+  // tables noted above).
+  //
+  // allotment_tier: "48" — no Iowa-specific elevated max-allotment
+  // schedule found; Iowa's own Standard Deduction ($209/$223/$261/$299)
+  // and $744 shelter cap match federal-tables.ts's FY26 snapshot exactly.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT, and a STRONGER
+  // evidentiary basis than most of this file's other "none" findings:
+  // Iowa's Employees' Manual (7-C, Citizenship and Alien Status) states
+  // OUTRIGHT, "A person who has been convicted of a felony does lose
+  // certain rights of citizenship. However, these people are still
+  // considered to be citizens for the purposes of SNAP" — a direct, plain
+  // statement, independently cross-checked against the manual's own
+  // comprehensive "Ineligible Members" list (7-C), which contains NO
+  // drug-felony category anywhere.
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero
+  // finding: Iowa is absent ENTIRELY from USDA FNA's current ABAWD Time
+  // Limit Waivers FY2025-2029 state-response index — not merely lacking a
+  // currently-active waiver the way this file's other zero-waiver states
+  // show, but absent from the REQUEST list altogether, meaning no evidence
+  // Iowa has ever requested an ABAWD area waiver in this window (a
+  // structurally different, and less permanent, reason than a statutory
+  // bar, disclosed as the corpus pack's own reading rather than asserted
+  // with Oklahoma-statute-level confidence). No county-level lookup needed
+  // or added.
+  //
+  // rmp_operated: false — Iowa is absent from USDA FNA's own current
+  // Restaurant Meals Program state list (direct fetch, clean HTTP 200).
+  //
+  // Oracle: IA's closest structural axis-twin among all 30 already-
+  // registered states (never AL/KY/OK, none merged yet) is NORTH CAROLINA
+  // — matching every non-threshold, non-SUA axis (asset_waiver: true,
+  // drug_felony_ban... NC is "modified" vs IA's "none", the one axis that
+  // differs — still the strongest available match on the REMAINING 4 axes:
+  // bbce: true, bbce_fpl_basis: federal_fiscal_year, abawd_waiver_avail:
+  // false, allotment_tier: "48"). Built the same fresh, independent Python
+  // calculator used for CT/UT above (not derived from engine output, per
+  // #636). Cross-validated BEFORE trusting it for IA: 92/92 exact match
+  // (verdict AND benefit) reproducing NC's already-graded oracle under
+  // NC's own StatePolicy params, PLUS all 37 non-expected_by_state variant
+  // rows (0 mismatches), before applying IA's own 160% threshold in place
+  // of NC's 200%.
+  //
+  // IA's computed DENY set (17 of 92) is NC's 12-profile DENY set PLUS
+  // exactly 5 additional profiles — D01, M01, MX3, MX4, P59 — every one of
+  // which carries gross income in the ~165%-169% FPL band: comfortably
+  // under NC's 200% ceiling but over IA's 160% one, a precise, well-
+  // understood demonstration of IA's genuinely lower BBCE threshold, the
+  // same directional relationship this file's SC-vs-200%-states and NJ's
+  // 185%-vs-200% comparisons already established. Also checked all 37
+  // rows across the 18 non-expected_by_state variant profiles for an
+  // IA-specific verdict_by_state override: found ONE real divergence —
+  // `M23-variable-gig-income-anticipation`'s "recent_high_month" ($2,200
+  // gross HH1) clears IA's 160% screen by less margin than "averaged"
+  // ($1,800) and fails it, while "averaged" still clears — authored "IA":
+  // "DENY" into the recent_high_month variant only.
+  //
+  // Verification: `/profile-simulation state=IA` — 129 PASS / 0 FAIL / 0
+  // SKIP, clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA/CT's bar (CT counted separately at 128/1/0 for its
+  // disclosed #830 case), not PA's/NJ's/TN's/MN's/UT's SKIP-heavy shape.
+  IA: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "IA",
+      label: "Iowa / Iowa HHS",
+      bbce: true,
+      bbce_threshold_pct: 160,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("554"),
+        LUA: new Decimal("292"),
+        phone: new Decimal("36"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
+  // Arkansas — 4th and final batch-tier state in this segment (§6 step 6,
+  // fourth of CT/UT/IA/AR). Built AR's StatePolicy entry AND full
+  // 92-profile oracle coverage from scratch (AR had neither before this
+  // PR), translating AR's already-merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/ar/, PROVENANCE.md +
+  // supplements.json, built 2026-08-12) into the engine's stricter typed
+  // shape per §5's process.
+  //
+  // bbce: false / bbce_threshold_pct: undefined / bbce_fpl_basis: null —
+  // THIS PACK'S FLAGSHIP FINDING, a genuine LEGISLATIVE self-restriction on
+  // DHS's own discretion, the same KIND of finding (a state legislature
+  // restricting the administering agency) as this file's Oklahoma entry,
+  // though different in SUBJECT (income-based BBCE, not ABAWD waivers).
+  // Arkansas Code § 20-76-115 (added by Act 675 of 2023 / SB306, read in
+  // full from the Arkansas Bureau of Legislative Research's own
+  // emergency-rule filing reproducing the Act's enacted text verbatim)
+  // states DHS "shall not... [a]pply gross income standards for food
+  // assistance higher than [7 U.S.C. § 2014(c)]" (the plain federal 130%
+  // FPL) NOR "grant categorical eligibility that exempts households from
+  // the gross income standard" UNLESS DHS separately obtains a federal
+  // waiver — Arkansas's ordinary NPA household is subject to the plain
+  // federal 130%/100% FPL gross/net tests, correctly encoded as `bbce:
+  // false` here.
+  //
+  // asset_waiver: false — a DELIBERATE, disclosed simplification of a
+  // genuinely more complex reality, not a guess: the SAME Act 675 directs
+  // DHS to seek (and DHS did obtain, per its own April 2025 emergency-rule
+  // filing) a federal waiver exempting SNAP enrollees from the resource
+  // limit specifically — but caps it tightly: a TEMPORARY $5,500 asset
+  // limit "for a period of up to one (1) year," "no more than one (1) time
+  // every five (5) years" (§ 20-76-115(b)(2)(B)-(C)), confirmed
+  // operationally by DHS's own SNAP Certification Manual § 1919
+  // (04/01/2025). This schema's `asset_waiver` is a flat boolean with no
+  // axis for "raised to $5,500, but only for 12 months, once per 5 years"
+  // — encoding `true` would silently overclaim a permanent waiver; `false`
+  // (the ordinary federal $3,000/$4,500 limit) is the conservative,
+  // defensible default, with the real temporary mechanism disclosed here
+  // rather than either fabricated into a new axis or silently dropped —
+  // the same "accepted limitation" treatment this file's NJ (#824)/VA/SC
+  // entries already give a schema gap they can't fully represent.
+  // Arkansas's NARROWER ordinary categorical eligibility (SSI and/or TEA
+  // cash-assistance recipients only, per Manual §§ 1920-1924) still waives
+  // both tests entirely as a plain federal mechanism, independent of this
+  // axis, via `facts.cat_elig` in categorical.ts.
+  //
+  // sua_by_tier — FULLY POPULATED, not null: HCSUA (Arkansas's "Standard
+  // Utility Allowance") $342/mo, LUA (Arkansas's "Basic Utility
+  // Allowance") $274/mo, phone (Telephone Standard) $51/mo — genuinely
+  // state-specific figures, notably LOWER than several of this file's
+  // other recently-built states (WI $553, LA $465, CT $976), sourced from
+  // DHS's own Appendix D (effective 10/1/2025, FFY2026 figures), retrieved
+  // via WebFetch after every direct curl attempt on DHS's PDF host
+  // returned a clean HTTP 403 (a genuine, disclosed access-barrier
+  // workaround using a different fetch path to the SAME primary source,
+  // not a substituted lower-quality source).
+  //
+  // allotment_tier: "48" — no Arkansas-specific elevated max-allotment
+  // schedule found; Arkansas's own Standard Deduction ($209/$223/$261/
+  // $299) and $744 shelter cap match federal-tables.ts's FY26 snapshot
+  // exactly.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT, read directly from
+  // Arkansas Code § 20-76-409 (via FindLaw's current-code mirror, after
+  // Justia's own mirror 403'd — this roster's now-familiar Justia-block
+  // pattern): "The State of Arkansas opts out of Section 115 of [PRWORA],"
+  // an unconditional opt-out of the SAME federal provision (21 U.S.C.
+  // § 862a) that created the ban, independently cross-checked against the
+  // Certification Manual's own disqualification-category provisions (no
+  // drug-felony category found anywhere).
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED finding, but
+  // DISCLOSED as resting on a NINE-YEAR-STALE primary source, the oldest
+  // individually-dated section the corpus pack found anywhere in
+  // Arkansas's manual: Manual § 3501 (Waivers), dated "SNAP Manual
+  // 01/01/17," states "the state of Arkansas is currently not under a
+  // waiver" — this entry follows what Arkansas's own primary source says
+  // (no more recent Arkansas-specific waiver statement was found anywhere
+  // in DHS's manual) while disclosing plainly, same as the corpus pack,
+  // that the source itself is nine years unrevised and should not be
+  // treated as a high-confidence current statement without independent
+  // re-verification against USDA FNS's own quarterly waiver list.
+  //
+  // rmp_operated: false — Arkansas is absent from USDA FNS's own current
+  // Restaurant Meals Program state list (direct fetch, clean HTTP 200).
+  // Not representable in this schema, and not silently conflated: Arkansas
+  // DOES operate a materially NARROWER homeless-specific mechanism (Manual
+  // §§ 120-121, Communal Dining Facilities) — meals from restaurants under
+  // a SPECIFIC CONTRACT with DHS, at a negotiated reduced price, limited to
+  // homeless (and separately, elderly/SSI meal-delivery) households — no
+  // engine axis exists for a narrower, population-and-contract-gated
+  // variant of RMP; `rmp_operated` has no consumer anywhere in verdict.ts
+  // or benefit-calc.ts regardless (grep-confirmed, same as every other
+  // state's entry in this file), so this has zero practical effect today.
+  //
+  // Oracle: AR's closest structural axis-twin among all 31 already-
+  // registered states (never AL/KY/OK, none merged yet) is MISSOURI —
+  // matching ALL non-SUA comparison axes exactly: bbce: false,
+  // asset_waiver: false, allotment_tier: "48", abawd_waiver_avail: false,
+  // rmp_operated: false (differing only on drug_felony_ban: MO "modified"
+  // vs AR "none" — immaterial to the gate, since both fail open the same
+  // way per #805). Built the same fresh, independent Python calculator
+  // used for CT/UT/IA above (not derived from engine output, per #636).
+  // Cross-validated BEFORE trusting it for AR: 92/92 exact match (verdict
+  // AND benefit) reproducing MO's already-graded oracle under MO's own
+  // StatePolicy params, PLUS all 37 non-expected_by_state variant rows (0
+  // mismatches).
+  //
+  // AR's computed DENY set (22 of 92) is IDENTICAL to MO's (zero
+  // divergence in either direction) — both are non-BBCE, real-asset-test
+  // states with the same federal 130%/100% income screen, so every
+  // income- and asset-driven denial lines up exactly; the temporary
+  // Act-675 resource increase this entry deliberately does not encode
+  // (see asset_waiver above) has zero effect on any of the 92 oracle
+  // profiles, independently confirmed none carry countable assets between
+  // $3,000/$4,500 and $5,500. Also checked all 37 rows across the 18
+  // non-expected_by_state variant profiles for an AR-specific
+  // verdict_by_state override: found TWO real divergences — both variants
+  // of `M23-variable-gig-income-anticipation` ("averaged" $1,800 and
+  // "recent_high_month" $2,200 gross HH1) fail AR's federal 130% gross
+  // test ($1,696), the same reason KS/OH/GA/IN/MO/UT already fail both —
+  // authored "AR": "DENY" into both variants' verdict_by_state blocks,
+  // matching MO's/UT's own pattern exactly.
+  //
+  // Verification: `/profile-simulation state=AR` — 129 PASS / 0 FAIL / 0
+  // SKIP, clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA/CT(128/1/0)/IA's bar, not PA's/NJ's/TN's/MN's/UT's
+  // SKIP-heavy shape.
+  AR: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "AR",
+      label: "Arkansas / DHS",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: {
+        HCSUA: new Decimal("342"),
+        LUA: new Decimal("274"),
+        phone: new Decimal("51"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
   // Idaho — first state of batch-tier segment 3 (docs/plans/snap-rules-
   // 50-state-engine-completion.md §6 step 6, "ID, WV, NH"), built after the
   // 13 individual-tier states (NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA merged;
