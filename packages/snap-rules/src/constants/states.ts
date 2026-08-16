@@ -3734,6 +3734,155 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Arkansas — 4th and final batch-tier state in this segment (§6 step 6,
+  // fourth of CT/UT/IA/AR). Built AR's StatePolicy entry AND full
+  // 92-profile oracle coverage from scratch (AR had neither before this
+  // PR), translating AR's already-merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/ar/, PROVENANCE.md +
+  // supplements.json, built 2026-08-12) into the engine's stricter typed
+  // shape per §5's process.
+  //
+  // bbce: false / bbce_threshold_pct: undefined / bbce_fpl_basis: null —
+  // THIS PACK'S FLAGSHIP FINDING, a genuine LEGISLATIVE self-restriction on
+  // DHS's own discretion, the same KIND of finding (a state legislature
+  // restricting the administering agency) as this file's Oklahoma entry,
+  // though different in SUBJECT (income-based BBCE, not ABAWD waivers).
+  // Arkansas Code § 20-76-115 (added by Act 675 of 2023 / SB306, read in
+  // full from the Arkansas Bureau of Legislative Research's own
+  // emergency-rule filing reproducing the Act's enacted text verbatim)
+  // states DHS "shall not... [a]pply gross income standards for food
+  // assistance higher than [7 U.S.C. § 2014(c)]" (the plain federal 130%
+  // FPL) NOR "grant categorical eligibility that exempts households from
+  // the gross income standard" UNLESS DHS separately obtains a federal
+  // waiver — Arkansas's ordinary NPA household is subject to the plain
+  // federal 130%/100% FPL gross/net tests, correctly encoded as `bbce:
+  // false` here.
+  //
+  // asset_waiver: false — a DELIBERATE, disclosed simplification of a
+  // genuinely more complex reality, not a guess: the SAME Act 675 directs
+  // DHS to seek (and DHS did obtain, per its own April 2025 emergency-rule
+  // filing) a federal waiver exempting SNAP enrollees from the resource
+  // limit specifically — but caps it tightly: a TEMPORARY $5,500 asset
+  // limit "for a period of up to one (1) year," "no more than one (1) time
+  // every five (5) years" (§ 20-76-115(b)(2)(B)-(C)), confirmed
+  // operationally by DHS's own SNAP Certification Manual § 1919
+  // (04/01/2025). This schema's `asset_waiver` is a flat boolean with no
+  // axis for "raised to $5,500, but only for 12 months, once per 5 years"
+  // — encoding `true` would silently overclaim a permanent waiver; `false`
+  // (the ordinary federal $3,000/$4,500 limit) is the conservative,
+  // defensible default, with the real temporary mechanism disclosed here
+  // rather than either fabricated into a new axis or silently dropped —
+  // the same "accepted limitation" treatment this file's NJ (#824)/VA/SC
+  // entries already give a schema gap they can't fully represent.
+  // Arkansas's NARROWER ordinary categorical eligibility (SSI and/or TEA
+  // cash-assistance recipients only, per Manual §§ 1920-1924) still waives
+  // both tests entirely as a plain federal mechanism, independent of this
+  // axis, via `facts.cat_elig` in categorical.ts.
+  //
+  // sua_by_tier — FULLY POPULATED, not null: HCSUA (Arkansas's "Standard
+  // Utility Allowance") $342/mo, LUA (Arkansas's "Basic Utility
+  // Allowance") $274/mo, phone (Telephone Standard) $51/mo — genuinely
+  // state-specific figures, notably LOWER than several of this file's
+  // other recently-built states (WI $553, LA $465, CT $976), sourced from
+  // DHS's own Appendix D (effective 10/1/2025, FFY2026 figures), retrieved
+  // via WebFetch after every direct curl attempt on DHS's PDF host
+  // returned a clean HTTP 403 (a genuine, disclosed access-barrier
+  // workaround using a different fetch path to the SAME primary source,
+  // not a substituted lower-quality source).
+  //
+  // allotment_tier: "48" — no Arkansas-specific elevated max-allotment
+  // schedule found; Arkansas's own Standard Deduction ($209/$223/$261/
+  // $299) and $744 shelter cap match federal-tables.ts's FY26 snapshot
+  // exactly.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT, read directly from
+  // Arkansas Code § 20-76-409 (via FindLaw's current-code mirror, after
+  // Justia's own mirror 403'd — this roster's now-familiar Justia-block
+  // pattern): "The State of Arkansas opts out of Section 115 of [PRWORA],"
+  // an unconditional opt-out of the SAME federal provision (21 U.S.C.
+  // § 862a) that created the ban, independently cross-checked against the
+  // Certification Manual's own disqualification-category provisions (no
+  // drug-felony category found anywhere).
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED finding, but
+  // DISCLOSED as resting on a NINE-YEAR-STALE primary source, the oldest
+  // individually-dated section the corpus pack found anywhere in
+  // Arkansas's manual: Manual § 3501 (Waivers), dated "SNAP Manual
+  // 01/01/17," states "the state of Arkansas is currently not under a
+  // waiver" — this entry follows what Arkansas's own primary source says
+  // (no more recent Arkansas-specific waiver statement was found anywhere
+  // in DHS's manual) while disclosing plainly, same as the corpus pack,
+  // that the source itself is nine years unrevised and should not be
+  // treated as a high-confidence current statement without independent
+  // re-verification against USDA FNS's own quarterly waiver list.
+  //
+  // rmp_operated: false — Arkansas is absent from USDA FNS's own current
+  // Restaurant Meals Program state list (direct fetch, clean HTTP 200).
+  // Not representable in this schema, and not silently conflated: Arkansas
+  // DOES operate a materially NARROWER homeless-specific mechanism (Manual
+  // §§ 120-121, Communal Dining Facilities) — meals from restaurants under
+  // a SPECIFIC CONTRACT with DHS, at a negotiated reduced price, limited to
+  // homeless (and separately, elderly/SSI meal-delivery) households — no
+  // engine axis exists for a narrower, population-and-contract-gated
+  // variant of RMP; `rmp_operated` has no consumer anywhere in verdict.ts
+  // or benefit-calc.ts regardless (grep-confirmed, same as every other
+  // state's entry in this file), so this has zero practical effect today.
+  //
+  // Oracle: AR's closest structural axis-twin among all 31 already-
+  // registered states (never AL/KY/OK, none merged yet) is MISSOURI —
+  // matching ALL non-SUA comparison axes exactly: bbce: false,
+  // asset_waiver: false, allotment_tier: "48", abawd_waiver_avail: false,
+  // rmp_operated: false (differing only on drug_felony_ban: MO "modified"
+  // vs AR "none" — immaterial to the gate, since both fail open the same
+  // way per #805). Built the same fresh, independent Python calculator
+  // used for CT/UT/IA above (not derived from engine output, per #636).
+  // Cross-validated BEFORE trusting it for AR: 92/92 exact match (verdict
+  // AND benefit) reproducing MO's already-graded oracle under MO's own
+  // StatePolicy params, PLUS all 37 non-expected_by_state variant rows (0
+  // mismatches).
+  //
+  // AR's computed DENY set (22 of 92) is IDENTICAL to MO's (zero
+  // divergence in either direction) — both are non-BBCE, real-asset-test
+  // states with the same federal 130%/100% income screen, so every
+  // income- and asset-driven denial lines up exactly; the temporary
+  // Act-675 resource increase this entry deliberately does not encode
+  // (see asset_waiver above) has zero effect on any of the 92 oracle
+  // profiles, independently confirmed none carry countable assets between
+  // $3,000/$4,500 and $5,500. Also checked all 37 rows across the 18
+  // non-expected_by_state variant profiles for an AR-specific
+  // verdict_by_state override: found TWO real divergences — both variants
+  // of `M23-variable-gig-income-anticipation` ("averaged" $1,800 and
+  // "recent_high_month" $2,200 gross HH1) fail AR's federal 130% gross
+  // test ($1,696), the same reason KS/OH/GA/IN/MO/UT already fail both —
+  // authored "AR": "DENY" into both variants' verdict_by_state blocks,
+  // matching MO's/UT's own pattern exactly.
+  //
+  // Verification: `/profile-simulation state=AR` — 129 PASS / 0 FAIL / 0
+  // SKIP, clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA/CT(128/1/0)/IA's bar, not PA's/NJ's/TN's/MN's/UT's
+  // SKIP-heavy shape.
+  AR: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "AR",
+      label: "Arkansas / DHS",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: {
+        HCSUA: new Decimal("342"),
+        LUA: new Decimal("274"),
+        phone: new Decimal("51"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
