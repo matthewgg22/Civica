@@ -168,42 +168,129 @@ function zoneTable(
   };
 }
 
+// ── Dated-snapshot structure (#803 FY27 prep) ───────────────────────────
+//
+// Prior to this refactor, AK_URBAN/AK_RURAL_I/AK_RURAL_II/
+// AK_STANDARD_DEDUCTION/AK_SHELTER_CAP were plain module-level constants
+// with NO effective-date banding at all — unlike federal-tables.ts's
+// `FederalTableSnapshot`/`SNAPSHOTS` array (48-contiguous table) and
+// states.ts's per-state `StatePolicy[]` array (SUA etc.), both of which
+// already carry `effective_start`/`effective_end`. When FY27 lands, this
+// gap would have forced an IN-PLACE edit of these constants (destroying
+// the FY26 figures with no way to keep both years addressable by date) —
+// exactly the anti-pattern federal-tables.ts's own top-of-file comment
+// warns against ("never edit a published table after its effective_end
+// passes... add a new effective-date entry").
+//
+// `AkAllotmentSnapshot` fixes that: one snapshot object per fiscal year,
+// carrying ALL of AK's dollar-figure axes (all three zones' max-allotment
+// tables + the statewide standard deduction + shelter cap) together, since
+// they are always published in and sourced from the same annual USDA FNS
+// AK-specific table / COLA memo. `AK_SNAPSHOTS` is the array FY27 gets
+// appended to (mirroring `SNAPSHOTS` in federal-tables.ts) — adding FY27
+// will be "append one more entry," never an edit of FY26's.
+//
+// `akAllotmentSnapshotFor(asOf)` resolves the entry whose
+// effective_start/effective_end brackets `asOf`. Its OUT-OF-RANGE fallback
+// is deliberately PERMISSIVE (returns the latest snapshot) rather than
+// throwing, unlike federal-tables.ts's `snapshotFor()` (which throws
+// `NoTableForDateError`). This is intentional, not an oversight: before
+// this refactor these AK figures were consulted with NO date check
+// whatsoever (every caller's `asOf` is already validated against
+// federal-tables.ts's OWN `snapshotFor()` before reaching these
+// AK-specific branches — see maxAllotmentFor()/minimumBenefitFor()/
+// standardDeductionFor()/shelterCapFor() in federal-tables.ts). Making
+// this table throw on an out-of-range date would be a NEW failure mode
+// this refactor is not authorized to introduce (it must change NOTHING
+// about current behavior). With exactly one snapshot (FY26) in the array
+// today, `akAllotmentSnapshotFor()` returns that same snapshot for EVERY
+// `asOf` value — byte-identical to the pre-refactor always-return-the-
+// only-table behavior. See docs/plans/fy27-cola-refresh-checklist.md.
+export interface AkAllotmentSnapshot {
+  fiscal_year: number;
+  effective_start: Date;
+  effective_end: Date;
+  urban: AkZoneAllotments;
+  rural1: AkZoneAllotments;
+  rural2: AkZoneAllotments;
+  /** AK's own statewide Standard Deduction — NOT zone-specific. */
+  standard_deduction: Map<number, Decimal>;
+  /** AK's own statewide Maximum Excess Shelter Deduction — NOT zone-specific. */
+  shelter_cap: Decimal;
+}
+
 // FY26 (10/1/2025-9/30/2026). HH1-8 verbatim from both USDA source PDFs
 // cited above (matched exactly); add-on and minimum-benefit from the same.
-export const AK_URBAN = zoneTable(
-  "urban",
-  ["385", "707", "1015", "1285", "1529", "1838", "2031", "2314"],
-  "282",
-  "31",
-);
-export const AK_RURAL_I = zoneTable(
-  "rural1",
-  ["491", "901", "1295", "1639", "1950", "2344", "2590", "2950"],
-  "360",
-  "39",
-);
-export const AK_RURAL_II = zoneTable(
-  "rural2",
-  ["598", "1097", "1576", "1995", "2374", "2853", "3152", "3591"],
-  "438",
-  "48",
-);
+// Standard deduction / shelter cap per #866 (see header note above).
+const AK_FY26: AkAllotmentSnapshot = {
+  fiscal_year: 2026,
+  effective_start: new Date(Date.UTC(2025, 9, 1)),
+  effective_end: new Date(Date.UTC(2026, 8, 30)),
+  urban: zoneTable(
+    "urban",
+    ["385", "707", "1015", "1285", "1529", "1838", "2031", "2314"],
+    "282",
+    "31",
+  ),
+  rural1: zoneTable(
+    "rural1",
+    ["491", "901", "1295", "1639", "1950", "2344", "2590", "2950"],
+    "360",
+    "39",
+  ),
+  rural2: zoneTable(
+    "rural2",
+    ["598", "1097", "1576", "1995", "2374", "2853", "3152", "3591"],
+    "438",
+    "48",
+  ),
+  standard_deduction: new Map<number, Decimal>([
+    [1, new Decimal("358")],
+    [2, new Decimal("358")],
+    [3, new Decimal("358")],
+    [4, new Decimal("358")],
+    [5, new Decimal("358")],
+    [6, new Decimal("374")],
+  ]),
+  shelter_cap: new Decimal("1189"),
+};
 
-// #866: AK's own statewide Standard Deduction ($358 HH1-5, $374 HH6+) and
-// Maximum Excess Shelter Deduction ($1,189) — NOT zone-specific, see the
-// header note above. Consulted by federal-tables.ts's
-// standardDeductionFor()/shelterCapFor() when state === "AK", the same
-// state-branch-first/federal-fallback shape maxAllotmentFor()/
-// minimumBenefitFor() already use for AK's zone table.
-export const AK_STANDARD_DEDUCTION = new Map<number, Decimal>([
-  [1, new Decimal("358")],
-  [2, new Decimal("358")],
-  [3, new Decimal("358")],
-  [4, new Decimal("358")],
-  [5, new Decimal("358")],
-  [6, new Decimal("374")],
-]);
-export const AK_SHELTER_CAP = new Decimal("1189");
+/**
+ * FY27 refresh: append a new `AkAllotmentSnapshot` here, e.g.
+ * `const AK_FY27: AkAllotmentSnapshot = { fiscal_year: 2027, ... };`
+ * then add it to `AK_SNAPSHOTS` below (ORDER DOES NOT MATTER —
+ * `akAllotmentSnapshotFor()` scans the whole array — but keep it
+ * chronological for readability, same convention as federal-tables.ts's
+ * `SNAPSHOTS`). Never edit `AK_FY26` in place once FY27 exists.
+ */
+const AK_SNAPSHOTS: AkAllotmentSnapshot[] = [AK_FY26];
+
+/**
+ * Resolve AK's dollar-figure snapshot for `asOf`. See the header note
+ * above for why this falls back to the latest snapshot instead of
+ * throwing when `asOf` is out of every known range (deliberately
+ * behavior-preserving pre-FY27; every real caller's `asOf` is already
+ * range-checked by federal-tables.ts's own `snapshotFor()` first).
+ */
+export function akAllotmentSnapshotFor(asOf?: Date): AkAllotmentSnapshot {
+  if (!asOf) return AK_SNAPSHOTS[AK_SNAPSHOTS.length - 1]!;
+  for (const s of AK_SNAPSHOTS) {
+    if (asOf >= s.effective_start && asOf <= s.effective_end) return s;
+  }
+  return AK_SNAPSHOTS[AK_SNAPSHOTS.length - 1]!;
+}
+
+// ── Backward-compatible exports ─────────────────────────────────────────
+// Same names, same values as before this refactor — every existing
+// call site/test that references these directly (no `asOf` awareness)
+// keeps working unchanged, pinned to the current (FY26) snapshot. New
+// date-aware callers should prefer `akAllotmentSnapshotFor(asOf)` or
+// `akAllotmentZoneFor(countyFips, asOf)` instead.
+export const AK_URBAN = AK_FY26.urban;
+export const AK_RURAL_I = AK_FY26.rural1;
+export const AK_RURAL_II = AK_FY26.rural2;
+export const AK_STANDARD_DEDUCTION = AK_FY26.standard_deduction;
+export const AK_SHELTER_CAP = AK_FY26.shelter_cap;
 
 /**
  * County FIPS ("SSCCC") → allotment zone, for the AK boroughs/census areas
@@ -315,10 +402,22 @@ const AK_ALLOTMENT_ZONE_BY_COUNTY_FIPS: Record<string, AkAllotmentZone> = {
  * representative-default choice states.ts's AK.sua_by_tier comment already
  * documents for the single-region SUA fallback, and DOH's own framing of
  * Anchorage/Fairbanks/Juneau as Alaska's "metro areas."
+ *
+ * `asOf` (#803 FY27 prep) is OPTIONAL and, while only one snapshot
+ * (AK_FY26) exists, changes NOTHING — every call resolves to the same
+ * snapshot regardless of date (see akAllotmentSnapshotFor()'s doc-comment).
+ * Once a FY27 snapshot is appended to AK_SNAPSHOTS, passing the real
+ * determination date here will automatically select the correct fiscal
+ * year's zone table. Omitting `asOf` keeps resolving to the latest
+ * snapshot, same as before this refactor.
  */
-export function akAllotmentZoneFor(countyFips: string | undefined): AkZoneAllotments | undefined {
+export function akAllotmentZoneFor(
+  countyFips: string | undefined,
+  asOf?: Date,
+): AkZoneAllotments | undefined {
   if (!countyFips) return undefined;
   const zone = AK_ALLOTMENT_ZONE_BY_COUNTY_FIPS[countyFips];
   if (!zone) return undefined;
-  return zone === "urban" ? AK_URBAN : zone === "rural1" ? AK_RURAL_I : AK_RURAL_II;
+  const snapshot = akAllotmentSnapshotFor(asOf);
+  return zone === "urban" ? snapshot.urban : zone === "rural1" ? snapshot.rural1 : snapshot.rural2;
 }
