@@ -27,7 +27,8 @@
 //   net        = max(0, adj_income - excess_shelter)
 //   max_allot  = maxAllotmentFor(size, asOf, state, county_fips) — AK
 //                zone-specific (#814), 48-contiguous for every other state
-//   benefit    = round(max_allot - 0.30 * net)            [273.10(e)(2)(ii)(A)]
+//   benefit    = max_allot - ceil(0.30 * net)              [273.10(e)(2)(ii)(A)]
+//                (30% figure rounds UP to the next dollar, not half-up; #876)
 //   if size ≤ 2 and 0 < benefit < min_benefit:
 //     benefit = min_benefit                                [273.10(e)(2)(ii)(C)]
 //
@@ -187,8 +188,12 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
   let net = adjIncome.sub(excessShelter);
   if (net.lt(ZERO)) net = ZERO;
 
-  // Benefit calc.
-  const thirtyPctNet = net.mul(0.30).roundDollar();
+  // Benefit calc. 7 CFR 273.10(e)(2)(ii)(A) requires rounding the 30%
+  // figure UP to the nearest higher dollar (or, equivalently, rounding the
+  // final allotment DOWN — see #876 for the equivalence proof). Round-half-up
+  // (roundDollar) only coincidentally matches for fractional cents ≥ .50;
+  // for .01-.49 it rounds down, silently overstating the benefit by $1.
+  const thirtyPctNet = net.mul(0.30).ceilDollar();
   // #814: AK's real max allotment is zone-specific (Urban/Rural I/Rural
   // II), meaningfully higher than the 48-contiguous table. #858: VI's real
   // max allotment is also elevated (a single flat table, no zones).
