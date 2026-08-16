@@ -1162,17 +1162,86 @@ const STATES: Record<string, StatePolicy[]> = {
   // system). Flat 200% BBCE (Domestic Violence Information Brochure
   // DHS-3477, CM 0013.06) — but MN's BBCE exempts a unit from BOTH the asset
   // test AND the net income test, stronger than every other flat-screen
-  // state in this file. sua_by_tier is DELIBERATELY null: Minnesota runs a
-  // SINGLE COMBINED utility allowance (heat/cool/electric/water/sewer/
-  // garbage/phone all together, not a tiered ladder at all), and the MN
-  // corpus pack's own build could NOT independently confirm the current
-  // dollar figure against a live authoritative source (the Combined
-  // Manual's utility-deduction section text wasn't captured in that pass,
-  // and both a USDA FY26 SUA PDF and a DHS page returned access-denied
-  // responses — see the MN corpus pack's PROVENANCE.md). Same discipline as
-  // PA's entry above: SUA stays null until a working primary source is
-  // reached, not guessed from a secondary figure this pack explicitly
-  // declined to trust (~$235/month electric-only, unconfirmed).
+  // state in this file.
+  //
+  // sua_by_tier — RESOLVED (#747, closing the gap the MN corpus pack's
+  // PROVENANCE.md and this file's prior null entry both documented).
+  // Minnesota runs a SINGLE COMBINED heat/cool utility allowance (covering
+  // heat, cooling, electricity, water, sewer, garbage, AND phone together)
+  // plus two SEPARATE non-heat standards for units without a heating/
+  // cooling expense — a genuinely different shape than most states' 3-tier
+  // ladder, but one that maps CLEANLY 1:1 onto this engine's {HCSUA, LUA,
+  // phone, none} schema the same way MI's did (determineSUATier's three
+  // yes/no questions — has_heating_costs, has_electric_or_gas, has_phone —
+  // match MN's own three eligibility categories exactly):
+  //   HCSUA = MN's "Heat/Air Standard Utility Deduction" (unit responsible
+  //     for heating and/or cooling, OR receives >$20 LIHEAP in the past 12
+  //     months, OR shares heat/cool costs with another unit/ineligible
+  //     person)
+  //   LUA   = MN's "electric standard utility deduction" (no heat/cool
+  //     responsibility, but responsible for an electricity expense)
+  //   phone = MN's "phone standard utility deduction" (no heat/cool, no
+  //     electric responsibility, but responsible for a phone expense)
+  //
+  // NAMING-COLLISION TRAP for a future maintainer: this engine's "LUA"
+  // label is generic (every other state's LUA also means "the lesser
+  // non-heat tier"), but Minnesota's OWN Combined Manual text literally
+  // calls its non-heat tier the "electric standard utility deduction" —
+  // do not confuse this with a state that has an actual field named "LUA"
+  // in its own manual (most don't; MN doesn't either). Also: MN explicitly
+  // allows electric AND phone standards to STACK ("If the unit is
+  // responsible for both electric and phone expenses, both standard
+  // utility deductions are allowed") — a real MN household with both,
+  // no heat, gets $235+$62=$297/month combined. This engine's
+  // determineSUATier() (sua.ts) can only return ONE tier per household
+  // (LUA OR phone, never both), so that specific stacking subset is
+  // UNDER-computed here at $235 (LUA only) instead of $297 — the SAME
+  // documented, disclosed gap as IL's Single Utility ($78), OH's Single
+  // SUA ($108), MI's water/sewer/cooking-fuel/trash standards, and NV's/
+  // AZ's undermodeled single-utility tiers (see those states' comments
+  // above) — not new to this fix, and not a blocker for closing #747.
+  //
+  // DOLLAR FIGURES — FFY26 (10/1/2025-9/30/2026), the cycle in effect as of
+  // this fix: HCSUA $667, electric/LUA $235, phone $62.
+  //
+  // Sourcing chain (primary + statutorily-linked corroboration, NOT a
+  // guess): MN's own SNAP Combined Manual §0018.15.09 (Utility Deductions)
+  // — reached this pass via a DIRECT PDF at dhs.state.mn.us/main/groups/
+  // county_access/documents/pub/mndhs-067957.pdf ("COMBINED MANUAL
+  // DESCRIPTION OF CHANGES ATTACHMENT," issue-dated 10/2024) — a static
+  // file-server path that is NOT behind the Radware/perfdrive bot-detection
+  // wall the MN corpus pack's PROVENANCE.md documented blocking the
+  // `idcplg` CMS pages (re-confirmed blocked again this pass via direct
+  // curl AND WebFetch — same wall, same redirect to validate.perfdrive.com,
+  // not a new avenue). That PDF's own extracted text gives the FFY25
+  // figures VERBATIM: "Allow the Heat/Air Standard Utility Deduction of
+  // $649," "Allow the electric standard utility deduction of $229 per
+  // month," "Allow the phone standard utility deduction of $60 per month"
+  // — i.e., the manual has not yet been reissued past FFY25 (matching the
+  // corpus pack's own $712/$190.30 shelter-cap staleness finding for the
+  // SAME issue-dated section).
+  //
+  // The CURRENT FFY26 figures ($667/$235/$62) come from a second MN
+  // state-published source: DHS's Health Care Programs Eligibility Policy
+  // Manual (EPM) Appendix F (hcopub.dhs.state.mn.us/epm/appendix_f.htm — a
+  // DIFFERENT DHS subdomain, NOT behind the Radware wall), which publishes
+  // a "Utility Allowance"/"Electricity Allowance"/"Telephone Allowance"
+  // table for the Medical Assistance spousal-impoverishment "community
+  // spouse" calculation, FFY26 column: $667/$235/$62, FFY25 column: $649/
+  // $229/$60. The FFY25 column MATCHES the SNAP manual's own $649/$229/$60
+  // EXACTLY — direct proof this EPM table is drawing from the same
+  // underlying SUA data, not an independently-set Medicaid-only figure.
+  // That equivalence isn't coincidental: 42 U.S.C. § 1396r-5(d)(4) DEFINES
+  // the community-spouse utility allowance as "the standard utility
+  // allowance ... used by the State under section 2014(e) of title 7" —
+  // i.e. federal law REQUIRES a state that uses a flat dollar table here
+  // (as MN's dated-effective-range table format shows it does, vs. the
+  // statute's alternative of "actual unreimbursed" costs) to use its own
+  // food-support/SNAP SUA figure, not a separately-computed one. This is
+  // the same "secondary source corroborating a primary figure's current
+  // value" discipline as MO's and CO's "sourced but possibly one FY stale"
+  // precedent, made unusually strong here by the statutory identity
+  // requirement rather than mere pattern-matching across sources.
   MN: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
@@ -1186,7 +1255,12 @@ const STATES: Record<string, StatePolicy[]> = {
       // — full waiver, stronger than the asset-only waiver most states above
       // use; non-categorically-eligible units still face $3,000/$4,500.
       asset_waiver: true,
-      sua_by_tier: null,
+      sua_by_tier: {
+        HCSUA: new Decimal("667"),
+        LUA: new Decimal("235"),
+        phone: new Decimal("62"),
+        none: new Decimal("0"),
+      },
       allotment_tier: "48",
       // GENUINE clean full opt-out — "End any disqualifications for someone
       // who was disqualified for Cash programs or SNAP as a drug felon prior
