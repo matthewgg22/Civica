@@ -3260,6 +3260,187 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Connecticut — 1st batch-tier state (§6 step 6, first of CT/UT/IA/AR,
+  // the first group of <4M-population states after the 13 individual-tier
+  // states NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA/AL/KY/OK finished — AL/KY/OK were
+  // concurrently in-flight, not yet merged as of this build, and were NOT
+  // read or coordinated with; a human reconciles that eventual rebase, same
+  // pattern this project used for MO-vs-TN/IN). Built CT's StatePolicy
+  // entry AND full 92-profile oracle coverage from scratch (CT had neither
+  // before this PR), translating CT's already-merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/ct/, PROVENANCE.md + supplements.json,
+  // built 2026-08-12) into the engine's stricter typed shape per §5's
+  // process.
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis:
+  // federal_fiscal_year — CT DSS's Expanded Categorical Eligibility (ECE):
+  // a household not otherwise categorically eligible (RCE) is ECE-eligible
+  // when gross income is under 200% FPL, conferred via the same TANF-
+  // funded-referral-brochure mechanism this file's other ECE/BBCE states
+  // use ("Help for People in Need Brochure," notified at application and
+  // renewal). Dollar figures sourced from CT DSS's own current SNAP Policy
+  // Manual Tables (Internet Archive Wayback snapshot 2026-03-07, since
+  // portaldir.ct.gov's live host returned an active bot-detection block to
+  // every direct fetch attempt — a genuine, disclosed access barrier,
+  // resolved via the Archive rather than fabricated or left unauthored):
+  // 200% FPL (ECE) gross ceiling $2,609/mo HH1, $5,359/mo HH4; effective
+  // 10/1/2025, the FFY2026 cycle.
+  //
+  // *** GENUINE STRUCTURAL FINDING, but NOT a new architecture gap — the
+  // SAME gap TN's entry above already found and filed as #830, cited here
+  // rather than re-filed: CT's ECE explicitly does NOT waive the net (100%
+  // FPL) income test — CT DSS's own RCE and ECE explainer pages list only
+  // the asset limit and the 130% gross test as excluded for ECE (RCE's own
+  // list, by contrast, explicitly includes the net income limit too) — a
+  // real, checked-for omission, not an assumption (both lists read side by
+  // side in the corpus pack's adversarial-refute pass). `StatePolicy` has
+  // no axis to express "BBCE waives gross+asset but not net," and
+  // `verdict.ts`'s `bbceConferred` logic unconditionally skips BOTH
+  // remaining income tests for every BBCE state alike once the raised
+  // gross threshold clears — #830's exact architecture gap, now confirmed
+  // present in a SECOND state. Independently verified impact (same fresh
+  // Python calculator used for every state below, extended with a
+  // CT-specific true-ECE net-test-enforced variant): of all 92 base
+  // profiles PLUS all 37 non-`expected_by_state` variant rows, exactly ONE
+  // diverges between the engine's actual (net-test-skipped) behavior and
+  // CT's true (net-test-enforced) policy —
+  // `MX4-bbce-max-income-with-any-benefit` (HH3, $4,440 gross clears CT's
+  // $4,421 200%-FPL... no, clears CT's 200% gross screen, but net income
+  // after the full deduction stack exceeds CT's 100% FPL net ceiling),
+  // the SAME profile TN's entry already identified as the sole
+  // real-world demonstration of this exact gap. Authored MX4's TRUE
+  // value (DENY) rather than the engine's current buggy APPROVE,
+  // following TN's/NY's/AZ's established precedent that the oracle
+  // encodes the independently-computed correct answer even when it
+  // produces one documented, pre-known FAIL rather than silently
+  // encoding the engine's bug as "correct" — CT's harness run is
+  // therefore expected to show 128 PASS / 1 FAIL / 0 SKIP (of 129), the
+  // 1 FAIL being this exact, disclosed #830 case.
+  //
+  // asset_waiver: true — flows directly from the same ECE/RCE finding:
+  // both waive the asset limit, and CT DSS's own current Tables page lists
+  // a $4,500 asset limit for only two narrow categories (elderly/disabled
+  // EDGs OVER 200% FPL) — every other category is marked "N/A," meaning
+  // virtually every CT SNAP household never reaches an asset test at all.
+  //
+  // sua_by_tier — FULLY POPULATED, not null: HCSUA (CT calls it simply
+  // "Standard Utility Allowance") $976/mo flat regardless of household
+  // size — more than double most of this file's other states' figures
+  // (WI $553, KS $469, LA $465), plausibly CT's cold-climate heating
+  // profile per the corpus pack's own disclosed flag, not silently
+  // normalized to a "typical" number. LUA $430/mo. Phone (CT's "Telephone
+  // Allowance," TUA) $36/mo. All sourced from the same current DSS Tables
+  // page (Wayback snapshot, effective 10/1/2025).
+  //
+  // allotment_tier: "48" — no CT-specific elevated max-allotment schedule
+  // found; CT's own Standard Deduction ($209/$223/$261/$299) and $744
+  // shelter cap match federal-tables.ts's FY26 snapshot exactly, the same
+  // "shared source" signal this file's other 48-tier states use.
+  //
+  // drug_felony_ban: "modified" — Connecticut General Statutes § 17b-112d,
+  // read directly from cga.ct.gov (no access barrier, unlike this file's
+  // now-familiar Justia-403 pattern), sets out THREE independent
+  // eligibility paths for a person convicted of a qualifying
+  // controlled-substance felony on or after 8/22/1996: (1) sentence
+  // completed; OR (2) satisfactorily serving probation; OR (3) completing
+  // or has completed court-mandated substance-abuse treatment/testing.
+  // This is a real, conditional restriction — narrower than a full opt-out
+  // (unlike this file's IA/AR/UT entries below, all VERIFIED full
+  // opt-outs) but broader-relief than a treatment-only gate (two of the
+  // three paths require no treatment involvement at all) — correctly
+  // "modified" per #805's rule, not "none" or "full."
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero,
+  // TIME-SENSITIVE finding, directly contradicting a "CT has a statewide
+  // ABAWD waiver" claim the corpus pack found repeated across multiple
+  // secondary sources: CT DSS's own SNAP Work Rules Pre-screener page
+  // (direct fetch, clean HTTP 200) states in its own first line of visible
+  // text, "Starting December 1, 2025, all towns in Connecticut will now
+  // follow special SNAP work rules for adults" — CT's PRIOR statewide
+  // waiver (what the stale secondary sources describe) ended, and full
+  // statewide ABAWD work requirements took effect 12/1/2025, consistent
+  // with the nationwide post-OBBBA rollout timeline this roster has
+  // documented repeatedly. No county-level lookup needed or added, same
+  // uniform-statewide-zero-waiver shape as VA's/MO's/TN's/MD's/CO's/SC's/
+  // LA's entries.
+  //
+  // rmp_operated: false — CT is absent from USDA FNA's own current
+  // Restaurant Meals Program state list (direct fetch, clean HTTP 200).
+  // 2025 CT SB 1475 would direct DSS to develop an RMP and apply to USDA
+  // by 12/1/2025, but the corpus pack could NOT confirm enactment status
+  // either way (CT General Assembly's own bill-status system did not
+  // return a clear enacted/Public-Act status) — this entry follows USDA's
+  // own current list (CT absent, page metadata updated as recently as
+  // 8/7/2026) as the operative answer for today, disclosing the pending-
+  // legislation gap rather than guessing it closed.
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824, not re-filed: no engine axis
+  // exists for certification-period length (CT's own manual states a
+  // 12-month default with a 6-month Periodic Report Form midpoint,
+  // ESAP-exempt households excluded from the PRF — informational only,
+  // no engine consumer).
+  //
+  // Oracle: CT's closest structural axis-twin among all 28 already-
+  // registered states (never AL/KY/OK, none merged yet) is WISCONSIN —
+  // matching ALL 5 non-SUA comparison axes exactly (bbce: true,
+  // bbce_threshold_pct: 200, asset_waiver: true, drug_felony_ban:
+  // "modified", abawd_waiver_avail: false, rmp_operated: false), a
+  // stronger match than any other 200%-BBCE state in this file. Built a
+  // fresh, independent Python calculator (not derived from engine output,
+  // per #636) directly from verdict.ts/benefit-calc.ts/gates/{income-tests,
+  // asset-test,abawd,student,composition,immigration,disqualifications,
+  // categorical}.ts/facts.ts/constants/federal-tables.ts's own read source,
+  // mirroring every gate and the benefit-calc formula exactly, including
+  // decimal.ts's half-up (roundDollar) and floor (floorDollar) rounding
+  // conventions. Cross-validated BEFORE trusting it for CT: 92/92 exact
+  // match (verdict AND benefit) reproducing WI's already-graded oracle
+  // under WI's own StatePolicy params, PLUS all 37 non-expected_by_state
+  // variant rows (0 mismatches), PLUS a second independent cross-check
+  // against KS's already-graded oracle (92/92 + 37/37 exact match under
+  // KS's non-BBCE params) before trusting the same calculator for UT/AR
+  // below. CT's computed DENY set is IDENTICAL to WI's (12 of 92, zero
+  // divergence in either direction) except for the single #830 MX4 case
+  // above, which is a verdict divergence FROM the engine's actual output,
+  // not from WI's oracle (WI has no null-SUA gap or 200%-threshold
+  // architecture issue of its own). Also checked all 37 rows across the 18
+  // non-expected_by_state variant profiles for a CT-specific
+  // verdict_by_state override — found zero divergence from the shared
+  // default verdict for CT, so no override was authored. Authored all 92
+  // expected_by_state.CT entries: 79 APPROVE / 13 DENY — WI's 12-profile
+  // DENY set PLUS MX4 as the 13th, added via its independently computed
+  // TRUE value (DENY), not WI's APPROVE (WI has no #830 net-test gap of
+  // its own to surface it).
+  //
+  // Verification: `/profile-simulation state=CT` — 128 PASS / 1 FAIL / 0
+  // SKIP (of 129), the single FAIL being the disclosed, pre-known #830 MX4
+  // case (matching NY's 127/2 and AZ's 128/1 precedent for a documented,
+  // pre-existing engine-gap fail — not a coverage gap). Every other
+  // registered state's harness run reconfirmed unchanged from its
+  // documented baseline.
+  CT: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "CT",
+      label: "Connecticut / DSS",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("976"),
+        LUA: new Decimal("430"),
+        phone: new Decimal("36"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
