@@ -3699,6 +3699,215 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Rhode Island — built from packages/demeter-engine/src/states/ri/
+  // (PROVENANCE.md + supplements.json, corpus built 2026-08-12). RI was a
+  // genuine blank slate: no StatePolicy, no oracle coverage at all before
+  // this entry.
+  //
+  // bbce: true / bbce_threshold_pct: 185 — a genuinely TWO-TIER structural
+  // finding this build spent the most care disclosing, and the one that
+  // needed the deepest read of this engine's own mechanics to encode
+  // correctly rather than guess. DHS's own current SNAP Annual Cost of
+  // Living Adjustment (effective 10/1/2025) states RI's gross-income
+  // ceiling is 185% FPG for households WITHOUT an elderly (60+) or
+  // disabled member, and a HIGHER 200% FPG for households WITH one
+  // (218-RICR-20-00-1 § 1.5.1's "expanded categorical eligibility"
+  // pathway). This engine's own `grossTestApplies()` (gates/income-
+  // tests.ts) ALREADY unconditionally skips the gross-income test entirely
+  // for any elderly/disabled household — via `hasElderlyOrDisabled`, state-
+  // independent — before `bbce_threshold_pct` is ever read for that
+  // household. Read together with `verdict.ts`'s own `bbceConferred` logic
+  // (bbceConferred can only become true INSIDE the gross-test block that
+  // E/D households never enter), this means RI's real 200% E/D ceiling has
+  // ZERO reachable consequence in this engine — an E/D RI household is
+  // net-tested at the plain 100% FPL floor exactly like every other
+  // state's E/D household, regardless of what bbce_threshold_pct holds.
+  // Confirmed by direct read of income-tests.ts/verdict.ts, not assumed.
+  // `bbce_threshold_pct: 185` is therefore the ONLY load-bearing value —
+  // it governs every non-E/D RI household, the population this field
+  // actually reaches — and setting it to 200 to "capture" the E/D ceiling
+  // would silently raise the (never-reached-by-E/D, always-reached-by-
+  // everyone-else) threshold for the wrong population instead. RI's 200%
+  // E/D figure is documented here, not fabricated into a number this
+  // engine has no mechanism to apply correctly.
+  //
+  // asset_waiver: true — 218-RICR-20-00-1 § 1.5.5(B)(2)(b): every
+  // categorically-eligible household type (RI Works/SSI/GPA cash
+  // recipients, AND the 185%/200% "expanded" cat-elig population) is
+  // exempt from the resource test entirely. A narrower non-cat-elig
+  // population still faces a real $4,500 (elderly/disabled) or $3,000
+  // (other) limit under § 1.5.5(B)(1) — same blanket-`true`-for-the-BBCE-
+  // majority-population simplification this file's other BBCE states
+  // already use.
+  //
+  // sua_by_tier — a genuine STRUCTURAL departure this build discloses
+  // rather than papers over: § 1.5.7(C) defines only a SINGLE combined
+  // Standard Utility Allowance ($844/mo, current FFY2026, bundling
+  // heating/cooling, cooking fuel, non-heat electricity/gas, one phone
+  // line, water, sewerage, and trash) plus a Standard Telephone Allowance
+  // ($26/mo) for a phone-only household not SUA-eligible. There is NO
+  // second published standard for a household with non-heat utility costs
+  // but no SUA eligibility — Rhode Island's own rule directs that
+  // household to its ACTUAL non-heat utility expenses instead, a mechanism
+  // this engine's Facts shape doesn't carry (same class of gap as VA's own
+  // disclosed "no LUA-equivalent standard exists" finding in this file).
+  // HCSUA -> $844; phone -> $26; LUA -> $0, NEVER FABRICATED — following
+  // VA's established precedent for this exact gap shape rather than
+  // inventing a number RI's own rule doesn't publish. This UNDERSTATES
+  // (never overstates) the shelter deduction for the small subset of RI
+  // households on the LUA tier — the conservative direction, and it never
+  // flips a verdict (BBCE-conferred households skip the net test
+  // regardless of the exact SUA figure fed in; only elderly/disabled
+  // households have an uncapped shelter deduction sensitive to this axis,
+  // and none of the 92 profiles' LUA-tier households are also E/D at a
+  // margin where this changes the verdict — independently verified).
+  //
+  // allotment_tier: "48" — no Rhode Island-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT, confirmed as a
+  // genuine minority position (most states in this file carry a
+  // "modified" ban, not a full opt-out) via direct primary-source read
+  // rather than accepted at face value: R.I. Gen. Laws § 40-6-8(d) states
+  // in full, "No person shall be ineligible for food stamp benefits due
+  // solely to the restricted eligibility rules otherwise imposed by
+  // § 115(a)(2) of [PRWORA] ... 21 U.S.C. § 862a(a)(2)." Cross-checked
+  // against RI's own 268-page SNAP regulation (218-RICR-20-00-1) in full,
+  // which contains NO drug-felony-conviction disqualification provision
+  // anywhere — corroboration by absence, and explicitly distinguished from
+  // RI's SEPARATE SNAP-benefits-for-controlled-substances trafficking
+  // penalty (a program-integrity rule, not a drug-felony-conviction ban,
+  // and not what the `drug_felony` tag in gates/disqualifications.ts
+  // models).
+  //
+  // abawd_waiver_avail: false — an affirmatively sourced, currently-zero
+  // finding: USDA FNS/FNA's own ABAWD Time Limit Waivers FY 2025-2029
+  // index lists RI's most recent posted entry as FY2025 (dated
+  // 03/12/2025), no FY2026 entry — consistent with no currently active
+  // area-wide ABAWD waiver anywhere in the state. DISCLOSED, not
+  // conflated: RI DELAYED its own OBBBA ABAWD work-requirement rollout to
+  // March 1, 2026 (later than the federal 11/1/2025 effective date) — an
+  // IMPLEMENTATION-TIMING choice about when the countable-months clock
+  // starts for newly-affected ABAWDs, not a geographic area waiver; this
+  // engine's `abawd.ts` already has its own OBBBA_EFFECTIVE constant
+  // (2025-11-01) governing the federal exemption-removal date nationwide,
+  // and RI's own later rollout date has no state-specific axis in this
+  // schema to hold it (a disclosed, immaterial gap: none of the 92
+  // profiles' ABAWD dates fall in the 11/1/2025-3/1/2026 window this would
+  // affect). No county-level lookup needed or added (waiverCountiesFor
+  // only covers CA/MA today; a uniform-statewide-zero-waiver answer has no
+  // county-level nuance for a lookup to represent).
+  //
+  // rmp_operated: true — RI DOES operate a Restaurant Meals Program (DHS's
+  // own Online Purchasing & Restaurant Meals Program page), the first
+  // `true` value in this batch tier and a genuine minority position among
+  // this file's other blank-slate builds (NC/VA/MO/TN/MD/CO/SC/LA/OK/ME
+  // all `false`) — but a narrow one, limited to homeless and some
+  // elderly/disabled households at nine participating Subway restaurants
+  // only, disclosed for accuracy even though `rmp_operated` has no
+  // consumer anywhere in verdict.ts or benefit-calc.ts (grep-confirmed,
+  // same as every other state's entry in this file — this axis is purely
+  // documentary today).
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824/#824-style, newly confirmed
+  // present for Rhode Island: the LUA/non-heat-utility-actual-expense
+  // mechanism (see sua_by_tier above) and the 2-vehicle-per-household cap
+  // (218-RICR-20-00-1 § 1.5.5(D)(1)(d)(AA), narrower than this file's
+  // uncapped-per-adult states) have no Facts-level axis to hold them —
+  // immaterial regardless, since `asset_waiver: true` means the resource
+  // test (where vehicle-counting would matter) never reaches the BBCE-
+  // majority population this axis governs, and none of the 92 profiles
+  // depend on RI's specific vehicle-cap figure.
+  //
+  // Oracle: RI's closest structural axis-twin among all 30 already-
+  // registered states, on every VERDICT-consequential axis (bbce,
+  // bbce_threshold_pct, bbce_fpl_basis, asset_waiver, abawd_waiver_avail,
+  // allotment_tier — the axes gates/income-tests.ts, gates/asset-test.ts,
+  // and gates/abawd.ts actually read), is NEW JERSEY — a 5/6 match (bbce:
+  // true, bbce_threshold_pct: 185, bbce_fpl_basis: "federal_fiscal_year",
+  // asset_waiver: true, allotment_tier: "48"), differing only in
+  // abawd_waiver_avail (NJ holds a real Cape May/Camden waiver; RI's own
+  // corpus found RI holds NO current waiver — an accurate divergence, not
+  // a mismatch to paper over) and, immaterially since it never gates
+  // anything, drug_felony_ban/rmp_operated. Built a fresh, independent
+  // Python
+  // calculator (not derived from engine output, per #636) directly from
+  // verdict.ts/benefit-calc.ts/gates/{income-tests,asset-test,abawd,
+  // student,composition,immigration,disqualifications,categorical}.ts/
+  // facts.ts/constants/federal-tables.ts's own read source, mirroring
+  // every gate and the benefit-calc formula exactly, including
+  // decimal.ts's half-up (roundDollar) and floor (floorDollar) rounding
+  // conventions — the SAME calculator built and cross-validated for ME
+  // above, reused/parameterized for RI per this batch's authorization.
+  // Cross-validated BEFORE trusting it for RI, on TWO twins since NJ's own
+  // null-SUA gap means NJ alone cannot exercise the full benefit-calc
+  // pathway: 34/34 exact match (verdict-only, matching NJ's own
+  // null-SUA-blocked shape) reproducing NJ's already-graded oracle under
+  // NJ's own StatePolicy params for the verdict-consequential-axis match,
+  // PLUS 129/129 exact match (verdict AND benefit, all 92 base profiles
+  // plus all 37 variant rows) reproducing WI's already-graded oracle under
+  // WI's own params to exercise the full benefit-calc pathway with a real
+  // SUA figure. Also checked all 37 rows across the 18 non-
+  // expected_by_state variant profiles directly under RI's own params for
+  // an RI-specific verdict_by_state override — found ZERO divergence from
+  // the shared default verdict. Authored all 92 expected_by_state.RI
+  // entries: 79 APPROVE / 13 DENY — ONE MORE deny than ME's/MT's 80/12,
+  // and independently confirmed to be exactly the same profile NJ's own
+  // build already found for the identical reason: `MX4-bbce-max-income-
+  // with-any-benefit` ($4,440 gross HH3) clears every 200%-BBCE state's
+  // threshold in this file but falls $2 short of RI's own 185% ceiling
+  // ($4,109 HH3) — confirmed by direct diff against ME's DENY set (12/12
+  // identical, MX4 the sole addition), an independent corroboration the
+  // divergence is a real policy consequence of the lower threshold, not a
+  // calculator bug.
+  //
+  // Verification: `/profile-simulation state=RI` — 129/129 PASS, 0 FAIL, 0
+  // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA/OK/ME's bar, not PA's/NJ's/TN's/MN's SKIP-heavy
+  // shape — RI's real, current SUA figures mean it did not need PA's/NJ's/
+  // TN's null-SUA fallback despite sharing NJ's 185% threshold). Every
+  // other registered state's harness run reconfirmed unchanged from its
+  // documented baseline: CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA/OK/ME all 129/0/0; NY 127/2/0; AZ 128/1/0; MN
+  // 0/0/129; PA/NJ/TN all 34/0/95 — every one identical to its pre-RI
+  // documented baseline, zero regressions. `tsc --noEmit -p packages/
+  // snap-rules` clean, 323/323 snap-rules tests pass (0 new — a schema-
+  // conformant pure addition needed no new unit tests), 44/47 profile-
+  // harness tests pass (3 pre-existing skips). Did not touch
+  // packages/demeter-engine (RI's corpus was already complete and out of
+  // scope) or any other state's StatePolicy/oracle coverage. No new GitHub
+  // issue filed — every gap found (the two-tier E/D-vs-general BBCE
+  // structure this engine's own architecture already renders moot for E/D
+  // households, the LUA/actual-non-heat-expense Facts-shape gap, the
+  // 2-vehicle-cap gap, the OBBBA-rollout-delay timing gap) is either a
+  // per-state disclosed gap of an already-documented class (#824-style) or
+  // a case where this build confirmed the engine's EXISTING mechanics
+  // already produce the correct behavior without needing a new axis, per
+  // this task's own instruction.
+  RI: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "RI",
+      label: "Rhode Island / DHS",
+      bbce: true,
+      bbce_threshold_pct: 185,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("844"),
+        LUA: new Decimal("0"),
+        phone: new Decimal("26"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: true,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
