@@ -3441,6 +3441,162 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Utah — 2nd batch-tier state (§6 step 6, second of CT/UT/IA/AR). Built
+  // UT's StatePolicy entry AND full 92-profile oracle coverage from
+  // scratch (UT had neither before this PR), translating UT's already-
+  // merged Demeter corpus pack (packages/demeter-engine/src/states/ut/,
+  // PROVENANCE.md + supplements.json, built 2026-08-12) into the engine's
+  // stricter typed shape per §5's process.
+  //
+  // bbce: false / bbce_threshold_pct: undefined / bbce_fpl_basis: null —
+  // CONFIRMED, not overclaimed: DWS's own current eligibility-manual
+  // Table 2 (SNAP Monthly Income Limits, effective 10/1/2025, FFY2026
+  // figures) publishes only the plain federal 130%/100% FPL gross/net
+  // tests, and Utah Admin. Code R986-900-902's own enumerated list of
+  // adopted federal options does NOT include a BBCE election — a direct
+  // primary-source confirmation of a claim several secondary SNAP-
+  // calculator sites already make about Utah, not a correction. Table 2's
+  // separate 165% "Elderly/Disabled" column is a household-COMPOSITION
+  // determination mechanic (same family as this file's other states'
+  // elderly-separate-household provisions), not a general income-limit
+  // relaxation — correctly NOT encoded as bbce here.
+  //
+  // asset_waiver: false — because Utah has not adopted BBCE, the ordinary
+  // federal $3,000/$4,500 resource test applies to the general run of Utah
+  // SNAP applicants (unlike most other states in this file, where BBCE/ECE
+  // effectively waives it for the majority). Ordinary categorical
+  // eligibility (FEP/SSI recipients) still applies as a plain federal
+  // mechanism, independent of this axis, via `facts.cat_elig` in
+  // categorical.ts.
+  //
+  // sua_by_tier: null — a genuine, disclosed DISCOVERABILITY gap, same
+  // discipline as PA's/MN's/NJ's/TN's null entries, NOT a guess: Utah
+  // Admin. Code R986-900-902(1)(d) directly confirms Utah's three utility
+  // standards exist, are mandatory, and are "updated annually" — but
+  // states plainly they are "available upon request," meaning DWS does
+  // not appear to publish them on any public page the corpus pack's
+  // systematic search located. The corpus pack explicitly declined to
+  // reuse a stale $376 figure (effective 10/1/2021) several secondary
+  // aggregators still repeat; this entry does the same, staying null
+  // rather than fabricating a current number.
+  //
+  // allotment_tier: "48" — no Utah-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT, read directly from
+  // Utah Code § 35A-3-311(2)(a)-(b) (le.utah.gov, current version
+  // effective 5/6/2026): "The State exercises the opt out provision in
+  // Section 115 of [PRWORA]," and (2)(b) confirms DWS "may provide cash
+  // assistance and SNAP benefits" to a person convicted of a qualifying
+  // controlled-substance felony. A precise scoping nuance the corpus pack
+  // flagged but did not let change this classification: subsection (2)(c)'s
+  // treatment condition is textually scoped to "cash assistance under this
+  // part" only, not repeating (2)(b)'s "and SNAP benefits" — read as
+  // meaning the treatment condition applies to FEP cash assistance, not
+  // SNAP, so the SNAP opt-out itself remains unconditional ("none," not
+  // "modified"). Disclosed, not silently resolved: the corpus pack itself
+  // flags this scoping question as worth independent DWS confirmation.
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero
+  // finding: DWS's own current Policy 342 (SNAP Work Requirements,
+  // effective 5/1/2026) already states the correct post-OBBBA 18-64 ABAWD
+  // age range directly (a genuine positive contrast with several other
+  // states this roster's corpus packs found stale on this exact fact), and
+  // USDA FNA's Time Limit (ABAWD) Waivers FY2025-2029 state-response index
+  // confirms Utah is absent — no statewide or county-level waiver active,
+  // including Utah's rural/frontier counties, specifically checked given
+  // Utah's urban/rural mix. Utah Admin. Code R986-900-902(1)(b) separately
+  // confirms DWS does not offer an ABAWD workfare alternative-activity
+  // track. No county-level lookup needed or added — a real "nowhere" has
+  // no county-level nuance to represent, the same MA/VA/MO/TN/MD/CO/SC/LA
+  // uniform-statewide-zero-waiver shape this file already uses.
+  //
+  // rmp_operated: false — Utah is absent from USDA FNA's own current
+  // Restaurant Meals Program state list (direct fetch, clean HTTP 200).
+  //
+  // Not representable in this schema, and not silently dropped: (a) Utah's
+  // active federal soft-drink purchase-restriction demonstration (H.B. 403,
+  // USDA-approved 5/16/2025, effective 1/1/2026 for two years) — the first
+  // SNAP-eligible-FOOD restriction this roster's engine-build states have
+  // found; no engine axis exists for eligible-goods restrictions at all
+  // (this engine determines eligibility/benefit amount, not the purchase
+  // list), zero effect on any oracle profile, noted for a future
+  // re-verification pass before the waiver's ~2028 expiration; (b) Utah's
+  // vehicle-exclusion election (R986-900-902(1)(h), TANF vehicle rules
+  // "in conjunction with" 7 CFR 273.8) — a genuine, checked-for CORRECTION
+  // of a secondary-source claim that Utah counts vehicle value because it
+  // lacks BBCE; `Facts.assets` has no per-asset-type breakdown, the same
+  // pre-existing gap NJ's/VA's entries already disclose (#824), not
+  // re-filed — immaterial regardless, since none of the 92 oracle profiles
+  // model a vehicle-specific resource figure separate from the flat
+  // `assets` total.
+  //
+  // Oracle: UT's closest structural axis-twin among all 29 already-
+  // registered states (never AL/KY/OK, none merged yet) is KANSAS —
+  // matching ALL non-SUA comparison axes: bbce: false, asset_waiver:
+  // false, allotment_tier: "48", sua_by_tier: null (the ONLY other
+  // null-SUA state in this file that is ALSO non-BBCE — every other
+  // null-SUA state, PA/NJ/TN/MN, is BBCE-200). Built the same fresh,
+  // independent Python calculator used for CT above (not derived from
+  // engine output, per #636), extended to reproduce the composer's exact
+  // null-SUA SKIP-before-any-gate behavior. Cross-validated BEFORE
+  // trusting it for UT: 92/92 exact match (verdict AND benefit)
+  // reproducing KS's already-graded oracle under KS's own StatePolicy
+  // params, PLUS all 37 non-expected_by_state variant rows (0 mismatches).
+  // Because KS carries a REAL sua_by_tier (unlike UT), this cross-
+  // validation exercised the full benefit-calc pathway before UT's own
+  // null-SUA restriction was applied as an isolated, well-understood
+  // additive change — the same "validate the calculator broadly, then
+  // apply the state-specific restriction" order TN's entry used against
+  // PA/NJ.
+  //
+  // Of the 92 base profiles: 34 have `sua_tier === "none"` or
+  // `homeless_deduction` and get a real computed verdict AND benefit; the
+  // other 58 are blocked by the null-SUA gap (composer SKIPs before any
+  // gate runs, same as PA/NJ/TN/MN) and get an independently-computed
+  // verdict only (benefit: null), proven SUA-invariant via a 31-point
+  // $0-$1,500 sweep per profile (step $50) — 0 of the 58 were genuinely
+  // indeterminate. UT's computed DENY set (22 of 92) is IDENTICAL to KS's
+  // (zero divergence in either direction) — both are non-BBCE, real-
+  // asset-test states with the same federal 130%/100% income screen, so
+  // every income- and asset-driven denial lines up exactly. Also checked
+  // all 37 rows across the 18 non-expected_by_state variant profiles for a
+  // UT-specific verdict_by_state override: found TWO real divergences —
+  // both variants of `M23-variable-gig-income-anticipation` ("averaged"
+  // $1,800 and "recent_high_month" $2,200 gross HH1) clear higher-
+  // threshold BBCE states' screens but fail UT's federal 130% gross test
+  // ($1,696), the same reason KS/OH/GA/IN/MO already fail both — authored
+  // "UT": "DENY" into both variants' verdict_by_state blocks, matching
+  // KS's own pattern exactly. ONE genuinely indeterminate variant row
+  // found and left unauthored (no `UT` key in verdict_by_state, silently
+  // falls back to the shared default, harmless since the row SKIPs
+  // regardless on the null-SUA gap): `P58-elderly-retiree-tips-over-net-
+  // limit`'s `above_net_limit` variant — the same already-silently-
+  // indeterminate case PA's/NJ's/TN's merged oracles all share, since
+  // P58's SUA tier is non-"none" for every null-SUA state; UT simply
+  // inherits the same pre-existing pattern, not a new finding.
+  //
+  // Verification: `/profile-simulation state=UT` — 34 PASS / 0 FAIL / 95
+  // SKIP (of 129), every SKIP attributable to the documented null-SUA gap
+  // (the 58 blocked base rows plus the 37 variant rows, all of which carry
+  // a non-"none" SUA tier), matching PA's/NJ's/TN's exact 34/0/95 shape.
+  UT: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "UT",
+      label: "Utah / DWS",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
