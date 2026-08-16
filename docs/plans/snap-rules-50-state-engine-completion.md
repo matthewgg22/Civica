@@ -141,19 +141,42 @@ else depends on it sooner.
 
 ## 4. A schema gap the plan needs to name up front
 
-`AllotmentTier` (`packages/snap-rules/src/constants/states.ts`) is currently a closed union
-of exactly `"48" | "AK"`. **HI and Guam both need a real elevated-allotment tier the schema
-cannot express today** — HI has its own maximum-allotment table under federal law, same
-family as AK's; Guam's corpus pack (batch 5) confirms its benefit figures are genuinely
-territory-elevated even though its *income* limits track the 48-state table. USVI may or
-may not need its own tier — unconfirmed, check during that state's build.
+**STATUS: DONE for VI. HI/GU remain open, separate future work (§5).**
 
-This means HI and GU (and possibly VI) are **not** simple "copy the pattern, fill in
-values" builds like the other 33 — they need a small `AllotmentTier` type extension first
-(and the max-allotment lookup wired to it), which is itself a schema change and should be
-scoped, reviewed, and gone-ahead-on as its own small step before those three states'
-constants land. Doing this quietly as a side effect of one state's PR would bury a
-schema decision inside a data PR — flag it as its own commit/PR instead.
+`AllotmentTier` (`packages/snap-rules/src/constants/states.ts`) was originally a closed
+union of exactly `"48" | "AK"`. **HI and Guam both need a real elevated-allotment tier the
+schema cannot express today** — HI has its own maximum-allotment table under federal law,
+same family as AK's; Guam's corpus pack (batch 5) confirms its benefit figures are
+genuinely territory-elevated even though its *income* limits track the 48-state table. USVI
+was flagged as "may or may not need its own tier — unconfirmed, check during that state's
+build"; VI's own batch-tier build (§6) CONFIRMED it does, with real sourced numbers,
+filed as issue #858.
+
+This means HI, GU, and VI are **not** simple "copy the pattern, fill in values" builds like
+the other 33 — they need a small `AllotmentTier` type extension first (and the max-allotment
+lookup wired to it), which is itself a schema change and should be scoped, reviewed, and
+gone-ahead-on as its own small step before those three states' constants land. Doing this
+quietly as a side effect of one state's PR would bury a schema decision inside a data PR —
+flag it as its own commit/PR instead.
+
+**Resolved for VI** (schema-extension PR, closes #858): `AllotmentTier` widened to
+`"48" | "AK" | "VI"`; `packages/snap-rules/src/constants/vi-allotment-table.ts` (new module,
+mirrors `ak-allotment-zones.ts`'s pattern but flat — VI's real table has no zone/county axis,
+unlike AK's) carries VI's real max-allotment + minimum-benefit figures, sourced verbatim
+from #858's own quoted USVI DHS FY2026 table; `federal-tables.ts`'s `maxAllotmentFor`/
+`minimumBenefitFor` both gained a `state === "VI"` branch mirroring AK's existing one. VI's
+`StatePolicy.allotment_tier` changed from `"48"` to `"VI"`, and the ~34 real-engine-gradeable
+rows in `expected_by_state.VI` (v0.6.json) had their `benefit` backfilled from `null` to
+VI's real computed dollar figure (fresh independent Python calculator, #636 methodology,
+zero mismatches against the engine's own post-fix output, cross-validated against #858's
+quoted table). VI's own $586 maximum shelter deduction (vs. federal FY26's $744) remains a
+DISCLOSED, UNFIXED gap — `shelterCapFor()` has no per-state override slot at all (not even
+for AK); #858 itself frames this as the non-material side of the gap since it under-caps
+rather than over-caps. HI and GU still have **no** `StatePolicy` entry at all and were NOT
+built in this PR — they remain entirely separate future work (§5), each needing its own
+go-ahead, and will need their own `"HI"`/`"GU"` `AllotmentTier` values (plus their own
+`hi-allotment-table.ts`/`gu-allotment-table.ts` modules) added when actually built, not
+before.
 
 ## 5. Per-state build process (mirrors the corpus pipeline; different verification step)
 
@@ -229,8 +252,16 @@ exists and only oracle authoring is outstanding):
    batch-tier build confirmed it needs this exact extension too (#858), so this step now
    unblocks HI/GU/VI together, not just HI/GU — but VI's `StatePolicy`+oracle are already
    merged (verdict-only grading, `benefit: null`, per the note above), so the schema step
-   only needs to backfill VI's real benefit dollars, not build VI from scratch.
-5. HI, GU (now unblocked, pending step 4; VI already built, needs only the backfill above)
+   only needs to backfill VI's real benefit dollars, not build VI from scratch. **DONE for
+   VI** (see §4's own updated status and this doc's VI-schema-fix execution-log entry
+   below): `AllotmentTier` widened to include `"VI"`, VI's `allotment_tier` changed to
+   `"VI"`, and its 34 real-engine-gradeable oracle rows backfilled with real benefit
+   dollars. HI/GU's own tier values (`"HI"`/`"GU"`) were deliberately NOT added — no table,
+   no consumer, no `StatePolicy` entry to feed — that remains step 5's own separate work.
+5. HI, GU (now unblocked on the schema mechanism per step 4's VI fix — the same
+   `AllotmentTier`-widening pattern is proven; still need their own `"HI"`/`"GU"` tier
+   values, their own allotment-table modules, and their own `StatePolicy` entries built
+   from scratch, each requiring its own go-ahead)
 6. Batch tier (<4M population, N≤3 per batch): ~~CT, UT, IA, AR~~ (done — first batch-tier
    segment, see the execution log's CT/UT/IA/AR entries below) / ~~MS, NM, NE~~ (done —
    second batch-tier segment, see the execution log's MS/NM/NE entries below) /
@@ -3418,3 +3449,83 @@ all of it.
   differently-shaped null-SUA gap (MN has no `sua_tier: "none"`-reachable rows the way
   PA/NJ/TN/VI's 34-row subset does, so it can't get even a verdict-only partial grade the
   way this build did). PR TBD, awaiting merge go-ahead.
+
+- **`AllotmentTier` schema extension for VI (closes #858)** — the explicitly-authorized §4
+  schema step, scoped to VI only (HI/GU deliberately untouched, §5 remains their own
+  separate future go-ahead). Mirrors #814's AK fix exactly in shape, but the underlying
+  table is structurally simpler: VI's real max-allotment table (USVI DHS's own FY2026
+  "Monthly Allotments and Deductions" PDF, quoted verbatim in #858) is a single FLAT
+  national-territory table with NO urban/rural zone axis at all — confirmed by reading the
+  source document in full before assuming otherwise, per the task's own instruction.
+
+  **Mechanism**: `AllotmentTier` (`packages/snap-rules/src/constants/states.ts`) widened
+  from `"48" | "AK"` to `"48" | "AK" | "VI"`. New module
+  `packages/snap-rules/src/constants/vi-allotment-table.ts` carries VI's real max-allotment
+  table (HH1-8: $383/$703/$1009/$1278/$1521/$1827/$2019/$2300, +$281/additional) and its
+  real minimum-benefit floor ($31 for a 1-2 person HH) — both verbatim from #858's own
+  quoted table. `federal-tables.ts`'s `maxAllotmentFor(size, asOf, state?, countyFips?)` and
+  `minimumBenefitFor(asOf, state?, countyFips?)` both gained a `state === "VI"` branch
+  (sitting right next to the pre-existing `state === "AK"` branch in the same two
+  functions), resolving straight to the flat table with `countyFips` accepted-but-unused
+  (unlike AK's zone resolution, which the VI branch does not touch or alter).
+  `benefit-calc.ts`'s two call sites needed no change — `state`/`facts.county_fips` were
+  already passed through generically to both functions since #814.
+
+  VI's own lower Maximum Shelter Deduction ($586 vs. federal FY26's $744) remains a
+  DISCLOSED, UNFIXED gap, matching #858's own framing that it is the non-material side of
+  the finding (it under-caps, working in the household's favor, rather than over-caps) —
+  `shelterCapFor()` has no per-state override slot at all, not even for AK, and extending it
+  is a separate, larger schema change out of scope here.
+
+  **`StatePolicy` update**: VI's entry in `states.ts` changed `allotment_tier` from `"48"`
+  (the only value the old schema allowed, CONFIRMED WRONG per #858) to `"VI"`. Doc-comment
+  updated to mark #858 RESOLVED rather than merely disclosed.
+
+  **Oracle backfill**: rebuilt a fresh, independent Python calculator (#636 methodology) —
+  NOT derived from engine output — implementing `benefit-calc.ts`'s own published math
+  summary (EID, standard deduction, medical floor, shelter excess/cap, 30%-of-net formula)
+  directly from each of the 34 real-engine-gradeable profiles' RAW facts in
+  `v0.6.json` (income lines, household composition, shelter, deductions), using VI's real
+  max-allotment table above. Cross-validated against the engine's own post-fix
+  `actual_benefit` trace for all 34 rows: **0 mismatches**. `expected_by_state.VI`'s 34
+  `benefit: null` entries (the ~34 of 92 base profiles not blocked by VI's separate,
+  unrelated null-`sua_by_tier` gap) replaced with these real, cross-validated dollar
+  figures; the other 58 base + 37 variant rows remain `null`/SKIP, untouched — that gap is
+  a different, still-open finding.
+
+  **Before/after examples** (illustrative; "OLD" = what the pre-fix `"48"`-tier engine
+  would have computed, reconstructed from the same net-income figures against the
+  48-contiguous table — VI never actually shipped these wrong numbers to `v0.6.json`
+  because they were `null` the whole time, but this is the magnitude of the bug the null
+  was protecting against):
+
+  | Profile | HH size | Net income | OLD (48-tier, wrong) | NEW (VI real) | Delta |
+  |---|---|---|---|---|---|
+  | A05 (homeless, zero income) | 1 | $0 | $298 | $383 | +28.5% |
+  | H11 (shelter-sweep, zero net) | 3 | $0 | $785 | $1,009 | +28.5% |
+  | M11 (low income, no shelter) | 2 | $1,231 | $177 | $334 | +88.7% |
+  | M03 (gross just under 130%) | 3 | $2,031 | $176 | $400 | +127.3% |
+  | P57 (roomer, shared housing) | 1 | $317 | $203 | $288 | +41.9% |
+
+  (The percentage deltas grow larger than the ~28.5% headline figure at higher net income
+  because the 30%-of-net offset is subtracted from a larger base — the underlying max-
+  allotment table itself is a uniform ~28.5-28.9% higher at every household size, exactly
+  matching #858's own table.)
+
+  **Verification**: `/profile-simulation state=VI` — 34 PASS / 0 FAIL / 95 SKIP, IDENTICAL
+  shape to before (verdicts unaffected, `allotment_tier` only feeds `benefit-calc.ts`, never
+  a gate), now with real dollar benefits instead of nulls on the 34 PASS rows. Full sweep of
+  all 51 registered jurisdictions (CA/WA/TX/NY/GA/MI/IL/FL/MA/NV/AZ/OR/WI/MN/OH/KS/PA/AK/
+  NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA/OK/ME/RI/MT/AL/KY/CT/UT/IA/AR/MS/NM/NE/ID/WV/NH/DE/SD/ND/VT/
+  WY/DC/VI) run byte-for-byte before and after the fix — **identical totals across every
+  single one**, including AK (129/0/0, unaffected despite its branch sitting right next to
+  VI's new branch in the same two functions) and the pre-known partial-fail states (NY
+  127/2/0, AZ 128/1/0, CT 128/1/0) and the null-SUA-gated states (PA/NJ/TN/AL/UT/MS/ID/WV/
+  DE/DC all 34/0/95, MN 0/0/129). `tsc --noEmit -p packages/snap-rules` clean. `pnpm test`
+  (snap-rules): 331/331 passing (8 new — 5 for `maxAllotmentFor`'s VI branch, 3 for
+  `minimumBenefitFor`'s, mirroring `ak-allotment-zones.test.ts`'s coverage of AK's branch,
+  added in `src/constants/federal-tables.test.ts` alongside the existing AK tests since this
+  is a genuine new engine mechanism, not just a per-state data addition). `pnpm test`
+  (profile-harness): 44/47 passing (3 pre-existing skips, unchanged). Did not touch HI's or
+  GU's `StatePolicy` (neither exists) or any other state's `StatePolicy`/oracle coverage.
+  PR TBD, awaiting merge go-ahead.

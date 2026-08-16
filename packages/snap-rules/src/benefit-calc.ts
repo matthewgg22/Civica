@@ -179,9 +179,10 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
   // Benefit calc.
   const thirtyPctNet = net.mul(0.30).roundDollar();
   // #814: AK's real max allotment is zone-specific (Urban/Rural I/Rural
-  // II), meaningfully higher than the 48-contiguous table. Passing
-  // `state`/`facts.county_fips` here is a no-op for every other state —
-  // maxAllotmentFor only branches on state === "AK".
+  // II), meaningfully higher than the 48-contiguous table. #858: VI's real
+  // max allotment is also elevated (a single flat table, no zones).
+  // Passing `state`/`facts.county_fips` here is a no-op for every other
+  // state — maxAllotmentFor only branches on state === "AK" or "VI".
   const maxAllot = maxAllotmentFor(size, asOf, state, facts.county_fips);
   let benefit = maxAllot.sub(thirtyPctNet);
   if (benefit.lt(ZERO)) benefit = ZERO;
@@ -192,7 +193,9 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
   // BBCE-conferred HHs can land at benefit=0 by math and still be
   // eligible; the floor still applies.
   // #814: AK's own minimum-benefit floor is also zone-specific and higher
-  // than the $24 FY26 federal default — same no-op-for-other-states shape.
+  // than the $24 FY26 federal default. #858: VI's own minimum-benefit
+  // floor is elevated too (single flat figure, no zones) — same
+  // no-op-for-other-states shape.
   const minBenefit = minimumBenefitFor(asOf, state, facts.county_fips);
   if (size <= 2 && benefit.gte(ZERO) && benefit.lt(minBenefit)) {
     benefit = minBenefit;

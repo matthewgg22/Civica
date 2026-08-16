@@ -131,7 +131,18 @@
 import { Decimal } from "../decimal";
 
 export type BBCEFPLBasis = "federal_fiscal_year" | "calendar_year" | null;
-export type AllotmentTier = "48" | "AK";
+// #858: widened from "48" | "AK" to add "VI" — VI's own real max-allotment
+// table is genuinely elevated above the 48-contiguous default, the same
+// class of gap AK's "AK" tier already models (packages/snap-rules/src/
+// constants/vi-allotment-table.ts + federal-tables.ts's maxAllotmentFor/
+// minimumBenefitFor state==="VI" branches). HI and GU are the SAME class
+// of gap (plan doc §4) but are NOT added here — neither has a StatePolicy
+// entry yet, and adding a tier value with no table behind it and no
+// consumer would be exactly the kind of unused-surface-area drift this
+// file's own discipline avoids elsewhere. Add "HI"/"GU" (plus their own
+// {hi,gu}-allotment-table.ts modules and federal-tables.ts branches) when
+// those states are actually built (plan doc §5), not before.
+export type AllotmentTier = "48" | "AK" | "VI";
 
 // Issue #805: a plain boolean can't express a real drug-felony policy —
 // most states in this file that carry `false` are a genuine "modified"
@@ -7654,26 +7665,36 @@ const STATES: Record<string, StatePolicy[]> = {
   // "real-figure-the-schema-can't-hold" shape. Same for VI's own $31
   // minimum allotment for 1-2 person HHs vs. the federal $24 default.)
   //
-  // allotment_tier: "48" — CONFIRMED WRONG, not merely "illustrative,"
-  // forced by the schema's closed `"48" | "AK"` union. VI's own FY2026
-  // table (fetched fresh this build) publishes a REAL Maximum Allotment
-  // column that is ~28.5-28.9% HIGHER than the 48-contiguous table at
-  // EVERY household size (VI $383/$703/$1009/$1278/$1521/$1827/$2019/
-  // $2300, +$281/additional vs. federal-tables.ts's FY26
+  // allotment_tier: "VI" — FIXED (was "48", CONFIRMED WRONG, forced by the
+  // schema's then-closed `"48" | "AK"` union). VI's own FY2026 table
+  // (fetched fresh during VI's original build) publishes a REAL Maximum
+  // Allotment column that is ~28.5-28.9% HIGHER than the 48-contiguous
+  // table at EVERY household size (VI $383/$703/$1009/$1278/$1521/$1827/
+  // $2019/$2300, +$281/additional vs. federal-tables.ts's FY26
   // $298/$546/$785/$994/$1183/$1421/$1571/$1789, +$218/additional) — VI's
   // own corpus pack independently corroborates this is structural, not a
   // fluke: "USVI is one of only four SNAP jurisdictions (with Alaska,
   // Hawaii, and Guam) that receives a COLA-adjusted income/deduction table
   // structurally different from the 48 contiguous states plus DC." Filed
   // as issue #858 (same class as this file's already-known HI/GU
-  // AllotmentTier gap, plan doc §4 — now confirmed with real VI numbers,
-  // not just suspected). Per that issue and this file's disclosure
-  // discipline: `benefit: null` is authored for ALL 92
-  // `expected_by_state.VI` oracle rows, INCLUDING the ~34 the null-SUA gap
-  // above doesn't otherwise block, so no oracle assertion silently locks
-  // in the ~28%-understated dollar figure this schema currently forces.
-  // Verdicts are unaffected — `allotment_tier` only feeds
-  // `benefit-calc.ts`, never a gate.
+  // AllotmentTier gap, plan doc §4 — confirmed with real VI numbers, not
+  // just suspected) and now RESOLVED for VI by the schema-extension PR
+  // that closes #858: `AllotmentTier` widened to `"48" | "AK" | "VI"`,
+  // packages/snap-rules/src/constants/vi-allotment-table.ts carries VI's
+  // real flat (non-zone) max-allotment + minimum-benefit table, and
+  // federal-tables.ts's `maxAllotmentFor`/`minimumBenefitFor` both gained a
+  // `state === "VI"` branch mirroring AK's existing one. VI's own $31
+  // minimum allotment (vs. the federal $24 default) is fixed by that same
+  // PR; VI's own lower $586 maximum shelter deduction (vs. federal's $744
+  // `shelter_cap`) remains a DISCLOSED, UNFIXED gap — `shelterCapFor()` has
+  // no per-state override slot at all (not even for AK), and #858 itself
+  // frames this as the non-material side of the gap since it under-caps
+  // rather than over-caps. With the fix landed, `benefit` in
+  // `expected_by_state.VI`'s 34 real-engine-gradeable oracle rows carries
+  // VI's real, non-null computed dollar figure instead of `null` — see
+  // this file's oracle-authoring note below for the before/after
+  // reconciliation. Verdicts are unaffected either way — `allotment_tier`
+  // only feeds `benefit-calc.ts`, never a gate.
   //
   // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT per USDA's own
   // 17th-edition State Options Report, which lists VI's "Drug Felony
@@ -7758,19 +7779,19 @@ const STATES: Record<string, StatePolicy[]> = {
   // allotment_tier above — a deliberate, disclosed, gap-driven choice, not
   // an oversight).
   //
-  // Verification: `/profile-simulation state=VI` — 34 PASS / 0 FAIL / 95
-  // SKIP (of 129: 92 base + 37 variant), matching PA's/NJ's/TN's exact
-  // SKIP-heavy shape (though VI's root cause is a COMBINATION of the
-  // null-SUA gap blocking 58+37=95 rows entirely AND the allotment_tier
-  // gap additionally blocking the benefit-dollar assertion on the
-  // remaining 34 — both disclosed above, neither silent). Every other
-  // registered state's harness run reconfirmed unchanged from its
-  // documented baseline. `tsc --noEmit -p packages/snap-rules` clean,
-  // 323/323 snap-rules tests pass (0 new — a schema-conformant pure
-  // addition needed no new unit tests), 44/47 profile-harness tests pass
-  // (3 pre-existing skips). Did not touch `packages/demeter-engine` (VI's
-  // corpus was already complete and out of scope) or any other state's
-  // `StatePolicy`/oracle coverage.
+  // Verification (VI's ORIGINAL build, superseded below): `/profile-
+  // simulation state=VI` — 34 PASS / 0 FAIL / 95 SKIP (of 129: 92 base + 37
+  // variant), matching PA's/NJ's/TN's exact SKIP-heavy shape (though VI's
+  // root cause is a COMBINATION of the null-SUA gap blocking 58+37=95 rows
+  // entirely AND the allotment_tier gap additionally blocking the
+  // benefit-dollar assertion on the remaining 34 — both disclosed above,
+  // neither silent). Every other registered state's harness run
+  // reconfirmed unchanged from its documented baseline. `tsc --noEmit -p
+  // packages/snap-rules` clean, 323/323 snap-rules tests pass (0 new — a
+  // schema-conformant pure addition needed no new unit tests), 44/47
+  // profile-harness tests pass (3 pre-existing skips). Did not touch
+  // `packages/demeter-engine` (VI's corpus was already complete and out of
+  // scope) or any other state's `StatePolicy`/oracle coverage.
   //
   // This is the LAST batch-tier entry (docs/plans/
   // snap-rules-50-state-engine-completion.md §6) — see that doc's own
@@ -7783,6 +7804,23 @@ const STATES: Record<string, StatePolicy[]> = {
   // MN's null SUA additionally has no `sua_tier: "none"`-reachable rows the
   // way PA/NJ/TN/VI's 34-row subset does — a pre-existing, different-shaped
   // gap, not something this build touched).
+  //
+  // ── #858 RESOLVED (schema-extension PR, plan doc §4/§6 step 4) ─────────
+  // `allotment_tier` below changed from "48" to "VI" now that
+  // `AllotmentTier` has been widened and packages/snap-rules/src/constants/
+  // vi-allotment-table.ts + federal-tables.ts's maxAllotmentFor/
+  // minimumBenefitFor carry VI's real table. This did NOT touch VI's
+  // null-`sua_by_tier` gap (a separate, unrelated finding) — the 58 base +
+  // 37 variant rows that gap blocks remain SKIP. It DID backfill the ~34
+  // real-engine-gradeable rows' `benefit` from `null` to VI's real computed
+  // dollar figure in v0.6.json's `expected_by_state.VI` (fresh independent
+  // Python calculator, #636 methodology, re-run WITH VI's real max-
+  // allotment table and cross-validated against #858's own quoted table).
+  // Re-verified: `/profile-simulation state=VI` still 34 PASS / 0 FAIL / 95
+  // SKIP — same shape, now with real dollars instead of nulls on the 34
+  // PASS rows. Zero regressions confirmed across every other registered
+  // state (HI/GU remain unbuilt and untouched — plan doc §5, separate
+  // future go-ahead).
   VI: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
@@ -7794,7 +7832,7 @@ const STATES: Record<string, StatePolicy[]> = {
       bbce_fpl_basis: "federal_fiscal_year",
       asset_waiver: true,
       sua_by_tier: null,
-      allotment_tier: "48",
+      allotment_tier: "VI",
       drug_felony_ban: "none",
       abawd_waiver_avail: false,
       rmp_operated: false,
