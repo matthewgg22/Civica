@@ -10,10 +10,25 @@
 //     BBCE  — CDSS ACIN I-46-25 (FFY 2026 income limits); Santa Clara
 //             County DEBS chart book. Verified live 2026-06-02 at
 //             cdss.ca.gov/Portals/9/Additional-Resources/Letters-and-Notices/ACINs/2025/I-46_25.pdf
-//     SUA   — CDSS ACL 25-68 (FY26 SUA chart). NOTE: ACINs are
-//             informational; ACLs are policy-binding. SUA values MUST
-//             cite the ACL, not the ACIN. Verified live 2026-06-02 at
-//             cdss.ca.gov/Portals/9/Additional-Resources/Letters-and-Notices/ACLs/2025/25-68.pdf
+//     SUA   — CORRECTED (#882, live-verified 2026-08-16): this used to cite
+//             ACL 25-68 on the theory that "ACINs are informational; ACLs
+//             are policy-binding, so SUA values must cite the ACL." Fetched
+//             live: ACL 25-68 (cdss.ca.gov/Portals/9/Additional-Resources/
+//             Letters-and-Notices/ACLs/2025/25-68.pdf, 2025-09-18) contains
+//             NO SUA dollar chart — it's about the SUAS/weatherization-
+//             payment eligibility rule, a different CalFresh topic. The
+//             actual FFY2026 SUA chart (HCSUA $663 / LUA $170 / phone $20)
+//             is published in the SAME COLA notice as the BBCE line above —
+//             CDSS ACIN I-46-25 (2025-09-03) — independently confirmed
+//             against LA County DPSS ePolicy 63-504.39 and the LSNC
+//             regulation summary "CalFresh Cost of Living Adjustment for
+//             Fiscal Year 2026", both of which cite ACIN I-46-25 by name for
+//             these same three figures. The $20 phone value below was
+//             already correct; only the citation was wrong. (packages/
+//             snap-rules/src/sua.ts's separate CA_SUA_FFY2026 constant had
+//             BOTH a wrong value ($44) and a wrong citation — fixed there
+//             too, see #882.)
+//             cdss.ca.gov/Portals/9/Additional-Resources/Letters-and-Notices/ACINs/2025/I-46_25.pdf
 //     RMP   — STATEWIDE per AB 942 (eff. 2019-10-12). Every CA county
 //             must operate RMP; restaurant *availability* still varies
 //             but county *participation* is mandatory. `rmp_operated:

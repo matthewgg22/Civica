@@ -142,98 +142,24 @@ export function formatEngineParams(state: string, asOf: Date): string {
           Math.round((v * pct) / 100),
         ]),
       );
-    // BBCE threshold is per-state. This map is DUPLICATED from snap-rules'
-    // `bbce_threshold_pct` (constants/states.ts) because statePolicyFor is not
-    // exported from that package's public entry, so there is no way to read it
-    // — see the issue linked below for deleting this in favour of the engine's
-    // own value.
-    //
-    // Every value here was read from states.ts, not recalled. The narrow key
-    // type is a deliberate TRIPWIRE, kept: adding a state without adding its
-    // real percentage fails the typecheck instead of printing 200% for a state
-    // that never adopted it. That tripwire has already caught this once (the
-    // hardcoded-200-for-TX bug) and caught it again when this file was widened
-    // from CA/MA to every state with authored math.
-    // IL: 165 mirrors snap-rules' bbce_threshold_pct, which (like GA's 130%
-    // all-adult-E/D sub-screen) only encodes the GENERAL screen — IL's real
-    // 200% screen for households with an elderly/disabled "Qualifying
-    // Member" is not yet modelled here either. Same accepted limitation as
-    // GA's; the full two-tier picture lives in the IL corpus pack's own
-    // income-pathways supplement, which retrieval also surfaces.
-    // NV: 200 is a genuine flat screen (not tiered like IL/GA) — Nevada's
-    // Expanded Categorical Eligibility applies the SAME 200% FPL gross test
-    // to every household, conferred via the "This Is Your Copy" TANF-brochure
-    // page every applicant already receives (E&P MS A-180.2).
-    // AZ: 200 is a genuine flat screen, no tiering — Arizona's Expanded
-    // Categorical Eligibility applies the SAME 200% FPL gross test to every
-    // household, and unlike several other states' TANF-info-brochure
-    // conferral pathway (see the AZ corpus pack's income-pathways
-    // supplement), there is no conferring document at all — it is a pure
-    // income comparison (CNAP FAA5.I.01.B).
-    // OR: 200 is a genuine flat screen — Oregon's Broad-Based Categorical
-    // Eligibility applies the SAME 200% FPL gross test to every household,
-    // conferred via the "Information and Referral Services" pamphlet every
-    // applicant already receives (OAR 461-135-0505(2)(a)(C)), the same
-    // conferral-vehicle family as NV's TANF brochure.
-    // WI: 200 mirrors snap-rules' bbce_threshold_pct for standard households,
-    // conferred via a "Job Center of Wisconsin" services notice (FSH 4.2.1) —
-    // the same conferral-vehicle family as NV/OR. WI's EBD households with
-    // gross income OVER 200% get an even more generous pathway (NO gross
-    // limit at all, only a 100% net test) not modelled here — same accepted
-    // limitation as IL's and GA's asymmetric-tier gaps; the full picture
-    // lives in the WI corpus pack's own income-pathways supplement.
-    // MN: 200 mirrors snap-rules' bbce_threshold_pct, conferred via a
-    // Domestic Violence Information Brochure (CM 0013.06) — a distinct
-    // conferral document from every other state's TANF/services-notice
-    // pathway. MN's BBCE also exempts units from the NET income test (not
-    // just the asset test), and its own EBD-over-200% exception (no gross
-    // limit at all) is not modelled here — same accepted limitation as
-    // WI's; the full picture lives in the MN corpus pack's income-pathways
-    // supplement.
-    // PA: 200 is a genuine flat screen — Pennsylvania calls it "Expanded
-    // Categorical Eligibility" and confers it via the PUB 567 brochure,
-    // "Help for Pennsylvanians in Need" (PAH 512.1). Unlike GA/IL/WI's
-    // tiered structure, PA applies the SAME 200% FPL gross test to every
-    // household regardless of elderly/disabled status, and — like MN —
-    // households under this screen face NO resource limit at all (not
-    // merely a waived asset test); the full picture, including the
-    // narrower 130%/$3,000 and 100%-net/$4,500 tiers that apply only to
-    // disqualified/sanctioned households, lives in the PA corpus pack's
-    // own income-pathways and asset-rule supplements.
-    // OH: 130 mirrors snap-rules' bbce_threshold_pct as-is — this is a
-    // DISCLOSED, UNRESOLVED DISCREPANCY, not a confirmed value like the
-    // other entries above. The OH corpus pack's own primary-source read of
-    // OAC 5101:4-2-02 found a genuine 200% FPL broad-based pathway ("Ohio
-    // careline" — a routine notice-plus-text-message TANF-funded service,
-    // the same conferral-vehicle family as NV/OR/WI/MN/GA/PA above) that
-    // waives the 130% gross test, net income test, AND resource limit —
-    // structurally the SAME shape as this file's other 200%-flat-screen
-    // entries, not GA's asset-only 130% pattern the states.ts comment
-    // claims OH matches. This file mirrors snap-rules' constant by design
-    // (see the note above the map) and packages/snap-rules is out of
-    // scope for corpus-only work, so the value here stays 130 pending a
-    // human decision — see the OH corpus pack's PROVENANCE.md ("BBCE
-    // threshold: states.ts says 130%; this pack found a genuine 200% FPL
-    // pathway") for the full writeup. Do not treat 130 as independently
-    // re-confirmed by this comment.
-    const BBCE_PCT = {
-      CA: 200,
-      MA: 200,
-      TX: 165,
-      WA: 200,
-      GA: 130,
-      MI: 200,
-      IL: 165,
-      FL: 200,
-      NV: 200,
-      AZ: 200,
-      OR: 200,
-      OH: 130,
-      WI: 200,
-      MN: 200,
-      PA: 200,
-    } as const;
-    const bbcePct: number | undefined = (BBCE_PCT as Record<string, number>)[state];
+    // #675 (RESOLVED, #882): this used to be a hand-maintained BBCE_PCT map,
+    // duplicated from snap-rules' `bbce_threshold_pct` (constants/states.ts)
+    // because statePolicyFor wasn't exported from that package's public
+    // entry, so there was no way to read it live. That duplication had
+    // already drifted once in production: this map said OH: 130 while
+    // states.ts had already moved OH to 200 (#751, same-day correction —
+    // OAC 5101:4-2-02 read live, a real 200% FPL broad-based pathway),
+    // meaning this file was quoting the WRONG, LESS GENEROUS BBCE screen to
+    // Ohio users — caught fixing this issue, not by the map's own tripwire.
+    // getEngineParams() now sources bbce_threshold_pct directly from
+    // StatePolicy (snap-rules/src/constants/index.ts), so this file reads
+    // the engine's own live value instead of a copy that can go stale. Every
+    // state snap-rules has authored a BBCE axis for gets a value
+    // automatically — no per-state map entry required, and no risk of a
+    // widened state list silently inheriting a wrong percentage (the
+    // "refuse rather than guess" branch below still applies whenever
+    // bbce_threshold_pct is undefined for a state without one).
+    const bbcePct: number | undefined = p.bbce_threshold_pct;
     lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);
     lines.push(`- Gross-income limit, 130% FPL (federal test): ${row(scaled(130))}`);
     if (bbcePct === undefined) {

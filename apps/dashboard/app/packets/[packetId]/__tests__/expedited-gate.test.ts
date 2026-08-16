@@ -140,6 +140,38 @@ describe("computeExpeditedPaths — Path 2 (7 CFR 273.2(i)(1)(iii))", () => {
     expect(paths).not.toContain("path2");
   });
 
+  it("uses the correct dollar figure per SUA tier (TELEPHONE = $20, #882 regression)", () => {
+    // TELEPHONE was $44 in CA_SUA_FFY2026 pre-#882 (a fabricated ACIN
+    // citation) — see packages/snap-rules/src/sua.ts. Real FFY2026 TELEPHONE
+    // is $20 (ACIN I-46-25, live-verified 2026-08-16). $400 rent + $20 =
+    // $420. A household at $410 combined should fire; one at $430 should
+    // not — a boundary that would have fired at $430 too under the old $44
+    // value ($400+$44=$444), silently overstating Path 2 eligibility for
+    // phone-only-utility CA households by $24/month.
+    const fires = computeExpeditedPaths({
+      ...BLANK,
+      employment_status: "employed",
+      monthly_gross_income: "310",
+      savings_amount: "100",
+      monthly_rent_or_mortgage: "400",
+      has_heating_costs: "no",
+      has_electric_or_gas: "no",
+      has_phone: "yes",
+    });
+    const doesNotFire = computeExpeditedPaths({
+      ...BLANK,
+      employment_status: "employed",
+      monthly_gross_income: "330",
+      savings_amount: "100",
+      monthly_rent_or_mortgage: "400",
+      has_heating_costs: "no",
+      has_electric_or_gas: "no",
+      has_phone: "yes",
+    });
+    expect(fires).toContain("path2");
+    expect(doesNotFire).not.toContain("path2");
+  });
+
   it("uses the correct dollar figure per SUA tier (LIMITED, not FULL)", () => {
     // LIMITED = $170. $400 rent + $170 = $570. Household at $560 combined
     // should fire; a household at $580 should not.

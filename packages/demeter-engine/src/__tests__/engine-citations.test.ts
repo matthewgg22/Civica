@@ -13,6 +13,9 @@ vi.mock("@civica/snap-rules", () => ({
     fpl: { "1": 1305, "3": 2221, "4": 2680, "6": 3596 },
     sua: { HCSUA: 663, LUA: 170, phone: 20, none: 0 },
     homeless_ded: 198.99,
+    // CA's real bbce_threshold_pct (states.ts) — #675/#882: formatEngineParams
+    // now reads this straight off getEngineParams() instead of a hardcoded map.
+    bbce_threshold_pct: 200,
   })),
 }));
 
