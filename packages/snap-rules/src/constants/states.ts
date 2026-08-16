@@ -3472,6 +3472,168 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // West Virginia — second state of batch-tier segment 3 (§6 step 6, "ID,
+  // WV, NH"), built after Idaho within the same batch. Blank slate, no
+  // prior StatePolicy or oracle coverage. Translated from West Virginia's
+  // already-merged Demeter corpus pack (packages/demeter-engine/src/
+  // states/wv/, PROVENANCE.md + supplements.json, built 2026-08-12) into
+  // the engine's stricter typed shape per §5's process — re-verification
+  // against the corpus's own primary sources (W. Va. Code § 9-2-3a; WV
+  // Bureau for Family Assistance's live SNAP program page), not fresh
+  // research.
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis:
+  // federal_fiscal_year (an honest inference — WV BFA's own page doesn't
+  // state FFY-vs-calendar-year framing explicitly, following this file's
+  // established default absent contrary evidence, same discipline TN's
+  // entry used) — WV BFA's live SNAP page publishes a two-column
+  // 130%/200% FPL gross-income table, and the corpus pack's Finding 1
+  // confirms the 200% figure applies BROADLY across household types, no
+  // elderly/disabled/separate-household carve-out narrowing it (a genuine,
+  // worth-naming CONTRAST with this roster's Nebraska corpus pack's
+  // narrower 165% column — WV's is the more typical shape this file's
+  // other elevated-BBCE states already use).
+  //
+  // asset_waiver: true — WV BFA's own page states "$3,000 for households"
+  // ($4,500 elderly/disabled) as the federal baseline in the SAME
+  // paragraph as "Most households will not be subject to the asset
+  // limit" — read here as the standard BBCE resource-waiver mechanism
+  // this file's other 200%-BBCE states already use (unlike Idaho's
+  // genuinely different raised-not-waived $5,000 mechanism, WV's own page
+  // does not describe a specific elevated dollar figure the way Idaho's
+  // does — it describes a waiver, consistent with `asset_waiver: true`
+  // being the correct encoding here, not #853's Idaho-specific gap).
+  //
+  // sua_by_tier: NULL — a genuine, disclosed sourcing gap, same discipline
+  // as PA's/NJ's/MN's/ID's null entries. The corpus pack's Finding 0
+  // explicitly distinguishes this from a bot-detection wall (none found
+  // anywhere in WV's primary sources — bfa.wv.gov and
+  // code.wvlegislature.gov both returned clean HTTP 200 throughout): this
+  // is a genuine COVERAGE gap. The West Virginia Income Maintenance
+  // Manual chapters this pack fetched (9 and 11) carry only procedural
+  // content dated 2008-2013 in their page footers, not a current
+  // deductions table (likely Chapter 12, which the corpus pack did not
+  // locate a working URL for) — a secondary-source aggregator dollar
+  // figure was deliberately REMOVED during the corpus pack's own
+  // adversarial refute pass rather than left in unverified, and is
+  // correctly not encoded here either.
+  //
+  // drug_felony_ban: "modified" — W. Va. Code § 9-2-3a (HB2459, 2019):
+  // West Virginia exempts ALL individuals domiciled in the state from the
+  // federal drug-felony ban UNLESS the offense of conviction itself
+  // involved SNAP-benefit misuse, loss of life, or physical injury — a
+  // real, conditional restriction (WV residents remain disqualified only
+  // for that narrow subset of offenses), correctly classified "modified"
+  // per #805's rule rather than "none" (this is NOT an unconditional
+  // opt-out the way NH's SR 97-27 below is — a genuine, disqualifying
+  // condition exists, just a narrow one) and not "full" (the
+  // overwhelming majority of drug-felony convictions do NOT disqualify).
+  // The corpus pack independently verified this TWICE — once from the
+  // statute's own unamended text, and again via a LIVE 2026 WV Board of
+  // Review decision (26-BOR-1601) applying this exact three-element test
+  // to reverse a county denial — the strongest primary-source
+  // confirmation of an operationally-current drug-felony policy anywhere
+  // in this file's roster to date. The gate mechanics are unaffected
+  // either way ("modified" fails open engine-wide per #805 until the
+  // engine models real per-condition facts).
+  //
+  // abawd_waiver_avail: false — the corpus pack's Finding 3 (flagged
+  // explicitly as THIS PACK'S OWN INFERENCE, not a directly-quoted DoHS/
+  // USDA statement) found West Virginia's long-standing statewide ABAWD
+  // waiver — reflecting decades of high unemployment in its Appalachian
+  // coalfield counties — appears to have LAPSED under OBBBA's tightened
+  // area-waiver threshold (>10% county unemployment; WV's highest county,
+  // McDowell, sits at ~9.1% as of the corpus pack's fetch date).
+  // Cross-checked directly against abawdmap.us's live status ("No waiver —
+  // rule applies," the same status as neighboring KY/VA/MD). Chosen
+  // `false` consistent with the corpus pack's own operative reading.
+  //
+  // rmp_operated: false — confirmed absent from USDA's current RMP state
+  // list; Propel's WV state EBT guide directly corroborates WV "does not
+  // participate in this program," with no pending WV RMP legislation
+  // found (a contrast with this file's NJ entry, where a similarly-worded
+  // bill has died in committee three separate sessions).
+  //
+  // allotment_tier: "48" — no elevated-allotment finding for WV.
+  //
+  // TIME-SENSITIVE FINDING carried from the corpus pack, not modeled here
+  // (no engine axis exists for a food-purchase restriction): WV was the
+  // FIRST state in the nation to implement a USDA-approved SNAP
+  // soda-purchase restriction (eff. 1/1/2026, "Healthy Choices" waiver).
+  // Unlike this roster's Nebraska waiver (vacated by a federal court in
+  // Aragon v. Rollins, June 2026 — WV was NOT a party to that suit and
+  // the corpus pack found no litigation affecting WV's restriction as of
+  // its fetch date), WV's restriction is presumed live. Purely
+  // informational — this engine has no axis for food-category purchase
+  // restrictions at all, so this finding cannot diverge from any
+  // encoded value.
+  //
+  // Oracle: built from the SAME independent Python calculator as Idaho's
+  // entry above (parameterized by state policy, not derived from engine
+  // output, per #636). Cross-validated BEFORE trusting it for WV: MD is
+  // WV's true 6-of-7 axis twin among already-merged states (bbce=true/
+  // 200%/federal_fiscal_year, asset_waiver=true, drug_felony_ban=
+  // "modified", abawd_waiver_avail=false, allotment_tier="48" — differing
+  // only in rmp_operated, which has no engine consumer) — reproduced MD's
+  // already-graded 92 base + 37 variant = 129/129 exact match (verdict
+  // AND benefit) under MD's own policy params. (The calculator was
+  // additionally validated against SC/LA/MO for Idaho's build immediately
+  // prior in this same batch, exercising every other code path this file
+  // uses — 516/516 combined across all four cross-validation states,
+  // 0 mismatches.) Also checked all 37 rows across the 18
+  // non-expected_by_state variant profiles directly under WV's own
+  // params: ONE divergence found, the SAME genuinely-indeterminate row
+  // Idaho's entry disclosed above — P58-elderly-retiree-tips-over-net-
+  // limit's `above_net_limit` variant (E/D household, break-even SUA
+  // $1,131.50 within the $0-$1,500 sweep range) — deliberately left
+  // UNOVERRIDDEN for the same reason: this row's SUA tier is non-"none"
+  // and non-homeless, so the live composer SKIPs it for WV regardless of
+  // which verdict is authored, matching the pre-existing precedent this
+  // exact profile already carries for PA's/NJ's null-SUA oracles.
+  //
+  // Authored all 92 expected_by_state.WV entries: 80 APPROVE / 12 DENY —
+  // IDENTICAL DENY set to every other 200%-BBCE/asset_waiver-true state in
+  // this file with no additional net-ceiling overlay (MD, CO, VA, NC,
+  // LA), since WV shares the same financial-gate-determining axes. 34 of
+  // the 92 carry a real computed $ benefit (sua_tier === "none" or
+  // homeless_deduction); the other 58 are blocked by the null-SUA gap
+  // (benefit: null), proven SUA-invariant via the same $0-$1,500
+  // twelve-point sweep discipline PA's/NJ's/ID's builds used (0 of 58
+  // genuinely indeterminate among the BASE profiles).
+  //
+  // Verification: `/profile-simulation state=WV` — 34 PASS / 0 FAIL / 95
+  // SKIP (matching PA's/NJ's/TN's/ID's null-SUA-gap shape exactly). Every
+  // other registered state's harness run reconfirmed unchanged from its
+  // documented baseline: CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129;
+  // PA/NJ/TN/ID all 34/0/95 — every one identical to its pre-WV documented
+  // baseline, zero regressions. `tsc --noEmit -p packages/snap-rules`
+  // clean, 323/323 snap-rules tests pass (0 new), 44/47 profile-harness
+  // tests pass (3 pre-existing skips). Did not touch `packages/
+  // demeter-engine` (WV's corpus was already complete and out of scope)
+  // or any other state's `StatePolicy`/oracle coverage. No new GitHub
+  // issue filed for WV specifically — every gap found (null SUA, the
+  // ABAWD-lapse inference, the food-restriction-waiver litigation status)
+  // is a per-state disclosed gap of an already-established class, not a
+  // new engine-architecture issue.
+  WV: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "WV",
+      label: "West Virginia / DoHS — Bureau for Family Assistance",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
