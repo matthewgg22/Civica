@@ -72,7 +72,8 @@ afterEach(() => {
 });
 
 async function sendQuestion(text: string, expectAnswer: string) {
-  fireEvent.change(screen.getByPlaceholderText(T.en.inputPlaceholder), {
+  // role, not placeholder text: the placeholder changes turn to turn.
+  fireEvent.change(screen.getByRole("textbox"), {
     target: { value: text },
   });
   fireEvent.click(screen.getByRole("button", { name: "Send" }));
@@ -113,12 +114,12 @@ describe("save nudge (#833)", () => {
   it("appears after SAVE_NUDGE_AFTER_TURNS answers, saves on demand, and can be waved off", async () => {
     render(<DemeterChat states={STATES} initialState="NH" />);
 
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 7; i++) {
       await sendQuestion(`q${i}`, `answer ${i}`);
       expect(screen.queryByRole("group", { name: T.en.saveNudge })).toBeNull();
     }
 
-    await sendQuestion("q4", "answer 4");
+    await sendQuestion("q8", "answer 8");
     expect(screen.getByRole("group", { name: T.en.saveNudge })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: T.en.saveNudgeYes }));
@@ -129,13 +130,13 @@ describe("save nudge (#833)", () => {
 
   it("does not reappear once waved off with 'not now', even though not saved", async () => {
     render(<DemeterChat states={STATES} initialState="NH" />);
-    for (let i = 1; i <= 4; i++) await sendQuestion(`q${i}`, `answer ${i}`);
+    for (let i = 1; i <= 8; i++) await sendQuestion(`q${i}`, `answer ${i}`);
     expect(screen.getByRole("group", { name: T.en.saveNudge })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: T.en.saveNudgeNo }));
     expect(screen.queryByRole("group", { name: T.en.saveNudge })).toBeNull();
 
-    await sendQuestion("q5", "answer 5");
+    await sendQuestion("q9", "answer 9");
     expect(screen.queryByRole("group", { name: T.en.saveNudge })).toBeNull();
   });
 });

@@ -21,6 +21,12 @@ export const T = {
     title: "Demeter",
     tagline: "Verified answers about SNAP — for any state.",
     inputPlaceholder: "Happy to answer any questions about SNAP…",
+    // Once the chat is already going and the last answer didn't end in a
+    // specific question to fall back on (pendingQuestion returns null), the
+    // box used to revert to the FIRST-TIME invitation above — which reads
+    // like Demeter forgot the conversation was happening (real feedback,
+    // 2026-08-15). A shorter, conversation-aware line instead.
+    inputPlaceholderContinue: "Ask a follow-up…",
     inputPlaceholderEstimate: "Tell me about your household, and I'll build it up…",
     send: "Send",
     stop: "Stop",
@@ -205,6 +211,7 @@ export const T = {
     title: "Demeter",
     tagline: "Respuestas verificadas sobre SNAP — para cualquier estado.",
     inputPlaceholder: "Con gusto respondo cualquier pregunta sobre SNAP…",
+    inputPlaceholderContinue: "Haz una pregunta de seguimiento…",
     inputPlaceholderEstimate: "Cuéntame sobre tu hogar y lo voy armando…",
     send: "Enviar",
     stop: "Parar",
@@ -337,6 +344,7 @@ export const T = {
     title: "Demeter",
     tagline: "Câu trả lời đã được xác minh về SNAP — cho mọi tiểu bang.",
     inputPlaceholder: "Rất sẵn lòng giải đáp mọi câu hỏi về SNAP…",
+    inputPlaceholderContinue: "Đặt một câu hỏi tiếp theo…",
     inputPlaceholderEstimate: "Kể cho tôi về hộ của bạn, tôi sẽ dựng dần lên…",
     send: "Gửi",
     stop: "Dừng",
@@ -468,6 +476,7 @@ export const T = {
     title: "Demeter",
     tagline: "经过核实的 SNAP 答案——适用于任何州。",
     inputPlaceholder: "关于 SNAP 的任何问题，都很乐意解答…",
+    inputPlaceholderContinue: "还有什么想问的…",
     inputPlaceholderEstimate: "跟我说说您的家庭情况，我来逐步整理…",
     send: "发送",
     stop: "停止",

@@ -28,6 +28,23 @@ const SPOKEN_NUMBER_RE = /(\d[\d,]*(?:\.\d+)?)\s*(k\b|thousand\b)?/gi;
  *  arbitrary arithmetic. */
 const CADENCE_FACTORS = [12, 52, 26];
 
+/** Weekly/biweekly income converted DIRECTLY to monthly — a different shape
+ *  from CADENCE_FACTORS above, which all route through an ANNUAL figure.
+ *  Someone paid by the day or week almost never states an annual number
+ *  first; the very first thing they need converted is weekly → monthly, and
+ *  this is not an approximation Demeter invented — 7 CFR 273.10(c)(2)
+ *  (already in the vendored corpus) states it verbatim: "the State agency
+ *  shall convert the income to a monthly amount by multiplying weekly
+ *  amounts by 4.3 and biweekly amounts by 2.15." Without these, that exact,
+ *  regulation-mandated conversion was rejected as an unverifiable invention
+ *  every single time — a real transcript got the identical "I'm still stuck
+ *  on the number" refusal on three consecutive turns no matter how much more
+ *  detail (household size, an expense figure, even a flat monthly
+ *  restatement) was supplied, because the model's correct first move —
+ *  converting the stated weekly/daily rate to monthly — could never pass. */
+const WEEKLY_TO_MONTHLY = 4.3;
+const BIWEEKLY_TO_MONTHLY = 2.15;
+
 function spokenValues(text: string): number[] {
   const out: number[] = [];
   for (const [, digits, suffix] of text.matchAll(SPOKEN_NUMBER_RE)) {
@@ -64,11 +81,24 @@ function admissibleFromUser(userText: string): Set<number> {
   // from {3,000, 300} and nothing else — not the $3,380 gross limit, not the
   // $204 standard deduction, which are policy figures and still have to be
   // retrieved before they can be stated.
+  //
+  // A PRODUCT of a pair is admitted for the same reason as a sum or a
+  // difference: "$150 a day for 4 days a week" states a day rate and a
+  // frequency, and the number those two figures make together — $600/week —
+  // is the person's own arithmetic, not an invented one, exactly as "made
+  // $3,000, spent $300" makes $2,700. Without it, anyone paid by the day or
+  // the hour could never have their own rate restated as a weekly or monthly
+  // total at all — see the WEEKLY_TO_MONTHLY/BIWEEKLY_TO_MONTHLY comment
+  // above for the conversion that has to follow it.
   const said = spokenValues(userText).filter((v) => v > 0);
   const combos = [...said];
   for (let i = 0; i < said.length; i++) {
     for (let j = i + 1; j < said.length; j++) {
-      combos.push(said[i]! + said[j]!, Math.abs(said[i]! - said[j]!));
+      combos.push(
+        said[i]! + said[j]!,
+        Math.abs(said[i]! - said[j]!),
+        said[i]! * said[j]!,
+      );
     }
   }
   for (const v of combos) {
@@ -76,6 +106,24 @@ function admissibleFromUser(userText: string): Set<number> {
     for (const f of CADENCE_FACTORS) {
       add(v * f);
       add(v / f);
+    }
+    add(v * WEEKLY_TO_MONTHLY);
+    add(v / WEEKLY_TO_MONTHLY);
+    add(v * BIWEEKLY_TO_MONTHLY);
+    add(v / BIWEEKLY_TO_MONTHLY);
+  }
+  // ONE further round, bounded: a converted total minus a separately-stated
+  // expense. "$150 a day, 4 days a week, and I spend about $50 on supplies"
+  // needs $600/week → $2,580/month (already admitted above) → minus the $50
+  // → $2,530 — the same subtraction precedent as the rideshare-driver case,
+  // just chained after a cadence conversion instead of applied directly to a
+  // flat monthly figure. Deliberately ONE pass, not recursive: this combines
+  // what is already admissible with a raw said value, not with itself, so it
+  // cannot compound into unbounded growth.
+  for (const derived of [...admissible]) {
+    for (const raw of said) {
+      add(derived + raw);
+      add(Math.abs(derived - raw));
     }
   }
   return admissible;
