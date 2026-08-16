@@ -3710,6 +3710,185 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Wyoming (batch tier 6, §6 step 6 — VT/WY/DC, second of three, appended
+  // after VT in this same worktree/PR) — built Wyoming's StatePolicy entry
+  // AND full 92-profile oracle coverage from scratch (WY had neither
+  // before this PR), translating WY's already-merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/wy/, PROVENANCE.md + supplements.json
+  // + freshness.json, built 2026-08-12) into the engine's stricter typed
+  // shape per §5's process.
+  //
+  // bbce: false, bbce_fpl_basis: null — THIS PACK'S FLAGSHIP FINDING, and
+  // rare in this file: Wyoming DFS's own current Table I income-limits
+  // table carries NO 200% FPL column at all — only 165% (elderly/disabled
+  // separate-HH gross test), 130% (standard federal gross), and 100%
+  // (net). Independently confirmed by USDA FNS/FNA's own 16th-edition SNAP
+  // State Options Report (June 2024), which lists Wyoming under "No BBCE
+  // (9)" — one of only NINE states nationally without the option (alongside
+  // AK [pre-7/1/2025, #804], AR, KS, MS, MO, SD, TN [pre-corpus-build], UT).
+  // TWO independent primary sources (WY's own manual AND USDA's own federal
+  // report) agree — a stronger evidentiary basis than a typical no-BBCE
+  // finding in this file. Wyoming's own manual Section 502 confirms
+  // categorical eligibility is narrowly SSI/POWER/Tribal-TANF-recipiency
+  // based only, with no income-based gate.
+  //
+  // asset_waiver: false — flows directly from the no-BBCE finding: a
+  // Wyoming household not receiving POWER/Tribal TANF/SSI faces BOTH the
+  // 130%/100% FPL income tests AND the real resource limit (Section 800:
+  // $3,000 general / $4,500 with a 60+/disabled member) — this figure
+  // matches the current federal FY2026 COLA-adjusted floor exactly, the
+  // same federal fallback the engine's own asset-test gate already applies
+  // whenever asset_waiver is false. Same posture as this file's OK/IN/KS
+  // entries.
+  //
+  // sua_by_tier — FULLY POPULATED, not null: WY DFS's own current Table I
+  // page (self-dated "October 1, 2025 - September 30, 2026," with the
+  // prior FFY2025 table visible for comparison on the same page) states a
+  // Standard Utility Allowance (heating/cooling) of $510/mo, a
+  // utilities-only standard (2+ non-heating utilities) of $340/mo, and a
+  // telephone-only allowance of $57/mo. HCSUA -> $510 (SUA), LUA -> $340
+  // (utilities-only — same naming-translation convention this file's
+  // OK/TX/VA entries already use for a non-heating middle tier), phone ->
+  // $57. DISCLOSED INTERNAL SITE INCONSISTENCY, resolved in favor of the
+  // dated table: WY DFS's separate "Do I Qualify?" consumer page states a
+  // DIFFERENT, materially lower, undated set of figures for the same
+  // categories ($177/$184/$215/$246 standard deduction vs. Table I's
+  // $209/$223/$261/$299; $569 shelter cap vs. Table I's $744) — this pack
+  // treats the explicitly-dated Table I page as authoritative, the same
+  // resolution rule this file's own "internal-site-staleness" precedent
+  // (Delaware's DSSM catches, corroborated independently here) already
+  // establishes; the "Do I Qualify" page's figures are NOT used anywhere
+  // in this entry.
+  //
+  // allotment_tier: "48" — no Wyoming-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT, and a genuine
+  // PRIMARY-SOURCE CORRECTION of a widely-repeated, template-style
+  // secondary-source claim: several low-quality SNAP-aggregator sites
+  // describe Wyoming as having a "modified" ban conditioned on
+  // sentence/treatment compliance — language this pack traced to NO
+  // identifiable Wyoming-specific primary source anywhere. USDA FNS/FNA's
+  // own 16th-edition SNAP State Options Report lists Wyoming plainly under
+  // "No disqualification (28)" for Drug Felony Disqualifications (7 CFR
+  // 273.11(m)), independently corroborated against WY DFS's own manual:
+  // the entire 600-series disqualification range (601-610) contains NO
+  // drug-felony section at all — the ONLY criminal-justice disqualification
+  // category in Wyoming's manual is fleeing-felon/probation-or-parole-
+  // violator status (Section 610), a narrower, differently-scoped
+  // provision. Unlike this file's Delaware/VT entries (a traceable REPEAL
+  // of a provision that once existed), this pack found no evidence such a
+  // drug-felony provision ever existed in Wyoming's own regulatory
+  // history at all — a stronger correction than a typical staleness catch.
+  //
+  // abawd_waiver_avail: false — WY DFS's own manual Section 708 is ALREADY
+  // current with the post-OBBBA 18-64 age band (unlike this file's
+  // Delaware entry, whose text was found lagging the live consumer page on
+  // this exact point) and explicitly exempts "a member of an Indian tribe"
+  // from the ABAWD time limit entirely — directly relevant given Wyoming's
+  // Wind River Reservation population (Eastern Shoshone + Northern
+  // Arapaho, Fremont/Hot Springs Counties), though that membership-based
+  // exemption isn't geography-dependent and needs no county lookup. USDA
+  // FNA's SNAP Time Limit (ABAWD) Waivers FY2025-2029 index shows Wyoming
+  // absent ENTIRELY — not among FY2025 waiver, FY2026 waiver, denial, OR
+  // termination entries, a genuinely complete negative finding. No
+  // county-level lookup needed — uniform statewide zero-waiver, same shape
+  // as this file's VA/MO/TN/MD/CO/SC/LA/OK/VT entries.
+  //
+  // rmp_operated: false — no RMP mention anywhere in DFS's live consumer
+  // materials or any of the nine SNAP/POWER Policy Manual sections this
+  // pack fetched; consistent secondary-source corroboration. Disclosed,
+  // not modeled (no engine consumer exists for this axis, grep-confirmed):
+  // a genuinely time-sensitive, NOT-YET-EFFECTIVE fact worth flagging even
+  // though this schema has no slot for it — Wyoming holds an APPROVED
+  // 2-year USDA demonstration-project waiver excluding sweetened,
+  // carbonated beverages from SNAP-purchasable items statewide, effective
+  // February 1, 2027 (not yet in effect as of this build).
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824, newly confirmed present for
+  // Wyoming: no engine axis exists for WY's certification-period structure
+  // (Section 1201(D)(1)/(J) caps ALL certification periods at 12 months —
+  // Wyoming does NOT extend to 24 months for all-elderly/disabled
+  // no-earned-income households the way several other states in this file
+  // do, a genuine structural contrast rather than an oversight, but purely
+  // informational — no engine axis reads certification-period length).
+  //
+  // Oracle: WY's closest structural axis-twin among all 30 already-
+  // registered states is OKLAHOMA — matching every verdict-and-benefit-
+  // consequential axis exactly (bbce: false, bbce_fpl_basis: null,
+  // asset_waiver: false, allotment_tier: "48", abawd_waiver_avail: false,
+  // AND drug_felony_ban: "none" — a stronger match than OK's own IN twin
+  // needed, since IN carries "modified"), differing only in the SUA dollar
+  // figures. Built a fresh, independent Python calculator (not derived
+  // from engine output, per #636) directly from verdict.ts/benefit-calc.ts/
+  // gates/{income-tests,asset-test,abawd,student,composition,immigration,
+  // disqualifications,categorical}.ts/facts.ts/constants/federal-tables.ts's
+  // own read source, mirroring every gate and the benefit-calc formula
+  // exactly, including decimal.ts's rounding conventions. Cross-validated
+  // BEFORE trusting it for WY: 129/129 exact match (verdict AND benefit,
+  // all 92 base profiles + 37 variant rows) reproducing OK's already-graded
+  // oracle under OK's own StatePolicy params. Also checked all 37 rows
+  // across the 18 non-expected_by_state variant profiles directly under
+  // WY's own params for a WY-specific verdict_by_state override, the same
+  // discipline every prior state's build used — found ONE real divergence
+  // (matching MO's/SC's/OK's one-override precedent, not NC's/VA's/MD's/
+  // CO's/LA's/VT's zero-override result): M23-variable-gig-income-
+  // anticipation's two variants ($1,800 and $2,200 gross HH1) both clear
+  // every BBCE state's threshold in this file but fail WY's plain federal
+  // 130% screen ($1,696-97) for the same reason KS/OH/GA/IN/MO/OK already
+  // fail — authored "WY": "DENY" into both variants' verdict_by_state
+  // blocks, matching OK's/IN's/KS's/MO's already-authored value exactly
+  // (an independent confirmation the divergence is real, not a calculator
+  // bug). Authored all 92 expected_by_state.WY entries: 70 APPROVE / 22
+  // DENY — independently confirmed IDENTICAL to OK's own (and, by OK's own
+  // prior finding, IN's) already-graded 92-profile verdict set (0
+  // divergence, the expected result since every verdict-controlling axis
+  // is identical); only benefit-dollar figures differ, driven by WY's SUA
+  // values ($510/$340/$57) vs OK's ($412/$354/$49).
+  //
+  // Verification: /profile-simulation state=WY — 129/129 PASS, 0 FAIL, 0
+  // SKIP (clean, matching every 129/0/0-grade state in this file, not
+  // PA's/NJ's/TN's/MN's SKIP-heavy shape — WY's real, current SUA figures
+  // mean it did not need the null-SUA fallback). Every other registered
+  // state's harness run reconfirmed unchanged from its documented
+  // baseline (full per-state confirmation in this build's PR description
+  // and the plan doc's execution-log entry). tsc --noEmit -p
+  // packages/snap-rules clean, 323/323 snap-rules tests pass (0 new — a
+  // schema-conformant pure addition needed no new unit tests), 44/47
+  // profile-harness tests pass (3 pre-existing skips). Did not touch
+  // packages/demeter-engine (WY's corpus was already complete and out of
+  // scope) or any other state's StatePolicy/oracle coverage. No new
+  // GitHub issue filed — the no-BBCE finding and the certification-period
+  // gap are both per-state disclosed findings/gaps of an already-
+  // documented class (a genuine minority-position policy finding already
+  // expressible via bbce: false, or an #824-style informational gap), not
+  // a new engine architecture gap, per this task's own instruction. This
+  // is the second of three batch-tier-6 jurisdictions (VT done, WY here,
+  // DC next) built in this same worktree/PR, one at a time, each appended
+  // after the previous.
+  WY: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "WY",
+      label: "Wyoming / DFS",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: {
+        HCSUA: new Decimal("510"),
+        LUA: new Decimal("340"),
+        phone: new Decimal("57"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
