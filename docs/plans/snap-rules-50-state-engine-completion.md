@@ -31,17 +31,17 @@ at all; today, most do.
 this plan's own individual-tier landings)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **29 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
-MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK.
+states.ts`) exists for **32 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
+MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK, ME, RI, MT.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
 engine against — has full 92-case coverage (minus TN's 3 deliberately-unauthored
-genuinely-indeterminate profiles, see below) for **27 of those 29**: CA, WA, TX, NY, GA,
-MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD, CO, SC, LA, OK clear CLEAN
-(129/0/0 or a documented pre-existing partial); PA, NJ, and TN also have all 92 (or 89,
-for TN) rows authored, per the execution log's PA/NJ/TN entries below, but all three
-grade 34/0/95 — most of their profiles legitimately SKIP on the null-SUA gap, not a
+genuinely-indeterminate profiles, see below) for **30 of those 32**: CA, WA, TX, NY, GA,
+MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD, CO, SC, LA, OK, ME, RI, MT
+clear CLEAN (129/0/0 or a documented pre-existing partial); PA, NJ, and TN also have all
+92 (or 89, for TN) rows authored, per the execution log's PA/NJ/TN entries below, but all
+three grade 34/0/95 — most of their profiles legitimately SKIP on the null-SUA gap, not a
 coverage gap, so none is counted as "clean" here.
 
 Two states have a `StatePolicy` but no oracle coverage yet, for different reasons:
@@ -62,14 +62,17 @@ One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
   the engine today and, if used for a real determination, would wrongly deny categorical
   eligibility to AK households between 130%–200% FPL.
 
-**24 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
-AL, AR, CT, DC, DE, GU, HI, IA, ID, KY, ME, MS, MT, ND, NE, NH,
-NM, RI, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, and OK — the
+**21 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
+AL, AR, CT, DC, DE, GU, HI, IA, ID, KY, MS, ND, NE, NH,
+NM, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, and OK — the
 first eleven "individual tier" states, §6 — are DONE; see the execution log's
 NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA/OK entries. Alabama and Kentucky's builds were BOTH
 concurrently in flight as of OK's build, neither yet merged — see OK's execution-log
 entry for the reconciliation note. Once AL and KY land, the individual tier closes at
-13/13.)
+13/13. ME, RI, and MT — the fourth batch-tier group, §6 step 6 — are ALSO now DONE; see
+the execution log's ME/RI/MT entries below. CT/UT/IA/AR, MS/NM/NE, and ID/WV/NH — the
+other three batch-tier segments — were all concurrently in flight as of this batch's
+build, none yet merged; not read or coordinated with.)
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
 
@@ -203,7 +206,10 @@ exists and only oracle authoring is outstanding):
 4. Schema step: extend `AllotmentTier` for HI/GU (own small PR, own go-ahead)
 5. HI, GU (now unblocked)
 6. Batch tier (<4M population, N≤3 per batch): CT, UT, IA, AR / MS, NM, NE / ID, WV, NH /
-   ME, RI, MT / DE, SD, ND / VT, WY, DC / VI
+   ~~ME, RI, MT~~ (done — fourth batch-tier group, see the execution log's ME/RI/MT
+   entries; CT/UT/IA/AR, MS/NM/NE, and ID/WV/NH were all concurrently in flight as of this
+   group's build, none yet merged, not read or coordinated with) / DE, SD, ND / VT, WY, DC
+   / VI
 7. MN, once a real SUA figure is sourced (may unblock independently of this sequencing —
    revisit whenever that specific gap closes)
 
@@ -1649,3 +1655,177 @@ all of it.
   chain across AL/KY/OK, the same pattern this project has used repeatedly (e.g.
   MO-vs-TN/IN); once all three land, the individual tier closes at 13/13. PR TBD, awaiting
   merge go-ahead.
+
+- **ME, RI, MT (batch-tier segment 4, §6 step 6, built as one three-state batch, ME first,
+  then RI, then MT — each built fully before the next, in a strict chain within this
+  batch's own worktree/branch appended after OK's entry)** — the first BATCH-tier segment
+  of this plan's engine build-out (individual tier closed at OK, pending AL/KY's eventual
+  rebase reconciliation). AL, KY, and this plan's other three batch-tier segments
+  (CT/UT/IA/AR; MS/NM/NE; ID/WV/NH) were ALL concurrently in-flight, not yet merged, as of
+  this batch's build — not read or coordinated with; a human reconciles the eventual
+  rebase chain, same pattern as MO-vs-TN/IN and AL/KY-vs-OK. Built all three states'
+  `StatePolicy` entries AND full 92-profile oracle coverage from scratch (all three were
+  genuine blank slates — no `StatePolicy`, no oracle coverage at all before this batch),
+  translating each state's already-merged Demeter corpus pack
+  (`packages/demeter-engine/src/states/{me,ri,mt}/`, PROVENANCE.md + supplements.json [+
+  freshness.json for ME], all built 2026-08-12) into the engine's stricter typed shape per
+  §5's process — re-verification against each corpus's own primary sources, not fresh
+  research.
+
+  **Maine** — bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis: "calendar_year", the
+  most structurally unusual finding this batch made and the one this build spent the most
+  care disclosing correctly rather than guessing: 10-144 C.M.R. Ch. 301, § 999-3's Chart 3
+  carries a 165% FPL column, but its own header text scopes it precisely to a household-
+  COMPOSITION test for elderly/disabled roommates establishing a separate household
+  (Section 111-1(2)(c)) — NOT a categorical-eligibility income ceiling, the way a reader
+  skimming only percentages could easily assume. Maine's REAL BBCE ceiling is Chart 4's
+  200% FPL test (raised from 185% to 200% effective July 2022 under 22 M.R.S. § 3104(13)),
+  and Chart 4 updates on a CALENDAR-YEAR cycle distinct from Charts 1-3's federal-fiscal-
+  year cycle — MA is this file's only other `calendar_year` entry, and Maine's own corpus
+  independently confirms the same structural shape rather than copying it.
+  `bbce_fpl_basis` is documentary only (grep-confirmed: no gate consumes it anywhere in
+  this engine), so this finding changes nothing behaviorally, but is disclosed for
+  accuracy. asset_waiver: true (Chart 9: the BBCE-majority population has carried no
+  resource limit since CY2022). sua_by_tier fully populated, a clean 3-tier mapping
+  despite Maine's own distinctive tier names: FSUA $1,096 -> HCSUA, NHUA $598 -> LUA, PhUA
+  $114 -> phone. drug_felony_ban: "none" — this batch's flagship correction: 22 M.R.S.
+  § 3104(14), read directly and in full, states plainly that an otherwise-eligible person
+  "may not be denied assistance because the person has been convicted of a drug-related
+  felony," correcting a February 2026 prisonpolicy.org 50-state survey that had
+  categorized Maine as NOT opted out — the corpus pack's own research traced the likely
+  error to a conflation with 22 M.R.S. § 3104(15), a separate, narrower disqualification
+  for certain post-2018 violent-crime/sexual-assault felonies conditioned on supervision
+  non-compliance, which this engine has no facts-level axis for either (immaterial to all
+  92 oracle profiles). abawd_waiver_avail: false (Maine's FY2025 213-area geographic
+  waiver expired 9/30/2025; USDA's own tracker shows no FY2026 renewal). rmp_operated:
+  false (absent from USDA's current RMP state list; no pending ME RMP legislation found —
+  a genuine, disclosed negative result).
+
+  **Rhode Island** — bbce: true / bbce_threshold_pct: 185, the axis that needed the
+  deepest read of this engine's OWN mechanics (not just the corpus) to encode correctly.
+  RI's own DHS publishes a genuinely TWO-TIER gross-income ceiling (185% general / 200%
+  elderly-disabled, 218-RICR-20-00-1 § 1.5.1), but this engine's `grossTestApplies()`
+  (gates/income-tests.ts) already skips the gross-income test UNCONDITIONALLY for any
+  elderly/disabled household — state-independent — before `bbce_threshold_pct` is ever
+  read for that household; read together with `verdict.ts`'s `bbceConferred` logic (which
+  can only become true INSIDE the gross-test block E/D households never enter), RI's real
+  200% E/D ceiling has ZERO reachable consequence in this engine, confirmed by direct
+  source read, not assumed. `185` is therefore the only load-bearing value — it governs
+  every non-E/D RI household, the population this field actually reaches. asset_waiver:
+  true (§ 1.5.5(B)(2)(b): every cat-elig pathway, including the 185%/200% "expanded" one,
+  is resource-test-exempt). sua_by_tier: HCSUA $844 (RI's single combined SUA tier,
+  bundling heat/cooling/cooking-fuel/electricity/phone/water/sewer/trash) / phone $26; LUA
+  set to $0, NEVER FABRICATED — RI's own regulation publishes no second non-heat-utility
+  standard at all (directs that household to ACTUAL expenses instead), the same disclosed-
+  gap shape as this file's VA entry; understates (never overstates) the shelter deduction
+  for the small LUA-tier subset, the conservative direction, and independently verified to
+  never flip a verdict. drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT confirmed as a
+  genuine minority position via primary-source read rather than accepted at face value:
+  R.I. Gen. Laws § 40-6-8(d) states the opt-out in full, corroborated by a full read of
+  RI's own 268-page SNAP regulation finding NO drug-felony-conviction provision anywhere
+  in it. abawd_waiver_avail: false (USDA's own tracker shows RI's most recent entry as
+  FY2025 only, no FY2026 renewal) — disclosed, not conflated with RI's SEPARATE
+  implementation-timing choice to delay its own OBBBA ABAWD rollout to 3/1/2026 (a date-of-
+  effect decision, not a geographic waiver; immaterial to all 92 profiles, none of whose
+  ABAWD dates fall in the 11/1/2025-3/1/2026 window this would affect). rmp_operated:
+  true — RI's first `true` value in this batch (DHS's own Online Purchasing & Restaurant
+  Meals Program page), though a narrow one (nine Subway locations only); documentary only,
+  no engine consumer, grep-confirmed.
+
+  **Montana** — bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis:
+  "federal_fiscal_year" (SNAP 304-1's Expanded Categorical Eligibility, gross-income-only,
+  no resource test — a clean fit for this engine's existing BBCE mechanism; a SEPARATE
+  Traditional CE path for TANF/Tribal TANF/SSI cash recipients maps to this engine's
+  existing pure-cash `cat_elig` path). asset_waiver: true (ECE households face no resource
+  test; the narrower "regular" track still faces the real $3,000/$4,500 limit).
+  sua_by_tier — a genuine FOUR-real-tier structure this build discloses rather than
+  silently collapses: SNAP 602-4 publishes SUA $799 (heating/cooling), LUA $267 (2+
+  non-heat utilities), a SEPARATE OUA $116 (exactly one non-heat utility), and Telephone
+  $34. This schema's three real tiers derive from `determineSUATier`'s single LIMITED
+  branch (no utility-COUNT dimension) — the same naming-collision mapping trap this file's
+  OH/MO/CO entries already document; MT's $267 LUA (2+ utilities) maps to this schema's
+  `LUA` slot, NOT the differently-scoped $116 OUA, the disclosed unmapped 4th tier.
+  drug_felony_ban: "modified" — a genuine, disclosed CORRECTION of a widely-repeated
+  secondary-source oversimplification (a Propel guide states flatly "Montana won't
+  disqualify you because of a drug felony"): MT DPHHS's own manual text, appearing
+  word-for-word across three separate sections (SNAP 001, SNAP 304-1, SNAP 602-4),
+  disqualifies a person convicted after 08/22/96 of a drug felony "AND not complying with
+  conditions of supervision" — a real, conditional restriction, neither a full opt-out
+  like ME's/RI's nor no-restriction like the secondary source claimed; no standalone MCA
+  statute found for this specific condition (implemented via DPHHS policy/administrative
+  rule, not a legislative opt-out). abawd_waiver_avail: false — the CLEANEST, most
+  directly-confirmed zero-waiver statement this file has recorded for any state: MT
+  DPHHS's own SNAP 802-1 states in full, "As of 11/01/2025, there are no areas within
+  Montana with approved ABAWD geographic waivers," a plain primary-source statement, not
+  an inference drawn from a federal tracker's absence the way ME's/RI's own entries above
+  had to rely on. rmp_operated: false (absent from the corpus's independently-corroborated
+  9-state RMP list; MT does carry the standard narrower federal congregate/meal-delivery
+  provision, a distinction the corpus pack draws explicitly so the two are never
+  conflated).
+
+  Common to all three: no county-level ABAWD lookup needed or added for any state
+  (waiverCountiesFor only covers CA/MA today; each state's uniform-statewide answer has no
+  county-level nuance for a lookup to represent). Not representable in this schema, and
+  not silently dropped, for any of the three: the SAME pre-existing gap class already
+  filed as #824 (Facts-shape/mechanism gaps — ME's LIHEAP-receipt axis and narrower
+  post-2018 felony provision; RI's LUA/actual-non-heat-expense mechanism and 2-vehicle
+  cap; MT's OUA/LUA naming-collision and DPHHS-policy-not-statute drug-felony condition) or
+  the OH/MO/CO-precedented naming-collision class (MT's LUA/OUA specifically). No new
+  GitHub issue filed for any of the three — every gap found is a per-state disclosed gap
+  of an already-documented class, or (RI's two-tier BBCE structure) a case where this
+  build confirmed the engine's EXISTING mechanics already produce correct behavior without
+  needing a new axis, per this task's own instruction.
+
+  Oracle: built ONE fresh, independent Python calculator (not derived from engine output,
+  per #636) directly from `verdict.ts`/`benefit-calc.ts`/`gates/{income-tests,asset-test,
+  abawd,student,composition,immigration,disqualifications,categorical}.ts`/`facts.ts`/
+  `constants/federal-tables.ts`'s own read source (not just their doc-comments), mirroring
+  every gate and the benefit-calc formula exactly, including `decimal.ts`'s half-up
+  (`roundDollar`) and floor (`floorDollar`) rounding conventions — reused/parameterized by
+  state policy across all three states in this batch per this task's own authorization,
+  while still cross-validating fresh for each state per §5 step 4's discipline. ME's
+  closest structural axis-twin among all 29 already-registered states is MASSACHUSETTS — a
+  FULL match on every verdict-and-benefit-consequential axis (literally identical policy
+  shape modulo SUA dollar figures); cross-validated 129/129 exact match (verdict AND
+  benefit, all 92 base profiles plus all 37 variant rows) reproducing MA's already-graded
+  oracle under MA's own params, PLUS 34/34 against NJ, 129/129 against WI, and 129/129
+  against CO (this batch's full cross-validation sweep, all four exact) before trusting
+  the calculator for ME. RI's closest twin is NEW JERSEY on every verdict-consequential
+  axis except abawd_waiver_avail (NJ holds a real Cape May/Camden waiver; RI holds none —
+  an accurate divergence, not a mismatch); cross-validated 34/34 (verdict-only, matching
+  NJ's own null-SUA-blocked shape) against NJ PLUS 129/129 (verdict AND benefit) against WI
+  to exercise the full benefit-calc pathway with a real SUA figure, since NJ's null SUA
+  alone couldn't. MT's closest twin is COLORADO — a FULL match, literally identical policy
+  shape modulo SUA dollar figures; cross-validated 129/129 exact match against CO's
+  already-graded oracle under CO's own params. Also checked all 37 non-`expected_by_state`
+  variant rows across the 18 variant profiles directly under each state's own params for a
+  state-specific `verdict_by_state` override — found ZERO divergence for all three states
+  (matching NC's/VA's/MD's/CO's/LA's zero-override precedent, not MO's/SC's/OK's one-
+  override result). Authored all 92 `expected_by_state` entries for each state: ME 80
+  APPROVE / 12 DENY, RI 79 APPROVE / 13 DENY, MT 80 APPROVE / 12 DENY. RI's one extra DENY
+  (vs. ME's/MT's 80/12) is independently confirmed to be exactly
+  `MX4-bbce-max-income-with-any-benefit` ($4,440 gross HH3 clears every 200%-BBCE state's
+  threshold in this file but falls $2 short of RI's own 185% ceiling, $4,109 HH3) — the
+  same profile and reason NJ's own 185%-threshold build already found, an independent
+  corroboration the divergence is a real policy consequence of the lower threshold, not a
+  calculator bug; confirmed by direct diff against ME's DENY set (12/12 identical, MX4 the
+  sole addition).
+
+  Verification: `/profile-simulation state=ME` / `state=RI` / `state=MT` — all THREE
+  129/129 PASS, 0 FAIL, 0 SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/
+  NC/VA/IN/MO/MD/CO/SC/LA/OK's bar, not PA's/NJ's/TN's/MN's SKIP-heavy shape — all three
+  states' real, current SUA figures meant none needed PA's/NJ's/TN's null-SUA fallback,
+  despite RI sharing NJ's 185% threshold). Every other registered state's harness run
+  reconfirmed unchanged from its documented baseline after EACH of the three states landed
+  (checked individually, not spot-checked, after ME, again after RI, again after MT):
+  CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC/LA/OK all 129/0/0; NY
+  127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 — every one identical to its
+  documented baseline at every checkpoint, zero regressions introduced by any of the three
+  states. `tsc --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass (0
+  new — a schema-conformant pure addition needed no new unit tests for any of the three
+  states), 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  `packages/demeter-engine` (all three corpora were already complete and out of scope) or
+  any other state's `StatePolicy`/oracle coverage. This is the fourth batch-tier segment
+  (§6 step 6) — CT/UT/IA/AR, MS/NM/NE, and ID/WV/NH remain, all three concurrently
+  in-flight as of this build, not yet merged; DE/SD/ND, VT/WY/DC, and VI remain
+  unstarted. PR TBD, awaiting merge go-ahead.
