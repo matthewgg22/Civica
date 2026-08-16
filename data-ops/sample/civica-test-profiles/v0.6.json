@@ -160,14 +160,14 @@
       "min_benefit": 24,
       "shelter_cap": 744,
       "fpl": {
-        "1": 1305,
-        "2": 1763,
-        "3": 2221,
-        "4": 2680,
-        "5": 3138,
-        "6": 3596,
-        "7": 4055,
-        "8": 4513
+        "1": 1304,
+        "2": 1762,
+        "3": 2220,
+        "4": 2679,
+        "5": 3137,
+        "6": 3595,
+        "7": 4054,
+        "8": 4512
       },
       "sua": {
         "HCSUA": 663,
@@ -214,7 +214,7 @@
           "8": 2314
         }
       },
-      "fpl_basis": "FLOOR(annual FPL / 12) before applying BBCE/130%/100% multipliers \u2014 the FNS/CalFresh published convention. Reconciled to CDSS ACIN I-46-25 (FFY2026) Attachment I; HALF_UP rounding here drifts +$1 at HH2/3/5/6/7/8 and breaks the published table (#606)."
+      "fpl_basis": "FLOOR(annual FPL / 12) before applying BBCE/130%/100% multipliers. Base constant corrected #869 2026-08-16 ($15,660 -> $15,650 per 90 FR 5917, a $10 transcription error against the actual Federal Register table). NOTE (#868, not fixed): with the corrected base, FLOOR no longer reconciles to CDSS ACIN I-46-25 (FFY2026) Attachment I or FNS's own published FY2026 Income Eligibility Standards at ANY household size -- every size is $1 low under floor; CEILING would match exactly instead. That rounding-direction question is separate, wider, and NOT yet authorized to fix (same open question as AK's #818). HALF_UP rounding (pre-#606) drifted +$1 at HH2/3/5/6/7/8 relative to the (then-current, wrong-constant) published table."
     },
     "tolerances": {
       "verdict": "exact_match",
@@ -7275,8 +7275,8 @@
           "benefit": 191
         },
         "TX": {
-          "verdict": "APPROVE",
-          "eligible": true,
+          "verdict": "DENY",
+          "eligible": false,
           "benefit": null
         },
         "KS": {
@@ -7305,9 +7305,9 @@
           "benefit": 47
         },
         "IL": {
-          "verdict": "APPROVE",
-          "eligible": true,
-          "benefit": 83
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         },
         "OH": {
           "verdict": "APPROVE",

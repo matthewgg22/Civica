@@ -13,9 +13,11 @@ const FY25 = new Date(Date.UTC(2025, 0, 1)); // 2025-01-01
 describe("fplMonthly per-region FPL table (#812)", () => {
   it("preserves EXACT prior behavior for every non-AK/HI state (byte-identical regression)", () => {
     // Old formula: single 48-contiguous+DC table, floor(annual/12).
+    // FY26 first-person figure corrected 15660 -> 15650 (#869: $10
+    // transcription error vs 90 FR 5917's actual published table).
     const oldFormula = (size: number, asOf: Date): number => {
       const fy25 = asOf < new Date(Date.UTC(2025, 9, 1));
-      const first = fy25 ? 15060 : 15660;
+      const first = fy25 ? 15060 : 15650;
       const each = fy25 ? 5380 : 5500;
       return Math.floor((first + each * (size - 1)) / 12);
     };
