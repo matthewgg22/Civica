@@ -36,16 +36,20 @@
 // into (the AK/VI precedent fixes both axes through the same two functions;
 // HI mirrors that exactly).
 //
-// ── What this does NOT fix (disclosed, matching #858's own framing) ─────
+// ── Standard deduction + shelter cap (#866 — FIXES the gap this file's
+// #861 header used to disclose as unfixed) ──────────────────────────────
 // HI's own table also carries a higher Standard Deduction ($295 sizes 1-4,
 // $300 size 5, $344 size 6+ vs. federal FY26's $209/$223/$261/$299) and a
 // higher Maximum Excess Shelter Deduction ($1,003 vs. federal FY26's $744).
-// `federal-tables.ts`'s `standardDeductionFor()`/`shelterCapFor()` have no
-// per-state override slot at all (not even for AK) — extending them is a
-// separate, larger schema change out of scope for this fix. Both gaps work
-// in the household's favor if ever wrongly applied (they UNDER-state the
-// deduction, not over-state it) — same non-material framing #858 used for
-// VI's analogous shelter-cap gap.
+// Both figures verbatim from USDA FNS's own FY2026 SNAP Cost-of-Living
+// Adjustments memorandum, the SAME primary document this file's
+// max_allotment table above is sourced from, quoted in full in issue #861
+// and re-confirmed for #866. Pre-#866, `standardDeductionFor()`/
+// `shelterCapFor()` had no per-state override slot at all (not even for
+// AK) and always returned the federal figures for HI, UNDERSTATING every
+// HI household's benefit (lower deduction → higher net income → lower
+// computed benefit than HI's real, higher figures produce). See issue
+// #866 for the full before/after reconciliation.
 //
 // ── HI's income-eligibility guideline (a SEPARATE, verdict-affecting fix) ─
 // HI's own HHS poverty guideline is ALSO genuinely elevated above the
@@ -67,10 +71,17 @@ export interface HiAllotmentTable {
   /** HI's own minimum-benefit floor (1-2 person HH), higher than the
    *  federal default ($24 FY26) every other non-elevated-tier state uses. */
   minimum_benefit: Decimal;
+  /** HI's own standard deduction table (#866) — higher than the federal
+   *  48-contiguous table at every household size. */
+  standard_deduction: Map<number, Decimal>;
+  /** HI's own maximum excess shelter deduction cap (#866) — higher than
+   *  the federal 48-contiguous $744. */
+  shelter_cap: Decimal;
 }
 
 // FY26 (10/1/2025-9/30/2026). Verbatim from USDA FNS's own FY2026 COLA
-// memorandum, quoted in full in issue #861.
+// memorandum, quoted in full in issue #861 (max_allotment/minimum_benefit)
+// and #866 (standard_deduction/shelter_cap).
 export const HI_ALLOTMENT_TABLE: HiAllotmentTable = {
   max_allotment: new Map<number, Decimal>([
     [1, new Decimal("506")],
@@ -84,4 +95,13 @@ export const HI_ALLOTMENT_TABLE: HiAllotmentTable = {
   ]),
   max_allotment_each_additional: new Decimal("371"),
   minimum_benefit: new Decimal("41"),
+  standard_deduction: new Map<number, Decimal>([
+    [1, new Decimal("295")],
+    [2, new Decimal("295")],
+    [3, new Decimal("295")],
+    [4, new Decimal("295")],
+    [5, new Decimal("300")],
+    [6, new Decimal("344")],
+  ]),
+  shelter_cap: new Decimal("1003"),
 };

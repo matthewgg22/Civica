@@ -7774,10 +7774,12 @@ const STATES: Record<string, StatePolicy[]> = {
   // `state === "VI"` branch mirroring AK's existing one. VI's own $31
   // minimum allotment (vs. the federal $24 default) is fixed by that same
   // PR; VI's own lower $586 maximum shelter deduction (vs. federal's $744
-  // `shelter_cap`) remains a DISCLOSED, UNFIXED gap — `shelterCapFor()` has
-  // no per-state override slot at all (not even for AK), and #858 itself
-  // frames this as the non-material side of the gap since it under-caps
-  // rather than over-caps. With the fix landed, `benefit` in
+  // `shelter_cap`) — plus VI's own lower standard deduction at HH sizes
+  // 1-3 ($184/$184/$185 vs. federal's $209) — was a DISCLOSED, UNFIXED gap
+  // at #858 time (shelterCapFor()/standardDeductionFor() had no per-state
+  // override slot at all) and is now FIXED by #866: both functions gained
+  // `state === "VI"` branches reading vi-allotment-table.ts's own
+  // standard_deduction/shelter_cap fields. With the fix landed, `benefit` in
   // `expected_by_state.VI`'s 34 real-engine-gradeable oracle rows carries
   // VI's real, non-null computed dollar figure instead of `null` — see
   // this file's oracle-authoring note below for the before/after
@@ -8036,15 +8038,15 @@ const STATES: Record<string, StatePolicy[]> = {
   // HI households are entitled to a materially higher income ceiling than
   // the 48-contiguous table would give them.
   //
-  // What this does NOT fix (disclosed, matching #858's own VI framing):
-  // HI's own table also carries a higher Standard Deduction ($295 sizes
-  // 1-4, $300 size 5, $344 size 6+ vs. federal FY26's $209/$223/$261/$299)
-  // and a higher Maximum Excess Shelter Deduction ($1,003 vs. federal
-  // FY26's $744). `standardDeductionFor()`/`shelterCapFor()` have no
-  // per-state override slot at all, not even for AK — extending them is a
-  // separate, larger schema change out of scope for #861. Both gaps work
-  // in the household's favor if left unfixed (they UNDER-state the
-  // deduction, not over-state it).
+  // Standard deduction + shelter cap: HI's own table also carries a higher
+  // Standard Deduction ($295 sizes 1-4, $300 size 5, $344 size 6+ vs.
+  // federal FY26's $209/$223/$261/$299) and a higher Maximum Excess
+  // Shelter Deduction ($1,003 vs. federal FY26's $744). Disclosed as
+  // out-of-scope for #861 at the time (`standardDeductionFor()`/
+  // `shelterCapFor()` had no per-state override slot at all) — now FIXED
+  // by #866, which added `state === "HI"` branches to both functions
+  // reading hi-allotment-table.ts's own standard_deduction/shelter_cap
+  // fields.
   //
   // drug_felony_ban: "modified" — Haw. Rev. Stat. § 346-53.3 conditions the
   // federal drug-felony ban's carve-out on treatment compliance: the
@@ -8273,14 +8275,14 @@ const STATES: Record<string, StatePolicy[]> = {
   // flagship finding, corroborating rather than merely restating this
   // build's own primary-source read of the same memo.
   //
-  // What this does NOT fix (disclosed, matching #858's own VI framing):
-  // GU's own table also carries a higher Standard Deduction ($420 sizes
-  // 1-3, $445 size 4, $522 size 5, $598 size 6+ vs. federal FY26's
-  // $209/$223/$261/$299) and a higher Maximum Excess Shelter Deduction
-  // ($873 vs. federal FY26's $744). `standardDeductionFor()`/
-  // `shelterCapFor()` have no per-state override slot at all — extending
-  // them is a separate, larger schema change out of scope for #861. Both
-  // gaps work in the household's favor if left unfixed.
+  // Standard deduction + shelter cap: GU's own table also carries a higher
+  // Standard Deduction ($420 sizes 1-3, $445 size 4, $522 size 5, $598
+  // size 6+ vs. federal FY26's $209/$223/$261/$299) and a higher Maximum
+  // Excess Shelter Deduction ($873 vs. federal FY26's $744). Disclosed as
+  // out-of-scope for #861 at the time — now FIXED by #866, which added
+  // `state === "GU"` branches to `standardDeductionFor()`/`shelterCapFor()`
+  // reading gu-allotment-table.ts's own standard_deduction/shelter_cap
+  // fields.
   //
   // drug_felony_ban: "modified" — USDA's own SNAP State Options Report
   // (17th Edition) lists Guam's own reported policy selection plainly as

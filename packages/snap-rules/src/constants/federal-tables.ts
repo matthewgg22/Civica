@@ -13,7 +13,7 @@
 // reads from here. No constant lives in two places.
 
 import { Decimal } from "../decimal";
-import { akAllotmentZoneFor, AK_URBAN } from "./ak-allotment-zones";
+import { akAllotmentZoneFor, AK_URBAN, AK_STANDARD_DEDUCTION, AK_SHELTER_CAP } from "./ak-allotment-zones";
 import { VI_ALLOTMENT_TABLE } from "./vi-allotment-table";
 import { HI_ALLOTMENT_TABLE } from "./hi-allotment-table";
 import { GU_ALLOTMENT_TABLE } from "./gu-allotment-table";
@@ -364,8 +364,49 @@ export function fplMonthly(size: number, asOf: Date, state: string): Decimal {
   return table.monthly_rounding === "ceiling" ? monthly.ceilDollar() : monthly.floorDollar();
 }
 
-export function standardDeductionFor(size: number, asOf: Date): Decimal {
-  const s = snapshotFor(asOf);
+/**
+ * FNS standard deduction for a household size. `state` is OPTIONAL and,
+ * for every state except AK/VI/HI/GU, changes NOTHING — behavior for
+ * every other jurisdiction is byte-identical to before #866.
+ *
+ * #866: AK/HI/GU each have their OWN, higher, statewide standard-
+ * deduction table (packages/snap-rules/src/constants/ak-allotment-zones.ts,
+ * hi-allotment-table.ts, gu-allotment-table.ts — the SAME per-jurisdiction
+ * constant files maxAllotmentFor()/minimumBenefitFor() already consult for
+ * those states, #814/#861), UNDERSTATING those states' benefits pre-fix.
+ * VI's own table is genuinely LOWER than the federal default at household
+ * sizes 1-3 (identical at 4-6+) — vi-allotment-table.ts — the OPPOSITE
+ * direction, OVERSTATING VI's benefits pre-fix. See issue #866 for the
+ * full reconciliation and both directions' dollar figures.
+ */
+export function standardDeductionFor(size: number, asOf: Date, state?: string): Decimal {
+  const s = snapshotFor(asOf); // still validates asOf has a loaded fiscal year, for every state
+
+  if (state === "AK") {
+    return size <= 5 ? AK_STANDARD_DEDUCTION.get(1)! : AK_STANDARD_DEDUCTION.get(6)!;
+  }
+
+  if (state === "VI") {
+    if (size <= 2) return VI_ALLOTMENT_TABLE.standard_deduction.get(1)!;
+    if (size === 3) return VI_ALLOTMENT_TABLE.standard_deduction.get(3)!;
+    if (size === 4) return VI_ALLOTMENT_TABLE.standard_deduction.get(4)!;
+    if (size === 5) return VI_ALLOTMENT_TABLE.standard_deduction.get(5)!;
+    return VI_ALLOTMENT_TABLE.standard_deduction.get(6)!;
+  }
+
+  if (state === "HI") {
+    if (size <= 4) return HI_ALLOTMENT_TABLE.standard_deduction.get(1)!;
+    if (size === 5) return HI_ALLOTMENT_TABLE.standard_deduction.get(5)!;
+    return HI_ALLOTMENT_TABLE.standard_deduction.get(6)!;
+  }
+
+  if (state === "GU") {
+    if (size <= 3) return GU_ALLOTMENT_TABLE.standard_deduction.get(1)!;
+    if (size === 4) return GU_ALLOTMENT_TABLE.standard_deduction.get(4)!;
+    if (size === 5) return GU_ALLOTMENT_TABLE.standard_deduction.get(5)!;
+    return GU_ALLOTMENT_TABLE.standard_deduction.get(6)!;
+  }
+
   if (size <= 3) return s.standard_deduction.get(1)!;
   if (size === 4) return s.standard_deduction.get(4)!;
   if (size === 5) return s.standard_deduction.get(5)!;
@@ -478,7 +519,21 @@ export function assetLimitFor(isED: boolean, asOf: Date): Decimal {
   return isED ? s.asset_limit_elderly_disabled : s.asset_limit_household;
 }
 
-export function shelterCapFor(asOf: Date): Decimal {
+/**
+ * FNS maximum excess shelter deduction cap. `state` is OPTIONAL and, for
+ * every state except AK/VI/HI/GU, changes NOTHING — same no-op-for-other-
+ * states shape as standardDeductionFor() above (#866).
+ *
+ * AK ($1,189) / HI ($1,003) / GU ($873) are each higher than the federal
+ * $744 default (understating those states' benefits pre-fix). VI ($586)
+ * is LOWER than federal (overstating VI's benefits pre-fix) — see issue
+ * #866.
+ */
+export function shelterCapFor(asOf: Date, state?: string): Decimal {
+  if (state === "AK") return AK_SHELTER_CAP;
+  if (state === "VI") return VI_ALLOTMENT_TABLE.shelter_cap;
+  if (state === "HI") return HI_ALLOTMENT_TABLE.shelter_cap;
+  if (state === "GU") return GU_ALLOTMENT_TABLE.shelter_cap;
   return snapshotFor(asOf).shelter_cap;
 }
 

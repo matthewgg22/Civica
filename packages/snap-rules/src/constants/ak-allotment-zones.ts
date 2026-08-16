@@ -117,6 +117,27 @@
 // over it — per this task's own instruction, a defensible PARTIAL mapping
 // with an Urban-fallback default is preferred over invented full coverage.
 
+// ── Standard deduction + shelter cap (#866) ─────────────────────────────
+// A DIFFERENT axis again from both the zone-based max-allotment table
+// above and the six-region SUA table (ak-utility-regions.ts) — Alaska's
+// Standard Deduction and Maximum Excess Shelter Deduction are each a
+// SINGLE statewide figure, not zone- or region-specific. Confirmed
+// directly from Alaska DOH's own current SNAP Standards PDF (FSP 77, rev
+// 09/25, effective 10/1/2025-9/30/2026, health.alaska.gov/media/wzalr0op/
+// alaska-snap-standards.pdf), cross-checked exactly against USDA FNS's own
+// FY2026 national Maximum Allotments and Deductions table, and
+// independently re-confirmed against packages/demeter-engine/src/states/
+// ak/supplements.json:120 ("resources-and-deductions" supplement): "a
+// Standard Deduction of $358 for households of 1-5 members and $374 for
+// 6+ (both figures matching USDA's national FY2026 Alaska-specific column
+// exactly)... an Excess Shelter Deduction capped at $1,189/month for most
+// households... this $1,189 figure also matches USDA's national FY2026
+// table exactly." Prior to #866, federal-tables.ts's standardDeductionFor()/
+// shelterCapFor() took no state parameter at all and always returned the
+// 48-contiguous table's $209/$223/$261/$299 SD and $744 shelter cap for
+// every state including AK, understating AK benefits (up to ~$45/mo from
+// the SD alone, more where shelter-capped). See issue #866.
+
 import { Decimal } from "../decimal";
 
 export type AkAllotmentZone = "urban" | "rural1" | "rural2";
@@ -167,6 +188,22 @@ export const AK_RURAL_II = zoneTable(
   "438",
   "48",
 );
+
+// #866: AK's own statewide Standard Deduction ($358 HH1-5, $374 HH6+) and
+// Maximum Excess Shelter Deduction ($1,189) — NOT zone-specific, see the
+// header note above. Consulted by federal-tables.ts's
+// standardDeductionFor()/shelterCapFor() when state === "AK", the same
+// state-branch-first/federal-fallback shape maxAllotmentFor()/
+// minimumBenefitFor() already use for AK's zone table.
+export const AK_STANDARD_DEDUCTION = new Map<number, Decimal>([
+  [1, new Decimal("358")],
+  [2, new Decimal("358")],
+  [3, new Decimal("358")],
+  [4, new Decimal("358")],
+  [5, new Decimal("358")],
+  [6, new Decimal("374")],
+]);
+export const AK_SHELTER_CAP = new Decimal("1189");
 
 /**
  * County FIPS ("SSCCC") → allotment zone, for the AK boroughs/census areas
