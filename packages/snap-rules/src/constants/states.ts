@@ -3506,6 +3506,216 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Delaware — DHSS / Division of Social Services (DSS). First "batch tier"
+  // build (docs/plans/snap-rules-50-state-engine-completion.md §6 step 6:
+  // "DE, SD, ND"), and this file's 30th state overall — a genuine blank
+  // slate, no prior StatePolicy or oracle coverage existed. Every axis below
+  // is TRANSLATED from the already-cited primary-source findings in the
+  // merged Demeter corpus pack (packages/demeter-engine/src/states/de/
+  // PROVENANCE.md + supplements.json + freshness.json), built 2026-08-12 —
+  // re-verification, not fresh research; see that pack's own Sources table
+  // (direct curl fetches of dhss.delaware.gov and regulations.delaware.gov,
+  // both clean HTTP 200 with no WAF barrier, plus the regulations.delaware.
+  // gov API PDF endpoint for the full 114-page DSSM 9000 manual and the
+  // archived DSSM 2000 manual, plus Delaware's own 2018 repeal order text).
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis: federal_fiscal_year
+  // — DSSM 9042 (Categorically Eligible Households): any household with
+  // gross income at or below 200% FPL is categorically eligible, via a
+  // DISTINCTIVE Delaware mechanism this pack read directly from DSSM 9042's
+  // own text (not a generic "BBCE" self-description several secondary
+  // sources use): Delaware uses TANF funds to provide non-cash
+  // pregnancy-prevention information (the 3rd statutory TANF purpose), with
+  // an authorization for this information embedded directly in the Delaware
+  // SNAP application itself. Delaware's own current Food Benefit Income
+  // Eligibility Limits table (published for the FFY2026 cycle, 10/1/2025-
+  // 9/30/2026) confirms the 200% figures ($2,610 HH1, $5,360 HH4) — the
+  // federal-fiscal-year basis this file's other 200%-BBCE states already use.
+  //
+  // asset_waiver: true — DSSM 9045: categorically eligible households "do
+  // not have to meet the resource limits or definitions" at all. Same "BBCE
+  // households skip resources" pattern this file's NC/VA/MD/LA entries
+  // already use — but Delaware's corpus pack flags a genuine, disclosed
+  // internal-DSSM staleness catch this build does NOT need to resolve to
+  // author this axis: a household that is NOT categorically eligible (e.g.
+  // ineligible-alien member, student-provision ineligibility, fleeing-felon/
+  // probation-violator status, non-exempt institutionalization, or
+  // work-requirement noncompliance — DSSM 9042.2/9042.3) still faces a real
+  // DSSM 9045 resource limit, and DSSM 9045's own text ($2,000/$3,000)
+  // traces to at least a 2009-era baseline with no visible newer amendment
+  // against the current federal FY2026 COLA-adjusted floor ($3,000/$4,500)
+  // — immaterial to this axis since `asset_waiver: true` already means the
+  // resource test never runs for the large majority of DE households this
+  // axis governs (the 200% FPL cat-elig population), but flagged here
+  // per the corpus pack's own disclosure rather than silently dropped.
+  //
+  // sua_by_tier: NULL — a genuine, disclosed gap, not a guess: DSSM 9060
+  // explicitly defers Delaware's Standard Deduction AND all four
+  // utility-allowance tiers (HCSUA/LUA/one-utility/telephone) to "the
+  // current October Cost-of-Living Adjustment Administrative Notice," a
+  // separate document the corpus pack could not locate at a working URL (a
+  // 2022-vintage URL pattern now 404s). USDA FNS's own FY2026 SUA guidance
+  // memo confirms these figures are now calculated PER-STATE via a 2.7%
+  // CPI-U self-adjustment from each state's own FY2025 baseline rather than
+  // published in one uniform national table — meaning Delaware's specific
+  // current dollar figures are genuinely state-specific and undiscovered,
+  // the same disclosed-null discipline this file's PA/NJ/TN entries already
+  // use rather than fabricating a number.
+  //
+  // allotment_tier: "48" — no Delaware-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL REPEAL, this pack's flagship
+  // finding, reached by chasing a specific repealed citation rather than
+  // accepting a secondary-source paraphrase: several secondary sources
+  // describe Delaware as having a "modified" drug-felony ban conditioned on
+  // sentence compliance — language traceable to DSSM 2027's own PRE-2018
+  // text. The corpus pack fetched Delaware's current DSSM 2000-series
+  // manual directly and found DSSM 2027 marked plainly "[Repealed - See 21
+  // DE Reg. 722 (03/01/18)]," then fetched 21 DE Reg. 722's own Final Order
+  // text directly: Delaware struck the drug-felony restriction from Cash
+  // Assistance/General Assistance entirely, effective March 11, 2018,
+  // implementing House Bill No. 11 (2017) and 31 Del. C. §524. DSSM 9042.2
+  // (SNAP's own categorical-eligibility exclusion list) independently
+  // confirms no drug-felony exclusion category exists in the SNAP-specific
+  // rules either. One disclosed internal-DSSM inconsistency: DSSM 9013.2
+  // still lists a drug-felony exclusion citing the repealed DSSM 2027 — the
+  // corpus pack treats the repeal order and DSSM 9042.2's own current
+  // exclusion list as authoritative over this stale, uncorrected
+  // cross-reference. Inconsequential regardless for this axis's
+  // verdict-and-benefit consequence (grep-confirmed: only "full" disqualifies
+  // in gates/disqualifications.ts).
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-lapsed
+  // finding: USDA FNS's own ABAWD Time Limit Waivers FY2025-2029 index lists
+  // Delaware's most recent posted waiver-response entry as the FY2025
+  // waiver (approved 09/19/2024, covering Wilmington city plus the combined
+  // Kent/Sussex County area), effective through September 30, 2025 — with
+  // NO FY2026 entry as of the corpus pack's fetch (2026-08-12). A separate,
+  // already-lapsed, one-month federal-shutdown-driven nationwide ABAWD
+  // pause (November 2025 only) is a distinct, time-limited event, not an
+  // ongoing Delaware-specific waiver. No county-level lookup needed, same
+  // uniform-statewide-zero-waiver shape as this file's VA/MO/TN/MD/CO/SC/
+  // LA/OK entries.
+  //
+  // rmp_operated: false — Delaware DHSS's own consumer page explicitly
+  // lists "Hot or prepared foods" under items a household CANNOT buy with
+  // SNAP benefits, cross-checked against secondary-source corroboration
+  // that no DE RMP exists; no pending Delaware RMP legislation found.
+  //
+  // Not representable in this schema, and not silently dropped — a
+  // NEW-TO-THIS-FILE type of disclosed gap: Delaware's DSSM 9060 states its
+  // Homeless Shelter Deduction as a flat $143.00, but that specific
+  // subsection's amendment footer shows no revision newer than 09/01/14,
+  // while USDA's current national FY2026 maximum is $198.99 — a state MAY
+  // legitimately set its own homeless-shelter-deduction figure below the
+  // federal cap, so $143.00 is not necessarily wrong, but the corpus pack
+  // could not confirm whether Delaware has since raised it. This engine has
+  // no per-state homeless-deduction axis at all (benefit-calc.ts's
+  // `homelessDeductionFor` is a single federal constant, engine-wide) — so
+  // this gap is disclosed here but not actionable without a schema change,
+  // the same category of accepted limitation as #824's NJ findings. Zero of
+  // the 92 v0.6 profiles with `homeless_deduction: true` are DE-specific
+  // enough for this to matter for THIS build's oracle (the federal $198.99
+  // figure is what the engine actually applies regardless of state).
+  //
+  // Oracle: DE's closest structural axis-twin among all 29 already-
+  // registered states is TENNESSEE — matching every verdict-and-benefit-
+  // consequential axis exactly (bbce: true, bbce_threshold_pct: 200,
+  // bbce_fpl_basis: federal_fiscal_year, asset_waiver: true, sua_by_tier:
+  // null, allotment_tier: "48", abawd_waiver_avail: false), differing only
+  // in `drug_felony_ban` (TN "modified" vs DE "none" — a value with zero
+  // verdict/benefit consequence, grep-confirmed: only "full" disqualifies
+  // anywhere in gates/disqualifications.ts). Built a fresh, independent
+  // Python calculator (not derived from engine output, per #636) directly
+  // from verdict.ts/benefit-calc.ts/gates/{income-tests,asset-test,abawd,
+  // student,composition,immigration,disqualifications,categorical}.ts/
+  // facts.ts/constants/federal-tables.ts's own read source (not just their
+  // doc-comments), mirroring every gate and the benefit-calc formula
+  // exactly, including decimal.ts's half-up (roundDollar), floor
+  // (floorDollar), and ceiling (ceilDollar) rounding conventions. Because
+  // TN's own fixture is missing 3 of 92 rows (TN deliberately left 3
+  // genuinely-indeterminate profiles unauthored per its own build), this
+  // build instead cross-validated the calculator against PENNSYLVANIA (also
+  // null-SUA, 200%/federal_fiscal_year BBCE, asset_waiver true — PA has the
+  // full 92/92 + 37/37 rows authored, differing from DE in
+  // `abawd_waiver_avail` (PA true vs DE false) and `drug_felony_ban` (PA
+  // "modified" vs DE "none"), a MORE rigorous check than matching DE's own
+  // params since it forced the calculator to prove both the true and false
+  // abawd_waiver_avail branches correct): 129/129 exact match (92 base +
+  // 37 variant rows) reproducing PA's already-graded oracle under PA's own
+  // StatePolicy params, using a realistic-range ($0-$1,000, 21-point) SUA
+  // sweep for the null-SUA-blocked rows — a bounded, realistic sweep caught
+  // ZERO indeterminate profiles for PA, unlike an earlier unrealistic
+  // $0-$1,500 sweep attempt which manufactured one false-ambiguous signal on
+  // a profile whose verdict only flips north of a ~$1,130 SUA figure no real
+  // state utility standard anywhere in this file has ever published (noted
+  // as a minor, out-of-scope PA cross-validation footnote, not touched here
+  // — PA itself stays fully out of scope for this build). Also independently
+  // cross-checked TN's own 89/92 authored rows for extra confidence: 88/89
+  // matched (the one divergence, MX4-bbce-max-income-with-any-benefit, is a
+  // TN-specific finding this build did not need to resolve or model, since
+  // DE is built and verified independently against PA, not TN). Ran the
+  // validated calculator under DE's own policy params: DE's computed DENY
+  // set is IDENTICAL to LA's (LA — also 200%/federal_fiscal_year BBCE,
+  // asset_waiver true, abawd_waiver_avail false — differing in `sua_by_tier`
+  // only) and OR's already-graded oracles (independently confirmed, since
+  // every verdict-controlling axis DE shares with LA/OR is identical).
+  // Authored all 92 `expected_by_state.DE` entries: 80 APPROVE / 12 DENY.
+  // Also checked all 37 rows across the 18 non-expected_by_state variant
+  // profiles for a DE-specific verdict_by_state override, the same
+  // discipline every prior state's build used — found ZERO divergence from
+  // the shared default verdict for DE (matching NC's/VA's/MD's/CO's/LA's
+  // zero-override result, not MO's/SC's/OK's one-override finding), since
+  // DE's computed verdict set is identical to LA's/OR's on every axis that
+  // affects eligibility.
+  //
+  // 58 of the 92 profiles use a non-"none" SUA tier and no
+  // homeless_deduction, so — same as PA's/NJ's/TN's null-SUA entries —
+  // `composeVerdict` legitimately SKIPs those rows for real grading
+  // (bails before any gate runs); those 58 keep `benefit: null` and got a
+  // verdict only after being independently proven SUA-invariant across the
+  // realistic $0-$1,000 sweep described above (0 of 58 were genuinely
+  // indeterminate). The other 34 profiles (`sua_tier === "none"` or
+  // `homeless_deduction: true`) got a REAL, fully-computed benefit, since
+  // neither path touches `policy.sua_by_tier` at all.
+  //
+  // Verification: `/profile-simulation state=DE` — 34 PASS / 0 FAIL / 95
+  // SKIP (of 129), every SKIP attributable to the documented null-SUA gap,
+  // no PARAMS_MISMATCH — matching PA's/NJ's/TN's exact SKIP-heavy shape,
+  // not this file's clean-129/0/0 majority. Every other registered state's
+  // harness run reconfirmed unchanged from its documented baseline (see
+  // this build's own execution-log entry in docs/plans/snap-rules-50-state-
+  // engine-completion.md for the full per-state totals list). `tsc
+  // --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass
+  // (0 new — a schema-conformant pure addition needed no new unit tests),
+  // 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  // `packages/demeter-engine` (DE's corpus was already complete and out of
+  // scope) or any other state's `StatePolicy`/oracle coverage. No new
+  // GitHub issue filed — every gap found (DSSM 9045's possibly-stale
+  // resource limit, DSSM 9060's possibly-stale $143 homeless deduction, the
+  // DSSM 9013.2 stale drug-felony cross-reference) is a per-state disclosed
+  // gap of an already-documented class (#824-style Facts-shape/mechanism
+  // gaps, or a genuinely time-sensitive fact worth re-checking later), not
+  // a new engine architecture gap, per this task's own instruction.
+  DE: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "DE",
+      label: "Delaware / DHSS-DSS (Division of Social Services)",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
