@@ -76,6 +76,20 @@ describe("Demeter CSS invariants", () => {
     expect(block).toMatch(/font-weight:\s*600/);
   });
 
+  it("the save sign-in panel gets the whole row it needs, not a button's", () => {
+    // .demeter__savepanel carries a title, a body paragraph, a stored-data
+    // note and an actions row — the same "needs the whole row" shape as
+    // .demeter__clearconfirm right above it, which already has this exact
+    // scoped override. .demeter__savepanel's OWN `flex: 1 1 100%` (declared
+    // where the rest of its rules live, elsewhere in this file) never got
+    // one — so it silently lost to `.dmchat .demeter__sidebtns > *` two
+    // classes up (one class beats two), squeezing the sign-in panel into a
+    // narrow ~8.5rem column beside "Start a new conversation" (real
+    // feedback, 2026-08-15 — screenshot showed it overlapping/cramped).
+    const body = ruleBody(".dmchat .demeter__sidebtns .demeter__savepanel");
+    expect(body).toMatch(/flex:\s*1 1 100%/);
+  });
+
   it("message motion exists and is reducible", () => {
     // There were no message animations at all, which is why sending read as a
     // state swap. Motion added is motion that must be droppable.
