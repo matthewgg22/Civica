@@ -3889,6 +3889,222 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // District of Columbia (batch tier 6, §6 step 6 — VT/WY/DC, third and
+  // final of three, appended after WY in this same worktree/PR) — DC is a
+  // jurisdiction, not a state, but administers SNAP as its own single,
+  // unified jurisdiction (DHS's Economic Security Administration,
+  // District-wide, no sub-jurisdictional policy variation) — structurally
+  // the closest parallel in this file to a state-administered program
+  // (NC/VA/TN/IN/MO/MD/CO/SC/LA/OK), and registers under state_code "DC"
+  // the same way every other jurisdiction in this schema does. Built DC's
+  // StatePolicy entry AND full 92-profile oracle coverage from scratch (DC
+  // had neither before this PR), translating DC's already-merged Demeter
+  // corpus pack (packages/demeter-engine/src/states/dc/, PROVENANCE.md +
+  // supplements.json + freshness.json, built 2026-08-12) into the engine's
+  // stricter typed shape per §5's process.
+  //
+  // bbce: true, bbce_threshold_pct: 200, bbce_fpl_basis: federal_fiscal_year
+  // — DC Code § 4-261.02 grants categorical eligibility to ALL applicants
+  // with income at or below 200% FPL GROSS income, achieved through a
+  // Mayor-established TANF-funded program or service — directly codified
+  // in a DC Council STATUTE (Title 4, Chapter 2B, the "Food Stamp
+  // Expansion Act"), not merely described in an agency manual, the same
+  // "codified in statute" structural pattern this file's VA entry already
+  // found. DHS's own income-limits table (effective 10/1/2025-9/30/2026)
+  // is FFY-dated, matching this file's federal_fiscal_year default. A
+  // genuine internal DC page labeling inconsistency this pack's corpus
+  // caught and this entry does NOT inherit: DHS's own table HEADER for
+  // the 200% column literally reads "Maximum Net Monthly Income (200%
+  // FPL)" even though the table's own footnote and the statute itself both
+  // confirm 200% FPL is a GROSS-income standard — this entry encodes the
+  // correct (gross) reading per the statute, not the header's mislabel.
+  //
+  // asset_waiver: true — DHS's own page states plainly that categorically
+  // eligible households (the large majority, per DHS: "Most District
+  // residents applying for SNAP are determined categorically eligible")
+  // "do not have a limit on resources." For the minority NOT categorically
+  // eligible, DHS's page states the resource limit plainly: $3,000 general
+  // / $4,500 with a 60+/disabled member — matching the current federal
+  // FY2026 COLA-adjusted floor exactly, the same federal fallback the
+  // engine's own asset-test gate already applies when asset_waiver is
+  // false for a non-cat-elig household.
+  //
+  // sua_by_tier: DELIBERATELY null — DC is a GENUINE STRUCTURAL GAP, not a
+  // guess either way, same disclosed-gap discipline as this file's PA/NJ/
+  // TN/MN entries. DHS's own current SNAP Eligibility Requirements page
+  // states exactly ONE utility figure: "a Standard Utility Allowance of
+  // $374, updated every October 1" — no separate Basic/Limited-Utility or
+  // telephone-only standard anywhere in DHS's own text, and this pack's
+  // freshness.json explicitly discloses that no second tier was located.
+  // A single confirmed figure cannot populate this schema's required
+  // 4-key {HCSUA, LUA, phone, none} shape without guessing the other two —
+  // this entry does NOT guess. DC DOES carry a genuinely DC-specific
+  // statutory mechanism worth flagging even though it's out of scope for
+  // this null entry: DC Code § 4-261.03 ("LIHEAP Heat and Eat initiative")
+  // requires the Mayor to provide the MAXIMUM Standard Utility Allowance
+  // to SNAP households, with automatic enrollment via a statutory
+  // $20.01/year minimum LIHEAP benefit — meaning DC's real-world SUA
+  // assignment is close to universal at the single known $374 figure for
+  // most households, but this entry still can't safely populate LUA/phone
+  // without a citation.
+  //
+  // allotment_tier: "48" — no DC-specific elevated max-allotment schedule
+  // found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL, UNCONDITIONAL STATUTORY
+  // OPT-OUT, reached via direct statutory text rather than accepting a
+  // secondary source's "opted out" framing at face value (the same
+  // caution this file's VT entry already applies, since several secondary
+  // sources describe OTHER states' bans imprecisely). DC Code § 4-205.71
+  // states in full: "An adult who is a drug felon shall not be denied cash
+  // or food assistance benefits...solely because he or she is a drug
+  // felon" — no sentence-compliance condition, no treatment-program
+  // requirement, originally added April 20, 1999 (D.C. Law 12-241) and
+  // most recently amended November 26, 2019 (D.C. Law 23-31).
+  //
+  // abawd_waiver_avail: false — FLAGSHIP FINDING, and a genuine correction
+  // of a widely-repeated secondary-source claim, confirmed by TWO
+  // independent primary sources: DHS's own live SNAP Work Requirements
+  // page states plainly "SNAP ABAWD work requirements implementation
+  // started on June 1, 2026" (36-month clock through May 31, 2029) — the
+  // OPPOSITE of several secondary sources' claim that DC still holds an
+  // active, ongoing districtwide waiver. Independently cross-checked
+  // against USDA FNS's own ABAWD Time Limit Waivers FY2025-2029 index,
+  // which lists DC's most recent posted waiver-response entries as three
+  // separate FY2025 responses with NO FY2026 entry, corroborating the
+  // waiver lapsed and was not renewed. No county-level lookup needed — DC
+  // is a single jurisdiction with no sub-jurisdictional geography for one
+  // to apply to, the same reasoning this file's VA/MO/TN/MD/CO/SC/LA/OK/
+  // VT/WY entries already use for a uniform statewide/district-wide
+  // zero-waiver finding.
+  //
+  // rmp_operated: false — SECOND FLAGSHIP FINDING, confirmed by TWO
+  // independent primary sources: USDA FNS's own official "States that
+  // Operate a Restaurant Meals Program" list does NOT include DC (the
+  // complete current list is AZ, MD, NY, CA, MA, RI, IL [Cook/Franklin
+  // only], MI, VA) — despite several secondary sources stating plainly
+  // that DC participates. Independently cross-checked against DHS's own
+  // live consumer page's explicit purchase-restriction list ("Hot foods"
+  // and "Prepared Foods fit for immediate consumption" are NOT
+  // purchasable, no RMP exception mentioned). This pack's reading: the
+  // secondary-source error likely conflates DC with its immediate
+  // RMP-operating neighbors, Maryland and Virginia, both of which DO
+  // appear on USDA's list — a genuinely useful correction given DC's
+  // literal adjacency to two RMP states this file already carries.
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824, newly confirmed present for
+  // DC: no engine axis exists for DC's genuinely longer 36-month ESAP
+  // (Elderly Simplified Application Project) certification period for
+  // all-elderly/disabled no-earned-income households, vs. the standard
+  // 12-month track — an informational/certification-period gap, not a
+  // verdict/benefit-consequential one, matching this file's OK/LA/SC/VT
+  // certification-period disclosures. DHS's own page also states a
+  // specific 4-person Standard Deduction figure could not be independently
+  // located (DHS's own text skips the 4-person tier explicitly) — this
+  // entry does not encode a state-specific Standard Deduction at all
+  // (Standard Deduction is a shared federal-tables.ts constant, not a
+  // per-state StatePolicy axis in this schema), so this particular corpus
+  // gap has no engine-side consequence.
+  //
+  // Oracle: DC's closest structural axis-twin among all 31 already-
+  // registered states is TENNESSEE — matching bbce: true,
+  // bbce_threshold_pct: 200, bbce_fpl_basis: federal_fiscal_year,
+  // asset_waiver: true, sua_by_tier: null, allotment_tier: "48",
+  // abawd_waiver_avail: false, rmp_operated: false — a full match on every
+  // verdict-and-benefit-consequential axis, differing only in
+  // drug_felony_ban (TN "modified" vs DC "none" — zero verdict/benefit
+  // consequence, grep-confirmed: only "full" disqualifies). Built a fresh,
+  // independent Python calculator (not derived from engine output, per
+  // #636) directly from verdict.ts/benefit-calc.ts/gates/{income-tests,
+  // asset-test,abawd,student,composition,immigration,disqualifications,
+  // categorical}.ts/facts.ts/constants/federal-tables.ts's own read
+  // source, mirroring every gate and the benefit-calc formula exactly,
+  // including decimal.ts's rounding conventions. Cross-validated BEFORE
+  // trusting it for DC: reproduced TN's already-graded oracle under TN's
+  // own StatePolicy params (34 PASS / 0 FAIL, the SUA-unblocked subset
+  // exactly matching TN's documented 34/0/95 baseline — the null-SUA
+  // gate's SKIP-before-any-other-gate behavior means the harness itself
+  // never grades the other 58/95 rows regardless of what any fixture
+  // authors for them, so this is the correct and complete cross-check for
+  // a null-SUA twin).
+  //
+  // For DC's own oracle authoring, applied the SAME "SUA-invariant sweep"
+  // methodology this file's PA/NJ/AK null-SUA builds already established
+  // (per [[project_snap_rules_oracle_authoring]]): for the 58 of 92
+  // profiles whose sua_tier isn't "none" and aren't homeless_deduction (the
+  // profiles the composer SKIPs before reaching any gate today), swept a
+  // hypothetical SUA value across a 13-point $0-$1,500 range and authored
+  // a verdict (benefit: null) ONLY where the verdict held identical at
+  // EVERY swept value — 0 of the 58 were genuinely indeterminate. (These
+  // 58 authored verdicts document the correct answer for a future SUA fix
+  // but are NOT graded PASS/FAIL by the harness today — the composer's
+  // null-SUA check bails before any gate runs, so today's
+  // `/profile-simulation state=DC` run SKIPs them regardless of what's
+  // authored here, exactly matching PA's/NJ's/TN's own 34/0/95 shape.)
+  // Also checked all 37 rows across the 18 non-expected_by_state variant
+  // profiles under DC's own params using the same sweep methodology —
+  // found ZERO verdict_by_state overrides needed (every SUA-unblocked
+  // variant's verdict matches the shared default), but found ONE
+  // genuinely-indeterminate row this file's prior null-SUA builds hadn't
+  // yet encountered: P58-elderly-retiree-tips-over-net-limit's
+  // "above_net_limit" variant is a household specifically engineered to
+  // sit at the net-income margin with an UNCAPPED (elderly/disabled)
+  // excess-shelter deduction — genuinely SUA-dependent by the profile's
+  // own design, not a calculator bug — left unauthored rather than
+  // guessed either way, the same "genuinely indeterminate stays
+  // unauthored" discipline this file's null-SUA precedent already
+  // establishes in principle (PA/NJ/AK's builds found 0 such rows only
+  // because none of their swept profiles happened to sit exactly at that
+  // margin; DC's is the first to actually hit one).
+  //
+  // Authored all 92 expected_by_state.DC entries: 80 APPROVE / 12 DENY —
+  // the SAME shared 12-DENY set every 200%-BBCE state in this file shares
+  // (D03-D10, M12, M19, S01, S04), all 12 independently confirmed
+  // SUA-invariant. 34 of the 92 get a real computed benefit (sua_tier
+  // "none" or homeless_deduction); the other 58 carry benefit: null with
+  // an independently-swept verdict, per the discipline above.
+  //
+  // Verification: `/profile-simulation state=DC` — 34 PASS / 0 FAIL / 95
+  // SKIP (matching PA's/NJ's/TN's exact SKIP-heavy shape, not the
+  // 129/0/0-clean bar this file's real-SUA states hit — DC's null-SUA gap
+  // means it needs the same null-SUA fallback PA/NJ/TN already established,
+  // NOT a coverage gap). Every other registered state's harness run
+  // reconfirmed unchanged from its documented baseline (full per-state
+  // confirmation in this build's PR description and the plan doc's
+  // execution-log entry). `tsc --noEmit -p packages/snap-rules` clean,
+  // 323/323 snap-rules tests pass (0 new — a schema-conformant pure
+  // addition needed no new unit tests), 44/47 profile-harness tests pass
+  // (3 pre-existing skips). Did not touch `packages/demeter-engine` (DC's
+  // corpus was already complete and out of scope) or any other
+  // jurisdiction's StatePolicy/oracle coverage. No new GitHub issue filed
+  // — the null-SUA gap is the SAME already-documented #824-adjacent class
+  // of gap PA's/NJ's/TN's/MN's entries already carry (not a new instance
+  // needing its own issue), and the DC-EITC-equivalent labeling
+  // inconsistency + the 36-month-ESAP certification-period gap are both
+  // per-jurisdiction disclosed findings of an already-documented class,
+  // per this task's own instruction. This is the third and FINAL of three
+  // batch-tier-6 jurisdictions (VT, WY, DC — all built one at a time in
+  // this same worktree/PR, each appended after the previous). Batch tier
+  // 6 (§6 step 6) is now complete.
+  DC: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "DC",
+      label: "District of Columbia / DHS — Economic Security Administration",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
