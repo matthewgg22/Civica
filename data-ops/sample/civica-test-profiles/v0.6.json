@@ -203,12 +203,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "TX": {
           "verdict": "APPROVE",
@@ -228,57 +228,57 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "PA": {
           "verdict": "APPROVE",
@@ -293,17 +293,17 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "TN": {
           "verdict": "APPROVE",
@@ -313,32 +313,32 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "VI": {
           "verdict": "APPROVE",
@@ -353,12 +353,12 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "DC": {
           "verdict": "APPROVE",
@@ -373,7 +373,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "ID": {
           "verdict": "APPROVE",
@@ -383,12 +383,12 @@
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "MS": {
           "verdict": "APPROVE",
@@ -398,37 +398,37 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "UT": {
           "verdict": "APPROVE",
@@ -438,7 +438,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "WV": {
           "verdict": "APPROVE",
@@ -448,7 +448,7 @@
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         },
         "HI": {
           "verdict": "APPROVE",
@@ -463,7 +463,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 759
+          "benefit": 758
         }
       }
     },
@@ -1626,12 +1626,12 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 530
+          "benefit": 529
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 497
+          "benefit": 496
         },
         "FL": {
           "verdict": "APPROVE",
@@ -1671,7 +1671,7 @@
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 530
+          "benefit": 529
         },
         "WI": {
           "verdict": "APPROVE",
@@ -1696,12 +1696,12 @@
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 488
+          "benefit": 487
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 524
+          "benefit": 523
         },
         "TN": {
           "verdict": "APPROVE",
@@ -1726,17 +1726,17 @@
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 492
+          "benefit": 491
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 515
+          "benefit": 514
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 499
+          "benefit": 498
         },
         "VI": {
           "verdict": "APPROVE",
@@ -1751,7 +1751,7 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 478
+          "benefit": 477
         },
         "CT": {
           "verdict": "APPROVE",
@@ -1781,7 +1781,7 @@
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 492
+          "benefit": 491
         },
         "ME": {
           "verdict": "APPROVE",
@@ -2311,7 +2311,7 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 292
+          "benefit": 291
         },
         "GA": {
           "verdict": "APPROVE",
@@ -2341,7 +2341,7 @@
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 277
+          "benefit": 276
         },
         "NV": {
           "verdict": "APPROVE",
@@ -2351,7 +2351,7 @@
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 215
+          "benefit": 214
         },
         "OR": {
           "verdict": "APPROVE",
@@ -2361,7 +2361,7 @@
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 286
+          "benefit": 285
         },
         "PA": {
           "verdict": "APPROVE",
@@ -2376,7 +2376,7 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 288
+          "benefit": 287
         },
         "VA": {
           "verdict": "APPROVE",
@@ -2386,7 +2386,7 @@
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 279
+          "benefit": 278
         },
         "TN": {
           "verdict": "APPROVE",
@@ -2396,7 +2396,7 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 255
+          "benefit": 254
         },
         "MD": {
           "verdict": "APPROVE",
@@ -2411,7 +2411,7 @@
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 250
+          "benefit": 249
         },
         "LA": {
           "verdict": "APPROVE",
@@ -2456,7 +2456,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 258
+          "benefit": 257
         },
         "ID": {
           "verdict": "APPROVE",
@@ -2486,7 +2486,7 @@
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "NE": {
           "verdict": "APPROVE",
@@ -2496,12 +2496,12 @@
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 282
+          "benefit": 281
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 257
+          "benefit": 256
         },
         "RI": {
           "verdict": "APPROVE",
@@ -2511,7 +2511,7 @@
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 250
+          "benefit": 249
         },
         "UT": {
           "verdict": "APPROVE",
@@ -2546,7 +2546,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 241
+          "benefit": 240
         }
       }
     },
@@ -3004,7 +3004,7 @@
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "TX": {
           "verdict": "APPROVE",
@@ -3024,27 +3024,27 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "MI": {
           "verdict": "APPROVE",
@@ -3054,27 +3054,27 @@
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 445
+          "benefit": 444
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "PA": {
           "verdict": "APPROVE",
@@ -3089,7 +3089,7 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "VA": {
           "verdict": "APPROVE",
@@ -3099,7 +3099,7 @@
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "TN": {
           "verdict": "APPROVE",
@@ -3109,32 +3109,32 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "VI": {
           "verdict": "APPROVE",
@@ -3149,12 +3149,12 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "DC": {
           "verdict": "APPROVE",
@@ -3169,7 +3169,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "ID": {
           "verdict": "APPROVE",
@@ -3179,12 +3179,12 @@
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "MS": {
           "verdict": "APPROVE",
@@ -3194,27 +3194,27 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "RI": {
           "verdict": "APPROVE",
@@ -3224,7 +3224,7 @@
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "UT": {
           "verdict": "APPROVE",
@@ -3234,7 +3234,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "WV": {
           "verdict": "APPROVE",
@@ -3244,7 +3244,7 @@
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 472
+          "benefit": 471
         },
         "HI": {
           "verdict": "APPROVE",
@@ -3259,7 +3259,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 471
+          "benefit": 470
         }
       }
     },
@@ -3363,12 +3363,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "TX": {
           "verdict": "APPROVE",
@@ -3388,57 +3388,57 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "PA": {
           "verdict": "APPROVE",
@@ -3453,17 +3453,17 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "TN": {
           "verdict": "APPROVE",
@@ -3473,32 +3473,32 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "VI": {
           "verdict": "APPROVE",
@@ -3513,12 +3513,12 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "DC": {
           "verdict": "APPROVE",
@@ -3533,7 +3533,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "ID": {
           "verdict": "APPROVE",
@@ -3543,12 +3543,12 @@
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "MS": {
           "verdict": "APPROVE",
@@ -3558,37 +3558,37 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "UT": {
           "verdict": "APPROVE",
@@ -3598,7 +3598,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "WV": {
           "verdict": "APPROVE",
@@ -3608,7 +3608,7 @@
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         },
         "HI": {
           "verdict": "APPROVE",
@@ -3623,7 +3623,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 783
+          "benefit": 782
         }
       }
     },
@@ -3716,7 +3716,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 122
+          "benefit": 121
         },
         "WA": {
           "verdict": "APPROVE",
@@ -3846,7 +3846,7 @@
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 56
+          "benefit": 55
         },
         "DC": {
           "verdict": "APPROVE",
@@ -3876,7 +3876,7 @@
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 56
+          "benefit": 55
         },
         "MS": {
           "verdict": "DENY",
@@ -3901,7 +3901,7 @@
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 56
+          "benefit": 55
         },
         "NM": {
           "verdict": "APPROVE",
@@ -3926,7 +3926,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 56
+          "benefit": 55
         },
         "WV": {
           "verdict": "APPROVE",
@@ -7140,7 +7140,7 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 119
+          "benefit": 118
         },
         "MA": {
           "verdict": "APPROVE",
@@ -7205,7 +7205,7 @@
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 17
+          "benefit": 16
         },
         "OR": {
           "verdict": "APPROVE",
@@ -7215,7 +7215,7 @@
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 86
+          "benefit": 85
         },
         "PA": {
           "verdict": "APPROVE",
@@ -7230,7 +7230,7 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 111
+          "benefit": 110
         },
         "VA": {
           "verdict": "APPROVE",
@@ -7355,7 +7355,7 @@
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 173
+          "benefit": 172
         },
         "SD": {
           "verdict": "DENY",
@@ -7395,7 +7395,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 120
+          "benefit": 119
         }
       }
     },
@@ -7483,12 +7483,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "TX": {
           "verdict": "DENY",
@@ -7508,7 +7508,7 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "GA": {
           "verdict": "DENY",
@@ -7519,47 +7519,47 @@
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "PA": {
           "verdict": "APPROVE",
@@ -7574,12 +7574,12 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "MO": {
           "verdict": "DENY",
@@ -7599,22 +7599,22 @@
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "OK": {
           "verdict": "DENY",
@@ -7639,7 +7639,7 @@
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "DC": {
           "verdict": "APPROVE",
@@ -7654,7 +7654,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "ID": {
           "verdict": "DENY",
@@ -7664,12 +7664,12 @@
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "MS": {
           "verdict": "DENY",
@@ -7679,12 +7679,12 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "NE": {
           "verdict": "DENY",
@@ -7694,17 +7694,17 @@
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "SD": {
           "verdict": "DENY",
@@ -7719,7 +7719,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         },
         "WV": {
           "verdict": "APPROVE",
@@ -7744,7 +7744,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 496
+          "benefit": 495
         }
       }
     },
@@ -7846,12 +7846,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "TX": {
           "verdict": "APPROVE",
@@ -7871,117 +7871,117 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "PA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "TN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "VI": {
           "verdict": "APPROVE",
@@ -7991,107 +7991,107 @@
         "AL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176.0
+          "benefit": 175
         },
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "DC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "DE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "ID": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "MS": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "UT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "WV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         },
         "HI": {
           "verdict": "APPROVE",
@@ -8106,7 +8106,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 176
+          "benefit": 175
         }
       }
     },
@@ -8204,12 +8204,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "TX": {
           "verdict": "APPROVE",
@@ -8224,12 +8224,12 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 522
+          "benefit": 521
         },
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "GA": {
           "verdict": "DENY",
@@ -8239,22 +8239,22 @@
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 234
+          "benefit": 233
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "NY": {
           "verdict": "DENY",
@@ -8264,22 +8264,22 @@
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 240
+          "benefit": 239
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 203
+          "benefit": 202
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "PA": {
           "verdict": "APPROVE",
@@ -8294,12 +8294,12 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 219
+          "benefit": 218
         },
         "MO": {
           "verdict": "DENY",
@@ -8319,12 +8319,12 @@
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "SC": {
           "verdict": "DENY",
@@ -8334,7 +8334,7 @@
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 246
+          "benefit": 245
         },
         "OK": {
           "verdict": "DENY",
@@ -8359,7 +8359,7 @@
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "DC": {
           "verdict": "APPROVE",
@@ -8374,7 +8374,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "ID": {
           "verdict": "DENY",
@@ -8389,7 +8389,7 @@
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "MS": {
           "verdict": "DENY",
@@ -8399,12 +8399,12 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "NE": {
           "verdict": "DENY",
@@ -8414,17 +8414,17 @@
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 232
+          "benefit": 231
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "SD": {
           "verdict": "DENY",
@@ -8439,7 +8439,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         },
         "WV": {
           "verdict": "APPROVE",
@@ -8464,7 +8464,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 256
+          "benefit": 255
         }
       }
     },
@@ -8570,12 +8570,12 @@
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 274
+          "benefit": 273
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 280
+          "benefit": 279
         },
         "IL": {
           "verdict": "APPROVE",
@@ -8600,12 +8600,12 @@
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 286
+          "benefit": 285
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 249
+          "benefit": 248
         },
         "OR": {
           "verdict": "APPROVE",
@@ -8635,7 +8635,7 @@
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 265
+          "benefit": 264
         },
         "MO": {
           "verdict": "APPROVE",
@@ -8650,7 +8650,7 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 298
+          "benefit": 297
         },
         "MD": {
           "verdict": "APPROVE",
@@ -8670,12 +8670,12 @@
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 292
+          "benefit": 291
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 276
+          "benefit": 275
         },
         "VI": {
           "verdict": "APPROVE",
@@ -8690,7 +8690,7 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 255
+          "benefit": 254
         },
         "CT": {
           "verdict": "APPROVE",
@@ -8755,7 +8755,7 @@
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 278
+          "benefit": 277
         },
         "RI": {
           "verdict": "APPROVE",
@@ -8903,12 +8903,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "TX": {
           "verdict": "APPROVE",
@@ -8923,12 +8923,12 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 668
+          "benefit": 667
         },
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "GA": {
           "verdict": "DENY",
@@ -8938,22 +8938,22 @@
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 311
+          "benefit": 310
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "NY": {
           "verdict": "DENY",
@@ -8963,22 +8963,22 @@
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 317
+          "benefit": 316
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 280
+          "benefit": 279
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "PA": {
           "verdict": "APPROVE",
@@ -8993,12 +8993,12 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 296
+          "benefit": 295
         },
         "MO": {
           "verdict": "DENY",
@@ -9018,12 +9018,12 @@
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "SC": {
           "verdict": "DENY",
@@ -9033,7 +9033,7 @@
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 323
+          "benefit": 322
         },
         "OK": {
           "verdict": "DENY",
@@ -9058,7 +9058,7 @@
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "DC": {
           "verdict": "APPROVE",
@@ -9073,7 +9073,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "ID": {
           "verdict": "DENY",
@@ -9088,7 +9088,7 @@
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "MS": {
           "verdict": "DENY",
@@ -9098,12 +9098,12 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "NE": {
           "verdict": "DENY",
@@ -9113,17 +9113,17 @@
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 309
+          "benefit": 308
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "SD": {
           "verdict": "DENY",
@@ -9138,7 +9138,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         },
         "WV": {
           "verdict": "APPROVE",
@@ -9163,7 +9163,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 327
+          "benefit": 326
         }
       }
     },
@@ -9275,12 +9275,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "TX": {
           "verdict": "APPROVE",
@@ -9295,62 +9295,62 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 722
+          "benefit": 721
         },
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 392
+          "benefit": 391
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 359
+          "benefit": 358
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 365
+          "benefit": 364
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 401
+          "benefit": 400
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 371
+          "benefit": 370
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 334
+          "benefit": 333
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 392
+          "benefit": 391
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 403
+          "benefit": 402
         },
         "PA": {
           "verdict": "APPROVE",
@@ -9365,17 +9365,17 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 350
+          "benefit": 349
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 386
+          "benefit": 385
         },
         "TN": {
           "verdict": "APPROVE",
@@ -9385,12 +9385,12 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 383
+          "benefit": 382
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 409
+          "benefit": 408
         },
         "CO": {
           "verdict": "APPROVE",
@@ -9405,12 +9405,12 @@
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 377
+          "benefit": 376
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 361
+          "benefit": 360
         },
         "VI": {
           "verdict": "APPROVE",
@@ -9425,12 +9425,12 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 340
+          "benefit": 339
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "DC": {
           "verdict": "APPROVE",
@@ -9460,7 +9460,7 @@
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "MS": {
           "verdict": "APPROVE",
@@ -9470,37 +9470,37 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 422
+          "benefit": 421
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 363
+          "benefit": 362
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "UT": {
           "verdict": "APPROVE",
@@ -9510,7 +9510,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         },
         "WV": {
           "verdict": "APPROVE",
@@ -9535,7 +9535,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 423
+          "benefit": 422
         }
       }
     },
@@ -9632,12 +9632,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "TX": {
           "verdict": "APPROVE",
@@ -9657,57 +9657,57 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 420
+          "benefit": 419
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 395
+          "benefit": 394
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "PA": {
           "verdict": "APPROVE",
@@ -9722,17 +9722,17 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 411
+          "benefit": 410
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "TN": {
           "verdict": "APPROVE",
@@ -9742,17 +9742,17 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "SC": {
           "verdict": "APPROVE",
@@ -9762,12 +9762,12 @@
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 422
+          "benefit": 421
         },
         "VI": {
           "verdict": "APPROVE",
@@ -9782,12 +9782,12 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 401
+          "benefit": 400
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "DC": {
           "verdict": "APPROVE",
@@ -9802,7 +9802,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "ID": {
           "verdict": "APPROVE",
@@ -9817,7 +9817,7 @@
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "MS": {
           "verdict": "APPROVE",
@@ -9827,37 +9827,37 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "UT": {
           "verdict": "APPROVE",
@@ -9867,7 +9867,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "WV": {
           "verdict": "APPROVE",
@@ -9877,7 +9877,7 @@
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         },
         "HI": {
           "verdict": "APPROVE",
@@ -9892,7 +9892,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 424
+          "benefit": 423
         }
       }
     },
@@ -10005,12 +10005,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "TX": {
           "verdict": "APPROVE",
@@ -10030,57 +10030,57 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "PA": {
           "verdict": "APPROVE",
@@ -10095,17 +10095,17 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "TN": {
           "verdict": "APPROVE",
@@ -10115,32 +10115,32 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "VI": {
           "verdict": "APPROVE",
@@ -10155,12 +10155,12 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "DC": {
           "verdict": "APPROVE",
@@ -10175,7 +10175,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "ID": {
           "verdict": "APPROVE",
@@ -10185,12 +10185,12 @@
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "MS": {
           "verdict": "APPROVE",
@@ -10200,37 +10200,37 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "UT": {
           "verdict": "APPROVE",
@@ -10240,7 +10240,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "WV": {
           "verdict": "APPROVE",
@@ -10250,7 +10250,7 @@
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         },
         "HI": {
           "verdict": "APPROVE",
@@ -10265,7 +10265,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 687
+          "benefit": 686
         }
       }
     },
@@ -10718,12 +10718,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "TX": {
           "verdict": "APPROVE",
@@ -10743,117 +10743,117 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "PA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "TN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "VI": {
           "verdict": "APPROVE",
@@ -10863,107 +10863,107 @@
         "AL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177.0
+          "benefit": 176
         },
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "DC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "DE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "ID": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "MS": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "UT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "WV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         },
         "HI": {
           "verdict": "APPROVE",
@@ -10978,7 +10978,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 177
+          "benefit": 176
         }
       }
     },
@@ -12357,12 +12357,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "TX": {
           "verdict": "APPROVE",
@@ -12377,62 +12377,62 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 636
+          "benefit": 635
         },
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 342
+          "benefit": 341
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 348
+          "benefit": 347
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 317
+          "benefit": 316
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "PA": {
           "verdict": "APPROVE",
@@ -12447,17 +12447,17 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 333
+          "benefit": 332
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "TN": {
           "verdict": "APPROVE",
@@ -12467,17 +12467,17 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "SC": {
           "verdict": "APPROVE",
@@ -12487,12 +12487,12 @@
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 344
+          "benefit": 343
         },
         "VI": {
           "verdict": "APPROVE",
@@ -12507,12 +12507,12 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 323
+          "benefit": 322
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "DC": {
           "verdict": "APPROVE",
@@ -12527,7 +12527,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "ID": {
           "verdict": "APPROVE",
@@ -12542,7 +12542,7 @@
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "MS": {
           "verdict": "APPROVE",
@@ -12552,37 +12552,37 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 346
+          "benefit": 345
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "UT": {
           "verdict": "APPROVE",
@@ -12592,7 +12592,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "WV": {
           "verdict": "APPROVE",
@@ -12602,7 +12602,7 @@
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         },
         "HI": {
           "verdict": "APPROVE",
@@ -12617,7 +12617,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 352
+          "benefit": 351
         }
       }
     },
@@ -13040,12 +13040,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "TX": {
           "verdict": "APPROVE",
@@ -13065,57 +13065,57 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "PA": {
           "verdict": "APPROVE",
@@ -13130,17 +13130,17 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "TN": {
           "verdict": "APPROVE",
@@ -13150,32 +13150,32 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "VI": {
           "verdict": "APPROVE",
@@ -13190,12 +13190,12 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "DC": {
           "verdict": "APPROVE",
@@ -13210,7 +13210,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "ID": {
           "verdict": "APPROVE",
@@ -13220,12 +13220,12 @@
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "MS": {
           "verdict": "APPROVE",
@@ -13235,37 +13235,37 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "UT": {
           "verdict": "APPROVE",
@@ -13275,7 +13275,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "WV": {
           "verdict": "APPROVE",
@@ -13285,7 +13285,7 @@
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         },
         "HI": {
           "verdict": "APPROVE",
@@ -13300,7 +13300,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 520
+          "benefit": 519
         }
       }
     },
@@ -14950,12 +14950,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "TX": {
           "verdict": "APPROVE",
@@ -14975,57 +14975,57 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "PA": {
           "verdict": "APPROVE",
@@ -15040,17 +15040,17 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "TN": {
           "verdict": "APPROVE",
@@ -15060,17 +15060,17 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "SC": {
           "verdict": "DENY",
@@ -15080,12 +15080,12 @@
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "VI": {
           "verdict": "APPROVE",
@@ -15100,12 +15100,12 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "DC": {
           "verdict": "APPROVE",
@@ -15120,7 +15120,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "ID": {
           "verdict": "APPROVE",
@@ -15130,12 +15130,12 @@
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "MS": {
           "verdict": "APPROVE",
@@ -15145,37 +15145,37 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "UT": {
           "verdict": "APPROVE",
@@ -15185,7 +15185,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "WV": {
           "verdict": "APPROVE",
@@ -15195,7 +15195,7 @@
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "HI": {
           "verdict": "APPROVE",
@@ -15210,7 +15210,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         }
       }
     },
@@ -16245,7 +16245,7 @@
         "VI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 277
+          "benefit": 276
         },
         "AL": {
           "verdict": "APPROVE",
@@ -16355,7 +16355,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 450
+          "benefit": 449
         },
         "GU": {
           "verdict": "APPROVE",
@@ -16741,7 +16741,7 @@
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 45
+          "benefit": 44
         },
         "NE": {
           "verdict": "DENY",
@@ -16761,7 +16761,7 @@
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 66
+          "benefit": 65
         },
         "SD": {
           "verdict": "DENY",
@@ -16964,12 +16964,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "TX": {
           "verdict": "APPROVE",
@@ -16984,62 +16984,62 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1900
+          "benefit": 1899
         },
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "PA": {
           "verdict": "APPROVE",
@@ -17054,17 +17054,17 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "TN": {
           "verdict": "APPROVE",
@@ -17074,32 +17074,32 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "VI": {
           "verdict": "APPROVE",
@@ -17114,12 +17114,12 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "DC": {
           "verdict": "APPROVE",
@@ -17134,7 +17134,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "ID": {
           "verdict": "APPROVE",
@@ -17144,12 +17144,12 @@
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "MS": {
           "verdict": "APPROVE",
@@ -17159,37 +17159,37 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "UT": {
           "verdict": "APPROVE",
@@ -17199,7 +17199,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "WV": {
           "verdict": "APPROVE",
@@ -17209,7 +17209,7 @@
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         },
         "HI": {
           "verdict": "APPROVE",
@@ -17224,7 +17224,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1284
+          "benefit": 1283
         }
       }
     },
@@ -18991,7 +18991,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1227
+          "benefit": 1226
         },
         "GU": {
           "verdict": "APPROVE",
@@ -19353,7 +19353,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1047
+          "benefit": 1046
         },
         "GU": {
           "verdict": "APPROVE",
@@ -19715,7 +19715,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 867
+          "benefit": 866
         },
         "GU": {
           "verdict": "APPROVE",
@@ -19827,12 +19827,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "TX": {
           "verdict": "APPROVE",
@@ -19848,12 +19848,12 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 437
+          "benefit": 436
         },
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "GA": {
           "verdict": "DENY",
@@ -19863,22 +19863,22 @@
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "NY": {
           "verdict": "DENY",
@@ -19888,42 +19888,42 @@
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "PA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "MO": {
           "verdict": "DENY",
@@ -19933,7 +19933,7 @@
         "TN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "IN": {
           "verdict": "DENY",
@@ -19943,12 +19943,12 @@
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "SC": {
           "verdict": "DENY",
@@ -19958,7 +19958,7 @@
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "OK": {
           "verdict": "DENY",
@@ -19983,22 +19983,22 @@
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "DC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "DE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "ID": {
           "verdict": "DENY",
@@ -20013,7 +20013,7 @@
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "MS": {
           "verdict": "DENY",
@@ -20023,12 +20023,12 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "NE": {
           "verdict": "DENY",
@@ -20038,17 +20038,17 @@
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "SD": {
           "verdict": "DENY",
@@ -20063,12 +20063,12 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "WV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         },
         "WY": {
           "verdict": "DENY",
@@ -20088,7 +20088,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 155
+          "benefit": 154
         }
       }
     },
@@ -20632,7 +20632,7 @@
         "VI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 286
+          "benefit": 285
         },
         "AL": {
           "verdict": "APPROVE",
@@ -20742,7 +20742,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 459
+          "benefit": 458
         },
         "GU": {
           "verdict": "APPROVE",
@@ -20964,7 +20964,7 @@
         "VI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 178
+          "benefit": 177
         },
         "AL": {
           "verdict": "APPROVE",
@@ -21074,7 +21074,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 351
+          "benefit": 350
         },
         "GU": {
           "verdict": "APPROVE",
@@ -21296,7 +21296,7 @@
         "VI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 106
+          "benefit": 105
         },
         "AL": {
           "verdict": "APPROVE",
@@ -21406,7 +21406,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 279
+          "benefit": 278
         },
         "GU": {
           "verdict": "APPROVE",
@@ -21628,7 +21628,7 @@
         "VI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 52
+          "benefit": 51
         },
         "AL": {
           "verdict": "APPROVE",
@@ -21738,7 +21738,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 225
+          "benefit": 224
         },
         "GU": {
           "verdict": "APPROVE",
@@ -22100,7 +22100,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1047
+          "benefit": 1046
         },
         "GU": {
           "verdict": "APPROVE",
@@ -22212,12 +22212,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "TX": {
           "verdict": "APPROVE",
@@ -22237,117 +22237,117 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "PA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "TN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "VI": {
           "verdict": "APPROVE",
@@ -22357,122 +22357,122 @@
         "AL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591.0
+          "benefit": 590
         },
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "DC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "DE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "ID": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "MS": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "UT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "WV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1227
+          "benefit": 1226
         },
         "GU": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1065
+          "benefit": 1064
         },
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         }
       }
     },
@@ -22827,7 +22827,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1047
+          "benefit": 1046
         },
         "GU": {
           "verdict": "APPROVE",
@@ -23702,12 +23702,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "TX": {
           "verdict": "DENY",
@@ -23727,7 +23727,7 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "GA": {
           "verdict": "DENY",
@@ -23737,7 +23737,7 @@
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "IL": {
           "verdict": "DENY",
@@ -23747,12 +23747,12 @@
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "NY": {
           "verdict": "DENY",
@@ -23762,42 +23762,42 @@
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "PA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "MO": {
           "verdict": "DENY",
@@ -23807,7 +23807,7 @@
         "TN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "IN": {
           "verdict": "DENY",
@@ -23817,12 +23817,12 @@
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "SC": {
           "verdict": "DENY",
@@ -23832,7 +23832,7 @@
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "OK": {
           "verdict": "DENY",
@@ -23857,17 +23857,17 @@
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "DC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "DE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "IA": {
           "verdict": "DENY",
@@ -23887,7 +23887,7 @@
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "MS": {
           "verdict": "DENY",
@@ -23897,12 +23897,12 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "NE": {
           "verdict": "DENY",
@@ -23912,17 +23912,17 @@
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "SD": {
           "verdict": "DENY",
@@ -23937,12 +23937,12 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "WV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         },
         "WY": {
           "verdict": "DENY",
@@ -23962,7 +23962,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 112
+          "benefit": 111
         }
       }
     },
@@ -24085,7 +24085,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 57
+          "benefit": 56
         },
         "WA": {
           "verdict": "APPROVE",
@@ -24427,12 +24427,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "TX": {
           "verdict": "APPROVE",
@@ -24452,117 +24452,117 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "PA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "TN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "VI": {
           "verdict": "APPROVE",
@@ -24572,107 +24572,107 @@
         "AL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416.0
+          "benefit": 415
         },
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "DC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "DE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "ID": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "MS": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "UT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "WV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         },
         "HI": {
           "verdict": "APPROVE",
@@ -24687,7 +24687,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 416
+          "benefit": 415
         }
       }
     },
@@ -25039,7 +25039,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1059
+          "benefit": 1058
         },
         "GU": {
           "verdict": "APPROVE",
@@ -25401,7 +25401,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1179
+          "benefit": 1178
         },
         "GU": {
           "verdict": "APPROVE",
@@ -25513,12 +25513,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "TX": {
           "verdict": "APPROVE",
@@ -25538,117 +25538,117 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "PA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "TN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "VI": {
           "verdict": "APPROVE",
@@ -25658,112 +25658,112 @@
         "AL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639.0
+          "benefit": 638
         },
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "DC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "DE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "ID": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MS": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "UT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "WV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1227
+          "benefit": 1226
         },
         "GU": {
           "verdict": "APPROVE",
@@ -25773,7 +25773,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         }
       }
     },
@@ -25875,12 +25875,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "TX": {
           "verdict": "APPROVE",
@@ -25900,117 +25900,117 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "PA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "TN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "VI": {
           "verdict": "APPROVE",
@@ -26020,107 +26020,107 @@
         "AL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639.0
+          "benefit": 638
         },
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "DC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "DE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "ID": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MS": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "UT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "WV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "HI": {
           "verdict": "APPROVE",
@@ -26130,12 +26130,12 @@
         "GU": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1113
+          "benefit": 1112
         },
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         }
       }
     },
@@ -26237,12 +26237,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "TX": {
           "verdict": "APPROVE",
@@ -26262,117 +26262,117 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "PA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "TN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "VI": {
           "verdict": "APPROVE",
@@ -26382,107 +26382,107 @@
         "AL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639.0
+          "benefit": 638
         },
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "DC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "DE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "ID": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MS": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "UT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "WV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         },
         "HI": {
           "verdict": "APPROVE",
@@ -26492,12 +26492,12 @@
         "GU": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1113
+          "benefit": 1112
         },
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 639
+          "benefit": 638
         }
       }
     },
@@ -26602,12 +26602,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "TX": {
           "verdict": "APPROVE",
@@ -26627,117 +26627,117 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "PA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "NJ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "TN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "VI": {
           "verdict": "APPROVE",
@@ -26747,107 +26747,107 @@
         "AL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308.0
+          "benefit": 307
         },
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "DC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "DE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "ID": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "MS": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "UT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "WV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         },
         "HI": {
           "verdict": "APPROVE",
@@ -26862,7 +26862,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 308
+          "benefit": 307
         }
       }
     },
@@ -27217,7 +27217,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1017
+          "benefit": 1016
         },
         "GU": {
           "verdict": "APPROVE",
@@ -27582,7 +27582,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1065
+          "benefit": 1064
         },
         "GU": {
           "verdict": "APPROVE",
@@ -27947,7 +27947,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1257
+          "benefit": 1256
         },
         "GU": {
           "verdict": "APPROVE",
@@ -28973,17 +28973,17 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 1056
+          "benefit": 1055
         },
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 633
+          "benefit": 632
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 600
+          "benefit": 599
         },
         "FL": {
           "verdict": "APPROVE",
@@ -29023,7 +29023,7 @@
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 633
+          "benefit": 632
         },
         "WI": {
           "verdict": "APPROVE",
@@ -29043,17 +29043,17 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 670
+          "benefit": 669
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 590
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 627
+          "benefit": 626
         },
         "TN": {
           "verdict": "APPROVE",
@@ -29073,17 +29073,17 @@
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 652
+          "benefit": 651
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 595
+          "benefit": 594
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 618
+          "benefit": 617
         },
         "OK": {
           "verdict": "APPROVE",
@@ -29123,7 +29123,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 645
+          "benefit": 644
         },
         "ID": {
           "verdict": "APPROVE",
@@ -29133,7 +29133,7 @@
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 595
+          "benefit": 594
         },
         "ME": {
           "verdict": "APPROVE",
@@ -29153,12 +29153,12 @@
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 711
+          "benefit": 710
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 663
+          "benefit": 662
         },
         "NH": {
           "verdict": "APPROVE",
@@ -29213,7 +29213,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 679
+          "benefit": 678
         }
       }
     },
@@ -30525,7 +30525,7 @@
         "VI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 277
+          "benefit": 276
         },
         "AL": {
           "verdict": "APPROVE",
@@ -30635,7 +30635,7 @@
         "HI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 450
+          "benefit": 449
         },
         "GU": {
           "verdict": "APPROVE",
@@ -30792,7 +30792,7 @@
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 279
+          "benefit": 278
         },
         "OR": {
           "verdict": "APPROVE",
@@ -30822,7 +30822,7 @@
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 295
+          "benefit": 294
         },
         "MO": {
           "verdict": "APPROVE",
@@ -30877,7 +30877,7 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 285
+          "benefit": 284
         },
         "CT": {
           "verdict": "APPROVE",
@@ -33176,12 +33176,12 @@
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "TX": {
           "verdict": "APPROVE",
@@ -33201,57 +33201,57 @@
         "WA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "GA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "FL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "IL": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "OH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "MI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "NY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "NV": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "OR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "WI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "PA": {
           "verdict": "APPROVE",
@@ -33266,17 +33266,17 @@
         "NC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "VA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "MO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "TN": {
           "verdict": "APPROVE",
@@ -33286,32 +33286,32 @@
         "IN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "MD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "CO": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "SC": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "LA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "OK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "VI": {
           "verdict": "APPROVE",
@@ -33326,12 +33326,12 @@
         "AR": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "CT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "DC": {
           "verdict": "APPROVE",
@@ -33346,7 +33346,7 @@
         "IA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "ID": {
           "verdict": "APPROVE",
@@ -33356,12 +33356,12 @@
         "KY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "ME": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "MS": {
           "verdict": "APPROVE",
@@ -33371,37 +33371,37 @@
         "MT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "ND": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "NE": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "NH": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "NM": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "RI": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "SD": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "UT": {
           "verdict": "APPROVE",
@@ -33411,7 +33411,7 @@
         "VT": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "WV": {
           "verdict": "APPROVE",
@@ -33421,7 +33421,7 @@
         "WY": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         },
         "HI": {
           "verdict": "APPROVE",
@@ -33436,7 +33436,7 @@
         "MN": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 544
+          "benefit": 543
         }
       }
     },
