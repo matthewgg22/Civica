@@ -7545,6 +7545,16 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__save-code { color: var(--demeter-muted); font-variant-numeric: tabular-nums; }
 /* The confirm step needs the whole row — it carries a sentence, not a label. */
 .dmchat .demeter__sidebtns .demeter__clearconfirm { flex: 1 1 100%; }
+/* SAME PROBLEM, MISSED HERE. The sign-in invitation carries a title, a body
+   paragraph, a stored-data note and an actions row — not a label either —
+   and .demeter__savepanel's OWN `flex: 1 1 100%` (declared where the rest of
+   its rules live, far from this section) was silently losing to the blanket
+   `.dmchat .demeter__sidebtns > *` rule two classes up: one class beats two.
+   Without this it got the SAME `flex: 1 1 0; min-width: 8.5rem` sizing meant
+   for a small button, squeezed into a narrow column beside "Start a new
+   conversation" — real feedback (2026-08-15), screenshot showed the panel
+   overlapping/cramped against the clear button. */
+.dmchat .demeter__sidebtns .demeter__savepanel { flex: 1 1 100%; }
 /* TAKE IT WITH YOU. Sits under the two conversation buttons because it is the
    third thing you can do with a conversation — and the only one that leaves
    with you. Wheat, because unlike Save and Start-new this one is a step
@@ -7724,6 +7734,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmst__scope-agency {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.76rem; line-height: 1.45; color: var(--demeter-muted);
+  /* Some states' agency field is a compound name ("Department of
+     Transitional Assistance (DTA), Executive Office of Health and Human
+     Services (EOHHS)") that ran past two lines and crowded the confirmation
+     card (real feedback, 2026-08-15). Clamped rather than shortened at the
+     data level — the full name still exists (it is what the disclaimer link
+     and the pack itself carry), this only caps how much of it prints here. */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .dmst__scope-portal {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;

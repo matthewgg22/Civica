@@ -3,7 +3,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
 import type { PackMeta } from "@civica/demeter-engine/packs";
 import { DemeterChat } from "../DemeterChat";
-import { T } from "../../lib/i18n/demeter-chat-copy";
 
 // Regression for #833: a real production conversation got a permanent 400
 // ("Conversation must start with a user message") once it passed ~10
@@ -66,7 +65,10 @@ afterEach(() => {
 });
 
 async function sendQuestion(text: string, expectAnswer: string) {
-  fireEvent.change(screen.getByPlaceholderText(T.en.inputPlaceholder), {
+  // role, not placeholder text: the placeholder itself changes turn to turn
+  // (first-time invitation vs. a conversation-aware line vs. the bot's own
+  // pending question) — see DemeterChat's composerPrompt.
+  fireEvent.change(screen.getByRole("textbox"), {
     target: { value: text },
   });
   fireEvent.click(screen.getByRole("button", { name: "Send" }));

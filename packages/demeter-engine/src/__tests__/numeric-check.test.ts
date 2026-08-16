@@ -136,6 +136,67 @@ describe("the plain grounding behaviour is unchanged", () => {
 // "I make $0" — they describe having no paycheck), and no regulation states
 // "$0" as a figure either, so this was structurally unsatisfiable no matter
 // how the true, safe statement was phrased.
+// Regression (real transcript, 2026-08-15): a cash-paid housekeeper said
+// "$150 a day for 4 days a week" and got the SAME "I'm still stuck on the
+// number" refusal on three consecutive turns, no matter how much more detail
+// she supplied — household size, an expense figure, even a flat "$2,000 a
+// month" restatement. The gate's own CADENCE_FACTORS ([12, 52, 26]) only
+// support annual↔monthly/weekly/biweekly conversions — it has no notion of a
+// WEEKLY figure converted directly to MONTHLY, which is the very first thing
+// anyone paid by the day or week needs and the very first thing the model
+// correctly reached for every time. That conversion is not an approximation
+// Demeter invented: 7 CFR 273.10(c)(2), already in the vendored corpus,
+// states it verbatim — "the State agency shall convert the income to a
+// monthly amount by multiplying weekly amounts by 4.3 and biweekly amounts
+// by 2.15." Every attempt to state that exact, regulation-mandated figure
+// was rejected as an unverifiable invention.
+describe("weekly/biweekly income converted to monthly (7 CFR 273.10(c)(2))", () => {
+  it("accepts a weekly figure converted to monthly by 4.3", () => {
+    // $150/day × 4 days = $600/week; × 4.3 = $2,580/month.
+    const r = verifyNumericEquivalence(
+      "That works out to about $2,580 a month.",
+      "",
+      "I get 150 a day for 4 days a week",
+    );
+    expect(r.mismatches).toEqual([]);
+    expect(r.pass).toBe(true);
+  });
+
+  it("accepts a biweekly figure converted to monthly by 2.15", () => {
+    const r = verifyNumericEquivalence(
+      "That comes to about $1,290 a month.",
+      "",
+      "I get paid 600 every two weeks",
+    );
+    expect(r.mismatches).toEqual([]);
+    expect(r.pass).toBe(true);
+  });
+
+  it("accepts the SAME weekly figure restated across several turns, not just once", () => {
+    // The real deadlock was not one bad turn — it was every subsequent turn
+    // repeating the identical refusal even as more detail was supplied.
+    const transcript = [
+      "I get 150 a day for 4 days a week by the house owner and its after each day",
+      "I live with me and my son who is 15 and in school. I get 150 a day, 4 days a week, every month and I spend about 50 dollars on cleaning supplies monthly.",
+    ].join("\n");
+    const r = verifyNumericEquivalence(
+      "$150 × 4 days = $600/week. Converted to monthly (× 4.3): about $2,580/month gross. Minus your $50 in supplies leaves $2,530.",
+      "",
+      transcript,
+    );
+    expect(r.mismatches).toEqual([]);
+    expect(r.pass).toBe(true);
+  });
+
+  it("still refuses a monthly figure that is not actually 4.3× or 2.15× anything the person said", () => {
+    // The point of the gate still holds — this must not become "any number
+    // near a stated figure passes".
+    const r = verifyNumericEquivalence("That comes to $9,999 a month.", "", "I get 150 a day for 4 days a week");
+    expect(r.pass).toBe(false);
+    expect(r.mismatches).toContain("$9,999");
+  });
+});
+
 describe("zero is never treated as a fabrication", () => {
   it("accepts $0 with no grounding and no user-stated figure at all", () => {
     const r = verifyNumericEquivalence(

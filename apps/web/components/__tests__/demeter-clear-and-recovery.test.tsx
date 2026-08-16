@@ -22,7 +22,8 @@ const STATES = [
 const STASH = "demeter:pending-save";
 
 function typeAndSend(text: string) {
-  fireEvent.change(screen.getByPlaceholderText(T.en.inputPlaceholder), {
+  // role, not placeholder text: the placeholder changes turn to turn.
+  fireEvent.change(screen.getByRole("textbox"), {
     target: { value: text },
   });
   fireEvent.click(screen.getByRole("button", { name: T.en.send }));
@@ -151,9 +152,12 @@ describe("a failed send hands the question back", () => {
     typeAndSend("Do I qualify?");
     await waitFor(() => expect(screen.getByRole("alert")).toBeTruthy());
     expect(screen.getByRole("alert").textContent).toContain("211");
-    expect(
-      (screen.getByPlaceholderText(T.en.inputPlaceholder) as HTMLTextAreaElement).value,
-    ).toBe("");
+    // Not retryable, so the user's turn stays in the transcript (only the
+    // empty assistant placeholder is dropped) — the composer is empty
+    // because nothing was HANDED BACK, not because there's no chat yet, so
+    // its placeholder is now the mid-conversation one, not the first-time
+    // invitation. role, not placeholder text, to avoid coupling to which.
+    expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe("");
   });
 
   it("tells a daily-capped user it resets TOMORROW, not in a minute", async () => {
