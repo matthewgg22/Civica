@@ -160,48 +160,18 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
           {c.trustH2}
         </h2>
         <dl className="dmx__trustlist dmx__trustlist--wide">
-          {c.trust.map((row, i) => {
-            // The third row carries the verified-state flags now — moved
-            // here from the hero orientation bar on direct feedback (see
-            // SnapOrientation). Counted on actual STATES only: DC/GU/VI are
-            // real, verified jurisdictions but not states, and folding them
-            // into this count made the label wrong even though the number
-            // was right. They still get named, just not as one of the 50.
-            if (i === 2) {
-              return (
-                // FULL WIDTH, not squeezed into one auto-fit cell like the
-                // other three rows — fifty flags need the room the hero
-                // aside used to give them; a 15rem-minimum grid cell would
-                // wrap them into a cramped narrow column instead.
-                <div className="dmx__trustrow dmx__trustrow--states" key={row.t}>
-                  <dt>
-                    {actualStates.length} {row.t}
-                  </dt>
-                  <dd>
-                    <ul className="dmo__states-grid">
-                      {actualStates.map((s) => (
-                        <li key={s.code}>
-                          <StateFlag code={s.code} />
-                        </li>
-                      ))}
-                    </ul>
-                    {otherJurisdictions.length > 0 && (
-                      <>
-                        <p className="dmo__states-also">{c.statesAlsoVerified}</p>
-                        <ul className="dmo__states-grid">
-                          {otherJurisdictions.map((s) => (
-                            <li key={s.code}>
-                              <StateFlag code={s.code} />
-                            </li>
-                          ))}
-                        </ul>
-                      </>
-                    )}
-                    <p className="dmo__states-detail">{row.d}</p>
-                  </dd>
-                </div>
-              );
-            }
+          {/* RENDERED OUT OF ARRAY ORDER: the three compact rows (0, 1, 3)
+              first, the full-width flags row (2) last — not c.trust's own
+              0-1-2-3 order. The auto-fit grid packs short rows two-up; with
+              the full-width row sitting in the MIDDLE of the array, row 3
+              ("Everywhere else") landed on its own line after it with
+              nothing to pair beside, reading as orphaned rather than part of
+              the same list. Moving the full-width row to the end lets 0, 1
+              and 3 flow together first, however many columns actually fit,
+              with the flags claiming their own final row same as before. */}
+          {[0, 1, 3].map((i) => {
+            const row = c.trust[i];
+            if (!row) return null;
             return (
               <div className="dmx__trustrow" key={row.t}>
                 <dt>{row.t}</dt>
@@ -209,6 +179,45 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
               </div>
             );
           })}
+          {/* The states-verified row — moved here from the hero orientation
+              bar on direct feedback (see SnapOrientation). Counted on actual
+              STATES only: DC/GU/VI are real, verified jurisdictions but not
+              states, and folding them into this count made the label wrong
+              even though the number was right. They still get named, just
+              not as one of the 50. */}
+          {c.trust[2] && (
+            // FULL WIDTH, not squeezed into one auto-fit cell like the other
+            // three rows — fifty flags need the room the hero aside used to
+            // give them; a 15rem-minimum grid cell would wrap them into a
+            // cramped narrow column instead.
+            <div className="dmx__trustrow dmx__trustrow--states" key={c.trust[2].t}>
+              <dt>
+                {actualStates.length} {c.trust[2].t}
+              </dt>
+              <dd>
+                <ul className="dmo__states-grid">
+                  {actualStates.map((s) => (
+                    <li key={s.code}>
+                      <StateFlag code={s.code} />
+                    </li>
+                  ))}
+                </ul>
+                {otherJurisdictions.length > 0 && (
+                  <>
+                    <p className="dmo__states-also">{c.statesAlsoVerified}</p>
+                    <ul className="dmo__states-grid">
+                      {otherJurisdictions.map((s) => (
+                        <li key={s.code}>
+                          <StateFlag code={s.code} />
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+                <p className="dmo__states-detail">{c.trust[2].d}</p>
+              </dd>
+            </div>
+          )}
         </dl>
       </section>
 

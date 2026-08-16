@@ -20,13 +20,18 @@ const LINK_PATHS = {
   questions: "/questions",
   privacy: "/privacy",
   supporters: "/supporters",
+  feedback: "/feedback",
 } as const;
 
-/** English is un-prefixed; everything else lives under /es|/vi|/zh. Privacy is
- *  the exception — it has no localized route yet, so it always points at the
- *  canonical page rather than a URL that would 404. */
+/** English is un-prefixed; everything else lives under /es|/vi|/zh. Privacy
+ *  and feedback are exceptions — neither has a localized route, so both
+ *  always point at the canonical page rather than a URL that would 404.
+ *  (Supporters has the same gap — see issue filed 2026-08-15 — but that one
+ *  was pre-existing, not introduced here, so it is left as still-prefixed
+ *  until that issue is picked up rather than silently changed in this
+ *  unrelated PR.) */
 function href(path: string, lang: AnswerLang): string {
-  if (path === LINK_PATHS.privacy) return path;
+  if (path === LINK_PATHS.privacy || path === LINK_PATHS.feedback) return path;
   return lang === "en" ? path : `/${lang}${path}`;
 }
 
@@ -58,6 +63,9 @@ export function DemeterFooter({ lang = "en" }: { lang?: AnswerLang }) {
           </Link>
           <Link className="dmft__link" href={href(LINK_PATHS.supporters, lang)}>
             {c.footerSupporters}
+          </Link>
+          <Link className="dmft__link" href={href(LINK_PATHS.feedback, lang)}>
+            {c.footerFeedback}
           </Link>
         </nav>
 

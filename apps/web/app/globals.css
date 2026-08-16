@@ -5069,6 +5069,55 @@ html {
 }
 .vpage__foot p + p { margin-top: 0.9rem; }
 
+/* /feedback's form. Same idle/busy/done/error shape and honeypot pattern as
+   SupporterSignOn, but themed on the Demeter tokens (--demeter-*) rather than
+   the older shared --civica-* ones .ssignon still uses — this page is new,
+   not legacy, and every other Demeter surface it's linked from already made
+   that switch. Inputs reuse .dmret__input/.dmret__go's own values (border,
+   radius, min-height) rather than inventing a second input style. */
+.fbform { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; max-width: 34rem; }
+.fbform__title {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.3rem; font-weight: 600; color: var(--demeter-ink); margin: 0 0 0.4rem;
+}
+.fbform__body {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.6; color: var(--demeter-body); margin: 0; max-width: 52ch;
+}
+.fbform__field { display: flex; flex-direction: column; gap: 0.4rem; }
+.fbform__label {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; letter-spacing: 0.04em; font-weight: 600; color: var(--demeter-ink);
+}
+.fbform__field input,
+.fbform__field select,
+.fbform__field textarea {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 1rem; min-height: 48px; padding: 0.6rem 0.9rem;
+  border: 1px solid var(--demeter-rule-strong); border-radius: 12px;
+  background: var(--demeter-card); color: var(--demeter-ink);
+}
+.fbform__field textarea { min-height: auto; resize: vertical; }
+.fbform__field input:focus-visible,
+.fbform__field select:focus-visible,
+.fbform__field textarea:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.fbform__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.fbform__error {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.88rem; color: var(--demeter-terracotta-deep);
+  background: var(--demeter-card); border: 1px solid var(--demeter-terracotta);
+  border-radius: 10px; padding: 0.7rem 0.9rem;
+}
+.fbform__submit {
+  align-self: flex-start;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.95rem; font-weight: 600; min-height: 48px; padding: 0 1.5rem;
+  border: 0; border-radius: 12px; cursor: pointer;
+  background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
+}
+.fbform__submit:disabled { opacity: 0.45; cursor: default; }
+.fbform__submit:hover:not(:disabled) { background: var(--demeter-terracotta); }
+
 /* ── Demeter identity tokens (Demeter AI Design Spec, Turn 3 — "sibling not
    twin") ──────────────────────────────────────────────────────────────
    Scoped to .screening* — NOT the shared --civica-* tokens, which the older
@@ -5535,6 +5584,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   display: block; text-decoration: none; background: var(--demeter-card);
   border: 1px solid var(--demeter-rule); border-radius: 20px;
   padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  /* CAPPED, not full section width. Every outlink card's own text stops at
+     52ch (.dmx__outlink-body) — the card's border and background used to
+     stretch the full section width regardless, leaving a wide band of plain
+     background beside a couple of short lines. Found on direct feedback
+     against one instance (the ask-Demeter CTA), then confirmed the same gap
+     on every other card using this class once actually measured — it was
+     the class's own rule that needed the fix, not one card's override. */
+  max-width: 40rem;
 }
 .dmx__outlink:hover { border-color: var(--demeter-terracotta); }
 .dmx__outlink-label {
@@ -5544,6 +5601,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-weight: 600; color: var(--demeter-terracotta-deep); margin-bottom: 0.4rem;
   text-decoration: underline; text-underline-offset: 3px;
 }
+/* THE WHOLE CARD IS THE LINK, but nothing on it looked like one beside the
+   underline on the heading — every external link on this page carries its
+   own ↗, and these full-card links carried no equivalent mark at all. A
+   plain arrow, not ↗: this navigates WITHIN the site, not out of it. */
+.dmx__outlink-label::after { content: " →"; }
 /* THE TWO CALLS TO ACTION ARE WHEAT. They were white cards with an underlined
    terracotta heading — the same treatment as every other card on a page made
    of cards, so the one thing the page is trying to get someone to do looked
@@ -5557,13 +5619,15 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx--fearscta .dmx__outlink {
   background: var(--demeter-wheat); border-color: transparent;
 }
-/* NARROWER, on direct feedback — its own text tops out at 52ch
-   (.dmx__outlink-body) but the card's border and background used to stretch
-   the full section width regardless, leaving a wide band of plain wheat
-   beside a couple of short lines. Scoped to just the ask-Demeter CTA, the
-   one this feedback was about — not the /questions outlink or the fears CTA,
-   which were not flagged and are left at full width unless that changes. */
-.dmx--askcta .dmx__outlink { max-width: 40rem; }
+/* NARROWER STILL than the general .dmx__outlink cap, and for a different
+   reason: this card and .dmnow right below it sit directly under the hero
+   text, which wraps at .dmo__h1's 20ch / .dmo__lede's 52ch — roughly 600-
+   625px measured. At the general 40rem (640px) cap, this card's own right
+   edge sat 40-60px past the text above it, a ragged edge that read as the
+   card not belonging to the column it was in rather than as a card that was
+   simply narrower than the page. Matched to the hero column's own width
+   instead of an independent value. */
+.dmx--askcta .dmx__outlink { max-width: 36rem; }
 .dmx--askcta .dmx__outlink:hover,
 .dmx--fearscta .dmx__outlink:hover { filter: brightness(0.96); border-color: transparent; }
 .dmx--askcta .dmx__outlink-label,
@@ -5653,6 +5717,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   background: var(--demeter-card);
   display: grid; grid-template-columns: auto minmax(0, 1fr);
   column-gap: clamp(1.25rem, 3vw, 2rem); row-gap: 0; align-items: center;
+  /* CAPPED — the content column's `1fr` track stretched to fill the section's
+     full width, but `.dmx__note`'s own 52ch measure stopped well short of
+     it, leaving ~270px of plain background between the note/links and the
+     box's own right edge (measured, not eyeballed). The box was sized to
+     the section, not to what's actually in it. */
+  max-width: 54rem;
 }
 .dmx__official .dmx__note { margin-top: 0.35rem; }
 .dmx__official-content { min-width: 0; }
@@ -5781,6 +5851,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.68rem; background: rgba(247, 246, 244, 0.85);
 }
+/* The credit text itself got themed above; its LINKS did not — Leaflet,
+   OpenStreetMap and CARTO all rendered in the library's own default blue,
+   the one place on the page not using the site's own link color. Every
+   other link on this page is terracotta. */
+.dmret__livemap .leaflet-control-attribution a { color: var(--demeter-terracotta-deep); }
 .dmret__livemap .leaflet-popup-content {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: 0.88rem; color: var(--demeter-ink); line-height: 1.5;
@@ -5909,11 +5984,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   margin: 1.5rem 0 0; padding: 1rem 1.2rem;
   border-left: 3px solid var(--demeter-terracotta-deep);
   background: var(--demeter-card); border-radius: 0 12px 12px 0;
-  /* NARROWER, on direct feedback, matching .dmx--askcta .dmx__outlink beside
+  /* NARROWER, on direct feedback, matching .dmx--askcta .dmx__outlink above
      it — the body text already stopped at 62ch (.dmnow__body) but the tinted
      background kept going, leaving a wide plain band next to two short
-     lines and a pair of links. */
-  max-width: 40rem;
+     lines and a pair of links. 36rem (not the CTA's original 40rem) so this
+     box's own right edge lines up with the CTA's and with the hero text
+     above both of them, instead of each picking a slightly different width
+     and leaving a ragged, unaligned right edge down the column. */
+  max-width: 36rem;
 }
 .dmnow__label {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -5972,6 +6050,8 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: 1.15rem; font-weight: 600; color: var(--demeter-ink);
 }
+/* Same click affordance as .dmx__outlink-label — see that rule's comment. */
+.dmfear__ctalabel::after { content: " →"; }
 .dmfear__ctanote {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.82rem; color: var(--demeter-ink); opacity: 0.75;
