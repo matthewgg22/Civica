@@ -31,18 +31,18 @@ at all; today, most do.
 this plan's own individual-tier landings)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **29 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
-MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK.
+states.ts`) exists for **32 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
+MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK, DE, SD, ND.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
 engine against — has full 92-case coverage (minus TN's 3 deliberately-unauthored
-genuinely-indeterminate profiles, see below) for **27 of those 29**: CA, WA, TX, NY, GA,
-MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD, CO, SC, LA, OK clear CLEAN
-(129/0/0 or a documented pre-existing partial); PA, NJ, and TN also have all 92 (or 89,
-for TN) rows authored, per the execution log's PA/NJ/TN entries below, but all three
-grade 34/0/95 — most of their profiles legitimately SKIP on the null-SUA gap, not a
-coverage gap, so none is counted as "clean" here.
+genuinely-indeterminate profiles, see below) for **29 of those 32**: CA, WA, TX, NY, GA,
+MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD, CO, SC, LA, OK, SD, ND
+clear CLEAN (129/0/0 or a documented pre-existing partial); PA, NJ, TN, and DE also have
+all 92 (or 89, for TN) rows authored, per the execution log's PA/NJ/TN/DE entries below,
+but all four grade 34/0/95 — most of their profiles legitimately SKIP on the null-SUA
+gap, not a coverage gap, so none is counted as "clean" here.
 
 Two states have a `StatePolicy` but no oracle coverage yet, for different reasons:
 
@@ -62,14 +62,18 @@ One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
   the engine today and, if used for a real determination, would wrongly deny categorical
   eligibility to AK households between 130%–200% FPL.
 
-**24 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
-AL, AR, CT, DC, DE, GU, HI, IA, ID, KY, ME, MS, MT, ND, NE, NH,
-NM, RI, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, and OK — the
+**21 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
+AL, AR, CT, DC, GU, HI, IA, ID, KY, ME, MS, MT, NE, NH,
+NM, RI, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, and OK — the
 first eleven "individual tier" states, §6 — are DONE; see the execution log's
 NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA/OK entries. Alabama and Kentucky's builds were BOTH
 concurrently in flight as of OK's build, neither yet merged — see OK's execution-log
 entry for the reconciliation note. Once AL and KY land, the individual tier closes at
-13/13.)
+13/13. DE, SD, and ND — batch tier 5, §6 step 6 — are ALSO now DONE; see the
+execution log's DE/SD/ND entries. Four other batch-tier segments — CT/UT/IA/AR,
+MS/NM/NE, ID/WV/NH, ME/RI/MT — were all concurrently in flight as of this build,
+none yet merged; a human reconciles the eventual rebase chain, same pattern as
+AL/KY/OK.)
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
 
@@ -203,7 +207,8 @@ exists and only oracle authoring is outstanding):
 4. Schema step: extend `AllotmentTier` for HI/GU (own small PR, own go-ahead)
 5. HI, GU (now unblocked)
 6. Batch tier (<4M population, N≤3 per batch): CT, UT, IA, AR / MS, NM, NE / ID, WV, NH /
-   ME, RI, MT / DE, SD, ND / VT, WY, DC / VI
+   ME, RI, MT / ~~DE, SD, ND~~ (done — batch tier 5, see the execution log's DE/SD/ND
+   entries) / VT, WY, DC / VI
 7. MN, once a real SUA figure is sourced (may unblock independently of this sequencing —
    revisit whenever that specific gap closes)
 
@@ -1649,3 +1654,245 @@ all of it.
   chain across AL/KY/OK, the same pattern this project has used repeatedly (e.g.
   MO-vs-TN/IN); once all three land, the individual tier closes at 13/13. PR TBD, awaiting
   merge go-ahead.
+
+- **Batch tier 5: DE, SD, ND (§6 step 6, "population <4M" segment)** — built as one
+  three-state batch in a dedicated worktree, strictly sequential (DE, then SD, then ND,
+  each fully built, verified, and committed before the next began — never interleaved).
+  As of this build, individual-tier AL and KY were STILL both open/conflicting (unrebased
+  against OK), and FOUR other batch-tier segments — CT/UT/IA/AR, MS/NM/NE, ID/WV/NH,
+  ME/RI/MT — were ALL concurrently in-flight in separate sessions, none yet merged; this
+  build did not read or coordinate with any of them. A human reconciles the eventual
+  rebase chain across all of it, the same pattern this project has used repeatedly (e.g.
+  MO-vs-TN/IN, AL/KY/OK).
+
+  **Scratchpad isolation note**: multiple other batch-tier agents were writing to the
+  same shared `/tmp` scratchpad root concurrently. This build worked entirely inside its
+  own uniquely-named subdirectory (`scratchpad/batch5-de-sd-nd/`) and re-verified its own
+  working files were intact (not silently overwritten by another session, the exact
+  failure mode a prior MS/NM/NE batch build hit twice) before trusting any derived result.
+
+  **Calculator**: built ONE fresh, independent Python calculator (not derived from engine
+  output, per #636) directly from `verdict.ts`/`benefit-calc.ts`/`gates/{income-tests,
+  asset-test,abawd,student,composition,immigration,disqualifications,categorical}.ts`/
+  `facts.ts`/`constants/federal-tables.ts`'s own read source (not just their doc-comments),
+  mirroring every gate and the benefit-calc formula exactly, including `decimal.ts`'s
+  half-up (`roundDollar`), floor (`floorDollar`), and ceiling (`ceilDollar`) rounding
+  conventions — reused and parameterized across all three states in this batch (per this
+  task's own explicit allowance), but cross-validated FRESH for each state per the #636
+  discipline, not assumed correct from one validation pass. Cross-validation runs:
+  Pennsylvania (129/129 exact match, 92 base + 37 variant rows) before trusting DE;
+  Oklahoma (129/129) before trusting SD; Louisiana (129/129) before trusting ND — three
+  independent full-coverage twins, exercising materially different axis combinations
+  (null-SUA/BBCE-200/asset_waiver-true/abawd-true; non-BBCE/asset_waiver-false/real-SUA;
+  BBCE-200/asset_waiver-true/real-SUA/abawd-false), between them covering essentially
+  every gate combination relevant to this batch. As a bonus, non-required sanity check,
+  also cross-checked Tennessee's own 89/92 authored rows: 88/89 matched, the one
+  divergence (`MX4-bbce-max-income-with-any-benefit`) a TN-specific finding this build did
+  not need to resolve, since DE was validated and built against PA, not TN.
+
+  **A genuine calculator-tuning finding surfaced during PA cross-validation** (not itself
+  a DE/SD/ND finding, but load-bearing for how this build's null-SUA sweep methodology
+  works): an early draft of the SUA-invariance sweep used an unrealistic $0-$1,500 range,
+  which produced one false "AMBIGUOUS" result against PA's own already-graded oracle
+  (`P58-elderly-retiree-tips-over-net-limit[above_net_limit]`, an uncapped-shelter E/D
+  household whose net-income verdict genuinely flips DENY→APPROVE, but only north of a
+  ~$1,130 SUA figure — a dollar amount no real state's HCSUA has ever published anywhere
+  in this file, the highest being this same batch's own SD figure, $950). Tightening the
+  sweep to a realistic $0-$1,000 bound (21 points, every $50) resolved the false positive
+  (PA: 129/129 clean) and is the bound this batch's own three states' null-SUA sweeps (DE
+  only; SD and ND both have real SUA) used throughout. Noted here as a minor, disclosed
+  PA cross-validation footnote — PA itself was NOT touched or re-authored by this build.
+
+  ---
+
+  **DE (Delaware — DHSS/DSS)**, first in this batch: translated from the already-merged
+  Demeter corpus pack (`packages/demeter-engine/src/states/de/`, built 2026-08-12).
+  `bbce: true` / `bbce_threshold_pct: 200` / `bbce_fpl_basis: federal_fiscal_year` — DSSM
+  9042's TANF-funded pregnancy-prevention-information categorical-eligibility mechanism, a
+  distinctive DE structure read directly from the regulation's own text rather than a
+  generic "BBCE" self-description several secondary sources use. `asset_waiver: true`
+  (DSSM 9045: cat-elig households skip the resource test entirely) — with a disclosed,
+  inconsequential internal-DSSM staleness catch (a non-cat-elig household's own $2,000/
+  $3,000 resource limit traces to a ~2009 baseline vs. the current federal $3,000/$4,500
+  floor; immaterial since `asset_waiver: true` means the resource test never reaches the
+  population this axis governs). `sua_by_tier: null` — DSSM 9060 explicitly defers
+  Delaware's Standard Deduction and all four utility-allowance tiers to a separate,
+  annually-updated "October COLA Administrative Notice" the corpus pack could not locate
+  at a working URL; the same disclosed-null discipline this file's PA/NJ/TN entries
+  already use, not a guess. `allotment_tier: "48"`. `drug_felony_ban: "none"` — a VERIFIED
+  FULL REPEAL (21 DE Reg. 722, effective 3/11/2018, implementing 2017 H.B. 11 and 31 Del.
+  C. §524), reached by chasing DSSM 2027's own repeal citation directly rather than
+  trusting a stale secondary-source "modified ban" framing several sites still repeat; one
+  disclosed internal-DSSM inconsistency (DSSM 9013.2 still cross-references the repealed
+  DSSM 2027) is inconsequential for this axis regardless. `abawd_waiver_avail: false` —
+  DE's last area waiver (Wilmington + Kent/Sussex) expired 9/30/2025 with no FY2026 renewal
+  posted on USDA's own index. `rmp_operated: false`.
+
+  Not representable in this schema, disclosed not dropped: DSSM 9060's own $143.00
+  Homeless Shelter Deduction figure (amendment footer no newer than 09/01/14, vs. the
+  current federal $198.99 this engine actually applies engine-wide) — this engine has no
+  per-state homeless-deduction axis at all, so the gap is disclosed but not actionable
+  without a schema change; zero of the 92 profiles' DE outcomes are affected since the
+  engine already applies the current federal figure regardless of state.
+
+  Closest structural axis-twin: TENNESSEE (identical on every verdict-and-benefit-
+  consequential axis: `bbce`/200%/`federal_fiscal_year`, `asset_waiver: true`,
+  `sua_by_tier: null`, `allotment_tier: "48"`, `abawd_waiver_avail: false`, differing only
+  in the verdict/benefit-inconsequential `drug_felony_ban`). Because TN's own fixture is
+  missing 3 of 92 genuinely-indeterminate rows, this build instead cross-validated the
+  calculator against PENNSYLVANIA (full 92/92 + 37/37 available, differing from DE in
+  `abawd_waiver_avail` — a MORE rigorous check, forcing both the true and false branches
+  to prove correct): 129/129 exact match. DE's own computed DENY set is IDENTICAL to LA's
+  and OR's already-graded oracles (independently confirmed, not assumed, since every
+  verdict-controlling axis matches). Authored all 92 `expected_by_state.DE` entries: 80
+  APPROVE / 12 DENY. Checked all 37 non-`expected_by_state` variant rows for a DE-specific
+  `verdict_by_state` override — found ZERO divergence (matching NC's/VA's/MD's/CO's/LA's
+  zero-override result). 58 of 92 profiles legitimately SKIP in real grading (the
+  documented null-SUA gap, `composeVerdict` bails before any gate runs) — those got a
+  verdict only after being independently proven SUA-invariant across the realistic
+  $0-$1,000 sweep; benefit stays null. The other 34 (`sua_tier === "none"` or
+  `homeless_deduction: true`) got a real, fully-computed benefit.
+
+  Verification: `/profile-simulation state=DE` — 34 PASS / 0 FAIL / 95 SKIP, no
+  PARAMS_MISMATCH, matching PA's/NJ's/TN's null-SUA shape exactly. Every other registered
+  state's harness run reconfirmed unchanged from its documented baseline (all 27
+  pre-existing states checked individually): CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/
+  VA/IN/MO/MD/CO/SC/LA/OK all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all
+  34/0/95 — every one identical to its pre-DE documented baseline. `tsc --noEmit -p
+  packages/snap-rules` clean, 323/323 snap-rules tests pass (0 new), 44/47
+  profile-harness tests pass (3 pre-existing skips). No new GitHub issue filed — every gap
+  found is a per-state disclosed gap of an already-documented class (#824-style
+  Facts-shape/mechanism gaps), not a new engine architecture gap. PR TBD, awaiting merge
+  go-ahead (bundled with SD and ND in one PR covering all three batch-tier-5 states).
+
+  ---
+
+  **SD (South Dakota — DSS/Division of Economic Assistance)**, second in this batch:
+  translated from the already-merged Demeter corpus pack
+  (`packages/demeter-engine/src/states/sd/`, built 2026-08-12). `bbce: false` /
+  `bbce_fpl_basis: null` — a primary-source-confirmed STRUCTURAL FINDING: DSS's own
+  manual §7700 defines categorical eligibility narrowly (TANF/Tribal TANF/SSI/Child Care
+  Services recipients only), §11300 confirms the plain federal 130%/100% FPG test applies
+  to everyone else — SD is one of a small group of states nationally that has not adopted
+  BBCE, confirmed directly from the manual, not just a secondary-source list. Same
+  archetype as this file's KS/IN/OK entries. `asset_waiver: false` (flows from the same
+  non-BBCE finding — the narrow SSI/TANF/CCS cat-elig population already skips resources
+  via the federal pure-cash path this engine already models). `sua_by_tier` — POPULATED,
+  with one disclosed naming-collision gap: a real 4-tier utility structure (SUA $950/LUA
+  $265/OUA $109/PUA $60), the twice-repeated body-text figures (§10400/§10411) treated as
+  authoritative over a stale Table of Contents entry the corpus pack itself caught and
+  disclosed; mapped SUA→HCSUA, LUA→LUA, PUA→phone; OUA (exactly-one-non-heat-utility) has
+  no schema slot, the same OH/MO/CO-precedent unmapped-4th-tier gap. `allotment_tier:
+  "48"`. `drug_felony_ban: "none"` — a CONFIRMED FULL OPT-OUT via two independent lines of
+  evidence: DSS's entire manual's felon-related content has only ONE felony-conviction
+  category (the 2014 Farm Bill violent/sex-offense list, §3920/§7370 — no drug-felony
+  provision at all), cross-checked against South Dakota Codified Law 28-12-3 (quoted by a
+  secondary legal-research source as SD's 2020 statutory opt-out, since law.justia.com
+  served an unresolvable Cloudflare wall). `abawd_waiver_avail: false` — USDA's own ABAWD
+  waiver index shows SD's only posted entry as FY2025 with no FY2026 renewal, in explicit
+  contrast to MN/MT/ND (which DO show FY2026 entries on the same index). `rmp_operated:
+  false` — SD's SB 149 (2022) FAILED in the state Senate 12-23 and was never enacted, a
+  specific correction of what a plain search for "South Dakota Restaurant Meals Program"
+  could otherwise mislead a reader into believing.
+
+  Not representable in this schema, disclosed not dropped: (a) DSS's manual §13222 names a
+  STATEWIDE (not reservation-restricted) Native American ABAWD exemption with no
+  per-member axis in this engine to represent it; (b) an FDPIR-IPV-carryover
+  disqualification mechanism (§§6385-6387) this engine's `disqual[]` tag model has no slot
+  for; (c) a flat-shortcut Medical Expense Deduction mechanism ($165 standard for a
+  $36-$200 expense band) different from this engine's actual-expense-only math —
+  independently verified 0 of the 92 oracle profiles land in that specific band.
+
+  Closest structural axis-twin: OKLAHOMA — a FULL 7/7 match on every comparison axis
+  (`bbce: false`, `bbce_fpl_basis: null`, `asset_waiver: false`, `allotment_tier: "48"`,
+  `drug_felony_ban: "none"`, `abawd_waiver_avail: false`, `rmp_operated: false`),
+  differing only in the SUA dollar figures — the strongest possible non-BBCE twin bond
+  this file has found since IN-via-KS. Cross-validated BEFORE trusting it for SD: 129/129
+  exact match reproducing OK's already-graded oracle under OK's own params. SD's own
+  computed DENY set is IDENTICAL to OK's (independently confirmed). Authored all 92
+  `expected_by_state.SD` entries: 70 APPROVE / 22 DENY. Checked all 37 non-
+  `expected_by_state` variant rows for an SD-specific override — found ONE real divergence
+  (matching MO's/SC's/OK's one-override precedent): `M23-variable-gig-income-
+  anticipation`'s two variants both fail SD's plain federal 130% screen for the same
+  reason KS/OH/GA/IN/MO/OK already fail — authored `"SD": "DENY"` into both variants,
+  matching IN's/KS's/MO's/OK's already-authored value exactly (an independent confirmation
+  the divergence is real, not a calculator bug).
+
+  Verification: `/profile-simulation state=SD` — 129/129 PASS, 0 FAIL, 0 SKIP (clean, not
+  PA's/NJ's/TN's/DE's SKIP-heavy shape — SD's real, current SUA figures need no null-SUA
+  fallback). Every other registered state's harness run reconfirmed unchanged from its
+  documented baseline, all 28 pre-existing states (including this batch's own DE) checked
+  individually — zero regressions. `tsc --noEmit -p packages/snap-rules` clean, 323/323
+  snap-rules tests pass (0 new), 44/47 profile-harness tests pass (3 pre-existing skips).
+  No new GitHub issue filed — every gap found is a per-state disclosed gap of an
+  already-documented class. PR TBD, awaiting merge go-ahead (bundled with DE and ND).
+
+  ---
+
+  **ND (North Dakota — HHS, 19 Human Service Zones)**, third and FINAL in this batch:
+  translated from the already-merged Demeter corpus pack
+  (`packages/demeter-engine/src/states/nd/`, built 2026-08-12). `bbce: true` /
+  `bbce_threshold_pct: 200` / `bbce_fpl_basis: federal_fiscal_year` — HHS Manual §505's
+  200% FPG track, labeled "BBCE (TANF I&R)" in narrative text and "Expanded Categorically
+  Eligible (ECE)" in the income-table appendix — the SAME pathway under two labels, per
+  the corpus pack's own explicit reading, not two separate tracks. The corpus pack also
+  caught a genuine stale-content trap: a legacy manual host (`43005/`) served
+  plausible-looking but pre-OBBBA, pre-FFY2026 figures with no HTTP-level staleness
+  signal; this build (like the corpus pack before it) relies only on the current,
+  actively-versioned `SNAP/` host with its own dated Release Log. `asset_waiver: true`
+  (§505/§601: a household passing the 200% BBCE/ECE track faces no resource test at all)
+  — with a disclosed, corrected secondary-source staleness catch (multiple aggregator
+  sites quote a stale $2,250/$3,250 non-cat-elig resource limit vs. the current $3,000/
+  $4,500 the corpus pack confirmed directly from HHS's own current §601). `sua_by_tier` —
+  POPULATED, with the SAME disclosed naming-collision gap SD's entry (immediately above
+  in this file) documents: a real 4-tier utility structure (SUA $775/mo — a genuine
+  MID-FISCAL-YEAR increase from $772 effective 4/1/2026, already past as of this build so
+  $775 is the current, not stale, figure, no effective-date snapshot split needed/LUSA
+  $286/MU $126/Telephone $35); mapped SUA→HCSUA, LUSA→LUA, Telephone→phone; MU
+  (exactly-one-non-heat-utility) has no schema slot, the same OH/MO/CO/SD-precedent
+  unmapped-4th-tier gap. `allotment_tier: "48"`. `drug_felony_ban: "none"` — a VERIFIED
+  FULL OPT-OUT (N.D.C.C. § 50-06-05.1, effective 2017, per a secondary-source statutory
+  quotation cross-checked against HHS's own disqualification-rules text, which lists no
+  general drug-felony ban). `abawd_waiver_avail: false` — THIS PACK'S FLAGSHIP FINDING, a
+  primary-source CORRECTION of a wrong secondary-source claim: HHS's own Policy Release
+  25.7 confirms ND's prior Rolette County/Turtle Mountain Reservation waiver ENDED
+  effective 10/31/2025 (affected individuals mailed notice 10/10/2025), cross-checked
+  against USDA's own tracker showing no FY2026 ND entry — directly contradicting a
+  WebSearch-surfaced aggregator claim that ND "holds an active statewide waiver through
+  June 30, 2026." `rmp_operated: false`.
+
+  Not representable in this schema, disclosed not dropped: (a) a TIME-SENSITIVE,
+  NOT-YET-EFFECTIVE USDA demonstration-project waiver (approved 12/10/2025, effective
+  9/1/2026) excluding soft drinks, energy drinks, and candy from SNAP-purchasable food —
+  this engine has no product-category purchasing-restriction axis at all, and regardless
+  is not yet active as of this build's date; (b) a narrow, reservation-tied
+  vehicle-licensing accommodation (§604) with no per-vehicle-type axis in this engine's
+  flat `assets: number` shape; (c) an FDPIR/SNAP choice-of-program mutual-exclusivity rule
+  with no engine axis to represent it, the same category as SD's own FDPIR gap documented
+  immediately above in this file. Zero of the 92 profiles' facts touch any of these three
+  gaps.
+
+  Closest structural axis-twin: LOUISIANA — a FULL 7/7 match on every comparison axis
+  (`bbce: true`, `bbce_threshold_pct: 200`, `bbce_fpl_basis: federal_fiscal_year`,
+  `asset_waiver: true`, `drug_felony_ban: "none"`, `abawd_waiver_avail: false`,
+  `allotment_tier: "48"`, `rmp_operated: false`), differing only in the SUA dollar figures
+  — the same strength of match LA itself found with OR, and matching this file's
+  OK-via-IN/SD-via-OK precedent for the strongest possible twin bond. Cross-validated
+  BEFORE trusting it for ND: 129/129 exact match reproducing LA's already-graded oracle
+  under LA's own params. ND's own computed DENY set is IDENTICAL to LA's/DE's already-
+  graded oracles (independently confirmed). Authored all 92 `expected_by_state.ND`
+  entries: 80 APPROVE / 12 DENY. Checked all 37 non-`expected_by_state` variant rows for
+  an ND-specific override — found ZERO divergence (matching NC's/VA's/MD's/CO's/LA's/DE's
+  zero-override result).
+
+  Verification: `/profile-simulation state=ND` — 129/129 PASS, 0 FAIL, 0 SKIP (clean,
+  ND's real, current SUA figures need no null-SUA fallback). Every other registered
+  state's harness run reconfirmed unchanged from its documented baseline, all 29
+  pre-existing states (including this batch's own DE and SD) checked individually — zero
+  regressions. `tsc --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass
+  (0 new), 44/47 profile-harness tests pass (3 pre-existing skips). No new GitHub issue
+  filed — every gap found is a per-state disclosed gap of an already-documented class.
+  This completes batch tier 5 (§6 step 6: "DE, SD, ND") — DE, SD, and ND all have full
+  StatePolicy + 92-profile oracle coverage; the calculator tuning finding (realistic
+  $0-$1,000 SUA sweep bound) is documented once, above, at the top of this batch's entry.
+  PR TBD, awaiting merge go-ahead (bundled with DE and SD in one PR).
