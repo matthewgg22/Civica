@@ -3506,6 +3506,199 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // ── Batch-tier segment 4 (§6 step 6, population <4M): ME, RI, MT ──────
+  // Each built ONE AT A TIME, fully, before the next — ME appended after
+  // OK's entry (the 13th and final individual-tier state), RI after ME's,
+  // MT after RI's, a strict chain within this batch's own worktree. AL and
+  // KY (individual tier) and three other batch-tier segments (CT/UT/IA/AR;
+  // MS/NM/NE; ID/WV/NH) were ALL concurrently in-flight, not yet merged, as
+  // of this batch's build — not read or coordinated with; a human
+  // reconciles the eventual rebase chain, same pattern as MO-vs-TN/IN.
+
+  // Maine — built from packages/demeter-engine/src/states/me/ (PROVENANCE.md
+  // + supplements.json + freshness.json, built 2026-08-12). ME was a genuine
+  // blank slate: no StatePolicy, no oracle coverage at all before this entry.
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis: "calendar_year" —
+  // a genuinely UNUSUAL structural finding this build spent the most care
+  // disclosing: 10-144 C.M.R. Ch. 301, § 999-3's Chart 3 carries a 165% FPL
+  // column, but its own header text scopes it precisely to "those purchasing
+  // and preparing meals with individuals who are elderly and have a
+  // disability and their spouses to qualify as a SEPARATE HOUSEHOLD" (Section
+  // 111-1(2)(c)) — a household-COMPOSITION test, not a categorical-
+  // eligibility income ceiling. Maine's real BBCE gross-income ceiling is
+  // Chart 4's 200% FPL test (7 C.F.R. § 273.2(j)(2), raised from 185% to
+  // 200% effective July 2022 under 22 M.R.S. § 3104(13)) — and Chart 4
+  // updates on a CALENDAR-YEAR cycle tied to the annual HHS poverty-
+  // guideline publication date, structurally distinct from Charts 1-3's
+  // federal-fiscal-year cycle every other Chart in Maine's own appendix
+  // uses. `bbce_fpl_basis` is documentary only (grep-confirmed: no gate
+  // consumes it, same as every other state's entry in this file) so this
+  // finding changes nothing behaviorally, but MA is this file's only other
+  // "calendar_year" entry and Maine's own corpus pack independently
+  // confirms the same structural shape, not a copy.
+  //
+  // asset_waiver: true — 10-144 C.M.R. Ch. 301, § 999-3 Chart 9: "Certain
+  // Broad Based Categorical Households" (the large majority of Maine SNAP
+  // households, qualifying via the 200% FPL BBCE pathway) have carried NO
+  // stated resource limit since Calendar Year 2022. A narrower
+  // non-categorical population still faces a real $4,500 (elderly/disabled)
+  // or $3,000 (all other) limit — same blanket-`true`-for-the-BBCE-
+  // majority-population simplification this file's other BBCE states
+  // already use, not a claim that literally every Maine household is
+  // resource-test-exempt.
+  //
+  // sua_by_tier — FULLY POPULATED, a clean 3-tier mapping despite Maine's
+  // own naming convention differing from this schema's generic labels:
+  // Full Standard Utility Allowance (FSUA, $1,096/mo) -> HCSUA; Non-Heat
+  // Utility Allowance (NHUA, $598/mo) -> LUA; Phone-Only Utility Allowance
+  // (PhUA, $114/mo) -> phone. Source: 10-144 C.M.R. Ch. 301, § 999-3 Chart
+  // 8, effective 10/1/2025/FFY2026. DISCLOSED, not silently resolved: the
+  // corpus pack's own freshness.json flags an unresolved $10 transcription
+  // anomaly in Maine's posted Standard Deduction table at household size 4
+  // ($233 vs. the national FFY2026 figure of $223 every other state in this
+  // file's federal-tables.ts snapshot already uses) — this engine reads
+  // Standard Deduction from the SHARED federal-tables.ts module, not a
+  // per-state StatePolicy axis, so this anomaly has NO consumer here and
+  // required no encoding decision; flagged for a future re-verification
+  // pass against Maine's final-adopted (not just proposed) Rule #244 text.
+  // Also disclosed: Maine's own OBBBA "Heat & Eat" implementation blog post
+  // states the automatic-LIHEAP-triggered FSUA-qualification pathway is now
+  // restricted to elderly/disabled households only (~980 Maine households
+  // affected) — this engine has no Facts-level LIHEAP-receipt axis at all
+  // (grep-confirmed, same pre-existing gap class as #824), so this finding
+  // changes nothing about the sua_by_tier values themselves, only how a
+  // real household would arrive at claiming the HCSUA tier.
+  //
+  // allotment_tier: "48" — no Maine-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT, and this build's
+  // flagship correction: 22 M.R.S. § 3104(14), read directly and in full,
+  // states plainly that an otherwise-eligible person "may not be denied
+  // assistance because the person has been convicted of a drug-related
+  // felony." The corpus pack's own research corrected a February 2026
+  // prisonpolicy.org 50-state survey that had categorized Maine as NOT
+  // opted out — likely conflating this provision with 22 M.R.S. § 3104(15),
+  // a separate, considerably NARROWER disqualification for certain
+  // post-1/1/2018 violent-crime/sexual-assault felony convictions
+  // conditioned on supervision non-compliance or fleeing-felon status. This
+  // engine has no facts-level distinction for that narrower provision
+  // either (same disclosed-gap class as the fleeing_felon/IPV tags this
+  // file's gates/disqualifications.ts already models generically, not
+  // state-specifically) — immaterial to any of the 92 oracle profiles,
+  // none of which encode a post-2018 violent/sexual-assault felony fact.
+  //
+  // abawd_waiver_avail: false — Maine's FY2025 ABAWD geographic waiver (213
+  // areas, approved 9/17/2024, retroactive to 10/1/2024) EXPIRED
+  // 9/30/2025. USDA FNA's own ABAWD Waivers FY2025-2029 state-response
+  // tracker shows Maine's only entry dated 09/13/2024 (FY2025 only), no
+  // FY2026 renewal found — the corpus pack discloses this as strong-but-
+  // not-certain evidence (the tracker updates only quarterly) rather than
+  // absolute certainty, but "no confirmed current waiver" is the
+  // conservative, correctly-conservative encoding either way (a false
+  // `false` wrongly denies an exemption; a false `true` wrongly grants
+  // one when there is none — the corpus pack found no current evidence for
+  // the latter). No county-level lookup needed or added (waiverCountiesFor
+  // only covers CA/MA today; a uniform-statewide answer has no county-level
+  // nuance for a lookup to represent either way).
+  //
+  // rmp_operated: false — Maine is ABSENT from USDA FNA's own current
+  // Restaurant Meals Program state list (Arizona, Maryland, New York,
+  // California, Massachusetts, Rhode Island, Illinois [Cook/Franklin
+  // Counties], Michigan, Virginia), and the corpus pack found no pending
+  // Maine RMP legislation either — a genuine, disclosed negative result,
+  // not an absence of search. Disclosed, immaterial regardless: `rmp_
+  // operated` has no consumer anywhere in verdict.ts or benefit-calc.ts
+  // (grep-confirmed, same as every other state's entry in this file).
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824, newly confirmed present for
+  // Maine: no engine axis exists for a LIHEAP-receipt fact (see sua_by_tier
+  // above) or for Maine's narrower post-2018 violent/sexual-assault felony
+  // disqualification (see drug_felony_ban above). Genuinely and honestly
+  // DISCLOSED as unverified, not guessed: the corpus pack found no
+  // Maine-specific vehicle-exclusion figure or valuation methodology with
+  // the same direct-sourcing confidence as its other findings — immaterial
+  // regardless, since `asset_waiver: true` means the resource test never
+  // reaches the BBCE-majority population this axis governs.
+  //
+  // Oracle: Maine's closest structural axis-twin among all 29 already-
+  // registered states is MASSACHUSETTS — a FULL match on every verdict-
+  // and-benefit-consequential axis (bbce: true, bbce_threshold_pct: 200,
+  // bbce_fpl_basis: "calendar_year" — MA is this file's ONLY other
+  // calendar_year entry, asset_waiver: true, drug_felony_ban: "none",
+  // abawd_waiver_avail: false, allotment_tier: "48", rmp_operated: false),
+  // differing only in the SUA dollar figures — literally identical policy
+  // shape modulo dollar amounts, a stronger match than any prior state's
+  // chosen twin in this file. Built a fresh, independent Python calculator
+  // (not derived from engine output, per #636) directly from verdict.ts/
+  // benefit-calc.ts/gates/{income-tests,asset-test,abawd,student,
+  // composition,immigration,disqualifications,categorical}.ts/facts.ts/
+  // constants/federal-tables.ts's own read source (not just their doc-
+  // comments), mirroring every gate and the benefit-calc formula exactly,
+  // including decimal.ts's half-up (roundDollar) and floor (floorDollar)
+  // rounding conventions. Cross-validated BEFORE trusting it for ME: 129/129
+  // exact match (verdict AND benefit, all 92 base profiles PLUS all 37
+  // non-expected_by_state variant rows) reproducing MA's already-graded
+  // oracle under MA's own StatePolicy params — the calculator's first
+  // cross-validation pass in this batch, additionally confirmed 34/34,
+  // 129/129, and 129/129 against NJ/WI/CO respectively before being reused
+  // for RI and MT below (same calculator, parameterized by state policy,
+  // per this batch's authorization to reuse/extend across all three states
+  // while still cross-validating fresh for each). Also checked all 37 rows
+  // across the 18 non-expected_by_state variant profiles directly under
+  // ME's own params for an ME-specific verdict_by_state override, the same
+  // discipline every prior state's build used — found ZERO divergence from
+  // the shared default verdict (matching NC's/VA's/MD's/CO's/LA's zero-
+  // override result): because ME's computed verdict set is identical to
+  // MA's on every axis that affects eligibility, ME's verdicts are
+  // IDENTICAL to MA's across all 92 base profiles and all 37 variant rows
+  // (80 APPROVE / 12 DENY, the same DENY set as MA's). Authored all 92
+  // expected_by_state.ME entries: 80 APPROVE / 12 DENY.
+  //
+  // Verification: `/profile-simulation state=ME` — 129/129 PASS, 0 FAIL, 0
+  // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA/OK's bar, not PA's/NJ's/TN's/MN's SKIP-heavy shape —
+  // ME's real, current SUA figures mean it did not need PA's/NJ's/TN's
+  // null-SUA fallback). Every other registered state's harness run
+  // reconfirmed unchanged from its documented baseline: CA/WA/TX/GA/MI/IL/
+  // FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC/LA/OK all 129/0/0; NY
+  // 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 — every one
+  // identical to its pre-ME documented baseline, zero regressions. `tsc
+  // --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass (0
+  // new — a schema-conformant pure addition needed no new unit tests),
+  // 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  // packages/demeter-engine (ME's corpus was already complete and out of
+  // scope) or any other state's StatePolicy/oracle coverage. No new GitHub
+  // issue filed — every gap found (the LIHEAP-receipt Facts-shape gap, the
+  // narrower post-2018 violent/sexual-assault-felony disqualification gap,
+  // the vehicle-exclusion sourcing gap) is a per-state disclosed gap of an
+  // already-documented class (#824-style Facts-shape/mechanism gaps), per
+  // this task's own instruction.
+  ME: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "ME",
+      label: "Maine / DHHS — Office for Family Independence (OFI)",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "calendar_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("1096"),
+        LUA: new Decimal("598"),
+        phone: new Decimal("114"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
