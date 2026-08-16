@@ -16,7 +16,7 @@ import {
   eligibleHouseholdSize,
   hasElderlyOrDisabled,
 } from "../facts";
-import { Decimal } from "../decimal";
+import { Decimal, ZERO, dec } from "../decimal";
 import {
   fplMonthly,
   GROSS_INCOME_TEST_RATIO,
@@ -49,7 +49,28 @@ export function grossIncomeTest(facts: Facts, state: string, asOf: Date): Income
     ratio = new Decimal(policy.bbce_threshold_pct).div(100);
   }
   const threshold = fpl.mul(ratio).roundDollar();
-  const gross = new Decimal(aggregateIncomeForCalc(facts, asOf).gross_total).roundDollar();
+
+  let grossForTest = new Decimal(aggregateIncomeForCalc(facts, asOf).gross_total);
+  // #824: NJ/VA/IL/MO exclude legally-obligated child support PAID from
+  // gross income under the 7 CFR 273.9(c) exclusion mechanism — subtracted
+  // before ANY income test, not just the 7 CFR 273.9(d)(5) ordinary
+  // deduction (applied only at net, after the gross test already ran)
+  // every other state's entry in this file uses. `benefit-calc.ts` is
+  // deliberately untouched by this: `child_support_paid` still flows
+  // through its existing `otherDeductions` path unchanged, so net income
+  // for a household that already clears THIS (possibly lowered) gross gate
+  // is algebraically identical to before — this flag changes ONLY whether
+  // a near-the-gross-line, child-support-paying household reaches the net/
+  // benefit computation at all, never the benefit dollar figure once
+  // through. See `StatePolicy.child_support_gross_exclusion`'s own
+  // doc-comment in constants/states.ts for the full reasoning.
+  if (policy.child_support_gross_exclusion) {
+    const cs = dec(facts.deductions.child_support_paid ?? 0);
+    grossForTest = grossForTest.sub(cs);
+    if (grossForTest.lt(ZERO)) grossForTest = ZERO;
+  }
+  const gross = grossForTest.roundDollar();
+
   const passes = gross.lte(threshold);
   return {
     passes,
