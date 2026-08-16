@@ -2609,6 +2609,221 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: true,
     },
   ],
+
+  // Colorado — CDHS (Colorado Department of Human Services), Division of
+  // Food and Energy Assistance, state-supervised / county-administered.
+  // Eighth "individual tier" build (docs/plans/snap-rules-50-state-engine-
+  // completion.md §6, after NC, NJ, VA, TN, IN, MO, MD) — a genuine blank
+  // slate, no prior StatePolicy or oracle coverage existed. Every axis
+  // below is TRANSLATED from the already-cited primary-source findings in
+  // the merged Demeter corpus pack (packages/demeter-engine/src/states/co/
+  // PROVENANCE.md + supplements.json + authorities.json), built 2026-08-11
+  // — re-verification, not fresh research.
+  //
+  // STRUCTURAL DEPARTURE this file has not seen before, load-bearing for
+  // every dollar-figure axis below: Colorado has NO separate narrative
+  // policy manual (unlike MO's SNAP Manual, MD's SNAP Manual, IN's PPM,
+  // VA's SNAP Manual Part, etc.) — Colorado's ENTIRE detailed SNAP policy,
+  // at every level of operational detail, lives directly inside 10 CCR
+  // 2506-1 ("RULE MANUAL VOLUME 4, SNAP"), a formally promulgated
+  // regulation subject to the State Board of Human Services' quarterly
+  // rulemaking cycle. The corpus pack's own hypothesis (stated as a
+  // hypothesis, not confirmed causation): this slower formal-rulemaking
+  // path is why Colorado's own regulation text is measurably stale on BOTH
+  // the FFY2026 COLA cycle (every dollar figure in 10 CCR 2506-1-4.207/
+  // 4.407 is labeled "Effective October 1, 2024," FFY2025) AND the 2025
+  // OBBBA changes (10 CCR 2506-1-4.311's ABAWD text still recites the
+  // pre-OBBBA 18-54 age range despite a "[Effective 1/4/2025]" header),
+  // even though CDHS's own website content (which doesn't require formal
+  // rulemaking) already reflects both.
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis:
+  // federal_fiscal_year — CONFIRMED, not corrected: 10 CCR 2506-1-4.206
+  // names Expanded Categorical Eligibility (ECE) directly at 200% FPL, and
+  // the corpus pack independently cross-validated Colorado's own 200%-FPL
+  // income-limits table against this file's Maryland entry's identical
+  // nationwide FFY2026 figures ($2,610/$3,526/$4,442/$5,360 for HH1-4) —
+  // Colorado's own income-limits table carries a stale "last updated Oct.
+  // 1, 2024" LABEL even though the actual DATA is current, because 200%
+  // FPL is set nationally, not state-by-state. Basic Categorical
+  // Eligibility (BCE) separately covers Colorado Works/SSI/OAP/AND/AB
+  // recipients. Only a household that fails BOTH BCE and ECE is evaluated
+  // under Standard Eligibility (SE): plain federal 130%/100% FPL.
+  //
+  // asset_waiver: true — flows directly from the BBCE finding above: 10
+  // CCR 2506-1-4.408(E) states the $3,000/$4,500 resource limit applies
+  // ONLY to the smaller Standard Eligibility population; BCE/ECE households
+  // face no resource test at all. Same "BBCE households skip resources"
+  // pattern this file's NC/VA/MD entries already use.
+  //
+  // sua_by_tier — POPULATED WITH DISCLOSED STALENESS, not null: Colorado's
+  // own regulation (10 CCR 2506-1-4.407.31) publishes a genuine FOUR-tier
+  // Standard Utility Allowance — HCUA (Heating/Cooling) $578, BUA (Basic,
+  // 2+ non-heat utilities) $367, OUA (One Utility) $69, Telephone $94 — but
+  // EVERY one of those four figures is explicitly labeled "Effective
+  // October 1, 2024" (FFY2025), one full federal fiscal year stale, and the
+  // corpus pack's targeted search could not locate a Colorado-specific
+  // FFY2026 update to any of the four (unlike the nationally-uniform
+  // Standard Deduction and Excess Shelter cap, which federal-tables.ts
+  // already carries current for FFY2026 regardless of this per-state SUA
+  // axis). This is the broadest single-state staleness gap this file has
+  // found — genuinely worse than MO's "one FY stale, unconfirmed FFY2026
+  // update" disclosure, since MO's own figure was merely UNCONFIRMED
+  // current where Colorado's own text AFFIRMATIVELY states the stale date.
+  // Populated anyway, following MO's disclosed-confidence precedent rather
+  // than PA's/NJ's/TN's/MN's "no figure exists at all" null treatment,
+  // because a real (if one-cycle-stale) sourced figure is a materially
+  // different, better-evidenced case than no figure at all — but this
+  // staleness risk should be re-verified against a fresher Colorado source
+  // before this axis is trusted for a real determination.
+  //
+  // Same NAMING-COLLISION mapping trap this file's OH and MO entries
+  // already document: this schema's three real tiers (HCSUA, LUA, phone)
+  // derive from `determineSUATier`'s single LIMITED branch
+  // (`has_electric_or_gas === "yes"`, no distinction of utility COUNT) —
+  // Colorado's own $367 BUA (2+ non-heat utilities) tier maps to this
+  // schema's `LUA` slot, NOT Colorado's own differently-scoped $69 OUA
+  // (exactly one utility) tier, which is the disclosed, unmapped 4th tier
+  // — same treatment as OH's $108 Single SUA, IL's $78 Single Utility, and
+  // MO's own $158 one-utility tier.
+  //
+  // allotment_tier: "48" — no Colorado-specific elevated max-allotment
+  // schedule found; 10 CCR 2506-1-4.207.3(D)'s own max/min-allotment table
+  // is the section already flagged stale above (FFY2025), not evidence of
+  // a genuinely elevated table the way AK's/HI's real tables are.
+  //
+  // drug_felony_ban: "modified" — a genuine, disclosed NARROWING of the
+  // widely-repeated secondary-source "modified ban" characterization: C.R.S.
+  // § 26-2-305(1)(c) disqualifies a household member for 2 years (first
+  // offense) or permanently (second offense) ONLY for a felony conviction
+  // DIRECTLY RELATED TO using SNAP/food-stamp benefits themselves to
+  // purchase controlled substances, where that misuse is part of the
+  // court's own findings — materially narrower than "any drug felony." 10
+  // CCR 2506-1-4.206(C) applies the identical narrow trigger to a SEPARATE
+  // consequence (loss of BCE/ECE, not an outright denial). Simple
+  // possession, or a drug felony unconnected to misusing one's own SNAP
+  // benefits, triggers neither provision. "Modified" remains the correct
+  // #805 classification (a real, conditional restriction exists, this
+  // engine does not yet model the actual narrow trigger at the facts
+  // level) even though the real trigger is narrower than most of this
+  // file's other "modified" entries (FL/PA/AZ/WI/KS/AK/NC/TN/MD). Gate
+  // behavior unchanged (fails open, same as every other "modified" entry)
+  // — see #805, gates/disqualifications.ts.
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero
+  // finding: Colorado holds ZERO ABAWD waivers anywhere in the state, urban
+  // Front Range counties and rural mountain counties alike, per the
+  // independent abawdmap.us aggregator ("No waiver — rule applies") and the
+  // absence of any Colorado entry on USDA's own Time Limit Waivers FY
+  // 2025-2029 index — no county-level lookup needed or meaningful, same
+  // uniform-statewide-zero-waiver shape as this file's VA/MO/TN/MD entries.
+  // DISCLOSED, not re-resolved: the corpus pack found a genuine, three-way
+  // internal contradiction on Colorado's OWN ABAWD age range — 10 CCR
+  // 2506-1-4.311 still recites the pre-OBBBA 18-54 age range and now-
+  // removed exemptions (homelessness, veteran, foster-care-24) despite an
+  // "[Effective 1/4/2025]" header, while CDHS's own dedicated ABAWD FAQ
+  // page and February 2026 training desk aid both state the current
+  // federal 18-64 range, and CDHS's own main /snap page contains a THIRD,
+  // internally-inconsistent statement ("18 and 56" in one paragraph, "18
+  // to 64" in another). The corpus pack treated 18-64 as authoritative (the
+  // most specific, most recently dated, most directly OBBBA-responsive
+  // sources) — this engine's ABAWD gate (gates/abawd.ts) already applies
+  // the correct federal 18-64 ceiling post-OBBBA-effective-date
+  // independent of any state axis, so this contradiction has no engine
+  // consumer regardless; flagged here for completeness only, same
+  // disclosure discipline as this file's other internal-contradiction
+  // findings (MD's two Section-200-vs-600 resource-limit conflict, TN's
+  // dual-citation-family conflicts).
+  //
+  // rmp_operated: false — Colorado does NOT currently operate a Restaurant
+  // Meals Program: CDHS's own current SNAP page explicitly lists hot foods
+  // and on-premises-consumption food as NOT SNAP-eligible, with no RMP
+  // exception. DISCLOSED, not resolved: SB25-169 (signed 5/13/2025)
+  // required CDHS to submit a USDA RMP application by January 1, 2026 — a
+  // deadline that has passed as of this pack's fetch date (2026-08-11)
+  // without a locatable public status update on submission, review, or
+  // approval. `false` is the correct CURRENT answer; this is a genuinely
+  // live, actively-moving axis that should be re-checked before this
+  // engine treats Colorado as a settled `false` indefinitely, distinct
+  // from VA's/MO's/TN's/MD's-ABAWD-style settled-zero findings above.
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gaps already filed as #824, not re-filed, just newly
+  // confirmed present for Colorado: (a) 10 CCR 2506-1-4.410(A) excludes ALL
+  // vehicles as a resource regardless of type, matching MO's/MD's blanket
+  // pattern (immaterial regardless, since asset_waiver: true above means
+  // the resource test never actually runs for a BBCE-covered CO household);
+  // (b) 10 CCR 2506-1-4.407(D)/4.407.5 treats legally obligated child
+  // support as an INCOME EXCLUSION applied before the gross income test,
+  // matching VA/NJ/IL/MO's mechanism rather than MD/IN/TN's ordinary-
+  // deduction mechanism — `benefit-calc.ts` models only the engine-wide
+  // ordinary-deduction mechanism; zero of the 92 v0.6 profiles model a
+  // nonzero `child_support_paid` for a Colorado-relevant profile that would
+  // expose this gap (A08's $300 child-support profile's CO verdict is
+  // unaffected either way, the same acceptance this file's NJ/MO A08
+  // entries already document). Also disclosed, informational only, no
+  // engine axis exists for either: (c) 10 CCR 2506-1-4.407.61's flat $165
+  // Standard Medical Expense Deduction (SMED) shortcut for verified medical
+  // expenses between $35.01-$200, matching MO's flat-shortcut pattern
+  // rather than MD's actual-expense-only rule — `benefit-calc.ts` models
+  // only actual verified medical expense minus the $35 floor, with no SMED
+  // shortcut axis for any state; zero of the 92 profiles are affected
+  // (independently verified: no profile's medical_unreimbursed value falls
+  // in the $35.01-$200 SMED-eligible band while also being SMED-favorable
+  // over actual-expense treatment); (d) 10 CCR 2506-1-4.208.1's 6-month/
+  // 24-month certification-period structure — no engine axis exists for
+  // certification-period length for any state in this file.
+  //
+  // Oracle: CO's closest structural axis-twin among all 25 already-
+  // registered states is NORTH CAROLINA — identical bbce (true/200/
+  // federal_fiscal_year), identical asset_waiver (true), identical
+  // drug_felony_ban ("modified"), identical abawd_waiver_avail (false),
+  // identical allotment_tier ("48"), identical rmp_operated (false); both
+  // also carry a real, non-null sua_by_tier needing the full shelter/SUA/
+  // benefit-calc pathway exercised (unlike NJ's/PA's/TN's null-SUA-blocked
+  // entries), differing only in the SUA dollar figures themselves. Built a
+  // fresh, independent Python calculator (not derived from engine output,
+  // per #636) directly from verdict.ts/benefit-calc.ts/gates/{income-tests,
+  // asset-test,abawd,student,composition,immigration,disqualifications,
+  // categorical}.ts/facts.ts/constants/federal-tables.ts's own read source
+  // (not just their doc-comments), mirroring every gate and the
+  // benefit-calc formula exactly, including decimal.ts's half-up
+  // (roundDollar) and floor (floorDollar) rounding conventions.
+  // Cross-validated BEFORE trusting it for CO: 92/92 exact match (verdict
+  // AND benefit) reproducing NC's already-graded oracle under NC's own
+  // StatePolicy params, PLUS all 37 non-expected_by_state variant rows (0
+  // mismatches) — before applying CO's own policy params. Also checked all
+  // 37 variant rows directly under CO's own params for a CO-specific
+  // verdict_by_state override, the same discipline every prior state's
+  // build used — found ZERO divergence from the shared default verdict
+  // (matching NC's/VA's/MD's zero-override result): CO's computed verdicts
+  // are IDENTICAL to NC's across all 92 base profiles and all 37 variant
+  // rows (80 APPROVE / 12 DENY, the same DENY set as NC's/VA's/MD's, since
+  // all four states share every financial-gate-relevant axis exactly),
+  // differing only in benefit dollar amount where SUA values diverge.
+  // Authored all 92 expected_by_state.CO entries.
+  CO: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "CO",
+      label: "Colorado / CDHS — Division of Food and Energy Assistance",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("578"),
+        LUA: new Decimal("367"),
+        phone: new Decimal("94"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
