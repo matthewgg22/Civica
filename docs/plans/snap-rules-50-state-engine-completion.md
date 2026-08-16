@@ -31,14 +31,14 @@ at all; today, most do.
 this plan's own individual-tier landings)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **28 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
-MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA.
+states.ts`) exists for **29 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
+MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
 engine against — has full 92-case coverage (minus TN's 3 deliberately-unauthored
-genuinely-indeterminate profiles, see below) for **26 of those 28**: CA, WA, TX, NY, GA,
-MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD, CO, SC, LA clear CLEAN
+genuinely-indeterminate profiles, see below) for **27 of those 29**: CA, WA, TX, NY, GA,
+MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD, CO, SC, LA, OK clear CLEAN
 (129/0/0 or a documented pre-existing partial); PA, NJ, and TN also have all 92 (or 89,
 for TN) rows authored, per the execution log's PA/NJ/TN entries below, but all three
 grade 34/0/95 — most of their profiles legitimately SKIP on the null-SUA gap, not a
@@ -62,12 +62,14 @@ One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
   the engine today and, if used for a real determination, would wrongly deny categorical
   eligibility to AK households between 130%–200% FPL.
 
-**25 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
+**24 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
 AL, AR, CT, DC, DE, GU, HI, IA, ID, KY, ME, MS, MT, ND, NE, NH,
-NM, OK, RI, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, CO, SC, and LA — the
-first ten "individual tier" states, §6 — are DONE; see the execution log's
-NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA entries. Alabama's build was concurrently in flight as of
-LA's build, not yet merged — see LA's execution-log entry for the reconciliation note.)
+NM, RI, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, and OK — the
+first eleven "individual tier" states, §6 — are DONE; see the execution log's
+NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA/OK entries. Alabama and Kentucky's builds were BOTH
+concurrently in flight as of OK's build, neither yet merged — see OK's execution-log
+entry for the reconciliation note. Once AL and KY land, the individual tier closes at
+13/13.)
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
 
@@ -194,7 +196,10 @@ exists and only oracle authoring is outstanding):
    not a one-line patch, precisely because it's already shipped and wrong)
 3. Individual tier (~4M+ population): ~~NC~~ (done), ~~NJ~~ (done), ~~VA~~ (done),
    ~~TN~~ (done), ~~IN~~ (done), ~~MO~~ (done), ~~MD~~ (done), ~~CO~~ (done), ~~SC~~ (done),
-   AL (concurrently in flight as of LA's build, not yet merged), ~~LA~~ (done), KY, OK
+   ~~LA~~ (done), ~~OK~~ (done — 13th and FINAL individual-tier state), AL (concurrently
+   in flight as of OK's build, not yet merged), KY (concurrently in flight as of OK's
+   build, not yet merged). Once AL and KY land and are reconciled against OK's rebase,
+   the individual tier closes at 13/13.
 4. Schema step: extend `AllotmentTier` for HI/GU (own small PR, own go-ahead)
 5. HI, GU (now unblocked)
 6. Batch tier (<4M population, N≤3 per batch): CT, UT, IA, AR / MS, NM, NE / ID, WV, NH /
@@ -1478,3 +1483,169 @@ all of it.
   class (#824-style Facts-shape/mechanism gaps, or a genuinely time-sensitive fact worth
   re-checking later), not a new engine architecture gap, per this task's own instruction.
   PR TBD, awaiting merge go-ahead.
+
+- **OK (individual tier, §6 step 3, 13th and FINAL individual-tier state after
+  NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA — Alabama's and Kentucky's individual-tier builds were
+  BOTH concurrently in flight as of this build, neither read or coordinated with; a human
+  reconciles the eventual rebase chain, same pattern this project used for MO-vs-TN/IN)**
+  — built Oklahoma's `StatePolicy` entry AND full 92-profile oracle coverage from scratch
+  (OK had neither before this PR), translating OK's already-merged Demeter corpus pack
+  (`packages/demeter-engine/src/states/ok/`, PROVENANCE.md + supplements.json +
+  freshness.json, built 2026-08-12) into the engine's stricter typed shape per §5's
+  process.
+
+  `bbce: false` — NOT a plain "OK has no BBCE" finding like IN's or KS's, and the entry
+  this build spent the most care disclosing rather than guessing. OK's own regulation,
+  OAC 340:50-11-111(b)/(d) (read via the Cornell LII mirror after oklahoma.gov's own
+  policy-library host 403'd), makes a household categorically eligible — BOTH the gross
+  AND net income tests removed entirely — for TANF/SSI recipients OR households receiving
+  services through "2-1-1 Oklahoma" (a TANF-MOE-funded information/referral service). This
+  is a genuinely BROADER mechanism than IN's/KS's narrow SSI/TANF-only federal cat-elig,
+  and structurally resembles the BBCE pathway every other expanded-cat-elig state in this
+  file uses — BUT OKDHS's own SNAP manual states NO percentage-of-FPL ceiling anywhere for
+  the 2-1-1 track, unlike Kentucky's dual 130%/200%, Louisiana's flat 200%, or Alabama's
+  dual 130%/200%. The corpus pack specifically checked for one (PROVENANCE.md Finding 4)
+  and confirmed its absence, not merely failed to find it. This schema's
+  `bbce_threshold_pct` field has no honest, sourced number to hold for OK's 2-1-1 pathway
+  — the actual gate, if any, sits inside 2-1-1 Oklahoma's own TANF-MOE-funded
+  service-eligibility determination, outside OKDHS's own SNAP policy and outside this
+  build's primary-source access. Setting `bbce: true` with no threshold would fall through
+  `gates/income-tests.ts`'s own ratio fallback to the plain 130% gross ratio while STILL
+  skipping the net test entirely via `bbceConferred` — silently granting a real, uncited
+  eligibility expansion no source supports. `bbce: false` is the conservative, defensible
+  encoding: the general (non-SSI/TANF) NPA population is evaluated under the plain federal
+  130%/100% test, and OK's genuine-but-unsourceable 2-1-1 Oklahoma expansion is disclosed
+  as an accepted gap rather than guessed into a number. `bbce_fpl_basis: null` follows,
+  matching IN's/KS's established shape for a non-BBCE state.
+
+  `asset_waiver: false` — flows from the same finding: Appendix C-3's own resource-
+  standards table states the $3,000/$4,500 test applies "ONLY to sponsored-alien
+  households and households that are NOT categorically eligible" — the narrow SSI/TANF/
+  2-1-1-Oklahoma cat-elig population already skips the resource test via the federal
+  pure-cash path (`facts.cat_elig`) this engine already models; the general NPA household
+  faces the plain federal resource limit, same posture as IN's/KS's entries.
+
+  `sua_by_tier` — FULLY POPULATED, not null, a genuinely CLEAN 3-tier mapping: Appendix C-3
+  (effective 10/1/2025, current FFY2026 figures) publishes exactly three utility
+  standards — SUA $412/mo (heating/cooling), BUA $354/mo (utilities billed but not
+  heating/cooling), and a standalone Telephone Standard $49/mo — with OAC 340:50-7-31
+  confirming a household may receive only ONE, choosing the highest it qualifies for.
+  Unlike this file's OH/MO/CO entries, OK's own supplement discloses no separate
+  "single utility" fourth tier distinct from BUA — no naming-collision trap, the same
+  clean 3-tier shape this file's SC/LA entries already found. HCSUA → $412 (SUA),
+  LUA → $354 (BUA), phone → $49. OK's Standard Deduction ($209 HH1-3, $223 HH4, $261 HH5,
+  $299 HH6+), capped excess shelter ($744), and Standard Homeless Shelter Deduction ($199)
+  all match `federal-tables.ts`'s FY26 snapshot exactly — the same shared-source signal
+  this file's NC/VA/MO/MD/CO/SC/LA entries already use.
+
+  `allotment_tier: "48"` — no Oklahoma-specific elevated max-allotment schedule found.
+
+  `drug_felony_ban: "none"` — a VERIFIED FULL OPT-OUT since 1997 (H.B. 2170, 1997 Okla.
+  Sess. Laws ch. 414), corroborated by TWO independent secondary sources converging on the
+  identical session-law citation (Collateral Consequences Resource Center: "1997 Okla.
+  Sess. Laws 414 § 28"; Prison Policy Initiative, Feb. 2026: "1997 Okla. Sess. Law Serv.
+  Ch. 414 (H.B. 2170) §§ 28, 31"), cross-checked against OAC 340:50's own CURRENT
+  disqualification-category list (fleeing felon, IPV, work-registration noncompliance,
+  substantial lottery/gambling winnings, post-2/7/2014 violent-crime convictions) — NONE
+  of which mention a drug-felony conviction at all. Disclosed access gap, not a fabricated
+  statute read: the corpus pack could NOT independently locate 1997 Okla. Sess. Laws ch.
+  414 §§ 28/31 as standalone, currently-numbered Title 56 sections in the Legislature's own
+  current compiled text (unlike neighboring sections of the same 1997 chapter, which ARE
+  codified today) — resolved via convergent secondary corroboration plus the current
+  regulation's own silence, the same evidentiary standard this file's Louisiana entry
+  already applies to its own Justia-403 statute-access gap.
+
+  `abawd_waiver_avail: false` — THIS PACK'S FLAGSHIP FINDING, and the most STRUCTURALLY
+  PERMANENT zero-waiver finding this file has recorded: 56 O.S. § 241.3(C) (added by Laws
+  2013, c. 178, § 1, effective September 1, 2013) states in full, "the Department of Human
+  Services shall not request a waiver to provide Supplemental Nutrition Assistance Program
+  services to able-bodied adults without dependents." OKDHS is STATUTORILY BARRED by the
+  Oklahoma Legislature from ever requesting an area-based ABAWD waiver, regardless of
+  local unemployment conditions — a genuinely different and more durable reason than every
+  other zero-waiver state in this file (VA/MO/TN/MD/CO/SC/LA), whose absence of a waiver
+  reflects a current administrative choice or a failure to meet the federal
+  10%-unemployment threshold, either of which COULD change without any legislative action.
+  Oklahoma's cannot, absent a legislative repeal of § 241.3(C) itself. No county-level
+  lookup needed, same uniform-statewide-zero-waiver shape as this file's VA/MO/TN/MD/CO/
+  SC/LA entries — the underlying reason is simply more permanent here.
+
+  `rmp_operated: false` — Oklahoma is ABSENT from USDA FNA's own current Restaurant Meals
+  Program state list, cross-checked against this file's MO/IN/TN/MD/CO/SC/LA entries' own
+  independent fetches of the same list. OKDHS's own EBT Resource Center page independently
+  confirms the practical consequence in plain consumer language: SNAP cannot buy "fast
+  food or food that will be heated and eaten in the store." Disclosed, immaterial
+  regardless: `rmp_operated` has no consumer anywhere in `verdict.ts` or `benefit-calc.ts`
+  (grep-confirmed, same as every other state's entry in this file).
+
+  Not representable in this schema, and not silently dropped — the SAME pre-existing gap
+  already filed as #824, not re-filed, just newly confirmed present for Oklahoma: legally
+  obligated child support is an ORDINARY POST-GROSS-INCOME DEDUCTION (OAC 340:50-7-31),
+  matching this file's MD/IN/TN/SC/LA pattern — A08's $300 child-support profile's OK
+  verdict is unaffected either way. Genuinely and honestly DISCLOSED as unverified, not
+  guessed either way: the corpus pack could not obtain a full verbatim read of OAC
+  340:50-7-1/340:50-7-6 (secondary summaries only) and therefore does NOT assert whether
+  Oklahoma blanket-excludes vehicles from the resource test — immaterial regardless, since
+  `asset_waiver: false` here means this build never needed to resolve it (the resource
+  test only reaches the narrow non-cat-elig population, and none of the 92 profiles'
+  assets depend on vehicle classification specifically). No engine axis exists for OK's
+  flat 12-month certification period (OAC 340:50-9-6, informational only) or for the
+  165%-FPL "assisting household" sub-pathway (OAC 340:50-5-1(c), a separate-household
+  mechanic structurally identical to Kentucky's MS 5200(B), not reachable by any of the 92
+  profiles).
+
+  Oracle: OK's closest structural axis-twin among all 28 already-registered states is
+  INDIANA — matching every verdict-and-benefit-consequential axis exactly (`bbce: false`,
+  `bbce_fpl_basis: null`, `asset_waiver: false`, `allotment_tier: "48"`,
+  `abawd_waiver_avail: false`), differing only in `drug_felony_ban` (IN "modified" vs OK
+  "none" — a value with zero verdict/benefit consequence, grep-confirmed: only `"full"`
+  disqualifies anywhere in `gates/disqualifications.ts`) and the SUA dollar figures. Built
+  a fresh, independent Python calculator (not derived from engine output, per #636)
+  directly from `verdict.ts`/`benefit-calc.ts`/`gates/{income-tests,asset-test,abawd,
+  student,composition,immigration,disqualifications,categorical}.ts`/`facts.ts`/
+  `constants/federal-tables.ts`'s own read source (not just their doc-comments), mirroring
+  every gate and the benefit-calc formula exactly, including `decimal.ts`'s half-up
+  (`roundDollar`) and floor (`floorDollar`) rounding conventions. Cross-validated BEFORE
+  trusting it for OK: 92/92 exact match (verdict AND benefit) reproducing IN's
+  already-graded oracle under IN's own `StatePolicy` params, PLUS all 37
+  non-`expected_by_state` variant rows (0 mismatches), before applying OK's own policy
+  params. Also checked all 37 rows across the 18 non-`expected_by_state` variant profiles
+  directly under OK's own params for an OK-specific `verdict_by_state` override, the same
+  discipline every prior state's build used — found ONE real divergence (matching MO's/
+  SC's one-override precedent, not NC's/VA's/MD's/CO's/LA's zero-override result):
+  `M23-variable-gig-income-anticipation`'s two variants ($1,800 and $2,200 gross HH1) both
+  clear every BBCE-165/185/200 state's threshold in this file but fail OK's plain federal
+  130% screen ($1,696-97) for the same reason KS/OH/GA/IN/MO already fail — authored
+  `"OK": "DENY"` into both variants' `verdict_by_state` blocks, matching IN's/KS's/MO's
+  already-authored value exactly (an independent confirmation the divergence is real, not
+  a calculator bug). Authored all 92 `expected_by_state.OK` entries: 70 APPROVE / 22 DENY
+  — independently confirmed IDENTICAL to IN's own already-graded 92-profile verdict set (0
+  divergence, the expected result since every verdict-controlling axis is identical
+  between the two states); only benefit-dollar figures differ, driven by OK's SUA values
+  ($412/$354/$49) vs IN's ($486/$283/$36).
+
+  Verification: `/profile-simulation state=OK` — 129/129 PASS, 0 FAIL, 0 SKIP (clean,
+  matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/IN/MO/MD/CO/SC/LA's bar, not
+  PA's/NJ's/TN's/MN's SKIP-heavy shape — OK's real, current SUA figures mean it did not
+  need PA's/NJ's/TN's null-SUA fallback). Every other registered state's harness run
+  reconfirmed unchanged from its documented baseline, all 28 pre-existing states checked
+  individually (not spot-checked): CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/
+  MD/CO/SC/LA all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 — every
+  one identical to its pre-OK documented baseline, zero regressions. `tsc --noEmit -p
+  packages/snap-rules` clean, 323/323 snap-rules tests pass (0 new — a schema-conformant
+  pure addition needed no new unit tests), 44/47 profile-harness tests pass (3
+  pre-existing skips). Did not touch `packages/demeter-engine` (OK's corpus was already
+  complete and out of scope), AL's or KY's concurrently in-flight work (not yet merged,
+  not read or coordinated with), or any other state's `StatePolicy`/oracle coverage. No
+  new GitHub issue filed — the 2-1-1 Oklahoma no-published-ceiling finding is a genuine
+  research/sourcing gap this schema's existing `bbce`/`bbce_threshold_pct` fields ARE
+  expressive enough to leave honestly unset for (unlike TN's #830, which needed a field
+  the schema had no slot for at all), and every other gap found (the unresolved
+  vehicle-resource-treatment question, the certification-period and 165%-assisting-
+  household informational gaps) is a per-state disclosed gap of an already-documented
+  class (#824-style Facts-shape/mechanism gaps), per this task's own instruction. This is
+  the 13th and FINAL individual-tier state (§6 step 3) — NC, NJ, VA, TN, IN, MO, MD, CO,
+  SC, and LA are all already merged (10 states); AL and KY were BOTH concurrently
+  in-flight and NOT yet merged as of this build. A human reconciles the eventual rebase
+  chain across AL/KY/OK, the same pattern this project has used repeatedly (e.g.
+  MO-vs-TN/IN); once all three land, the individual tier closes at 13/13. PR TBD, awaiting
+  merge go-ahead.
