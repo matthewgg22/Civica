@@ -31,18 +31,21 @@ at all; today, most do.
 this plan's own individual-tier landings)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **32 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
-MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK, ME, RI, MT.
+states.ts`) exists for **33 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
+MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK, ME, RI, MT, AL.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
 engine against — has full 92-case coverage (minus TN's 3 deliberately-unauthored
-genuinely-indeterminate profiles, see below) for **30 of those 32**: CA, WA, TX, NY, GA,
+genuinely-indeterminate profiles, see below) for **30 of those 33**: CA, WA, TX, NY, GA,
 MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD, CO, SC, LA, OK, ME, RI, MT
-clear CLEAN (129/0/0 or a documented pre-existing partial); PA, NJ, and TN also have all
-92 (or 89, for TN) rows authored, per the execution log's PA/NJ/TN entries below, but all
-three grade 34/0/95 — most of their profiles legitimately SKIP on the null-SUA gap, not a
-coverage gap, so none is counted as "clean" here.
+clear CLEAN (129/0/0 or a documented pre-existing partial); PA, NJ, TN, and AL also have
+all 92 (or 89, for TN) rows authored, per the execution log's PA/NJ/TN/AL entries below,
+but all four grade 34/0/95 — most of their profiles legitimately SKIP on the null-SUA gap,
+not a coverage gap, so none is counted as "clean" here. (AL's own oracle achieves genuine
+FULL 92/92 coverage — unlike TN's 89/92 — but the SKIP-heavy grade is unavoidable given
+AL's own null SUA; see AL's execution-log entry for why full authored coverage and a clean
+harness grade are different things.)
 
 Two states have a `StatePolicy` but no oracle coverage yet, for different reasons:
 
@@ -62,17 +65,17 @@ One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
   the engine today and, if used for a real determination, would wrongly deny categorical
   eligibility to AK households between 130%–200% FPL.
 
-**21 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
-AL, AR, CT, DC, DE, GU, HI, IA, ID, KY, MS, ND, NE, NH,
-NM, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, and OK — the
-first eleven "individual tier" states, §6 — are DONE; see the execution log's
-NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA/OK entries. Alabama and Kentucky's builds were BOTH
-concurrently in flight as of OK's build, neither yet merged — see OK's execution-log
-entry for the reconciliation note. Once AL and KY land, the individual tier closes at
-13/13. ME, RI, and MT — the fourth batch-tier group, §6 step 6 — are ALSO now DONE; see
-the execution log's ME/RI/MT entries below. CT/UT/IA/AR, MS/NM/NE, and ID/WV/NH — the
-other three batch-tier segments — were all concurrently in flight as of this batch's
-build, none yet merged; not read or coordinated with.)
+**20 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
+AR, CT, DC, DE, GU, HI, IA, ID, KY, MS, ND, NE, NH,
+NM, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK, and AL — the
+first twelve "individual tier" states, §6 — are DONE; see the execution log's
+NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA/OK/AL entries. Kentucky's build was concurrently in flight
+as of OK's build, not yet merged — see OK's execution-log entry for the reconciliation
+note. Once KY lands, the individual tier closes at 13/13. ME, RI, and MT — the fourth
+batch-tier group, §6 step 6 — are ALSO now DONE; see the execution log's ME/RI/MT entries
+below. CT/UT/IA/AR, MS/NM/NE, and ID/WV/NH — the other three batch-tier segments — were
+all concurrently in flight as of this batch's build, none yet merged; not read or
+coordinated with.)
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
 
@@ -199,10 +202,10 @@ exists and only oracle authoring is outstanding):
    not a one-line patch, precisely because it's already shipped and wrong)
 3. Individual tier (~4M+ population): ~~NC~~ (done), ~~NJ~~ (done), ~~VA~~ (done),
    ~~TN~~ (done), ~~IN~~ (done), ~~MO~~ (done), ~~MD~~ (done), ~~CO~~ (done), ~~SC~~ (done),
-   ~~LA~~ (done), ~~OK~~ (done — 13th and FINAL individual-tier state), AL (concurrently
-   in flight as of OK's build, not yet merged), KY (concurrently in flight as of OK's
-   build, not yet merged). Once AL and KY land and are reconciled against OK's rebase,
-   the individual tier closes at 13/13.
+   ~~LA~~ (done), ~~OK~~ (done — 13th and FINAL individual-tier state), ~~AL~~ (done —
+   rebased against SC/LA/OK, see AL's execution-log entry), KY (concurrently in flight as
+   of OK's build, not yet merged). Once KY lands and is reconciled, the individual tier
+   closes at 13/13.
 4. Schema step: extend `AllotmentTier` for HI/GU (own small PR, own go-ahead)
 5. HI, GU (now unblocked)
 6. Batch tier (<4M population, N≤3 per batch): CT, UT, IA, AR / MS, NM, NE / ID, WV, NH /
@@ -1829,3 +1832,167 @@ all of it.
   (§6 step 6) — CT/UT/IA/AR, MS/NM/NE, and ID/WV/NH remain, all three concurrently
   in-flight as of this build, not yet merged; DE/SD/ND, VT/WY/DC, and VI remain
   unstarted. PR TBD, awaiting merge go-ahead.
+
+- **AL (individual tier, §6 step 3, ninth state after NC/NJ/VA/TN/IN/MO/MD/CO — SC's own PR
+  #846 was open/CI-green but not yet merged as of this build; not coordinated with, per the
+  task's own instruction that a human reconciles the eventual rebase, the same pattern
+  MO's/AL's own entries above already used for a concurrently-in-flight state)** — built
+  Alabama's `StatePolicy` entry AND full 92-profile oracle coverage from scratch (AL had
+  neither before this PR), translating AL's already-merged Demeter corpus pack
+  (`packages/demeter-engine/src/states/al/`, PROVENANCE.md + supplements.json +
+  freshness.json + authorities.json, built 2026-08-12 from a direct curl fetch of Alabama
+  DHR's current per-chapter POE Manual and current Form 1942) into the engine's stricter
+  typed shape per §5's process.
+
+  STRUCTURAL FINDING this file had not carried in exactly this shape before: `bbce: true` /
+  `bbce_threshold_pct: 130` is a genuine DUAL-TRACK BBCE (closest precedent: Georgia's own
+  "BBCE is not income relief" entry) — AL POE § 210(B) extends Expanded Categorical
+  Eligibility at 130% FPL generally, OR 200% FPL ONLY for households where every member is
+  elderly or disabled AND net income also clears 100% FPL. 130 is the correct
+  general-population screen (matching GA's own "record the screen that binds for a regular
+  household" precedent); the elevated 200%-for-all-E/D pathway is not separately modeled —
+  but unlike GA's entry, this gap is LARGELY SELF-MITIGATING: `gates/income-tests.ts`'s
+  existing federal default already routes any E/D-containing household around the gross
+  test entirely and straight to the 100% FPL net test, which is exactly the ceiling AL's
+  elevated tier separately requires. Independently checked computationally against all 129
+  rows (92 base + 37 variants) for the one theoretical residual gap (an E/D household whose
+  net clears 100% FPL from a large deduction stack while its gross exceeds 200% FPL) — zero
+  such rows exist in this fixture, so the unmodelled sub-screen flips zero verdicts here,
+  the same "checked, not assumed" discipline this file's other disclosed-limitation findings
+  use. `bbce_fpl_basis: federal_fiscal_year` is an honest inference (AL's manual states no
+  explicit FFY-vs-calendar framing), following this file's established TN-precedent default.
+
+  `asset_waiver: true` — AL POE § 210(B) states plainly: "Households qualifying under
+  EITHER pathway are exempt from the asset (resource) test" — a cleaner, more direct finding
+  than GA's own `false` (GA's TCOS cat-elig does NOT waive the asset test; Alabama's
+  genuinely does). `allotment_tier: "48"` — AL's own confirmed Standard Deduction
+  ($209/$209/$209/$223/$261/$299, DHR Form 1942 Rev. 10/25) matches federal-tables.ts's
+  FY26 snapshot exactly, the same shared-source signal this file's NC/VA/MO/MD/CO entries
+  use.
+
+  `drug_felony_ban: "modified"` — this pack's flagship finding, and a genuine CORRECTION to
+  an oversimplified widely-repeated secondary-source claim (a 2022-era Equal Justice
+  Initiative article reads as saying Alabama retains the unmodified federal lifetime ban).
+  AL POE § 101(f) implements Ala. Code § 38-1-8 (Act 2015-185, § 12, eff. ~Jan. 30, 2016): a
+  person otherwise disqualified for a drug-related felony becomes SNAP-eligible upon
+  completing their sentence, OR while satisfactorily serving probation (including completing
+  mandatory drug treatment) — DHR's own manual text confusingly calls the disqualification
+  "permanent" in one sentence and describes the statutory pathway back in the very next.
+  Justia and FindLaw both 403'd the statute's own text — resolved via convergent secondary
+  corroboration (AL Reporter, Alabama Today) cross-checked against DHR's own primary manual
+  text, the same access pattern this file's PA/IN entries already disclose.
+
+  `abawd_waiver_avail: false` — an AFFIRMATIVELY SOURCED, currently-zero finding: ABAWDMap.us
+  confirms Alabama holds ZERO ABAWD waivers anywhere in the state ("No waiver — rule
+  applies"), including its historically high-unemployment Black Belt region (18 rural
+  counties, specifically checked given the region's economic profile per the task's own
+  prompt) — same uniform-statewide-zero-waiver shape as this file's VA/MO/TN/MD/CO entries,
+  no county lookup needed. `rmp_operated: false` — Alabama is absent from USDA FNA's current
+  RMP state list; AL POE § 1107 describes exactly one restaurant/prepared-meal mechanism,
+  expressly limited to homeless SNAP recipients — no broader elderly/disabled RMP option
+  exists, unlike MD's or VA's statewide programs.
+
+  `sua_by_tier: null` — a genuine, disclosed RESEARCH GAP, same discipline as PA's/NJ's/
+  TN's/MN's null entries: AL POE § 903(F)-(J) describes the SUA/BUA/Telephone Standard
+  STRUCTURE in full, but every dollar figure is deferred to an internal "Basis of Issuance
+  Chart" this pack could not locate at any public DHR URL.
+
+  A genuine ACCESS-ARTIFACT finding carried into this entry's provenance, not itself an
+  engine value: dhr.alabama.gov hosts a SECOND, materially stale 2022-vintage "Appendix I"
+  POE manual PDF, still live and easily surfaced by an ordinary search, with pre-OBBBA ABAWD
+  rules and FFY2022 dollar figures — nothing on either DHR page flags it as superseded.
+  Every figure in this entry traces to apps.dhr.alabama.gov's CURRENT per-chapter manual and
+  Form 1942 (Rev. 10/25) ONLY.
+
+  Not representable in this schema, and not silently dropped: AL POE § 802 excludes ALL
+  vehicles as a resource regardless of type (matching MO/MD/CO's blanket pattern),
+  immaterial regardless since `asset_waiver: true` means the resource test never runs; AL
+  POE § 903(C)'s flat $185 Standard Medical Deduction shortcut (matching MO's/CO's
+  flat-shortcut pattern) is NOT modeled by `benefit-calc.ts`'s actual-expense-over-$35-floor
+  mechanism — UNLIKE MO's/CO's own "zero profiles affected" finding, this one genuinely IS
+  material: `MX1-arguable-max-e-d-deduction-stacked-3000-gross` is the sole determinate
+  ("none"-tier) profile with a qualifying ($900/mo) medical expense, and independently
+  verified to compute a DIFFERENT benefit dollar amount under each mechanism ($546 via the
+  engine's actual mechanism, authored below, vs. $273 under AL's true flat-then-actual-excess
+  policy) — the verdict is unaffected (APPROVE either way), but the benefit amount genuinely
+  differs; authored per the engine's actual mechanism, same convention every other state's
+  benefit figure in this file follows, with the discrepancy disclosed rather than silently
+  accepted. Conversely, AL POE § 903(E)'s treatment of legally obligated child support as an
+  ORDINARY DEDUCTION is NOT a gap for Alabama — `benefit-calc.ts`'s own child-support
+  mechanism already IS the ordinary-deduction mechanism, so AL is one of the states where the
+  engine's one hardcoded mechanism happens to already match real policy, unlike NJ's/VA's/
+  MO's/CO's income-exclusion states (#824). No engine axis exists for certification-period
+  length (AL's own 12-month standard, including for ABAWDs — closer to MD's 12-month pattern
+  than CO's/SC's 6-month baseline).
+
+  Oracle: AL's closest structural axis-twin among all 26 already-registered states is OHIO —
+  identical `bbce_threshold_pct` (130, an exact numeric match, not just "both under 200"),
+  identical `asset_waiver` (true), identical `allotment_tier` ("48"); OH's `drug_felony_ban`
+  ("none") differs from AL's ("modified") in label only — both fail open at
+  `gates/disqualifications.ts`'s gate, so the two states are behaviorally identical on every
+  drug_felony-tagged profile. Built a fresh, independent Python calculator (not derived from
+  engine output, per #636) directly from `verdict.ts`/`benefit-calc.ts`/`gates/
+  {income-tests,asset-test,abawd,student,composition,immigration,disqualifications,
+  categorical}.ts`/`facts.ts`/`constants/federal-tables.ts`'s own read source (not just their
+  doc-comments), mirroring every gate and the benefit-calc formula exactly, including
+  `decimal.ts`'s half-up (`roundDollar`), floor (`floorDollar`), and ceiling (`ceilDollar`)
+  rounding conventions. Cross-validated BEFORE trusting it for AL: 129/129 exact match
+  (verdict AND benefit, all 92 base + all 37 variant rows, zero mismatches) reproducing OH's
+  already-graded oracle under OH's own StatePolicy params. Since OH's `abawd_waiver_avail`
+  (true) differs from AL's (false), this cross-validation exercises every mechanic except the
+  ABAWD-waiver-exemption branch itself (a single boolean read, independently verified by
+  direct code inspection). Separately cross-validated the calculator's null-SUA
+  SKIP-detection and SUA-sweep-invariance-proof mechanics specifically — the pathway AL
+  itself needs — by reproducing TN's already-graded null-SUA oracle under TN's own params:
+  34/34 exact match on TN's determinate rows, 54/55 exact match on TN's null-SUA-blocked rows
+  (the sole "mismatch," `MX4-bbce-max-income-with-any-benefit`, correctly REPRODUCES TN's own
+  already-documented #830 net-ceiling-architecture-gap divergence, not a calculator bug), and
+  36/37 exact match on TN's 37 variant rows (the sole remaining "mismatch,"
+  `P58-elderly-retiree-tips-over-net-limit`'s `above_net_limit` variant, independently
+  reproduces TN's own already-documented genuine indeterminacy — the sweep found both
+  APPROVE and DENY, confirming, not contradicting, TN's finding). Also checked all 37 rows
+  across the 18 non-`expected_by_state` variant profiles directly under AL's own params for
+  an AL-specific `verdict_by_state` override — found exactly ONE real divergence:
+  `M23-variable-gig-income-anticipation`'s two variants ($1,800 and $2,200 gross HH1) clear
+  every 200%/185%-BBCE state's threshold but fail AL's 130% screen — authored `"AL": "DENY"`
+  into both variants, matching KS's/MO's/IN's/OH's/GA's own already-authored 130%-or-federal
+  value exactly. `P58`'s `above_net_limit` variant is genuinely indeterminate under AL's own
+  SUA sweep too (same finding PA/NJ/TN already made) — no override authored.
+
+  Authored all 92 `expected_by_state.AL` entries — a genuine FULL-COVERAGE result unlike
+  TN's 89-of-92 (AL's own 130% general-population screen has no compounding net-ceiling
+  ambiguity the way TN's uniform 200% screen did, so all 58 null-SUA-blocked profiles proved
+  SUA-invariant, zero genuinely indeterminate): 34 determinate (32 APPROVE / 2 DENY, real
+  computed benefit) + 58 null-SUA-blocked (40 APPROVE / 18 DENY, benefit: null,
+  SUA-invariance-proven across the same $0-$1,500 sweep PA/NJ/TN/MN used) = 72 APPROVE / 20
+  DENY overall. AL's DENY set is a strict superset of NC's/VA's/MD's/CO's 12-profile DENY set
+  (the same 12, plus 8 additional gross-income-margin profiles — D01, G06, M01, M04, M06,
+  MX3, MX4, P59 — that clear 200% FPL but fail AL's lower 130% screen), and differs from OH's
+  19-profile DENY set by exactly ONE profile (`M12-abawd-in-a-waived-area`, attributable
+  purely to `abawd_waiver_avail`) — both directional differences independently confirmed
+  against the raw income/threshold math. Full coverage in the FIXTURE does not mean full
+  coverage in the GRADE: `composeVerdict`'s own null-SUA guard SKIPs any profile whose
+  `sua_tier` isn't "none"/homeless BEFORE ever consulting the independently-proven invariant
+  verdict this oracle carries — the fixture is authored for when a real SUA figure eventually
+  lands, the same reason PA's/NJ's/TN's/MN's oracles already exist despite an unavoidably
+  SKIP-heavy real grade.
+
+  Verification: `/profile-simulation state=AL` — 34 PASS / 0 FAIL / 95 SKIP (of 129),
+  matching PA's/NJ's/TN's exact SKIP-heavy shape (not CA/MA/.../CO's clean 129/0/0 bar) —
+  every SKIP attributable to the documented null-SUA guard, no PARAMS_MISMATCH, 0 FAIL.
+  Every other registered state's harness run reconfirmed unchanged from its documented
+  baseline, all 26 pre-existing states checked individually (not spot-checked):
+  CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO all 129/0/0; NY 127/2/0; AZ
+  128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 — every one identical to its pre-AL documented
+  baseline, zero regressions. `tsc --noEmit -p packages/snap-rules` clean, 323/323 snap-rules
+  tests pass (0 new — a schema-conformant pure addition needed no new unit tests), 44/47
+  profile-harness tests pass (3 pre-existing skips). Did not touch `packages/demeter-engine`
+  (AL's corpus was already complete and out of scope) or any other state's
+  `StatePolicy`/oracle coverage, including SC's still-open, unmerged PR #846. No new GitHub
+  issue filed — every gap found (the stale-duplicate PDF trap, the unmodelled all-E/D 200%
+  sub-screen, the null SUA, the flat medical-deduction shortcut's MX1 impact, the blanket
+  vehicle exclusion, the 12-month certification period) is a per-state disclosed gap of an
+  already-documented class (#824-style Facts-shape/mechanism gaps, or the GA-precedent
+  "sub-screen not yet modelled" acceptance), not a new engine architecture gap, per this
+  task's own instruction. PR [#848](https://github.com/matthewgg22/Civica/pull/848),
+  awaiting merge go-ahead.
