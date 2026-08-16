@@ -221,6 +221,18 @@ export interface StatePolicy {
   effective_end: Date;
   state_code: string;
   label: string;
+  /**
+   * In practice this no longer means "does this state have some form of
+   * Broad-Based Categorical Eligibility" — it means "does this state's BBCE
+   * work the specific way verdict.ts's bundled categorical-eligibility logic
+   * already expects" (a flat elevated-income-ceiling + full resource-test
+   * waiver, conferred via a TANF-funded informational notice). States with a
+   * real BBCE-like program whose mechanism doesn't fit that bundled shape —
+   * e.g. Idaho, Oklahoma, Nebraska, all encoded `false` this session even
+   * though each has some genuine elevated-eligibility pathway — end up
+   * mischaracterized as "no BBCE" rather than "BBCE, but not this shape."
+   * This is a known architectural gap, tracked (not fixed here) as #853.
+   */
   bbce: boolean;
   bbce_threshold_pct?: number;
   bbce_fpl_basis: BBCEFPLBasis;
