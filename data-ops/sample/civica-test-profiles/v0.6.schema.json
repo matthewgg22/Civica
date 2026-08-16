@@ -8,12 +8,11 @@
   "properties": {
     "meta": {
       "type": "object",
-      "required": ["version", "fy", "default_state", "states", "params", "tolerances"],
+      "required": ["version", "fy", "default_state", "params", "tolerances"],
       "properties": {
         "version": {"type": "string"},
         "fy": {"type": "string"},
         "default_state": {"type": "string"},
-        "states": {"type": "object", "additionalProperties": {"type": "object"}},
         "params": {"type": "object"},
         "tolerances": {"type": "object", "required": ["verdict", "benefit"]}
       }
