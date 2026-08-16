@@ -36,15 +36,24 @@
 // VI into (the AK precedent fixes both axes through the same two
 // functions; VI mirrors that exactly).
 //
-// ── What this does NOT fix (disclosed, matching #858's own framing) ─────
-// VI's own table also carries a lower Maximum Shelter Deduction ($586 vs.
-// federal FY26's $744). `federal-tables.ts`'s `shelterCapFor()` has no
-// per-state override slot at all (not even for AK) — extending it is a
-// separate, larger schema change out of scope for this PR. #858 itself
-// frames this as the non-material gap ("the shelter cap works in VI's
-// favor if ever wrongly applied, i.e. it UNDER-caps rather than
-// over-caps") — left disclosed-but-unfixed here, same as states.ts's own
-// VI StatePolicy comment already notes.
+// ── Standard deduction + shelter cap (#866 — FIXES the gap this file's
+// #858 header used to disclose as unfixed) ──────────────────────────────
+// VI's own table also carries a Standard Deduction that differs from the
+// 48-contiguous table at household sizes 1-3 ($184 for 1-2, $185 for 3 —
+// LOWER than federal FY26's $209 — identical to federal at sizes 4-6+:
+// $223/$261/$299) and a LOWER Maximum Shelter Deduction ($586 vs. federal
+// FY26's $744). Both figures verbatim from USVI DHS's own FY2026 (10/1/
+// 2025-9/30/2026) "Monthly Allotments and Deductions" table
+// (dhs.vi.gov/wp-content/uploads/2025/10/DFA_FY-2026-COLA-ADJUSTMENTS-AND-
+// DEDUCTIONS-TABLE.pdf), quoted in full in issue #858 and re-confirmed in
+// this repo at packages/demeter-engine/src/states/vi/supplements.json:138
+// and vi/pack.json:67. UNLIKE AK/HI/GU (all elevated, understating
+// benefits pre-fix), VI's own SD/shelter-cap figures are LOWER than the
+// federal defaults at the sizes where they differ — the pre-#866 engine
+// therefore OVER-stated some VI households' benefits (using the federal
+// $209 SD instead of VI's own $184/$185, and the federal $744 cap instead
+// of VI's own $586), the opposite direction from AK/HI/GU. See issue #866
+// for the full before/after reconciliation.
 
 import { Decimal } from "../decimal";
 
@@ -56,10 +65,17 @@ export interface ViAllotmentTable {
   /** VI's own minimum-benefit floor (1-2 person HH), higher than the
    *  federal default ($24 FY26) every other non-elevated-tier state uses. */
   minimum_benefit: Decimal;
+  /** VI's own standard deduction table (#866) — LOWER than the federal
+   *  48-contiguous table at sizes 1-3, identical at sizes 4-6+. */
+  standard_deduction: Map<number, Decimal>;
+  /** VI's own maximum excess shelter deduction cap (#866) — LOWER than
+   *  the federal 48-contiguous $744. */
+  shelter_cap: Decimal;
 }
 
 // FY26 (10/1/2025-9/30/2026). Verbatim from USVI DHS's own published table,
-// quoted in full in issue #858.
+// quoted in full in issue #858 (max_allotment/minimum_benefit) and #866
+// (standard_deduction/shelter_cap).
 export const VI_ALLOTMENT_TABLE: ViAllotmentTable = {
   max_allotment: new Map<number, Decimal>([
     [1, new Decimal("383")],
@@ -73,4 +89,13 @@ export const VI_ALLOTMENT_TABLE: ViAllotmentTable = {
   ]),
   max_allotment_each_additional: new Decimal("281"),
   minimum_benefit: new Decimal("31"),
+  standard_deduction: new Map<number, Decimal>([
+    [1, new Decimal("184")],
+    [2, new Decimal("184")],
+    [3, new Decimal("185")],
+    [4, new Decimal("223")],
+    [5, new Decimal("261")],
+    [6, new Decimal("299")],
+  ]),
+  shelter_cap: new Decimal("586"),
 };

@@ -46,15 +46,19 @@
 // federal FY26 default of $24 — fixed here too, mirroring HI's/VI's/AK's
 // precedent through the same `minimumBenefitFor` function.
 //
-// ── What this does NOT fix (disclosed, matching #858's own framing) ─────
+// ── Standard deduction + shelter cap (#866 — FIXES the gap this file's
+// #861 header used to disclose as unfixed) ──────────────────────────────
 // GU's own table also carries a higher Standard Deduction ($420 sizes 1-3,
 // $445 size 4, $522 size 5, $598 size 6+ vs. federal FY26's $209/$223/
 // $261/$299) and a higher Maximum Excess Shelter Deduction ($873 vs.
-// federal FY26's $744). `federal-tables.ts`'s `standardDeductionFor()`/
-// `shelterCapFor()` have no per-state override slot at all (not even for
-// AK) — extending them is a separate, larger schema change out of scope for
-// this fix. Both gaps work in the household's favor if ever wrongly applied
-// (they UNDER-state the deduction, not over-state it).
+// federal FY26's $744). Both figures verbatim from USDA FNS's own FY2026
+// SNAP Cost-of-Living Adjustments memorandum, the SAME primary document
+// this file's max_allotment table above is sourced from, quoted in full
+// in issue #861 and re-confirmed for #866. Pre-#866,
+// `standardDeductionFor()`/`shelterCapFor()` had no per-state override
+// slot at all and always returned the federal figures for GU,
+// UNDERSTATING every GU household's benefit. See issue #866 for the full
+// before/after reconciliation.
 
 import { Decimal } from "../decimal";
 
@@ -66,10 +70,17 @@ export interface GuAllotmentTable {
   /** GU's own minimum-benefit floor (1-2 person HH), higher than the
    *  federal default ($24 FY26) every other non-elevated-tier state uses. */
   minimum_benefit: Decimal;
+  /** GU's own standard deduction table (#866) — higher than the federal
+   *  48-contiguous table at every household size. */
+  standard_deduction: Map<number, Decimal>;
+  /** GU's own maximum excess shelter deduction cap (#866) — higher than
+   *  the federal 48-contiguous $744. */
+  shelter_cap: Decimal;
 }
 
 // FY26 (10/1/2025-9/30/2026). Verbatim from USDA FNS's own FY2026 COLA
-// memorandum, quoted in full in issue #861.
+// memorandum, quoted in full in issue #861 (max_allotment/minimum_benefit)
+// and #866 (standard_deduction/shelter_cap).
 export const GU_ALLOTMENT_TABLE: GuAllotmentTable = {
   max_allotment: new Map<number, Decimal>([
     [1, new Decimal("439")],
@@ -83,4 +94,13 @@ export const GU_ALLOTMENT_TABLE: GuAllotmentTable = {
   ]),
   max_allotment_each_additional: new Decimal("322"),
   minimum_benefit: new Decimal("35"),
+  standard_deduction: new Map<number, Decimal>([
+    [1, new Decimal("420")],
+    [2, new Decimal("420")],
+    [3, new Decimal("420")],
+    [4, new Decimal("445")],
+    [5, new Decimal("522")],
+    [6, new Decimal("598")],
+  ]),
+  shelter_cap: new Decimal("873"),
 };

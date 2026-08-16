@@ -9,7 +9,10 @@
 //
 // Math summary (the entire benefit calc, per 7 CFR 273.10):
 //   EID        = 0.20 * earned                                  [273.9(d)(2)]
-//   SD         = standardDeductionFor(size, asOf)               [273.9(d)(1)]
+//   SD         = standardDeductionFor(size, asOf, state) — AK/HI/GU each
+//                have their own higher table, VI's own is lower at sizes
+//                1-3 (#866), 48-contiguous for every other state
+//                                                              [273.9(d)(1)]
 //   medical    = max(0, medical_unreimbursed - $35) if E/D      [273.9(d)(3)]
 //   other_ded  = dependent_care + medical + child_support_paid  [273.9(d)(4),(5)]
 //   adj_income = max(0, gross - EID - SD - other_ded)
@@ -19,6 +22,8 @@
 //     shelter_amt = rent + state_sua + internet                  [273.9(d)(6)]
 //     excess_shelter = max(0, shelter_amt - 0.5 * adj_income)
 //     if not E/D: excess_shelter = min(excess_shelter, shelter_cap)
+//       — shelter_cap = shelterCapFor(asOf, state): AK/HI/GU higher, VI
+//         lower than the federal $744 default (#866)
 //   net        = max(0, adj_income - excess_shelter)
 //   max_allot  = maxAllotmentFor(size, asOf, state, county_fips) — AK
 //                zone-specific (#814), 48-contiguous for every other state
@@ -92,8 +97,11 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
   const eidRate = earnedIncomeDeductionRateFor(asOf);
   const eid = earned.mul(eidRate).roundDollar();
 
-  // Standard deduction by HH size.
-  const sd = standardDeductionFor(size, asOf);
+  // Standard deduction by HH size. #866: AK/HI/GU each have their own,
+  // higher, statewide table (understating benefits pre-fix); VI's own
+  // table is lower at sizes 1-3 (overstating benefits pre-fix). No-op for
+  // every other state.
+  const sd = standardDeductionFor(size, asOf, state);
 
   // Dependent care (no floor, no cap in modern rules).
   const depCare = dec(facts.deductions.dependent_care ?? 0);
@@ -162,7 +170,10 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
     } else if (isED) {
       excessShelter = rawExcess;
     } else {
-      const cap = shelterCapFor(asOf);
+      // #866: AK/HI/GU have their own, higher shelter cap (understating
+      // benefits pre-fix); VI's own cap is lower (overstating benefits
+      // pre-fix). No-op for every other state.
+      const cap = shelterCapFor(asOf, state);
       if (rawExcess.gt(cap)) {
         excessShelter = cap;
         shelterCapped = true;
