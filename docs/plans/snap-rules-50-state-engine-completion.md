@@ -22,27 +22,35 @@ at all; today, most do.
 ```
    CORPUS (packages/demeter-engine)        ENGINE (packages/snap-rules)
    "what does Mae say about this state"    "what does the calculator DO for this state"
-   53 / 53 jurisdictions          ────▶     18 / 53 jurisdictions have StatePolicy
-                                            16 / 53 have oracle-verified expected outputs
-                                             1 / 18 (AK) has a policy axis that looks stale
+   53 / 53 jurisdictions          ────▶     30 / 53 jurisdictions have StatePolicy
+                                            30 / 53 have oracle expectations authored
+                                            25 / 30 grade fully CLEAN (129/0/0 or a
+                                              documented pre-existing partial); 4 more
+                                              (PA/NJ/TN/VI) grade 34/0/95 on the
+                                              disclosed null-SUA gap; MN is 0/0/129
+                                              (structurally blocked, no rows gradeable)
 ```
 
 ## 2. Current state of the calculator (verified against `origin/codex/rebuild-feb18`, plus
-this plan's own individual-tier landings)
+this plan's own individual-tier and batch-tier landings)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **29 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
-MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK.
+states.ts`) exists for **30 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
+MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK, VI.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
 engine against — has full 92-case coverage (minus TN's 3 deliberately-unauthored
-genuinely-indeterminate profiles, see below) for **27 of those 29**: CA, WA, TX, NY, GA,
+genuinely-indeterminate profiles, see below) for **29 of those 30**: CA, WA, TX, NY, GA,
 MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD, CO, SC, LA, OK clear CLEAN
-(129/0/0 or a documented pre-existing partial); PA, NJ, and TN also have all 92 (or 89,
-for TN) rows authored, per the execution log's PA/NJ/TN entries below, but all three
-grade 34/0/95 — most of their profiles legitimately SKIP on the null-SUA gap, not a
-coverage gap, so none is counted as "clean" here.
+(129/0/0 or a documented pre-existing partial); PA, NJ, TN, and VI also have all 92 (or
+89, for TN) rows authored, per the execution log's PA/NJ/TN/VI entries below, but all
+four grade 34/0/95 — most of their profiles legitimately SKIP on the null-SUA gap, not a
+coverage gap, so none is counted as "clean" here. VI's case is a double-disclosed gap, not
+a single one: even its 34 harness-gradeable rows carry `benefit: null` rather than a real
+dollar figure, because VI ALSO can't honestly represent its own confirmed-elevated
+max-allotment table in the current `AllotmentTier` schema (see VI's own execution-log
+entry below and issue #858) — every one of VI's 34 PASS rows is graded on verdict alone.
 
 Two states have a `StatePolicy` but no oracle coverage yet, for different reasons:
 
@@ -62,14 +70,17 @@ One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
   the engine today and, if used for a real determination, would wrongly deny categorical
   eligibility to AK households between 130%–200% FPL.
 
-**24 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
+**23 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
 AL, AR, CT, DC, DE, GU, HI, IA, ID, KY, ME, MS, MT, ND, NE, NH,
-NM, RI, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, and OK — the
+NM, RI, SD, UT, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, and OK — the
 first eleven "individual tier" states, §6 — are DONE; see the execution log's
 NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA/OK entries. Alabama and Kentucky's builds were BOTH
 concurrently in flight as of OK's build, neither yet merged — see OK's execution-log
 entry for the reconciliation note. Once AL and KY land, the individual tier closes at
-13/13.)
+13/13. VI — the batch tier's solo, final entry, §6 — is ALSO now DONE; see the
+execution log's VI entry below. Several other batch-tier segments were reported
+concurrently in flight or recently merged as of VI's build — see that entry's own note
+on which PRs were checked via `gh pr list` and which weren't coordinated with.)
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
 
@@ -203,9 +214,20 @@ exists and only oracle authoring is outstanding):
 4. Schema step: extend `AllotmentTier` for HI/GU (own small PR, own go-ahead)
 5. HI, GU (now unblocked)
 6. Batch tier (<4M population, N≤3 per batch): CT, UT, IA, AR / MS, NM, NE / ID, WV, NH /
-   ME, RI, MT / DE, SD, ND / VT, WY, DC / VI
+   ME, RI, MT / DE, SD, ND / VT, WY, DC / ~~VI~~ (done — see execution log; this was the
+   batch tier's solo, final entry). As of VI's build, `gh pr list` showed: batch4 (ME, RI,
+   MT — PR #855) and individual-tier AL (PR #848) both MERGED (essentially concurrently
+   with VI's own build, within the same hour); batch1 (CT/UT/IA/AR, PR #852), batch2
+   (MS/NM/NE, PR #851), batch3 (ID/WV/NH, PR #854), batch5 (DE/SD/ND, PR #856), batch6
+   (VT/WY/DC, PR #857), and individual-tier KY (PR #850) all still OPEN, not yet merged.
+   VI's build did not read, coordinate with, or rebase on top of any of this concurrent
+   work — branched from `origin/codex/rebuild-feb18` at the commit that merged OK (#849)
+   only. A human reconciles the eventual rebase chain across all of these, the same
+   pattern this project has used repeatedly (MO-vs-TN/IN, AL/KY-vs-OK).
 7. MN, once a real SUA figure is sourced (may unblock independently of this sequencing —
-   revisit whenever that specific gap closes)
+   revisit whenever that specific gap closes). HI, GU, and now VI (issue #858) remain
+   blocked on the `AllotmentTier` schema extension (§4) — the only other still-unstarted
+   engine work after the batch tier closes.
 
 ## 7. Governance — carried forward unchanged
 
@@ -1649,3 +1671,152 @@ all of it.
   chain across AL/KY/OK, the same pattern this project has used repeatedly (e.g.
   MO-vs-TN/IN); once all three land, the individual tier closes at 13/13. PR TBD, awaiting
   merge go-ahead.
+
+- **VI (batch tier, §6 step 6, SOLO entry — the LAST batch-tier item)** — built the U.S.
+  Virgin Islands' `StatePolicy` entry AND full 92-profile oracle coverage from scratch (VI
+  had neither before this PR), translating VI's already-merged Demeter corpus pack
+  (`packages/demeter-engine/src/states/vi/PROVENANCE.md` + `supplements.json` +
+  `pack.json`, built 2026-08-12 as part of the six-agent AK/VT/WY/DC/GU/VI closing-batch
+  round) into the engine's stricter typed shape per §5's process, cross-checked directly
+  against USVI DHS's own current FY2026 table (fetched fresh this build via `curl` +
+  `pdftotext -layout` — the corpus pack quoted several figures from it but not its full
+  text) and USDA's own live BBCE page.
+
+  **Step 0, per this task's own explicit instruction**: independently re-confirmed VI runs
+  STANDARD FEDERAL SNAP, not the Nutrition Assistance Program (NAP) block grant three other
+  U.S. territories (Puerto Rico, American Samoa, CNMI) run instead — the same distinction a
+  2026-08 Demeter fix (#743) found matters (three territories genuinely don't run SNAP). VI
+  is not one of them; both USDA's own SNAP state directory entry and the 17th-edition State
+  Options Report's introduction confirm it plainly, and the corpus pack itself already
+  independently verified this before building anything. A `StatePolicy` entry IS
+  appropriate — this is a build, not a "stop and report" case.
+
+  `bbce: true`, `bbce_threshold_pct: 175` (USDA's own live BBCE page: VI listed "All
+  households" categorically eligible, "No limit on assets," gross income limit "175%,"
+  corroborated by a second, independently USDA-sourced FRAC compilation; a vi.gov press
+  release quoting DHS Commissioner Averil George confirms the underlying change and its
+  effective date, 10/1/2024). `bbce_fpl_basis: "federal_fiscal_year"` (DHS-VI's own table is
+  captioned "October 1, 2025, to September 30, 2026"). Cross-checking the real DHS-VI FY2026
+  table fetched this build against `federal-tables.ts`'s FY26 48-contiguous FPL table
+  confirmed VI's income limits derive from the SAME federal guideline every non-AK/HI state
+  uses (its "175% of Poverty" column reproduces $15,660/$5,500 × 1.75, floor-rounded, to
+  within $1 at every household size) — VI does NOT need its own elevated FPL region the way
+  AK's #812 fix did; only its BENEFIT table is elevated (see `allotment_tier` below).
+  DHS-VI's own table carries an unresolved internal ambiguity (a second, unexplained "200%
+  of Poverty" column) that the corpus pack already flagged and deferred on; this entry does
+  the same. `asset_waiver: true` (USDA's BBCE page: "No limit on assets" for VI's broadest
+  tier).
+
+  `sua_by_tier: **null**` — same disclosed-gap discipline as PA's/NJ's/TN's/MN's null
+  entries, CONFIRMED (not merely suspected) by reading DHS-VI's actual FY2026 table
+  directly: it publishes a "MAXIMUM SHELTER DEDUCTION" ($586.00) and a "TELEPHONE
+  DEDUCTION" ($34.00) but no separate HCSUA/LUA breakdown at all — consistent with USDA's
+  own State Options Report listing VI's utility-expense treatment as "SUAs not mandatory."
+  The engine's required `{HCSUA, LUA, phone, none}` quad has no home for a table that
+  publishes a shelter-deduction CAP (a different concept from a utility standard) and a
+  phone standard but nothing in between.
+
+  ***GENUINE STRUCTURAL FINDING, filed as
+  [#858](https://github.com/matthewgg22/Civica/issues/858) rather than silently encoded or
+  guessed around:*** `allotment_tier: "48"` is **CONFIRMED WRONG**, not merely
+  "illustrative" — the schema's closed `"48" | "AK"` union has no slot for VI's real
+  Maximum Allotment table, which this build fetched directly from DHS-VI's own FY2026 PDF
+  and found ~28.5–28.9% HIGHER than the 48-contiguous table at every household size (VI
+  $383/$703/$1009/$1278/$1521/$1827/$2019/$2300, +$281/additional vs. federal-tables.ts's
+  $298/$546/$785/$994/$1183/$1421/$1571/$1789, +$218/additional) — VI's own corpus pack
+  independently corroborates this is structural: "USVI is one of only four SNAP
+  jurisdictions (with Alaska, Hawaii, and Guam) that receives a COLA-adjusted
+  income/deduction table structurally different from the 48 contiguous states plus DC."
+  This is the SAME `AllotmentTier` gap the plan doc's §4 already flagged for HI/GU
+  (previously only suspected for those two) — now CONFIRMED with real sourced numbers for a
+  third jurisdiction. Per this task's own explicit instruction ("disclose that as a gap...
+  rather than silently using '48' if it's wrong"): **`benefit: null` is authored for ALL 92
+  `expected_by_state.VI` oracle rows** — including the ~34 rows the separate null-SUA gap
+  above doesn't otherwise block — specifically so no oracle assertion silently locks in the
+  ~28%-understated dollar figure this schema currently forces. Verdicts are unaffected;
+  `allotment_tier` only feeds `benefit-calc.ts`, never a gate. VI's own FY2026 table also
+  carries a lower Maximum Shelter Deduction ($586 vs. federal FY26's $744) and Minimum
+  Allotment ($31 for 1-2 person HH vs. federal FY26's $24), neither representable either
+  (no per-state override slot exists for `federal-tables.ts`'s uniform `shelter_cap`/
+  `minimum_benefit`) — flagged in #858 for completeness; immaterial to this build's
+  benefit-null decision, which the max-allotment finding alone already requires.
+
+  `drug_felony_ban: "none"` — a VERIFIED FULL OPT-OUT per USDA's 17th-edition State Options
+  Report ("No disqualification," the fullest opt-out tier, same category this file's
+  DE/ND/OK entries independently confirmed). Disclosed gap: no USVI Code section or DHS
+  regulation implementing the opt-out was located; the POLICY OUTCOME is confirmed via a
+  primary federal source, the underlying territorial citation is not (immaterial to the
+  classification — per #805 only `"full"` ever gates, and "none" is correct either way).
+  `abawd_waiver_avail: false` — an affirmative finding from VI's own current (2026-dated)
+  ABAWD webpage PDF and consumer flyer (both fetched fresh this build), which describe NEW
+  post-OBBBA work requirements beginning 3/1/2026 with no mention anywhere of an area-wide
+  waiver — the same "new work rules now apply" framing this file's VA/MO/TN/MD/CO/SC/LA/OK
+  zero-waiver entries use. USDA's State Options Report separately lists a "Statewide ABAWD
+  time limit waiver" for VI, but that figure is PRE-OBBBA data (as of 10/1/2024) and
+  predates VI's own 3/1/2026 rule change — the corpus pack already flagged this as stale,
+  and this entry follows that same reasoning rather than the stale federal snapshot.
+  `rmp_operated: false` — confirmed absent from USDA's own current, live RMP
+  participating-jurisdictions list.
+
+  Oracle: VI's closest structural axis-twin among already-registered null-SUA states is a
+  BLEND, not a single clean match — NJ (asset_waiver true, drug_felony_ban "none" exactly,
+  but abawd_waiver_avail TRUE, bbce_threshold_pct 185) and TN/WI (abawd_waiver_avail FALSE
+  exactly, but bbce_threshold_pct 200 and drug_felony_ban "modified"). Built a fresh,
+  independent Python calculator (not derived from engine output, per #636) directly from
+  `verdict.ts`/`benefit-calc.ts`/`gates/{income-tests,asset-test,abawd,student,composition,
+  immigration,disqualifications,categorical}.ts`/`facts.ts`/`constants/federal-tables.ts`'s
+  own read source, mirroring every gate and the benefit-calc formula exactly, including
+  `decimal.ts`'s half-up (`roundDollar`) and floor (`floorDollar`) rounding conventions.
+  Cross-validated BEFORE trusting it for VI: 92/92 exact VERDICT match (via a
+  `bypass_sua_skip` mode that skips only the early null-SUA bail — legitimate because
+  verdict never depends on the actual SUA dollar figure for a BBCE-conferred household,
+  since the net test is skipped entirely once BBCE confers) reproducing NJ's AND PA's
+  already-graded 92-row oracles under their own params, PLUS a full 92/92 exact match on
+  BOTH verdict AND benefit reproducing WI's already-graded oracle under WI's REAL (non-null)
+  SUA table — the strongest available check of the calculator's core benefit-calc
+  arithmetic, not just its gates. One expected, EXPLAINED divergence surfaced
+  cross-validating against TN (`MX4-bbce-max-income-with-any-benefit`): TN's
+  independently-authored oracle applies TN's own additional net-income ceiling (issue #830,
+  an engine-architecture gap this engine doesn't implement and VI's own corpus disclosed no
+  evidence of) — not a calculator bug, the same class of expected divergence #830's own
+  entry already documented. Also checked all 37 rows across the 18 non-`expected_by_state`
+  variant profiles for a VI-specific `verdict_by_state` override: all 18 variant profiles'
+  BASE facts use `sua_tier: "HCSUA"` (never "none", never `homeless_deduction`, no variant
+  patch changes that) — every one of the 37 rows hits VI's null-SUA engine-SKIP regardless
+  of any override authored, so none was added (would be inert), the same reasoning this
+  file's PA/NJ/TN entries already established for their own null-SUA variant rows.
+
+  Authored all 92 `expected_by_state.VI` entries: 79 APPROVE / 13 DENY, `benefit: null`
+  throughout (see the allotment_tier finding above). VI's DENY set is NC's/VA's 12-profile
+  DENY set plus TWO axis-driven additions relative to different peers:
+  `M12-abawd-in-a-waived-area` (DENY, matching WI's/TN's `abawd_waiver_avail: false`, unlike
+  NJ's/PA's `true`) and `MX4-bbce-max-income-with-any-benefit` (DENY — VI's 175% threshold
+  is LOWER than even NJ's 185%, so a profile engineered to clear 185% by $2 but sit under
+  200% fails VI's threshold too).
+
+  Verification: `/profile-simulation state=VI` — 34 PASS / 0 FAIL / 95 SKIP (of 129),
+  matching PA's/NJ's/TN's exact SKIP-heavy shape, though VI's root cause is a COMBINATION of
+  the null-SUA gap (blocking 58+37=95 rows entirely) AND the allotment_tier gap (separately
+  blocking the benefit-dollar assertion on the remaining 34) — both disclosed above, neither
+  silent. Every other registered state's harness run individually reconfirmed unchanged
+  from its documented baseline: CA/WA/TX/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/MO/IN/MD/CO/
+  SC/LA/OK all 129/0/0 (23 states); NY 127/2/0; AZ 128/1/0; PA/NJ/TN all 34/0/95; MN
+  0/0/129 — 30 registered states total (29 pre-existing + VI), zero regressions.
+  `tsc --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass (0 new — a
+  schema-conformant pure addition needed no new unit tests), 44/47 profile-harness tests
+  pass (3 pre-existing skips). Did not touch `packages/demeter-engine` (VI's corpus was
+  already complete and out of scope) or any other state's `StatePolicy`/oracle coverage.
+
+  This is the LAST batch-tier entry (§6) and a SOLO entry (§6 lists "VI" alone as the final
+  batch-tier item, unlike the other N=3 segments). As of this build, `gh pr list` showed
+  batch4 (ME/RI/MT, #855) and individual-tier AL (#848) both MERGED (essentially
+  concurrently with this build); batch1 (#852), batch2 (#851), batch3 (#854), batch5
+  (#856), batch6 (#857), and individual-tier KY (#850) all still OPEN — this build branched
+  from `origin/codex/rebuild-feb18` at the commit that merged OK (#849) only, and did not
+  read, coordinate with, or rebase on top of any of that concurrent work; a human
+  reconciles the eventual rebase chain, the same pattern this project has used repeatedly.
+  After VI, the only remaining unstarted engine work is: HI/GU/VI's shared `AllotmentTier`
+  schema extension (§4, issues #858 and the pre-existing HI/GU note) and MN's separate,
+  differently-shaped null-SUA gap (MN has no `sua_tier: "none"`-reachable rows the way
+  PA/NJ/TN/VI's 34-row subset does, so it can't get even a verdict-only partial grade the
+  way this build did). PR TBD, awaiting merge go-ahead.

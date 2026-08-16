@@ -3506,6 +3506,234 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // U.S. Virgin Islands — DHS / Division of Family Assistance (DFA). Batch
+  // tier (docs/plans/snap-rules-50-state-engine-completion.md §6), SOLO
+  // ENTRY, and the FINAL batch-tier item — a genuine blank slate, no prior
+  // StatePolicy or oracle coverage existed. Every axis below is TRANSLATED
+  // from the already-merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/vi/PROVENANCE.md +
+  // supplements.json + pack.json), built 2026-08-12, cross-checked directly
+  // against USVI DHS's own current FY2026 (10/1/2025-9/30/2026) "Monthly
+  // Allotments and Deductions" table (fetched fresh this build via
+  // `curl` + `pdftotext -layout` — the corpus pack quoted several figures
+  // from this table but not its full text) and USDA's own official BBCE
+  // page + 17th-edition State Options Report.
+  //
+  // STEP 0, before authoring anything: independently re-confirmed VI runs
+  // STANDARD FEDERAL SNAP, not the Nutrition Assistance Program (NAP) block
+  // grant that Puerto Rico / American Samoa / CNMI run instead — this is
+  // the SAME distinction a 2026-08 Demeter fix (#743) found matters: three
+  // U.S. territories genuinely do NOT run SNAP. VI is not one of them.
+  // USDA's own SNAP state directory entry names VI's program plainly as
+  // "Supplemental Nutrition Assistance Program (SNAP)," and the 17th-edition
+  // State Options Report's own introduction states "SNAP State agencies
+  // include all 50 States, the District of Columbia, Guam, and the Virgin
+  // Islands" — devoting a full state-summary page (pp.135-136) to VI's own
+  // SNAP policy options, the treatment NOT given to PR/AS/CNMI. A
+  // StatePolicy entry is appropriate.
+  //
+  // bbce: true, bbce_threshold_pct: 175 — confirmed directly on USDA's own
+  // CURRENT, live Broad-Based Categorical Eligibility policy page
+  // (fns.usda.gov/snap/broad-based-categorical-eligibility): VI listed with
+  // "All households" categorically eligible (the broadest BBCE tier),
+  // gross income limit "175%," corroborated by a second, independently
+  // USDA-sourced FRAC compilation. A vi.gov press release quoting DHS
+  // Commissioner Averil George confirms the underlying change and its date:
+  // the threshold rose from 130% to 175% FPL effective 10/1/2024 — a
+  // genuinely recent VI-specific policy choice. Cross-checked against the
+  // real DHS-VI FY2026 table fetched this build: its "175% of Poverty"
+  // column ($2,284/$3,085/$3,887/$4,690/... by HH size 1-8) reproduces the
+  // standard 48-contiguous FPL table (federal-tables.ts's FY26
+  // fpl_by_region.contiguous: $15,660/$5,500) times 1.75, floor-rounded,
+  // almost exactly (HH4 $4,690 matches exactly; HH1 is $1 off, $2,284 vs a
+  // computed $2,283 — the same order of minor table-vs-formula drift this
+  // file's AK/VA entries already document, not a sign VI uses an elevated
+  // FPL guideline). This ALSO confirms `bbce_fpl_basis` should NOT be an
+  // elevated "vi" region in federal-tables.ts's fpl_by_region (unlike AK's
+  // real #812 need) — VI's income limits derive from the SAME 48-contiguous
+  // HHS guideline every other non-AK/HI state uses; only its BENEFIT
+  // (max-allotment) table is genuinely elevated (see allotment_tier below).
+  // DHS-VI's own table carries an UNRESOLVED internal ambiguity — a second,
+  // unexplained "200% of Poverty" column sits beside the 175% one with no
+  // distinguishing text — the corpus pack flagged this and deferred to
+  // USDA's own singular, authoritative 175% BBCE-page figure rather than
+  // guessing at the second column's purpose; this entry does the same.
+  //
+  // bbce_fpl_basis: "federal_fiscal_year" — DHS-VI's own table is captioned
+  // "October 1, 2025, to September 30, 2026," the same FFY framing this
+  // file's CA/NC/VA/AK(post-BBCE)/OK entries already use (contrast MA's
+  // calendar_year).
+  //
+  // asset_waiver: true — USDA's own BBCE page states "No limit on assets"
+  // for VI's "All households" tier — the broadest possible waiver, same
+  // breadth as MN's/NC's entries (stronger than an asset-only carve-out).
+  //
+  // sua_by_tier: null — a disclosed gap, same discipline as PA's/NJ's/TN's/
+  // MN's null entries, CONFIRMED (not merely suspected) by reading DHS-VI's
+  // actual FY2026 table directly this build: it publishes a "MAXIMUM
+  // SHELTER DEDUCTION" of $586.00 and a "TELEPHONE DEDUCTION" of $34.00,
+  // but NO separate HCSUA/LUA(heating-vs-non-heating) breakdown at all —
+  // the schema's required {HCSUA, LUA, phone, none} quad has no home for
+  // a table that publishes a shelter-deduction CAP (not a utility standard)
+  // and a phone standard but nothing in between. This matches USDA's own
+  // 17th-edition State Options Report, which lists VI's "Treatment of
+  // Utility Expenses" policy option as "SUAs not mandatory" — VI is not
+  // required to use a flat SUA methodology at all, consistent with there
+  // being no published HCSUA/LUA figures to encode. (VI's own $586 maximum
+  // shelter deduction is ALSO not the same concept as `federal-tables.ts`'s
+  // uniform `shelter_cap` ($744 FY26) — VI's real cap is lower, but this
+  // engine has no per-state override slot for that federal-wide constant
+  // either; noted here as a second, smaller disclosed gap of the same
+  // "real-figure-the-schema-can't-hold" shape. Same for VI's own $31
+  // minimum allotment for 1-2 person HHs vs. the federal $24 default.)
+  //
+  // allotment_tier: "48" — CONFIRMED WRONG, not merely "illustrative,"
+  // forced by the schema's closed `"48" | "AK"` union. VI's own FY2026
+  // table (fetched fresh this build) publishes a REAL Maximum Allotment
+  // column that is ~28.5-28.9% HIGHER than the 48-contiguous table at
+  // EVERY household size (VI $383/$703/$1009/$1278/$1521/$1827/$2019/
+  // $2300, +$281/additional vs. federal-tables.ts's FY26
+  // $298/$546/$785/$994/$1183/$1421/$1571/$1789, +$218/additional) — VI's
+  // own corpus pack independently corroborates this is structural, not a
+  // fluke: "USVI is one of only four SNAP jurisdictions (with Alaska,
+  // Hawaii, and Guam) that receives a COLA-adjusted income/deduction table
+  // structurally different from the 48 contiguous states plus DC." Filed
+  // as issue #858 (same class as this file's already-known HI/GU
+  // AllotmentTier gap, plan doc §4 — now confirmed with real VI numbers,
+  // not just suspected). Per that issue and this file's disclosure
+  // discipline: `benefit: null` is authored for ALL 92
+  // `expected_by_state.VI` oracle rows, INCLUDING the ~34 the null-SUA gap
+  // above doesn't otherwise block, so no oracle assertion silently locks
+  // in the ~28%-understated dollar figure this schema currently forces.
+  // Verdicts are unaffected — `allotment_tier` only feeds
+  // `benefit-calc.ts`, never a gate.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT per USDA's own
+  // 17th-edition State Options Report, which lists VI's "Drug Felony
+  // Disqualifications" policy option plainly as "No disqualification" — the
+  // fullest opt-out tier, same category this file's DE/ND/OK entries
+  // independently confirmed for their own jurisdictions. Disclosed gap: no
+  // USVI Code section or DHS regulation implementing the opt-out was
+  // located — DHS-VI's own public materials don't cite one, and no
+  // codified, section-numbered USVI SNAP policy manual (comparable to
+  // other states' administrative codes) was found publicly posted. The
+  // POLICY OUTCOME is confirmed via a primary federal source; the
+  // underlying territorial statutory citation is a disclosed, unresolved
+  // gap (does not affect the classification: "none" is correct either way,
+  // and per #805 only "full" ever gates).
+  //
+  // abawd_waiver_avail: false — an affirmative, current-materials-based
+  // finding, not a fail-open default. USVI DHS's own current (2026-dated)
+  // ABAWD webpage PDF and "SNAP Benefits Are Changing" flyer (both fetched
+  // fresh this build) describe NEW post-OBBBA work requirements beginning
+  // 3/1/2026 (already past as of this build) with NO mention anywhere of
+  // an area-wide waiver — the same "new work rules now apply" framing this
+  // file's VA/MO/TN/MD/CO/SC/LA/OK zero-waiver entries use, not language
+  // consistent with an active exemption. USDA's own 17th-edition State
+  // Options Report separately lists VI's "ABAWD Time Limit Waiver" status
+  // as "Statewide ABAWD time limit waiver" — but that report uses PRE-OBBBA
+  // data (as of 10/1/2024) and predates VI's own 3/1/2026 rule change; the
+  // corpus pack explicitly flags this as stale and NOT evidence of a
+  // currently active waiver under the post-3/1/2026 regime, and this entry
+  // follows that same reasoning rather than the stale federal snapshot.
+  //
+  // rmp_operated: false — confirmed ABSENT from USDA's own current,
+  // published Restaurant Meals Program participating-jurisdictions list
+  // (fetched via the BBCE-page cross-check, listing AZ/CA/IL Cook-Franklin/
+  // MD/MA/MI/NY/RI and others — VI is not among them). No USVI DHS page or
+  // press release describes a pending or planned RMP.
+  //
+  // Oracle: VI's closest structural axis-twin among already-registered
+  // null-SUA states is a BLEND — NJ (asset_waiver true, drug_felony_ban
+  // "none" exactly, but abawd_waiver_avail TRUE, bbce_threshold_pct 185)
+  // and TN/WI (abawd_waiver_avail FALSE exactly, but bbce_threshold_pct
+  // 200 and drug_felony_ban "modified"). Built a fresh, independent Python
+  // calculator (not derived from engine output, per #636) directly from
+  // verdict.ts/benefit-calc.ts/gates/{income-tests,asset-test,abawd,
+  // student,composition,immigration,disqualifications,categorical}.ts/
+  // facts.ts/constants/federal-tables.ts's own read source, mirroring every
+  // gate and the benefit-calc formula exactly, including decimal.ts's
+  // half-up (roundDollar) and floor (floorDollar) rounding conventions.
+  // Cross-validated BEFORE trusting it for VI: 92/92 exact verdict match
+  // (bypassing only the null-SUA early-bail, since verdict never depends on
+  // the actual SUA dollar figure for a BBCE-conferred household — the net
+  // test is skipped entirely) reproducing NJ's AND PA's already-graded
+  // 92-row oracles under their own params, PLUS a full 92/92 exact match on
+  // BOTH verdict AND benefit reproducing WI's already-graded oracle under
+  // WI's real (non-null) SUA table — the strongest available check of the
+  // calculator's core benefit-calc arithmetic, not just its gates. A single
+  // expected, EXPLAINED divergence surfaced cross-validating against TN
+  // (MX4-bbce-max-income-with-any-benefit: TN's independently-authored
+  // oracle applies TN's own additional net-income ceiling, issue #830, an
+  // engine-architecture gap this engine doesn't implement and VI's own
+  // corpus disclosed no evidence of; not a calculator bug). Also confirmed
+  // the real-engine-gradeable subset (34 of 92, matching PA/NJ/TN's split
+  // exactly) reproduces NJ's, PA's, and WI's graded benefit dollar amounts
+  // with 0 mismatches before switching to VI's own policy params.
+  //
+  // Checked all 37 rows across the 18 non-`expected_by_state` variant
+  // profiles (facts_patch A/B pairs) for a VI-specific `verdict_by_state`
+  // override: all 18 variant profiles' BASE facts use `sua_tier: "HCSUA"`
+  // (never "none", never `homeless_deduction`, and no variant patch changes
+  // that) — meaning every one of the 37 rows hits VI's null-SUA engine-SKIP
+  // regardless of any override authored, so none was added (the override
+  // would be inert). Same reasoning this file's PA/NJ/TN entries already
+  // established for their own null-SUA variant rows.
+  //
+  // Authored all 92 `expected_by_state.VI` entries: 79 APPROVE / 13 DENY.
+  // VI's DENY set is NC's/VA's 12-profile DENY set PLUS TWO axis-driven
+  // additions relative to different peers: `M12-abawd-in-a-waived-area`
+  // (DENY, matching WI's/TN's `abawd_waiver_avail: false` — NOT NJ's/PA's
+  // `true`) AND `MX4-bbce-max-income-with-any-benefit` (DENY — VI's 175%
+  // threshold is LOWER than even NJ's 185%, so a profile engineered to
+  // clear 185% by $2 but sit under 200% fails VI's threshold too, unlike
+  // NJ where it barely clears). `benefit: null` for all 92 (see
+  // allotment_tier above — a deliberate, disclosed, gap-driven choice, not
+  // an oversight).
+  //
+  // Verification: `/profile-simulation state=VI` — 34 PASS / 0 FAIL / 95
+  // SKIP (of 129: 92 base + 37 variant), matching PA's/NJ's/TN's exact
+  // SKIP-heavy shape (though VI's root cause is a COMBINATION of the
+  // null-SUA gap blocking 58+37=95 rows entirely AND the allotment_tier
+  // gap additionally blocking the benefit-dollar assertion on the
+  // remaining 34 — both disclosed above, neither silent). Every other
+  // registered state's harness run reconfirmed unchanged from its
+  // documented baseline. `tsc --noEmit -p packages/snap-rules` clean,
+  // 323/323 snap-rules tests pass (0 new — a schema-conformant pure
+  // addition needed no new unit tests), 44/47 profile-harness tests pass
+  // (3 pre-existing skips). Did not touch `packages/demeter-engine` (VI's
+  // corpus was already complete and out of scope) or any other state's
+  // `StatePolicy`/oracle coverage.
+  //
+  // This is the LAST batch-tier entry (docs/plans/
+  // snap-rules-50-state-engine-completion.md §6) — see that doc's own
+  // updated §2/§6 for which batch-tier PRs (CT/UT/IA/AR, MS/NM/NE, ID/WV/
+  // NH, ME/RI/MT, DE/SD/ND, VT/WY/DC) were merged vs. still in flight as of
+  // this build; VI was NOT built alongside or coordinated with any of them.
+  // After VI, the only remaining unstarted engine work is: HI/GU (blocked
+  // on the AllotmentTier schema extension, §4, now also blocking VI per
+  // issue #858) and MN (blocked on its own separate null-SUA gap, since
+  // MN's null SUA additionally has no `sua_tier: "none"`-reachable rows the
+  // way PA/NJ/TN/VI's 34-row subset does — a pre-existing, different-shaped
+  // gap, not something this build touched).
+  VI: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "VI",
+      label: "U.S. Virgin Islands / DHS-DFA",
+      bbce: true,
+      bbce_threshold_pct: 175,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
