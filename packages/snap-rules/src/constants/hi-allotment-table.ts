@@ -79,10 +79,25 @@ export interface HiAllotmentTable {
   shelter_cap: Decimal;
 }
 
+// ── Dated-snapshot structure (#803 FY27 prep) ───────────────────────────
+// Same pattern and same reasoning as vi-allotment-table.ts's
+// `ViAllotmentSnapshot`/`viAllotmentTableFor()` — see that file's header
+// note for the full rationale (permissive out-of-range fallback,
+// behavior-preserving with a single FY26 snapshot). See
+// docs/plans/fy27-cola-refresh-checklist.md.
+export interface HiAllotmentSnapshot extends HiAllotmentTable {
+  fiscal_year: number;
+  effective_start: Date;
+  effective_end: Date;
+}
+
 // FY26 (10/1/2025-9/30/2026). Verbatim from USDA FNS's own FY2026 COLA
 // memorandum, quoted in full in issue #861 (max_allotment/minimum_benefit)
 // and #866 (standard_deduction/shelter_cap).
-export const HI_ALLOTMENT_TABLE: HiAllotmentTable = {
+const HI_FY26: HiAllotmentSnapshot = {
+  fiscal_year: 2026,
+  effective_start: new Date(Date.UTC(2025, 9, 1)),
+  effective_end: new Date(Date.UTC(2026, 8, 30)),
   max_allotment: new Map<number, Decimal>([
     [1, new Decimal("506")],
     [2, new Decimal("929")],
@@ -105,3 +120,27 @@ export const HI_ALLOTMENT_TABLE: HiAllotmentTable = {
   ]),
   shelter_cap: new Decimal("1003"),
 };
+
+/**
+ * FY27 refresh: append a new `HiAllotmentSnapshot` here and add it to
+ * `HI_SNAPSHOTS` below. Never edit `HI_FY26` in place once FY27 exists.
+ */
+const HI_SNAPSHOTS: HiAllotmentSnapshot[] = [HI_FY26];
+
+/**
+ * Resolve HI's dollar-figure snapshot for `asOf`. See vi-allotment-
+ * table.ts's `viAllotmentTableFor()` doc-comment for the out-of-range
+ * fallback rationale.
+ */
+export function hiAllotmentTableFor(asOf?: Date): HiAllotmentSnapshot {
+  if (!asOf) return HI_SNAPSHOTS[HI_SNAPSHOTS.length - 1]!;
+  for (const s of HI_SNAPSHOTS) {
+    if (asOf >= s.effective_start && asOf <= s.effective_end) return s;
+  }
+  return HI_SNAPSHOTS[HI_SNAPSHOTS.length - 1]!;
+}
+
+// Backward-compatible export — same name, same values as before this
+// refactor, pinned to the current (FY26) snapshot. New date-aware callers
+// should prefer `hiAllotmentTableFor(asOf)` instead.
+export const HI_ALLOTMENT_TABLE: HiAllotmentTable = HI_FY26;

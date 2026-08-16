@@ -11,12 +11,28 @@
 // Both the verdict composer (verdict.ts) and any consumer that needs to
 // surface engine params (e.g. PARAMS_MISMATCH detection in the harness)
 // reads from here. No constant lives in two places.
+//
+// ── FY27 refresh (#803) — READ THIS BEFORE EDITING ANY DOLLAR FIGURE ────
+// As of 2026-08-16, USDA has NOT published the FY27 COLA memo. When it
+// does, DO NOT edit FY26's values above in place — append a new
+// `FederalTableSnapshot` to `SNAPSHOTS` below (same rule the comment
+// above already states). The full FY27 refresh touches MORE than this
+// file: five allotment table-sets (this file's 48-contiguous
+// `max_allotment`/`standard_deduction`/`shelter_cap` + `ak-allotment-
+// zones.ts` + `vi-allotment-table.ts` + `hi-allotment-table.ts` +
+// `gu-allotment-table.ts`, all now dated-snapshot-shaped so FY27 is an
+// append, not an edit), the three `fpl_by_region` FPL tables in THIS
+// file (contiguous/ak/hi), and every state's `sua_by_tier` figures in
+// `states.ts` (append a new dated `StatePolicy` entry per state — that
+// array already supports multiple dated entries). Full checklist with
+// the exact field list and sourcing/verification steps per file:
+// docs/plans/fy27-cola-refresh-checklist.md.
 
 import { Decimal } from "../decimal";
-import { akAllotmentZoneFor, AK_URBAN, AK_STANDARD_DEDUCTION, AK_SHELTER_CAP } from "./ak-allotment-zones";
-import { VI_ALLOTMENT_TABLE } from "./vi-allotment-table";
-import { HI_ALLOTMENT_TABLE } from "./hi-allotment-table";
-import { GU_ALLOTMENT_TABLE } from "./gu-allotment-table";
+import { akAllotmentZoneFor, akAllotmentSnapshotFor } from "./ak-allotment-zones";
+import { viAllotmentTableFor } from "./vi-allotment-table";
+import { hiAllotmentTableFor } from "./hi-allotment-table";
+import { guAllotmentTableFor } from "./gu-allotment-table";
 
 // ─── Per-region FPL table (#812) ───────────────────────────────────────────
 //
@@ -415,28 +431,32 @@ export function standardDeductionFor(size: number, asOf: Date, state?: string): 
   const s = snapshotFor(asOf); // still validates asOf has a loaded fiscal year, for every state
 
   if (state === "AK") {
-    return size <= 5 ? AK_STANDARD_DEDUCTION.get(1)! : AK_STANDARD_DEDUCTION.get(6)!;
+    const akStandardDeduction = akAllotmentSnapshotFor(asOf).standard_deduction;
+    return size <= 5 ? akStandardDeduction.get(1)! : akStandardDeduction.get(6)!;
   }
 
   if (state === "VI") {
-    if (size <= 2) return VI_ALLOTMENT_TABLE.standard_deduction.get(1)!;
-    if (size === 3) return VI_ALLOTMENT_TABLE.standard_deduction.get(3)!;
-    if (size === 4) return VI_ALLOTMENT_TABLE.standard_deduction.get(4)!;
-    if (size === 5) return VI_ALLOTMENT_TABLE.standard_deduction.get(5)!;
-    return VI_ALLOTMENT_TABLE.standard_deduction.get(6)!;
+    const viTable = viAllotmentTableFor(asOf);
+    if (size <= 2) return viTable.standard_deduction.get(1)!;
+    if (size === 3) return viTable.standard_deduction.get(3)!;
+    if (size === 4) return viTable.standard_deduction.get(4)!;
+    if (size === 5) return viTable.standard_deduction.get(5)!;
+    return viTable.standard_deduction.get(6)!;
   }
 
   if (state === "HI") {
-    if (size <= 4) return HI_ALLOTMENT_TABLE.standard_deduction.get(1)!;
-    if (size === 5) return HI_ALLOTMENT_TABLE.standard_deduction.get(5)!;
-    return HI_ALLOTMENT_TABLE.standard_deduction.get(6)!;
+    const hiTable = hiAllotmentTableFor(asOf);
+    if (size <= 4) return hiTable.standard_deduction.get(1)!;
+    if (size === 5) return hiTable.standard_deduction.get(5)!;
+    return hiTable.standard_deduction.get(6)!;
   }
 
   if (state === "GU") {
-    if (size <= 3) return GU_ALLOTMENT_TABLE.standard_deduction.get(1)!;
-    if (size === 4) return GU_ALLOTMENT_TABLE.standard_deduction.get(4)!;
-    if (size === 5) return GU_ALLOTMENT_TABLE.standard_deduction.get(5)!;
-    return GU_ALLOTMENT_TABLE.standard_deduction.get(6)!;
+    const guTable = guAllotmentTableFor(asOf);
+    if (size <= 3) return guTable.standard_deduction.get(1)!;
+    if (size === 4) return guTable.standard_deduction.get(4)!;
+    if (size === 5) return guTable.standard_deduction.get(5)!;
+    return guTable.standard_deduction.get(6)!;
   }
 
   if (size <= 3) return s.standard_deduction.get(1)!;
@@ -492,7 +512,7 @@ export function maxAllotmentFor(size: number, asOf: Date, state?: string, county
   if (size < 1) throw new Error("Household size must be >= 1");
 
   if (state === "AK") {
-    const zone = akAllotmentZoneFor(countyFips) ?? AK_URBAN;
+    const zone = akAllotmentZoneFor(countyFips, asOf) ?? akAllotmentSnapshotFor(asOf).urban;
     const exactAk = zone.max_allotment.get(size);
     if (exactAk) return exactAk;
     const largestAk = Math.max(...zone.max_allotment.keys());
@@ -504,34 +524,37 @@ export function maxAllotmentFor(size: number, asOf: Date, state?: string, county
   }
 
   if (state === "VI") {
-    const exactVi = VI_ALLOTMENT_TABLE.max_allotment.get(size);
+    const viTable = viAllotmentTableFor(asOf);
+    const exactVi = viTable.max_allotment.get(size);
     if (exactVi) return exactVi;
-    const largestVi = Math.max(...VI_ALLOTMENT_TABLE.max_allotment.keys());
+    const largestVi = Math.max(...viTable.max_allotment.keys());
     if (size > largestVi) {
-      const baseVi = VI_ALLOTMENT_TABLE.max_allotment.get(largestVi)!;
-      return baseVi.add(VI_ALLOTMENT_TABLE.max_allotment_each_additional.mul(size - largestVi));
+      const baseVi = viTable.max_allotment.get(largestVi)!;
+      return baseVi.add(viTable.max_allotment_each_additional.mul(size - largestVi));
     }
     throw new Error(`No max_allotment for size ${size} (VI)`);
   }
 
   if (state === "HI") {
-    const exactHi = HI_ALLOTMENT_TABLE.max_allotment.get(size);
+    const hiTable = hiAllotmentTableFor(asOf);
+    const exactHi = hiTable.max_allotment.get(size);
     if (exactHi) return exactHi;
-    const largestHi = Math.max(...HI_ALLOTMENT_TABLE.max_allotment.keys());
+    const largestHi = Math.max(...hiTable.max_allotment.keys());
     if (size > largestHi) {
-      const baseHi = HI_ALLOTMENT_TABLE.max_allotment.get(largestHi)!;
-      return baseHi.add(HI_ALLOTMENT_TABLE.max_allotment_each_additional.mul(size - largestHi));
+      const baseHi = hiTable.max_allotment.get(largestHi)!;
+      return baseHi.add(hiTable.max_allotment_each_additional.mul(size - largestHi));
     }
     throw new Error(`No max_allotment for size ${size} (HI)`);
   }
 
   if (state === "GU") {
-    const exactGu = GU_ALLOTMENT_TABLE.max_allotment.get(size);
+    const guTable = guAllotmentTableFor(asOf);
+    const exactGu = guTable.max_allotment.get(size);
     if (exactGu) return exactGu;
-    const largestGu = Math.max(...GU_ALLOTMENT_TABLE.max_allotment.keys());
+    const largestGu = Math.max(...guTable.max_allotment.keys());
     if (size > largestGu) {
-      const baseGu = GU_ALLOTMENT_TABLE.max_allotment.get(largestGu)!;
-      return baseGu.add(GU_ALLOTMENT_TABLE.max_allotment_each_additional.mul(size - largestGu));
+      const baseGu = guTable.max_allotment.get(largestGu)!;
+      return baseGu.add(guTable.max_allotment_each_additional.mul(size - largestGu));
     }
     throw new Error(`No max_allotment for size ${size} (GU)`);
   }
@@ -562,10 +585,10 @@ export function assetLimitFor(isED: boolean, asOf: Date): Decimal {
  * #866.
  */
 export function shelterCapFor(asOf: Date, state?: string): Decimal {
-  if (state === "AK") return AK_SHELTER_CAP;
-  if (state === "VI") return VI_ALLOTMENT_TABLE.shelter_cap;
-  if (state === "HI") return HI_ALLOTMENT_TABLE.shelter_cap;
-  if (state === "GU") return GU_ALLOTMENT_TABLE.shelter_cap;
+  if (state === "AK") return akAllotmentSnapshotFor(asOf).shelter_cap;
+  if (state === "VI") return viAllotmentTableFor(asOf).shelter_cap;
+  if (state === "HI") return hiAllotmentTableFor(asOf).shelter_cap;
+  if (state === "GU") return guAllotmentTableFor(asOf).shelter_cap;
   return snapshotFor(asOf).shelter_cap;
 }
 
@@ -588,17 +611,17 @@ export function shelterCapFor(asOf: Date, state?: string): Decimal {
 export function minimumBenefitFor(asOf: Date, state?: string, countyFips?: string): Decimal {
   const s = snapshotFor(asOf);
   if (state === "AK") {
-    const zone = akAllotmentZoneFor(countyFips) ?? AK_URBAN;
+    const zone = akAllotmentZoneFor(countyFips, asOf) ?? akAllotmentSnapshotFor(asOf).urban;
     return zone.minimum_benefit;
   }
   if (state === "VI") {
-    return VI_ALLOTMENT_TABLE.minimum_benefit;
+    return viAllotmentTableFor(asOf).minimum_benefit;
   }
   if (state === "HI") {
-    return HI_ALLOTMENT_TABLE.minimum_benefit;
+    return hiAllotmentTableFor(asOf).minimum_benefit;
   }
   if (state === "GU") {
-    return GU_ALLOTMENT_TABLE.minimum_benefit;
+    return guAllotmentTableFor(asOf).minimum_benefit;
   }
   return s.minimum_benefit;
 }

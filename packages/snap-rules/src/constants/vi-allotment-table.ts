@@ -73,10 +73,39 @@ export interface ViAllotmentTable {
   shelter_cap: Decimal;
 }
 
+// ── Dated-snapshot structure (#803 FY27 prep) ───────────────────────────
+//
+// Prior to this refactor, VI_ALLOTMENT_TABLE was a single plain constant
+// with NO effective-date banding — unlike federal-tables.ts's
+// `FederalTableSnapshot`/`SNAPSHOTS` array, which already carries
+// `effective_start`/`effective_end` and explicitly warns against editing a
+// published table in place. `ViAllotmentSnapshot` extends `ViAllotmentTable`
+// with the same fiscal-year/date-range fields, so FY27 can be appended to
+// `VI_SNAPSHOTS` as a NEW entry instead of overwriting FY26's figures.
+//
+// `viAllotmentTableFor(asOf)`'s out-of-range fallback is deliberately
+// PERMISSIVE (returns the latest snapshot) rather than throwing — same
+// reasoning as ak-allotment-zones.ts's `akAllotmentSnapshotFor()`: this
+// table had NO date check at all before this refactor (every real caller's
+// `asOf` is already validated by federal-tables.ts's own `snapshotFor()`
+// first), so throwing here would be a NEW failure mode outside this
+// refactor's authorized (behavior-preserving) scope. With exactly one
+// snapshot (FY26) in the array today, this resolves to that same snapshot
+// for EVERY `asOf` — byte-identical to the pre-refactor constant. See
+// docs/plans/fy27-cola-refresh-checklist.md.
+export interface ViAllotmentSnapshot extends ViAllotmentTable {
+  fiscal_year: number;
+  effective_start: Date;
+  effective_end: Date;
+}
+
 // FY26 (10/1/2025-9/30/2026). Verbatim from USVI DHS's own published table,
 // quoted in full in issue #858 (max_allotment/minimum_benefit) and #866
 // (standard_deduction/shelter_cap).
-export const VI_ALLOTMENT_TABLE: ViAllotmentTable = {
+const VI_FY26: ViAllotmentSnapshot = {
+  fiscal_year: 2026,
+  effective_start: new Date(Date.UTC(2025, 9, 1)),
+  effective_end: new Date(Date.UTC(2026, 8, 30)),
   max_allotment: new Map<number, Decimal>([
     [1, new Decimal("383")],
     [2, new Decimal("703")],
@@ -99,3 +128,30 @@ export const VI_ALLOTMENT_TABLE: ViAllotmentTable = {
   ]),
   shelter_cap: new Decimal("586"),
 };
+
+/**
+ * FY27 refresh: append a new `ViAllotmentSnapshot` here (`fiscal_year:
+ * 2027`, real `effective_start`/`effective_end`) and add it to
+ * `VI_SNAPSHOTS` below. Never edit `VI_FY26` in place once FY27 exists.
+ */
+const VI_SNAPSHOTS: ViAllotmentSnapshot[] = [VI_FY26];
+
+/**
+ * Resolve VI's dollar-figure snapshot for `asOf`. See the header note
+ * above for why out-of-range falls back to the latest snapshot instead of
+ * throwing (deliberately behavior-preserving pre-FY27).
+ */
+export function viAllotmentTableFor(asOf?: Date): ViAllotmentSnapshot {
+  if (!asOf) return VI_SNAPSHOTS[VI_SNAPSHOTS.length - 1]!;
+  for (const s of VI_SNAPSHOTS) {
+    if (asOf >= s.effective_start && asOf <= s.effective_end) return s;
+  }
+  return VI_SNAPSHOTS[VI_SNAPSHOTS.length - 1]!;
+}
+
+// Backward-compatible export — same name, same values as before this
+// refactor. Every existing call site/test that references this directly
+// (no `asOf` awareness) keeps working unchanged, pinned to the current
+// (FY26) snapshot. New date-aware callers should prefer
+// `viAllotmentTableFor(asOf)` instead.
+export const VI_ALLOTMENT_TABLE: ViAllotmentTable = VI_FY26;
