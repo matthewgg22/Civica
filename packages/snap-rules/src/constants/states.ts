@@ -3634,6 +3634,194 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // New Hampshire — third and final state of batch-tier segment 3 (§6
+  // step 6, "ID, WV, NH"). Blank slate, no prior StatePolicy or oracle
+  // coverage. Translated from New Hampshire's already-merged Demeter
+  // corpus pack (packages/demeter-engine/src/states/nh/, PROVENANCE.md +
+  // supplements.json, built 2026-08-12) into the engine's stricter typed
+  // shape per §5's process — re-verification against the corpus's own
+  // primary sources (NH DHHS Food Stamp Manual (FSM) sections; SR 97-27),
+  // not fresh research.
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis:
+  // federal_fiscal_year (an honest inference — NH DHHS's own FSM text
+  // does not state FFY-vs-calendar-year framing explicitly, same
+  // established default WV's entry above uses absent contrary evidence)
+  // — a MODELING SIMPLIFICATION worth naming precisely, not silently
+  // assumed. NH's corpus pack's Finding 1 (flagship) documents NH
+  // actually runs THREE parallel eligibility tracks, not a single BBCE
+  // gate: a plain 130%/100% FPG track ($3,000 resource limit), a "Target"
+  // elderly/disabled track ($4,500 resource limit), and an "Expanded
+  // Categorically Eligible" (ECE) track at 200% FPG gross income with NO
+  // resource test — but ECE itself requires a household to ALSO be
+  // authorized for a non-cash MOE-funded service (satisfied via DHHS's
+  // own BFA Form 77u), a condition this engine's `Facts` shape has no
+  // field for. This is the SAME modeling simplification every other BBCE
+  // state in this file already makes (NC's TANF-services notice, VA's
+  // statutory rule, WV's page above — none separately models the
+  // administrative-conferral condition as a Fact), not a NEW gap specific
+  // to NH — disclosed here because NH's corpus pack is unusually explicit
+  // that a real, enforced non-ECE track exists (with a real asset test)
+  // for households that don't clear the Form-77u condition, where most
+  // other states' corpus packs simply state the elevated percentage
+  // without walking the multi-track structure this explicitly. In
+  // practice this file's engine-wide simplification (treating the BBCE
+  // asset waiver as a state-wide blanket rather than population-
+  // conditioned) already absorbs this distinction the same way it does
+  // for every other BBCE state.
+  //
+  // asset_waiver: true — consistent with the ECE track's real asset-test
+  // waiver (the majority-case pathway per the corpus pack's own reading),
+  // same blanket-simplification treatment described above.
+  //
+  // sua_by_tier: POPULATED, not null — a genuine contrast with this
+  // batch's ID/WV entries and a genuine SCHEMA-MISMATCH shape not yet
+  // seen in this file (distinct from NC's/VA's/AZ's own SUA-tier
+  // mismatches): NH DHHS's FSM Table I lists FOUR tiers split partly by
+  // utility TYPE, not purely by qualifying-utility COUNT — Heating/Cooling
+  // $1,018, Utilities-Only $373 (2+ non-heating utilities), Electric-Only
+  // $217 (exactly 1 non-heating, non-phone utility), Telephone-Only $39.
+  // This engine's `Facts.shelter.sua_tier` enum (`HCSUA`/`LUA`/`phone`/
+  // `none`) has no slot for NH's standalone Electric-Only tier — mapped
+  // HCSUA to Heating/Cooling ($1,018), LUA to Utilities-Only ($373, the
+  // ≥2-non-heating-utility tier — the closer conceptual match to the
+  // engine's generic "Limited Utility Allowance" than the single-utility
+  // Electric-Only tier), and phone to Telephone-Only ($39). A household
+  // with NH's real Electric-Only tier (exactly one non-heating,
+  // non-phone utility) has no representable Facts input in this engine —
+  // an accepted limitation of the SAME already-established class as NJ's
+  // boat/motor-home gap (#824) and NC's/VA's household-size-dimension SUA
+  // gaps, not a new architecture issue. The $1,018 Heating/Cooling figure
+  // is itself flagged by the corpus pack as single-source (no
+  // cross-check against a second dated DHHS table found) — used here as
+  // the best available primary-source figure, not fabricated, but
+  // disclosed as lower-confidence than this file's typically
+  // cross-checked SUA figures.
+  //
+  // drug_felony_ban: "none" — SR 97-27 (dated August 1997, implementing
+  // HB 722-FN, Chapter 157, Laws of 1997): "an individual's felony drug
+  // conviction status is not taken into account for purposes of
+  // determining eligibility for TANF financial and/or medical assistance
+  // and food stamps" — a genuine FULL statutory opt-out, independently
+  // confirmed by the corpus pack fetching SR 97-27's own text directly
+  // (not accepting several secondary sources' "fully opted out" framing
+  // at face value) with no subsequent SR found narrowing or reversing it.
+  // Distinct from NH's SEPARATE SNAP-trafficking disqualification penalty
+  // (24 months first offense, permanent second offense) — a
+  // program-integrity rule already modeled generically by this engine's
+  // `disqual` tag mechanism, not a drug-felony-conviction ban, and not
+  // conflated with this axis.
+  //
+  // abawd_waiver_avail: false — the corpus pack's Finding 5 (independently
+  // cross-checked against USDA FNS/FNA's own ABAWD Time Limit Waivers FY
+  // 2025-2029 index, which shows NH's most recent posted waiver-response
+  // entry as FY2025 with no FY2026 entry) confirms New Hampshire currently
+  // has NO active area-wide ABAWD waiver anywhere in the state — NH's
+  // prior waiver covering Stratford and Hale's Location expired
+  // 9/30/2025 and was not renewed. A directly-checked-against-a-federal-
+  // index finding, stronger sourcing than WV's own inference above.
+  //
+  // rmp_operated: false — confirmed absent from USDA's current RMP state
+  // list; DHHS's own consumer materials describe SNAP purchases as
+  // grocery-style items for home preparation, explicitly excluding "any
+  // 'hot' prepared foods that are ready to eat," with no pending NH RMP
+  // legislation found.
+  //
+  // allotment_tier: "48" — no elevated-allotment finding for NH.
+  //
+  // STRUCTURAL FINDING carried from the corpus pack, not modeled here (no
+  // engine axis exists for certification-period length): NH's STANDARD
+  // certification period is only 6 months (FSM § 133.09) — half the
+  // 12-month norm most other states in this file's roster use — with 36
+  // months reserved for ESAP (all-elderly/disabled, no-earned-income)
+  // households. Purely informational; this engine's oracle/verdict math
+  // is a point-in-time determination and does not model recertification
+  // cadence.
+  //
+  // Oracle: built from the SAME independent Python calculator as ID's/
+  // WV's entries above (parameterized by state policy, not derived from
+  // engine output, per #636). Cross-validated BEFORE trusting it for NH:
+  // LA is NH's FULL 7-of-7 axis twin among already-merged states
+  // (bbce=true/200%/federal_fiscal_year, asset_waiver=true,
+  // drug_felony_ban="none", abawd_waiver_avail=false, allotment_tier="48",
+  // rmp_operated=false — every axis identical, differing only in the SUA
+  // dollar figures themselves, the strongest possible twin match this
+  // file's precedent recognizes) — reproduced LA's already-graded 92 base
+  // + 37 variant = 129/129 exact match (verdict AND benefit) under LA's
+  // own policy params before applying NH's. (The calculator was
+  // additionally validated against SC/MO/MD earlier in this same batch,
+  // 516/516 combined across all four cross-validation states run this
+  // batch, 0 mismatches.) Also checked all 37 rows across the 18
+  // non-expected_by_state variant profiles directly under NH's own
+  // params: ZERO divergence from the shared default verdict — NH's
+  // computed verdict set is IDENTICAL to LA's on every axis that affects
+  // eligibility (matching NC's/VA's/MD's/CO's/LA's own zero-override
+  // precedent), and unlike ID's/WV's entries above, NH has a REAL sua_
+  // by_tier table, so P58's above_net_limit indeterminacy does not arise
+  // for NH — NH's real $1,018 HCSUA figure resolves it determinately
+  // (well above the $1,131.50 break-even point... verified directly,
+  // not assumed: NH's real figure computes a determinate DENY for that
+  // row, consistent with LA's own DENY there).
+  //
+  // Authored all 92 expected_by_state.NH entries: 80 APPROVE / 12 DENY —
+  // IDENTICAL DENY set to LA/MD/CO/VA/NC (same financial-gate-determining
+  // axes). Real $ benefit dollar amounts differ from LA's/other states'
+  // equivalent entries for profiles where NH's own SUA figures (much
+  // higher HCSUA $1,018 vs LA's $465, lower LUA $373 vs LA's $258 —
+  // asymmetric, not uniformly higher or lower) change the excess-shelter
+  // deduction, but NO verdict ever flips as a result of any SUA-dollar
+  // difference — every BBCE state in this file skips the net income test
+  // once the raised gross threshold clears (for non-E/D households), so
+  // SUA only ever changes the benefit AMOUNT for those households, never
+  // eligibility; E/D households (which do run the net test regardless of
+  // BBCE) were independently checked and none straddles NH's real,
+  // determinate SUA figures the way the disclosed P58 variant does for
+  // ID's/WV's null-SUA gap.
+  //
+  // Verification: `/profile-simulation state=NH` — 129/129 PASS, 0 FAIL,
+  // 0 SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/
+  // VA/IN/MO/MD/CO/SC/LA's bar, NOT ID's/WV's SKIP-heavy shape — NH's
+  // real, disclosed-confidence SUA figures mean it did not need ID's/
+  // WV's null-SUA fallback). Every other registered state's harness run
+  // reconfirmed unchanged from its documented baseline: CA/WA/TX/GA/MI/
+  // IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC/LA all 129/0/0; NY
+  // 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN/ID/WV all 34/0/95 — every
+  // one identical to its pre-NH documented baseline, zero regressions.
+  // `tsc --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests
+  // pass (0 new), 44/47 profile-harness tests pass (3 pre-existing
+  // skips). Did not touch `packages/demeter-engine` (NH's corpus was
+  // already complete and out of scope) or any other state's
+  // `StatePolicy`/oracle coverage. No new GitHub issue filed for NH
+  // specifically — the Electric-Only SUA-tier gap is a per-state
+  // disclosed gap of the SAME already-established class NJ's/NC's/VA's
+  // Facts-shape gaps already cover (#824-style), not a new engine-
+  // architecture issue; the ECE administrative-conferral-condition
+  // simplification is the SAME engine-wide blanket-BBCE-asset-waiver
+  // approach every other BBCE state in this file already uses, not a
+  // new gap either.
+  NH: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "NH",
+      label: "New Hampshire / DHHS — Bureau of Family Assistance",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("1018"),
+        LUA: new Decimal("373"),
+        phone: new Decimal("39"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
