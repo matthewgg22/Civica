@@ -54,9 +54,15 @@ describe("engine-parameter parity", () => {
       const params = formatEngineParams(code, new Date());
       const claimsPct = /BBCE[^\n]*?(\d+)% FPL/.exec(params);
       if (claimsPct) {
-        // If it states a percentage at all, it must not be the CA default
-        // applied to a state that never adopted it.
-        expect([130, 165, 200], `${code} BBCE %`).toContain(Number(claimsPct[1]));
+        // If it states a percentage at all, it must be one of the REAL
+        // thresholds snap-rules' states.ts has ever authored (checked
+        // 2026-08-16: 130/160/165/175/185/200 across all 55 StatePolicy
+        // entries) — not the CA default applied to a state that never
+        // adopted it. This list widened from the original {130,165,200}
+        // (the old hardcoded BBCE_PCT map's value set, #675/#882) once
+        // formatEngineParams started sourcing bbce_threshold_pct live from
+        // every authored state instead of a 15-state hand-copied map.
+        expect([130, 160, 165, 175, 185, 200], `${code} BBCE %`).toContain(Number(claimsPct[1]));
       }
     }
   });
