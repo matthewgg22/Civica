@@ -3,7 +3,7 @@
     "version": "0.6",
     "fy": "2026",
     "basis": "post-OBBBA (2025-11-01)",
-    "count": 110,
+    "count": 111,
     "default_state": "CA",
     "params": {
       "fy": "2026",
@@ -15321,6 +15321,114 @@
               "OH": "APPROVE"
             }
           }
+        }
+      }
+    },
+    {
+      "id": "M31-child-support-gross-income-exclusion-margin",
+      "legacy_id": "M31",
+      "label": "Child support paid excluded from GROSS income at the margin (#824)",
+      "as_of_date": "2026-06-01",
+      "facts": {
+        "household": [
+          {
+            "member_id": "m1",
+            "age": 34,
+            "role": "head",
+            "disability": false,
+            "elderly": false,
+            "student": "not",
+            "immigration": "citizen",
+            "five_yr_bar": "n/a",
+            "sponsored": false,
+            "work_class": "gen_work_subject",
+            "abawd_months_used": 0,
+            "disqual": [],
+            "living": "housed"
+          },
+          {
+            "member_id": "m2",
+            "age": 8,
+            "role": "child",
+            "disability": false,
+            "elderly": false,
+            "student": "not",
+            "immigration": "citizen",
+            "five_yr_bar": "n/a",
+            "sponsored": false,
+            "work_class": "exempt",
+            "abawd_months_used": 0,
+            "disqual": [],
+            "living": "housed"
+          }
+        ],
+        "income": [
+          {
+            "member": "m1",
+            "type": "wages",
+            "amount": 2500,
+            "freq": "monthly",
+            "anticipation": "averaged",
+            "source_status": "ongoing"
+          }
+        ],
+        "shelter": {
+          "rent": 700,
+          "sua_tier": "none",
+          "sua_amount": 0,
+          "internet": 0,
+          "homeless_deduction": false
+        },
+        "deductions": {
+          "dependent_care": 0,
+          "medical_unreimbursed": 0,
+          "child_support_paid": 300
+        },
+        "assets": 500,
+        "cat_elig": "NPA",
+        "expedited": false,
+        "sponsor_income": null
+      },
+      "requires": [
+        "deductions.child_support",
+        "income.wages",
+        "test.gross_net_fpl"
+      ],
+      "oracle_basis": "HH2, $2,500/mo wages, $300/mo court-ordered child support paid. Gross income sits ABOVE the federal 130% FPL gross-income-test line for HH2 ($2,291, FY26: floor($21,150/12)=$1,762 x 1.30 -> round=$2,291) but $300 below it once child support paid is excluded from gross per 7 CFR 273.9(c) (#824). MO (non-BBCE, 130% federal floor, child_support_gross_exclusion=true): $2,500 > $2,291 without the exclusion (DENY) but $2,500-$300=$2,200 <= $2,291 with it (APPROVE) -- the load-bearing flip this profile exists to prove. KS (non-BBCE, same $2,291 threshold, NO child-support-gross-exclusion policy): stays DENY either way -- proves the axis is state-scoped, not engine-wide. IL (165% BBCE, threshold $2,907), NJ (185% BBCE, threshold $3,260), VA (200% BBCE, threshold $3,524): $2,500 clears all three BBCE ceilings with or without the $300 excluded, so all three stay APPROVE regardless -- included to confirm zero regression for the other three #824-confirmed states, not to demonstrate a flip. Net-income math is untouched by #824 by design (see StatePolicy.child_support_gross_exclusion's doc-comment in constants/states.ts), so `benefit` is left null everywhere -- this profile asserts VERDICT ONLY, not benefit dollars. FPL/threshold math independently hand-derived from federal-tables.ts's own published FY26 constants (15,650 first person + 5,500 each additional, floor rounding), not copied from engine output, per #636 methodology.",
+      "citation": "7 CFR 273.9(a)(1), 273.9(c)",
+      "error_surface": {
+        "mode": "flip",
+        "element": "311_wages"
+      },
+      "negative_control": false,
+      "must_reject": false,
+      "paired_with": null,
+      "integrity": null,
+      "expected_by_state": {
+        "MO": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "KS": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "IL": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "NJ": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
+        },
+        "VA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": null
         }
       }
     },

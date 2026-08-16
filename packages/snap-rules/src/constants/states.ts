@@ -248,6 +248,29 @@ export interface StatePolicy {
   bbce: boolean;
   bbce_threshold_pct?: number;
   bbce_net_ceiling_pct?: number | null;
+  /**
+   * #824: a minority of states (NJ/VA/IL/MO confirmed) treat legally-
+   * obligated child support PAID by a household member as a 7 CFR
+   * 273.9(c) income EXCLUSION — subtracted from gross income before ANY
+   * income test runs — rather than only the 7 CFR 273.9(d)(5) ordinary
+   * deduction (applied at net income, after the gross test already ran)
+   * every other state's entry in this file uses. `undefined`/`false`
+   * (every state without this line) preserves today's behavior exactly:
+   * `child_support_paid` still flows through `benefit-calc.ts`'s existing
+   * `otherDeductions` path unchanged. `grossIncomeTest()` in
+   * gates/income-tests.ts is the only consumer — it subtracts
+   * `child_support_paid` from gross before comparing to the (possibly
+   * BBCE-raised) threshold when this is `true`. Deliberately does NOT
+   * change the earned-income-deduction base or net-income math: net income
+   * is algebraically identical either way for a household that already
+   * clears the (possibly-lowered) gross gate, so this axis changes ONLY
+   * whether a near-the-gross-line, child-support-paying household reaches
+   * that gate at all — not its benefit dollar figure once through. Same
+   * "widen the schema once, migrate every existing entry to the value that
+   * preserves current behavior" pattern as `bbce_net_ceiling_pct` (#830)
+   * before it.
+   */
+  child_support_gross_exclusion?: boolean;
   bbce_fpl_basis: BBCEFPLBasis;
   asset_waiver: boolean;
   /** Per-tier SUA values; null = not authored, callers MUST NOT trust. */
@@ -684,6 +707,22 @@ const STATES: Record<string, StatePolicy[]> = {
   // IL's "Single Utility" tier ($78, one non-heat/non-phone utility) has
   // no slot in this engine's {HCSUA, LUA, phone} shape — undermodeled the
   // same way as OH's identically-named tier (see OH's own comment).
+  //
+  // child_support_gross_exclusion: true (#824, live-verified 2026-08-16) —
+  // IDHS PM/WAG 13-01-07, "Child Support Income Exclusion"
+  // (dhs.state.il.us/page.aspx?item=16161, item=16162): "All court-ordered
+  // child support payments are treated as an income exclusion from the
+  // SNAP household's total gross monthly income when comparing to the
+  // Maximum Monthly Gross Income Standard for the household size... It is
+  // not allowed as an income deduction in the net benefit calculation." —
+  // the most explicit of the four #824-confirmed states: it names the
+  // gross-income comparison directly and explicitly disclaims the ordinary
+  // net-only deduction mechanism. Wired into `gates/income-tests.ts`'s
+  // `grossIncomeTest()`; matches NJ/VA/MO's pattern (all four independently
+  // re-verified together). `benefit-calc.ts`'s net-income math is
+  // deliberately left untouched — see `StatePolicy.
+  // child_support_gross_exclusion`'s own doc-comment for why that's a
+  // genuine no-op for net/benefit here, not a scoping shortcut.
   IL: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
@@ -692,6 +731,7 @@ const STATES: Record<string, StatePolicy[]> = {
       label: "Illinois / IDHS",
       bbce: true,
       bbce_threshold_pct: 165,
+      child_support_gross_exclusion: true,
       bbce_fpl_basis: "federal_fiscal_year",
       asset_waiver: true,
       sua_by_tier: {
@@ -1802,24 +1842,31 @@ const STATES: Record<string, StatePolicy[]> = {
   //      "Identification of income deductions" mechanism (7 CFR
   //      273.9(d)(5), subtracted from NET income only, after the gross
   //      test already ran) this file's other child-support-documenting
-  //      states use. `benefit-calc.ts` implements ONLY the ordinary-
-  //      deduction mechanism engine-wide (`facts.deductions.
-  //      child_support_paid` is summed into `otherDeductions`, applied
-  //      after `aggregateIncomeForCalc`'s gross total is already fixed —
-  //      see benefit-calc.ts's own math-summary comment) — there is no
-  //      per-state axis or Facts field this StatePolicy entry could set
-  //      to switch that mechanism, so this is a shared architecture gap,
-  //      not something a single state's entry can fix. Exactly one of
-  //      this fixture's 92 profiles (A08) carries a nonzero
-  //      `child_support_paid` ($300); A08's NJ oracle entry was computed
-  //      using the engine's standard ordinary-deduction mechanic (same as
-  //      every other state) rather than inventing NJ-specific EID/gross-
-  //      exclusion mechanics the corpus pack itself did not fully specify
-  //      (it does not say whether NJ's exclusion also changes the base
-  //      the 20% earned-income deduction applies to) — A08's VERDICT is
-  //      unaffected either way (gross income is far under any BBCE
-  //      threshold with or without the $300), only a benefit-dollar
-  //      question remains genuinely open.
+  //      states use.
+  //
+  //      RESOLVED (#824, live-verified 2026-08-16): the schema gap this
+  //      comment used to describe is closed. `StatePolicy` now carries
+  //      `child_support_gross_exclusion` (see its own doc-comment above),
+  //      wired into `gates/income-tests.ts`'s `grossIncomeTest()` — set
+  //      `true` below. Re-confirmed the N.J.A.C. 10:87-5.9 text directly
+  //      (Cornell LII, law.cornell.edu/regulations/new-jersey/
+  //      N-J-A-C-10-87-5-9): "All legally obligated or court-ordered
+  //      child support payments paid by a household member to, or on
+  //      behalf of, a non-household member... [is excluded]" — listed
+  //      under the exclusions section, not the deductions section, exactly
+  //      as this comment already documented. `benefit-calc.ts`'s net-
+  //      income math is DELIBERATELY left untouched (see the new field's
+  //      doc-comment for why that's algebraically a no-op for net/benefit,
+  //      not merely a scoping shortcut) — so NJ's own open question
+  //      (whether the exclusion also changes the 20% EID's base) remains
+  //      genuinely unresolved, not silently assumed either way, same as
+  //      before. Exactly one of this fixture's profiles (A08) carries a
+  //      nonzero `child_support_paid` ($300); independently re-confirmed
+  //      A08's NJ verdict is unaffected by this fix (gross income $1,400
+  //      is far under NJ's 185% BBCE threshold with or without the $300)
+  //      — A08 is unchanged. A new profile (M31) was authored specifically
+  //      to exercise this axis at the gross-income margin, since A08 alone
+  //      never reaches the line either way.
   NJ: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
@@ -1828,6 +1875,7 @@ const STATES: Record<string, StatePolicy[]> = {
       label: "New Jersey / DHS-DFD",
       bbce: true,
       bbce_threshold_pct: 185,
+      child_support_gross_exclusion: true,
       bbce_fpl_basis: "federal_fiscal_year",
       asset_waiver: true,
       sua_by_tier: null,
@@ -2171,7 +2219,8 @@ const STATES: Record<string, StatePolicy[]> = {
   // "actual utility cost" field distinct from a named tier standard),
   // making this a genuine Facts-shape gap, not a per-state value this
   // engine can correctly express, the same category of accepted limitation
-  // as NJ's boat/motor-home and child-support-exclusion gaps (#824) above.
+  // as NJ's boat/motor-home gap (#824) above (VA's OWN child-support-
+  // exclusion axis, once also NJ's #824 gap, is now closed — see below).
   // Rather than fabricate a number with no VA citation behind it, LUA is
   // set to $0 — the same "no fabrication" discipline this file applies
   // everywhere else — which UNDER-STATES (never over-states) the excess-
@@ -2189,6 +2238,20 @@ const STATES: Record<string, StatePolicy[]> = {
   // "actual utility cost" field (the same class of fix NJ's #824 needs for
   // its own gap) would be the correct long-term resolution, not a per-state
   // engine value.
+  // child_support_gross_exclusion: true (#824, live-verified 2026-08-16) —
+  // 22VAC40-601-70, titled verbatim "Income exclusion for legally obligated
+  // child support payments" (law.lis.virginia.gov/admincode/title22/
+  // agency40/chapter601/section70/): "Legally obligated child support
+  // payments paid by a SNAP household member to or for a nonhousehold
+  // member will be allowed as an exclusion from countable income for SNAP
+  // purposes." The regulation's own section title places this among VA's
+  // income-exclusion provisions, not its deduction provisions — matching
+  // this file's NJ/IL/MO pattern (all four independently re-verified
+  // together, #824). Wired into `gates/income-tests.ts`'s
+  // `grossIncomeTest()`; `benefit-calc.ts`'s net-income math is
+  // deliberately left untouched (see `StatePolicy.
+  // child_support_gross_exclusion`'s own doc-comment for why that's a
+  // genuine no-op for net/benefit, not a scoping shortcut).
   VA: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
@@ -2197,6 +2260,7 @@ const STATES: Record<string, StatePolicy[]> = {
       label: "Virginia / VDSS",
       bbce: true,
       bbce_threshold_pct: 200,
+      child_support_gross_exclusion: true,
       bbce_fpl_basis: "federal_fiscal_year",
       asset_waiver: true,
       sua_by_tier: {
@@ -2338,13 +2402,30 @@ const STATES: Record<string, StatePolicy[]> = {
   // not "deduction") is an income EXCLUSION applied even to the gross
   // 130% FPL test itself (7 CFR 273.9(c)), matching this file's VA/NJ/IL
   // pattern — NOT the ordinary post-gross deduction (7 CFR 273.9(d)(5))
-  // this engine implements engine-wide (benefit-calc.ts). Same already-
-  // filed Facts-shape/mechanism gap as #824 (NJ's entry above), not a new
-  // one — exactly one of the 92 oracle profiles (A08) carries a nonzero
-  // `child_support_paid` ($300); its MO oracle entry uses the engine's
-  // standard ordinary-deduction mechanic since A08's verdict is
-  // unaffected either way, the same acceptance NJ's A08 entry already
-  // documents.
+  // this engine implements engine-wide (benefit-calc.ts).
+  //
+  // RESOLVED (#824, live-verified 2026-08-16): `child_support_gross_
+  // exclusion: true` below. Re-confirmed directly against 1115.035.20's
+  // own text (dssmanuals.mo.gov/food-stamps/1115-000-00/1115-035-00/
+  // 1115-035-20/): "The actual amount of court ordered child support paid
+  // by the household to or for non-household members from the household's
+  // income is excluded to determine: eligibility based on 130% of the
+  // Federal Poverty Level (FPL) ... net income..." — explicit that the
+  // exclusion runs at the gross 130% FPL step, not only at net. Wired into
+  // `gates/income-tests.ts`'s `grossIncomeTest()`. MO is the state where
+  // this fix is most load-bearing among the four #824-confirmed states:
+  // MO isn't BBCE (`bbce: false` above), so its gross line sits at the
+  // federal 130% floor with no BBCE cushion — the tightest of the four,
+  // and the one M31 (the new oracle profile authored for this fix) uses to
+  // demonstrate an actual DENY→APPROVE flip. `benefit-calc.ts`'s net-
+  // income math is deliberately left untouched — see `StatePolicy.
+  // child_support_gross_exclusion`'s own doc-comment for why that's a
+  // genuine no-op for net/benefit, not a scoping shortcut. Exactly one of
+  // the pre-existing oracle profiles (A08) carries a nonzero
+  // `child_support_paid` ($300); independently re-confirmed A08's MO
+  // verdict is unaffected by this fix (gross income $1,400 is far under
+  // even MO's un-cushioned 130% floor with or without the $300) — A08 is
+  // unchanged.
   //
   // allotment_tier: "48" — no Missouri-specific elevated max-allotment
   // schedule found; MO's own Standard Deduction ($209/$209/$209/$223/
@@ -2397,6 +2478,7 @@ const STATES: Record<string, StatePolicy[]> = {
       state_code: "MO",
       label: "Missouri / DSS — Family Support Division",
       bbce: false,
+      child_support_gross_exclusion: true,
       bbce_fpl_basis: null,
       asset_waiver: false,
       sua_by_tier: {
