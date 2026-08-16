@@ -2824,6 +2824,220 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // South Carolina — 9th individual-tier state (§6 step 3, ninth after NC/
+  // NJ/VA/TN/IN/MO/MD/CO). Built SC's StatePolicy entry AND full 92-profile
+  // oracle coverage from scratch (SC had neither before this PR),
+  // translating SC's already-merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/sc/, PROVENANCE.md + supplements.json,
+  // built 2026-08-11) into the engine's stricter typed shape per §5's
+  // process.
+  //
+  // bbce: true / bbce_threshold_pct: 130 / bbce_fpl_basis:
+  // federal_fiscal_year — THIS PACK'S FLAGSHIP FINDING, a genuine
+  // CORRECTION to the widely-repeated secondary-source assumption that
+  // BBCE states run a 200% FPL ceiling: SC SNAP Manual (Vol. 70, June 2026)
+  // § 4.1(D) grants "Family Independence Information and Referral
+  // Services" categorical eligibility only to households at or below 130%
+  // FPL — and SC's ORDINARY gross income test (§ 13.6(2)(B)) is ALSO 130%
+  // FPL, the plain federal floor with no state-elected increase. SC's BBCE
+  // analog therefore does NOT expand income eligibility at all; what it
+  // actually does is waive the resource test (and the separate net income
+  // test) for households already inside the ordinary 130% gross limit. This
+  // is honestly encoded as `bbce: true, bbce_threshold_pct: 130` rather than
+  // `bbce: false` — SC's own manual frames it as a categorical-eligibility
+  // mechanism, and verdict.ts's actual gate logic already does the right
+  // thing with these values with NO code change needed: because
+  // GROSS_INCOME_TEST_RATIO is also 1.30 (130%), the BBCE-raised threshold
+  // is numerically identical to the federal default, so the gross test
+  // behaves exactly like a non-BBCE state's — but `policy.bbce === true`
+  // still marks `bbceConferred = true` once that (unchanged) threshold
+  // clears, which correctly skips BOTH the net income test AND (via
+  // `asset_waiver: true` below, redundantly-but-consistently) the asset
+  // test for every NPA household that clears it. This is a genuinely clean
+  // demonstration that the bbce/bbce_threshold_pct split this schema
+  // already supports (decoupled from asset_waiver) was built expressively
+  // enough for a state whose "raised" threshold equals its ordinary one —
+  // no engine change, no new axis, no disclosed gap. (E/D households still
+  // take the net-only federal path per every other state's existing
+  // behavior, since `grossTestApplies` is false for them regardless of
+  // BBCE — pre-existing, shared engine behavior, not new here.) Independent
+  // verification (see oracle note below): SC's computed 21-DENY set out of
+  // 92 base profiles sits between the plain-130%-threshold states already
+  // in this file (OH 19, GA 22, KS 22) and is materially larger than the
+  // 200%/165%-threshold states (NC/VA 12, TX 16) — direct confirmation
+  // SC behaves as a 130%-effective-ceiling state in practice, not a 200%
+  // one, matching § 4.1(D)'s own text exactly.
+  //
+  // asset_waiver: true — flows directly from the same § 4.1(D) finding:
+  // "will have the household's resources excluded when determining
+  // eligibility" for every household within the 130% pathway — which is
+  // effectively every NPA household that isn't already gross-income-denied,
+  // since the pathway's ceiling equals the ordinary gross test.
+  //
+  // sua_by_tier — FULLY POPULATED, not null, a genuinely CLEAN case (SC's
+  // own SNAP Manual, dated June 2026, is only ~2 months old at fetch date —
+  // no staleness disclosure needed, unlike CO's four-tier-stale entry or
+  // MO's one-cycle-stale figures elsewhere in this file). § 12.5(2)-(3):
+  // Mandatory Utility Allowance (MUA) $388/mo for households billed
+  // separately for heating/cooling (or qualifying LIHEAP), Basic Utility
+  // Allowance (BUA) $265/mo for households billed for 2+ non-heating
+  // utilities, standalone Telephone Allowance $27/mo. These map cleanly
+  // onto this schema's three tiers by FUNCTION, not by SC's own label —
+  // MUA (heat/cool) -> HCSUA, BUA (2+ non-heat utilities) -> LUA, Telephone
+  // -> phone — a clean 1:1 fit with NO naming-collision trap (contrast
+  // OH's/MO's/CO's disclosed "LUA slot actually maps to the 2+-utility
+  // tier, not the state's own differently-scoped 1-utility tier" gap: SC's
+  // BUA is ALREADY a 2+-utility standard by SC's own definition, so no
+  // fourth, unmapped tier exists here to disclose).
+  //
+  // allotment_tier: "48" — SC's own Standard Deduction
+  // ($209/$209/$209/$223/$261/$299), Excess Shelter cap ($744), and
+  // resource limits ($3,000/$4,500) all match federal-tables.ts's FY26
+  // snapshot exactly (§ 12.1-12.2, § 12.4, § 10.2) — the same shared-source
+  // signal NC's/VA's/MO's/MD's/CO's entries already use, and consistent
+  // with PROVENANCE.md Finding 5's observation that SC's manual tracks the
+  // federal fiscal year unusually closely for this roster.
+  //
+  // drug_felony_ban: "full" — THIS PACK'S SECOND FLAGSHIP FINDING, and a
+  // genuine CONFIRMATION (not correction) of the minority nationwide
+  // position: SC SNAP Manual § 2.3(7) restates 21 U.S.C. § 862a(a)(2)'s
+  // plain federal lifetime ban verbatim as SCDSS policy (conduct after
+  // 8/22/1996, expungement/pardon the only listed exception), with NO
+  // separate SC statute located anywhere implementing, narrowing, or
+  // opting out of it under § 862a(d)(1) — corroborated by two independent
+  // secondary aggregators (Network for Public Health Law's 50-state survey
+  // explicitly codes SC as "kept full federal ban," no statute cited;
+  // Prison Policy Initiative, Feb. 2026). SC and Guam are the only two US
+  // jurisdictions in this posture nationwide, per PROVENANCE.md Finding 2 —
+  // matching this file's existing precedent that "full" means the
+  // unmodified federal ban applies (#805), not a state-enacted trigger.
+  // This makes SC only the SECOND state in this file (after TX) to carry
+  // "full" rather than "none"/"modified"/"unconfirmed."
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero
+  // finding: independent ABAWDMap.us aggregator states "No waiver — rule
+  // applies" for South Carolina, and no SC entry appears on USDA's Time
+  // Limit Waivers FY2025-2029 index. SC's own manual (§ 8.12, § 8.15)
+  // already reflects the full 2025 OBBBA ABAWD changes (18-64 age range,
+  // under-14 caregiver exception, removed homelessness/veteran/foster-care
+  // exemptions, added Indian/Urban Indian/California Indian exemption) with
+  // no internal contradiction found — a genuine contrast with this file's
+  // CO entry, which found the opposite (a three-way internal contradiction,
+  // stale pre-OBBBA regulation text). No county-level lookup needed, same
+  // uniform-statewide-zero-waiver shape as VA/MO/TN/MD/CO's entries.
+  //
+  // rmp_operated: false — SC is absent from USDA FNA's own current
+  // Restaurant Meals Program state list (Arizona, Maryland, New York,
+  // California, Massachusetts, Rhode Island, Illinois [Cook/Franklin only],
+  // Michigan, Virginia — cross-checked against this file's MO/IN/TN
+  // entries' own independent fetches of the same list). SC's manual
+  // describes only a narrower federal-baseline "Homeless Meal Provider"
+  // concessional-price mechanism limited to homeless households, not the
+  // broader elderly/disabled population an RMP typically covers — no
+  // evidence any such contract is currently active with a specific SC
+  // restaurant (disclosed gap, immaterial: `rmp_operated` has no consumer
+  // anywhere in verdict.ts or benefit-calc.ts, grep-confirmed, same as
+  // every other state's entry in this file).
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gaps already filed as #824, not re-filed, just newly
+  // confirmed present for South Carolina in genuinely novel shapes: (a) SC's
+  // vehicle-resource rule (§ 10.3(B)(vii), § 10.7(AA)) is a STRUCTURAL
+  // DEPARTURE this roster has not documented before — ONE exempt vehicle
+  // PER LICENSED DRIVER (not per household), conditioned on South Carolina
+  // vehicle registration, with any other vehicle counted at the higher of
+  // fair-market-value-over-$4,650 or full equity value; immaterial
+  // regardless, since `asset_waiver: true` means the resource test never
+  // runs for the 130%-pathway population this axis governs; (b) SC's flat
+  // $175 Standard Medical (SM) Deduction shortcut for verified expenses
+  // $35.01-$210 (§ 12.8), matching MO's/CO's flat-shortcut pattern with its
+  // own distinct dollar figures, not modeled by benefit-calc.ts's
+  // actual-expense-only mechanism; independently verified zero of the 92
+  // profiles are affected; (c) legally obligated child support (§ 12.7) is
+  // an ORDINARY POST-GROSS-INCOME DEDUCTION applied at net-income Step (F),
+  // matching this file's MD/IN/TN pattern (NOT VA/NJ/IL/MO/CO's
+  // income-exclusion-before-the-gross-test mechanism) — A08's $300
+  // child-support profile's SC verdict is unaffected either way, same
+  // acceptance as every prior state's A08 entry; (d) no engine axis exists
+  // for certification-period length (SC's plain federal 6-month/24-month
+  // structure, § 13.8(1), matching CO's finding, not MD's distinctive
+  // 12-month mechanism).
+  //
+  // Genuinely time-sensitive, disclosed and NOT modeled (no engine axis
+  // exists for SNAP-eligible-food restrictions at all): SC's USDA-approved
+  // candy/soda/energy-drink exclusion is real and imminent but NOT YET
+  // EFFECTIVE as of the corpus pack's 2026-08-11 fetch date — approved by
+  // Secretary Rollins 12/10/2025, modified 8/3/2026, EFFECTIVE 8/31/2026.
+  // No engine consumer exists for SNAP food-eligibility rules at all (this
+  // engine determines eligibility/benefit amount, not the eligible-goods
+  // list), so this has zero effect on any oracle profile — noted here only
+  // because PROVENANCE.md flags it as the pack's third flagship finding and
+  // a future re-verification pass after 8/31/2026 should not be surprised
+  // to find it already reflected in SC's own manual by then.
+  //
+  // Oracle: SC's closest structural axis-twin among all 26 already-
+  // registered states is TEXAS — matching 6 of 7 comparison axes exactly
+  // (bbce: true, asset_waiver: true, drug_felony_ban: "full" [the ONLY
+  // other "full" entry in this file], abawd_waiver_avail: false,
+  // allotment_tier: "48", rmp_operated: false), differing only in
+  // bbce_threshold_pct (TX 165 vs SC 130) — a stronger match than any
+  // 130%-threshold state in this file (OH/GA/NY all differ on
+  // asset_waiver, drug_felony_ban, or rmp_operated, each only 5/7). Built a
+  // fresh, independent Python calculator (not derived from engine output,
+  // per #636) directly from verdict.ts/benefit-calc.ts/gates/{income-tests,
+  // asset-test,abawd,student,composition,immigration,disqualifications,
+  // categorical}.ts/facts.ts/constants/federal-tables.ts's own read source
+  // (not just their doc-comments), mirroring every gate and the
+  // benefit-calc formula exactly, including decimal.ts's half-up
+  // (roundDollar) and floor (floorDollar) rounding conventions.
+  // Cross-validated BEFORE trusting it for SC: 92/92 exact match (verdict
+  // AND benefit) reproducing TX's already-graded oracle under TX's own
+  // StatePolicy params, PLUS all 37 non-expected_by_state variant rows (0
+  // mismatches), before applying SC's own policy params. As a second,
+  // independent sanity check (not a formal cross-validation, since neither
+  // is SC's structural twin), compared SC's own computed DENY set against
+  // KS's (non-BBCE, asset_waiver false) and OH's (BBCE-130, asset_waiver
+  // true) already-graded oracles: SC's DENY set is KS's DENY set MINUS
+  // exactly the 2 asset-limit-driven denials (D02, M02 — explained by
+  // asset_waiver: true) PLUS the 1 drug-felony denial KS's "modified" ban
+  // fails open on (M29 — explained by drug_felony_ban: "full"); separately,
+  // SC's DENY set is OH's DENY set PLUS exactly those same 2 profiles
+  // (M29, plus M12-abawd-in-a-waived-area — explained by
+  // abawd_waiver_avail: false vs OH's true) with zero unexplained
+  // divergence in either direction. Also checked all 37 rows across the 18
+  // non-expected_by_state variant profiles (facts_patch A/B pairs) for an
+  // SC-specific verdict_by_state override, the same discipline every prior
+  // state's build used — found ONE real divergence (matching MO's
+  // one-override precedent, not NC's/VA's/MD's/CO's zero-override result):
+  // M23-variable-gig-income-anticipation's two variants ($1,800 and $2,200
+  // gross HH1) both clear TX's 165% threshold ($2,153) but fail SC's
+  // effective 130% screen (~$1,697) for the same reason KS/OH/GA/IN/MO
+  // already fail — authored "SC": "DENY" into both variants'
+  // verdict_by_state blocks. Authored all 92 expected_by_state.SC entries:
+  // 71 APPROVE / 21 DENY.
+  SC: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "SC",
+      label: "South Carolina / SCDSS",
+      bbce: true,
+      bbce_threshold_pct: 130,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("388"),
+        LUA: new Decimal("265"),
+        phone: new Decimal("27"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "full",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
