@@ -3260,6 +3260,218 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Idaho — first state of batch-tier segment 3 (docs/plans/snap-rules-
+  // 50-state-engine-completion.md §6 step 6, "ID, WV, NH"), built after the
+  // 13 individual-tier states (NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA merged;
+  // AL/KY/OK concurrently in flight, not yet merged as of this build — not
+  // touched or coordinated with, same reconciliation-later pattern as
+  // MO-vs-TN/IN). Two OTHER batch-tier segments (CT/UT/IA/AR and MS/NM/NE)
+  // were also concurrently in flight as of this build, likewise not
+  // touched. Idaho is a genuine blank slate (no prior StatePolicy or
+  // oracle coverage). Translated from Idaho's already-merged Demeter
+  // corpus pack (packages/demeter-engine/src/states/id/, PROVENANCE.md +
+  // supplements.json, built 2026-08-12) into the engine's stricter typed
+  // shape per §5's process — re-verification against the corpus's own
+  // primary sources (IDAPA 16.03.04, Idaho's SNAP administrative code;
+  // Idaho DHW's live Apply for SNAP page), not fresh research.
+  //
+  // bbce: FALSE — a deliberate, reasoned departure from every other BBCE
+  // state in this file, not an oversight. IDAPA 16.03.04.010.09 defines
+  // Idaho's Broad-Based Categorical Eligibility precisely: BBCE-eligible
+  // households are "ALSO SUBJECT TO resource, gross, and net income
+  // eligibility standards" — i.e. Idaho's BBCE does NOT raise the
+  // gross-income ceiling (DHW's own current income-limit table matches the
+  // plain federal 130% FPL figures exactly, confirmed independently
+  // matching this file's Nebraska-cycle cross-check to the dollar) and
+  // does NOT exempt households from the net-income test either. Setting
+  // `bbce: true` in this schema — even with `bbce_threshold_pct` left
+  // undefined — would still incorrectly set `bbceConferred = true` in
+  // verdict.ts once a household clears the (unmodified) gross test,
+  // silently skipping the net income test for a state whose real law
+  // confers no such skip. `bbce: false` is the encoding that correctly
+  // reproduces Idaho's real income-test mechanics byte-for-byte, since
+  // Idaho's income tests genuinely ARE the federal defaults (130% gross /
+  // 100% net, always both enforced). Filed as a genuine engine-
+  // architecture gap, #853 (StatePolicy.bbce bundles three effects —
+  // raised gross ceiling, net-test conferral, and conventional
+  // asset-waiver pairing — that don't universally co-vary; a sibling
+  // finding to #830's TN gap, pointing the opposite direction: TN needs an
+  // ADDITIONAL net-ceiling layered on top of BBCE conferral, Idaho needs
+  // BBCE's income-test effects to be absent entirely).
+  //
+  // asset_waiver: FALSE — a disclosed, conservative approximation, not a
+  // confirmed federal-baseline finding. Idaho's REAL resource limit is a
+  // flat $5,000 for the BBCE population (IDAPA 16.03.04.305), RAISED (not
+  // waived) above the federal baseline ($3,000 non-E/D / $4,500 E/D) that
+  // applies to everyone else — independently cross-checked against Idaho
+  // DHW's own consumer page ("For most households, resources must be
+  // under $5,000... Household and recreational vehicles" among counted
+  // resource types), which is itself a second, independent primary source
+  // for the same figure and a second, independent contradiction of a
+  // widely-repeated secondary-source claim that Idaho BBCE households face
+  // "no resource limit" at all (the corpus pack's own flagship correction,
+  // Finding 1 — this pack's OWN first-pass web search synthesis initially
+  // reproduced that same wrong claim before primary-source verification
+  // caught it). This schema has no numeric override slot for "a real,
+  // enforced, but state-specific dollar limit distinct from both the
+  // boolean waiver and the federal default" — `asset_waiver: true` would
+  // wrongly skip the test for ANY asset level (Idaho's real law does not),
+  // while `asset_waiver: false` (chosen here) enforces a real test but
+  // under-states Idaho's genuine $5,000 generosity for households with
+  // $3,000-$5,000 in assets. Same #853 gap as above. Independently
+  // verified this has NO effect on any of the 92 v0.6 profiles' verdicts —
+  // none carries assets in the disclosed $3,000-$5,000 band — so this is a
+  // forward-looking gap disclosure, not a currently-observed miscompute.
+  //
+  // sua_by_tier: NULL — a genuine, disclosed sourcing gap, same discipline
+  // as PA's/NJ's/MN's null entries. IDAPA 16.03.04.543 confirms Idaho runs
+  // a FOUR-tier utility-allowance system (Standard/Limited/Minimum/
+  // Telephone — a structural match to this roster's Nebraska corpus pack's
+  // own four-tier finding, not a coincidence unique to either state) but
+  // the rule text defines each tier by QUALIFYING CRITERIA only, with no
+  // dollar figures — Idaho, like several states in this file, appears to
+  // publish the actual current dollar figures in a non-public eligibility
+  // manual this corpus pack's fetch window did not converge on. A $144
+  // Standard Medical Expense figure and a $744 shelter-cap figure both
+  // appear in secondary sources the corpus pack found, but neither is
+  // independently confirmed from a dated Idaho DHW table — not encoded
+  // here for that reason (the engine's shelter cap already comes from
+  // federal-tables.ts, not a per-state value, so this only affects the
+  // unconfirmed SUA dollar figures, correctly left null rather than
+  // guessed).
+  //
+  // drug_felony_ban: "modified" — IDAPA 16.03.04.287: individuals convicted
+  // of a controlled-substance possession/use/distribution felony "can
+  // receive Food Stamps when they comply with the terms of a withheld
+  // judgment, probation, or parole" and are ineligible only while NOT
+  // complying — a real, conditional restriction (not a full ban, not a
+  // full opt-out), correctly classified "modified" per #805's rule. Note a
+  // genuine STRUCTURAL difference from this file's other "modified" states
+  // worth naming precisely (the corpus pack's own Finding 3): Idaho's rule
+  // conditions eligibility on ONGOING SENTENCE COMPLIANCE, not conviction
+  // count (contrast SC's/other states' severity-tiered rules) and states
+  // no explicit treatment-program requirement (contrast PA's/AZ's
+  // treatment-conditioned rules) — the gate's mechanics are unaffected
+  // either way ("modified" fails open engine-wide per #805 until the
+  // engine models real per-condition facts), but the underlying policy
+  // shape is genuinely distinct and disclosed as such.
+  //
+  // abawd_waiver_avail: false — the corpus pack's Finding 4 (secondary-
+  // source-corroborated, not independently fetched from a dated current
+  // USDA waiver list specific to Idaho) found no evidence Idaho currently
+  // maintains an active statewide or area-wide ABAWD waiver. Chosen `false`
+  // (all counties presumed time-limited absent an individual exemption)
+  // consistent with the corpus pack's own operative reading, though
+  // flagged there as secondary-source-only.
+  //
+  // rmp_operated: false — Idaho DHW's own About SNAP page lists "Hot,
+  // prepared foods meant to be eaten right away" among non-purchasable
+  // items with no elderly/disabled/homeless carve-out mentioned, and no
+  // evidence of an Idaho RMP was found anywhere in the corpus pack's
+  // research (DHW's consumer materials, IDAPA 16.03.04's full text, or
+  // USDA's current RMP participation list).
+  //
+  // allotment_tier: "48" — no elevated-allotment finding for Idaho.
+  //
+  // FRESHNESS FLAG carried from the corpus pack, not modeled here (no
+  // engine axis exists for it): IDAPA 16.03.04.257's own ABAWD-exemption
+  // text (dated 7-1-24) is stale relative to OBBBA — still shows the
+  // pre-OBBBA 18-53/55 age range and the veteran/homeless/foster-youth
+  // exemptions OBBBA removed nationally 10/20/2025. The engine's own
+  // `gates/abawd.ts` already applies the CORRECT post-OBBBA federal age
+  // ceiling (64) and exemption rules engine-wide regardless of a state's
+  // own administrative-code lag, so this is informational only — no
+  // divergence between Idaho's stale rule text and the engine's actual
+  // behavior, disclosed for completeness per the corpus pack's own Finding
+  // 4.
+  //
+  // Oracle: built a fresh, independent Python calculator (not derived from
+  // engine output, per #636) directly from verdict.ts/benefit-calc.ts/
+  // gates/{income-tests,asset-test,abawd,student,composition,immigration,
+  // disqualifications,categorical}.ts/facts.ts/constants/federal-tables.ts's
+  // own read source, mirroring every gate and the benefit-calc formula
+  // exactly, including decimal.ts's half-up (roundDollar) and floor
+  // (floorDollar) rounding conventions. Cross-validated BEFORE trusting it
+  // for ID against FOUR already-merged states spanning every code path
+  // this batch needs (SC: bbce=true/130%/asset_waiver=true/drug="full";
+  // LA: bbce=true/200%/asset_waiver=true/drug="none"; MO: bbce=false/
+  // asset_waiver=false/drug="modified" — MO is Idaho's true 6-of-7 axis
+  // twin, differing only in sua_by_tier (MO real, ID null); MD:
+  // bbce=true/200%/asset_waiver=true/drug="modified") — 4 × (92 base +
+  // 37 variant) = 516/516 exact match (verdict AND benefit) reproducing
+  // each state's already-graded oracle under ITS OWN policy params before
+  // applying ID's own. Also checked all 37 rows across the 18
+  // non-expected_by_state variant profiles directly under ID's own params
+  // for an ID-specific verdict_by_state override: TWO real divergences
+  // found and authored (M23-variable-gig-income-anticipation's `averaged`
+  // and `recent_high_month` variants both flip from the shared default
+  // APPROVE to ID DENY — Idaho's plain-federal-130% gross screen ($1,696
+  // HH1, FY26) denies both the $1,800 and $2,200 gross-income test points,
+  // matching the exact same DENY pattern this file's KS/OH/GA/MO/IN/SC
+  // federal-130-or-equivalent states already carry for the same two rows —
+  // internally consistent, not a bug). ONE genuinely indeterminate row
+  // found and deliberately left UNOVERRIDDEN (not fabricated either
+  // direction): P58-elderly-retiree-tips-over-net-limit's
+  // `above_net_limit` variant is an E/D household whose real verdict
+  // depends on the unauthored SUA figure at a break-even point of exactly
+  // $1,131.50 (APPROVE above, DENY below) within the $0-$1,500 sweep range
+  // — this exact profile ALREADY carries an inline note in v0.6.json about
+  // MA/CA SUA-sensitivity for this same row, so ID's sensitivity is
+  // consistent with, not a departure from, prior-established precedent.
+  // Since this row's SUA tier is non-"none" and non-homeless, the live
+  // composer SKIPs it for ID regardless (same null-SUA gate as the 58
+  // affected base profiles below), so leaving it unoverridden has zero
+  // effect on any live grading — disclosed for completeness only.
+  //
+  // Authored all 92 expected_by_state.ID entries: 70 APPROVE / 22 DENY (a
+  // materially higher DENY count than this file's 200%-BBCE states, exactly
+  // as expected for a state running the plain federal 130%/100% income
+  // tests with no BBCE elevation). 32 of the 92 carry a real computed $
+  // benefit (sua_tier === "none" or homeless_deduction); the other 60 are
+  // blocked by the null-SUA gap (benefit: null), proven SUA-invariant via
+  // the same $0-$1,500 twelve-point sweep discipline PA's/NJ's/AK's builds
+  // used (0 of 60 genuinely indeterminate among the BASE profiles — the
+  // one indeterminate row found, P58's variant above, is a VARIANT row,
+  // not one of the 92 base profiles, so it doesn't count against that
+  // established "0 of N" pattern).
+  //
+  // Verification: `/profile-simulation state=ID` — 34 PASS / 0 FAIL / 95
+  // SKIP (matching PA's/NJ's/TN's null-SUA-gap shape exactly, not
+  // CA/MA/TX/.../LA's 129/0/0 clean bar — ID's real, disclosed null-SUA gap
+  // means it needs the same SKIP-heavy grade PA/NJ/TN already established
+  // as the correct, honest outcome for a genuinely unauthored SUA table).
+  // Every other registered state's harness run reconfirmed unchanged from
+  // its documented baseline: CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/
+  // VA/IN/MO/MD/CO/SC/LA all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129;
+  // PA/NJ/TN all 34/0/95 — every one identical to its pre-ID documented
+  // baseline, zero regressions. `tsc --noEmit -p packages/snap-rules`
+  // clean, 323/323 snap-rules tests pass (0 new — a schema-conformant pure
+  // addition needed no new unit tests), 44/47 profile-harness tests pass
+  // (3 pre-existing skips). Did not touch `packages/demeter-engine`
+  // (Idaho's corpus was already complete and out of scope) or any other
+  // state's `StatePolicy`/oracle coverage. Filed #853 for the genuine
+  // engine-architecture gap found (bbce's 3-effect bundling + asset_waiver's
+  // missing numeric-override slot) — every OTHER gap found (null SUA, the
+  // stale ABAWD rule text, the unconfirmed SME/shelter-cap secondary-source
+  // figures) is a per-state disclosed gap of an already-established class,
+  // not a new architecture issue, per this task's own instruction.
+  ID: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "ID",
+      label: "Idaho / DHW — Self-Reliance Programs",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
