@@ -673,9 +673,20 @@ const STATES: Record<string, StatePolicy[]> = {
     },
   ],
 
-  // Ohio is BBCE at the FEDERAL 130% — categorical eligibility that waives the
-  // asset test without raising the income screen, the same archetype as
-  // Georgia. Worth knowing before anyone assumes BBCE means 200%.
+  // CORRECTED (#751, 2026-08-16): Ohio is BBCE at 200% FPL, NOT the federal
+  // 130% previously encoded here. Primary source: OAC 5101:4-2-02 (eff.
+  // 10/1/2024), read directly at codes.ohio.gov — "an assistance group with
+  // gross income at or below two hundred per cent of the federal poverty
+  // level" that is "provided a notice and a text message with a link that
+  // includes information about Ohio careline services" is categorically
+  // eligible, with the rule explicitly waiving the "SNAP one hundred thirty
+  // per cent gross income limit," the "net income limit," AND the "resource
+  // limit." This is the pamphlet-conferral family (GA/MI/MN/NV/OR/WI/PA),
+  // NOT GA's narrower asset-only shape the prior comment here mistakenly
+  // matched it to. The 130% value previously here would have produced a
+  // false DENY for every OH household between 130% and 200% FPL — see
+  // #751 for the full discrepancy writeup and the oracle-fixture rebuild
+  // this required (data-ops/sample/civica-test-profiles/v0.6.json).
   //
   // Utility standards: ODJFS Food Assistance Change Transmittal No. 105
   // (Aug 29, 2025), "October 1, 2025, Mass Change", fetched live 2026-08-09
@@ -697,7 +708,7 @@ const STATES: Record<string, StatePolicy[]> = {
       state_code: "OH",
       label: "Ohio / ODJFS",
       bbce: true,
-      bbce_threshold_pct: 130,
+      bbce_threshold_pct: 200,
       bbce_fpl_basis: "federal_fiscal_year",
       asset_waiver: true,
       sua_by_tier: {
@@ -715,7 +726,18 @@ const STATES: Record<string, StatePolicy[]> = {
       // the Food and Nutrition Act, 7 U.S.C. 2011 et seq.) and attaches no
       // drug-specific condition. `false` is a finding, not a fail-open default.
       drug_felony_ban: "none",
-      abawd_waiver_avail: true,
+      // CORRECTED (#752, 2026-08-16): was `true`. Ohio Rev. Code
+      // § 5101.548(B) (eff. 9/30/2025, enacted via HB 96) reads, in full:
+      // "The department of job and family services shall not request, apply
+      // for, or renew a waiver authorized by section 6(o)(4) of the 'Food
+      // and Nutrition Act of 2008,' 7 U.S.C. 2015(o)(4)" — text confirmed
+      // directly at codes.ohio.gov. Corroborated against the third-party
+      // abawdmap.us tracker, which shows Ohio with "No statewide ABAWD
+      // waiver verified; the time limit applies." `false` is a statutory
+      // finding, not a fail-open default — same "under-claim a real
+      // restriction rather than over-claim a stale exemption" pattern as
+      // IL's #701 and MA's entry.
+      abawd_waiver_avail: false,
       rmp_operated: false,
     },
   ],
