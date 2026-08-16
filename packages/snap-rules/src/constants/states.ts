@@ -3260,6 +3260,190 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Mississippi — MDHS. First "batch tier" build (docs/plans/snap-rules-
+  // 50-state-engine-completion.md §6 step 6, "MS, NM, NE"), built after the
+  // 13 individual-tier states above. A genuine blank slate — no prior
+  // StatePolicy or oracle coverage existed. Every axis below is TRANSLATED
+  // from the already-cited primary-source findings in the merged Demeter
+  // corpus pack (packages/demeter-engine/src/states/ms/PROVENANCE.md +
+  // supplements.json, built 2026-08-12) — re-verification, not fresh
+  // research.
+  //
+  // bbce: false — THIS PACK'S FLAGSHIP FINDING, a genuine CONFIRMATION
+  // (not a correction) of a claim several secondary sources already make:
+  // MDHS's current SNAP Policy Manual, Rule 15.1, limits categorical
+  // eligibility strictly to households where every member receives or is
+  // eligible for TANF and/or SSI (7 CFR 273.2(j)(2)) — there is no
+  // income-based Broad-Based/Expanded CE track raising the gross-income
+  // ceiling for other households the way the majority of this roster's
+  // states document. Because bbce is false, bbce_threshold_pct is omitted
+  // and bbce_fpl_basis is null, the same shape this file's KS/IN/MO
+  // non-BBCE entries already established. asset_waiver: false follows
+  // directly — the narrow TANF/SSI cat-elig population skips the asset
+  // test via the engine's existing cat_elig mechanism regardless of this
+  // flag; the general NPA population faces the plain federal $3,000/
+  // $4,500 resource limit (Rule 16.1, which itself defers to USDA's
+  // annually-posted national standard rather than republishing a
+  // Mississippi-specific figure).
+  //
+  // sua_by_tier: null — a DISCLOSED, genuinely NEW combination for this
+  // file: MS is the FIRST non-BBCE null-SUA state (PA/NJ/TN's null-SUA
+  // entries are all BBCE states). MDHS's own manual (Rule 18.9) describes
+  // the SUA/BUA/telephone-allowance STRUCTURE precisely but defers dollar
+  // figures to "the appropriate utility allowances," and USDA FNA's own
+  // national FY2026 SUA-values PDF (which would carry Mississippi's
+  // specific figure) returned a live Akamai bot-detection block (HTTP 403)
+  // to every direct fetch attempt the corpus pack made. Populated as null
+  // rather than guessed or borrowed from another state, matching PA's/
+  // NJ's/TN's disclosed-gap discipline exactly. allotment_tier: "48" — no
+  // Mississippi-specific elevated max-allotment schedule found; MS's own
+  // Standard Deduction figures ($209/$223/$261/$299) match
+  // federal-tables.ts's FY26 snapshot exactly (Rule 18.2's 8.31%-of-net-
+  // income-standard formula, the same national minimum-standard-deduction
+  // formula 7 CFR 273.9(d)(1)(i) sets), the same shared-source signal
+  // this file's NC/VA/MO/MD/CO/SC/LA entries use.
+  //
+  // drug_felony_ban: "none" — CONFIRMED, not corrected: MDHS's own current
+  // manual, Rule 22.14, states unconditionally that Mississippi opted out
+  // of the federal drug-felony ban effective July 1, 2019 (Miss. Code Ann.
+  // §43-12-71), with no treatment-program requirement, no probation-
+  // compliance condition, no partial carve-out found anywhere in MDHS's
+  // text — a genuinely UNCONDITIONAL opt-out, a sharper finding than this
+  // file's KS/AZ/WI/FL "modified" entries. Access caveat carried from the
+  // corpus pack: law.justia.com returned HTTP 403 on the raw statute text;
+  // this finding rests on MDHS's own manual quoting and dating the
+  // statute's effect, corroborated by WebSearch (Public Health Law Center,
+  // Collateral Consequences Resource Center, 2019 contemporaneous
+  // coverage of then-HB 1352), not a direct read of the codified text
+  // itself. Because "none" behaves identically to "modified"/"unconfirmed"
+  // at today's gate (only "full" disqualifies, per #805), this
+  // classification has zero effect on MS's computed oracle relative to a
+  // hypothetical "modified" entry — disclosed for completeness, not
+  // because it changes any of the 92 profiles' verdicts.
+  //
+  // abawd_waiver_avail: false — a STRUCTURALLY DISTINCT finding worth
+  // naming precisely: unlike most `false` entries in this file (a labor-
+  // market fact or a discretionary policy choice), Mississippi's ABAWD
+  // waiver authority is gated to a formal natural-disaster declaration
+  // with the Governor's approval, NOT the federal unemployment-rate
+  // criteria — MDHS's own current manual, Rule 13.12, states MDHS "may
+  // seek a waiver of the ABAWD time limits with the Governor's approval
+  // only during a formal state or federal declaration of a natural
+  // disaster," citing Miss. Code Ann. §43-12-19. Currently zero active
+  // waivers anywhere in Mississippi, including several historically
+  // waiver-eligible Delta counties (ABAWDMap.us corroboration), consistent
+  // with this disaster-only statutory gate — no county-level lookup
+  // needed, same uniform-statewide-zero-waiver shape as this file's VA/
+  // MO/TN/MD/CO/SC/LA entries. rmp_operated: false — Mississippi is
+  // ABSENT from USDA FNA's own current Restaurant Meals Program state
+  // list (fetched 2026-08-12, clean HTTP 200), with no pending MS
+  // legislation found directing MDHS toward one.
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824, not re-filed, just newly
+  // confirmed present for Mississippi: MDHS excludes MOST vehicles from
+  // resources entirely (Rule 16.4.H, licensed/unlicensed on-road vehicles
+  // and any vehicle used as the household's home, no fair-market-value
+  // threshold at all — only recreational/off-road vehicles are counted,
+  // above a $4,650 excess-fair-market-value or equity threshold, Rule
+  // 16.5), matching this file's NC/MO/MD/CO/LA blanket-exclusion pattern;
+  // immaterial to every profile regardless since none of the 92 model a
+  // recreational-vehicle resource. Mississippi's medical deduction is
+  // ACTUAL-EXPENSE-ONLY (Rule 18.4, expenses minus $35, no flat Standard
+  // Medical Deduction shortcut) — already matched by this engine's
+  // existing benefit-calc.ts mechanism, no gap. Mississippi's ESAP
+  // requires EVERY household member to be 65+ (narrower than the 60+/
+  // disabled ESAP structure some other states use) and its Choctaw Food
+  // Distribution Program alternative-benefit choice — both informational
+  // only, no engine axis exists for certification-track or FDP-vs-SNAP
+  // choice for any state in this file.
+  //
+  // Oracle: MS's closest structural axis-twin among all 28 already-
+  // registered states is KANSAS — a FULL match on every axis that has a
+  // verdict/benefit consumer (bbce: false, bbce_threshold_pct: undefined,
+  // bbce_fpl_basis: null, asset_waiver: false, abawd_waiver_avail: false,
+  // allotment_tier: "48", rmp_operated: false; drug_felony_ban differs
+  // ("none" vs KS's "modified") but, per #805, has zero grading effect
+  // since neither value is "full"). Built a fresh, independent Python
+  // calculator (not derived from engine output, per #636) directly from
+  // verdict.ts/benefit-calc.ts/gates/{income-tests,asset-test,abawd,
+  // student,composition,immigration,disqualifications,categorical}.ts/
+  // facts.ts/constants/federal-tables.ts's own read source (not just their
+  // doc-comments), mirroring every gate and the benefit-calc formula
+  // exactly, including decimal.ts's half-up (roundDollar) and floor
+  // (floorDollar) rounding conventions. Cross-validated BEFORE trusting it
+  // for MS: 92/92 exact match (verdict AND benefit) reproducing KS's
+  // already-graded oracle under KS's own StatePolicy params, PLUS all 37
+  // non-expected_by_state variant rows (0 mismatches) — 129/129 total,
+  // before applying MS's own null-SUA policy. Confirmed MS's computed
+  // DENY set is IDENTICAL to KS's DENY set across all 92 base profiles
+  // (22 DENY / 70 APPROVE, 0 divergence) — a strong internal-consistency
+  // signal, expected precisely because every verdict-controlling axis
+  // (bbce/asset_waiver/abawd_waiver_avail/allotment_tier) is identical
+  // between the two states.
+  //
+  // Because sua_by_tier is null, MS's composer SKIPS (before any gate
+  // runs) for every profile with a non-"none" sua_tier and no
+  // homeless_deduction — the SAME shape PA's/NJ's/TN's null-SUA entries
+  // already established, but MS is the first NON-BBCE state to hit it.
+  // 32 of the 92 base profiles (sua_tier === "none" or homeless_deduction)
+  // get a real, independently-computed benefit; the other 60 get an
+  // independently-computed VERDICT ONLY (benefit: null), proven
+  // SUA-invariant via a $0-$1,500 sweep (step $50) per profile — 0 of the
+  // 60 were genuinely indeterminate at the base-profile level. One
+  // variant row IS genuinely indeterminate, matching a PATTERN already
+  // silently present in PA's/NJ's/TN's merged oracles:
+  // P58-elderly-retiree-tips-over-net-limit's "above_net_limit" variant
+  // flips verdict depending on the (currently unconfirmed) real MS SUA
+  // figure across the sweep — left deliberately unauthored for MS (no
+  // verdict_by_state.MS override), the same treatment PA's/NJ's/TN's
+  // already-merged P58 entries established. Two variant rows needed an
+  // MS-specific verdict_by_state override:
+  // M23-variable-gig-income-anticipation's two variants ($1,800/$2,200
+  // gross HH1) both clear every BBCE-200 state's threshold but fail MS's
+  // plain federal 130% screen ($1,696/97) — authored "MS": "DENY" into
+  // both, matching KS's/IN's/MO's already-authored value exactly (an
+  // independent confirmation the divergence is real, not a calculator
+  // bug). Also checked all 37 variant rows directly under MS's own params
+  // — found zero further divergence beyond the two M23 rows and the one
+  // indeterminate P58 row.
+  //
+  // Verification: `/profile-simulation state=MS` — 34 PASS / 0 FAIL / 95
+  // SKIP (of 129), every SKIP attributable to the documented null-SUA gap
+  // — matching PA's/NJ's/TN's exact 34/0/95 shape, not the clean 129/0/0
+  // bar the real-SUA states in this file clear. Confirmed zero regression:
+  // every other registered state's harness run unchanged from its
+  // documented baseline (CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129;
+  // PA/NJ/TN all 34/0/95 — all pre-existing, none newly introduced).
+  // Did not touch `packages/demeter-engine` (MS's corpus was already
+  // complete and out of scope) or any other state's StatePolicy/oracle
+  // coverage. AL/KY/OK (individual tier) and CT/UT/IA/AR (the first
+  // batch-tier segment) were all concurrently in-flight, not yet merged,
+  // as of this build — not touched, not coordinated with; a human
+  // reconciles the eventual rebase chain, same pattern as MO-vs-TN/IN. No
+  // new GitHub issue filed — every gap found (the null SUA, the vehicle-
+  // exclusion gap, the disaster-only ABAWD-waiver-authority structure) is
+  // a per-state disclosed gap of an already-documented class (#824-style
+  // Facts-shape/mechanism gaps, or PA's/NJ's/TN's null-SUA precedent), not
+  // a new engine architecture gap.
+  MS: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "MS",
+      label: "Mississippi / MDHS",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
