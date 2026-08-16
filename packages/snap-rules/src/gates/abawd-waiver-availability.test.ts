@@ -27,9 +27,16 @@ function facts(workClass: string, monthsUsed: number, countyFips?: string): Fact
 }
 
 describe("ABAWD area-waiver exemptions respect state waiver availability (#608)", () => {
-  it("honors a waiver exemption in a state that HAS waivers (CA)", () => {
+  it("CA's real waived counties still honor the exemption via county-level data, even though the state fallback is now false (#878)", () => {
+    // No county_fips given here — the gate has no per-county answer
+    // available, so it falls back to the state-level abawd_waiver_avail,
+    // which #878 now sets to `false` (matches abawdmap.us's tracker). CA
+    // DOES still hold real waivers in 7 of 58 counties — see the
+    // county-level tests below, which pass a real waived county_fips and
+    // still get honored via CA_WAIVER_COUNTY_FIPS regardless of this flag.
     const r = evaluateAbawd(facts("abawd_exempt:waiver_county", 3), ASOF, "CA");
-    expect(r.passes).toBe(true);
+    expect(r.passes).toBe(false);
+    expect(r.status).toBe("time_exhausted");
   });
 
   it("refuses a waiver exemption in a state with NO waivers (TX) once time is exhausted", () => {
@@ -70,11 +77,16 @@ describe("ABAWD area-waiver exemptions respect state waiver availability (#608)"
     expect(r.status).toBe("time_exhausted");
   });
 
-  it("CA falls back to the permissive state-level flag when county is UNKNOWN", () => {
+  it("CA falls back to the state-level flag when county is UNKNOWN — now false, matching the tracker (#878)", () => {
     // No county_fips given — the gate has no per-county answer available,
-    // so it falls back to abawd_waiver_avail: true exactly as before #614.
+    // so it falls back to abawd_waiver_avail. Before #614 this was the ONLY
+    // mechanism; before #878 the fallback was a permissive `true`. #878
+    // changes only the fallback's VALUE (now false, matching abawdmap.us),
+    // not the county-level precision #614 already built — see the
+    // known-waived-county test above, unaffected by this change.
     const r = evaluateAbawd(facts("abawd_exempt:waiver_county", 3), ASOF, "CA");
-    expect(r.passes).toBe(true);
+    expect(r.passes).toBe(false);
+    expect(r.status).toBe("time_exhausted");
   });
 });
 

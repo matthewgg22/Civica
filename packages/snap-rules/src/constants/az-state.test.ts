@@ -61,8 +61,8 @@ describe("Arizona unsourced/simplified axes stay honest", () => {
     expect(statePolicyFor("AZ", ASOF).drug_felony_ban).toBe("modified");
   });
 
-  it("ABAWD waiver flag is true — 7 real currently-waived areas exist (Yuma County + 6 Tribal areas)", () => {
-    expect(statePolicyFor("AZ", ASOF).abawd_waiver_avail).toBe(true);
+  it("ABAWD waiver flag is false (#878) — 7 real currently-waived areas exist (Yuma County + 6 Tribal areas), but the state-level fallback now matches abawdmap.us's tracker answer instead of this file's retired coverage-fraction judgment call", () => {
+    expect(statePolicyFor("AZ", ASOF).abawd_waiver_avail).toBe(false);
   });
 
   it("RMP is true — Arizona is one of only 9 states on USDA FNA's own RMP list", () => {

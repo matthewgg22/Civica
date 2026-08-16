@@ -288,20 +288,25 @@ const STATES: Record<string, StatePolicy[]> = {
       // behavior (fails open, does not disqualify) but honestly labeled
       // unconfirmed rather than inventing a "none" finding with no source.
       drug_felony_ban: "unconfirmed",
-      // DELIBERATELY `true`, and deliberately imprecise. California DOES hold
+      // CORRECTED (#878, 2026-08-16): was `true`. California DOES hold real
       // waivers — but only in 7 of 58 counties (Colusa, Imperial, Tulare,
       // Alpine, Merced, Monterey, Plumas; ACL 25-79 + 26-15, through
-      // 2026-10-31). Statewide time limits otherwise resumed 2026-06-01
-      // (ACL 25-93).
-      //
-      // A state-level boolean cannot express "7 of 58", so both values are
-      // wrong — the question is which way. `true` over-approves the 51
-      // time-limited counties; `false` would DENY the 7 genuinely waived ones.
-      // Wrongly denying food is the worse error, so we keep the permissive
-      // value until Facts carries county_fips and the county waiver list
-      // (CA_WAIVER_COUNTY_FIPS, already used by enrollment-api) can be read
-      // here. Do not "fix" this to false without that layer.
-      abawd_waiver_avail: true,
+      // 2026-10-31); statewide time limits otherwise resumed 2026-06-01
+      // (ACL 25-93). That real 7-county footprint is no longer this
+      // boolean's job — it's handled precisely by CA_WAIVER_COUNTY_FIPS
+      // (work-requirements/waiver-counties.ts), consulted by gates/abawd.ts
+      // whenever a household's county_fips is known. This field is now ONLY
+      // the fallback for the unknown-county case, and per user-authorized
+      // standing policy (#878: match the government's own tracker instead of
+      // this file's own "is the waived fraction big enough" judgment call),
+      // the fallback should answer the same way the tracker does: abawdmap.us
+      // (build 2026-06-22) places CA in "Partial/Area relief" and describes
+      // it as "Statewide waiver ended; time limit applies from June 1, 2026"
+      // — i.e. `false` is the correct general-case default, matching CA's
+      // own ACL 25-93 resumption date. Previously kept `true` under a
+      // "wrongly denying food is the worse error" fallback reasoning that
+      // this issue retires in favor of tracker-consistency.
+      abawd_waiver_avail: false,
       rmp_operated: true,
     },
   ],
@@ -490,7 +495,17 @@ const STATES: Record<string, StatePolicy[]> = {
       // behavior (fails open, does not disqualify) but honestly labeled
       // unconfirmed rather than inventing a "none" finding with no source.
       drug_felony_ban: "unconfirmed",
-      abawd_waiver_avail: true,
+      // CORRECTED (#878, 2026-08-16): was `true` with NO supporting citation
+      // at all. Independently verified live: WA DSHS's own Basic Food "Work
+      // Requirements" page states, as of 2/1/2026, "no areas in Washington
+      // are waived" — nonexempt ABAWDs in every area of the state are
+      // subject to work requirements and the 3-month time limit. abawdmap.us
+      // (build 2026-06-22) independently agrees, placing WA in its
+      // "No statewide waiver — rule applies" bucket. Per user-authorized
+      // standing policy (#878), `false` here is both the tracker's answer
+      // AND directly, affirmatively confirmed by WA's own agency — not a
+      // fail-open guess in either direction.
+      abawd_waiver_avail: false,
       // CORRECTED (#707, live-verified 2026-08-16): was `true` with no
       // supporting citation (unlike CA's, which cites AB 942 directly) and
       // no corpus-side verification (WA's Demeter pack has no RMP topic).
@@ -818,7 +833,20 @@ const STATES: Record<string, StatePolicy[]> = {
       // unchanged (fails open, same as before) until this engine models the
       // treatment-compliance condition at the facts level.
       drug_felony_ban: "modified",
-      abawd_waiver_avail: true,
+      // CORRECTED (#878, 2026-08-16): was `true` with NO supporting citation
+      // at all. Live search corroborates PA does hold real, narrow county/
+      // civil-subdivision-level waivers (high-unemployment pockets in the
+      // Mon Valley and northern PA, plus a Lancaster/Lebanon work-
+      // requirement start-date deferral through 9/2026) — but abawdmap.us
+      // (build 2026-06-22) places PA in its "No statewide waiver — rule
+      // applies" bucket, same as every state in this file without a named
+      // active/partial waiver. Per user-authorized standing policy (#878:
+      // match the government's own tracker rather than this file's own
+      // coverage-fraction judgment call), `false` is the correct answer —
+      // no PA_WAIVER_COUNTY_FIPS lookup exists to carry the real narrow
+      // exception the way CA's/MA's does, so this boolean is consulted for
+      // every PA household today, not just an unknown-area fallback.
+      abawd_waiver_avail: false,
       rmp_operated: false,
     },
   ],
@@ -962,20 +990,24 @@ const STATES: Record<string, StatePolicy[]> = {
       // confirming the repeal is fully reflected in current policy. `false`
       // here is a finding, not a fail-open default.
       drug_felony_ban: "none",
-      // Michigan DOES hold real ABAWD/TLFA waivers as of build (unlike GA,
-      // which holds none) — effective 12/1/2025, 15 counties (Alcona, Alger,
+      // CORRECTED (#878, 2026-08-16): was `true`. Michigan DOES hold real
+      // ABAWD/TLFA waivers — effective 12/1/2025, 15 counties (Alcona, Alger,
       // Arenac, Cheboygan, Iosco, Iron, Luce, Mackinac, Montmorency, Oceana,
       // Ogemaw, Oscoda, Presque Isle, Roscommon, Schoolcraft) and 6 cities (Bay
       // City, Detroit, Eastpointe, Flint, Jackson, Saginaw) are waived; every
-      // other county/city is TLFA-subject. A state-level boolean cannot express
-      // "15 of 83 counties + 6 cities," so `true` is both the CA-style
-      // permissive fallback AND, unlike CA, an affirmatively correct "this
-      // state currently holds waivers somewhere" finding — it is the FALLBACK
-      // ONLY for when a household's county/city isn't known; no
-      // MI_WAIVER_COUNTY_FIPS lookup exists yet (the CA/#614 pattern), so this
-      // boolean is consulted for every Michigan household today, not just the
-      // unknown-county case. Source: BEM 620, "TLFA Locations."
-      abawd_waiver_avail: true,
+      // other county/city is TLFA-subject (Source: BEM 620, "TLFA
+      // Locations" — kept here as documented context, not deleted). No
+      // MI_WAIVER_COUNTY_FIPS lookup exists yet (the CA/#614 pattern), so
+      // this boolean was previously consulted for every Michigan household,
+      // not just an unknown-county fallback, and was set `true` to avoid
+      // wrongly denying the real 15-county/6-city population. Per
+      // user-authorized standing policy (#878: match the government's own
+      // tracker rather than this file's own coverage-fraction judgment
+      // call), that reasoning is retired — abawdmap.us (build 2026-06-22)
+      // places MI in its "No statewide waiver — rule applies" bucket, same
+      // as every other state in this file without a named active/partial
+      // waiver, so `false` is the correct answer now.
+      abawd_waiver_avail: false,
       // Michigan's RMP is a genuine STATEWIDE program (like CA's AB 942
       // mandate), NOT county-restricted the way IL's is (Cook/Franklin only,
       // hence IL's `false`). Eligibility is gated by household composition
@@ -1133,24 +1165,27 @@ const STATES: Record<string, StatePolicy[]> = {
       // this before drafting anything (see PROVENANCE.md). `false` here is a
       // finding against the CURRENT statute, not a fail-open default.
       drug_felony_ban: "none",
-      // Nevada's statewide ABAWD waiver (02/01/2025-01/31/2026) was NOT
-      // renewed — "Nevada's statewide ABAWD waiver was terminated FY2026"
-      // (E&P MS B-470.1.2). But UNLIKE NY's post-expiration picture (2 tiny
-      // reservations out of 58 districts), Nevada's post-expiration waived-area
-      // list (eff. 2/1/2026, E&P MS B-472) is a genuinely substantial set: 11
-      // named Tribal/Reservation areas (Battle Mountain, Campbell Ranch,
-      // Dresslerville Colony, Elko Colony, Fort McDermitt, Las Vegas Indian
-      // Colony, Lovelock Indian Colony, Pyramid Lake Paiute Reservation,
-      // Reno-Sparks Indian Colony, Stewart Community, Walker River Reservation,
-      // Yerington Colony) PLUS all of Mineral County. No NV_WAIVER_COUNTY_FIPS
-      // lookup exists, so this boolean is consulted for every Nevada household
-      // today, not just an unknown-area fallback — same shape as MI's entry
-      // above. `true` is chosen under the same "wrongly denying food is the
-      // worse error" reasoning MI and CA use: it over-approves ABAWD households
-      // OUTSIDE the waived areas (including Nevada's population centers,
-      // Clark/Washoe counties, which are NOT on the waived list) rather than
-      // risk denying the real households inside 12 currently-waived areas.
-      abawd_waiver_avail: true,
+      // CORRECTED (#878, 2026-08-16): was `true`. Nevada's statewide ABAWD
+      // waiver (02/01/2025-01/31/2026) was NOT renewed — "Nevada's statewide
+      // ABAWD waiver was terminated FY2026" (E&P MS B-470.1.2). Nevada's
+      // post-expiration waived-area list (eff. 2/1/2026, E&P MS B-472) is a
+      // genuinely substantial set: 11 named Tribal/Reservation areas (Battle
+      // Mountain, Campbell Ranch, Dresslerville Colony, Elko Colony, Fort
+      // McDermitt, Las Vegas Indian Colony, Lovelock Indian Colony, Pyramid
+      // Lake Paiute Reservation, Reno-Sparks Indian Colony, Stewart
+      // Community, Walker River Reservation, Yerington Colony) PLUS all of
+      // Mineral County — kept here as documented context, not deleted. No
+      // NV_WAIVER_COUNTY_FIPS lookup exists, so this boolean was previously
+      // consulted for every Nevada household, not just an unknown-area
+      // fallback, and was set `true` to avoid wrongly denying the real
+      // 12-area population. Per user-authorized standing policy (#878:
+      // match the government's own tracker rather than this file's own
+      // coverage-fraction judgment call), that reasoning is retired —
+      // abawdmap.us (build 2026-06-22) places NV in its "No statewide
+      // waiver — rule applies" bucket, same as every other state in this
+      // file without a named active/partial waiver, so `false` is the
+      // correct answer now.
+      abawd_waiver_avail: false,
       // Confirmed ABSENT from USDA FNA's own national Restaurant Meals Program
       // page (fetched fresh by the NV corpus pack, updated the same week) —
       // lists AZ, CA, IL (Cook/Franklin only), MD, MA, MI, NY, RI, VA; no NV.
@@ -1204,14 +1239,22 @@ const STATES: Record<string, StatePolicy[]> = {
       // under-claim, not a fail-open default. Issue #805: re-typed to
       // "modified" — same gate behavior (fails open) as before.
       drug_felony_ban: "modified",
-      // Arizona's fixed 1/1/2025-12/31/2027 ABAWD clock currently has 7 real
-      // waived areas (CNAP FAA2.M.09.B): Yuma County, plus 6 Tribal/
-      // Reservation/Trust-Land areas (Cocopah, Hualapai, Maricopa/Ak-Chin,
-      // Salt River, San Carlos, Pascua Yaqui). No AZ_WAIVER_COUNTY_FIPS lookup
-      // exists, so — same reasoning as NV's and MI's entries above — `true`
-      // avoids wrongly denying the real households inside those 7 areas, at
-      // the cost of over-approving ABAWD households elsewhere in the state.
-      abawd_waiver_avail: true,
+      // CORRECTED (#878, 2026-08-16): was `true`. Arizona's fixed
+      // 1/1/2025-12/31/2027 ABAWD clock does carry 7 real waived areas
+      // (CNAP FAA2.M.09.B): Yuma County, plus 6 Tribal/Reservation/
+      // Trust-Land areas (Cocopah, Hualapai, Maricopa/Ak-Chin, Salt River,
+      // San Carlos, Pascua Yaqui) — kept here as documented context, not
+      // deleted. No AZ_WAIVER_COUNTY_FIPS lookup exists, so this boolean was
+      // previously consulted for every Arizona household, not just an
+      // unknown-area fallback, and was set `true` to avoid wrongly denying
+      // the real 7-area population. Per user-authorized standing policy
+      // (#878: match the government's own tracker rather than this file's
+      // own coverage-fraction judgment call), that reasoning is retired —
+      // abawdmap.us (build 2026-06-22) places AZ in its "No statewide
+      // waiver — rule applies" bucket, same as every other state in this
+      // file without a named active/partial waiver, so `false` is the
+      // correct answer now.
+      abawd_waiver_avail: false,
       // Confirmed on USDA FNA's own national Restaurant Meals Program page —
       // one of only 9 states nationally (AZ, CA, IL Cook/Franklin only, MD, MA,
       // MI, NY, RI, VA) — genuine statewide operation, not county-restricted.
@@ -1790,7 +1833,21 @@ const STATES: Record<string, StatePolicy[]> = {
       sua_by_tier: null,
       allotment_tier: "48",
       drug_felony_ban: "none",
-      abawd_waiver_avail: true,
+      // CORRECTED (#878, 2026-08-16): was `true`. The block comment above
+      // this entry documents NJ's real, time-bound Cape May County + Camden
+      // City waiver (eff. 2/1/2026-1/31/2027) — kept intact as documented
+      // context, not deleted. No per-place lookup exists for it (Camden
+      // City is a sub-county municipality, a genuine schema gap per #825),
+      // so this boolean was previously consulted for every NJ household,
+      // not just an unknown-area fallback, and was set `true` to avoid
+      // wrongly denying the real two-area population. Per user-authorized
+      // standing policy (#878: match the government's own tracker rather
+      // than this file's own coverage-fraction judgment call), that
+      // reasoning is retired — abawdmap.us (build 2026-06-22) places NJ in
+      // its "No statewide waiver — rule applies" bucket, same as every
+      // other state in this file without a named active/partial waiver, so
+      // `false` is the correct answer now.
+      abawd_waiver_avail: false,
       rmp_operated: false,
     },
   ],
@@ -5893,10 +5950,14 @@ const STATES: Record<string, StatePolicy[]> = {
   // 200, bbce_fpl_basis: federal_fiscal_year, asset_waiver: true,
   // allotment_tier: "48", rmp_operated: false; drug_felony_ban differed,
   // "modified" vs OR's "none", but had zero grading effect per #805 even
-  // then — NM's later reclassification to "none" above now makes this a
-  // 7-of-7 exact match on every axis except abawd_waiver_avail), differing
-  // only in abawd_waiver_avail (NM: true, OR: false) — the one axis
-  // expected to produce a real, explainable divergence. Built a fresh, independent
+  // then), differing only in abawd_waiver_avail (NM: true, OR: false) at
+  // the time this oracle was originally built — the one axis expected to
+  // produce a real, explainable divergence. Two later corrections (NM's
+  // drug_felony_ban reclassified to "none" by the ambiguity-default review,
+  // and abawd_waiver_avail flipped to false by #878's tracker-reconciliation
+  // sweep) now make NM and OR an exact 7-of-7 match on every StatePolicy
+  // axis — the M12 divergence this oracle documents below no longer
+  // applies; NM's DENY set is now identical to OR's. Built a fresh, independent
   // Python calculator (not derived from engine output, per #636) directly
   // from verdict.ts/benefit-calc.ts/gates/{income-tests,asset-test,abawd,
   // student,composition,immigration,disqualifications,categorical}.ts/
@@ -5961,8 +6022,38 @@ const STATES: Record<string, StatePolicy[]> = {
         none: new Decimal("0"),
       },
       allotment_tier: "48",
+      // drug_felony_ban corrected to "none" by the drug-felony ambiguity-
+      // default review (2026-08-16): NM's §27-2B-11(C) opt-out is genuinely
+      // ambiguous (scoped to "distribution" convictions only, leaving
+      // possession/use textually unaddressed), resolved via USDA FNS's SNAP
+      // State Options Report (16th Ed., June 2024), which lists NM under
+      // "No disqualification" — the same bucket as Utah, this file's
+      // existing "none" precedent for a comparably ambiguous statute.
       drug_felony_ban: "none",
-      abawd_waiver_avail: true,
+      // CORRECTED (#878, 2026-08-16): was `true`. The block comment above
+      // this entry documents NM's real, narrow waiver footprint — HCA's own
+      // "Keep Your Benefits, NM!" page states the new statewide work rules
+      // do "not apply in Luna County, Laguna Pueblo, San Felipe Pueblo,
+      // Taos Pueblo, or Tesuque Pueblo" (1 county + 4 pueblos) — kept intact
+      // as documented context, not deleted. No lookup exists for it (four
+      // of the five waived jurisdictions are Pueblos, not counties, a
+      // genuine schema gap the county-FIPS-keyed lookup can't represent),
+      // so this boolean was previously consulted for every NM household,
+      // not just an unknown-area fallback, and was set `true` to avoid
+      // wrongly denying that narrow population. THIS is the exact
+      // inconsistency that surfaced #878: Kentucky's comparably narrow
+      // 5-of-120-county waiver was encoded `false` under the identical
+      // "waived fraction too small to justify the permissive default"
+      // reasoning this file used elsewhere — the opposite conclusion from
+      // NM's, from the same reasoning, applied to a *smaller* footprint.
+      // Per user-authorized standing policy (#878: match the government's
+      // own tracker rather than this file's own coverage-fraction judgment
+      // call, precisely to end this kind of inconsistency), abawdmap.us
+      // (build 2026-06-22) places NM in its "No statewide waiver — rule
+      // applies" bucket, same as KY and every other state in this file
+      // without a named active/partial waiver — so `false` is now the
+      // correct, KY-consistent answer.
+      abawd_waiver_avail: false,
       rmp_operated: false,
     },
   ],

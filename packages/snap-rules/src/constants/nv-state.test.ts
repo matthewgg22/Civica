@@ -74,14 +74,14 @@ describe("Nevada unsourced/simplified axes stay honest", () => {
     expect(statePolicyFor("NV", ASOF).drug_felony_ban).toBe("none");
   });
 
-  it("ABAWD waiver flag is true — 12 real waived areas exist post-statewide-expiration", () => {
-    // Unlike NY (2 tiny reservations, `false`), Nevada's post-2/1/2026
-    // waived-area list is 11 Tribal/Reservation areas plus Mineral County —
-    // substantial enough that `true` follows CA's/MI's "wrongly denying food
-    // is the worse error" reasoning rather than NY's "essentially unwaived"
-    // one. No per-area lookup exists, so this boolean governs every NV
-    // household, not just an unknown-area fallback.
-    expect(statePolicyFor("NV", ASOF).abawd_waiver_avail).toBe(true);
+  it("ABAWD waiver flag is false (#878) — 12 real waived areas exist post-statewide-expiration, but the state-level fallback now matches abawdmap.us's tracker answer instead of this file's retired coverage-fraction judgment call", () => {
+    // Nevada's post-2/1/2026 waived-area list is real (11 Tribal/Reservation
+    // areas plus Mineral County, E&P MS B-472) — but no per-area lookup
+    // exists, and per #878 standing policy this fallback boolean now
+    // matches the government's own tracker (abawdmap.us: "no statewide
+    // waiver") rather than this file's own retired "is the waived fraction
+    // big enough" judgment call.
+    expect(statePolicyFor("NV", ASOF).abawd_waiver_avail).toBe(false);
   });
 
   it("RMP is false — Nevada is confirmed absent from USDA FNA's own RMP state list", () => {
