@@ -69,7 +69,16 @@
 //             No dollar-value or citation change needed. Full source trail:
 //             this issue and packages/demeter-engine/src/states/ma/
 //             PROVENANCE.md.
-//     RMP   — Massachusetts does not operate a Restaurant Meals Program.
+//     RMP   — RESOLVED (#711, live-fetched 2026-08-10 via OLGT 2023-85,
+//             re-verified live 2026-08-16). Massachusetts HAS operated a
+//             statewide-eligibility Restaurant Meals Program since
+//             December 2023 — DTA Online Guide Transmittal OLGT 2023-85:
+//             homeless/disabled/60+ households are automatically enrolled,
+//             no application required, and may purchase at ANY
+//             RMP-participating restaurant in Massachusetts (not confined
+//             to a launch catchment area). `rmp_operated: true`, following
+//             the same eligibility-vs-restaurant-density reasoning as CA's
+//             and IL's entries.
 //     ABAWD — RESOLVED, CONFIRMED CORRECT (#713, live-fetched 2026-08-10).
 //             `abawd_waiver_avail: false` is correct as of the best
 //             available evidence — the prior "STALE/INCORRECT" flag on
@@ -299,7 +308,17 @@ const STATES: Record<string, StatePolicy[]> = {
       // the waiver-availability rule now live (#608), this correctly stops an
       // area-based exemption from being honored anywhere in Massachusetts.
       abawd_waiver_avail: false,
-      rmp_operated: false,
+      // CORRECTED (#711, live-fetched 2026-08-10 via OLGT 2023-85, re-
+      // verified live 2026-08-16): Massachusetts has run a statewide-
+      // eligibility Restaurant Meals Program since December 2023 — was
+      // wrongly encoded `false` ("Massachusetts does not operate a
+      // Restaurant Meals Program"). Eligible households (60+, disabled, or
+      // homeless) are automatically enrolled and may purchase at any
+      // RMP-participating restaurant statewide — the same eligibility-vs-
+      // restaurant-density reasoning CA's and IL's `rmp_operated: true`
+      // entries already use. See MA's header comment above for the full
+      // source trail.
+      rmp_operated: true,
     },
   ],
 
@@ -447,7 +466,15 @@ const STATES: Record<string, StatePolicy[]> = {
       // unconfirmed rather than inventing a "none" finding with no source.
       drug_felony_ban: "unconfirmed",
       abawd_waiver_avail: true,
-      rmp_operated: true,
+      // CORRECTED (#707, live-verified 2026-08-16): was `true` with no
+      // supporting citation (unlike CA's, which cites AB 942 directly) and
+      // no corpus-side verification (WA's Demeter pack has no RMP topic).
+      // USDA FNA's own "States that Operate a Restaurant Meals Program"
+      // list — cross-checked live via two independent searches, 2026-08-16
+      // — names nine states (AZ, CA, IL, MD, MA, MI, NY, RI, VA). Washington
+      // is absent. WA's own DSHS Basic Food page makes no mention of a
+      // restaurant option either. `false` per that authoritative list.
+      rmp_operated: false,
     },
   ],
 
@@ -587,7 +614,24 @@ const STATES: Record<string, StatePolicy[]> = {
       // as before; `full` would deny all drug-felony households, not just
       // the trafficking subset the statute actually excludes.
       drug_felony_ban: "modified",
-      abawd_waiver_avail: true,
+      // CORRECTED (#708, live-verified 2026-08-16): was `true` with no
+      // supporting citation. USDA FNA's own ABAWD waiver-response file
+      // index (fna.usda.gov/snap/waivers/timelimit/2025-2029) lists no
+      // fl-abawd-response-*.pdf for either FY2025 or FY2026, unlike every
+      // comparison state checked (AZ/IL/MI/WA all have at least one file).
+      // Florida DCF's own ABAWD FAQ page (myflfamilies.com/services/
+      // public-assistance/abawd, fetched live 2026-08-16) makes no mention
+      // of any geographic waiver or exempt area at all — contrast CA's/
+      // IL's entries, which both publish an explicit waived-county list
+      // when a waiver is live. A live search independently corroborates no
+      // active FY26 ABAWD waiver for Florida. `false` per the same
+      // direction-of-error correction already applied to IL (#701/#702).
+      // Oracle note (#708): correcting this changes FL's expected verdict
+      // for the one ABAWD-waived-area profile (M12) — see
+      // data-ops/sample/civica-test-profiles/v0.6.json's FL row, rebuilt
+      // via an independent calculation (#636 methodology), not copied from
+      // engine output.
+      abawd_waiver_avail: false,
       rmp_operated: false,
     },
   ],
@@ -644,11 +688,19 @@ const STATES: Record<string, StatePolicy[]> = {
       // ABAWD waiver file or a newer IDHS Manual Release before assuming this
       // stays a flat `false` forever.
       abawd_waiver_avail: false,
-      // RMP runs in Cook and Franklin counties ONLY — a state-level boolean
-      // cannot say that, so it stays false until county granularity exists
-      // (#614). False under-claims a real program rather than over-claiming it
-      // statewide.
-      rmp_operated: false,
+      // CORRECTED (#704, live-fetched 2026-08-16): RMP was Cook/Franklin-
+      // county-only at the 2022 pilot stage (the reasoning this comment
+      // used to give), but IDHS Manual Release MR #25.26 (07/15/2025)
+      // states it "has since been made permanent" and now allows "eligible
+      // SNAP customers statewide to use their Illinois Link card at
+      // approved restaurants" — confirmed live against MR #25.26 itself
+      // (dhs.state.il.us item=168870) and independently corroborated by a
+      // live web search returning the same "statewide" language. Customer
+      // ELIGIBILITY is statewide and automatic (60+/disabled/homeless);
+      // restaurant participation density is a separate, still-growing
+      // question this does not resolve — the same eligibility-vs-density
+      // distinction CA's `rmp_operated: true` entry already draws.
+      rmp_operated: true,
     },
   ],
 

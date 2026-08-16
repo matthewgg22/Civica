@@ -96,17 +96,25 @@ describe("Tranche 1 SUA — FL/IL/OH sourced, PA a logged verification gap (#619
 });
 
 describe("Tranche 1 unsourced axes stay honest", () => {
-  it("FL/PA's ABAWD waiver flag stays fail-open — still unsourced", () => {
+  it("PA's ABAWD waiver flag stays fail-open — still unsourced", () => {
     // A wrong `false` STRIPS a claimed waiver exemption (gates/abawd.ts reads
     // false as "we affirmatively know this area holds no waiver") and denies
-    // food. Three sourcing passes have failed to produce a citable FY26
-    // answer for these two, so they stay true. See the states.ts block
-    // comment for why the real fix is county sets, not a boolean flip.
-    // OH moved out of this group (#752) — its flag is now SOURCED false,
-    // see the dedicated test below.
-    for (const c of ["FL", "PA"]) {
-      expect(statePolicyFor(c, ASOF).abawd_waiver_avail, `${c} waiver flag`).toBe(true);
-    }
+    // food. Sourcing passes have failed to produce a citable FY26 answer for
+    // PA, so it stays true. See the states.ts block comment for why the real
+    // fix is county sets, not a boolean flip. OH moved out of this group
+    // (#752) and FL moved out of this group (#708) — both flags are now
+    // SOURCED false, see the dedicated tests below.
+    expect(statePolicyFor("PA", ASOF).abawd_waiver_avail, "PA waiver flag").toBe(true);
+  });
+
+  it("Florida's ABAWD waiver flag is SOURCED false — no FY25/FY26 waiver response on file (#708)", () => {
+    // CORRECTED (#708, 2026-08-16): was fail-open `true`, grouped with PA
+    // above. USDA FNA's own ABAWD waiver-response file index lists no
+    // fl-abawd-response-*.pdf for either fiscal year (unlike AZ/IL/MI/WA,
+    // which each have at least one), and Florida DCF's own ABAWD page
+    // discloses no waived area at all. Same "under-claim a real restriction
+    // rather than over-claim a stale exemption" pattern as IL's #701.
+    expect(statePolicyFor("FL", ASOF).abawd_waiver_avail).toBe(false);
   });
 
   it("Illinois' ABAWD waiver flag is SOURCED false — statewide waiver ended Nov 2025 (#701)", () => {
@@ -130,9 +138,14 @@ describe("Tranche 1 unsourced axes stay honest", () => {
     expect(statePolicyFor("OH", ASOF).abawd_waiver_avail).toBe(false);
   });
 
-  it("Illinois RMP stays false — it runs in Cook and Franklin counties only", () => {
-    // Under-claiming a real county program beats advertising it statewide.
-    expect(statePolicyFor("IL", ASOF).rmp_operated).toBe(false);
+  it("Illinois RMP is SOURCED true — made permanent and statewide July 2025 (#704)", () => {
+    // CORRECTED (#704, 2026-08-16): was `false`, reasoned as "runs in Cook
+    // and Franklin counties only" — accurate for the 2022 pilot, stale now.
+    // IDHS Manual Release MR #25.26 (07/15/2025): RMP "has since been made
+    // permanent" and now allows "eligible SNAP customers statewide" to use
+    // it. Customer ELIGIBILITY is what this axis tracks (same reasoning as
+    // CA's `rmp_operated: true`), not restaurant participation density.
+    expect(statePolicyFor("IL", ASOF).rmp_operated).toBe(true);
   });
 });
 
