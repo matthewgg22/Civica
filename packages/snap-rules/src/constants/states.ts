@@ -41,50 +41,62 @@
 //             2026-01-15 (FR Doc 2026-00755) — engine must adopt
 //             CY2026 values before MA pilot reads BBCE thresholds
 //             after 2026-02-01.
-//     SUA   — !!! PENDING DTA PRIMARY-SOURCE VERIFICATION !!!
-//             Engine currently encodes HCSUA $914, LUA $556, phone $64
-//             with citation DTA 106 CMR 364.945. These were confirmed
-//             via Mass Legal Help cross-reference + Justia/LII regulation
-//             mirrors in the 2026-06-02 triple-check (mass.gov returned
-//             HTTP 403 to direct WebFetch), but the 2026-06-02 audit
-//             pass flagged two open questions:
-//               1. MA LUA $556 — could not independently confirm vs
-//                  DTA's own FY26 SUA/LUA chart. (Note: MA HCSUA $914
-//                  is plausible for heating; LUA at $556 means ~60% of
-//                  HCSUA, higher than other states' ratios.)
-//               2. CMR section: the audit suggests SUA may live at
-//                  106 CMR 366.910 (Bay State CAP SUA, which CAP
-//                  recipients use) with the broader shelter/utility
-//                  framework at 106 CMR 364.400-series. 364.945 may be
-//                  the wrong subsection.
-//             ACTION: any A02-style MA elderly+SSI benefit math is
-//             illustrative until the operator verifies (a) values
-//             against DTA's published FY26 chart, and (b) the correct
-//             CMR citation against live 106 CMR text. The qualitative
-//             lesson "MA utility allowances ≫ CA" is sound; exact $
-//             and CMR section are not yet primary-sourced.
-//             VERIFICATION ATTEMPTS LOGGED:
-//               - 2026-06-02 triple-check: mass.gov 403, Mass Legal
-//                 Help cross-reference accepted (value $914/$556/$64)
-//               - 2026-06-03 integrity audit Fix #6: re-attempted
-//                 mass.gov (403), masslegalhelp.org (403), Cornell
-//                 LII 106 CMR (directory only, no section text). All
-//                 three primary fetches blocked. PENDING continues.
-//             This needs an operator pull from a logged-in DTA
-//             portal session or via a browser that defeats the bot
-//             detection. Agent fetches will not unblock it.
-//             Bay State CAP recipients use a CAP-SPECIFIC SUA per
-//             106 CMR 366.910 (separate from the per-state SUA above);
-//             engine silently substitutes HCSUA for CAP recipients —
-//             miscompute for ~70K MA elderly+SSI cases. Either add a
-//             CAP detection branch or route CAP cases to a not-
-//             implemented surface.
-//     RMP   — Massachusetts does not operate a Restaurant Meals Program.
-//     ABAWD — !!! STALE/INCORRECT as a state-level flag !!!
-//             MA statewide waiver EXPIRED 2025-06-30 per DTA
-//             OLGTM-2025-31. No active geographic waivers in MA as of
-//             FY26 (FNS reinstatement litigation ongoing). Engine's
-//             `abawd_waiver_avail: true` is wrong for the entire state.
+//     SUA   — RESOLVED, CONFIRMED CORRECT (#712, live-fetched 2026-08-10).
+//             Engine encodes HCSUA $914, LUA $556, phone $64, cited to DTA
+//             106 CMR 364.945. Both open doubts the prior PENDING flag
+//             raised are now closed:
+//               1. MA LUA $556 — confirmed against DTA's own "Helpful
+//                  Charts and Figures—SNAP" table (eohhs.ehs.state.ma.us,
+//                  "Last updated: 1/2026"): Heating/Cooling SUA $914,
+//                  Nonheating SUA $556, Phone SUA $64 — an exact match.
+//                  A prior-year mass.gov PDF recovered via the Wayback
+//                  Machine ($890/$542/$62, effective 10/1/2024) confirms
+//                  the ~61% LUA/HCSUA ratio is MA's own stable methodology
+//                  across at least two years, not an anomaly.
+//               2. CMR section — both 364.945 and 366.910 (Bay State CAP)
+//                  are real, separate citations, but in both FY25 and FY26
+//                  the Bay State CAP SUA has been numerically IDENTICAL to
+//                  the regular Heating/Cooling SUA ($890=$890, $914=$914),
+//                  confirmed via DTA's own Bay State CAP SUA PDF (Wayback,
+//                  FY25) and the current Helpful Charts table (both years).
+//                  The engine's use of HCSUA for everyone, including Bay
+//                  State CAP recipients, has produced the mathematically
+//                  correct number in both years checked, even without a
+//                  distinct 366.910 branch — materially lowering the
+//                  urgency of the ~70K-case miscompute risk this comment
+//                  used to flag, though the citations remain legally
+//                  separate and a future year could diverge.
+//             No dollar-value or citation change needed. Full source trail:
+//             this issue and packages/demeter-engine/src/states/ma/
+//             PROVENANCE.md.
+//     RMP   — RESOLVED (#711, live-fetched 2026-08-10 via OLGT 2023-85,
+//             re-verified live 2026-08-16). Massachusetts HAS operated a
+//             statewide-eligibility Restaurant Meals Program since
+//             December 2023 — DTA Online Guide Transmittal OLGT 2023-85:
+//             homeless/disabled/60+ households are automatically enrolled,
+//             no application required, and may purchase at ANY
+//             RMP-participating restaurant in Massachusetts (not confined
+//             to a launch catchment area). `rmp_operated: true`, following
+//             the same eligibility-vs-restaurant-density reasoning as CA's
+//             and IL's entries.
+//     ABAWD — RESOLVED, CONFIRMED CORRECT (#713, live-fetched 2026-08-10).
+//             `abawd_waiver_avail: false` is correct as of the best
+//             available evidence — the prior "STALE/INCORRECT" flag on
+//             this comment was itself the stale artifact, not the value.
+//             OLGT 2025-31 (July 25, 2025): "DTA's last geographic waiver
+//             expired June 30, 2025 ... the Department cannot continue
+//             applying the 'Resident of a Waived Area' reason." OLGT
+//             2025-59 (Oct 30, 2025, the most recent ABAWD bulletin found)
+//             shows no reinstatement between July and October 2025.
+//             STALE-ARTIFACT TRAP for a future refresh pass: a DTA-hosted
+//             page titled "ABAWD Work Rules – Waived Areas" is still live
+//             and claims the time limit is "waived in all cities and towns
+//             in Massachusetts at this time" — but its own PDF metadata
+//             shows it hasn't been touched since August 2022, nearly three
+//             years before the 2025 expiration, and OLGT 2025-31 itself
+//             lists that exact page among the ones it says it revised (but
+//             apparently didn't). Trust the dated OLGT bulletin, not an
+//             undated/old-dated "current status" page.
 //             Sources: mass.gov/info-details/abawd-waived-areas;
 //             MLRI 2025 ABAWD Guide.
 //     Mirror: Civica/Features/SNAP/SNAPRules/snap_eligibility_ma.json
@@ -296,7 +308,17 @@ const STATES: Record<string, StatePolicy[]> = {
       // the waiver-availability rule now live (#608), this correctly stops an
       // area-based exemption from being honored anywhere in Massachusetts.
       abawd_waiver_avail: false,
-      rmp_operated: false,
+      // CORRECTED (#711, live-fetched 2026-08-10 via OLGT 2023-85, re-
+      // verified live 2026-08-16): Massachusetts has run a statewide-
+      // eligibility Restaurant Meals Program since December 2023 — was
+      // wrongly encoded `false` ("Massachusetts does not operate a
+      // Restaurant Meals Program"). Eligible households (60+, disabled, or
+      // homeless) are automatically enrolled and may purchase at any
+      // RMP-participating restaurant statewide — the same eligibility-vs-
+      // restaurant-density reasoning CA's and IL's `rmp_operated: true`
+      // entries already use. See MA's header comment above for the full
+      // source trail.
+      rmp_operated: true,
     },
   ],
 
@@ -444,7 +466,15 @@ const STATES: Record<string, StatePolicy[]> = {
       // unconfirmed rather than inventing a "none" finding with no source.
       drug_felony_ban: "unconfirmed",
       abawd_waiver_avail: true,
-      rmp_operated: true,
+      // CORRECTED (#707, live-verified 2026-08-16): was `true` with no
+      // supporting citation (unlike CA's, which cites AB 942 directly) and
+      // no corpus-side verification (WA's Demeter pack has no RMP topic).
+      // USDA FNA's own "States that Operate a Restaurant Meals Program"
+      // list — cross-checked live via two independent searches, 2026-08-16
+      // — names nine states (AZ, CA, IL, MD, MA, MI, NY, RI, VA). Washington
+      // is absent. WA's own DSHS Basic Food page makes no mention of a
+      // restaurant option either. `false` per that authoritative list.
+      rmp_operated: false,
     },
   ],
 
@@ -584,7 +614,24 @@ const STATES: Record<string, StatePolicy[]> = {
       // as before; `full` would deny all drug-felony households, not just
       // the trafficking subset the statute actually excludes.
       drug_felony_ban: "modified",
-      abawd_waiver_avail: true,
+      // CORRECTED (#708, live-verified 2026-08-16): was `true` with no
+      // supporting citation. USDA FNA's own ABAWD waiver-response file
+      // index (fna.usda.gov/snap/waivers/timelimit/2025-2029) lists no
+      // fl-abawd-response-*.pdf for either FY2025 or FY2026, unlike every
+      // comparison state checked (AZ/IL/MI/WA all have at least one file).
+      // Florida DCF's own ABAWD FAQ page (myflfamilies.com/services/
+      // public-assistance/abawd, fetched live 2026-08-16) makes no mention
+      // of any geographic waiver or exempt area at all — contrast CA's/
+      // IL's entries, which both publish an explicit waived-county list
+      // when a waiver is live. A live search independently corroborates no
+      // active FY26 ABAWD waiver for Florida. `false` per the same
+      // direction-of-error correction already applied to IL (#701/#702).
+      // Oracle note (#708): correcting this changes FL's expected verdict
+      // for the one ABAWD-waived-area profile (M12) — see
+      // data-ops/sample/civica-test-profiles/v0.6.json's FL row, rebuilt
+      // via an independent calculation (#636 methodology), not copied from
+      // engine output.
+      abawd_waiver_avail: false,
       rmp_operated: false,
     },
   ],
@@ -641,11 +688,19 @@ const STATES: Record<string, StatePolicy[]> = {
       // ABAWD waiver file or a newer IDHS Manual Release before assuming this
       // stays a flat `false` forever.
       abawd_waiver_avail: false,
-      // RMP runs in Cook and Franklin counties ONLY — a state-level boolean
-      // cannot say that, so it stays false until county granularity exists
-      // (#614). False under-claims a real program rather than over-claiming it
-      // statewide.
-      rmp_operated: false,
+      // CORRECTED (#704, live-fetched 2026-08-16): RMP was Cook/Franklin-
+      // county-only at the 2022 pilot stage (the reasoning this comment
+      // used to give), but IDHS Manual Release MR #25.26 (07/15/2025)
+      // states it "has since been made permanent" and now allows "eligible
+      // SNAP customers statewide to use their Illinois Link card at
+      // approved restaurants" — confirmed live against MR #25.26 itself
+      // (dhs.state.il.us item=168870) and independently corroborated by a
+      // live web search returning the same "statewide" language. Customer
+      // ELIGIBILITY is statewide and automatic (60+/disabled/homeless);
+      // restaurant participation density is a separate, still-growing
+      // question this does not resolve — the same eligibility-vs-density
+      // distinction CA's `rmp_operated: true` entry already draws.
+      rmp_operated: true,
     },
   ],
 
@@ -972,8 +1027,10 @@ const STATES: Record<string, StatePolicy[]> = {
       // independent secondary sources agree; NOT independently confirmed
       // against an OTDA primary source in this pass — the NY corpus pack
       // itself (built 2026-08-07) never addressed this topic, a real gap in
-      // that pack worth a follow-up). Consistent with every other Northeast/
-      // progressive-policy state already in this file (IL, NV, MA all "none").
+      // that pack worth a follow-up). Consistent with every other
+      // progressive-drug-policy state already in this file (IL, NV, MA all
+      // "none" — not a single region: IL is Midwest, NV is Mountain West,
+      // MA is the only one actually in the Northeast).
       // Kept as "none" rather than "unconfirmed" since a real (if secondary)
       // citation exists — but the primary-source gap above still stands.
       drug_felony_ban: "none",
@@ -1564,8 +1621,9 @@ const STATES: Record<string, StatePolicy[]> = {
   // not a live policy divergence; DFD's public messaging already states
   // the correct current $3,000/$4,500).
   //
-  // sua_by_tier: null — genuinely unconfirmed, same discipline as PA's and
-  // MN's null entries above, NOT a guess. The corpus pack's own build
+  // sua_by_tier: null — genuinely unconfirmed, same discipline as PA's
+  // null entries above, NOT a guess (MN's own null-SUA gap was later
+  // closed — see MN's entry, #863). The corpus pack's own build
   // could independently corroborate only ONE of the three federally-
   // required tiers, and only secondarily: NJ's HCSUA is reported at $977/
   // month (up from $878, eff. 10/1/2025) by a NJ Medicaid Communication
@@ -2165,7 +2223,8 @@ const STATES: Record<string, StatePolicy[]> = {
   // Excess Shelter cap, Homeless Deduction — see allotment_tier below)
   // ARE independently confirmed current via the same 10/2025 Flyer. This
   // is a real "sourced but possibly one FY stale" figure, not a "no
-  // figure exists at all" gap (PA's/NJ's/MN's null discipline) — the same
+  // figure exists at all" gap (PA's/NJ's null discipline — MN's null-SUA
+  // gap was later closed, #863) — the same
   // distinction MA's entry above already draws (PENDING VERIFICATION,
   // still populated) — so populated with the disclosed staleness risk
   // named here rather than blocking benefit computation entirely.
@@ -2311,7 +2370,9 @@ const STATES: Record<string, StatePolicy[]> = {
   // KS's own bbce:false entry already uses in this file.
   //
   // sua_by_tier — FULLY POPULATED, not null: a genuine contrast with this
-  // file's PA/NJ/MN null entries. IN PPM 3020.00.00's four flat-dollar
+  // file's PA/NJ null entries (MN was also null-SUA at the time this was
+  // written; MN's gap was later closed by #863). IN PPM 3020.00.00's four
+  // flat-dollar
   // (non-size-scaled) utility tiers are all current, dated 10/01/2025, and
   // independently cross-checked TWO ways before trusting them (corpus pack
   // adversarial refute pass): against the SAME manual's own prior-period
@@ -2488,7 +2549,8 @@ const STATES: Record<string, StatePolicy[]> = {
   // bbce_fpl_basis: "federal_fiscal_year" — TN's rule text does not itself
   // state an FFY-vs-calendar-year framing (unlike AK's/NC's/VA's explicit
   // "effective October 1" captions); this follows the roster's established
-  // default (every state but MA is federal_fiscal_year) absent contrary
+  // default (every state but MA and ME is federal_fiscal_year — ME is a
+  // calendar_year twin of MA, see ME's own entry below) absent contrary
   // evidence, an honest inference rather than a confirmed citation.
   //
   // *** GENUINE STRUCTURAL FINDING, this file's ONLY instance so far, filed
@@ -2527,7 +2589,8 @@ const STATES: Record<string, StatePolicy[]> = {
   // federal-tables.ts) still applies to the tested minority.
   //
   // sua_by_tier: null — a genuine, disclosed gap, same discipline as PA's/
-  // NJ's/MN's null entries, NOT a guess. TDHS Policy 24.12 and Policy 24.18
+  // NJ's null entries, NOT a guess (MN's own null-SUA gap was later
+  // closed, #863). TDHS Policy 24.12 and Policy 24.18
   // BOTH explicitly defer exact dollar figures to an internal "Family
   // Assistance Standards Desk Guide" the corpus pack could not locate
   // published anywhere on tn.gov. The ONLY publicly fetchable dollar table
@@ -2862,7 +2925,7 @@ const STATES: Record<string, StatePolicy[]> = {
   // update" disclosure, since MO's own figure was merely UNCONFIRMED
   // current where Colorado's own text AFFIRMATIVELY states the stale date.
   // Populated anyway, following MO's disclosed-confidence precedent rather
-  // than PA's/NJ's/TN's/MN's "no figure exists at all" null treatment,
+  // than PA's/NJ's/TN's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) "no figure exists at all" null treatment,
   // because a real (if one-cycle-stale) sourced figure is a materially
   // different, better-evidenced case than no figure at all — but this
   // staleness risk should be re-verified against a fresher Colorado source
@@ -3418,13 +3481,13 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Verification: `/profile-simulation state=LA` — 129/129 PASS, 0 FAIL,
   // 0 SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/
-  // VA/IN/MO/MD/CO/SC's bar, not PA's/NJ's/TN's/MN's SKIP-heavy shape —
+  // VA/IN/MO/MD/CO/SC's bar, not PA's/NJ's/TN's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) SKIP-heavy shape —
   // LA's real, disclosed-confidence SUA figures mean it did not need
   // PA's/NJ's/TN's null-SUA fallback). Every other registered state's
   // harness run reconfirmed unchanged from its documented baseline, all
   // 27 pre-existing states checked individually (not spot-checked):
   // CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC all
-  // 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 —
+  // 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129 (later fixed to 129/0/0 by #863); PA/NJ/TN all 34/0/95 —
   // every one identical to its pre-LA documented baseline, zero
   // regressions. `tsc --noEmit -p packages/snap-rules` clean, 323/323
   // snap-rules tests pass (0 new — a schema-conformant pure addition
@@ -3652,13 +3715,13 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Verification: `/profile-simulation state=OK` — 129/129 PASS, 0 FAIL,
   // 0 SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/
-  // VA/IN/MO/MD/CO/SC/LA's bar, not PA's/NJ's/TN's/MN's SKIP-heavy shape —
+  // VA/IN/MO/MD/CO/SC/LA's bar, not PA's/NJ's/TN's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) SKIP-heavy shape —
   // OK's real, current SUA figures mean it did not need PA's/NJ's/TN's
   // null-SUA fallback). Every other registered state's harness run
   // reconfirmed unchanged from its documented baseline, all 27
   // pre-existing states checked individually (not spot-checked):
   // CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC/LA all
-  // 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 —
+  // 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129 (later fixed to 129/0/0 by #863); PA/NJ/TN all 34/0/95 —
   // every one identical to its pre-OK documented baseline, zero
   // regressions. `tsc --noEmit -p packages/snap-rules` clean, 323/323
   // snap-rules tests pass (0 new — a schema-conformant pure addition
@@ -3861,12 +3924,12 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Verification: `/profile-simulation state=ME` — 129/129 PASS, 0 FAIL, 0
   // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
-  // IN/MO/MD/CO/SC/LA/OK's bar, not PA's/NJ's/TN's/MN's SKIP-heavy shape —
+  // IN/MO/MD/CO/SC/LA/OK's bar, not PA's/NJ's/TN's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) SKIP-heavy shape —
   // ME's real, current SUA figures mean it did not need PA's/NJ's/TN's
   // null-SUA fallback). Every other registered state's harness run
   // reconfirmed unchanged from its documented baseline: CA/WA/TX/GA/MI/IL/
   // FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC/LA/OK all 129/0/0; NY
-  // 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 — every one
+  // 127/2/0; AZ 128/1/0; MN 0/0/129 (later fixed to 129/0/0 by #863); PA/NJ/TN all 34/0/95 — every one
   // identical to its pre-ME documented baseline, zero regressions. `tsc
   // --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass (0
   // new — a schema-conformant pure addition needed no new unit tests),
@@ -4066,13 +4129,14 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Verification: `/profile-simulation state=RI` — 129/129 PASS, 0 FAIL, 0
   // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
-  // IN/MO/MD/CO/SC/LA/OK/ME's bar, not PA's/NJ's/TN's/MN's SKIP-heavy
+  // IN/MO/MD/CO/SC/LA/OK/ME's bar, not PA's/NJ's/TN's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) SKIP-heavy
   // shape — RI's real, current SUA figures mean it did not need PA's/NJ's/
   // TN's null-SUA fallback despite sharing NJ's 185% threshold). Every
   // other registered state's harness run reconfirmed unchanged from its
   // documented baseline: CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/
   // IN/MO/MD/CO/SC/LA/OK/ME all 129/0/0; NY 127/2/0; AZ 128/1/0; MN
-  // 0/0/129; PA/NJ/TN all 34/0/95 — every one identical to its pre-RI
+  // 0/0/129 (later fixed to 129/0/0 by #863); PA/NJ/TN all 34/0/95 —
+  // every one identical to its pre-RI
   // documented baseline, zero regressions. `tsc --noEmit -p packages/
   // snap-rules` clean, 323/323 snap-rules tests pass (0 new — a schema-
   // conformant pure addition needed no new unit tests), 44/47 profile-
@@ -4238,12 +4302,12 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Verification: `/profile-simulation state=MT` — 129/129 PASS, 0 FAIL, 0
   // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
-  // IN/MO/MD/CO/SC/LA/OK/ME/RI's bar, not PA's/NJ's/TN's/MN's SKIP-heavy
+  // IN/MO/MD/CO/SC/LA/OK/ME/RI's bar, not PA's/NJ's/TN's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) SKIP-heavy
   // shape — MT's real, current SUA figures mean it did not need PA's/NJ's/
   // TN's null-SUA fallback). Every other registered state's harness run
   // reconfirmed unchanged from its documented baseline: CA/WA/TX/GA/MI/IL/
   // FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC/LA/OK/ME/RI all 129/0/0;
-  // NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 — every one
+  // NY 127/2/0; AZ 128/1/0; MN 0/0/129 (later fixed to 129/0/0 by #863); PA/NJ/TN all 34/0/95 — every one
   // identical to its pre-MT documented baseline, zero regressions. `tsc
   // --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass
   // (0 new — a schema-conformant pure addition needed no new unit tests),
@@ -4340,7 +4404,7 @@ const STATES: Record<string, StatePolicy[]> = {
   // does NOT waive the asset test) — Alabama's ECE genuinely does.
   //
   // sua_by_tier: null — a genuine, disclosed RESEARCH GAP, same discipline
-  // as PA's/NJ's/TN's/MN's null entries: AL POE § 903(F)-(J) describes the
+  // as PA's/NJ's/TN's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) null entries: AL POE § 903(F)-(J) describes the
   // Standard Utility Allowance / Basic Utility Allowance / Telephone
   // Standard STRUCTURE in full, but every dollar figure is deferred to an
   // internal "Basis of Issuance Chart" this pack could not locate at any
@@ -4478,7 +4542,8 @@ const STATES: Record<string, StatePolicy[]> = {
   // genuinely indeterminate): 34 determinate (32 APPROVE / 2 DENY, real
   // computed benefit) + 58 null-SUA-blocked (40 APPROVE / 18 DENY,
   // benefit: null, SUA-invariance-proven across the same $0-$1,500 sweep
-  // PA/NJ/TN/MN used) = 72 APPROVE / 20 DENY overall. AL's DENY set is a
+  // PA/NJ/TN used, the same methodology MN's own oracle used before its
+  // null-SUA gap was closed by #863) = 72 APPROVE / 20 DENY overall. AL's DENY set is a
   // strict superset of NC's/VA's/MD's/CO's 12-profile DENY set (the same 12,
   // plus 8 additional gross-income-margin profiles — D01, G06, M01, M04,
   // M06, MX3, MX4, P59 — that clear 200% FPL but fail AL's lower 130%
@@ -4491,8 +4556,9 @@ const STATES: Record<string, StatePolicy[]> = {
   // `StatePolicy.sua_by_tier`) SKIPs any profile whose `sua_tier` isn't
   // "none"/homeless BEFORE ever consulting the independently-proven
   // invariant verdict this oracle carries — the fixture is authored for
-  // when a real SUA figure eventually lands, exactly PA's/NJ's/TN's/MN's
-  // already-established reason for doing the same.
+  // when a real SUA figure eventually lands, exactly PA's/NJ's/TN's
+  // already-established reason for doing the same (and exactly what
+  // happened for MN itself, later, via #863).
   //
   // Verification: `/profile-simulation state=AL` — 34 PASS / 0 FAIL / 95
   // SKIP (of 129), matching PA's/NJ's/TN's exact SKIP-heavy shape (NOT
@@ -4501,7 +4567,7 @@ const STATES: Record<string, StatePolicy[]> = {
   // registered state's harness run reconfirmed unchanged from its
   // documented baseline, all 26 pre-existing states checked individually
   // (not spot-checked): CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/
-  // MO/MD/CO all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all
+  // MO/MD/CO all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129 (later fixed to 129/0/0 by #863); PA/NJ/TN all
   // 34/0/95 — every one identical to its pre-AL documented baseline, zero
   // regressions. `tsc --noEmit -p packages/snap-rules` clean, 323/323
   // snap-rules tests pass (0 new — a schema-conformant pure addition needed
@@ -4536,19 +4602,22 @@ const STATES: Record<string, StatePolicy[]> = {
   ],
 
   // Kentucky (individual tier, §6 step 3, eleventh state after NC/NJ/VA/TN/
-  // IN/MO/MD/CO/SC/LA) — built Kentucky's `StatePolicy` entry AND full
-  // 92-profile oracle coverage from scratch (KY had neither before this PR),
-  // translating KY's already-merged Demeter corpus pack
-  // (packages/demeter-engine/src/states/ky/, PROVENANCE.md + supplements.json
-  // + authorities.json, built 2026-08-12) into the engine's stricter typed
-  // shape per §5's process. At this build's start, two OTHER individual-tier
-  // builds were concurrently in-flight, NOT yet merged: Alabama (AL, state
-  // #10, PR open, based on an older commit before SC merged) and Louisiana
-  // (LA, state #11, PR #847, based on the current SC-merged tip). LA merged
-  // (PR #847) partway through this build's session; this entry was rebased
+  // IN/MO/MD/CO/SC/LA — SC is the 9th of those per SC's own header comment
+  // above, making LA the 10th and KY the 11th) — built Kentucky's
+  // `StatePolicy` entry AND full 92-profile oracle coverage from scratch (KY
+  // had neither before this PR), translating KY's already-merged Demeter
+  // corpus pack (packages/demeter-engine/src/states/ky/, PROVENANCE.md +
+  // supplements.json + authorities.json, built 2026-08-12) into the engine's
+  // stricter typed shape per §5's process. At this build's start, ONE OTHER
+  // individual-tier build was concurrently in-flight, NOT yet merged:
+  // Alabama (AL, PR open, based on an older commit before SC merged — its
+  // own PR-basis ordinal is provisional and not reconciled here). Louisiana
+  // (LA, PR #847, based on the current SC-merged tip, i.e. the 10th state)
+  // merged partway through this build's session; this entry was rebased
   // onto the LA-merged tip and appended after LA's entry below, not after
   // SC's. AL's work was NOT touched or coordinated with — it remains open; a
-  // human reconciles the eventual rebase chain (same MO-vs-TN/IN pattern this
+  // human reconciles the eventual rebase chain, including AL's final
+  // ordinal position relative to LA/KY (same MO-vs-TN/IN pattern this
   // project has used before).
   //
   // bbce: true / bbce_threshold_pct: 130 / bbce_fpl_basis:
@@ -4761,7 +4830,7 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Verification: `/profile-simulation state=KY` — 129/129 PASS, 0 FAIL, 0
   // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
-  // IN/MO/MD/CO/SC's bar, not PA's/NJ's/TN's/MN's SKIP-heavy shape — KY's
+  // IN/MO/MD/CO/SC's bar, not PA's/NJ's/TN's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) SKIP-heavy shape — KY's
   // real, current, non-null SUA figures mean it did not need PA's/NJ's/
   // TN's null-SUA fallback). Every other registered state's harness run
   // reconfirmed unchanged from its documented baseline. `tsc --noEmit -p
@@ -4844,9 +4913,9 @@ const STATES: Record<string, StatePolicy[]> = {
   // diverges between the engine's actual (net-test-skipped) behavior and
   // CT's true (net-test-enforced) policy —
   // `MX4-bbce-max-income-with-any-benefit` (HH3, $4,440 gross clears CT's
-  // $4,421 200%-FPL... no, clears CT's 200% gross screen, but net income
-  // after the full deduction stack exceeds CT's 100% FPL net ceiling),
-  // the SAME profile TN's entry already identified as the sole
+  // 200% gross screen, but net income after the full deduction stack
+  // exceeds CT's 100% FPL net ceiling), the SAME profile TN's entry
+  // already identified as the sole
   // real-world demonstration of this exact gap. Authored MX4's TRUE
   // value (DENY) rather than the engine's current buggy APPROVE,
   // following TN's/NY's/AZ's established precedent that the oracle
@@ -5009,7 +5078,9 @@ const STATES: Record<string, StatePolicy[]> = {
   // categorical.ts.
   //
   // sua_by_tier: null — a genuine, disclosed DISCOVERABILITY gap, same
-  // discipline as PA's/MN's/NJ's/TN's null entries, NOT a guess: Utah
+  // discipline as PA's/NJ's/TN's null entries (MN was also null-SUA at the
+  // time this was written; MN's gap was later closed by #863), NOT a
+  // guess: Utah
   // Admin. Code R986-900-902(1)(d) directly confirms Utah's three utility
   // standards exist, are mandatory, and are "updated annually" — but
   // states plainly they are "available upon request," meaning DWS does
@@ -5075,7 +5146,9 @@ const STATES: Record<string, StatePolicy[]> = {
   // matching ALL non-SUA comparison axes: bbce: false, asset_waiver:
   // false, allotment_tier: "48", sua_by_tier: null (the ONLY other
   // null-SUA state in this file that is ALSO non-BBCE — every other
-  // null-SUA state, PA/NJ/TN/MN, is BBCE-200). Built the same fresh,
+  // null-SUA state, PA/NJ/TN, is BBCE-200 — MN was also null-SUA and
+  // BBCE-200 at the time this was written, but its gap was later closed
+  // by #863). Built the same fresh,
   // independent Python calculator used for CT above (not derived from
   // engine output, per #636), extended to reproduce the composer's exact
   // null-SUA SKIP-before-any-gate behavior. Cross-validated BEFORE
@@ -5092,7 +5165,9 @@ const STATES: Record<string, StatePolicy[]> = {
   // Of the 92 base profiles: 34 have `sua_tier === "none"` or
   // `homeless_deduction` and get a real computed verdict AND benefit; the
   // other 58 are blocked by the null-SUA gap (composer SKIPs before any
-  // gate runs, same as PA/NJ/TN/MN) and get an independently-computed
+  // gate runs, same as PA/NJ/TN — and, at the time this was written, MN
+  // too, before its null-SUA gap was closed by #863) and get an
+  // independently-computed
   // verdict only (benefit: null), proven SUA-invariant via a 31-point
   // $0-$1,500 sweep per profile (step $50) — 0 of the 58 were genuinely
   // indeterminate. UT's computed DENY set (22 of 92) is IDENTICAL to KS's
@@ -5249,7 +5324,7 @@ const STATES: Record<string, StatePolicy[]> = {
   // Verification: `/profile-simulation state=IA` — 129 PASS / 0 FAIL / 0
   // SKIP, clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
   // IN/MO/MD/CO/SC/LA/CT's bar (CT counted separately at 128/1/0 for its
-  // disclosed #830 case), not PA's/NJ's/TN's/MN's/UT's SKIP-heavy shape.
+  // disclosed #830 case), not PA's/NJ's/TN's/UT's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) SKIP-heavy shape.
   IA: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),
@@ -5398,7 +5473,7 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Verification: `/profile-simulation state=AR` — 129 PASS / 0 FAIL / 0
   // SKIP, clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
-  // IN/MO/MD/CO/SC/LA/CT(128/1/0)/IA's bar, not PA's/NJ's/TN's/MN's/UT's
+  // IN/MO/MD/CO/SC/LA/CT(128/1/0)/IA's bar, not PA's/NJ's/TN's/UT's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863)
   // SKIP-heavy shape.
   AR: [
     {
@@ -5576,7 +5651,7 @@ const STATES: Record<string, StatePolicy[]> = {
   // bar the real-SUA states in this file clear. Confirmed zero regression:
   // every other registered state's harness run unchanged from its
   // documented baseline (CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/
-  // IN/MO/MD/CO/SC/LA all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129;
+  // IN/MO/MD/CO/SC/LA all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129 (later fixed to 129/0/0 by #863);
   // PA/NJ/TN all 34/0/95 — all pre-existing, none newly introduced).
   // Did not touch `packages/demeter-engine` (MS's corpus was already
   // complete and out of scope) or any other state's StatePolicy/oracle
@@ -5756,11 +5831,11 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Verification: `/profile-simulation state=NM` — 129/129 PASS, 0 FAIL, 0
   // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
-  // IN/MO/MD/CO/SC/LA's bar, not PA's/NJ's/TN's/MN's/MS's SKIP-heavy
+  // IN/MO/MD/CO/SC/LA's bar, not PA's/NJ's/TN's/MS's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) SKIP-heavy
   // shape). Every other registered state's harness run reconfirmed
   // unchanged from its documented baseline (CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/
   // WI/KS/OH/AK/NC/VA/IN/MO/MD/CO/SC/LA all 129/0/0; NY 127/2/0; AZ
-  // 128/1/0; PA/NJ/TN/MS all 34/0/95; MN 0/0/129 — all pre-existing, none
+  // 128/1/0; PA/NJ/TN/MS all 34/0/95; MN 0/0/129 (later fixed to 129/0/0 by #863) — all pre-existing, none
   // newly introduced). Did not touch `packages/demeter-engine` (NM's
   // corpus was already complete and out of scope) or any other state's
   // StatePolicy/oracle coverage. AL/KY/OK (individual tier) and CT/UT/IA/
@@ -5960,11 +6035,11 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Verification: `/profile-simulation state=NE` — 129/129 PASS, 0 FAIL, 0
   // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
-  // IN/MO/MD/CO/SC/LA/NM's bar, not PA's/NJ's/TN's/MN's/MS's SKIP-heavy
+  // IN/MO/MD/CO/SC/LA/NM's bar, not PA's/NJ's/TN's/MS's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) SKIP-heavy
   // shape). Every other registered state's harness run reconfirmed
   // unchanged from its documented baseline (CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/
   // WI/KS/OH/AK/NC/VA/IN/MO/MD/CO/SC/LA/NM all 129/0/0; NY 127/2/0; AZ
-  // 128/1/0; PA/NJ/TN/MS all 34/0/95; MN 0/0/129 — all pre-existing, none
+  // 128/1/0; PA/NJ/TN/MS all 34/0/95; MN 0/0/129 (later fixed to 129/0/0 by #863) — all pre-existing, none
   // newly introduced). Did not touch `packages/demeter-engine` (NE's
   // corpus was already complete and out of scope) or any other state's
   // StatePolicy/oracle coverage. AL/KY/OK (individual tier) and CT/UT/IA/
@@ -6065,7 +6140,8 @@ const STATES: Record<string, StatePolicy[]> = {
   // forward-looking gap disclosure, not a currently-observed miscompute.
   //
   // sua_by_tier: NULL — a genuine, disclosed sourcing gap, same discipline
-  // as PA's/NJ's/MN's null entries. IDAPA 16.03.04.543 confirms Idaho runs
+  // as PA's/NJ's null entries (MN's own null-SUA gap was later closed,
+  // #863). IDAPA 16.03.04.543 confirms Idaho runs
   // a FOUR-tier utility-allowance system (Standard/Limited/Minimum/
   // Telephone — a structural match to this roster's Nebraska corpus pack's
   // own four-tier finding, not a coincidence unique to either state) but
@@ -6183,7 +6259,7 @@ const STATES: Record<string, StatePolicy[]> = {
   // as the correct, honest outcome for a genuinely unauthored SUA table).
   // Every other registered state's harness run reconfirmed unchanged from
   // its documented baseline: CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/
-  // VA/IN/MO/MD/CO/SC/LA all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129;
+  // VA/IN/MO/MD/CO/SC/LA all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129 (later fixed to 129/0/0 by #863);
   // PA/NJ/TN all 34/0/95 — every one identical to its pre-ID documented
   // baseline, zero regressions. `tsc --noEmit -p packages/snap-rules`
   // clean, 323/323 snap-rules tests pass (0 new — a schema-conformant pure
@@ -6346,7 +6422,7 @@ const STATES: Record<string, StatePolicy[]> = {
   // SKIP (matching PA's/NJ's/TN's/ID's null-SUA-gap shape exactly). Every
   // other registered state's harness run reconfirmed unchanged from its
   // documented baseline: CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/
-  // IN/MO/MD/CO/SC/LA all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129;
+  // IN/MO/MD/CO/SC/LA all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129 (later fixed to 129/0/0 by #863);
   // PA/NJ/TN/ID all 34/0/95 — every one identical to its pre-WV documented
   // baseline, zero regressions. `tsc --noEmit -p packages/snap-rules`
   // clean, 323/323 snap-rules tests pass (0 new), 44/47 profile-harness
@@ -6526,7 +6602,7 @@ const STATES: Record<string, StatePolicy[]> = {
   // WV's null-SUA fallback). Every other registered state's harness run
   // reconfirmed unchanged from its documented baseline: CA/WA/TX/GA/MI/
   // IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC/LA all 129/0/0; NY
-  // 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN/ID/WV all 34/0/95 — every
+  // 127/2/0; AZ 128/1/0; MN 0/0/129 (later fixed to 129/0/0 by #863); PA/NJ/TN/ID/WV all 34/0/95 — every
   // one identical to its pre-NH documented baseline, zero regressions.
   // `tsc --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests
   // pass (0 new), 44/47 profile-harness tests pass (3 pre-existing
@@ -7338,7 +7414,7 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Verification: `/profile-simulation state=VT` — 129/129 PASS, 0 FAIL,
   // 0 SKIP (clean, matching every 129/0/0-grade state in this file, not
-  // PA's/NJ's/TN's/MN's SKIP-heavy shape — VT's real, current SUA figures
+  // PA's/NJ's/TN's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) SKIP-heavy shape — VT's real, current SUA figures
   // mean it did not need the null-SUA fallback). Every other registered
   // state's harness run reconfirmed unchanged from its documented baseline
   // (full per-state confirmation in this build's PR description and the
@@ -7518,7 +7594,7 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Verification: /profile-simulation state=WY — 129/129 PASS, 0 FAIL, 0
   // SKIP (clean, matching every 129/0/0-grade state in this file, not
-  // PA's/NJ's/TN's/MN's SKIP-heavy shape — WY's real, current SUA figures
+  // PA's/NJ's/TN's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) SKIP-heavy shape — WY's real, current SUA figures
   // mean it did not need the null-SUA fallback). Every other registered
   // state's harness run reconfirmed unchanged from its documented
   // baseline (full per-state confirmation in this build's PR description
@@ -7600,7 +7676,9 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // sua_by_tier: DELIBERATELY null — DC is a GENUINE STRUCTURAL GAP, not a
   // guess either way, same disclosed-gap discipline as this file's PA/NJ/
-  // TN/MN entries. DHS's own current SNAP Eligibility Requirements page
+  // TN entries (MN was also null-SUA at the time this was written; MN's
+  // gap was later closed by #863). DHS's own current SNAP Eligibility
+  // Requirements page
   // states exactly ONE utility figure: "a Standard Utility Allowance of
   // $374, updated every October 1" — no separate Basic/Limited-Utility or
   // telephone-only standard anywhere in DHS's own text, and this pack's
@@ -7748,7 +7826,7 @@ const STATES: Record<string, StatePolicy[]> = {
   // corpus was already complete and out of scope) or any other
   // jurisdiction's StatePolicy/oracle coverage. No new GitHub issue filed
   // — the null-SUA gap is the SAME already-documented #824-adjacent class
-  // of gap PA's/NJ's/TN's/MN's entries already carry (not a new instance
+  // of gap PA's/NJ's/TN's (MN was also null-SUA at the time this was written; MN's gap was later closed by #863) entries already carry (not a new instance
   // needing its own issue), and the DC-EITC-equivalent labeling
   // inconsistency + the 36-month-ESAP certification-period gap are both
   // per-jurisdiction disclosed findings of an already-documented class,
@@ -7840,8 +7918,9 @@ const STATES: Record<string, StatePolicy[]> = {
   // for VI's "All households" tier — the broadest possible waiver, same
   // breadth as MN's/NC's entries (stronger than an asset-only carve-out).
   //
-  // sua_by_tier: null — a disclosed gap, same discipline as PA's/NJ's/TN's/
-  // MN's null entries, CONFIRMED (not merely suspected) by reading DHS-VI's
+  // sua_by_tier: null — a disclosed gap, same discipline as PA's/NJ's/TN's
+  // null entries (MN's own null-SUA gap was later closed, #863), CONFIRMED
+  // (not merely suspected) by reading DHS-VI's
   // actual FY2026 table directly this build: it publishes a "MAXIMUM
   // SHELTER DEDUCTION" of $586.00 and a "TELEPHONE DEDUCTION" of $34.00,
   // but NO separate HCSUA/LUA(heating-vs-non-heating) breakdown at all —
@@ -7971,9 +8050,21 @@ const STATES: Record<string, StatePolicy[]> = {
   // `true`) AND `MX4-bbce-max-income-with-any-benefit` (DENY — VI's 175%
   // threshold is LOWER than even NJ's 185%, so a profile engineered to
   // clear 185% by $2 but sit under 200% fails VI's threshold too, unlike
-  // NJ where it barely clears). `benefit: null` for all 92 (see
-  // allotment_tier above — a deliberate, disclosed, gap-driven choice, not
-  // an oversight).
+  // NJ where it barely clears).
+  //
+  // SUPERSEDED (kept for history, not current): AT THIS POINT IN THE BUILD
+  // — before the #858/#866 fixes below landed — `benefit: null` for all 92
+  // rows was correct, a deliberate, disclosed, gap-driven choice (the
+  // allotment_tier gap blocked every row's dollar figure, not just the
+  // null-SUA-blocked ones). That is NO LONGER the current state: #858
+  // (real `AllotmentTier: "VI"` table) and #866 (VI's own standard-
+  // deduction/shelter-cap figures) together backfilled the 34
+  // real-engine-gradeable rows' `benefit` from `null` to VI's real
+  // computed dollar figure — see the #858 RESOLVED section below for the
+  // actual before/after mechanism. The remaining 58 base + 37 variant rows
+  // stay `benefit: null`, correctly — that subset is blocked by VI's
+  // separate, still-open null-`sua_by_tier` gap, not the allotment_tier
+  // gap this paragraph originally described.
   //
   // Verification (VI's ORIGINAL build, superseded below): `/profile-
   // simulation state=VI` — 34 PASS / 0 FAIL / 95 SKIP (of 129: 92 base + 37
@@ -7996,10 +8087,12 @@ const STATES: Record<string, StatePolicy[]> = {
   // this build; VI was NOT built alongside or coordinated with any of them.
   // After VI, the only remaining unstarted engine work is: HI/GU (blocked
   // on the AllotmentTier schema extension, §4, now also blocking VI per
-  // issue #858) and MN (blocked on its own separate null-SUA gap, since
-  // MN's null SUA additionally has no `sua_tier: "none"`-reachable rows the
-  // way PA/NJ/TN/VI's 34-row subset does — a pre-existing, different-shaped
-  // gap, not something this build touched).
+  // issue #858) and MN (blocked, AT THE TIME OF THIS BUILD, on its own
+  // separate null-SUA gap, since MN's null SUA additionally had no
+  // `sua_tier: "none"`-reachable rows the way PA/NJ/TN/VI's 34-row subset
+  // does — a pre-existing, different-shaped gap, not something this build
+  // touched. MN's gap was subsequently closed by #863 — see MN's own
+  // entry; it is no longer blocked.).
   //
   // ── #858 RESOLVED (schema-extension PR, plan doc §4/§6 step 4) ─────────
   // `allotment_tier` below changed from "48" to "VI" now that
@@ -8093,7 +8186,9 @@ const STATES: Record<string, StatePolicy[]> = {
   // assets" for HI's "All households" BBCE tier).
   //
   // sua_by_tier: null — a disclosed gap, same discipline as PA's/NJ's/TN's/
-  // MN's/VI's null entries. Hawaii Administrative Rules § 17-676-73
+  // VI's null entries (MN was also null-SUA at the time this was written;
+  // MN's gap was later closed by #863). Hawaii Administrative Rules
+  // § 17-676-73
   // confirms a genuinely different STRUCTURE (individually-calculated
   // per-utility-type standard allowances — sewer/trash, water,
   // electricity/gas, mandatory telephone — rather than a single flat or
@@ -8287,8 +8382,10 @@ const STATES: Record<string, StatePolicy[]> = {
   // Built alongside HI — see HI's entry above for the shared #861 schema
   // step's own doc-comment. This is the LAST jurisdiction of the original
   // 53-jurisdiction plan scope (docs/plans/snap-rules-50-state-engine-
-  // completion.md §5) — completing the entire plan except MN, still
-  // blocked on its own separate null-SUA gap (plan doc §6 step 7).
+  // completion.md §5) — completing the entire plan except MN, which was
+  // AT THE TIME still blocked on its own separate null-SUA gap (plan doc
+  // §6 step 7). MN's gap was subsequently closed by #863; the plan is now
+  // 100% complete across all 53 jurisdictions.
   //
   // Every axis below is TRANSLATED from the already-merged Demeter corpus
   // pack's already-cited findings (packages/demeter-engine/src/states/gu/
@@ -8340,7 +8437,9 @@ const STATES: Record<string, StatePolicy[]> = {
   // BBCE-page fetch is the actual primary confirmation of this axis).
   //
   // sua_by_tier: null — a disclosed gap, same discipline as PA's/NJ's/
-  // TN's/MN's/VI's/HI's null entries. USDA's own State Options Report
+  // TN's/VI's/HI's null entries (MN was also null-SUA at the time this
+  // was written; MN's gap was later closed by #863). USDA's own State
+  // Options Report
   // confirms Guam uses "Mandatory SUAs" (a flat allowance, not itemized
   // actual costs) — a STRUCTURE finding — but neither the corpus pack nor
   // this build's independent re-check located Guam's own specific
@@ -8486,8 +8585,10 @@ const STATES: Record<string, StatePolicy[]> = {
   // This is the LAST jurisdiction of the original 53-jurisdiction plan
   // scope (docs/plans/snap-rules-50-state-engine-completion.md §5/§6) —
   // see that doc's own updated execution log for the full completion
-  // note. Only MN remains outside this build's scope, blocked on its own
-  // separate, unrelated null-SUA structural gap (plan doc §6 step 7).
+  // note. Only MN remained outside this build's scope, blocked on its own
+  // separate, unrelated null-SUA structural gap (plan doc §6 step 7) — MN's
+  // gap was subsequently closed by #863, so the plan is now 100% complete
+  // across all 53 jurisdictions.
   GU: [
     {
       effective_start: new Date(Date.UTC(2020, 0, 1)),

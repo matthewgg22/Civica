@@ -11076,9 +11076,10 @@
           "reason": "no GA geographic or state-level ABAWD waiver [7 CFR 273.24]"
         },
         "FL": {
-          "verdict": "APPROVE",
-          "eligible": true,
-          "benefit": 298
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null,
+          "reason": "no FL geographic ABAWD waiver on file for FY25/FY26 \u2014 USDA FNA's waiver-response file index lists no fl-abawd-response-*.pdf for either fiscal year (unlike AZ/IL/MI/WA, which each have at least one), and FL DCF's own ABAWD page discloses no waived area, so the exhausted 3-of-36 clock denies [7 CFR 273.24]"
         },
         "IL": {
           "verdict": "DENY",
