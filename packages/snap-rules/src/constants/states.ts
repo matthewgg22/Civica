@@ -233,6 +233,18 @@ export interface StatePolicy {
   effective_end: Date;
   state_code: string;
   label: string;
+  /**
+   * In practice this no longer means "does this state have some form of
+   * Broad-Based Categorical Eligibility" — it means "does this state's BBCE
+   * work the specific way verdict.ts's bundled categorical-eligibility logic
+   * already expects" (a flat elevated-income-ceiling + full resource-test
+   * waiver, conferred via a TANF-funded informational notice). States with a
+   * real BBCE-like program whose mechanism doesn't fit that bundled shape —
+   * e.g. Idaho, Oklahoma, Nebraska, all encoded `false` this session even
+   * though each has some genuine elevated-eligibility pathway — end up
+   * mischaracterized as "no BBCE" rather than "BBCE, but not this shape."
+   * This is a known architectural gap, tracked (not fixed here) as #853.
+   */
   bbce: boolean;
   bbce_threshold_pct?: number;
   bbce_net_ceiling_pct?: number | null;
@@ -5786,25 +5798,54 @@ const STATES: Record<string, StatePolicy[]> = {
   // federal E/D-uncapped rule regardless of state (benefit-calc.ts), so
   // this is not a gap this StatePolicy entry needs to carry.
   //
-  // drug_felony_ban: "modified" — a genuinely DISCLOSED SCOPE AMBIGUITY,
-  // not a clean opt-out: N.M. Stat. Ann. §27-2B-11(C) (fetched via two
-  // independently-convergent secondary/quasi-primary mirrors — Public
-  // Health Law Center, FindLaw — after both law.justia.com (403) and
-  // nmonesource.com, New Mexico's own official statute host (404), failed)
-  // invokes the FULL federal opt-out provision (21 U.S.C. §862a(d)(1)(A))
-  // but narrows its own scope to convictions "on the basis of...
-  // DISTRIBUTION of a controlled substance" specifically — NOT the federal
-  // ban's full possession/use/distribution scope. Public Health Law
-  // Center's OWN analysis independently makes the identical observation,
-  // describing the possession/use scope as genuinely open, not resolved.
-  // "Modified" (a real, conditional/narrower-than-full restriction this
-  // engine does not yet model at the facts level) is the correct #805
-  // classification — NOT "none" (a broader "fully opted out" secondary
-  // characterization the corpus pack found but explicitly declined to
-  // adopt as settled, given the statute's own narrower quoted text).
-  // Because only "full" disqualifies at today's gate (#805), this
-  // classification has zero effect on NM's computed oracle relative to a
-  // hypothetical "none" or "unconfirmed" entry.
+  // drug_felony_ban: "none" — RECLASSIFIED from "modified" on re-audit
+  // under the standing ambiguity-default rule (genuinely ambiguous state
+  // drug-felony text now defaults to "none," the more permissive reading,
+  // rather than "modified" — the same rule applied to Utah's own
+  // similarly-worded statute above). The underlying textual ambiguity
+  // this entry originally flagged is real and unchanged: N.M. Stat. Ann.
+  // §27-2B-11(C) (fetched via two independently-convergent secondary/
+  // quasi-primary mirrors — Public Health Law Center, FindLaw — after
+  // both law.justia.com (403) and nmonesource.com, New Mexico's own
+  // official statute host (404), failed) invokes the FULL federal
+  // opt-out provision (21 U.S.C. §862a(d)(1)(A)) but narrows its own
+  // scope to convictions "on the basis of... DISTRIBUTION of a
+  // controlled substance" specifically — a plain reading leaves
+  // possession/use convictions textually unaddressed by that clause,
+  // which is the genuine two-reading ambiguity (does the omission mean
+  // the federal default ban still applies to possession/use, or was the
+  // "distribution" language just imprecise drafting for a broader
+  // opt-out). Public Health Law Center's own analysis independently
+  // flags the identical observation.
+  //
+  // What changed the call: re-verified live against USDA FNS's own SNAP
+  // State Options Report, 16th Edition (June 2024, fetched directly,
+  // govinfo-hosted PDF, no access barrier) — the authoritative federal
+  // survey compiled from each state agency's own self-reported policy
+  // elections, not a secondary aggregator. Its "Drug Felony
+  // Disqualifications" summary page lists New Mexico under "No
+  // disqualification (28)" (PRWORA Section 115 / 7 CFR 273.11(m)), NOT
+  // under "Modified disqualification (24)" — and NM's own individual
+  // state-profile page in the same report independently confirms it:
+  // "Drug Felony Disqualifications: No disqualification." Utah, this
+  // file's existing "none" precedent, appears in the SAME "No
+  // disqualification" list, cross-validating the report's reliability
+  // for this exact comparison. Two further independent secondary legal
+  // surveys corroborate: the Collateral Consequences Resource Center's
+  // 50-state SNAP/TANF drug-felony survey and the Network for Public
+  // Health Law's SNAP-ban issue brief both characterize New Mexico as
+  // having "fully opted out" for SNAP, while still separately noting the
+  // statute's narrower "distribution" text as a drafting curiosity, not
+  // as defeating the full-opt-out reading. Given the raw statutory text
+  // is genuinely ambiguous but the authoritative federal source (drawn
+  // from NM's own reporting to USDA) and every independent legal
+  // secondary source converge on "no disqualification" as the actual
+  // operative policy, "none" is both the standing-rule default AND the
+  // better-supported reading on the full evidence, not merely a
+  // tie-breaker. Because only "full" disqualifies at today's gate
+  // (#805), this reclassification has zero effect on NM's computed
+  // oracle relative to the prior "modified" entry — verified unchanged
+  // below.
   //
   // abawd_waiver_avail: true — a genuine, precisely-dated REFINEMENT: New
   // Mexico's ABAWD waiver footprint narrowed sharply (from 29 counties + 18
@@ -5848,12 +5889,14 @@ const STATES: Record<string, StatePolicy[]> = {
   //
   // Oracle: NM's closest structural axis-twin among all 29 already-
   // registered states is OREGON — matching 6 of 7 comparison axes exactly
-  // (bbce: true, bbce_threshold_pct: 200, bbce_fpl_basis:
-  // federal_fiscal_year, asset_waiver: true, allotment_tier: "48",
-  // rmp_operated: false; drug_felony_ban differs, "modified" vs OR's
-  // "none", but has zero grading effect per #805), differing only in
-  // abawd_waiver_avail (NM: true, OR: false) — the one axis expected to
-  // produce a real, explainable divergence. Built a fresh, independent
+  // at the time this oracle was built (bbce: true, bbce_threshold_pct:
+  // 200, bbce_fpl_basis: federal_fiscal_year, asset_waiver: true,
+  // allotment_tier: "48", rmp_operated: false; drug_felony_ban differed,
+  // "modified" vs OR's "none", but had zero grading effect per #805 even
+  // then — NM's later reclassification to "none" above now makes this a
+  // 7-of-7 exact match on every axis except abawd_waiver_avail), differing
+  // only in abawd_waiver_avail (NM: true, OR: false) — the one axis
+  // expected to produce a real, explainable divergence. Built a fresh, independent
   // Python calculator (not derived from engine output, per #636) directly
   // from verdict.ts/benefit-calc.ts/gates/{income-tests,asset-test,abawd,
   // student,composition,immigration,disqualifications,categorical}.ts/
@@ -5918,7 +5961,7 @@ const STATES: Record<string, StatePolicy[]> = {
         none: new Decimal("0"),
       },
       allotment_tier: "48",
-      drug_felony_ban: "modified",
+      drug_felony_ban: "none",
       abawd_waiver_avail: true,
       rmp_operated: false,
     },

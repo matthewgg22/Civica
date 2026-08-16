@@ -17,23 +17,35 @@ The 50-state corpus expansion (batches 1–5, all merged) built **Demeter's chat
 That is a separate system from **the calculator** (`packages/snap-rules`'s `StatePolicy`
 registry) — the thing that actually runs a real eligibility/benefit determination against
 a household's facts. A jurisdiction can have a fully verified corpus and *no* calculator
-at all; today, most do.
+at all — that WAS true of most jurisdictions for most of this plan's execution, but as of
+this plan's completion every jurisdiction has both (see the diagram below).
 
 ```
    CORPUS (packages/demeter-engine)        ENGINE (packages/snap-rules)
    "what does Mae say about this state"    "what does the calculator DO for this state"
    53 / 53 jurisdictions          ────▶     53 / 53 jurisdictions have StatePolicy
                                             53 / 53 have oracle expectations authored
-                                            25 / 32 grade fully CLEAN (129/0/0 or a
-                                              documented pre-existing partial); 6 more
-                                              (PA/NJ/TN/VI/HI/GU) grade 34/0/95 on the
-                                              disclosed null-SUA gap; MN is 0/0/129
-                                              (structurally blocked, no rows gradeable)
+                                            40 / 53 grade fully CLEAN (129/0/0, or a
+                                              documented pre-existing partial — NY's
+                                              127/2/0, a #733-shaped BBCE-tier gap, and
+                                              CT's 128/1/0, a #830 architecture-gap
+                                              shape); 13 more (PA/NJ/TN/AL/UT/MS/ID/WV/
+                                              DE/DC/VI/HI/GU) grade 34/0/95 on the
+                                              disclosed null-SUA gap; 0 structurally
+                                              blocked — MN's null-SUA gap, the last one,
+                                              closed 2026-08-16 (issue #747, closed by
+                                              PR #863)
 ```
 
-**§5 is DONE — HI and GU (#861) are built, completing the ENTIRE original
-53-jurisdiction plan scope except MN (still blocked on its own separate null-SUA gap, §6
-step 7).** See the execution log's HI/GU entries below.
+(AZ is deliberately absent from the "documented pre-existing partial" list above,
+contrary to `states.ts`'s own dozens of embedded "AZ 128/1/0" regression-check
+comments — a direct harness re-run confirms AZ is actually clean 129/0/0, matching what
+AZ's own original oracle-authoring PR #741 reported at the time. That widespread stale
+claim is tracked separately as issue #877, not fixed in this pass.)
+
+**Plan CLOSED — every jurisdiction in scope (all 53) has both a `StatePolicy` and full
+oracle coverage; MN, the final remaining gap, closed 2026-08-16 (issue #747, landed by
+PR #863).** See the execution log's HI/GU and MN entries below.
 
 ## 2. Current state of the calculator (verified against `origin/codex/rebuild-feb18`, plus
 this plan's own individual-tier and batch-tier landings)
@@ -50,56 +62,68 @@ jurisdictions) are DONE, built and merged per the execution log's entries below.
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
 engine against — has full 92-case coverage (minus TN's 3 deliberately-unauthored
-genuinely-indeterminate profiles, see below) for **40 of those 51**: CA, WA, TX, GA, MI,
-IL, FL, MA, NV, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD, CO, SC, LA, OK, ME, RI, MT, KY,
-IA, AR, NH, NM, NE, SD, ND, VT, WY clear CLEAN (129/0/0); NY (127/2/0), AZ (128/1/0), and
-CT (128/1/0) are documented pre-existing partials in the same "clean" bucket — CT's single
-disclosed fail is the SAME #830 architecture-gap shape as NY's/AZ's, not a coverage gap.
-PA, NJ, TN, AL, UT, ID, WV, MS, DE, DC, and VI also have all 92 (or 89, for TN) rows
-authored, per the execution log's entries below, but all eleven grade 34/0/95 — most of
-their profiles legitimately SKIP on the null-SUA gap, not a coverage gap, so none is
+genuinely-indeterminate profiles, see below) for **all 53 jurisdictions**, no exceptions.
+Of those, **40 grade fully CLEAN**: CA, WA, TX, GA, MI, IL, FL, MA, NV, AZ, OR, WI, MN, KS,
+OH, AK, NC, VA, IN, MO, MD, CO, SC, LA, OK, ME, RI, MT, KY, IA, AR, NH, NM, NE, SD, ND, VT,
+WY clear CLEAN (129/0/0) — this includes both AK (its `bbce`/allotment/FPL corrections all
+landed, see below) and MN (its null-SUA gap closed 2026-08-16, see below); NY (127/2/0,
+a documented #733-shaped BBCE-tier gap) and CT (128/1/0, a documented #830
+architecture-gap shape) are documented pre-existing partials in the same "clean" bucket.
+(A direct harness re-run also confirms AZ belongs in the 38-state fully-clean list above,
+not among the "documented pre-existing partial" pair — `states.ts`'s own dozens of
+embedded "AZ 128/1/0" comments are themselves stale/incorrect, contradicted by AZ's own
+original oracle-authoring PR #741; tracked separately as issue #877, not fixed in this
+pass.) The remaining **13 grade 34/0/95** on the disclosed null-SUA gap: PA, NJ, TN, AL,
+UT, ID, WV, MS, DE, DC, VI, HI, GU — most of their profiles legitimately SKIP (`sua_by_tier:
+null` means `composeVerdict` bails before any gate runs), not a coverage gap, so none is
 counted as "clean" here. (AL's own oracle achieves genuine FULL 92/92 coverage — unlike
 TN's 89/92 — but the SKIP-heavy grade is unavoidable given AL's own null SUA; see AL's
 execution-log entry for why full authored coverage and a clean harness grade are different
 things. MS was the FIRST non-BBCE state to carry this null-SUA shape — PA/NJ/TN/AL/UT are
-all BBCE states; ID, WV, DE, and DC followed. **VI's case is a double-disclosed gap, not a
-single one**: even its 34 harness-gradeable rows carry `benefit: null` rather than a real
-dollar figure, because VI ALSO can't honestly represent its own confirmed-elevated
-max-allotment table in the current `AllotmentTier` schema — see VI's own execution-log
-entry and issue #858 — every one of VI's 34 PASS rows is graded on verdict alone.)
+all BBCE states; ID, WV, DE, DC, VI, HI, and GU followed. **VI's case is a double-disclosed
+gap, not a single one**: even its 34 harness-gradeable rows carry `benefit: null` rather
+than a real dollar figure, because VI ALSO can't honestly represent its own
+confirmed-elevated max-allotment table in the current `AllotmentTier` schema — see VI's own
+execution-log entry and issue #858 — every one of VI's 34 PASS rows is graded on verdict
+alone. HI and GU landed with the `AllotmentTier` extension already in place, so — unlike
+VI — their PASS rows never went through a `benefit: null` interim state.)
 
-One state has a `StatePolicy` but no oracle coverage at all:
+**Every jurisdiction now has both a `StatePolicy` and oracle coverage — zero structurally
+blocked, zero missing entirely.** This was not always true during this plan's execution;
+the historical gaps below are preserved as a record of what got fixed and how, not as
+current status:
 
-| State | Has `StatePolicy` | Has oracle coverage | Why not |
-|---|---|---|---|
-| **MN** | yes | no | **Structurally blocked**, not just unauthored — `sua_by_tier: null`; the engine can't compute a shelter-deduction-dependent benefit for MN until a real SUA figure lands (per [[project_snap_rules_oracle_authoring]]) |
+- **MN** had a `StatePolicy` but no gradeable oracle coverage at all — **structurally
+  blocked**, not just unauthored: `sua_by_tier: null` meant the engine couldn't compute a
+  shelter-deduction-dependent benefit for MN at all (`/profile-simulation state=MN` was a
+  hard 0 PASS / 0 FAIL / 129 SKIP). **Closed 2026-08-16** (issue #747, landed by PR #863):
+  real FFY26 SUA figures sourced, all 92 `expected_by_state.MN` entries authored per #636
+  methodology, `/profile-simulation state=MN` now 129/129 PASS, 0 FAIL, 0 SKIP — see the
+  execution log's MN entry (the final entry in this document).
 
-(PA's oracle-authoring pass, listed as outstanding earlier in this plan's drafting, has
-since landed — see the execution log's PA entry — so PA is no longer in this table.)
+- **AK** had a `StatePolicy` that was oracle-covered but **wrong**: `bbce: false`, when
+  AK's own corpus pack (batch 5, primary-sourced) confirmed AK adopted 200% FPL BBCE
+  effective 7/1/2025 — a real, pre-disclosed gap that, if used for a live determination,
+  would have wrongly denied categorical eligibility to AK households between 130%–200%
+  FPL. **Fully corrected across a chain of PRs**, not a single patch: #804 (the `bbce`/
+  `asset_waiver` correction + full oracle rebuild, PR #815), #814 (AK's zone-based max
+  allotment + minimum benefit were never consumed, PR #817), and #812 (AK needs its own
+  HHS poverty guideline, not the 48-contiguous table, PR #819) — all three merged.
+  `/profile-simulation state=AK` is now 129/129 PASS, 0 FAIL, 0 SKIP, exercising real
+  benefit-dollar assertions, not verdict-only. One small residual gap from this chain
+  remains open and deferred: issue #818 (AK's federal-130% non-BBCE gross test is $1
+  below AK's own published figure in a narrow pre-BBCE-effective-date window) — small,
+  intentionally not bundled into any of the three fixes above.
 
-One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
-
-- **AK** — `bbce: false` in the engine, but AK's own corpus pack (batch 5, built this
-  session, primary-sourced) confirms AK adopted 200% FPL BBCE effective **7/1/2025**. The
-  engine entry predates the whole corpus expansion (an early "Wave B" commit) and the
-  file's own header comment already flags AK — alongside TX and KS — as a **"policy
-  archetype... illustrative until the FNS-published values are loaded,"** not a verified
-  entry. This is a real, pre-disclosed gap, not a surprise regression — but it's live in
-  the engine today and, if used for a real determination, would wrongly deny categorical
-  eligibility to AK households between 130%–200% FPL.
-
-**2 jurisdictions have neither** `StatePolicy` nor oracle coverage — the full remaining
-scope: GU, HI. (NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA, OK, AL, and KY — all thirteen
-"individual tier" states, §6 — are DONE; see the execution log's
-NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA/OK/AL/KY entries. **The individual tier is CLOSED at
-13/13.** ME, RI, MT (fourth batch-tier group), CT, UT, IA, AR (first batch-tier group),
-MS, NM, NE (second batch-tier group), ID, WV, NH (third batch-tier group), DE, SD, ND
-(fifth batch-tier group), VT, WY, DC (sixth batch-tier group), and VI (the batch tier's
-solo, final entry) are all DONE (execution log's entries below) — **every planned
-batch-tier segment, including VI, is now complete.** Only GU and HI (both blocked on
-§4's `AllotmentTier` schema step — VI's own build independently confirmed it needs that
-exact extension too, filed as #858) and MN (blocked on its own null-SUA gap, tracked
-separately above) remain outside this plan's scope.)
+- **GU and HI** had neither a `StatePolicy` nor oracle coverage — both were blocked on
+  §4's `AllotmentTier` schema step (VI's own batch-tier build independently confirmed it
+  needed that same extension, filed as #858). **Both built from scratch and merged**
+  (#861, the final §5 step): `AllotmentTier` widened to include `"HI"`/`"GU"`, their own
+  allotment-table modules added, full `StatePolicy` entries and 92+37-row oracle coverage
+  authored — see the execution log's HI/GU entries below. The individual tier (NC, NJ,
+  VA, TN, IN, MO, MD, CO, SC, LA, OK, AL, KY — 13/13) and every planned batch-tier segment
+  (CT/UT/IA/AR, MS/NM/NE, ID/WV/NH, ME/RI/MT, DE/SD/ND, VT/WY/DC, and VI's solo entry) were
+  already complete before GU/HI landed.
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
 
@@ -125,7 +149,13 @@ this question for the corpus and found it sound:
 building states the same way; #779's registration-safety-net is the only open item, and
 it's orthogonal to the "don't repeat 50×" question.
 
-### Engine (`packages/snap-rules`) — mostly sound, three real gaps worth fixing before mass-building
+### Engine (`packages/snap-rules`) — mostly sound; the three gaps below are now ALL FIXED (see status notes)
+
+**STATUS: all three structural gaps this section originally flagged as "worth fixing
+before mass-building" are DONE — #805 (drug_felony_ban enum), #806 (effective-date
+banding), and the `AllotmentTier` widening (§4, closed by #858/#861). The table and
+"recommended order" below are preserved as the original reasoning for WHY each fix was
+worth doing, not as an open TODO list.**
 
 | Element | Current design | Verdict |
 |---|---|---|
@@ -133,16 +163,16 @@ it's orthogonal to the "don't repeat 50×" question.
 | ABAWD waiver counties (CA and others) | Per-county lookup tables in `work-requirements/waiver-counties.ts`; `StatePolicy.abawd_waiver_avail` is documented as only the state-level *fallback* for when `county_fips` is unknown, not the real answer | **Already correct pattern** — the model for how a state's own genuinely-granular data should be stored: a real lookup file, with `StatePolicy` holding only a coarse default. |
 | AK's per-region SUA | `constants/ak-utility-regions.ts`, same fallback-default pattern as ABAWD counties | **Already correct**, same reasoning. |
 | `bbce` / `bbce_threshold_pct` / `bbce_fpl_basis` / `asset_waiver` / `sua_by_tier` / `drug_felony_ban` / `rmp_operated` | One flat value per state in `StatePolicy` | **Genuinely per-state** — these vary state to state by design, not an artifact of poor structure. Authoring these 35× is real, unavoidable work, not duplication to eliminate. |
-| `drug_felony_ban: boolean` | A true/false flag standing in for what is, in practice, at least three real states (`full ban`, `modified/conditional ban`, `full opt-out`) | **Structural gap.** Every state with a modified ban (already: PA, MD, WV, KY, NE, HI, AK per its own PROVENANCE.md) is forced to encode it as `false`, with the real nuance pushed into a comment — the type can't express what the policy actually is. Fine at today's scale; a real liability once ~15-20 of 53 states carry a silently-flattened "modified" value with no queryable signal. **Fix this once, as its own PR, before or early in the batch-tier build-out** — widen to a `"none" \| "modified" \| "full"` enum (or similar), migrate the ~18 existing entries in the same PR, then every new state gets it right from day one instead of needing a 35-state retrofit later. |
-| `AllotmentTier: "48" \| "AK"` | Closed union, no room for HI/GU's genuinely elevated allotment tables | **Structural gap**, already noted in §4 below — same "fix the enum once, before the states that need it" logic. |
-| No effective-date banding on `StatePolicy` | `federal-tables.ts` already solved this exact problem for FEDERAL figures — `FederalTableSnapshot { effective_start, effective_end, ... }`, an array of dated snapshots, explicitly because "never edit a published table after its effective_end passes... add a new effective-date entry" instead. **`StatePolicy` does not use this pattern at all** — it's a flat, undated `Record<string, StatePolicy>`, one value per state, edited in place whenever policy changes. | **The single highest-value structural fix.** AK's `bbce` flip (issue #804) is exactly the failure mode this would prevent — a real policy change with a real effective date, currently modeled as a silent in-place edit with no record of what was true before. Every future COLA cycle, recert-period change, or new-law adoption across 53 states will hit this same gap repeatedly if it isn't fixed now. **Recommend: reuse the exact `FederalTableSnapshot` shape for `StatePolicy` before building the batch tier** — this is not a new pattern to invent, just extending one that already exists and is already proven for the federal tables. |
+| `drug_felony_ban: boolean` (AT THE TIME THIS WAS WRITTEN) | A true/false flag standing in for what is, in practice, at least three real states (`full ban`, `modified/conditional ban`, `full opt-out`) | **DONE — #805, merged (PR #807).** Widened to `"none" \| "modified" \| "full" \| "unconfirmed"`, migrated the ~18 existing entries in the same PR; every state added since gets it right from day one. See `packages/snap-rules/src/constants/states.ts`'s `DrugFelonyBanStatus` type. |
+| `AllotmentTier: "48" \| "AK"` (AT THE TIME THIS WAS WRITTEN) | Closed union, no room for HI/GU's genuinely elevated allotment tables | **DONE — §4 below, closed by #858 (VI) and #861 (HI/GU).** Now `"48" \| "AK" \| "VI" \| "HI" \| "GU"`. |
+| No effective-date banding on `StatePolicy` (AT THE TIME THIS WAS WRITTEN) | `federal-tables.ts` already solved this exact problem for FEDERAL figures — `FederalTableSnapshot { effective_start, effective_end, ... }`, an array of dated snapshots, explicitly because "never edit a published table after its effective_end passes... add a new effective-date entry" instead. **`StatePolicy` did not use this pattern at all** — it was a flat, undated `Record<string, StatePolicy>`, one value per state, edited in place whenever policy changed. | **DONE — #806, merged (PR #808).** `StatePolicy` is now `Record<string, StatePolicy[]>` keyed by `effective_start`/`effective_end`, `statePolicyFor(state, asOf)` requires a date. AK's `bbce` flip (#804) became the first real, non-placeholder use of this capability — see the execution log. |
 
-**Recommended order given the above**: do the `drug_felony_ban` enum widening and the
+**Recommended order given the above** (this WAS the plan; it is exactly what happened,
+in this order, per the execution log): do the `drug_felony_ban` enum widening and the
 `StatePolicy` effective-date-snapshot migration as their own small PRs, early — ideally
 before or alongside PA's oracle-authoring pass (§5 step 1), since PA is small, fast, and
 low-risk to validate the new shape against before 33 more states build on top of it. The
-`AllotmentTier` extension can wait until HI/GU are actually up (§5 step 4) since nothing
-else depends on it sooner.
+`AllotmentTier` extension waited until HI/GU were actually up (§5 step 4), as recommended.
 
 ## 4. A schema gap the plan needs to name up front
 
@@ -258,11 +288,15 @@ Suggested order, by 2026 population estimate (skipping HI/GU pending §4's schem
 skipping MN pending its SUA gap, PA promoted to the front since its `StatePolicy` already
 exists and only oracle authoring is outstanding):
 
-1. **PA** (constants already done — pure oracle-authoring, fastest win, do first)
-2. **AK correction** (fix `bbce`, re-verify every other axis against the corpus's
-   PROVENANCE.md, regenerate all 92 oracle rows since a `bbce` flip changes categorical-
-   eligibility outcomes across a large share of the profile set — treat as a full rebuild,
-   not a one-line patch, precisely because it's already shipped and wrong)
+1. ~~**PA**~~ (done — constants already existed, pure oracle-authoring, PR #809, see the
+   execution log's PA entry)
+2. ~~**AK correction**~~ (done — fix `bbce`, re-verify every other axis against the
+   corpus's PROVENANCE.md, regenerate all 92 oracle rows since a `bbce` flip changes
+   categorical-eligibility outcomes across a large share of the profile set — treated as a
+   full rebuild, not a one-line patch, precisely because it had already shipped and was
+   wrong. Landed across #804/PR #815, then #814/PR #817 and #812/PR #819 closed the
+   benefit-amount and FPL-table gaps AK's own corpus surfaced along the way — see §2 above
+   and the execution log's AK entries)
 3. Individual tier (~4M+ population): ~~NC~~ (done), ~~NJ~~ (done), ~~VA~~ (done),
    ~~TN~~ (done), ~~IN~~ (done), ~~MO~~ (done), ~~MD~~ (done), ~~CO~~ (done), ~~SC~~ (done),
    ~~LA~~ (done), ~~OK~~ (done — 13th and FINAL individual-tier state), ~~AL~~ (done —
@@ -294,10 +328,11 @@ exists and only oracle authoring is outstanding):
    see the execution log's VT/WY/DC entries) / ~~VI~~ (done — the batch tier's solo,
    final entry, see VI's own execution-log entry and issue #858). **The batch tier is
    CLOSED — every planned segment has landed.**
-7. MN, once a real SUA figure is sourced (may unblock independently of this sequencing —
-   revisit whenever that specific gap closes). **This is now the ONLY remaining item in the
-   entire plan** — HI and GU (§5) are done (#861), completing every other jurisdiction of
-   the original 53-jurisdiction scope.
+7. ~~MN, once a real SUA figure is sourced~~ (done — closed 2026-08-16, issue #747, landed
+   by PR #863: real FFY26 SUA figures sourced, all 92 `expected_by_state.MN` entries
+   authored, `/profile-simulation state=MN` now 129/0/0. See the execution log's MN entry,
+   the final entry in this document). **This was the last remaining item in the entire
+   plan — with it closed, all 53/53 jurisdictions are complete.**
 
 ## 7. Governance — carried forward unchanged
 
@@ -341,8 +376,7 @@ all of it.
   as old `true`; everything else fails open, same as old `false`) — this fixed what the
   value *claims*, not what the gate *does*. 279/279 snap-rules tests + 44/47
   profile-harness tests (3 pre-existing skips) passing, `tsc --noEmit` clean. PR
-  [#807](https://github.com/matthewgg22/Civica/pull/807), CI green, awaiting merge
-  go-ahead.
+  [#807](https://github.com/matthewgg22/Civica/pull/807), **merged**.
 - **#806 (effective-date banding)** — reused `federal-tables.ts`'s already-proven
   `FederalTableSnapshot` pattern for `StatePolicy`: added `effective_start`/`effective_end`,
   `STATES` became `Record<string, StatePolicy[]>`, `statePolicyFor(state, asOf)` now
@@ -384,8 +418,7 @@ all of it.
   Reconciliation verified: `tsc --noEmit` clean, 279/279 snap-rules tests + 44/47
   profile-harness tests (3 pre-existing skips) passing, three-dot diff against origin
   correctly scoped to #806's real incremental changes only. PR
-  [#808](https://github.com/matthewgg22/Civica/pull/808), CI running, awaiting merge
-  go-ahead.
+  [#808](https://github.com/matthewgg22/Civica/pull/808), **merged**.
 - **PA oracle-authoring (#636 methodology)** — authored `expected_by_state.PA` for all 92
   `expected_by_state`-shaped v0.6 profiles, following the NY/NV/AZ/OR/WI methodology.
   Fixture-only; PA's `StatePolicy` untouched (out of scope per the standing
@@ -515,7 +548,7 @@ all of it.
   `minimumBenefitFor`/`ak-allotment-zones.ts` work (separate, already in flight) and did NOT
   build any part of HI's `StatePolicy`, corpus registration, or oracle coverage (out of
   scope; only the table SHAPE is HI-ready). PR
-  [#819](https://github.com/matthewgg22/Civica/pull/819), awaiting merge go-ahead.
+  [#819](https://github.com/matthewgg22/Civica/pull/819), **merged**.
 
 - **NC (StatePolicy + full oracle authoring, first "individual tier" state, §6)** — North
   Carolina was a genuine blank slate: no `StatePolicy`, no oracle coverage at all, unlike
