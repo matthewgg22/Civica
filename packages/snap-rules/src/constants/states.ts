@@ -3910,6 +3910,214 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // North Dakota — HHS, delivered locally through 19 state-supervised
+  // "Human Service Zones" (2019 restructuring, SB 2124 / N.D.C.C. ch.
+  // 50-01.1). Third and FINAL "batch tier" build in this segment
+  // (docs/plans/snap-rules-50-state-engine-completion.md §6 step 6: "DE,
+  // SD, ND"), 32nd state overall — a genuine blank slate, no prior
+  // StatePolicy or oracle coverage existed. Every axis below is TRANSLATED
+  // from the already-cited primary-source findings in the merged Demeter
+  // corpus pack (packages/demeter-engine/src/states/nd/PROVENANCE.md +
+  // supplements.json), built 2026-08-12 — re-verification, not fresh
+  // research; see that pack's own Sources table (direct fetches of HHS's
+  // CURRENT, actively-versioned SNAP/ manual host, cross-checked against a
+  // STALE legacy 43005/ manual mirror the corpus pack caught and
+  // deliberately did not rely on for any dollar figure — see Finding 0 in
+  // that pack's PROVENANCE.md).
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis:
+  // federal_fiscal_year — HHS Manual §505 runs a 200% FPG track the manual
+  // calls "BBCE (TANF I&R)" in its narrative text and "Expanded
+  // Categorically Eligible (ECE)" in its income-table appendix (this build
+  // treats these as the SAME pathway under two labels, per the corpus
+  // pack's own explicit reading, not two separate tracks). Current FFY2026
+  // (10/1/2025-9/30/2026) figures confirmed directly from HHS's own current
+  // §505/Appendix B: 200% ECE/BBCE gross limit $2,610 HH1, matching the
+  // federal-fiscal-year basis this file's other 200%-BBCE states already
+  // use.
+  //
+  // asset_waiver: true — a household passing the 200% BBCE/ECE track faces
+  // NO resource test at all, per HHS's own §505/§601 read together. Same
+  // "BBCE households skip resources" pattern this file's NC/VA/MD/LA/DE
+  // entries already use. A household that has not established BBCE/ECE
+  // eligibility faces a REAL, current resource limit under §601 (revised
+  // 5/16/2025): $4,500 elderly/disabled, $3,000 all other — the corpus
+  // pack flags and corrects a genuine, still-repeated secondary-source
+  // staleness trap here, multiple aggregator sites quoting a lower
+  // $2,250/$3,250 figure that appears to reflect an un-updated older cycle.
+  //
+  // sua_by_tier — POPULATED, with ONE disclosed naming-collision gap, the
+  // SAME shape this file's SD entry (immediately above) just documented:
+  // HHS's own Policy Release 26.2 (Appendix B, "Table of Standards," eff.
+  // 4/1/2026) publishes a genuine FOUR-tier utility structure — Standard
+  // Utility Allowance (SUA, heating/cooling) $775/mo (a MID-FISCAL-YEAR
+  // increase from $772, a genuinely unusual within-cycle adjustment this
+  // file's other states hold constant for the full October-to-September
+  // fiscal year; $775 is the figure operative as of this build's date and
+  // therefore the CURRENT, not stale, figure to use — no effective-date
+  // snapshot split needed since 4/1/2026 has already passed as of this
+  // build), Limited Utility Allowance (LUSA, 2+ non-heat utilities)
+  // $286/mo, Minimum Utility Standard (MU, exactly ONE non-heat utility)
+  // $126/mo, and a standalone Telephone Standard $35/mo. Mapped: SUA ->
+  // HCSUA ($775), LUSA -> LUA ($286, North Dakota's own "2+ utilities"
+  // LUSA maps cleanly onto this schema's LUA slot), Telephone -> phone
+  // ($35). North Dakota's OWN $126 MU (exactly one non-heat utility) has
+  // NO slot in this schema's three-tier {HCSUA, LUA, phone} shape — the
+  // SAME disclosed, unmapped-4th-tier naming-collision gap this file's
+  // OH/MO/CO/SD entries already document. Independently verified this
+  // gap affects only a small subset of the 92 oracle profiles' benefit-
+  // dollar amounts (the base fixture's SUA-tier axis only exercises
+  // HCSUA/LUA/phone/none, not ND's own one-utility scenario specifically).
+  //
+  // allotment_tier: "48" — no North Dakota-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT via state statute:
+  // North Dakota Century Code § 50-06-05.1 (per Public Health Law Center's
+  // secondary-source quotation, effective 2017) states HHS "may not deny
+  // assistance under [SNAP] to any individual who has been convicted of a
+  // felony offense that has as an element the possession, use, or
+  // distribution of a controlled substance." Cross-checked against HHS's
+  // own SNAP manual disqualification-rules text (§430-05-77-55, legacy
+  // host — flagged by the corpus pack itself as not independently
+  // re-fetched from the current SNAP/ host, though the underlying
+  // statutory-opt-out claim does not depend on that specific gap) and
+  // found only SNAP-program-integrity-specific disqualifications (benefit
+  // trafficking, fleeing-felon/parole-violator status) with NO general
+  // drug-felony-conviction ban at all — consistent with the full-opt-out
+  // reading. Inconsequential regardless for this axis's verdict/benefit
+  // consequence (grep-confirmed: only "full" disqualifies in
+  // gates/disqualifications.ts).
+  //
+  // abawd_waiver_avail: false — a FLAGSHIP, PRIMARY-SOURCE CORRECTION of a
+  // specific, wrong secondary-source claim: HHS's own Policy Release 25.7
+  // (effective 11/1/2025, amended 11/13/2025) states directly that North
+  // Dakota's prior ABAWD Geographic Waiver — covering the Turtle Mountain
+  // Reservation and Rolette County under a 7/1/2025-6/30/2026 waiver
+  // period — was ENDING effective 10/31/2025, with affected individuals
+  // mailed notice on 10/10/2025. Cross-checked directly against USDA
+  // FNS/FNA's own ABAWD Time Limit Waivers FY2025-2029 index, which lists
+  // North Dakota's most recent posted waiver-response entry as FY2025
+  // (dated 6/18/2025) with NO FY2026 entry — corroborating no renewal. The
+  // corpus pack found and explicitly CORRECTED a WebSearch-surfaced
+  // secondary-source (aggregator) claim that North Dakota "holds an active
+  // statewide waiver through June 30, 2026" — both HHS's own dated release
+  // and USDA's own tracker confirm ND currently has NO active ABAWD
+  // geographic waiver anywhere in the state as of 11/1/2025 onward. No
+  // county-level lookup needed (the real waiver geography, while it
+  // existed, was already narrower than county-level — a specific
+  // reservation, not authored as a lookup since it has since lapsed
+  // entirely and a real "nowhere" answer has no county-level nuance for a
+  // lookup to represent, the same VA/MO/TN/MD/CO/SC/LA/OK/DE/SD-precedent
+  // uniform-statewide-zero-waiver shape).
+  //
+  // rmp_operated: false — HHS's own consumer FAQ page explicitly lists
+  // "food that will be eaten in the store" and "foods that are hot at the
+  // point of sale" among items households CANNOT buy with SNAP benefits,
+  // cross-checked against secondary-source corroboration (Propel's state
+  // EBT guide) that ND does not currently operate an RMP; no pending North
+  // Dakota RMP legislation found.
+  //
+  // Not representable in this schema, and not silently dropped: (a) a
+  // TIME-SENSITIVE, NOT-YET-EFFECTIVE finding the corpus pack flagged at
+  // length — North Dakota received a rare USDA demonstration-project
+  // waiver (approved 12/10/2025) excluding soft drinks, energy drinks, and
+  // candy from SNAP-purchasable food, EFFECTIVE SEPTEMBER 1, 2026 — this
+  // engine has no product-category-level purchasing-restriction axis at
+  // all (a `Facts`-shape gap, not a per-state value, same category as
+  // #824's NJ findings), and regardless is NOT YET ACTIVE as of this
+  // build's date; disclosed rather than modeled. (b) North Dakota's own
+  // narrow, reservation-tied vehicle-licensing accommodation (§604: "On
+  // Indian reservations that do not require vehicles driven by tribal
+  // members to be licensed, such vehicles must be treated as licensed
+  // vehicles" for the standard resource-exclusion purpose) has no
+  // per-vehicle-type axis in this engine's flat `assets: number` shape,
+  // same category of accepted limitation as NJ's boat/motor-home gap; (c)
+  // a household on or near a reservation may participate in EITHER SNAP OR
+  // the Food Distribution Program (FDPIR/Commodities) but never both in
+  // the same month (legacy-host §430-05-05-50/-50-05) — no engine axis
+  // models this choice-of-program mutual exclusivity, same category as
+  // SD's FDPIR gap documented immediately above. Zero of the 92 v0.6
+  // profiles' facts touch any of these three gaps.
+  //
+  // Oracle: ND's closest structural axis-twin among all 31 already-
+  // registered states is LOUISIANA — a FULL 7/7 match on every comparison
+  // axis (bbce: true, bbce_threshold_pct: 200, bbce_fpl_basis:
+  // federal_fiscal_year, asset_waiver: true, drug_felony_ban: "none",
+  // abawd_waiver_avail: false, allotment_tier: "48", rmp_operated: false),
+  // differing only in the SUA dollar figures — the same strength of match
+  // LA itself found with OR, and matching this file's OK-via-IN/SD-via-OK
+  // precedent for the strongest possible twin bond. Built a fresh,
+  // independent Python calculator (not derived from engine output, per
+  // #636) directly from verdict.ts/benefit-calc.ts/gates/{income-tests,
+  // asset-test,abawd,student,composition,immigration,disqualifications,
+  // categorical}.ts/facts.ts/constants/federal-tables.ts's own read source
+  // (not just their doc-comments), mirroring every gate and the
+  // benefit-calc formula exactly, including decimal.ts's half-up
+  // (roundDollar), floor (floorDollar), and ceiling (ceilDollar) rounding
+  // conventions — the SAME calculator already cross-validated against
+  // PA (for DE) and OK (for SD) earlier in this same batch build.
+  // Cross-validated BEFORE trusting it for ND: 129/129 exact match (92
+  // base + 37 variant rows) reproducing LA's already-graded oracle under
+  // LA's own StatePolicy params. Ran the validated calculator under ND's
+  // own policy params: ND's computed DENY set is IDENTICAL to LA's/DE's
+  // already-graded oracles (independently confirmed, since every
+  // verdict-controlling axis ND shares with LA/DE is identical). Authored
+  // all 92 `expected_by_state.ND` entries: 80 APPROVE / 12 DENY. Also
+  // checked all 37 rows across the 18 non-expected_by_state variant
+  // profiles for an ND-specific verdict_by_state override, the same
+  // discipline every prior state's build used — found ZERO divergence
+  // from the shared default verdict for ND (matching NC's/VA's/MD's/CO's/
+  // LA's/DE's zero-override result, not MO's/SC's/OK's/SD's one-override
+  // finding), since ND's computed verdict set is identical to LA's/DE's
+  // on every axis that affects eligibility.
+  //
+  // Verification: `/profile-simulation state=ND` — 129/129 PASS, 0 FAIL,
+  // 0 SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/
+  // VA/IN/MO/MD/CO/SC/LA/OK/SD's bar, not PA's/NJ's/TN's/DE's SKIP-heavy
+  // shape — ND's real, current SUA figures mean it did not need PA's/NJ's/
+  // TN's/DE's null-SUA fallback). Every other registered state's harness
+  // run reconfirmed unchanged from its documented baseline (see this
+  // build's own execution-log entry in docs/plans/snap-rules-50-state-
+  // engine-completion.md for the full per-state totals list). `tsc
+  // --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass
+  // (0 new — a schema-conformant pure addition needed no new unit tests),
+  // 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  // `packages/demeter-engine` (ND's corpus was already complete and out of
+  // scope) or any other state's `StatePolicy`/oracle coverage. No new
+  // GitHub issue filed — every gap found (the MU/one-utility naming-
+  // collision gap, the not-yet-effective food-restriction-waiver
+  // product-category gap, the reservation vehicle-licensing accommodation
+  // gap, the FDPIR choice-of-program mutual-exclusivity gap) is a
+  // per-state disclosed gap of an already-documented class (#824-style
+  // Facts-shape/mechanism gaps, or the OH/MO/CO/SD-precedent
+  // unmapped-4th-utility-tier gap), not a new engine architecture gap, per
+  // this task's own instruction. This is the THIRD and FINAL state in
+  // batch tier 5 (§6 step 6: "DE, SD, ND") — all three now have full
+  // StatePolicy + 92-profile oracle coverage.
+  ND: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "ND",
+      label: "North Dakota / HHS (Human Service Zones)",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("775"),
+        LUA: new Decimal("286"),
+        phone: new Decimal("35"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
