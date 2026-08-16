@@ -7710,11 +7710,15 @@ const STATES: Record<string, StatePolicy[]> = {
   // real DHS-VI FY2026 table fetched this build: its "175% of Poverty"
   // column ($2,284/$3,085/$3,887/$4,690/... by HH size 1-8) reproduces the
   // standard 48-contiguous FPL table (federal-tables.ts's FY26
-  // fpl_by_region.contiguous: $15,660/$5,500) times 1.75, floor-rounded,
-  // almost exactly (HH4 $4,690 matches exactly; HH1 is $1 off, $2,284 vs a
-  // computed $2,283 — the same order of minor table-vs-formula drift this
-  // file's AK/VA entries already document, not a sign VI uses an elevated
-  // FPL guideline). This ALSO confirms `bbce_fpl_basis` should NOT be an
+  // fpl_by_region.contiguous: $15,650/$5,500 — corrected #869, was
+  // $15,660) times 1.75, floor-rounded, only APPROXIMATELY (HH4 $4,690 vs
+  // a computed $4,688.25; HH1 $2,284 vs a computed $2,282 — see #868: the
+  // engine's floor-then-multiply architecture for the contiguous table no
+  // longer reconciles exactly to published state tables once the base
+  // constant is corrected, a residual explicitly NOT fixed by #869. This
+  // is the same order of table-vs-formula drift this file's AK/VA entries
+  // already document, not a sign VI uses an elevated FPL guideline). This
+  // ALSO confirms `bbce_fpl_basis` should NOT be an
   // elevated "vi" region in federal-tables.ts's fpl_by_region (unlike AK's
   // real #812 need) — VI's income limits derive from the SAME 48-contiguous
   // HHS guideline every other non-AK/HI state uses; only its BENEFIT

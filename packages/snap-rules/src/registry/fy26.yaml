@@ -50,16 +50,16 @@ entries:
 
   - id: federal_fpl_hh1_annual_for_snap_fy26
     type: constant
-    value: 15660
+    value: 15650
     unit: usd_per_year
     state: federal
     label: "HHS Poverty Guideline annual for HH1, 48 contiguous + DC, applied to SNAP FY26"
-    source_doc: "HHS Federal Register Notice, 2025 Poverty Guidelines"
+    source_doc: "HHS Federal Register Notice, 2025 Poverty Guidelines (90 FR 5917)"
     source_url: "https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines"
     effective_date: "2025-10-01"
     valid_through: "2026-09-30"
     owner: policy-data
-    notes: "SOURCE DOCUMENT is CY2025 HHS FPL ($15,660 annual). SNAP applies this throughout FY26 (Oct 1 2025 – Sep 30 2026), then switches to CY2026 HHS FPL at FY27 rollover. HHS published CY2026 FPL on 2026-01-15 (FR Doc 2026-00755); engine continues using CY2025 per the SNAP COLA convention. Linter staleness aligned to SNAP FY26 operational end."
+    notes: "SOURCE DOCUMENT is CY2025 HHS FPL ($15,650 annual, 90 FR 5917 p.5917 — corrected #869 2026-08-16, was mistranscribed as $15,660). SNAP applies this throughout FY26 (Oct 1 2025 – Sep 30 2026), then switches to CY2026 HHS FPL at FY27 rollover. HHS published CY2026 FPL on 2026-01-15 (FR Doc 2026-00755); engine continues using CY2025 per the SNAP COLA convention. Linter staleness aligned to SNAP FY26 operational end."
 
   - id: federal_max_allotment_hh1_fy26
     type: constant

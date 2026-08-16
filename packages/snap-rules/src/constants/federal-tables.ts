@@ -221,14 +221,35 @@ const FY26: FederalTableSnapshot = {
   // HHS 2025 Poverty Guidelines (Federal Register Vol. 90 No. 11, Jan 17,
   // 2025, 90 FR 5917 — govinfo.gov/content/pkg/FR-2025-01-17/pdf/2025-
   // 01377.pdf). Per-region (#812/#861): AK's and HI's guidelines are
-  // materially higher than the contiguous table's $15,660/$5,500 below —
+  // materially higher than the contiguous table's $15,650/$5,500 below —
   // see RegionalFplTable's doc-comment for the derivation + AK-vs-published-
   // table reconciliation.
-  // Monthly HH1 (contiguous) = $15,660/12 ≈ $1,305 (the value cited in the
-  // fixture's meta.params.fpl[1]).
+  //
+  // #869: fpl_annual_first_person was $15,660 through PR #863 — a $10
+  // transcription error against 90 FR 5917's own published "2025 POVERTY
+  // GUIDELINES FOR THE 48 CONTIGUOUS STATES AND THE DISTRICT OF COLUMBIA"
+  // table (p.5917: HH1 = "$15,650", not $15,660). Independently re-fetched
+  // and confirmed live 2026-08-16 against THREE sources: the Federal
+  // Register PDF itself (govinfo.gov, above), ASPE's own "prior HHS
+  // poverty guidelines" reference page, and USDA FNS's FY2026 SNAP Income
+  // Eligibility Standards PDF (fns-prod.azureedge.us/sites/default/files/
+  // resource-files/snap-fy26-incomeEligibilityStandards.pdf) — all three
+  // agree on $15,650. AK's ($19,550/$6,880) and HI's ($17,990/$6,330)
+  // entries below were checked against the SAME Federal Register PDF and
+  // are correct as-is — this was a contiguous-table-only transcription
+  // slip, not a wrong source document.
+  //
+  // Monthly HH1 (contiguous) = $15,650/12 ≈ $1,304 under this table's
+  // floor convention (the value now cited in the fixture's
+  // meta.params.fpl[1]) — NOTE this is $1 LOWER than FNS's own published
+  // FY2026 Income Eligibility Standards Table 1 HH1 figure of $1,305 in
+  // that same PDF above, which is derived from CEILING(annual/12), not
+  // floor — see fplMonthly()'s doc-comment below and issue #868 for the
+  // (deliberately NOT fixed here — separate, not-yet-authorized scope)
+  // rounding-direction residual this constant correction surfaces.
   fpl_by_region: {
     contiguous: {
-      fpl_annual_first_person: new Decimal("15660"),
+      fpl_annual_first_person: new Decimal("15650"),
       fpl_annual_each_additional: new Decimal("5500"),
       monthly_rounding: "floor",
     },
@@ -326,24 +347,35 @@ export function snapshotFor(asOf: Date): FederalTableSnapshot {
  * federal-tables.test.ts's cross-state regression check).
  *
  * FNS / CalFresh convention for the 48-contiguous table: FLOOR the monthly
- * value before applying BBCE / 130% / 100% multipliers. Verified against
- * CDSS ACIN I-46-25 (FFY 2026) Attachment I via the 2026-06-02 audit
- * reconciliation:
+ * value before applying BBCE / 130% / 100% multipliers. This was verified
+ * against CDSS ACIN I-46-25 (FFY 2026) Attachment I via the 2026-06-02
+ * audit reconciliation using the (then-current, since-corrected — #869)
+ * $15,660 base:
  *
- *   Annual FPL HH1 = $15,660; each add'l = $5,500.
+ *   Annual FPL HH1 = $15,660 (WRONG, see #869); each add'l = $5,500.
  *   HH2 monthly raw = $21,160/12 = $1,763.33 → floor = $1,763
- *     × 2.0 (BBCE-200) = $3,526 ✓ matches ACIN
+ *     × 2.0 (BBCE-200) = $3,526 ✓ matched ACIN (with the wrong base)
  *   HH3 monthly raw = $26,660/12 = $2,221.67 → floor = $2,221
- *     × 2.0 = $4,442 ✓ matches ACIN
+ *     × 2.0 = $4,442 ✓ matched ACIN (with the wrong base)
  *   HH4 monthly raw = $32,160/12 = $2,680.00 (exact, no fractional)
- *     × 2.0 = $5,360 ✓ matches ACIN
- *   HH5/6/8 similar — all floor reconciles to published table.
+ *     × 2.0 = $5,360 ✓ matched ACIN (with the wrong base)
  *
- * Prior implementation used `roundDollar()` (Math.round, HALF_UP) which
- * produced +$1 drift at HH2/3/5/6/8 vs the published BBCE-200, 130% gross,
- * and 100% net thresholds — flipping borderline cases. The fix: floor at
- * the monthly step so all derived thresholds match the FNS-published
- * rounding convention.
+ * #869/#868: with the CORRECTED $15,650 base, floor no longer reconciles
+ * to those SAME ACIN figures at any of the sizes above — e.g. HH2:
+ * floor($21,150/12) = $1,762 × 2.0 = $3,524, a NEW $2 mismatch against
+ * ACIN's $3,526 (was exact before, only because the wrong base and floor
+ * happened to cancel out). `ceiling($21,150/12) = $1,763 × 2.0 = $3,526`
+ * reconciles exactly instead. This is the SAME class of round-order
+ * mismatch #818 found for AK, now shown to also affect the contiguous
+ * table — tracked in #868, deliberately NOT fixed by #869 (out of that
+ * fix's authorized scope; changing `monthly_rounding` needs its own
+ * go-ahead + oracle sweep).
+ *
+ * Prior implementation (pre-#606) used `roundDollar()` (Math.round,
+ * HALF_UP) which produced +$1 drift at HH2/3/5/6/8 vs the
+ * (wrong-base-constant) published thresholds at the time — the fix then
+ * was floor at the monthly step. #868 documents that floor's apparent
+ * correctness was itself an artifact of the wrong base constant.
  *
  * AK and HI (#861) each use their OWN annual guideline and their OWN
  * rounding convention (ceiling, not floor) — see RegionalFplTable's
