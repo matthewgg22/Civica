@@ -3444,6 +3444,195 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // New Mexico — HCA (Income Support Division). Second "batch tier" build
+  // (docs/plans/snap-rules-50-state-engine-completion.md §6 step 6, "MS,
+  // NM, NE"), built after MS above. A genuine blank slate — no prior
+  // StatePolicy or oracle coverage existed. Every axis below is TRANSLATED
+  // from the already-cited primary-source findings in the merged Demeter
+  // corpus pack (packages/demeter-engine/src/states/nm/PROVENANCE.md +
+  // supplements.json, built 2026-08-12) — re-verification, not fresh
+  // research.
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis: federal_fiscal_year
+  // — a genuine, precisely-DATED CORRECTION: NMAC 8.139.420.8 (amended
+  // 3/1/2025) sets broad-based CE at gross income under 200% FPG,
+  // corroborated by HCA's own Sept. 23, 2024 press release dating the
+  // change ("The gross income limit increased from 165% to 200%...
+  // effective [October 1, 2024]"). The corpus pack traced the LIKELY
+  // origin of a stale "165% FPG" figure several secondary/calculator sites
+  // still repeat to a specific, still-live, pre-rename hsd.state.nm.us PDF
+  // (revision 6-15-2023). asset_waiver: true — NMAC 8.139.420.8 exempts
+  // broad-based CE households from resource VERIFICATION (a precise
+  // structural point the corpus pack flags: this is a resource-
+  // verification waiver, not an income-test waiver — broad-based CE
+  // households in New Mexico still must meet BOTH the gross AND net income
+  // standards, unlike financial-assistance/SSI CE households, who skip
+  // both income tests entirely via this engine's existing cat_elig
+  // mechanism). Because nearly every household under 200% FPG qualifies
+  // for broad-based CE, HCA's own $3,000/$4,500 published asset figures
+  // (matching the current FFY2026 national standard) are rarely reached in
+  // practice — but they ARE real and operative for the narrower
+  // non-CE population, so `asset_waiver: true` here follows this file's
+  // established NC/VA/MD/CO/SC/LA convention (asset test never runs for
+  // the BBCE-covered population) rather than the "New Mexico has no asset
+  // limit" oversimplification the corpus pack found and rejected.
+  //
+  // sua_by_tier — FULLY POPULATED, not null, a genuinely CLEAN case (the
+  // corpus pack found ZERO access barriers on HCA's own FFY2026 dollar-
+  // figure PDF, a contrast with this file's own MS entry immediately
+  // above): HCSUA $419 (Heating and Cooling Standard), LUA $289 (billed
+  // for utilities but not heating/cooling), phone $51 (Telephone
+  // Standard) — all from HCA's Income Eligibility Guidelines for SNAP &
+  // Financial Assistance, FFY2026 (ISD 017, revision 9-30-2025), no
+  // naming-collision trap (clean 1:1 fit by function, same shape as SC's/
+  // LA's entries). allotment_tier: "48" — NM's own Standard Deduction
+  // ($209/$223/$261/$299) and Excess Shelter Deduction cap ($744) match
+  // federal-tables.ts's FY26 snapshot exactly, the same shared-source
+  // signal this file's NC/VA/MO/MD/CO/SC/LA entries use. One disclosed
+  // open item the corpus pack flagged: it did not find NM-specific
+  // language distinguishing an elderly/disabled UNCAPPED shelter
+  // deduction from the capped figure — this engine already applies the
+  // federal E/D-uncapped rule regardless of state (benefit-calc.ts), so
+  // this is not a gap this StatePolicy entry needs to carry.
+  //
+  // drug_felony_ban: "modified" — a genuinely DISCLOSED SCOPE AMBIGUITY,
+  // not a clean opt-out: N.M. Stat. Ann. §27-2B-11(C) (fetched via two
+  // independently-convergent secondary/quasi-primary mirrors — Public
+  // Health Law Center, FindLaw — after both law.justia.com (403) and
+  // nmonesource.com, New Mexico's own official statute host (404), failed)
+  // invokes the FULL federal opt-out provision (21 U.S.C. §862a(d)(1)(A))
+  // but narrows its own scope to convictions "on the basis of...
+  // DISTRIBUTION of a controlled substance" specifically — NOT the federal
+  // ban's full possession/use/distribution scope. Public Health Law
+  // Center's OWN analysis independently makes the identical observation,
+  // describing the possession/use scope as genuinely open, not resolved.
+  // "Modified" (a real, conditional/narrower-than-full restriction this
+  // engine does not yet model at the facts level) is the correct #805
+  // classification — NOT "none" (a broader "fully opted out" secondary
+  // characterization the corpus pack found but explicitly declined to
+  // adopt as settled, given the statute's own narrower quoted text).
+  // Because only "full" disqualifies at today's gate (#805), this
+  // classification has zero effect on NM's computed oracle relative to a
+  // hypothetical "none" or "unconfirmed" entry.
+  //
+  // abawd_waiver_avail: true — a genuine, precisely-dated REFINEMENT: New
+  // Mexico's ABAWD waiver footprint narrowed sharply (from 29 counties + 18
+  // reservations through 12/31/2025) but did NOT fully disappear on
+  // January 1, 2026 — HCA's own current Keep Your Benefits, NM! page
+  // states the new statewide work rules do "not apply in Luna County,
+  // Laguna Pueblo, San Felipe Pueblo, Taos Pueblo, or Tesuque Pueblo," a
+  // genuine, real, currently-active waiver footprint (one county + four
+  // pueblos) — chosen `true` under this file's established "wrongly
+  // denying food is the worse error" reasoning (same as NJ's/AZ's/CA's/
+  // MI's/NV's entries) rather than treating the "statewide work rules"
+  // headline as if it applied everywhere. Deliberately did NOT build a
+  // real per-county WAIVER_COUNTIES_BY_STATE lookup for NM despite Luna
+  // County being a clean FIPS match: four of the five waived jurisdictions
+  // are PUEBLOS, not counties — the existing lookup is keyed by
+  // county-level FIPS only and cannot represent tribal-land geography, the
+  // SAME shape gap NJ's Camden-City-inside-Camden-County finding already
+  // disclosed (#825) — a partial/wrong Set would be actively worse than
+  // the honest state-level fallback. rmp_operated: false — New Mexico is
+  // ABSENT from USDA FNA's own current Restaurant Meals Program state
+  // list, with no pending NM legislation found directing HCA toward one.
+  //
+  // Not representable in this schema, and not silently dropped — the SAME
+  // pre-existing gap already filed as #824, not re-filed, just newly
+  // confirmed present for New Mexico in a genuinely novel shape: HCA's own
+  // Sept. 23, 2024 press release describes a NEW-MEXICO-SPECIFIC state
+  // supplement for elderly/disabled no-earned-income households (increased
+  // from $32 to $100/month, same effective date as the BBCE change) — an
+  // additional state-funded top-up on top of the federal SNAP allotment,
+  // distinct from AK's zone-based minimum-benefit floor (the only
+  // state-varying minimum-benefit mechanism this engine currently models)
+  // and MD's own $50 elderly-composition-conditioned floor (#already
+  // disclosed in this file's MD entry) — no engine axis exists for this
+  // NM-specific supplement; zero of the 92 oracle profiles are affected
+  // since it is additive on top of, not a substitute for, the federal
+  // benefit this engine computes. Also informational only, no engine axis:
+  // NM's 36-month certification period for all-60+/disabled no-earned-
+  // income households (up from 12), and the federal FDPIR-vs-SNAP
+  // household exclusivity rule relevant to NM's substantial tribal-land
+  // population.
+  //
+  // Oracle: NM's closest structural axis-twin among all 29 already-
+  // registered states is OREGON — matching 6 of 7 comparison axes exactly
+  // (bbce: true, bbce_threshold_pct: 200, bbce_fpl_basis:
+  // federal_fiscal_year, asset_waiver: true, allotment_tier: "48",
+  // rmp_operated: false; drug_felony_ban differs, "modified" vs OR's
+  // "none", but has zero grading effect per #805), differing only in
+  // abawd_waiver_avail (NM: true, OR: false) — the one axis expected to
+  // produce a real, explainable divergence. Built a fresh, independent
+  // Python calculator (not derived from engine output, per #636) directly
+  // from verdict.ts/benefit-calc.ts/gates/{income-tests,asset-test,abawd,
+  // student,composition,immigration,disqualifications,categorical}.ts/
+  // facts.ts/constants/federal-tables.ts's own read source (not just their
+  // doc-comments), mirroring every gate and the benefit-calc formula
+  // exactly, including decimal.ts's half-up (roundDollar) and floor
+  // (floorDollar) rounding conventions. Cross-validated BEFORE trusting it
+  // for NM: 92/92 exact match (verdict AND benefit) reproducing OR's
+  // already-graded oracle under OR's own StatePolicy params, PLUS all 37
+  // non-expected_by_state variant rows (0 mismatches) — 129/129 total,
+  // before applying NM's own policy params.
+  //
+  // Confirmed the ONE expected divergence, and only that one: NM's
+  // computed DENY set is IDENTICAL to OR's DENY set MINUS
+  // M12-abawd-in-a-waived-area, which flips APPROVE for NM (matching this
+  // file's NJ's/PA's precedent — abawd_waiver_avail: true) — 11 DENY / 81
+  // APPROVE for NM vs OR's 12 DENY / 80 APPROVE, exactly the single
+  // explained difference the axis comparison above predicted. Also checked
+  // all 37 non-expected_by_state variant rows directly under NM's own
+  // params for an NM-specific verdict_by_state override — found ZERO
+  // divergence from OR's already-graded values (M23's both variants stay
+  // APPROVE for NM, matching every other 200%-BBCE state in this file with
+  // a real SUA and no net ceiling — VA/NC/PA/OR all APPROVE MX4/M23-style
+  // profiles the non-BBCE states DENY). Authored all 92
+  // expected_by_state.NM entries: 81 APPROVE / 11 DENY. Since NM's
+  // sua_by_tier is fully populated (unlike MS's null entry), every
+  // APPROVE profile gets a real, independently-computed benefit — no
+  // SUA-sweep or indeterminacy handling was needed for NM at all.
+  //
+  // Verification: `/profile-simulation state=NM` — 129/129 PASS, 0 FAIL, 0
+  // SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA's bar, not PA's/NJ's/TN's/MN's/MS's SKIP-heavy
+  // shape). Every other registered state's harness run reconfirmed
+  // unchanged from its documented baseline (CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/
+  // WI/KS/OH/AK/NC/VA/IN/MO/MD/CO/SC/LA all 129/0/0; NY 127/2/0; AZ
+  // 128/1/0; PA/NJ/TN/MS all 34/0/95; MN 0/0/129 — all pre-existing, none
+  // newly introduced). Did not touch `packages/demeter-engine` (NM's
+  // corpus was already complete and out of scope) or any other state's
+  // StatePolicy/oracle coverage. AL/KY/OK (individual tier) and CT/UT/IA/
+  // AR (the first batch-tier segment) were all concurrently in-flight, not
+  // yet merged, as of this build — not touched, not coordinated with; a
+  // human reconciles the eventual rebase chain, same pattern as
+  // MO-vs-TN/IN. No new GitHub issue filed — every gap found (the NM
+  // state-supplement mechanism, the drug-felony distribution-only scope
+  // ambiguity, the Pueblo-geography ABAWD-lookup gap) is a per-state
+  // disclosed gap of an already-documented class (#824/#825-style
+  // Facts-shape/mechanism gaps), not a new engine architecture gap.
+  NM: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "NM",
+      label: "New Mexico / HCA (Income Support Division)",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("419"),
+        LUA: new Decimal("289"),
+        phone: new Decimal("51"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: true,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
