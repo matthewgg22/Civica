@@ -31,14 +31,14 @@ at all; today, most do.
 this plan's own individual-tier landings)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **27 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
-MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC.
+states.ts`) exists for **28 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
+MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO, SC, LA.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
 engine against — has full 92-case coverage (minus TN's 3 deliberately-unauthored
-genuinely-indeterminate profiles, see below) for **25 of those 27**: CA, WA, TX, NY, GA,
-MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD, CO, SC clear CLEAN
+genuinely-indeterminate profiles, see below) for **26 of those 28**: CA, WA, TX, NY, GA,
+MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD, CO, SC, LA clear CLEAN
 (129/0/0 or a documented pre-existing partial); PA, NJ, and TN also have all 92 (or 89,
 for TN) rows authored, per the execution log's PA/NJ/TN entries below, but all three
 grade 34/0/95 — most of their profiles legitimately SKIP on the null-SUA gap, not a
@@ -62,11 +62,12 @@ One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
   the engine today and, if used for a real determination, would wrongly deny categorical
   eligibility to AK households between 130%–200% FPL.
 
-**26 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
-AL, AR, CT, DC, DE, GU, HI, IA, ID, KY, LA, ME, MS, MT, ND, NE, NH,
-NM, OK, RI, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, CO, and SC — the first
-nine "individual tier" states, §6 — are DONE; see the execution log's
-NC/NJ/VA/TN/IN/MO/MD/CO/SC entries.)
+**25 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
+AL, AR, CT, DC, DE, GU, HI, IA, ID, KY, ME, MS, MT, ND, NE, NH,
+NM, OK, RI, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, CO, SC, and LA — the
+first ten "individual tier" states, §6 — are DONE; see the execution log's
+NC/NJ/VA/TN/IN/MO/MD/CO/SC/LA entries. Alabama's build was concurrently in flight as of
+LA's build, not yet merged — see LA's execution-log entry for the reconciliation note.)
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
 
@@ -192,7 +193,8 @@ exists and only oracle authoring is outstanding):
    eligibility outcomes across a large share of the profile set — treat as a full rebuild,
    not a one-line patch, precisely because it's already shipped and wrong)
 3. Individual tier (~4M+ population): ~~NC~~ (done), ~~NJ~~ (done), ~~VA~~ (done),
-   ~~TN~~ (done), ~~IN~~ (done), ~~MO~~ (done), ~~MD~~ (done), ~~CO~~ (done), ~~SC~~ (done), AL, LA, KY, OK
+   ~~TN~~ (done), ~~IN~~ (done), ~~MO~~ (done), ~~MD~~ (done), ~~CO~~ (done), ~~SC~~ (done),
+   AL (concurrently in flight as of LA's build, not yet merged), ~~LA~~ (done), KY, OK
 4. Schema step: extend `AllotmentTier` for HI/GU (own small PR, own go-ahead)
 5. HI, GU (now unblocked)
 6. Batch tier (<4M population, N≤3 per batch): CT, UT, IA, AR / MS, NM, NE / ID, WV, NH /
@@ -1334,3 +1336,145 @@ all of it.
   already-documented class (#824-style Facts-shape/mechanism gaps, or a genuinely
   time-sensitive fact worth re-checking after 8/31/2026), not a new engine architecture gap,
   per this task's own instruction. PR TBD, awaiting merge go-ahead.
+
+- **LA (individual tier, §6 step 3, tenth state after NC/NJ/VA/TN/IN/MO/MD/CO/SC)** — built
+  Louisiana's `StatePolicy` entry AND full 92-profile oracle coverage from scratch (LA had
+  neither before this PR), translating LA's already-merged Demeter corpus pack
+  (`packages/demeter-engine/src/states/la/`, PROVENANCE.md + supplements.json +
+  freshness.json, built 2026-08-12) into the engine's stricter typed shape per §5's process.
+  Alabama's individual-tier build (this sequence's 9th-numbered state, but built
+  concurrently, not read or coordinated with) was NOT yet merged as of this build — a human
+  reconciles the eventual rebase, same pattern this project used for MO-vs-TN/IN.
+
+  `bbce: true` / `bbce_threshold_pct: 200` / `bbce_fpl_basis: federal_fiscal_year` — LA
+  E-280-SNAP (Broad-Based Categorical Eligibility): households authorized to receive a
+  non-cash TANF/MOE-funded service via FITAP get a FLAT 200% FPL gross income test
+  REPLACING the ordinary 130% test, with no additional condition that every household
+  member be elderly or disabled — structurally SIMPLER than this file's most recent prior
+  corpus finding, Alabama's dual-track 130%/200% structure, confirmed by the corpus pack
+  reading E-280-SNAP's FULL text (not just its section heading) specifically to avoid
+  pattern-matching Alabama's more complex structure onto Louisiana without verification.
+  J-300-SNAP (current FFY2026 Income Eligibility Chart, effective Oct. 1, 2025) confirms
+  the federal-fiscal-year cycle: 130% FPL HH1 $1,696/mo, 200% FPL HH1 $2,609/mo, 100% FPL
+  (net) HH1 $1,305/mo.
+
+  `asset_waiver: true` — flows directly from the same E-280-SNAP finding: BBCE households
+  have their resources EXCLUDED ENTIRELY, and LA's manual instructs staff not to even
+  request resource verification for these households (E-280-SNAP, E-281-1-SNAP,
+  B-1022-SNAP).
+
+  `sua_by_tier` — FULLY POPULATED, not null: LA B-654-1/2/3-SNAP (effective June 1, 2026)
+  publishes SUA $465/mo (heating/cooling households), BUA $258/mo (2+ non-heating
+  utilities), standalone Telephone Standard $76/mo. Clean 1:1 functional fit onto this
+  schema's three tiers — SUA→HCSUA, BUA→LUA, Telephone→phone — the same shape this file's
+  SC entry found, with no naming-collision trap (LA's BUA is already a 2+-utility standard
+  by LA's own definition, unlike OH's/MO's/CO's disclosed mismatched-tier gap). LA's
+  Standard Deduction ($209/$209/$209/$223/$261/$299), capped excess shelter ($744), and
+  $3,000/$4,500 resource limits all match `federal-tables.ts`'s FY26 snapshot exactly.
+
+  `allotment_tier: "48"` — no Louisiana-specific elevated max-allotment schedule found.
+
+  `drug_felony_ban: "none"` — a VERIFIED FULL OPT-OUT, this pack's second flagship finding:
+  La. R.S. 46:233.3 (2017 Regular Session HB 681, effective October 1, 2017) exempts ALL
+  individuals domiciled in Louisiana from the federal 21 U.S.C. 862a(a)(2) drug-felony SNAP
+  ban — per CLASP's "No More Double Punishments" report, Louisiana is among a minority of
+  states (alongside North Dakota) that FULLY opted out, not merely modified, the ban.
+  Independently corroborated by reading LA's own current disqualification manual directly:
+  E-220-SNAP and E-222-SNAP enumerate every category of SNAP member disqualification
+  Louisiana's program currently applies, and a drug-related felony conviction, by itself,
+  appears on NEITHER list. Access caveat: Justia 403'd on direct fetch of the statute's own
+  text; corroborated via convergent secondary sources (CLASP, the Public Health Law
+  Center's opt-out map) cross-checked against LA's own primary-source manual, which
+  independently confirms the same substantive rule by omission — not a direct read of the
+  statute's codified text.
+
+  `abawd_waiver_avail: false` — an AFFIRMATIVELY SOURCED, DOUBLE-LOCKED-OUT finding, this
+  pack's third flagship finding: Louisiana's own 2024 Act 308 barred DCFS from seeking or
+  renewing ABAWD waivers unless required by federal law — a state-specific choice predating
+  OBBBA by roughly a year, expiring LA's last 33 parish-level waivers (more than half the
+  state's 64 parishes) October 1, 2024. OBBBA then independently eliminated the federal
+  ABAWD-waiver mechanism nationwide (effective November 2025). ABAWDMap.us confirms zero
+  ABAWD waivers statewide as of its last review (June 16, 2026). No county-level lookup
+  needed, same uniform-statewide-zero-waiver shape as this file's VA/MO/TN/MD/CO/SC
+  entries.
+
+  `rmp_operated: false` — Louisiana is ABSENT from USDA FNA's own current Restaurant Meals
+  Program state list (fetched Aug. 7, 2026). Disclosed, not modeled (no engine consumer
+  exists for this axis, grep-confirmed): LDH separately announced (July 20, 2026) a
+  TEMPORARY, STATEWIDE hot-foods disaster waiver for ALL SNAP participants following
+  Tropical Storm Arthur, stated effective through August 13, 2026 — a genuinely
+  time-sensitive, already-lapsed-as-of-this-build mechanism (LA's own `freshness.json`
+  re-checked 2026-08-15: no extension found, fails safe), and a different, disaster-specific
+  mechanism from a standing RMP, never conflated with it.
+
+  Not representable in this schema, and not silently dropped — the SAME pre-existing gaps
+  already filed as #824, newly confirmed present for Louisiana: (a) all vehicles excluded
+  as a resource regardless of type (LA B-1040-SNAP's countable-resources list omits
+  vehicles entirely), matching this file's NC/MO/MD/CO pattern; immaterial regardless since
+  `asset_waiver: true` means the resource test never runs for the BBCE population this axis
+  governs; (b) legally obligated child support (LA B-656-SNAP) is an ORDINARY
+  POST-GROSS-INCOME DEDUCTION, matching this file's MD/IN/TN/SC pattern (NOT VA/NJ/IL/MO/
+  CO's income-exclusion-before-the-gross-test mechanism) — A08's $300 child-support
+  profile's LA verdict is unaffected either way; (c) a flat Homeless Shelter Deduction of
+  $198.99/mo (LA B-654-6-SNAP) as an alternative to the capped excess shelter deduction —
+  this happens to equal the federal FY26 homeless-deduction figure `federal-tables.ts`
+  already uses engine-wide, so LA carries no disclosed divergence here (a different shape
+  from MO's/CO's/SC's flat-shortcut findings, which carry LA-irrelevant state-specific
+  dollar amounts); (d) no engine axis exists for certification-period length (LA's 12-month
+  structure with a 6-month Simplified Report midpoint, S-110-SNAP, matching this file's
+  Alabama/MD pattern per the corpus pack, not CO's/SC's 6-month baseline).
+
+  Disclosed research-access gap (not a fabricated citation, per the corpus pack's own
+  `freshness.json`): LA's own B-1030-SNAP (the section B-1040-SNAP itself cites for
+  "required resource limits") could not be independently located at a stable URL. The
+  $3,000/$4,500 resource-limit figures are corroborated via B-1040-17-SNAP's own worked
+  numerical example plus independent secondary confirmation, not a direct read of
+  B-1030-SNAP's full text — immaterial to every axis authored here since none of them
+  depend on the exact resource-limit figure (`asset_waiver` already skips the test).
+
+  Oracle: LA's closest structural axis-twin among all 27 already-registered states is
+  OREGON — a FULL 7/7 match on every comparison axis (`bbce: true`,
+  `bbce_threshold_pct: 200`, `bbce_fpl_basis: federal_fiscal_year`, `asset_waiver: true`,
+  `drug_felony_ban: "none"`, `abawd_waiver_avail: false`, `allotment_tier: "48"`,
+  `rmp_operated: false`), differing only in the SUA dollar figures — a stronger match than
+  any prior state's chosen twin in this file (VA-via-NC, MD-via-VA, CO-via-NC, SC-via-TX
+  were all 6/7). Built a fresh, independent Python calculator (not derived from engine
+  output, per #636) directly from `verdict.ts`/`benefit-calc.ts`/`gates/{income-tests,
+  asset-test,abawd,student,composition,immigration,disqualifications,categorical}.ts`/
+  `facts.ts`/`constants/federal-tables.ts`'s own read source (not just their doc-comments),
+  mirroring every gate and the benefit-calc formula exactly, including `decimal.ts`'s
+  half-up (`roundDollar`) and floor (`floorDollar`) rounding conventions. Cross-validated
+  BEFORE trusting it for LA: 92/92 exact match (verdict AND benefit) reproducing OR's
+  already-graded oracle under OR's own `StatePolicy` params, PLUS all 37
+  non-`expected_by_state` variant rows (0 mismatches) — 129/129 total, before applying LA's
+  own policy params. Also checked all 37 rows across the 18 non-`expected_by_state` variant
+  profiles directly under LA's own params for an LA-specific `verdict_by_state` override,
+  the same discipline every prior state's build used — found ZERO divergence from the
+  shared default verdict (matching NC's/VA's/MD's/CO's zero-override result, not MO's/SC's
+  one-override finding): because LA's computed verdict set is identical to OR's on every
+  axis that affects eligibility, LA's verdicts are IDENTICAL to OR's across all 92 base
+  profiles and all 37 variant rows (80 APPROVE / 12 DENY, the same DENY set as OR's),
+  differing only in benefit dollar amount for 8 of the 92 profiles where OR's/LA's SUA
+  figures diverge AND the household's excess-shelter deduction isn't already clamped by the
+  federal $744 shelter cap (elderly/disabled households with an uncapped shelter deduction,
+  plus BBCE-flip and near-threshold profiles where the SUA-driven net-income difference
+  doesn't change the verdict). Authored all 92 `expected_by_state.LA` entries: 80 APPROVE /
+  12 DENY.
+
+  Verification: `/profile-simulation state=LA` — 129/129 PASS, 0 FAIL, 0 SKIP (clean,
+  matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/IN/MO/MD/CO/SC's bar, not PA's/
+  NJ's/TN's/MN's SKIP-heavy shape). Every other registered state's harness run reconfirmed
+  unchanged from its documented baseline, all 27 pre-existing states checked individually
+  (not spot-checked): CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD/CO/SC all
+  129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 — every one identical to
+  its pre-LA documented baseline, zero regressions. `tsc --noEmit -p packages/snap-rules`
+  clean, 323/323 snap-rules tests pass (0 new — a schema-conformant pure addition needed no
+  new unit tests), 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  `packages/demeter-engine` (LA's corpus was already complete and out of scope) or any
+  other state's `StatePolicy`/oracle coverage. No new GitHub issue filed — every gap found
+  (the disclosed B-1030-SNAP access gap, the DCFS-to-LDH agency transfer, the Economic
+  Stability/Economic Independence manual rename, the SMED/child-support-exclusion/vehicle-
+  exclusion/certification-period gaps) is a per-state disclosed gap of an already-documented
+  class (#824-style Facts-shape/mechanism gaps, or a genuinely time-sensitive fact worth
+  re-checking later), not a new engine architecture gap, per this task's own instruction.
+  PR TBD, awaiting merge go-ahead.
