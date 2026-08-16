@@ -6361,6 +6361,618 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Delaware — DHSS / Division of Social Services (DSS). First "batch tier"
+  // build (docs/plans/snap-rules-50-state-engine-completion.md §6 step 6:
+  // "DE, SD, ND"), and this file's 30th state overall — a genuine blank
+  // slate, no prior StatePolicy or oracle coverage existed. Every axis below
+  // is TRANSLATED from the already-cited primary-source findings in the
+  // merged Demeter corpus pack (packages/demeter-engine/src/states/de/
+  // PROVENANCE.md + supplements.json + freshness.json), built 2026-08-12 —
+  // re-verification, not fresh research; see that pack's own Sources table
+  // (direct curl fetches of dhss.delaware.gov and regulations.delaware.gov,
+  // both clean HTTP 200 with no WAF barrier, plus the regulations.delaware.
+  // gov API PDF endpoint for the full 114-page DSSM 9000 manual and the
+  // archived DSSM 2000 manual, plus Delaware's own 2018 repeal order text).
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis: federal_fiscal_year
+  // — DSSM 9042 (Categorically Eligible Households): any household with
+  // gross income at or below 200% FPL is categorically eligible, via a
+  // DISTINCTIVE Delaware mechanism this pack read directly from DSSM 9042's
+  // own text (not a generic "BBCE" self-description several secondary
+  // sources use): Delaware uses TANF funds to provide non-cash
+  // pregnancy-prevention information (the 3rd statutory TANF purpose), with
+  // an authorization for this information embedded directly in the Delaware
+  // SNAP application itself. Delaware's own current Food Benefit Income
+  // Eligibility Limits table (published for the FFY2026 cycle, 10/1/2025-
+  // 9/30/2026) confirms the 200% figures ($2,610 HH1, $5,360 HH4) — the
+  // federal-fiscal-year basis this file's other 200%-BBCE states already use.
+  //
+  // asset_waiver: true — DSSM 9045: categorically eligible households "do
+  // not have to meet the resource limits or definitions" at all. Same "BBCE
+  // households skip resources" pattern this file's NC/VA/MD/LA entries
+  // already use — but Delaware's corpus pack flags a genuine, disclosed
+  // internal-DSSM staleness catch this build does NOT need to resolve to
+  // author this axis: a household that is NOT categorically eligible (e.g.
+  // ineligible-alien member, student-provision ineligibility, fleeing-felon/
+  // probation-violator status, non-exempt institutionalization, or
+  // work-requirement noncompliance — DSSM 9042.2/9042.3) still faces a real
+  // DSSM 9045 resource limit, and DSSM 9045's own text ($2,000/$3,000)
+  // traces to at least a 2009-era baseline with no visible newer amendment
+  // against the current federal FY2026 COLA-adjusted floor ($3,000/$4,500)
+  // — immaterial to this axis since `asset_waiver: true` already means the
+  // resource test never runs for the large majority of DE households this
+  // axis governs (the 200% FPL cat-elig population), but flagged here
+  // per the corpus pack's own disclosure rather than silently dropped.
+  //
+  // sua_by_tier: NULL — a genuine, disclosed gap, not a guess: DSSM 9060
+  // explicitly defers Delaware's Standard Deduction AND all four
+  // utility-allowance tiers (HCSUA/LUA/one-utility/telephone) to "the
+  // current October Cost-of-Living Adjustment Administrative Notice," a
+  // separate document the corpus pack could not locate at a working URL (a
+  // 2022-vintage URL pattern now 404s). USDA FNS's own FY2026 SUA guidance
+  // memo confirms these figures are now calculated PER-STATE via a 2.7%
+  // CPI-U self-adjustment from each state's own FY2025 baseline rather than
+  // published in one uniform national table — meaning Delaware's specific
+  // current dollar figures are genuinely state-specific and undiscovered,
+  // the same disclosed-null discipline this file's PA/NJ/TN entries already
+  // use rather than fabricating a number.
+  //
+  // allotment_tier: "48" — no Delaware-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL REPEAL, this pack's flagship
+  // finding, reached by chasing a specific repealed citation rather than
+  // accepting a secondary-source paraphrase: several secondary sources
+  // describe Delaware as having a "modified" drug-felony ban conditioned on
+  // sentence compliance — language traceable to DSSM 2027's own PRE-2018
+  // text. The corpus pack fetched Delaware's current DSSM 2000-series
+  // manual directly and found DSSM 2027 marked plainly "[Repealed - See 21
+  // DE Reg. 722 (03/01/18)]," then fetched 21 DE Reg. 722's own Final Order
+  // text directly: Delaware struck the drug-felony restriction from Cash
+  // Assistance/General Assistance entirely, effective March 11, 2018,
+  // implementing House Bill No. 11 (2017) and 31 Del. C. §524. DSSM 9042.2
+  // (SNAP's own categorical-eligibility exclusion list) independently
+  // confirms no drug-felony exclusion category exists in the SNAP-specific
+  // rules either. One disclosed internal-DSSM inconsistency: DSSM 9013.2
+  // still lists a drug-felony exclusion citing the repealed DSSM 2027 — the
+  // corpus pack treats the repeal order and DSSM 9042.2's own current
+  // exclusion list as authoritative over this stale, uncorrected
+  // cross-reference. Inconsequential regardless for this axis's
+  // verdict-and-benefit consequence (grep-confirmed: only "full" disqualifies
+  // in gates/disqualifications.ts).
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-lapsed
+  // finding: USDA FNS's own ABAWD Time Limit Waivers FY2025-2029 index lists
+  // Delaware's most recent posted waiver-response entry as the FY2025
+  // waiver (approved 09/19/2024, covering Wilmington city plus the combined
+  // Kent/Sussex County area), effective through September 30, 2025 — with
+  // NO FY2026 entry as of the corpus pack's fetch (2026-08-12). A separate,
+  // already-lapsed, one-month federal-shutdown-driven nationwide ABAWD
+  // pause (November 2025 only) is a distinct, time-limited event, not an
+  // ongoing Delaware-specific waiver. No county-level lookup needed, same
+  // uniform-statewide-zero-waiver shape as this file's VA/MO/TN/MD/CO/SC/
+  // LA/OK entries.
+  //
+  // rmp_operated: false — Delaware DHSS's own consumer page explicitly
+  // lists "Hot or prepared foods" under items a household CANNOT buy with
+  // SNAP benefits, cross-checked against secondary-source corroboration
+  // that no DE RMP exists; no pending Delaware RMP legislation found.
+  //
+  // Not representable in this schema, and not silently dropped — a
+  // NEW-TO-THIS-FILE type of disclosed gap: Delaware's DSSM 9060 states its
+  // Homeless Shelter Deduction as a flat $143.00, but that specific
+  // subsection's amendment footer shows no revision newer than 09/01/14,
+  // while USDA's current national FY2026 maximum is $198.99 — a state MAY
+  // legitimately set its own homeless-shelter-deduction figure below the
+  // federal cap, so $143.00 is not necessarily wrong, but the corpus pack
+  // could not confirm whether Delaware has since raised it. This engine has
+  // no per-state homeless-deduction axis at all (benefit-calc.ts's
+  // `homelessDeductionFor` is a single federal constant, engine-wide) — so
+  // this gap is disclosed here but not actionable without a schema change,
+  // the same category of accepted limitation as #824's NJ findings. Zero of
+  // the 92 v0.6 profiles with `homeless_deduction: true` are DE-specific
+  // enough for this to matter for THIS build's oracle (the federal $198.99
+  // figure is what the engine actually applies regardless of state).
+  //
+  // Oracle: DE's closest structural axis-twin among all 29 already-
+  // registered states is TENNESSEE — matching every verdict-and-benefit-
+  // consequential axis exactly (bbce: true, bbce_threshold_pct: 200,
+  // bbce_fpl_basis: federal_fiscal_year, asset_waiver: true, sua_by_tier:
+  // null, allotment_tier: "48", abawd_waiver_avail: false), differing only
+  // in `drug_felony_ban` (TN "modified" vs DE "none" — a value with zero
+  // verdict/benefit consequence, grep-confirmed: only "full" disqualifies
+  // anywhere in gates/disqualifications.ts). Built a fresh, independent
+  // Python calculator (not derived from engine output, per #636) directly
+  // from verdict.ts/benefit-calc.ts/gates/{income-tests,asset-test,abawd,
+  // student,composition,immigration,disqualifications,categorical}.ts/
+  // facts.ts/constants/federal-tables.ts's own read source (not just their
+  // doc-comments), mirroring every gate and the benefit-calc formula
+  // exactly, including decimal.ts's half-up (roundDollar), floor
+  // (floorDollar), and ceiling (ceilDollar) rounding conventions. Because
+  // TN's own fixture is missing 3 of 92 rows (TN deliberately left 3
+  // genuinely-indeterminate profiles unauthored per its own build), this
+  // build instead cross-validated the calculator against PENNSYLVANIA (also
+  // null-SUA, 200%/federal_fiscal_year BBCE, asset_waiver true — PA has the
+  // full 92/92 + 37/37 rows authored, differing from DE in
+  // `abawd_waiver_avail` (PA true vs DE false) and `drug_felony_ban` (PA
+  // "modified" vs DE "none"), a MORE rigorous check than matching DE's own
+  // params since it forced the calculator to prove both the true and false
+  // abawd_waiver_avail branches correct): 129/129 exact match (92 base +
+  // 37 variant rows) reproducing PA's already-graded oracle under PA's own
+  // StatePolicy params, using a realistic-range ($0-$1,000, 21-point) SUA
+  // sweep for the null-SUA-blocked rows — a bounded, realistic sweep caught
+  // ZERO indeterminate profiles for PA, unlike an earlier unrealistic
+  // $0-$1,500 sweep attempt which manufactured one false-ambiguous signal on
+  // a profile whose verdict only flips north of a ~$1,130 SUA figure no real
+  // state utility standard anywhere in this file has ever published (noted
+  // as a minor, out-of-scope PA cross-validation footnote, not touched here
+  // — PA itself stays fully out of scope for this build). Also independently
+  // cross-checked TN's own 89/92 authored rows for extra confidence: 88/89
+  // matched (the one divergence, MX4-bbce-max-income-with-any-benefit, is a
+  // TN-specific finding this build did not need to resolve or model, since
+  // DE is built and verified independently against PA, not TN). Ran the
+  // validated calculator under DE's own policy params: DE's computed DENY
+  // set is IDENTICAL to LA's (LA — also 200%/federal_fiscal_year BBCE,
+  // asset_waiver true, abawd_waiver_avail false — differing in `sua_by_tier`
+  // only) and OR's already-graded oracles (independently confirmed, since
+  // every verdict-controlling axis DE shares with LA/OR is identical).
+  // Authored all 92 `expected_by_state.DE` entries: 80 APPROVE / 12 DENY.
+  // Also checked all 37 rows across the 18 non-expected_by_state variant
+  // profiles for a DE-specific verdict_by_state override, the same
+  // discipline every prior state's build used — found ZERO divergence from
+  // the shared default verdict for DE (matching NC's/VA's/MD's/CO's/LA's
+  // zero-override result, not MO's/SC's/OK's one-override finding), since
+  // DE's computed verdict set is identical to LA's/OR's on every axis that
+  // affects eligibility.
+  //
+  // 58 of the 92 profiles use a non-"none" SUA tier and no
+  // homeless_deduction, so — same as PA's/NJ's/TN's null-SUA entries —
+  // `composeVerdict` legitimately SKIPs those rows for real grading
+  // (bails before any gate runs); those 58 keep `benefit: null` and got a
+  // verdict only after being independently proven SUA-invariant across the
+  // realistic $0-$1,000 sweep described above (0 of 58 were genuinely
+  // indeterminate). The other 34 profiles (`sua_tier === "none"` or
+  // `homeless_deduction: true`) got a REAL, fully-computed benefit, since
+  // neither path touches `policy.sua_by_tier` at all.
+  //
+  // Verification: `/profile-simulation state=DE` — 34 PASS / 0 FAIL / 95
+  // SKIP (of 129), every SKIP attributable to the documented null-SUA gap,
+  // no PARAMS_MISMATCH — matching PA's/NJ's/TN's exact SKIP-heavy shape,
+  // not this file's clean-129/0/0 majority. Every other registered state's
+  // harness run reconfirmed unchanged from its documented baseline (see
+  // this build's own execution-log entry in docs/plans/snap-rules-50-state-
+  // engine-completion.md for the full per-state totals list). `tsc
+  // --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass
+  // (0 new — a schema-conformant pure addition needed no new unit tests),
+  // 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  // `packages/demeter-engine` (DE's corpus was already complete and out of
+  // scope) or any other state's `StatePolicy`/oracle coverage. No new
+  // GitHub issue filed — every gap found (DSSM 9045's possibly-stale
+  // resource limit, DSSM 9060's possibly-stale $143 homeless deduction, the
+  // DSSM 9013.2 stale drug-felony cross-reference) is a per-state disclosed
+  // gap of an already-documented class (#824-style Facts-shape/mechanism
+  // gaps, or a genuinely time-sensitive fact worth re-checking later), not
+  // a new engine architecture gap, per this task's own instruction.
+  DE: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "DE",
+      label: "Delaware / DHSS-DSS (Division of Social Services)",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
+  // South Dakota — DSS / Division of Economic Assistance. Second "batch
+  // tier" build (docs/plans/snap-rules-50-state-engine-completion.md §6
+  // step 6, after DE), 31st state overall — a genuine blank slate, no prior
+  // StatePolicy or oracle coverage existed. Every axis below is TRANSLATED
+  // from the already-cited primary-source findings in the merged Demeter
+  // corpus pack (packages/demeter-engine/src/states/sd/PROVENANCE.md +
+  // supplements.json), built 2026-08-12 — re-verification, not fresh
+  // research; see that pack's own Sources table (a single, clean, direct
+  // curl fetch of DSS's own 249-page SNAP Policy and Procedure Manual PDF,
+  // dated "Updated July 2026" on its own cover page, extracted via
+  // `pdftotext -layout`; no WAF/bot-detection barrier).
+  //
+  // bbce: false / bbce_fpl_basis: null — a genuine, primary-source-
+  // confirmed STRUCTURAL FINDING: DSS's own manual §7700 defines
+  // categorical eligibility narrowly (TANF, Tribal TANF, SSI, or Child Care
+  // Services recipients only), with NO income-ceiling expansion the way
+  // BBCE states run — §11300 states directly that non-categorically-
+  // eligible households face the standard 130% FPG gross / 100% FPG net
+  // income test. South Dakota is one of a small group of states nationally
+  // (WebSearch corroboration names 6-7, this pack independently confirmed
+  // only South Dakota's own status directly from its own manual) that has
+  // not adopted BBCE. Same non-BBCE archetype as this file's KS/IN/OK
+  // entries.
+  //
+  // asset_waiver: false — flows directly from the same non-BBCE finding:
+  // the narrow SSI/TANF/Tribal-TANF/CCS cat-elig population already skips
+  // the resource test via the federal pure-cash path (`facts.cat_elig`)
+  // this engine already models; the general NPA household faces DSS's own
+  // manual §9010 real, current resource limit ($4,500 elderly/disabled,
+  // $3,000 all other) — same posture as IN's/KS's/OK's entries. Worth
+  // noting: the corpus pack found and corrected a genuine, still-repeated
+  // secondary-source staleness trap here — multiple current aggregator
+  // sites quote a lower $2,750/$4,250 figure (consistent with an earlier,
+  // likely-FFY2023 cycle), while DSS's own July-2026-dated manual gives the
+  // CURRENT $4,500/$3,000 figures matching the national FFY2026 cycle.
+  //
+  // sua_by_tier — POPULATED, with ONE disclosed naming-collision gap: DSS's
+  // manual runs a genuine FOUR-tier utility-allowance structure — Standard
+  // Utility Allowance (SUA, heating/cooling) $950/mo, Limited Utility
+  // Allowance (LUA, 2+ non-heat utilities) $265/mo, One Utility Allowance
+  // (OUA, exactly ONE non-heat utility) $109/mo, and Phone Utility
+  // Allowance (PUA, telephone-only) $60/mo — the manual's own Table of
+  // Contents lists a STALE, lower set of figures ($850/$238/$98/$54)
+  // contradicting the body text's IDENTICAL figures stated twice (§10400
+  // and §10411); this build treats the twice-repeated, internally-
+  // consistent body-text figures as authoritative, same judgment call the
+  // corpus pack itself already made and disclosed. Mapped: SUA -> HCSUA
+  // ($950), LUA -> LUA ($265, South Dakota's own "2+ utilities" LUA maps
+  // cleanly onto this schema's LUA slot, unlike some other states' BUA/LUA
+  // naming mismatches), PUA -> phone ($60). South Dakota's OWN $109 OUA
+  // (exactly one non-heat utility) has NO slot in this schema's
+  // three-tier {HCSUA, LUA, phone} shape — the SAME disclosed,
+  // unmapped-4th-tier naming-collision gap this file's OH ($108 Single
+  // SUA), MO ($158 one-utility), and CO ($69 OUA) entries already
+  // document, via `determineSUATier`'s single LIMITED branch
+  // (`has_electric_or_gas === "yes"`, no distinction of utility COUNT).
+  // Independently verified this affects only a small subset of the 92
+  // oracle profiles' benefit-dollar amounts (households using SD's real
+  // OUA scenario are not present in the base fixture's SUA-tier axis,
+  // which only exercises HCSUA/LUA/phone/none — the gap is disclosed for
+  // completeness, not because it changed any of the 92 profiles' outcomes).
+  //
+  // allotment_tier: "48" — no South Dakota-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a CONFIRMED FULL OPT-OUT via two independent
+  // lines of evidence: DSS's ENTIRE manual's felon-related disqualification
+  // content contains only ONE felony-conviction category (§3920/§7370, the
+  // 2014 Farm Bill's violent/sex-offense list — aggravated sexual abuse,
+  // murder, child sexual exploitation, sexual assault — for convictions
+  // after 2/7/2014), with NO separate drug-felony provision anywhere; this
+  // silence is cross-checked against South Dakota Codified Law 28-12-3,
+  // quoted by a secondary legal-research source (Collateral Consequences
+  // Resource Center) as South Dakota's 2020 statutory opt-out of Pub. L.
+  // 104-193 § 115(a)(2) (the federal drug-felony ban). Disclosed access
+  // gap: the statutory text itself rests on the secondary source alone
+  // (law.justia.com served an unresolvable Cloudflare JS-challenge wall);
+  // inconsequential regardless for this axis's verdict/benefit consequence
+  // (grep-confirmed: only "full" disqualifies in gates/disqualifications.ts).
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-lapsed
+  // finding: USDA FNS/FNA's own ABAWD Time Limit Waivers FY2025-2029 index
+  // lists South Dakota's only posted waiver-response entry as FY2025
+  // (dated 08/12/2024), with NO FY2026 entry — in explicit contrast to
+  // Minnesota, Montana, and North Dakota, which DO show FY2026 entries on
+  // the same current index. Separately, and NOT modeled by this axis (no
+  // engine consumer exists for a personal, non-geographic exemption): DSS's
+  // manual §13222 names a STATEWIDE (not reservation-restricted) Native
+  // American ABAWD exemption, "individuals who are Native American who
+  // live anywhere in the state," per the federal Indian Health Care
+  // Improvement Act definition — a federal ABAWD exemption category this
+  // schema has no per-member axis to represent, disclosed rather than
+  // silently dropped. No county-level lookup needed for the geographic
+  // waiver axis, same uniform-statewide-zero-waiver shape as this file's
+  // VA/MO/TN/MD/CO/SC/LA/OK/DE entries.
+  //
+  // rmp_operated: false — DSS's manual explicitly excludes "hot foods
+  // ready to eat" from SNAP-eligible purchases with no RMP carve-out
+  // anywhere in its ~17,000 lines of text; South Dakota Senate Bill 149
+  // (2022), which would have established an RMP, FAILED in the state
+  // Senate 12-23 and was never enacted — flagged explicitly since a plain
+  // web search for "South Dakota Restaurant Meals Program" surfaces the
+  // bill's 2022 introduction coverage, which could otherwise mislead a
+  // reader into believing SD has or is about to have an RMP.
+  //
+  // Not representable in this schema, and not silently dropped: (a) a
+  // household disqualified from the Food Distribution Program on Indian
+  // Reservations (FDPIR) for an Intentional Program Violation (IPV) is
+  // disqualified from SNAP for the same period, and vice versa (DSS
+  // manual §§6385-6387) — this engine's `disqual[]` tag model has no
+  // FDPIR-specific tag, same category of accepted limitation as this
+  // file's NJ (#824) findings; (b) South Dakota's flat-shortcut Medical
+  // Expense Deduction mechanism ($165 standard for $36-$200 in expenses,
+  // before the $35 disregard) is a DIFFERENT mechanism from this engine's
+  // actual-expense-only medical-deduction math — independently verified
+  // this affects 0 of the 92 oracle profiles (none put an E/D household's
+  // medical expenses in that specific $36-$200 band).
+  //
+  // Oracle: SD's closest structural axis-twin among all 30 already-
+  // registered states is OKLAHOMA — a FULL 7/7 match on every comparison
+  // axis (bbce: false, bbce_fpl_basis: null, asset_waiver: false,
+  // allotment_tier: "48", drug_felony_ban: "none", abawd_waiver_avail:
+  // false, rmp_operated: false), differing only in the SUA dollar figures
+  // themselves — the strongest possible twin match this file's non-BBCE
+  // archetype has offered since IN-via-KS. Built a fresh, independent
+  // Python calculator (not derived from engine output, per #636) directly
+  // from verdict.ts/benefit-calc.ts/gates/{income-tests,asset-test,abawd,
+  // student,composition,immigration,disqualifications,categorical}.ts/
+  // facts.ts/constants/federal-tables.ts's own read source (not just their
+  // doc-comments), mirroring every gate and the benefit-calc formula
+  // exactly, including decimal.ts's half-up (roundDollar), floor
+  // (floorDollar), and ceiling (ceilDollar) rounding conventions.
+  // Cross-validated BEFORE trusting it for SD: 129/129 exact match (92
+  // base + 37 variant rows) reproducing OK's already-graded oracle under
+  // OK's own StatePolicy params. Ran the validated calculator under SD's
+  // own policy params: SD's computed DENY set is IDENTICAL to OK's
+  // already-graded oracle (independently confirmed, since every
+  // verdict-controlling axis SD shares with OK is identical). Authored all
+  // 92 `expected_by_state.SD` entries: 70 APPROVE / 22 DENY. Also checked
+  // all 37 rows across the 18 non-expected_by_state variant profiles for
+  // an SD-specific verdict_by_state override, the same discipline every
+  // prior state's build used — found ONE real divergence (matching MO's/
+  // SC's/OK's one-override precedent, not NC's/VA's/MD's/CO's/LA's/DE's
+  // zero-override result): `M23-variable-gig-income-anticipation`'s two
+  // variants ($1,800 and $2,200 gross HH1) both fail SD's plain federal
+  // 130% screen for the same reason KS/OH/GA/IN/MO/OK already fail —
+  // authored "SD": "DENY" into both variants' verdict_by_state blocks,
+  // matching IN's/KS's/MO's/OK's already-authored value exactly (an
+  // independent confirmation the divergence is real, not a calculator
+  // bug).
+  //
+  // Verification: `/profile-simulation state=SD` — 129/129 PASS, 0 FAIL,
+  // 0 SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/
+  // VA/IN/MO/MD/CO/SC/LA/OK's bar, not PA's/NJ's/TN's/DE's SKIP-heavy
+  // shape — SD's real, current SUA figures mean it did not need PA's/NJ's/
+  // TN's/DE's null-SUA fallback). Every other registered state's harness
+  // run reconfirmed unchanged from its documented baseline (see this
+  // build's own execution-log entry in docs/plans/snap-rules-50-state-
+  // engine-completion.md for the full per-state totals list). `tsc
+  // --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass
+  // (0 new — a schema-conformant pure addition needed no new unit tests),
+  // 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  // `packages/demeter-engine` (SD's corpus was already complete and out of
+  // scope) or any other state's `StatePolicy`/oracle coverage. No new
+  // GitHub issue filed — every gap found (the OUA/one-utility naming-
+  // collision gap, the FDPIR-IPV-carryover mechanism gap, the flat-
+  // shortcut medical-deduction mechanism gap, the statewide Native
+  // American ABAWD exemption with no per-member axis) is a per-state
+  // disclosed gap of an already-documented class (#824-style Facts-shape/
+  // mechanism gaps, or the OH/MO/CO-precedent unmapped-4th-utility-tier
+  // gap), not a new engine architecture gap, per this task's own
+  // instruction.
+  SD: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "SD",
+      label: "South Dakota / DSS (Division of Economic Assistance)",
+      bbce: false,
+      bbce_fpl_basis: null,
+      asset_waiver: false,
+      sua_by_tier: {
+        HCSUA: new Decimal("950"),
+        LUA: new Decimal("265"),
+        phone: new Decimal("60"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
+
+  // North Dakota — HHS, delivered locally through 19 state-supervised
+  // "Human Service Zones" (2019 restructuring, SB 2124 / N.D.C.C. ch.
+  // 50-01.1). Third and FINAL "batch tier" build in this segment
+  // (docs/plans/snap-rules-50-state-engine-completion.md §6 step 6: "DE,
+  // SD, ND"), 32nd state overall — a genuine blank slate, no prior
+  // StatePolicy or oracle coverage existed. Every axis below is TRANSLATED
+  // from the already-cited primary-source findings in the merged Demeter
+  // corpus pack (packages/demeter-engine/src/states/nd/PROVENANCE.md +
+  // supplements.json), built 2026-08-12 — re-verification, not fresh
+  // research; see that pack's own Sources table (direct fetches of HHS's
+  // CURRENT, actively-versioned SNAP/ manual host, cross-checked against a
+  // STALE legacy 43005/ manual mirror the corpus pack caught and
+  // deliberately did not rely on for any dollar figure — see Finding 0 in
+  // that pack's PROVENANCE.md).
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis:
+  // federal_fiscal_year — HHS Manual §505 runs a 200% FPG track the manual
+  // calls "BBCE (TANF I&R)" in its narrative text and "Expanded
+  // Categorically Eligible (ECE)" in its income-table appendix (this build
+  // treats these as the SAME pathway under two labels, per the corpus
+  // pack's own explicit reading, not two separate tracks). Current FFY2026
+  // (10/1/2025-9/30/2026) figures confirmed directly from HHS's own current
+  // §505/Appendix B: 200% ECE/BBCE gross limit $2,610 HH1, matching the
+  // federal-fiscal-year basis this file's other 200%-BBCE states already
+  // use.
+  //
+  // asset_waiver: true — a household passing the 200% BBCE/ECE track faces
+  // NO resource test at all, per HHS's own §505/§601 read together. Same
+  // "BBCE households skip resources" pattern this file's NC/VA/MD/LA/DE
+  // entries already use. A household that has not established BBCE/ECE
+  // eligibility faces a REAL, current resource limit under §601 (revised
+  // 5/16/2025): $4,500 elderly/disabled, $3,000 all other — the corpus
+  // pack flags and corrects a genuine, still-repeated secondary-source
+  // staleness trap here, multiple aggregator sites quoting a lower
+  // $2,250/$3,250 figure that appears to reflect an un-updated older cycle.
+  //
+  // sua_by_tier — POPULATED, with ONE disclosed naming-collision gap, the
+  // SAME shape this file's SD entry (immediately above) just documented:
+  // HHS's own Policy Release 26.2 (Appendix B, "Table of Standards," eff.
+  // 4/1/2026) publishes a genuine FOUR-tier utility structure — Standard
+  // Utility Allowance (SUA, heating/cooling) $775/mo (a MID-FISCAL-YEAR
+  // increase from $772, a genuinely unusual within-cycle adjustment this
+  // file's other states hold constant for the full October-to-September
+  // fiscal year; $775 is the figure operative as of this build's date and
+  // therefore the CURRENT, not stale, figure to use — no effective-date
+  // snapshot split needed since 4/1/2026 has already passed as of this
+  // build), Limited Utility Allowance (LUSA, 2+ non-heat utilities)
+  // $286/mo, Minimum Utility Standard (MU, exactly ONE non-heat utility)
+  // $126/mo, and a standalone Telephone Standard $35/mo. Mapped: SUA ->
+  // HCSUA ($775), LUSA -> LUA ($286, North Dakota's own "2+ utilities"
+  // LUSA maps cleanly onto this schema's LUA slot), Telephone -> phone
+  // ($35). North Dakota's OWN $126 MU (exactly one non-heat utility) has
+  // NO slot in this schema's three-tier {HCSUA, LUA, phone} shape — the
+  // SAME disclosed, unmapped-4th-tier naming-collision gap this file's
+  // OH/MO/CO/SD entries already document. Independently verified this
+  // gap affects only a small subset of the 92 oracle profiles' benefit-
+  // dollar amounts (the base fixture's SUA-tier axis only exercises
+  // HCSUA/LUA/phone/none, not ND's own one-utility scenario specifically).
+  //
+  // allotment_tier: "48" — no North Dakota-specific elevated max-allotment
+  // schedule found.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT via state statute:
+  // North Dakota Century Code § 50-06-05.1 (per Public Health Law Center's
+  // secondary-source quotation, effective 2017) states HHS "may not deny
+  // assistance under [SNAP] to any individual who has been convicted of a
+  // felony offense that has as an element the possession, use, or
+  // distribution of a controlled substance." Cross-checked against HHS's
+  // own SNAP manual disqualification-rules text (§430-05-77-55, legacy
+  // host — flagged by the corpus pack itself as not independently
+  // re-fetched from the current SNAP/ host, though the underlying
+  // statutory-opt-out claim does not depend on that specific gap) and
+  // found only SNAP-program-integrity-specific disqualifications (benefit
+  // trafficking, fleeing-felon/parole-violator status) with NO general
+  // drug-felony-conviction ban at all — consistent with the full-opt-out
+  // reading. Inconsequential regardless for this axis's verdict/benefit
+  // consequence (grep-confirmed: only "full" disqualifies in
+  // gates/disqualifications.ts).
+  //
+  // abawd_waiver_avail: false — a FLAGSHIP, PRIMARY-SOURCE CORRECTION of a
+  // specific, wrong secondary-source claim: HHS's own Policy Release 25.7
+  // (effective 11/1/2025, amended 11/13/2025) states directly that North
+  // Dakota's prior ABAWD Geographic Waiver — covering the Turtle Mountain
+  // Reservation and Rolette County under a 7/1/2025-6/30/2026 waiver
+  // period — was ENDING effective 10/31/2025, with affected individuals
+  // mailed notice on 10/10/2025. Cross-checked directly against USDA
+  // FNS/FNA's own ABAWD Time Limit Waivers FY2025-2029 index, which lists
+  // North Dakota's most recent posted waiver-response entry as FY2025
+  // (dated 6/18/2025) with NO FY2026 entry — corroborating no renewal. The
+  // corpus pack found and explicitly CORRECTED a WebSearch-surfaced
+  // secondary-source (aggregator) claim that North Dakota "holds an active
+  // statewide waiver through June 30, 2026" — both HHS's own dated release
+  // and USDA's own tracker confirm ND currently has NO active ABAWD
+  // geographic waiver anywhere in the state as of 11/1/2025 onward. No
+  // county-level lookup needed (the real waiver geography, while it
+  // existed, was already narrower than county-level — a specific
+  // reservation, not authored as a lookup since it has since lapsed
+  // entirely and a real "nowhere" answer has no county-level nuance for a
+  // lookup to represent, the same VA/MO/TN/MD/CO/SC/LA/OK/DE/SD-precedent
+  // uniform-statewide-zero-waiver shape).
+  //
+  // rmp_operated: false — HHS's own consumer FAQ page explicitly lists
+  // "food that will be eaten in the store" and "foods that are hot at the
+  // point of sale" among items households CANNOT buy with SNAP benefits,
+  // cross-checked against secondary-source corroboration (Propel's state
+  // EBT guide) that ND does not currently operate an RMP; no pending North
+  // Dakota RMP legislation found.
+  //
+  // Not representable in this schema, and not silently dropped: (a) a
+  // TIME-SENSITIVE, NOT-YET-EFFECTIVE finding the corpus pack flagged at
+  // length — North Dakota received a rare USDA demonstration-project
+  // waiver (approved 12/10/2025) excluding soft drinks, energy drinks, and
+  // candy from SNAP-purchasable food, EFFECTIVE SEPTEMBER 1, 2026 — this
+  // engine has no product-category-level purchasing-restriction axis at
+  // all (a `Facts`-shape gap, not a per-state value, same category as
+  // #824's NJ findings), and regardless is NOT YET ACTIVE as of this
+  // build's date; disclosed rather than modeled. (b) North Dakota's own
+  // narrow, reservation-tied vehicle-licensing accommodation (§604: "On
+  // Indian reservations that do not require vehicles driven by tribal
+  // members to be licensed, such vehicles must be treated as licensed
+  // vehicles" for the standard resource-exclusion purpose) has no
+  // per-vehicle-type axis in this engine's flat `assets: number` shape,
+  // same category of accepted limitation as NJ's boat/motor-home gap; (c)
+  // a household on or near a reservation may participate in EITHER SNAP OR
+  // the Food Distribution Program (FDPIR/Commodities) but never both in
+  // the same month (legacy-host §430-05-05-50/-50-05) — no engine axis
+  // models this choice-of-program mutual exclusivity, same category as
+  // SD's FDPIR gap documented immediately above. Zero of the 92 v0.6
+  // profiles' facts touch any of these three gaps.
+  //
+  // Oracle: ND's closest structural axis-twin among all 31 already-
+  // registered states is LOUISIANA — a FULL 7/7 match on every comparison
+  // axis (bbce: true, bbce_threshold_pct: 200, bbce_fpl_basis:
+  // federal_fiscal_year, asset_waiver: true, drug_felony_ban: "none",
+  // abawd_waiver_avail: false, allotment_tier: "48", rmp_operated: false),
+  // differing only in the SUA dollar figures — the same strength of match
+  // LA itself found with OR, and matching this file's OK-via-IN/SD-via-OK
+  // precedent for the strongest possible twin bond. Built a fresh,
+  // independent Python calculator (not derived from engine output, per
+  // #636) directly from verdict.ts/benefit-calc.ts/gates/{income-tests,
+  // asset-test,abawd,student,composition,immigration,disqualifications,
+  // categorical}.ts/facts.ts/constants/federal-tables.ts's own read source
+  // (not just their doc-comments), mirroring every gate and the
+  // benefit-calc formula exactly, including decimal.ts's half-up
+  // (roundDollar), floor (floorDollar), and ceiling (ceilDollar) rounding
+  // conventions — the SAME calculator already cross-validated against
+  // PA (for DE) and OK (for SD) earlier in this same batch build.
+  // Cross-validated BEFORE trusting it for ND: 129/129 exact match (92
+  // base + 37 variant rows) reproducing LA's already-graded oracle under
+  // LA's own StatePolicy params. Ran the validated calculator under ND's
+  // own policy params: ND's computed DENY set is IDENTICAL to LA's/DE's
+  // already-graded oracles (independently confirmed, since every
+  // verdict-controlling axis ND shares with LA/DE is identical). Authored
+  // all 92 `expected_by_state.ND` entries: 80 APPROVE / 12 DENY. Also
+  // checked all 37 rows across the 18 non-expected_by_state variant
+  // profiles for an ND-specific verdict_by_state override, the same
+  // discipline every prior state's build used — found ZERO divergence
+  // from the shared default verdict for ND (matching NC's/VA's/MD's/CO's/
+  // LA's/DE's zero-override result, not MO's/SC's/OK's/SD's one-override
+  // finding), since ND's computed verdict set is identical to LA's/DE's
+  // on every axis that affects eligibility.
+  //
+  // Verification: `/profile-simulation state=ND` — 129/129 PASS, 0 FAIL,
+  // 0 SKIP (clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/
+  // VA/IN/MO/MD/CO/SC/LA/OK/SD's bar, not PA's/NJ's/TN's/DE's SKIP-heavy
+  // shape — ND's real, current SUA figures mean it did not need PA's/NJ's/
+  // TN's/DE's null-SUA fallback). Every other registered state's harness
+  // run reconfirmed unchanged from its documented baseline (see this
+  // build's own execution-log entry in docs/plans/snap-rules-50-state-
+  // engine-completion.md for the full per-state totals list). `tsc
+  // --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass
+  // (0 new — a schema-conformant pure addition needed no new unit tests),
+  // 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  // `packages/demeter-engine` (ND's corpus was already complete and out of
+  // scope) or any other state's `StatePolicy`/oracle coverage. No new
+  // GitHub issue filed — every gap found (the MU/one-utility naming-
+  // collision gap, the not-yet-effective food-restriction-waiver
+  // product-category gap, the reservation vehicle-licensing accommodation
+  // gap, the FDPIR choice-of-program mutual-exclusivity gap) is a
+  // per-state disclosed gap of an already-documented class (#824-style
+  // Facts-shape/mechanism gaps, or the OH/MO/CO/SD-precedent
+  // unmapped-4th-utility-tier gap), not a new engine architecture gap, per
+  // this task's own instruction. This is the THIRD and FINAL state in
+  // batch tier 5 (§6 step 6: "DE, SD, ND") — all three now have full
+  // StatePolicy + 92-profile oracle coverage.
+  ND: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "ND",
+      label: "North Dakota / HHS (Human Service Zones)",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("775"),
+        LUA: new Decimal("286"),
+        phone: new Decimal("35"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
