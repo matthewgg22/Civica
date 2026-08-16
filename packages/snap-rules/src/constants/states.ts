@@ -3597,6 +3597,143 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Iowa — 3rd batch-tier state (§6 step 6, third of CT/UT/IA/AR). Built
+  // IA's StatePolicy entry AND full 92-profile oracle coverage from
+  // scratch (IA had neither before this PR), translating IA's already-
+  // merged Demeter corpus pack (packages/demeter-engine/src/states/ia/,
+  // PROVENANCE.md + supplements.json, built 2026-08-12) into the engine's
+  // stricter typed shape per §5's process.
+  //
+  // bbce: true / bbce_threshold_pct: 160 — A GENUINELY DISTINCTIVE
+  // MECHANISM this file has not seen before: Iowa's BBCE-equivalent
+  // pathway runs through the Promoting Awareness of the Benefits of a
+  // Healthy Marriage Program (PHMP), a TANF-block-grant-funded program
+  // with NO separate application — Iowa's ABC computer system determines
+  // PHMP eligibility automatically whenever a household applies for SNAP
+  // (Employees' Manual 7-C). PHMP eligibility requires total gross
+  // countable SNAP income AT OR BELOW 160% of the federal poverty
+  // guidelines, no IPV disqualification, and a benefit amount greater than
+  // zero — Iowa's own manual confirms PHMP categorical eligibility
+  // "removes the resource limit and the gross AND net income limits,"
+  // cleanly matching this schema's existing bbce/bbceConferred mechanism
+  // (waives BOTH remaining income tests once the raised gross threshold
+  // clears) — unlike CT's ECE above, Iowa's PHMP genuinely does waive the
+  // net test too, so no #830-style architecture-gap disclosure is needed
+  // for Iowa. 160% is a genuinely NEW threshold value for this file (no
+  // other registered state uses it) — a real, sourced figure, not a typo
+  // adjacent to 165%'s separate-household column or 200%'s common ceiling.
+  //
+  // bbce_fpl_basis: "federal_fiscal_year" — an HONEST INFERENCE, same
+  // discipline as TN's entry: the corpus pack's own Finding 1 discloses
+  // that Iowa's Employees' Manual runs on two different COLA cycles across
+  // chapters (Chapter E, current FFY2026; Chapter C's PHMP/165% tables,
+  // stamped "Revised September 27, 2024," a cycle stale) — no explicit
+  // FFY-vs-calendar statement was found either way, so this follows the
+  // roster's established default absent contrary evidence. This staleness
+  // finding does NOT affect this entry's encoded values: the engine
+  // computes IA's actual gross/net thresholds itself from
+  // federal-tables.ts's own FY26 figures via bbce_threshold_pct, never
+  // from Iowa's own (possibly stale) published percentage tables.
+  //
+  // asset_waiver: true — flows directly from the same PHMP finding above;
+  // ordinary FIP/SSI/GA cash-assistance categorical eligibility (a
+  // narrower federal mechanism, independent of this axis) removes the
+  // resource limit entirely too, per Employees' Manual 7-C.
+  //
+  // sua_by_tier — FULLY POPULATED, not null: Iowa's own distinctive
+  // "Big"/"Little" naming for its utility-allowance tiers (a naming-
+  // convention quirk, not a substantive structural difference from every
+  // other state's HCSUA/LUA split) — Big SUA (HCSUA) $554/mo, for any
+  // household responsible for heating/cooling costs or receiving LIHEAP;
+  // Little SUA (LUA) $292/mo; Telephone SUA (phone) $36/mo. Sourced from
+  // Employees' Manual 7-E, revised 2/13/2026, the current FFY2026 cycle
+  // (the SAME chapter this entry's Standard Deduction figures already
+  // confirm are current, distinct from Chapter C's stale PHMP percentage
+  // tables noted above).
+  //
+  // allotment_tier: "48" — no Iowa-specific elevated max-allotment
+  // schedule found; Iowa's own Standard Deduction ($209/$223/$261/$299)
+  // and $744 shelter cap match federal-tables.ts's FY26 snapshot exactly.
+  //
+  // drug_felony_ban: "none" — a VERIFIED FULL OPT-OUT, and a STRONGER
+  // evidentiary basis than most of this file's other "none" findings:
+  // Iowa's Employees' Manual (7-C, Citizenship and Alien Status) states
+  // OUTRIGHT, "A person who has been convicted of a felony does lose
+  // certain rights of citizenship. However, these people are still
+  // considered to be citizens for the purposes of SNAP" — a direct, plain
+  // statement, independently cross-checked against the manual's own
+  // comprehensive "Ineligible Members" list (7-C), which contains NO
+  // drug-felony category anywhere.
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero
+  // finding: Iowa is absent ENTIRELY from USDA FNA's current ABAWD Time
+  // Limit Waivers FY2025-2029 state-response index — not merely lacking a
+  // currently-active waiver the way this file's other zero-waiver states
+  // show, but absent from the REQUEST list altogether, meaning no evidence
+  // Iowa has ever requested an ABAWD area waiver in this window (a
+  // structurally different, and less permanent, reason than a statutory
+  // bar, disclosed as the corpus pack's own reading rather than asserted
+  // with Oklahoma-statute-level confidence). No county-level lookup needed
+  // or added.
+  //
+  // rmp_operated: false — Iowa is absent from USDA FNA's own current
+  // Restaurant Meals Program state list (direct fetch, clean HTTP 200).
+  //
+  // Oracle: IA's closest structural axis-twin among all 30 already-
+  // registered states (never AL/KY/OK, none merged yet) is NORTH CAROLINA
+  // — matching every non-threshold, non-SUA axis (asset_waiver: true,
+  // drug_felony_ban... NC is "modified" vs IA's "none", the one axis that
+  // differs — still the strongest available match on the REMAINING 4 axes:
+  // bbce: true, bbce_fpl_basis: federal_fiscal_year, abawd_waiver_avail:
+  // false, allotment_tier: "48"). Built the same fresh, independent Python
+  // calculator used for CT/UT above (not derived from engine output, per
+  // #636). Cross-validated BEFORE trusting it for IA: 92/92 exact match
+  // (verdict AND benefit) reproducing NC's already-graded oracle under
+  // NC's own StatePolicy params, PLUS all 37 non-expected_by_state variant
+  // rows (0 mismatches), before applying IA's own 160% threshold in place
+  // of NC's 200%.
+  //
+  // IA's computed DENY set (17 of 92) is NC's 12-profile DENY set PLUS
+  // exactly 5 additional profiles — D01, M01, MX3, MX4, P59 — every one of
+  // which carries gross income in the ~165%-169% FPL band: comfortably
+  // under NC's 200% ceiling but over IA's 160% one, a precise, well-
+  // understood demonstration of IA's genuinely lower BBCE threshold, the
+  // same directional relationship this file's SC-vs-200%-states and NJ's
+  // 185%-vs-200% comparisons already established. Also checked all 37
+  // rows across the 18 non-expected_by_state variant profiles for an
+  // IA-specific verdict_by_state override: found ONE real divergence —
+  // `M23-variable-gig-income-anticipation`'s "recent_high_month" ($2,200
+  // gross HH1) clears IA's 160% screen by less margin than "averaged"
+  // ($1,800) and fails it, while "averaged" still clears — authored "IA":
+  // "DENY" into the recent_high_month variant only.
+  //
+  // Verification: `/profile-simulation state=IA` — 129 PASS / 0 FAIL / 0
+  // SKIP, clean, matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/
+  // IN/MO/MD/CO/SC/LA/CT's bar (CT counted separately at 128/1/0 for its
+  // disclosed #830 case), not PA's/NJ's/TN's/MN's/UT's SKIP-heavy shape.
+  IA: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "IA",
+      label: "Iowa / Iowa HHS",
+      bbce: true,
+      bbce_threshold_pct: 160,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("554"),
+        LUA: new Decimal("292"),
+        phone: new Decimal("36"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "none",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
