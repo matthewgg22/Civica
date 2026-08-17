@@ -41,7 +41,20 @@ const SHAPE_DEFAULTS = {
 /** Fill in ONLY the shape defaults above — every field a caseworker is
  *  actually asked about must already be present, or the caller has a bug. */
 export function completeFactsShape(facts: PartialFacts): Facts {
-  return { ...SHAPE_DEFAULTS, ...facts } as unknown as Facts;
+  const merged = { ...SHAPE_DEFAULTS, ...facts } as unknown as Facts;
+  // The overlay is SHALLOW, so a stated shelter object REPLACES the default
+  // one wholesale — and the extractor knows rent long before it knows the
+  // SUA tier (utilities may simply never come up). Zod requires sua_tier on
+  // every shelter object, so a rent-only shelter validated as "one detail we
+  // recorded does not look right" — a permanent, unactionable checklist item
+  // that kept every real extracted household from ever reaching computable
+  // (#895). "none" is the conservative floor: it can only UNDERSTATE the
+  // benefit (utility allowances raise deductions), never overstate it, and
+  // engine-grounding says so out loud when this default was applied.
+  if (facts.shelter && facts.shelter.sua_tier === undefined) {
+    merged.shelter = { ...merged.shelter, sua_tier: "none" };
+  }
+  return merged;
 }
 
 export interface CompletenessResult {

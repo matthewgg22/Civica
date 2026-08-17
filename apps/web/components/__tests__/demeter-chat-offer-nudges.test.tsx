@@ -17,6 +17,13 @@ import { T } from "../../lib/i18n/demeter-chat-copy";
 // This drives the real component through enough turns to cross both
 // thresholds and asserts each banner reappears/appears on schedule, and
 // stays gone once genuinely dismissed for good.
+//
+// EXPLICIT TIMEOUTS (#892): each test runs 8-14 sequential real
+// sendQuestion round-trips through the full component (paced-streaming
+// reveal + async state settling per turn). Locally that lands anywhere
+// from ~4.3s to ~9.3s per test; CI runners are slower still, and vitest's
+// 5000ms default flaked two unrelated PRs in a row (#890, #896) before
+// these were added.
 
 const verification = {
   verified_on: "2026-08-05",
@@ -81,7 +88,7 @@ async function sendQuestion(text: string, expectAnswer: string) {
 }
 
 describe("mode-offer re-offers instead of retiring forever (#833)", () => {
-  it("re-offers after MODE_REOFFER_AFTER_TURNS following a 'just asking' dismissal", async () => {
+  it("re-offers after MODE_REOFFER_AFTER_TURNS following a 'just asking' dismissal", { timeout: 30_000 }, async () => {
     render(<DemeterChat states={STATES} initialState="NH" />);
 
     await sendQuestion("q1", "answer 1");
@@ -111,7 +118,7 @@ describe("mode-offer re-offers instead of retiring forever (#833)", () => {
 });
 
 describe("save nudge (#833)", () => {
-  it("appears after SAVE_NUDGE_AFTER_TURNS answers, saves on demand, and can be waved off", async () => {
+  it("appears after SAVE_NUDGE_AFTER_TURNS answers, saves on demand, and can be waved off", { timeout: 30_000 }, async () => {
     render(<DemeterChat states={STATES} initialState="NH" />);
 
     for (let i = 1; i <= 7; i++) {
@@ -128,7 +135,7 @@ describe("save nudge (#833)", () => {
     expect(screen.queryByRole("group", { name: T.en.saveNudge })).toBeNull();
   });
 
-  it("does not reappear once waved off with 'not now', even though not saved", async () => {
+  it("does not reappear once waved off with 'not now', even though not saved", { timeout: 30_000 }, async () => {
     render(<DemeterChat states={STATES} initialState="NH" />);
     for (let i = 1; i <= 8; i++) await sendQuestion(`q${i}`, `answer ${i}`);
     expect(screen.getByRole("group", { name: T.en.saveNudge })).toBeTruthy();

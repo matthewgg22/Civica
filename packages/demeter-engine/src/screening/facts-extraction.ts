@@ -59,6 +59,17 @@ const EXTRACT_TOOL = {
             disability: { type: "boolean" },
             elderly: { type: "boolean" },
             student: { type: "string" },
+            // Was missing entirely (#895): completeness REQUIRES a per-member
+            // immigration status, so with no way to record one, "we're both
+            // citizens" was silently dropped and no extracted household could
+            // ever reach computable — in chat grounding OR the worksheet.
+            immigration: {
+              type: "string",
+              enum: ["citizen", "lpr", "refugee", "cofa", "undocumented"],
+              description:
+                "ONLY if explicitly stated ('we're citizens', 'I have a green card' → lpr). " +
+                "Omit when not stated — never guess.",
+            },
           },
           required: ["member_id"],
         },
@@ -85,6 +96,19 @@ const EXTRACT_TOOL = {
         properties: {
           rent: { type: "number" },
           homeless_deduction: { type: "boolean" },
+          // Mapped to the engine's SUA tier below (#895). Without any way to
+          // record utilities, every extracted shelter object failed schema
+          // validation on the required sua_tier and surfaced as "one detail
+          // we recorded does not look right".
+          utilities: {
+            type: "string",
+            enum: ["heating_cooling", "other_utilities", "phone_only", "none"],
+            description:
+              "ONLY if explicitly stated: heating_cooling when they pay heat or A/C " +
+              "separately from rent; other_utilities for electric/water/etc. without " +
+              "heat; phone_only; none when they say utilities are included. Omit when " +
+              "not stated.",
+          },
         },
       },
       deductions: {
@@ -102,21 +126,43 @@ const EXTRACT_TOOL = {
       cat_elig: {
         type: "string",
         enum: ["pure_SSI", "pure_TANF", "NPA"],
-        description: "Set ONLY if the user stated every household member receives SSI or TANF/GA.",
+        // The old description ("set ONLY if ... receives") made the NEGATIVE
+        // unrecordable: "no SSI or TANF" — exactly what completeness needs to
+        // hear to mark this answered — had to be dropped, so the question
+        // stayed permanently open no matter what the user said (#895).
+        description:
+          'Set "pure_SSI" or "pure_TANF" ONLY if the user stated EVERY household member ' +
+          'receives it. Set "NPA" if the user stated nobody receives SSI or TANF/GA. ' +
+          "Omit when they haven't said either way.",
       },
     },
   },
 };
 
-/** Extract the facts stated in the LATEST user turn. Prior turns provide
- *  context (so "she" resolves), but only new facts are returned — the caller
- *  owns merging onto accumulated state. */
+/** Extract the facts stated in the LATEST user turn (default), or across the
+ *  whole visible conversation (`scope: "conversation"`).
+ *
+ *  The per-turn default serves the worksheet, whose CLIENT accumulates state
+ *  across turns and merges each patch (mergeFactsPatch below). The
+ *  conversation scope serves the chat's engine-grounding step (#895), where
+ *  the server is stateless per request and there is nothing to merge onto —
+ *  each request re-reads whatever the visible window still contains. Prior
+ *  turns provide context either way (so "she" resolves). */
 export async function extractFacts(
   messages: Array<{ role: "user" | "assistant"; content: string }>,
   apiKey: string,
   signal?: AbortSignal,
+  scope: "latest_turn" | "conversation" = "latest_turn",
 ): Promise<ExtractionResult> {
   const client = new Anthropic({ apiKey });
+  const scopeInstruction =
+    scope === "conversation"
+      ? "Extract every household fact the USER stated anywhere in this conversation — " +
+        "user messages only; never treat something the assistant said as a stated fact. " +
+        "If the user corrected a figure later, the correction wins."
+      : "Extract ONLY what was explicitly stated in the LATEST user message " +
+        "— use earlier turns for context (pronouns, running total) but do not re-extract facts " +
+        "already established there.";
   const resp = await client.messages.create(
     {
       model: MAE_MODEL,
@@ -133,10 +179,10 @@ export async function extractFacts(
       // does not apply: tool_choice forces the call.)
       thinking: { type: "disabled" as const },
       system:
-        "You extract SNAP household facts from a caseworker's conversation with an eligibility " +
-        "screening assistant. Extract ONLY what was explicitly stated in the LATEST user message " +
-        "— use earlier turns for context (pronouns, running total) but do not re-extract facts " +
-        "already established there. Never guess a number, age, or status that wasn't said.",
+        "You extract SNAP household facts from a conversation with an eligibility " +
+        "screening assistant. " +
+        scopeInstruction +
+        " Never guess a number, age, or status that wasn't said.",
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
       tools: [EXTRACT_TOOL],
       tool_choice: { type: "tool", name: "record_household_facts" },
@@ -147,7 +193,37 @@ export async function extractFacts(
   const call = resp.content.find(
     (b): b is Anthropic.ToolUseBlock => b.type === "tool_use" && b.name === "record_household_facts",
   );
-  const patch = (call?.input as PartialFacts) ?? {};
+  const patch = (call?.input as PartialFacts & { shelter?: { utilities?: string } }) ?? {};
+  // NORMALIZE INCOME TO MONTHLY (#895). snap-rules never reads `freq` — the
+  // field exists on the schema but every gate and the benefit calc treat
+  // `amount` as a monthly figure (all 90 counting oracle profiles state
+  // monthly amounts). So "$600 a week" recorded as-is computed as $600 a
+  // MONTH — caught live as a household handed the maximum allotment instead
+  // of a near-minimum benefit. Converted here, at the one seam both
+  // consumers (worksheet merge, chat grounding) share, using the same
+  // factors 7 CFR 273.10(c)(2) mandates for exactly this conversion.
+  const TO_MONTHLY: Record<string, number> = { weekly: 4.3, biweekly: 2.15, annual: 1 / 12 };
+  for (const line of patch.income ?? []) {
+    const factor = TO_MONTHLY[line.freq ?? ""];
+    if (factor !== undefined && typeof line.amount === "number") {
+      line.amount = Math.round(line.amount * factor * 100) / 100;
+      line.freq = "monthly";
+    }
+  }
+  // The tool records utilities in plain terms; the engine's ShelterSchema
+  // wants its SUA tier enum. Map here so BOTH consumers (worksheet merge,
+  // chat grounding) receive engine-shaped facts.
+  if (patch.shelter && "utilities" in patch.shelter) {
+    const TIER: Record<string, "HCSUA" | "LUA" | "phone" | "none"> = {
+      heating_cooling: "HCSUA",
+      other_utilities: "LUA",
+      phone_only: "phone",
+      none: "none",
+    };
+    const tier = TIER[patch.shelter.utilities ?? ""];
+    delete patch.shelter.utilities;
+    if (tier) (patch.shelter as { sua_tier?: string }).sua_tier = tier;
+  }
   const empty =
     !patch.household?.length &&
     !patch.income?.length &&

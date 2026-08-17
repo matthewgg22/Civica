@@ -37,6 +37,10 @@ import { detectDistress, DISTRESS_SYSTEM_ADDENDUM } from "./distress";
 import { verifyNumericEquivalence } from "./numeric-check";
 import { answerInstruction, degradeWrapper, degradeLeads, type AnswerLang } from "./lang";
 import { classifyQuestionTopic } from "./form-questions";
+import {
+  shouldAttemptEngineGrounding,
+  buildEngineGroundingBlock,
+} from "./screening/engine-grounding";
 
 export type ChatRole = "user" | "assistant";
 export interface ChatMessage {
@@ -318,6 +322,34 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   if (langInstruction) {
     systemBlocks.push({ type: "text", text: langInstruction });
   }
+
+  // Engine grounding (#895) — the synthesis step. When the user has stated
+  // money figures and a state is set, extract the household facts from the
+  // visible conversation and run them through the verified snap-rules engine
+  // (via the same classification layer the worksheet trusts). The resulting
+  // block is self-describing (carries its own use-these-figures-verbatim
+  // instructions) and joins systemBlocks BEFORE numericSource is built below,
+  // so engine-computed figures pass the numeric gate with no gate changes.
+  // Soft in every direction: the cheap trigger keeps non-numeric chats at
+  // zero extra cost, and any extraction/engine failure returns a null block
+  // rather than costing the reader their answer. Extraction tokens are
+  // tracked so the caller's spend settle sees them.
+  let groundingUsageIn = 0;
+  let groundingUsageOut = 0;
+  if (shouldAttemptEngineGrounding(messages, state === undefined ? "CA" : state)) {
+    const grounding = await buildEngineGroundingBlock(
+      messages,
+      state === undefined ? "CA" : (state as string),
+      apiKey,
+      signal,
+    );
+    groundingUsageIn = grounding.usage.inputTokens;
+    groundingUsageOut = grounding.usage.outputTokens;
+    if (grounding.text) {
+      systemBlocks.push({ type: "text", text: grounding.text });
+    }
+  }
+
   // Numbers the answer may legitimately carry: the verified sources PLUS the
   // user's own figures (an answer that echoes "with $1,500/month income…" is
   // repeating the question, not inventing data — live eval caught the gate
@@ -381,8 +413,8 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   let outcome: VerifierOutcome = "clean";
   let answerText = "";
   let finalChecks: CitationCheck[] = [];
-  let usageIn = 0;
-  let usageOut = 0;
+  let usageIn = groundingUsageIn;
+  let usageOut = groundingUsageOut;
 
   // --- Attempt 1: stream with incremental verification ----------------------
   let aborted = false;

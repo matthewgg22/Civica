@@ -1,5 +1,13 @@
-import { describe, it, expect } from "vitest";
-import { mergeFactsPatch } from "../facts-extraction";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+
+const sdk = vi.hoisted(() => ({ create: vi.fn() }));
+vi.mock("@anthropic-ai/sdk", () => ({
+  default: class FakeAnthropic {
+    messages = { create: sdk.create };
+  },
+}));
+
+import { mergeFactsPatch, extractFacts, type PartialFacts } from "../facts-extraction";
 
 describe("mergeFactsPatch", () => {
   it("adds a new household member", () => {
@@ -60,5 +68,60 @@ describe("mergeFactsPatch", () => {
     const base = mergeFactsPatch({}, { household: [{ member_id: "a", age: 40, role: "head" }] });
     const same = mergeFactsPatch(base, {});
     expect(same).toEqual(base);
+  });
+});
+
+// extractFacts post-processing (#895). snap-rules never reads income.freq —
+// every gate and the benefit calc treat `amount` as monthly — so extraction
+// itself must hand over engine-shaped facts. Caught live: "$600 a week"
+// recorded as-is computed as $600 a MONTH, and a working-poor household was
+// told the MAXIMUM allotment instead of a near-minimum benefit. Same seam
+// maps the tool's plain-terms `utilities` onto the engine's SUA tier enum.
+describe("extractFacts normalizes the tool output to engine shape", () => {
+  beforeEach(() => sdk.create.mockReset());
+
+  function toolResponse(input: object) {
+    sdk.create.mockResolvedValue({
+      content: [{ type: "tool_use", name: "record_household_facts", input }],
+      usage: { input_tokens: 10, output_tokens: 5 },
+    });
+  }
+  const MSG = [{ role: "user" as const, content: "irrelevant — the SDK is mocked" }];
+
+  it("converts weekly income to monthly by 4.3 (7 CFR 273.10(c)(2))", async () => {
+    toolResponse({ income: [{ member: "a", type: "wages", amount: 600, freq: "weekly" }] });
+    const { patch } = await extractFacts(MSG, "k");
+    expect(patch.income).toEqual([{ member: "a", type: "wages", amount: 2580, freq: "monthly" }]);
+  });
+
+  it("converts biweekly by 2.15 and annual by 1/12", async () => {
+    toolResponse({
+      income: [
+        { member: "a", type: "wages", amount: 1000, freq: "biweekly" },
+        { member: "a", type: "unearned_other", amount: 1200, freq: "annual" },
+      ],
+    });
+    const { patch } = await extractFacts(MSG, "k");
+    expect(patch.income![0]).toEqual({ member: "a", type: "wages", amount: 2150, freq: "monthly" });
+    expect(patch.income![1]).toEqual({ member: "a", type: "unearned_other", amount: 100, freq: "monthly" });
+  });
+
+  it("leaves monthly amounts untouched", async () => {
+    toolResponse({ income: [{ member: "a", type: "ssa", amount: 1180, freq: "monthly" }] });
+    const { patch } = await extractFacts(MSG, "k");
+    expect(patch.income).toEqual([{ member: "a", type: "ssa", amount: 1180, freq: "monthly" }]);
+  });
+
+  it("maps the tool's plain-terms utilities onto the engine's SUA tier", async () => {
+    toolResponse({ shelter: { rent: 1000, utilities: "heating_cooling" } });
+    const { patch } = await extractFacts(MSG, "k");
+    expect(patch.shelter).toEqual({ rent: 1000, sua_tier: "HCSUA" });
+  });
+
+  it("drops an unstated utilities field without inventing a tier", async () => {
+    toolResponse({ shelter: { rent: 1000 } });
+    const { patch } = await extractFacts(MSG, "k");
+    expect(patch.shelter).toEqual({ rent: 1000 });
+    expect((patch as PartialFacts).shelter?.sua_tier).toBeUndefined();
   });
 });
