@@ -1,6 +1,15 @@
 # Completing the SNAP calculator for all 53 jurisdictions
 
-**Status:** COMPLETE — 53/53 jurisdictions, 0 remaining gaps (MN's null-SUA closed 2026-08-16, #747) · **Date:** 2026-08-12 · **Companion to:** [mae-state-corpus-framework.md](mae-state-corpus-framework.md), [snap-rules-matrix.md](snap-rules-matrix.md)
+**Status:** COMPLETE, then hardened — 53/53 jurisdictions, 0 remaining structural gaps (MN's null-SUA closed 2026-08-16, #747), followed by a 5-lens audit and its full Primary+Secondary-tier fix cycle (2026-08-16, §7 below) · **Date:** 2026-08-12, updated 2026-08-16 · **Companion to:** [mae-state-corpus-framework.md](mae-state-corpus-framework.md), [snap-rules-matrix.md](snap-rules-matrix.md)
+
+**This engine — `packages/snap-rules`, and everything in this document — exists solely to
+serve Demeter.** There is no other product consumer: Demeter's chat (`apps/web`, via
+`packages/demeter-engine`) is the only live surface that calls into this calculator's
+eligibility/benefit math. (A handful of *separate*, non-Demeter re-implementations of similar
+SNAP math exist elsewhere in the monorepo — a Python backend service, two iOS Swift
+calculators, a CBO/caseworker document-QC tool — but those are different code, a different
+product surface, and explicitly out of scope for this plan; see issue #887, filed but not
+started, not this document's concern.)
 
 **This plan is a plan, not a go-ahead.** `packages/snap-rules` is fully parked per the
 standing rule — every state and every batch below needs its own separate, explicit
@@ -13,39 +22,46 @@ immediately instead of re-deriving scope each time.
 ## 1. Two systems, two different completion states
 
 The 50-state corpus expansion (batches 1–5, all merged) built **Demeter's chat corpus** —
-53 jurisdictions' worth of cited policy text that lets Mae answer questions accurately.
-That is a separate system from **the calculator** (`packages/snap-rules`'s `StatePolicy`
-registry) — the thing that actually runs a real eligibility/benefit determination against
-a household's facts. A jurisdiction can have a fully verified corpus and *no* calculator
-at all — that WAS true of most jurisdictions for most of this plan's execution, but as of
-this plan's completion every jurisdiction has both (see the diagram below).
+53 jurisdictions' worth of cited policy text that lets Demeter's chat answer questions
+accurately. That is a separate system from **the calculator** (`packages/snap-rules`'s
+`StatePolicy` registry) — the thing that actually runs a real eligibility/benefit
+determination against a household's facts, still solely on Demeter's behalf. A jurisdiction
+can have a fully verified corpus and *no* calculator at all — that WAS true of most
+jurisdictions for most of this plan's execution, but as of this plan's completion every
+jurisdiction has both (see the diagram below).
 
 ```
    CORPUS (packages/demeter-engine)        ENGINE (packages/snap-rules)
-   "what does Mae say about this state"    "what does the calculator DO for this state"
+   "what does Demeter's chat say about     "what does the calculator DO for this state,
+    this state"                             for Demeter"
    53 / 53 jurisdictions          ────▶     53 / 53 jurisdictions have StatePolicy
                                             53 / 53 have oracle expectations authored
-                                            40 / 53 grade fully CLEAN (129/0/0, or a
+                                            39 / 53 grade fully CLEAN (129/0/0, or a
                                               documented pre-existing partial — NY's
-                                              127/2/0, a #733-shaped BBCE-tier gap, and
-                                              CT's 128/1/0, a #830 architecture-gap
-                                              shape); 13 more (PA/NJ/TN/AL/UT/MS/ID/WV/
+                                              127/2/0, a #733-shaped BBCE-tier gap, the
+                                              ONLY known live fail left anywhere in the
+                                              registry); 13 more (PA/NJ/TN/AL/UT/MS/ID/WV/
                                               DE/DC/VI/HI/GU) grade 34/0/95 on the
                                               disclosed null-SUA gap; 0 structurally
                                               blocked — MN's null-SUA gap, the last one,
                                               closed 2026-08-16 (issue #747, closed by
-                                              PR #863)
+                                              PR #863); AZ and CT both moved from
+                                              "documented partial" into the clean 39 during
+                                              the post-completion audit-fix cycle (§7)
 ```
 
-(AZ is deliberately absent from the "documented pre-existing partial" list above,
-contrary to `states.ts`'s own dozens of embedded "AZ 128/1/0" regression-check
-comments — a direct harness re-run confirms AZ is actually clean 129/0/0, matching what
-AZ's own original oracle-authoring PR #741 reported at the time. That widespread stale
-claim is tracked separately as issue #877, not fixed in this pass.)
+(AZ was deliberately absent from the "documented pre-existing partial" list above even at
+this plan's first completion, contrary to `states.ts`'s own dozens of embedded "AZ 128/1/0"
+regression-check comments — a direct harness re-run confirmed AZ was already clean
+129/0/0 at that time, matching what AZ's own original oracle-authoring PR #741 reported.
+That widespread stale claim was tracked as issue #877 and fixed as part of §7's cleanup.
+CT's own 128/1/0 partial was a REAL bug, not a stale comment — closed for real by §7's
+#830 fix, PR #879.)
 
-**Plan CLOSED — every jurisdiction in scope (all 53) has both a `StatePolicy` and full
-oracle coverage; MN, the final remaining gap, closed 2026-08-16 (issue #747, landed by
-PR #863).** See the execution log's HI/GU and MN entries below.
+**Plan CLOSED at first completion — every jurisdiction in scope (all 53) had both a
+`StatePolicy` and full oracle coverage; MN, the final remaining gap, closed 2026-08-16
+(issue #747, landed by PR #863).** See the execution log's HI/GU and MN entries below, and
+§7 for the substantial hardening pass that followed the same day.
 
 ## 2. Current state of the calculator (verified against `origin/codex/rebuild-feb18`, plus
 this plan's own individual-tier and batch-tier landings)
@@ -3829,3 +3845,85 @@ all of it.
   jurisdiction with a genuine, real SUA figure. Branch `feat/snap-rules-mn-sua`, PR against
   `codex/rebuild-feb18`, not merging on completion alone — human review per standing
   `packages/snap-rules` governance.
+
+---
+
+## 7. Post-completion hardening: the 5-lens audit and its fix cycle (2026-08-16)
+
+Same day as MN's closure, the user requested a comprehensive read-only audit of the
+just-completed registry — five independent agents (states.ts internal consistency, live
+formal-source accuracy, oracle-fixture integrity, engine code + issue backlog, this plan
+doc's own coherence), published as an artifact report. Verdict: structurally excellent
+and verdict-accurate, but with real correctness debt in three places — pre-session
+"archetype" states (TX, AZ) that never got this session's verification rigor, a federal
+deduction axis (standard deduction/shelter cap) the territory work hadn't assessed, and a
+comment layer that had rotted as the registry grew from 18 to 53 entries.
+
+**Every finding was fixed, one issue-then-PR-then-explicit-merge-go-ahead at a time, per
+standing governance — nothing here was ever a blanket authorization.** Ten PRs landed:
+
+**Primary tier (wrong answers being given that day):**
+- **#871** — TX's `drug_felony_ban` corrected "full"→"modified" (HRC §33.018 + USDA State
+  Options Report) and `asset_waiver` corrected true→false (USDA's own BBCE chart shows a
+  real $5,000 limit) — TX had been wrongly denying every drug-felony household the statute
+  actually protects, and wrongly skipping the asset test for households that should be
+  asset-tested.
+- **#872** — AK/HI/GU/VI's standard-deduction + shelter-cap axis, previously entirely
+  unassessed (silently defaulting to the 48-contiguous federal figures). AK/HI/GU were
+  understating real benefits; VI, the opposite direction, was overstating them. All four
+  sourced and fixed in one PR, none deferred.
+- **#873** — the FY26 FPL base constant, $15,660 → the correct $15,650 (90 FR 5917), plus a
+  full 53-jurisdiction sweep for verdict flips (found exactly 2: TX and IL's `M01`).
+- **#867** — AZ's one-dollar P64 fixture bug (576→575), plus forensic proof that PR #741's
+  original "clean sweep" claim couldn't have meant what it said.
+- **#870** — Ohio's real BBCE threshold is 200%, not the 130% that had been encoded — every
+  OH household between 130–200% FPL was a false DENY. Also fixed OH's ABAWD waiver
+  (statutorily barred since HB 96, was encoded as available).
+
+**Issue hygiene (#875, #874):** closed 6 stale/superseded issues, fixed ~35 sites of stale
+"MN is blocked" prose, corrected 3 `rmp_operated` values and 1 verdict-consequential
+`abawd_waiver_avail` value (FL) against live sources, removed a dead fixture-metadata blob.
+
+**Secondary tier, following a plain-language Q&A walkthrough of the audit's open
+subjective questions with the user** (full methodology captured in persistent memory as
+`feedback_snap_rules_ambiguity_methodology` — default to the permissive reading when a
+law is genuinely ambiguous; prioritize by population impact, not item count):
+- **#879** — the BBCE dual gross+net income-ceiling gap (#830), fixed for the 3 confirmed
+  states (TN/CT/KY), a new optional schema field, zero behavior change elsewhere. CT's
+  long-standing MX4 fail is now genuinely fixed, not just documented.
+- **#880** — hand-cleaned this very document's stale early sections (not just archived),
+  re-verified New Mexico's `drug_felony_ban` against the new ambiguity-default rule
+  (reclassified "modified"→"none"), added a doc-comment clarifying what `bbce: true`
+  actually checks today.
+- **#881** — full 53-jurisdiction `abawd_waiver_avail` sweep against the authoritative
+  external tracker; 8 states corrected (CA/WA/PA/MI/NV/AZ/NJ/NM).
+- **#883** — a genuine schema gap (#824): 4 states (NJ/VA/IL/MO) exclude paid child support
+  from the *gross*-income test, not just the net-income deduction every state already gets
+  federally. All 4 held up under live verification. Verdict-affecting only, never touches
+  benefit dollars.
+- **#886** — `getEngineParams` (the params-formatting surface Demeter's chat quotes
+  directly to users) had never been state-conditioned — **AK/HI/GU/VI users were being
+  quoted wrong benefit figures in Demeter's chat this whole time**, even though the actual
+  calculation was always correct. Also fixed a likely-fabricated CA phone-SUA citation, and
+  — folding in #675 — found and fixed a hand-maintained BBCE-percentage map that was
+  **still quoting Ohio's stale 130% threshold to chat users**, weeks after the engine
+  itself had been corrected. Both were live, user-facing bugs, not just internal
+  inconsistencies.
+- **#884** — FY27 COLA readiness prep (#803): confirmed the FY27 memo isn't published yet,
+  so this is structural-only — dated-snapshot banding added to the territory/AK allotment
+  tables ahead of time, plus a checklist for the actual refresh once the memo lands.
+- **#888** — the highest-blast-radius fix of the cycle: the engine's 30%-of-net-income
+  rounding matched neither method 7 CFR 273.10(e)(2)(ii)(A) actually authorizes. Proved the
+  two federal methods are mathematically identical (`floor(N-x) = N-ceil(x)` for integer
+  N), then swept all 4,878 profile×jurisdiction combinations — 1,011 across 51
+  jurisdictions get exactly $1 lower, zero exceptions, zero verdict changes. A monorepo-wide
+  grep for other copies of this same math found 5 more (Python backend, 2 iOS Swift
+  calculators, a Swift CLI adapter, snap-qc-engine) — filed as **#887**, deliberately NOT
+  fixed, because **none of them serve Demeter** — see the header note above.
+
+**Result**: every Primary and Secondary-tier finding from the audit is closed. NY is now
+the *only* jurisdiction in the entire 53-jurisdiction registry with any known harness fail
+at all (127/2/0, pre-existing, unrelated to any of this session's work). Remaining,
+Tertiary-tier, not started: the states.ts file-split, the null-SUA backlog (13 states,
+MN's statutory-identity technique is reusable), and general URL-rot maintenance — none of
+these are wrong-answers-today, they're about surviving the next scale-up.
