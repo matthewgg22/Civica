@@ -73,6 +73,25 @@ function describeFacts(facts: PartialFacts): string[] {
   for (const inc of facts.income ?? []) {
     lines.push(`- Income: $${inc.amount} ${inc.freq ?? ""} (${inc.type ?? "unspecified type"})`.trim());
   }
+  // The SUM is stated by the engine, not left to the model. With two or more
+  // lines, the natural figure any answer reaches for is the monthly total —
+  // and a sum of two cadence-converted amounts is a derived+derived shape the
+  // numeric gate's user-arithmetic allowlist can't admit, which degraded a
+  // real two-job household on the second-pass battery (2026-08-17). Summing
+  // income lines is eligibility arithmetic, so it belongs here. Rounded to
+  // whole dollars so the model's verbatim restatement matches the gate's
+  // literal grounding check.
+  const incomeLines = facts.income ?? [];
+  if (incomeLines.length > 1) {
+    const total = incomeLines.reduce(
+      (sum, inc) => sum + (typeof inc.amount === "number" ? inc.amount : 0),
+      0,
+    );
+    lines.push(
+      `- Total stated gross income: $${Math.round(total).toLocaleString("en-US")}/month ` +
+        "(the engine's sum of the lines above — use THIS figure for any comparison or restatement)",
+    );
+  }
   if (facts.shelter?.rent !== undefined) lines.push(`- Shelter cost: $${facts.shelter.rent}/month`);
   if (typeof facts.assets === "number") lines.push(`- Stated countable assets: $${facts.assets}`);
   if (facts.cat_elig) lines.push(`- Categorical status: ${facts.cat_elig}`);
