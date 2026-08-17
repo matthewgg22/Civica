@@ -127,6 +127,32 @@ describe("buildEngineGroundingBlock", () => {
     expect(text).not.toMatch(/Estimated monthly benefit/);
   });
 
+  // Second-pass live battery, 2026-08-17: a two-job household ($300/week +
+  // $250 biweekly) DEGRADED — the block grounded each converted line ($1,290,
+  // $537.50) but not their SUM, and the county-review guidance explicitly
+  // invites comparing "the user's stated figures against the income limits",
+  // so the model totals them — a derived+derived figure the numeric gate's
+  // user-arithmetic can't admit. The engine is the right place to state the
+  // total (summing income lines IS eligibility arithmetic), so the block must
+  // carry it whenever more than one income line exists.
+  it("multiple income lines → the block states the engine's own monthly TOTAL", async () => {
+    sdk.create.mockResolvedValue(
+      extractionResponse({
+        ...COMPUTABLE,
+        income: [
+          { member: "a", type: "wages", amount: 1290, freq: "monthly" },
+          { member: "a", type: "wages", amount: 537.5, freq: "monthly" },
+        ],
+      }),
+    );
+    const { text } = await buildEngineGroundingBlock(
+      MSG("I make $300 a week at a cafe and $250 every two weeks cleaning offices"),
+      "CA",
+      "test-key",
+    );
+    expect(text).toContain("Total stated gross income: $1,828/month");
+  });
+
   it("an empty extraction returns no block at all", async () => {
     sdk.create.mockResolvedValue(extractionResponse({}));
     const { text } = await buildEngineGroundingBlock(MSG("what is snap?"), "CA", "test-key");
