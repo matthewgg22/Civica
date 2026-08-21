@@ -32,6 +32,7 @@ import { T } from "../lib/i18n/demeter-chat-copy";
 import { stateName } from "../lib/state-names";
 import { detectState, detectUncoveredPlace, type StateMention } from "../lib/detect-state";
 import type { SavedMsg } from "../lib/demeter-conversations";
+import { shieldCitations } from "../lib/no-translate";
 import {
   saveChatSession,
   readChatSession,
@@ -128,12 +129,17 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
           href={link[2]}
           target="_blank"
           rel="noopener noreferrer"
+          // The label is a source name or citation — an identifier, not text
+          // for a translator (vercel-guidelines finding 1).
+          translate="no"
         >
           {link[1]}
         </a>
       );
     }
-    return p;
+    // Citation tokens in plain text get the same shield: "7 CFR 273.9(d)(2)"
+    // stops being a citation the moment machine translation touches it.
+    return shieldCitations(p, `${keyBase}t${j}`);
   });
 }
 
@@ -732,6 +738,34 @@ export function DemeterChat({
   }, [messages, state, lang, busy, worksheetMode, classification]);
 
   useEffect(() => () => clearTimeout(rafRef.current), []);
+
+  // THE URL CLAIMS WHAT THE SCREEN SHOWS (vercel-guidelines finding 3).
+  // Inbound ?state= always worked; picking a state never wrote it back, so
+  // share/refresh/Back silently dropped the scope. replaceState, not
+  // pushState — scope is a property of the page, not a navigation. The
+  // conversation itself stays OUT of the URL on purpose.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    if (state) url.searchParams.set("state", state);
+    else url.searchParams.delete("state");
+    if (url.toString() !== window.location.href) {
+      window.history.replaceState(window.history.state, "", url);
+    }
+  }, [state]);
+
+  // AUTOFOCUS, DESKTOP ONLY (vercel-guidelines finding 6): this surface is a
+  // screen with one primary input, so arriving should mean typing. Coarse
+  // pointers skip it — the keyboard shoves the layout around — and
+  // preventScroll keeps a restored conversation where the reader left it.
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    inputRef.current?.focus({ preventScroll: true });
+    // Mount-only on purpose: refocusing on later state changes would steal
+    // focus mid-conversation.
+     
+  }, []);
   /** Back to one row. The composer grows as you type, so clearing the value
    *  without clearing the inline height leaves an empty box the size of the
    *  question you just sent. */

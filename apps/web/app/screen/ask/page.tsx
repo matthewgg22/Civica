@@ -45,6 +45,9 @@ import { DemeterNav } from "../../../components/DemeterNav";
 import { alternateLanguages, askUrl } from "../../../lib/i18n/routes";
 import { askStructuredData, EN_TITLE, EN_DESCRIPTION } from "./structured-data";
 
+/** The browser frame matches the paper (vercel-guidelines finding 4). */
+export const viewport = { themeColor: "#F7F6F4" };
+
 export const metadata: Metadata = {
   title: EN_TITLE,
   description: EN_DESCRIPTION,
@@ -82,7 +85,7 @@ export default async function ScreenAskPage({
       : null;
 
   return (
-    <main className="dmpage">
+    <main className="dmpage" id="main-content">
       <DemeterNav />
       <div className="dmpage__inner">
         <SnapOrientation />

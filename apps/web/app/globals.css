@@ -82,6 +82,21 @@
   box-sizing: border-box;
 }
 
+/* The document commits to the light printed-paper look — say so, so dark-mode
+   devices stop framing it with dark scrollbars and form-control bases
+   (vercel-guidelines finding 4). */
+:root {
+  color-scheme: light;
+}
+
+/* Interactive elements: no double-tap zoom (real risk on the follow-up chips,
+   tapped in quick succession) and no default grey/blue tap flash — pressed
+   states are the design system's job (vercel-guidelines finding 5). */
+a, button, [role="button"], [role="radio"], [role="option"], summary, input, textarea, select, label {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 html,
 body {
   margin: 0;
@@ -7181,6 +7196,21 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    Two tabs only. "Ask" is the tool, "Questions" is the reference — that is the
    whole product, and a nav listing everything the site technically has is how
    a two-page product starts looking like a directory. */
+/* The skip link — first focusable on every Demeter page, visible only while
+   focused (vercel-guidelines finding 2). */
+.dmnav__skip {
+  position: absolute; left: 0.75rem; top: 0.6rem; z-index: 50;
+  transform: translateY(-300%);
+  background: var(--demeter-ink); color: var(--demeter-paper);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; padding: 0.55rem 0.9rem; border-radius: 8px;
+  text-decoration: none;
+}
+.dmnav__skip:focus-visible {
+  transform: none;
+  outline: 2px solid var(--demeter-terracotta); outline-offset: 2px;
+}
+
 .dmnav {
   border-bottom: 1px solid var(--demeter-rule);
   background: var(--demeter-paper);
@@ -7564,6 +7594,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__link {
   color: var(--demeter-terracotta-deep); text-decoration: underline;
   text-underline-offset: 2px;
+  /* Expanded hit area without layout change: vertical padding on an inline
+     box doesn't grow the line box, it only widens the target — these are
+     load-bearing citation links measured at 15px tall (vercel-guidelines
+     finding 7). */
+  padding-block: 0.55rem;
 }
 
 .demeter__para { margin: 0; }
@@ -7704,7 +7739,13 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 /* Quieter than either button, and last: a standing promise about how answers
    are checked, not something to do right now. */
 .dmchat .demeter__sidetools .demeter__how {
-  min-height: 0; padding: 0; font-size: 0.78rem; align-self: flex-start;
+  /* Visually quiet, but the HIT AREA stays 44px: the old zeroed height and
+     padding here silently shrank the target to 21px (measured) while the
+     base rule still declared 44 (vercel-guidelines finding 7). The negative
+     block margin gives the padding back to the layout, so the rail reads
+     exactly as before. */
+  min-height: 44px; padding: 0.7rem 0; margin-block: -0.7rem;
+  font-size: 0.78rem; align-self: flex-start;
 }
 
 @media (max-width: 900px) {
