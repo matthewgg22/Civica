@@ -191,7 +191,7 @@ export const T = {
       // load-bearing is still here: it goes when the tab closes, we keep the
       // text, and this is not a decision.
       privacy: "Closing the tab ends this. We keep the text to check our accuracy — avoid names.",
-      privacySaved: "Saved to your account. We keep the text to check our accuracy — avoid names.",
+      privacySaved: "Saved to your account, along with this estimate. We keep the text to check our accuracy — avoid names.",
       disclaimer: "An estimate, not a decision.",
       pickState: "Pick your state above and your estimate can build here as you talk.",
       pickStateCta: "Choose your state",
@@ -336,7 +336,7 @@ export const T = {
       privacy:
         "Cerrar la pestaña termina esto. Guardamos el texto para verificar nuestra exactitud — evita nombres.",
       privacySaved:
-        "Guardada en tu cuenta. Guardamos el texto para verificar nuestra exactitud — evita nombres.",
+        "Guardada en tu cuenta, junto con este estimado. Guardamos el texto para verificar nuestra exactitud — evita nombres.",
       disclaimer: "Un estimado, no una decisión.",
       pickState: "Elige tu estado arriba y tu estimado se irá armando aquí.",
       pickStateCta: "Elige tu estado",
@@ -470,7 +470,7 @@ export const T = {
       privacy:
         "Đóng tab là kết thúc. Chúng tôi lưu nội dung để kiểm tra độ chính xác — đừng nhập tên.",
       privacySaved:
-        "Đã lưu vào tài khoản của bạn. Chúng tôi lưu nội dung để kiểm tra độ chính xác — đừng nhập tên.",
+        "Đã lưu vào tài khoản của bạn, cùng với mức ước tính này. Chúng tôi lưu nội dung để kiểm tra độ chính xác — đừng nhập tên.",
       disclaimer: "Chỉ là ước tính, không phải quyết định.",
       pickState: "Chọn tiểu bang của bạn ở trên để ước tính có thể hiện ở đây.",
       pickStateCta: "Chọn tiểu bang",
@@ -599,7 +599,7 @@ export const T = {
       privacy:
         "关闭标签页即结束。我们保留文字以核查准确性——请勿输入姓名。",
       privacySaved:
-        "已保存到您的账户。我们保留文字以核查准确性——请勿输入姓名。",
+        "已保存到您的账户，包括此估算。我们保留文字以核查准确性——请勿输入姓名。",
       disclaimer: "这只是估算，不是决定。",
       pickState: "请在上方选择您所在的州，估算就能在这里生成。",
       pickStateCta: "选择您所在的州",

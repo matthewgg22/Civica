@@ -25,6 +25,7 @@ import { geoHint } from "../../lib/geo-hint";
 import { DemeterChat } from "../../components/DemeterChat";
 import { DemeterNav } from "../../components/DemeterNav";
 import { loadConversation } from "../../lib/demeter-conversations-server";
+import type { WorksheetSnapshot } from "../../lib/chat-session";
 
 export const metadata: Metadata = {
   title: "Ask Demeter — SNAP answers with the rule attached",
@@ -59,6 +60,10 @@ export default async function ChatPage({
           initialState={resumed ? resumed.state_code : initialState}
           initialQuestion={q ?? null}
           initialMessages={resumed?.messages ?? []}
+          // The wire type (SavedWorksheet) is structurally the stored shape of
+          // WorksheetSnapshot — same trust as `messages`, a straight hydrate
+          // of what this user's own save wrote through normalizeWorksheet.
+          initialWorksheet={(resumed?.worksheet as WorksheetSnapshot | null) ?? null}
           savedConversationId={resumed?.id ?? null}
           pendingSave={save === "pending"}
           geoHint={hint}

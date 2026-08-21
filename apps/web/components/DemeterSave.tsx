@@ -172,7 +172,14 @@ export function DemeterSave({
 
   const post = useCallback(
     async (
-      payload: { messages: SavedMsg[]; state: string | null; lang: AnswerLang },
+      payload: {
+        messages: SavedMsg[];
+        state: string | null;
+        lang: AnswerLang;
+        /** The drafted application, stored on the row (#905) so a next-day
+         *  resume gets it back. The route validates and may drop it. */
+        worksheet?: WorksheetSnapshot;
+      },
       id: string | null,
     ): Promise<"ok" | "signin" | "limit" | "error"> => {
       try {
@@ -214,7 +221,7 @@ export function DemeterSave({
   const save = useCallback(async () => {
     if (messages.length === 0) return;
     setStatus("saving");
-    const outcome = await post({ messages, state, lang }, savedId);
+    const outcome = await post({ messages, state, lang, worksheet: worksheet?.() }, savedId);
     if (outcome === "ok") return setStatus("saved");
     if (outcome === "signin") {
       writeStash({ at: Date.now(), messages, state, lang, worksheet: worksheet?.() });
@@ -245,7 +252,15 @@ export function DemeterSave({
     if (!stash || stash.messages.length === 0) return;
     onRestore(stash.messages, stash.state, stash.lang, stash.worksheet);
     setStatus("saving");
-    void post({ messages: stash.messages, state: stash.state, lang: stash.lang }, null).then(
+    void post(
+      {
+        messages: stash.messages,
+        state: stash.state,
+        lang: stash.lang,
+        worksheet: stash.worksheet,
+      },
+      null,
+    ).then(
       (outcome) => {
         // Still signed out after signing in means something is genuinely
         // wrong; the stash is already consumed, so offer the plain error
@@ -261,8 +276,10 @@ export function DemeterSave({
   useEffect(() => {
     if (!savedId || busy || messages.length === 0) return;
     if (fingerprint(messages) === savedFingerprintRef.current) return;
-    void post({ messages, state, lang }, savedId);
-  }, [savedId, busy, messages, state, lang, post]);
+    // The worksheet updates with the transcript, so a resumed row is current
+    // on BOTH — read through the getter at post time, same as the stash.
+    void post({ messages, state, lang, worksheet: worksheet?.() }, savedId);
+  }, [savedId, busy, messages, state, lang, post, worksheet]);
 
   // Nothing worth saving until an answer has actually arrived.
   const hasAnswer = messages.some((m) => m.role === "assistant" && m.content !== "");

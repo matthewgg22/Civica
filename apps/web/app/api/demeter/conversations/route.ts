@@ -23,6 +23,7 @@ import {
   normalizeMessages,
   normalizeStateCode,
   normalizeTitle,
+  normalizeWorksheet,
   MAX_CONVERSATIONS,
 } from "../../../../lib/demeter-conversations";
 
@@ -81,6 +82,23 @@ export async function POST(request: Request) {
     messages,
     state_code: normalizeStateCode(body.state),
     lang: normalizeLang(body.lang),
+    // The drafted application (#905). Null for ask-mode chats, for clients
+    // older than this feature, and for anything malformed — never a 400: the
+    // worksheet is rebuildable from the transcript, the transcript is not.
+    worksheet: normalizeWorksheet(body.worksheet),
+  };
+
+  /** Migrations apply by hand (dashboard SQL paste), so this code WILL run
+   *  against a prod database that does not have the worksheet column yet.
+   *  PostgREST reports that as a missing-column error; retrying once without
+   *  the field keeps saves working through the window. Anything else is a
+   *  real failure and is not retried. */
+  const isMissingWorksheetColumn = (error: { code?: string; message?: string }) =>
+    error.code === "PGRST204" && /worksheet/.test(error.message ?? "");
+  const rowWithoutWorksheet = () => {
+    const rest: Record<string, unknown> = { ...row };
+    delete rest.worksheet;
+    return rest;
   };
 
   // An id means "this conversation, kept up to date" — the chat re-posts after
@@ -88,13 +106,22 @@ export async function POST(request: Request) {
   // prefix that existed at the moment they pressed the button.
   const id = typeof body.id === "string" ? body.id : null;
   if (id) {
-    const { data, error } = await supabase
-      .schema("snap_enrollment")
-      .from(TABLE)
-      .update(row)
-      .eq("id", id)
-      .select("id, title, updated_at")
-      .maybeSingle();
+    const doUpdate = (payload: Record<string, unknown>) =>
+      supabase
+        .schema("snap_enrollment")
+        .from(TABLE)
+        .update(payload)
+        .eq("id", id)
+        .select("id, title, updated_at")
+        .maybeSingle();
+
+    let { data, error } = await doUpdate(row);
+    if (error && isMissingWorksheetColumn(error)) {
+      console.warn(
+        "[demeter-conversations] worksheet column missing — paste migration 20260821; saving without it",
+      );
+      ({ data, error } = await doUpdate(rowWithoutWorksheet()));
+    }
 
     if (error) {
       console.error("[demeter-conversations] update failed:", error);
@@ -124,17 +151,26 @@ export async function POST(request: Request) {
     );
   }
 
-  const { data, error } = await supabase
-    .schema("snap_enrollment")
-    .from(TABLE)
-    // user_id is written explicitly rather than defaulted in the DDL: a column
-    // DEFAULT auth.uid() would be silently wrong for any service-role write,
-    // and the INSERT policy's WITH CHECK rejects this row anyway if it does not
-    // match the caller. Belt and braces on the one write that establishes
-    // ownership for the life of the row.
-    .insert({ ...row, user_id: user.id })
-    .select("id, title, updated_at")
-    .single();
+  // user_id is written explicitly rather than defaulted in the DDL: a column
+  // DEFAULT auth.uid() would be silently wrong for any service-role write,
+  // and the INSERT policy's WITH CHECK rejects this row anyway if it does not
+  // match the caller. Belt and braces on the one write that establishes
+  // ownership for the life of the row.
+  const doInsert = (payload: Record<string, unknown>) =>
+    supabase
+      .schema("snap_enrollment")
+      .from(TABLE)
+      .insert({ ...payload, user_id: user.id })
+      .select("id, title, updated_at")
+      .single();
+
+  let { data, error } = await doInsert(row);
+  if (error && isMissingWorksheetColumn(error)) {
+    console.warn(
+      "[demeter-conversations] worksheet column missing — paste migration 20260821; saving without it",
+    );
+    ({ data, error } = await doInsert(rowWithoutWorksheet()));
+  }
 
   if (error) {
     console.error("[demeter-conversations] insert failed:", error);

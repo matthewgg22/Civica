@@ -9,7 +9,7 @@
 // null, and gets exactly the same null for an id that never existed.
 
 import { createSupabaseServerClient } from "./supabase-server";
-import type { SavedMsg } from "./demeter-conversations";
+import type { SavedMsg, SavedWorksheet } from "./demeter-conversations";
 
 export type SavedConversation = {
   id: string;
@@ -19,6 +19,10 @@ export type SavedConversation = {
   lang: string;
   created_at: string;
   updated_at: string;
+  /** The drafted application at last save (#905). Null on rows saved before
+   *  the worksheet column existed, and absent entirely if the column's
+   *  migration has not been pasted yet (the read falls back). */
+  worksheet?: SavedWorksheet | null;
 };
 
 export type ConversationSummary = Omit<SavedConversation, "messages">;
@@ -31,12 +35,25 @@ export async function loadConversation(id: string): Promise<SavedConversation | 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const { data, error } = await supabase
-    .schema("snap_enrollment")
-    .from("demeter_conversations")
-    .select("id, title, messages, state_code, lang, created_at, updated_at")
-    .eq("id", id)
-    .maybeSingle();
+  const read = (columns: string) =>
+    supabase
+      .schema("snap_enrollment")
+      .from("demeter_conversations")
+      .select(columns)
+      .eq("id", id)
+      .maybeSingle();
+
+  let { data, error } = await read(
+    "id, title, messages, state_code, lang, created_at, updated_at, worksheet",
+  );
+  // Migrations apply by hand, so the worksheet column (#905, migration
+  // 20260821) may not exist yet. Resume must keep working through that
+  // window exactly as it did before the feature.
+  if (error && /worksheet/.test(error.message ?? "")) {
+    ({ data, error } = await read(
+      "id, title, messages, state_code, lang, created_at, updated_at",
+    ));
+  }
 
   if (error) {
     // A failed read must not take the chat page down with it — the page still
@@ -44,7 +61,7 @@ export async function loadConversation(id: string): Promise<SavedConversation | 
     console.error("[demeter-conversations] load failed:", error);
     return null;
   }
-  return (data as SavedConversation | null) ?? null;
+  return (data as unknown as SavedConversation | null) ?? null;
 }
 
 /** The signed-in user's conversations, newest activity first. Transcripts are

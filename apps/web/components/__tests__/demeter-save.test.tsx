@@ -311,6 +311,35 @@ describe("the worksheet survives the trip through sign-in (#898 P2-9)", () => {
     expect(stash.worksheet).toEqual(WORKSHEET);
   });
 
+  // #905: the SAVED ROW carries the worksheet too, so a conversation reopened
+  // days later gets its drafted application back — not only the same-session
+  // stash paths P2-9 fixed.
+  it("posts the worksheet with a signed-in save", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(201, { conversation: { id: "conv-1" } }));
+    renderSave({ worksheet: () => WORKSHEET } as Partial<Parameters<typeof DemeterSave>[0]>);
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+    await screen.findByText(COPY.saved);
+    expect(bodyOf()).toMatchObject({ worksheet: WORKSHEET });
+  });
+
+  it("posts the stashed worksheet when completing a save after sign-in", async () => {
+    window.localStorage.setItem(
+      "demeter:pending-save",
+      JSON.stringify({
+        at: Date.now(),
+        messages: CONVERSATION,
+        state: "CA",
+        lang: "en",
+        worksheet: WORKSHEET,
+      }),
+    );
+    fetchMock.mockResolvedValue(jsonResponse(201, { conversation: { id: "conv-9" } }));
+    renderSave({ messages: [], pendingSave: true, onRestore: vi.fn() });
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect(bodyOf()).toMatchObject({ worksheet: WORKSHEET });
+  });
+
   it("hands the worksheet back on return, with the conversation", async () => {
     window.localStorage.setItem(
       "demeter:pending-save",

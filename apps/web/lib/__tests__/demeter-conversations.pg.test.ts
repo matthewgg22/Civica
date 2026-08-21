@@ -224,3 +224,66 @@ describe.skipIf(!DB)("saved conversations, RLS (real Postgres)", () => {
     ).rejects.toThrow(/violates check constraint/i);
   });
 });
+
+// #905: the worksheet column, against the real migration. CI applies the
+// migration files, so this proves 20260821_demeter_conversations_worksheet.sql
+// actually creates what the route writes to — and that its CHECK refuses the
+// shapes normalizeWorksheet would never send.
+describe.skipIf(!DB)("saved conversations, worksheet column (#905)", () => {
+  let pool: Pool;
+  const USER = "33333333-3333-4333-8333-333333333333";
+
+  beforeAll(() => {
+    pool = new Pool({ connectionString: DB, max: 2 });
+  });
+
+  afterAll(async () => {
+    await pool.query(
+      "DELETE FROM snap_enrollment.demeter_conversations WHERE user_id = $1",
+      [USER],
+    );
+    await pool.end();
+  });
+
+  it("round-trips a worksheet object on the row", async () => {
+    const worksheet = {
+      mode: "estimate",
+      facts: { household: [{ member_id: "a", age: 45, role: "head" }] },
+      classification: null,
+    };
+    const rows = (
+      await pool.query(
+        `INSERT INTO snap_enrollment.demeter_conversations
+           (user_id, title, messages, worksheet)
+         VALUES ($1, 'w', '[{"role":"user","content":"hi"}]'::jsonb, $2::jsonb)
+         RETURNING worksheet`,
+        [USER, JSON.stringify(worksheet)],
+      )
+    ).rows;
+    expect(rows[0]!.worksheet).toEqual(worksheet);
+  });
+
+  it("defaults to NULL — rows saved before the feature stay valid", async () => {
+    const rows = (
+      await pool.query(
+        `INSERT INTO snap_enrollment.demeter_conversations
+           (user_id, title, messages)
+         VALUES ($1, 'no-ws', '[{"role":"user","content":"hi"}]'::jsonb)
+         RETURNING worksheet`,
+        [USER],
+      )
+    ).rows;
+    expect(rows[0]!.worksheet).toBeNull();
+  });
+
+  it("refuses a non-object worksheet at the column CHECK", async () => {
+    await expect(
+      pool.query(
+        `INSERT INTO snap_enrollment.demeter_conversations
+           (user_id, title, messages, worksheet)
+         VALUES ($1, 'bad', '[{"role":"user","content":"hi"}]'::jsonb, '"estimate"'::jsonb)`,
+        [USER],
+      ),
+    ).rejects.toThrow(/check|violates/i);
+  });
+});
