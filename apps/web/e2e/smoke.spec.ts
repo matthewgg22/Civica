@@ -25,7 +25,11 @@ test.describe("front door", () => {
     await page.goto("/");
     await expect(page).toHaveURL(/\/screen\/ask$/);
     await expect(composer(page)).toHaveCount(0);
-    const cta = page.getByRole("link", { name: /Ask Demeter about your situation/i });
+    // .first(): finding 4 of the taste audit gave the top hand-off card and
+    // the bottom fears CTA the SAME label on purpose (one label per intent),
+    // so a bare name-locator now resolves both. First in document order is
+    // the top card — the one that carries ?state through.
+    const cta = page.getByRole("link", { name: /Ask Demeter about your situation/i }).first();
     await expect(cta).toBeVisible();
     await cta.click();
     await expect(page).toHaveURL(/\/chat$/);
@@ -134,7 +138,7 @@ test.describe("chat surface", () => {
   // arrives at the chat scoped to nothing.
   test("the hand-off carries a state through to the chat", async ({ page }) => {
     await page.goto("/screen/ask?state=TX");
-    await page.getByRole("link", { name: /Ask Demeter about your situation/i }).click();
+    await page.getByRole("link", { name: /Ask Demeter about your situation/i }).first().click();
     await expect(page).toHaveURL(/\/chat\?state=TX/);
     await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
   });
@@ -196,7 +200,7 @@ test.describe("chat surface", () => {
       await page.goto("/screen/ask");
       await page.getByRole("link", { name: label, exact: true }).click();
       await expect(page).toHaveURL(new RegExp(path.replace(/\//g, "\\/")));
-      await expect(page.getByRole("link", { name: marker })).toBeVisible();
+      await expect(page.getByRole("link", { name: marker }).first()).toBeVisible();
     });
   }
 
