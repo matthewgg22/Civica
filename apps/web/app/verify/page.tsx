@@ -24,8 +24,16 @@ export const metadata: Metadata = {
     "Every state in Demeter is built from primary sources and adversarially fact-checked before it ships — here is the verification trail, state by state.",
 };
 
+// Below this many real answers, a percentage is false precision — "16.7%"
+// reads as a measured rate when it's really "2 of 12", and a tiny sample can
+// swing from 8% to 40% on the next answer alone. We show the raw count
+// instead until there's enough volume for a rate to mean anything, rather
+// than let a headline number imply more confidence than the sample supports.
+const SMALL_SAMPLE_THRESHOLD = 50;
+
 export default async function VerifyPage() {
   const stats = await certaintyStats(30);
+  const isSmallSample = stats.measured && stats.totalAnswers < SMALL_SAMPLE_THRESHOLD;
   return (
     <>
       {/* THE PAGE HAD NO HEADER. It was reachable from every other surface and
@@ -61,12 +69,26 @@ export default async function VerifyPage() {
           {stats.measured ? (
             <>
               <div className="vstat__figure">
-                <span className="vstat__pct">{stats.groundedRate}%</span>
+                {isSmallSample ? (
+                  <span className="vstat__pct">
+                    {stats.certainAnswers} of {stats.totalAnswers}
+                  </span>
+                ) : (
+                  <span className="vstat__pct">{stats.groundedRate}%</span>
+                )}
                 <span className="vstat__unit">
                   of the last {stats.totalAnswers.toLocaleString()} answers were marked{" "}
                   <strong>CERTAIN</strong>
                 </span>
               </div>
+              {isSmallSample && (
+                <p className="vstat__flag">
+                  Early data. {stats.totalAnswers} real answers isn&apos;t enough yet to
+                  read as a rate &mdash; the next answer alone could swing a percentage by
+                  several points. We show the plain count instead of a percentage until
+                  there&apos;s a large enough sample for one to mean something.
+                </p>
+              )}
               <p className="vstat__note">
                 Measured over the past {stats.windowDays} days from Demeter&apos;s own
                 answer log — not a target, not a claim. An answer only counts as

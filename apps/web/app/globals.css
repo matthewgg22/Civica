@@ -4981,6 +4981,14 @@ html {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
 }
 .vstat__note { color: var(--demeter-muted); }
+/* Same soft-callout pattern as .worksheet__guest-note and
+   .screen-landing__ask-note — reused, not a new tint. */
+.vstat__flag {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; line-height: 1.5; color: var(--demeter-terracotta-deep);
+  background: #FBF1EC; border: 1px solid var(--demeter-rule-strong); border-radius: 10px;
+  padding: 0.6rem 0.85rem; margin: 0.85rem 0 0;
+}
 
 /* ── /verify, the pass ──────────────────────────────────────────────────────
    Many of this page's conventions had drifted from the rest of the surface:
