@@ -483,6 +483,7 @@ export function DemeterChat({
   initialQuestion = null,
   initialLang = "en",
   initialMessages = [],
+  initialWorksheet = null,
   savedConversationId = null,
   pendingSave = false,
   geoHint = null,
@@ -495,6 +496,11 @@ export function DemeterChat({
   initialLang?: AnswerLang;
   /** A resumed conversation's transcript (?c=<id>), loaded server-side. */
   initialMessages?: Msg[];
+  /** The resumed conversation's drafted application (#905), from the saved
+   *  row. The sessionStorage restore path deliberately yields to a resumed
+   *  conversation (initialMessages short-circuits it), so this prop is the
+   *  only way the worksheet comes back on a next-day resume. */
+  initialWorksheet?: WorksheetSnapshot | null;
   /** The id being resumed — new answers keep updating that same row. */
   savedConversationId?: string | null;
   /** ?save=pending — we have just come back from signing in and there is a
@@ -511,19 +517,28 @@ export function DemeterChat({
   const [input, setInput] = useState(initialQuestion ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // The right rail's state. Held HERE and nowhere else — never persisted, so
-  // it dies with the tab (see the worksheet route's header). Facts live in a
-  // ref rather than state: nothing renders them directly (the rail renders the
-  // CLASSIFICATION), and a ref is always current inside the async callback,
-  // where a state value would be a stale closure a turn behind.
-  const factsRef = useRef<PartialFacts>({});
-  const [classification, setClassification] = useState<ScreeningClassification | null>(null);
+  // The right rail's state. Facts live in a ref rather than state: nothing
+  // renders them directly (the rail renders the CLASSIFICATION), and a ref is
+  // always current inside the async callback, where a state value would be a
+  // stale closure a turn behind. Persistence: the per-tab session store and
+  // the sign-in stash carry a WorksheetSnapshot (#898 P2-9), and a SAVED
+  // conversation stores one on its row (#905) — the saved-state privacy line
+  // says so.
+  const factsRef = useRef<PartialFacts>(initialWorksheet?.facts ?? {});
+  const [classification, setClassification] = useState<ScreeningClassification | null>(
+    initialWorksheet?.classification ?? null,
+  );
   /** Defaults to "ask" DELIBERATELY. The rail used to read household facts out
    *  of the conversation from the moment a state was picked, whether or not
    *  anyone had asked for an estimate — a reasonable thing to offer and an
    *  unreasonable thing to do quietly to someone who came to find out how the
    *  system works before telling it anything about themselves. */
-  const [worksheetMode, setWorksheetMode] = useState<WorksheetMode>("ask");
+  const [worksheetMode, setWorksheetMode] = useState<WorksheetMode>(
+    // A resumed conversation reopens in the mode it was left in (#905) — the
+    // ask default protects a NEW visitor from quiet gathering, and a person
+    // resuming their own estimate is the opposite of that case.
+    initialWorksheet?.mode ?? "ask",
+  );
   /** Whether the "just asking, or shall I work out a figure?" offer has been
    *  answered or waved away at least once — see the callout above the
    *  composer. Dismissing it no longer retires it forever: see

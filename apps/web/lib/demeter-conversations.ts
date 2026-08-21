@@ -133,3 +133,40 @@ export function normalizeStateCode(raw: unknown): string | null {
 export function normalizeLang(raw: unknown): AnswerLang {
   return typeof raw === "string" && isAnswerLang(raw) ? raw : "en";
 }
+
+/** The estimate rail's state, as stored on the saved row (#905). Structurally
+ *  the same value as chat-session.ts's WorksheetSnapshot; typed loosely here
+ *  because this file is the WIRE validator — the engine types live a package
+ *  away and the shape check below is what actually guards the column. */
+export type SavedWorksheet = {
+  mode: "ask" | "estimate";
+  facts: Record<string, unknown>;
+  classification: Record<string, unknown> | null;
+};
+
+/** Byte budget for the worksheet. Far above a real household (the audit
+ *  conversation's snapshot is ~1KB) and small enough that the side panel can
+ *  never crowd the transcript out of MAX_BYTES. */
+export const WORKSHEET_MAX_BYTES = 48_000;
+
+const isPlainObject = (v: unknown): v is Record<string, unknown> =>
+  typeof v === "object" && v !== null && !Array.isArray(v);
+
+/** Validate an incoming worksheet snapshot, or null.
+ *
+ *  Null on ANY defect, never an error: the transcript is what someone pressed
+ *  Save for, and a malformed side-panel snapshot must never cost them it.
+ *  Same philosophy as normalizeMessages preferring trimming to rejection —
+ *  taken one step further because unlike the transcript, the worksheet can be
+ *  rebuilt from the conversation on the next turn. */
+export function normalizeWorksheet(raw: unknown): SavedWorksheet | null {
+  if (!isPlainObject(raw)) return null;
+  const { mode, facts, classification } = raw as Partial<SavedWorksheet>;
+  if (mode !== "ask" && mode !== "estimate") return null;
+  if (!isPlainObject(facts)) return null;
+  const cls = classification ?? null;
+  if (cls !== null && !isPlainObject(cls)) return null;
+  const out: SavedWorksheet = { mode, facts, classification: cls };
+  if (byteLength(out) > WORKSHEET_MAX_BYTES) return null;
+  return out;
+}
