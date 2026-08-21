@@ -24,6 +24,7 @@ import {
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 import Image from "next/image";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
+import { programDisplayName, agencyDisplayName } from "../lib/program-name";
 import { StateFlag } from "./StateFlag";
 import { UsCoverageMap } from "./UsCoverageMap";
 import { SnapRetailerMap } from "./SnapRetailerMap";
@@ -318,12 +319,24 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
             covers CalFresh, Basic Food, FoodShare and the rest by name. Visually
             hidden, deliberately not display:none, so it stays in the
             accessibility tree as a plain readable list for anyone who would
-            rather not poke at a map. */}
+            rather not poke at a map.
+
+            DISPLAY NAMES, not raw pack fields (taste audit finding 1). The
+            pack's program/agency strings are written for the MODEL (#761) and
+            carry research annotation — rendered raw, this list read a
+            screen-reader user "see PROVENANCE.md Finding 8" and cross-pack
+            notes as the accessible alternative to the map. The one audience
+            that gets the text version must get exactly what a sighted user
+            gets from a tap: program, agency, portal. */}
         <ul className="dmx__sronly">
           {states.map((s) => (
             <li key={s.code}>
-              {s.code} — {s.program}, {s.agency}
-              {s.portal ? `, ${s.portal.name} (${s.portal.url})` : ""}
+              {s.code}: {programDisplayName(s.program)}, {agencyDisplayName(s.agency)}
+              {/* Portal names drift too — Wyoming's is "…(paper application
+                  only — no online portal found)". Same cleaning rule as the
+                  program name: its trailing-paren-prose cut is exactly this
+                  shape. */}
+              {s.portal ? `, ${programDisplayName(s.portal.name)} (${s.portal.url})` : ""}
             </li>
           ))}
         </ul>

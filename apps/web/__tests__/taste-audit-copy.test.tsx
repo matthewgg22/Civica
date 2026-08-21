@@ -43,10 +43,14 @@ describe("the screen-reader state roster is user copy, not the research annexe (
     expect(items.length).toBeGreaterThanOrEqual(50);
     for (const li of items) {
       const line = li.textContent ?? "";
-      // The Missouri entry alone ran ~480 characters of naming history before
-      // the fix. A cleaned line — code, program, agency, portal — fits well
-      // under this bound for every jurisdiction.
-      expect(line.length, line.slice(0, 80)).toBeLessThanOrEqual(160);
+      // The annotation always rides behind an em-dash in the pack fields, so
+      // "no em-dash in a roster line" IS the invariant — length alone cannot
+      // separate clean from annotated (Illinois' legitimate line runs 212;
+      // Colorado's annotated one ran about the same). The loose bound only
+      // backstops a future field that dodges the dash: Missouri's annotated
+      // entry ran ~480 characters.
+      expect(line, line.slice(0, 80)).not.toContain("—");
+      expect(line.length, line.slice(0, 80)).toBeLessThanOrEqual(300);
     }
   });
 

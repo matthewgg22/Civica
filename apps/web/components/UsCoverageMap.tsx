@@ -19,7 +19,7 @@
 import { useState } from "react";
 import type { PackMeta } from "@civica/demeter-engine/packs";
 import { US_MAP_VIEWBOX, US_STATE_PATHS } from "../lib/us-map-paths";
-import { programDisplayName } from "../lib/program-name";
+import { programDisplayName, agencyDisplayName } from "../lib/program-name";
 import { StateFlag } from "./StateFlag";
 
 export interface CoverageMapCopy {
@@ -67,7 +67,7 @@ export function UsCoverageMap({
               tabIndex={0}
               /* Display name, not the raw field: an annotation clause read out
                  on every arrow key is a paragraph where a name belongs. */
-              aria-label={`${programDisplayName(pack.program)} — ${pack.agency}`}
+              aria-label={`${programDisplayName(pack.program)}, ${agencyDisplayName(pack.agency)}`}
               aria-pressed={selected === code}
               onClick={() => setSelected(code === selected ? null : code)}
               onKeyDown={(e) => {
@@ -90,7 +90,9 @@ export function UsCoverageMap({
             <p className="dmmap__program">{programDisplayName(chosen.program)}</p>
             <p className="dmmap__agency">
               <span className="dmmap__cardlabel">{copy.agency}</span>
-              {chosen.agency}
+              {/* Cleaned like the program name above — the raw field carries
+                  corpus annotation (taste audit finding 1, issue #761). */}
+              {agencyDisplayName(chosen.agency)}
             </p>
             {chosen.portal && (
               <a
@@ -101,7 +103,7 @@ export function UsCoverageMap({
               >
                 {/* Bound to the last word: alone on a wrapped line the arrow
                     reads as a stray glyph rather than part of the link. */}
-                {copy.apply} {chosen.portal.name}&nbsp;↗
+                {copy.apply} {programDisplayName(chosen.portal.name)}&nbsp;↗
               </a>
             )}
             <p className="dmmap__verified">

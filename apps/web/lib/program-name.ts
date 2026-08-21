@@ -43,3 +43,25 @@ export function programDisplayName(program: string): string {
   }
   return out;
 }
+
+/**
+ * The agency as a person should hear it, same rule as the program name: cut
+ * at the first em-dash outside parentheses, where the corpus annotation
+ * starts ("…(DCYF) — but the Combined Manual itself is still hosted on the
+ * LEGACY DHS domain"). A depth-0 dash inside a legitimate division name cuts
+ * too — shorter but still accurate beats longer with the annexe attached.
+ * No trailing-parenthetical rule here: agency parens are always real
+ * acronyms, never prose.
+ */
+export function agencyDisplayName(agency: string): string {
+  let out = "";
+  let depth = 0;
+  for (let i = 0; i < agency.length; i++) {
+    const ch = agency[i];
+    if (ch === "(") depth++;
+    else if (ch === ")") depth = Math.max(0, depth - 1);
+    if (depth === 0 && ch === "—" && agency[i - 1] === " ") break;
+    out += ch;
+  }
+  return out.trim();
+}
