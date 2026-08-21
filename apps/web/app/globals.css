@@ -4764,6 +4764,14 @@ html {
   font-size: 0.98rem; line-height: 1.55; color: var(--demeter-muted);
   margin: 0 0 0.5rem; max-width: 44ch; text-wrap: pretty;
 }
+/* The two-mode framing (#898 P2-6). Sans, smaller and quieter than the lede —
+   it is orientation, not the invitation — and a touch wider, since it names
+   both mode labels and 44ch would wrap it to five lines. */
+.demeter__emptymodes {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; line-height: 1.6; color: var(--demeter-muted);
+  margin: 0 0 0.5rem; max-width: 54ch; text-wrap: pretty;
+}
 .demeter__suggests {
   display: flex; flex-direction: column; gap: 0.5rem; width: 100%; align-items: center;
 }
@@ -5432,6 +5440,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   background: var(--demeter-card); border: 1px solid var(--demeter-rule-strong);
   border-radius: 12px; padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.5rem;
 }
+/* The panel spaces its children with the flex gap above; the UA's default
+   <p> margins stacked on top of it (measured: 16.15/14.45/13.26px — uneven
+   because each 1em tracks its font-size) and made the panel read broken
+   (#898 P2-7). The global reset zeroes only html/body, not p. */
+.demeter__savepanel p { margin: 0; }
 .demeter__savepanel-title { font-weight: 600; font-size: 0.95rem; color: var(--demeter-ink); }
 .demeter__savepanel-body { font-size: 0.85rem; color: var(--demeter-ink); line-height: 1.5; }
 .demeter__savepanel-stored { font-size: 0.78rem; color: var(--demeter-muted); line-height: 1.5; }
