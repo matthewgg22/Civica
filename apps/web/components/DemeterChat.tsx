@@ -1372,6 +1372,11 @@ export function DemeterChat({
             <DemeterMark size={52} />
             <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
             <p className="demeter__emptylede">{t.emptyLede}</p>
+            {/* Framing before the first word is typed (#898 P2-6): SNAP is
+                formula work this chat can walk through, and there are two
+                modes. A full-length real conversation ended without the
+                tester ever learning either. */}
+            <p className="demeter__emptymodes">{t.emptyModes}</p>
             {/* NO STARTER QUESTIONS. There were three — "Do I earn too much to
                 qualify?", "I need food this week", "Will I have to do an
                 interview?" — and none of them is what someone actually opens
