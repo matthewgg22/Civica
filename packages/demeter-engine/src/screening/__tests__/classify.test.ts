@@ -143,3 +143,75 @@ describe("classifyScreening — the six mockup outcomes", () => {
     expect(c.summary.toLowerCase()).toContain("our gap");
   });
 });
+
+// Second-pass class audit after #898 P0-1 (the member_id drift): the SAME
+// family of fault — free-form model output meeting the engine's exact-token
+// expectations — exists on `student`. The extraction tool emitted free text
+// ("college", "high school"), the engine's student gate matches ONLY
+// "he_halftime_subject" — so a real transcript's 20-year-old full-time
+// college student silently counted as a fully-eligible member (household 3,
+// bigger deductions and allotment) when federal rules exclude him from the
+// household size while still counting his income (7 CFR 273.5;
+// 273.1(b)(7)(i)). And the engine's own gate would DENY the WHOLE household
+// for a mixed household with an unexempt student (a documented Wave-2 gap) —
+// so both naive paths compute a wrong answer in opposite directions. The
+// honest screening outcome for a MIXED household with an at-risk student is
+// a caseworker's review, not a number.
+describe("student seam (#898 second pass)", () => {
+  const base: PartialFacts = {
+    income: [{ member: "a", type: "wages", amount: 2580, freq: "monthly" }],
+    shelter: { rent: 2000, sua_tier: "LUA" },
+    assets: 600,
+    cat_elig: "NPA",
+  };
+
+  it("mixed household with a half-time+ student → caseworker review, not a computed number", () => {
+    const c = classifyScreening(
+      {
+        ...base,
+        household: [
+          { member_id: "a", age: 56, role: "head", immigration: "citizen" },
+          { member_id: "b", age: 15, role: "child", immigration: "citizen", student: "not" },
+          { member_id: "c", age: 20, role: "child", immigration: "citizen", student: "he_halftime_subject" },
+        ],
+      },
+      "MA",
+      ASOF,
+    );
+    expect(c.outcome).toBe("needs_county_review");
+    expect(c.summary).toMatch(/student/i);
+    expect(c.summary).toMatch(/caseworker/i);
+    expect(c.summary).not.toMatch(/county/i);
+  });
+
+  it("an EXEMPT student in a mixed household computes normally", () => {
+    const c = classifyScreening(
+      {
+        ...base,
+        household: [
+          { member_id: "a", age: 56, role: "head", immigration: "citizen" },
+          { member_id: "c", age: 20, role: "child", immigration: "citizen", student: "he_exempt:work20" },
+        ],
+      },
+      "MA",
+      ASOF,
+    );
+    expect(c.outcome).not.toBe("needs_county_review");
+  });
+
+  it("a SINGLE-person at-risk student still flows to the engine's own DENY", () => {
+    const c = classifyScreening(
+      {
+        ...base,
+        household: [
+          { member_id: "a", age: 20, role: "head", immigration: "citizen", student: "he_halftime_subject" },
+        ],
+      },
+      "MA",
+      ASOF,
+    );
+    // The engine handles the single-student case correctly today — don't
+    // route it away from a real answer.
+    expect(c.outcome).toBe("likely_ineligible");
+  });
+});

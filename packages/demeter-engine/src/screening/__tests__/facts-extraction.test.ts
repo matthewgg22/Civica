@@ -125,3 +125,47 @@ describe("extractFacts normalizes the tool output to engine shape", () => {
     expect((patch as PartialFacts).shelter?.sua_tier).toBeUndefined();
   });
 });
+
+// Second-pass class audit (#898): `student` was the ONE remaining
+// unconstrained free-text field the tool could emit — the model wrote
+// "college" / "high school", and the engine's student gate matches only its
+// exact fixture tokens, so a real transcript's full-time college student
+// silently counted as a fully-eligible member. The tool now offers a small
+// stated-facts enum, mapped here to the tokens the engine actually reads.
+describe("extractFacts maps student enrollment to engine tokens", () => {
+  beforeEach(() => sdk.create.mockReset());
+
+  function toolResponse(input: object) {
+    sdk.create.mockResolvedValue({
+      content: [{ type: "tool_use", name: "record_household_facts", input }],
+      usage: { input_tokens: 10, output_tokens: 5 },
+    });
+  }
+  const MSG = [{ role: "user" as const, content: "irrelevant — the SDK is mocked" }];
+
+  it("half-time+ higher ed → he_halftime_subject; high school → not", async () => {
+    toolResponse({
+      household: [
+        { member_id: "a", age: 20, student: "higher_ed_half_time_plus" },
+        { member_id: "b", age: 15, student: "high_school" },
+      ],
+    });
+    const { patch } = await extractFacts(MSG, "k");
+    expect(patch.household![0]!.student).toBe("he_halftime_subject");
+    expect(patch.household![1]!.student).toBe("not");
+  });
+
+  it("less-than-half-time and none → not; an engine token passes through unchanged", async () => {
+    toolResponse({
+      household: [
+        { member_id: "a", age: 20, student: "higher_ed_less_than_half" },
+        { member_id: "b", age: 30, student: "none" },
+        { member_id: "c", age: 22, student: "he_exempt:work20" },
+      ],
+    });
+    const { patch } = await extractFacts(MSG, "k");
+    expect(patch.household![0]!.student).toBe("not");
+    expect(patch.household![1]!.student).toBe("not");
+    expect(patch.household![2]!.student).toBe("he_exempt:work20");
+  });
+});
