@@ -152,10 +152,12 @@ export async function buildEngineGroundingBlock(
         break;
       case "needs_county_review":
         resultSection =
-          `\nEngine result: NEEDS COUNTY REVIEW — ${classification.summary}\n` +
+          `\nEngine result: NEEDS A CASEWORKER'S CALCULATION — ${classification.summary}\n` +
           "Do not assert an exact benefit figure. You may compare the user's own stated " +
           "figures against the income limits in the live engine parameters above, labeled " +
-          "as a rough screen; the county calculates the exact number.";
+          "as a rough screen; the agency's caseworker calculates the exact number. " +
+          "(Say 'caseworker' or the state agency's own name — most states have no " +
+          "sub-state administrative layer, so never attribute the calculation to one.)";
         break;
       case "expedited":
         resultSection =

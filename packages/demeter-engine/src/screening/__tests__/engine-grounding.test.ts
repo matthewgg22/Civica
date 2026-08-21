@@ -123,7 +123,12 @@ describe("buildEngineGroundingBlock", () => {
       "MA",
       "test-key",
     );
-    expect(text).toContain("NEEDS COUNTY REVIEW");
+    // #898 P0-2: "county" is a California-ism — Massachusetts (and most
+    // states) run SNAP at the STATE level with no county step, and a real
+    // user said "I am concerned to apply now since... it says needs county
+    // review". Agency-neutral wording only.
+    expect(text).toContain("NEEDS A CASEWORKER'S CALCULATION");
+    expect(text).not.toMatch(/county/i);
     expect(text).not.toMatch(/Estimated monthly benefit/);
   });
 
