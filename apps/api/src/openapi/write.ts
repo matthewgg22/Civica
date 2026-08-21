@@ -18,4 +18,4 @@ const outPath = resolve(
 
 const spec = buildOpenAPIDocument();
 writeFileSync(outPath, JSON.stringify(spec, null, 2) + '\n', 'utf-8');
-console.log(`OpenAPI spec written to ${outPath}`);
+process.stdout.write(`OpenAPI spec written to ${outPath}\n`);

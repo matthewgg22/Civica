@@ -23,15 +23,17 @@ const LINK_PATHS = {
   feedback: "/feedback",
 } as const;
 
-/** English is un-prefixed; everything else lives under /es|/vi|/zh. Privacy
- *  and feedback are exceptions — neither has a localized route, so both
- *  always point at the canonical page rather than a URL that would 404.
- *  (Supporters has the same gap — see issue filed 2026-08-15 — but that one
- *  was pre-existing, not introduced here, so it is left as still-prefixed
- *  until that issue is picked up rather than silently changed in this
- *  unrelated PR.) */
+/** English is un-prefixed; everything else lives under /es|/vi|/zh. Privacy,
+ *  feedback and supporters are exceptions — none has a localized route, so
+ *  all three always point at the canonical page rather than a URL that would
+ *  404. Supporters joined the list when #837 was picked up: the prefixed link
+ *  had been 404ing from every localized page. If a localized supporters page
+ *  ever ships, remove it from this list and add the [lang] route in the same
+ *  change. */
 function href(path: string, lang: AnswerLang): string {
-  if (path === LINK_PATHS.privacy || path === LINK_PATHS.feedback) return path;
+  if (path === LINK_PATHS.privacy || path === LINK_PATHS.feedback || path === LINK_PATHS.supporters) {
+    return path;
+  }
   return lang === "en" ? path : `/${lang}${path}`;
 }
 

@@ -46,8 +46,11 @@ navigatorRoutes.get('/sessions', async (c) => {
     return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
   }
 
+  // The shape the select's packet_assignments(...) join actually returns —
+  // typed here so the two casts below stop being `any` (#721 first lint).
+  type AssignmentRow = { is_current: boolean; staff_id: string | null };
   const sessions = (data ?? [])
-    .filter((p) => !assigned_to || (p.packet_assignments as any[]).some((a) => a.is_current && a.staff_id === assigned_to))
+    .filter((p) => !assigned_to || (p.packet_assignments as AssignmentRow[]).some((a) => a.is_current && a.staff_id === assigned_to))
     .map((p) => ({
       session_id: p.packet_id,
       status: p.status,
@@ -55,7 +58,7 @@ navigatorRoutes.get('/sessions', async (c) => {
       state: p.state_code,
       created_at: p.created_at,
       updated_at: p.updated_at,
-      navigator_id: (p.packet_assignments as any[]).find((a) => a.is_current)?.staff_id ?? null,
+      navigator_id: (p.packet_assignments as AssignmentRow[]).find((a) => a.is_current)?.staff_id ?? null,
     }));
 
   return c.json({ sessions });
@@ -187,7 +190,7 @@ navigatorRoutes.post('/sessions/:id/assign', async (c) => {
 
   if (!body.navigator_id) return c.json({ code: 'missing_field', message: 'Missing required field: navigator_id', field: 'navigator_id' }, 400);
 
-  const { data: packet, error: pErr } = await se()
+  const { error: pErr } = await se()
     .from('snap_packets')
     .select('packet_id')
     .eq('packet_id', id)
@@ -241,7 +244,7 @@ navigatorRoutes.post('/sessions/:id/notes', async (c) => {
   const noteText = body.body?.trim();
   if (!noteText) return c.json({ code: 'missing_field', message: 'Missing required field: body', field: 'body' }, 400);
 
-  const { data: packet, error: pErr } = await se()
+  const { error: pErr } = await se()
     .from('snap_packets')
     .select('packet_id')
     .eq('packet_id', id)
@@ -290,7 +293,7 @@ navigatorRoutes.post('/sessions/:id/missing-items', async (c) => {
   const itemType = body.item_type?.trim();
   if (!itemType) return c.json({ code: 'missing_field', message: 'Missing required field: item_type', field: 'item_type' }, 400);
 
-  const { data: packet, error: pErr } = await se()
+  const { error: pErr } = await se()
     .from('snap_packets')
     .select('packet_id')
     .eq('packet_id', id)
@@ -390,7 +393,7 @@ navigatorRoutes.get('/sessions/:id/audit-log', async (c) => {
   const limit = Math.min(Number(c.req.query('limit') ?? '50'), 200);
   const offset = Number(c.req.query('offset') ?? '0');
 
-  const { data: packet, error: pErr } = await se()
+  const { error: pErr } = await se()
     .from('snap_packets')
     .select('packet_id')
     .eq('packet_id', id)
