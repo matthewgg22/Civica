@@ -7,6 +7,7 @@
 // unit-testable and keeps citations reproducible).
 
 import corpusJson from "./corpus/ecfr-snap.json";
+import colaJson from "./corpus/usda-cola-fy26.json";
 import { embed, cosine } from "./embeddings";
 import { DESCRIPTORS } from "./section-descriptors";
 import { getStatePack, type StatePack, type PackTopic } from "./states";
@@ -123,7 +124,17 @@ interface ExternalTopic {
   terms: string[];
   curated?: RegChunk;
   suppressSections?: string[]; // corpus sections to drop when this topic fires
+  /** Fire only when the query carries a money-ish figure. For terms too broad
+   *  to gate a topic alone ("do I qualify") but exactly right when a dollar
+   *  amount rides along ("$74k a year — do we qualify?"), where the dollar
+   *  tables ARE the answer (#785). */
+  requireMoney?: boolean;
 }
+
+/** Money-ish signal in the query — deliberately loose, mirrors the engine
+ *  grounding gate's shape: "$74,000", "74k", "4 k a month", "2000 per year". */
+const MONEYISH_RE =
+  /\$\s?\d|\b\d[\d,]*(?:\.\d+)?\s*(?:k|thousand)\b|\b\d[\d,]*(?:\.\d+)?\s*(?:a|per|each|every)\s+(?:hour|day|week|month|year)\b/i;
 
 function curatedAuthority(citation: string, heading: string, text: string, url: string): RegChunk {
   return { id: citation, citation, section: citation, heading, subsection: null, text, source_url: url, effective_date: "curated reference" };
@@ -173,6 +184,31 @@ const FEDERAL_EXTERNAL_TOPICS: ExternalTopic[] = [
   },
 ];
 
+
+// FY 2026 dollar tables (#785), term-triggered like the federal external
+// topics above. The eCFR corpus carries 273.9(a)'s PERCENTAGES; these carry
+// the published dollar tables the percentages point at — income standards,
+// allotments, deduction amounts — so the numeric gate can finally let an
+// answer say "$2,292 for two people" with the memo retrieved behind it. The
+// artifact is fetch-then-commit with full provenance; its own test expires it
+// at the effective window's end (#803 tracks the FY27 refetch).
+const FY_COLA_TOPICS: ExternalTopic[] = (
+  colaJson as {
+    topics: {
+      terms: string[];
+      money_gated_terms?: string[];
+      citation: string;
+      heading: string;
+      text: string;
+      source_url: string;
+    }[];
+  }
+).topics.flatMap((t) => {
+  const curated = curatedAuthority(t.citation, t.heading, t.text, t.source_url);
+  const out: ExternalTopic[] = [{ terms: t.terms, curated }];
+  if (t.money_gated_terms?.length) out.push({ terms: t.money_gated_terms, curated, requireMoney: true });
+  return out;
+});
 
 // FUNCTION WORDS ONLY. This list used to also carry domain terms — "snap",
 // "household", "member", "applicant" — added as a band-aid for #766 (the word
@@ -435,7 +471,12 @@ export async function retrieve(rawQuery: string, opts: RetrieveOptions = {}): Pr
   // these return the correct cite — or nothing — instead of a wrong 7 CFR hit.
   const curated: RegChunk[] = [];
   const suppressed = new Set<string>();
-  for (const topic of [...FEDERAL_EXTERNAL_TOPICS, ...packTopics(getStatePack(state))]) {
+  // State-pack curated authorities come BEFORE the federal dollar tables: in a
+  // BBCE state the state's own published limit is the operative answer, and
+  // the COLA chunk's own text says so ("the state's own published figures
+  // govern"). Curated order here is presentation order.
+  for (const topic of [...FEDERAL_EXTERNAL_TOPICS, ...packTopics(getStatePack(state)), ...FY_COLA_TOPICS]) {
+    if (topic.requireMoney && !MONEYISH_RE.test(normalized)) continue;
     if (topic.terms.some((t) => queryHasTerm(words, normalized, t))) {
       if (topic.curated) curated.push(topic.curated);
       for (const s of topic.suppressSections ?? []) suppressed.add(s);
