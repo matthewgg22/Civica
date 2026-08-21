@@ -25,6 +25,7 @@ import type { AnswerLang } from "@civica/demeter-engine/packs";
 import Image from "next/image";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { programDisplayName, agencyDisplayName } from "../lib/program-name";
+import { shieldCitations } from "../lib/no-translate";
 import { StateFlag } from "./StateFlag";
 import { UsCoverageMap } from "./UsCoverageMap";
 import { SnapRetailerMap } from "./SnapRetailerMap";
@@ -143,7 +144,7 @@ export function SnapOrientation({ lang = "en" }: { lang?: AnswerLang }) {
       <aside className="dmex" aria-label={c.example.label}>
         <p className="dmex__label">{c.example.label}</p>
         <p className="dmex__q">{c.example.q}</p>
-        <p className="dmex__a">{c.example.a}</p>
+        <p className="dmex__a">{shieldCitations(c.example.a, "dmex")}</p>
         <p className="dmex__note">
           {c.example.note}{" "}
           <a className="dmex__cta" href={lang === "en" ? "/chat" : `/${lang}/chat`}>
@@ -345,7 +346,10 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
             notes as the accessible alternative to the map. The one audience
             that gets the text version must get exactly what a sighted user
             gets from a tap: program, agency, portal. */}
-        <ul className="dmx__sronly">
+        {/* translate="no": every line is state codes, program and agency
+            proper nouns, and portal URLs — identifiers a machine translator
+            can only corrupt (vercel-guidelines finding 1). */}
+        <ul className="dmx__sronly" translate="no">
           {states.map((s) => (
             <li key={s.code}>
               {s.code}: {programDisplayName(s.program)}, {agencyDisplayName(s.agency)}

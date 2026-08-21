@@ -27,6 +27,8 @@ import { DemeterNav } from "../../components/DemeterNav";
 import { loadConversation } from "../../lib/demeter-conversations-server";
 import type { WorksheetSnapshot } from "../../lib/chat-session";
 
+export const viewport = { themeColor: "#F7F6F4" };
+
 export const metadata: Metadata = {
   title: "Ask Demeter — SNAP answers with the rule attached",
   description:
@@ -54,7 +56,7 @@ export default async function ChatPage({
   return (
     <div className="dmchat">
       <DemeterNav active="ask" />
-      <main className="dmchat__body">
+      <main className="dmchat__body" id="main-content">
         <DemeterChat
           states={VERIFIED_STATES}
           initialState={resumed ? resumed.state_code : initialState}

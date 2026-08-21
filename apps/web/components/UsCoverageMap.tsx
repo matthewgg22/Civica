@@ -87,12 +87,12 @@ export function UsCoverageMap({
         {chosen ? (
           <>
             <StateFlag code={chosen.code} size={40} />
-            <p className="dmmap__program">{programDisplayName(chosen.program)}</p>
+            <p className="dmmap__program" translate="no">{programDisplayName(chosen.program)}</p>
             <p className="dmmap__agency">
               <span className="dmmap__cardlabel">{copy.agency}</span>
               {/* Cleaned like the program name above — the raw field carries
                   corpus annotation (taste audit finding 1, issue #761). */}
-              {agencyDisplayName(chosen.agency)}
+              <span translate="no">{agencyDisplayName(chosen.agency)}</span>
             </p>
             {chosen.portal && (
               <a
@@ -103,7 +103,7 @@ export function UsCoverageMap({
               >
                 {/* Bound to the last word: alone on a wrapped line the arrow
                     reads as a stray glyph rather than part of the link. */}
-                {copy.apply} {programDisplayName(chosen.portal.name)}&nbsp;↗
+                {copy.apply} <span translate="no">{programDisplayName(chosen.portal.name)}</span>&nbsp;↗
               </a>
             )}
             <p className="dmmap__verified">

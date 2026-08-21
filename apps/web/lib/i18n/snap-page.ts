@@ -35,6 +35,8 @@ export interface PageCopy {
   h1: string;
   productLede: string;
   snapLine: string;
+  /** The skip link — the first focusable on every Demeter page. */
+  skipToContent: string;
   /** The example exchange beside the hero (taste audit finding 5) — a REAL
    *  answer generated through the actual pipeline on 2026-08-21 (audit line:
    *  mode "eval", model claude-sonnet-5, verifier clean, citation 7 CFR
@@ -193,6 +195,7 @@ const en: PageCopy = {
     "Demeter answers in plain language and quotes the federal regulation behind every claim and your state’s own manual, to help explain the benefit program to you.",
   snapLine:
     "SNAP is monthly money for groceries, paid onto an EBT card. Formerly called food stamps. Applying is free.",
+  skipToContent: "Skip to content",
   example: {
     label: "A real answer",
     q: "My roommate and I live together and split rent, but we buy and cook our food separately. Are we one SNAP household?",
@@ -447,6 +450,7 @@ const es: PageCopy = {
     "Demeter responde en lenguaje sencillo y cita el reglamento federal detrás de cada afirmación — y el manual de tu estado, donde hemos verificado uno.",
   snapLine:
     "SNAP es dinero mensual para comida, depositado en una tarjeta EBT. Antes llamado cupones de alimentos. Solicitar es gratis.",
+  skipToContent: "Saltar al contenido",
   example: {
     label: "Una respuesta real",
     q: "Mi compañero de cuarto y yo compartimos la renta. ¿Contamos como un solo hogar?",
@@ -686,6 +690,7 @@ const vi: PageCopy = {
     "Demeter trả lời bằng ngôn ngữ dễ hiểu và trích dẫn quy định liên bang đứng sau mỗi khẳng định — cùng với sổ tay của tiểu bang bạn, nơi chúng tôi đã xác minh.",
   snapLine:
     "SNAP là tiền mua thực phẩm hằng tháng, nạp vào thẻ EBT. Trước đây gọi là tem phiếu thực phẩm. Nộp đơn miễn phí.",
+  skipToContent: "Bỏ qua đến nội dung",
   example: {
     label: "Một câu trả lời thật",
     q: "Tôi và bạn cùng phòng chia tiền thuê nhà. Chúng tôi có tính là một hộ không?",
@@ -929,6 +934,7 @@ const zh: PageCopy = {
     // claim is that it knows which state's rules apply to you.
     "Demeter 用通俗语言回答，并为每一条结论引用相应的联邦法规——以及您所在州的手册，只要我们已核实。",
   snapLine: "SNAP 是每月打入 EBT 卡的食品补助，旧称食品券。申请免费。",
+  skipToContent: "跳到内容",
   example: {
     label: "一条真实回答",
     q: "我和室友分摊房租。我们算一个家庭吗？",

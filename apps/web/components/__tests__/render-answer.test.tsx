@@ -229,7 +229,10 @@ describe("underscore emphasis", () => {
     // "_Check it yourself:_" shipped with its underscores showing on every
     // cited answer — the renderer only knew about asterisks.
     const nodes = renderAnswer("_Check it yourself:_ Pub. L. 119-21");
-    expect(tags(nodes)).toEqual(["em"]);
+    // The span is the citation's translate="no" shield (vercel-guidelines
+    // finding 1) — "Pub. L. 119-21" is an identifier machine translation
+    // could only corrupt.
+    expect(tags(nodes)).toEqual(["em", "span"]);
     expect(texts(nodes)).not.toContain("_");
     expect(texts(nodes)).toContain("Check it yourself:");
   });

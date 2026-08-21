@@ -39,6 +39,13 @@ export function DemeterNav({
 
   return (
     <header className="dmnav">
+      {/* FIRST focusable on the page (vercel-guidelines finding 2): a
+          keyboard or screen-reader user otherwise walks the brand, two tabs
+          and four language links on every page before reaching content — on
+          /chat, before reaching the composer. Visible only while focused. */}
+      <a className="dmnav__skip" href="#main-content">
+        {c.skipToContent}
+      </a>
       <div className="dmnav__inner">
         <Link className="dmnav__brand" href={p("/screen/ask")} aria-label="Demeter">
           {/* The mark carries the brand in a bar that is otherwise all text —
@@ -46,7 +53,7 @@ export function DemeterNav({
               to anchor. 44 matches that stack's height. */}
           <DemeterMark size={44} />
           <span className="dmnav__brandtext">
-            <span className="dmnav__wordmark">Demeter</span>
+            <span className="dmnav__wordmark" translate="no">Demeter</span>
             {/* A one-line subtitle, so the wordmark alone is not the only thing
                 telling a first-time visitor what this is. "Demeter" is a Greek
                 harvest goddess; on its own it says nothing about SNAP. */}

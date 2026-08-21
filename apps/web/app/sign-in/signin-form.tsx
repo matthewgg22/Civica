@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState, type FormEvent } from "react";
+import { Suspense, useEffect, useRef, useState, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { STORAGE_KEY, type Locale } from "../i18n";
 import { snapT } from "../../lib/i18n/snap-copy";
@@ -66,6 +66,9 @@ function SignInForm() {
   );
   const dt = SIGNIN_T[lang];
   const [email, setEmail] = useState("");
+  // Focus lands back in the field that needs fixing on a failed submit
+  // (vercel-guidelines finding 8) — role="alert" announces, this navigates.
+  const emailRef = useRef<HTMLInputElement>(null);
   const [linkState, setLinkState] = useState<"idle" | "sending" | "sent">("idle");
   const [linkError, setLinkError] = useState<string | null>(null);
 
@@ -101,17 +104,20 @@ function SignInForm() {
       if (res.status === 400) {
         setLinkError(forConversation ? dt.errorInvalidEmail : snapT(locale, "signin_error_invalid_email"));
         setLinkState("idle");
+        emailRef.current?.focus();
         return;
       }
       if (res.status === 429) {
         setLinkError(forConversation ? dt.errorRateLimited : snapT(locale, "signin_error_rate_limited"));
         setLinkState("idle");
+        emailRef.current?.focus();
         return;
       }
       setLinkState("sent");
     } catch {
       setLinkError(forConversation ? dt.errorGeneric : snapT(locale, "signin_error_generic"));
       setLinkState("idle");
+      emailRef.current?.focus();
     }
   };
 
@@ -229,6 +235,8 @@ function SignInForm() {
               type="email"
               inputMode="email"
               autoComplete="email"
+              spellCheck={false}
+              ref={emailRef}
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
