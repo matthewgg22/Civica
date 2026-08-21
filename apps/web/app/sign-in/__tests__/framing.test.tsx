@@ -97,18 +97,20 @@ describe("sign-in framing", () => {
 describe("Demeter framing survives localized paths (#898 P1-5)", () => {
   afterEach(cleanup);
 
+  // Since #694 these assert the LOCALIZED Demeter title — the same check
+  // (right product, not the apply flow), one better: the right language too.
   it("a Spanish chat page's save still reads as Demeter", async () => {
     renderAt("next=%2Fes%2Fscreen%2Fask%3Fsave%3Dpending");
-    expect(await screen.findByText("Save your conversation")).toBeTruthy();
+    expect(await screen.findByText(SIGNIN_T.es.title)).toBeTruthy();
     expect(screen.queryByText(/for your navigator/)).toBeNull();
   });
 
   it("Vietnamese and Chinese too", async () => {
     renderAt("next=%2Fvi%2Fscreen%2Fask");
-    expect(await screen.findByText("Save your conversation")).toBeTruthy();
+    expect(await screen.findByText(SIGNIN_T.vi.title)).toBeTruthy();
     cleanup();
     renderAt("next=%2Fzh%2Fscreen%2Fask");
-    expect(await screen.findByText("Save your conversation")).toBeTruthy();
+    expect(await screen.findByText(SIGNIN_T.zh.title)).toBeTruthy();
   });
 });
 
@@ -147,7 +149,11 @@ describe("the Demeter branch speaks all four languages (#694)", () => {
 
   it("the apply flow keeps its two-way EN/ES toggle", async () => {
     renderAt("next=%2Fapply");
-    expect(await screen.findByRole("button", { name: /Español|English/ })).toBeTruthy();
+    // The toggle's accessible name is its aria-label, which names the action
+    // in the OTHER language ("Cambiar a español" while showing English).
+    expect(
+      await screen.findByRole("button", { name: /Cambiar a español|Switch to English/ }),
+    ).toBeTruthy();
     expect(screen.queryByRole("button", { name: "Tiếng Việt" })).toBeNull();
   });
 
@@ -158,5 +164,22 @@ describe("the Demeter branch speaks all four languages (#694)", () => {
         expect(SIGNIN_T[lang][key], `${lang}.${key}`).toBeTruthy();
       }
     }
+  });
+});
+
+// The browser tab is part of the framing too (#698). The page could not export
+// metadata while it was itself the "use client" module, so every visit wore
+// the root layout's "Civica — Apply for SNAP food benefits" title — including
+// a Vietnamese Demeter user mid-save. generateMetadata switches on the same
+// forConversation test as the page body.
+describe("tab title matches the product (#698)", () => {
+  it("Demeter by default and for chat arrivals; Civica for the apply flow", async () => {
+    const { generateMetadata } = await import("../page");
+    const titleFor = async (query: Record<string, string>) =>
+      (await generateMetadata({ searchParams: Promise.resolve(query) })).title;
+    expect(await titleFor({})).toMatch(/Demeter/);
+    expect(await titleFor({ next: "/vi/screen/ask" })).toMatch(/Demeter/);
+    expect(await titleFor({ next: "/apply" })).toMatch(/Civica/);
+    expect(await titleFor({ next: "/apply" })).not.toMatch(/Demeter/);
   });
 });

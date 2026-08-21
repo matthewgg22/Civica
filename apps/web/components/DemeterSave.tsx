@@ -296,7 +296,7 @@ export function DemeterSave({
         <p className="demeter__savepanel-body">{copy.panelBody}</p>
         <p className="demeter__savepanel-stored">{copy.panelStored}</p>
         <div className="demeter__savepanel-actions">
-          <a className="demeter__savepanel-cta" href={`/sign-in?next=${next}`}>
+          <a className="demeter__savepanel-cta" href={`/sign-in?next=${next}&lang=${lang}`}>
             {copy.panelCta}
           </a>
           <button

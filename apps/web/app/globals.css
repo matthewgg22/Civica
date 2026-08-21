@@ -6729,6 +6729,24 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   border-color: var(--demeter-rule-strong);
 }
 
+/* The four-language switcher (#694) — same shape as the chat header's row of
+   language links, so the step between the chat and the saved list reads as
+   the same product. aria-pressed carries the active state; the underline is
+   its visual. */
+.signin-langs { display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap; }
+.signin-lang {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  background: transparent; border: 0; cursor: pointer;
+  font-size: 0.8rem; color: var(--demeter-muted);
+  padding: 0.35rem 0.45rem; min-height: 44px;
+}
+.signin-lang:hover { color: var(--demeter-ink); }
+.signin-lang[aria-pressed="true"] {
+  color: var(--demeter-ink); font-weight: 600; text-decoration: underline;
+  text-underline-offset: 4px; text-decoration-color: var(--demeter-terracotta-deep);
+}
+.signin-lang:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+
 /* ═══ THE LABEL RECIPE ═══════════════════════════════════════════════════════
    Every uppercase micro-label on a Demeter surface, in ONE place.
 

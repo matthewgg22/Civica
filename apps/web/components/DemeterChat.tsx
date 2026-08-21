@@ -1921,7 +1921,7 @@ export function DemeterChat({
                   className="demeter__emailsignin"
                   href={`/sign-in?next=${encodeURIComponent(
                     typeof window !== "undefined" ? window.location.pathname : "/screen/ask",
-                  )}`}
+                  )}&lang=${lang}`}
                 >
                   {t.emailSignIn}
                 </a>
