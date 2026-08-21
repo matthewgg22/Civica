@@ -159,3 +159,22 @@ describe("retention copy — the estimate rail must not understate what is kept"
     expect(screen.getByText(copy.privacy)).toBeTruthy();
   });
 });
+
+// #905: once the saved row stores the worksheet, "we keep the text" understates
+// what is kept — the estimate itself is now stored too, and the saved-state
+// privacy line must say so in every language. Same harm direction as the
+// original #703 bug: understating retention on a benefits service.
+describe("saved-state copy names the stored estimate (#905)", () => {
+  const ESTIMATE_WORD: Record<(typeof LOCALES)[number], RegExp> = {
+    en: /estimate/i,
+    es: /estimado/i,
+    vi: /ước tính/i,
+    zh: /估算/,
+  };
+
+  it("every locale's privacySaved mentions the estimate", () => {
+    for (const locale of LOCALES) {
+      expect(T[locale].worksheet.privacySaved, locale).toMatch(ESTIMATE_WORD[locale]);
+    }
+  });
+});

@@ -89,6 +89,29 @@ describe("the worksheet survives a page change (#898 P2-9)", () => {
     expect(screen.getByText(SESSION.worksheet.classification.summary)).toBeTruthy();
   });
 
+  // #905: the third restore path — a SAVED conversation reopened by id. The
+  // server hands the page initialMessages plus the stored worksheet; the
+  // sessionStorage path above deliberately yields to it (initialMessages
+  // short-circuits the mount restore), so this prop is the only way the
+  // drafted application comes back on a next-day resume.
+  it("a saved conversation opened by id restores its worksheet from the server row", () => {
+    render(
+      <DemeterChat
+        states={STATES}
+        initialState="MA"
+        initialMessages={SESSION.messages as never}
+        initialWorksheet={SESSION.worksheet as never}
+      />,
+    );
+    expect(
+      screen.getByRole("radio", { name: T.en.worksheet.modeEstimate }).getAttribute(
+        "aria-checked",
+      ),
+    ).toBe("true");
+    expect(screen.getByText(OUTCOME_COPY.likely_eligible.label)).toBeTruthy();
+    expect(screen.getByText(SESSION.worksheet.classification.summary)).toBeTruthy();
+  });
+
   it("a session without a worksheet still restores, in the default mode", () => {
     const bare = { messages: SESSION.messages, state: SESSION.state, lang: SESSION.lang };
     window.sessionStorage.setItem("demeter:chat", JSON.stringify(bare));

@@ -5,6 +5,7 @@ import {
   normalizeMessages,
   normalizeStateCode,
   normalizeTitle,
+  normalizeWorksheet,
   MAX_MESSAGES,
   MAX_BYTES,
   type SavedMsg,
@@ -148,5 +149,50 @@ describe("field normalizers", () => {
     expect(normalizeTitle("  Rent question  ")).toBe("Rent question");
     expect(normalizeTitle("   ")).toBeNull();
     expect(normalizeTitle(undefined)).toBeNull();
+  });
+});
+
+// #905: the drafted application rides on the saved row. Validation mirrors the
+// file's philosophy — drop the worksheet rather than refuse the save: the
+// transcript is the thing someone pressed the button for, and a malformed
+// side-panel snapshot must never cost them it.
+describe("normalizeWorksheet (#905)", () => {
+  const VALID = {
+    mode: "estimate",
+    facts: { household: [{ member_id: "a", age: 45, role: "head" }] },
+    classification: {
+      outcome: "likely_eligible",
+      summary: "Net income falls under the one-person limit.",
+      completeness: { computable: true, stillNeeded: [], rawErrors: [] },
+    },
+  };
+
+  it("keeps a valid snapshot exactly as it was", () => {
+    expect(normalizeWorksheet(VALID)).toEqual(VALID);
+  });
+
+  it("accepts ask mode and a null classification", () => {
+    expect(normalizeWorksheet({ mode: "ask", facts: {}, classification: null })).toEqual({
+      mode: "ask",
+      facts: {},
+      classification: null,
+    });
+  });
+
+  it("drops anything malformed rather than failing the save", () => {
+    expect(normalizeWorksheet(undefined)).toBeNull();
+    expect(normalizeWorksheet(null)).toBeNull();
+    expect(normalizeWorksheet("estimate")).toBeNull();
+    expect(normalizeWorksheet({ mode: "turbo", facts: {} })).toBeNull();
+    expect(normalizeWorksheet({ mode: "estimate", facts: [] })).toBeNull();
+    expect(normalizeWorksheet({ mode: "estimate" })).toBeNull();
+  });
+
+  it("drops an oversized snapshot rather than sinking the transcript with it", () => {
+    const bloated = {
+      ...VALID,
+      facts: { padding: "x".repeat(64_000) },
+    };
+    expect(normalizeWorksheet(bloated)).toBeNull();
   });
 });
