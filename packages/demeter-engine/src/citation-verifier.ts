@@ -174,26 +174,26 @@ const TRAILER_STRINGS = {
   en: {
     header: "**Citation:**",
     bad: "⚠️ **NOT recognized — likely an error, verify before relying:**",
-    inSrc: "✓ regulatory text retrieved for this question:",
-    known: "◑ recognized authority, but not in the retrieved text — confirm against source:",
+    inSrc: "✓ checked against the official rule text we pulled for this question:",
+    known: "◑ a real rule, but we didn't pull its wording this time — double-check:",
   },
   es: {
     header: "**Citas:**",
     bad: "⚠️ **NO reconocida — probablemente un error, verifica antes de confiar:**",
-    inSrc: "✓ texto regulatorio recuperado para esta pregunta:",
-    known: "◑ autoridad reconocida, pero no está en el texto recuperado — confirma contra la fuente:",
+    inSrc: "✓ verificado contra el texto oficial que consultamos para esta pregunta:",
+    known: "◑ una regla real, pero esta vez no consultamos su texto — confírmalo:",
   },
   vi: {
     header: "**Trích dẫn:**",
     bad: "⚠️ **KHÔNG nhận dạng được — có thể là lỗi, hãy xác minh trước khi dựa vào:**",
-    inSrc: "✓ văn bản quy định đã truy xuất cho câu hỏi này:",
-    known: "◑ văn bản có thật, nhưng không nằm trong nội dung đã truy xuất — hãy đối chiếu với nguồn:",
+    inSrc: "✓ đã đối chiếu với nguyên văn quy định chúng tôi tra cho câu hỏi này:",
+    known: "◑ quy định có thật, nhưng lần này chúng tôi chưa tra nguyên văn — nên kiểm tra lại:",
   },
   zh: {
     header: "**引用：**",
     bad: "⚠️ **无法识别——可能有误，依赖前请先核实：**",
-    inSrc: "✓ 为此问题检索到的法规原文：",
-    known: "◑ 已知的法规依据，但不在检索到的原文中——请与来源核对：",
+    inSrc: "✓ 已对照我们为这个问题调取的官方原文核对：",
+    known: "◑ 规定真实，但这次未调取其原文——请再核实：",
   },
 } as const;
 

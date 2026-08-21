@@ -75,7 +75,8 @@ describe("renderAnswer (chat markdown subset)", () => {
     // it in the answer's own face and size. It is reference, not answer, so it
     // is now a block of its own — the hairline is that block's top border.
     const nodes = renderAnswer("answer body\n\n---\n**Citation:**\n- ✓ ok");
-    expect(tags(nodes)).toContain("div");
+    // A collapsed <details> as of #898 P1-4 — still a block, still no <hr>.
+    expect(tags(nodes)).toContain("details");
     expect(tags(nodes)).not.toContain("hr");
     // The content is all still there, and still marked up.
     expect(tags(nodes)).toContain("strong");
@@ -124,9 +125,10 @@ describe("paragraphs are blocks, so they can be given space", () => {
 
   it("the citation rule closes the paragraph before it", () => {
     const nodes = renderAnswer("The answer.\n---\n7 CFR 273.9");
-    // Still two paragraphs — one in the answer, one inside the footnote.
+    // Still two paragraphs — one in the answer, one inside the footnote
+    // (which is a collapsed <details> as of #898 P1-4).
     expect(paragraphs(nodes)).toBe(2);
-    expect(tags(nodes)).toContain("div");
+    expect(tags(nodes)).toContain("details");
   });
 });
 

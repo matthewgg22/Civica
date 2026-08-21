@@ -6933,7 +6933,31 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.78rem; line-height: 1.5; color: var(--demeter-muted);
   margin-top: 0.9rem; padding-top: 0.7rem;
   border-top: 1px solid var(--demeter-rule);
-  display: flex; flex-direction: column; gap: 0.3rem;
+}
+/* A collapsed <details> as of #898 P1-4: the verdict line is the summary,
+   the full citation breakdown one tap away. display:flex on a <details>
+   would force the content visible even when closed, so the gap moved onto
+   the revealed children instead. */
+.demeter__footnote > *:not(summary) { margin-top: 0.3rem; }
+.demeter__footnote-summary {
+  cursor: pointer; list-style: none; display: flex; align-items: baseline; gap: 0.4rem;
+}
+.demeter__footnote-summary::-webkit-details-marker { display: none; }
+/* Our own disclosure mark — small, before the verdict, rotating when open,
+   so the line reads as tappable without a browser-default triangle drawn in
+   the wrong size for this type. */
+.demeter__footnote-summary::before {
+  content: "▸"; flex: none; font-size: 0.7em; color: var(--demeter-muted);
+  transition: transform 120ms ease;
+}
+.demeter__footnote[open] > .demeter__footnote-summary::before { transform: rotate(90deg); }
+.demeter__footnote-summary:hover { color: var(--demeter-body); }
+.demeter__footnote-summary:focus-visible {
+  outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 4px;
+}
+.demeter__footnote-summary .demeter__para { display: inline; }
+@media (prefers-reduced-motion: reduce) {
+  .demeter__footnote-summary::before { transition: none; }
 }
 .demeter__footnote .demeter__para { margin: 0; font-size: inherit; line-height: inherit; }
 .demeter__footnote .demeter__list { margin: 0; font-size: inherit; }
