@@ -183,3 +183,35 @@ describe("tab title matches the product (#698)", () => {
     expect(await titleFor({ next: "/apply" })).not.toMatch(/Demeter/);
   });
 });
+
+// Vercel-guidelines finding 8: errors announced but never focused, and the
+// email field spellchecked. On a failed submit the person should land back in
+// the field that needs fixing.
+describe("sign-in error focus + email attributes (vercel finding 8)", () => {
+  beforeEach(() => {
+    searchParams.value = new URLSearchParams("next=%2Fscreen%2Fask");
+  });
+  afterEach(() => {
+    cleanup();
+    vi.unstubAllGlobals();
+  });
+
+  it("the email input never spellchecks", async () => {
+    render(<SignInPage />);
+    const input = await screen.findByLabelText(SIGNIN_T.en.emailLabel);
+    expect(input.getAttribute("spellcheck")).toBe("false");
+  });
+
+  it("a rejected address puts focus back in the field", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(JSON.stringify({}), { status: 400 })),
+    );
+    render(<SignInPage />);
+    const input = await screen.findByLabelText(SIGNIN_T.en.emailLabel);
+    fireEvent.change(input, { target: { value: "not-an-email@" } });
+    fireEvent.submit(input.closest("form")!);
+    await screen.findByText(SIGNIN_T.en.errorInvalidEmail);
+    expect(document.activeElement).toBe(input);
+  });
+});

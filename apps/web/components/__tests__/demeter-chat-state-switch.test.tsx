@@ -239,3 +239,49 @@ describe("a transcript reads as a conversation", () => {
     );
   });
 });
+
+// Vercel-guidelines finding 3: the URL claims less than the screen shows.
+// Inbound ?state= worked; the picker never wrote it back, so share/refresh
+// silently dropped the scope. The conversation itself deliberately stays out
+// of the URL — only the state parameter syncs.
+describe("state scope syncs to the URL (vercel finding 3)", () => {
+  it("picking a state writes ?state=, clearing writes it away", async () => {
+    window.history.replaceState({}, "", "/chat");
+    render(<DemeterChat states={STATES} />);
+    pickState(/California/);
+    await waitFor(() => expect(window.location.search).toContain("state=CA"));
+
+    fireEvent.click(screen.getByRole("button", { name: "Your state" }));
+    fireEvent.click(screen.getByRole("option", { name: /All states/ }));
+    await waitFor(() => expect(window.location.search).not.toContain("state="));
+    window.history.replaceState({}, "", "/");
+  });
+});
+
+// Vercel-guidelines finding 6: /chat is the guideline's exact case — a screen
+// whose single primary input should be focused on arrival, desktop only
+// (mobile keyboards shift the layout).
+describe("composer autofocus on desktop (vercel finding 6)", () => {
+  it("focuses the composer when the pointer is fine", async () => {
+    vi.stubGlobal("matchMedia", (q: string) => ({
+      matches: /pointer:\s*fine/.test(q),
+      media: q, addEventListener: () => {}, removeEventListener: () => {},
+      addListener: () => {}, removeListener: () => {}, onchange: null, dispatchEvent: () => false,
+    }));
+    render(<DemeterChat states={STATES} />);
+    await waitFor(() => expect(document.activeElement?.tagName).toBe("TEXTAREA"));
+    vi.unstubAllGlobals();
+  });
+
+  it("leaves focus alone on coarse pointers", async () => {
+    vi.stubGlobal("matchMedia", (q: string) => ({
+      matches: false,
+      media: q, addEventListener: () => {}, removeEventListener: () => {},
+      addListener: () => {}, removeListener: () => {}, onchange: null, dispatchEvent: () => false,
+    }));
+    render(<DemeterChat states={STATES} />);
+    await new Promise((r) => setTimeout(r, 50));
+    expect(document.activeElement?.tagName).not.toBe("TEXTAREA");
+    vi.unstubAllGlobals();
+  });
+});
