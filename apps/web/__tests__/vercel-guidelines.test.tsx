@@ -3,11 +3,10 @@
 // Vercel Web Interface Guidelines audit, findings 1-8 (2026-08-21, report:
 // claude.ai/code/artifact/26d5e20d…). Scope per Matthew: the Demeter website
 // pages. Each block names its finding.
-import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
-import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { render, cleanup } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { PackMeta } from "@civica/demeter-engine/packs";
 
 import { renderAnswer } from "../components/DemeterChat";
 import { SnapDetail, SnapOrientation } from "../components/SnapOverview";
