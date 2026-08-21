@@ -254,7 +254,11 @@ describe("coming back from sign-in", () => {
 
     // Restored FIRST: landing on an empty chat with a "saved" badge would be a
     // worse outcome than not offering this at all.
-    await waitFor(() => expect(onRestore).toHaveBeenCalledWith(CONVERSATION, "CA", "en"));
+    // Fourth arg: the worksheet slot (#898 P2-9) — undefined for a stash
+    // written before it existed, and the restore must still work.
+    await waitFor(() =>
+      expect(onRestore).toHaveBeenCalledWith(CONVERSATION, "CA", "en", undefined),
+    );
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     expect(bodyOf()).toMatchObject({ messages: CONVERSATION });
     // Consumed, so a later reload cannot resurrect someone's transcript.
@@ -279,6 +283,52 @@ describe("coming back from sign-in", () => {
     );
     expect(onRestore).not.toHaveBeenCalled();
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+// #898 P2-9: the tester saved at the END of a full conversation — the moment
+// the drafted application matters most — and came back from sign-in to a
+// restored transcript with the estimate rail wiped. The stash carried
+// messages/state/lang and silently dropped the worksheet.
+describe("the worksheet survives the trip through sign-in (#898 P2-9)", () => {
+  const WORKSHEET = {
+    mode: "estimate" as const,
+    facts: { household: [{ member_id: "a", age: 45, role: "head" }] },
+    classification: {
+      outcome: "likely_eligible",
+      summary: "Net income falls under the one-person limit.",
+      completeness: { computable: true, stillNeeded: [], rawErrors: [] },
+    },
+  };
+
+  it("stashes the worksheet beside the transcript", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(401, { error: "sign_in_required" }));
+    renderSave({ worksheet: () => WORKSHEET } as Partial<Parameters<typeof DemeterSave>[0]>);
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+    await screen.findByText(COPY.panelTitle);
+
+    const stash = JSON.parse(window.localStorage.getItem("demeter:pending-save")!);
+    expect(stash.worksheet).toEqual(WORKSHEET);
+  });
+
+  it("hands the worksheet back on return, with the conversation", async () => {
+    window.localStorage.setItem(
+      "demeter:pending-save",
+      JSON.stringify({
+        at: Date.now(),
+        messages: CONVERSATION,
+        state: "CA",
+        lang: "en",
+        worksheet: WORKSHEET,
+      }),
+    );
+    fetchMock.mockResolvedValue(jsonResponse(201, { conversation: { id: "conv-9" } }));
+    const onRestore = vi.fn();
+    renderSave({ messages: [], pendingSave: true, onRestore });
+
+    await waitFor(() =>
+      expect(onRestore).toHaveBeenCalledWith(CONVERSATION, "CA", "en", WORKSHEET),
+    );
   });
 });
 

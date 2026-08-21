@@ -25,6 +25,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 import { MAX_CONVERSATIONS, type SavedMsg } from "../lib/demeter-conversations";
+import type { WorksheetSnapshot } from "../lib/chat-session";
 
 export interface SaveCopy {
   save: string;
@@ -50,6 +51,10 @@ type Stash = {
   messages: SavedMsg[];
   state: string | null;
   lang: AnswerLang;
+  /** The drafted application, carried WITH the transcript (#898 P2-9): the
+   *  tester who saved at conversation end — the moment the outline matters
+   *  most — got their conversation back and their worksheet wiped. */
+  worksheet?: WorksheetSnapshot;
 };
 
 /** Exported for the test: the round trip is only correct if what one side
@@ -64,12 +69,14 @@ export function readStash(now = Date.now()): Stash | null {
     // Stale means they signed in much later, or on another day entirely, and
     // restoring a conversation they have moved on from would be a surprise.
     if (now - parsed.at > STASH_TTL_MS) return null;
-    return {
+    const stash: Stash = {
       at: parsed.at,
       messages: parsed.messages,
       state: parsed.state ?? null,
       lang: (parsed.lang ?? "en") as AnswerLang,
     };
+    if (parsed.worksheet) stash.worksheet = parsed.worksheet;
+    return stash;
   } catch {
     // Storage disabled, quota, or corrupt JSON. Losing the stash costs one
     // re-press of Save; throwing here would break the page.
@@ -103,6 +110,7 @@ export function DemeterSave({
   onRestore,
   onSavedChange,
   triggerSave,
+  worksheet,
   copy,
 }: {
   messages: SavedMsg[];
@@ -113,7 +121,12 @@ export function DemeterSave({
   pendingSave: boolean;
   /** Set when the page was opened as ?c=<id>: already saved, keep it current. */
   initialSavedId: string | null;
-  onRestore: (messages: SavedMsg[], state: string | null, lang: AnswerLang) => void;
+  onRestore: (
+    messages: SavedMsg[],
+    state: string | null,
+    lang: AnswerLang,
+    worksheet?: WorksheetSnapshot,
+  ) => void;
   /** Reported upward only so the worksheet's privacy line can stop saying the
    *  conversation is gone when the tab closes (#703). Deliberately a
    *  notification, not a lift: whether a row exists is this component's fact,
@@ -126,6 +139,12 @@ export function DemeterSave({
    *  Mirrors openPicker's signal-number pattern: any CHANGE triggers a
    *  save, the value itself is meaningless. Undefined/unset never fires. */
   triggerSave?: number;
+  /** Getter, not a value: read at the moment the stash is written so the
+   *  drafted application crosses sign-in exactly as it stood (#898 P2-9). A
+   *  getter also keeps this out of every effect dependency list — the
+   *  worksheet changes on every engine turn and none of those changes should
+   *  re-run a save. */
+  worksheet?: () => WorksheetSnapshot | undefined;
   copy: SaveCopy;
 }) {
   const [savedId, setSavedId] = useState<string | null>(initialSavedId);
@@ -198,11 +217,11 @@ export function DemeterSave({
     const outcome = await post({ messages, state, lang }, savedId);
     if (outcome === "ok") return setStatus("saved");
     if (outcome === "signin") {
-      writeStash({ at: Date.now(), messages, state, lang });
+      writeStash({ at: Date.now(), messages, state, lang, worksheet: worksheet?.() });
       return setStatus("signin");
     }
     setStatus(outcome === "limit" ? "limit" : "error");
-  }, [messages, state, lang, savedId, post]);
+  }, [messages, state, lang, savedId, post, worksheet]);
 
   // Fired by the composer's inline save-nudge banner (#833 audit,
   // 2026-08-15). A ref, not state, tracks the last value acted on: this
@@ -224,7 +243,7 @@ export function DemeterSave({
     restoredRef.current = true;
     const stash = readStash();
     if (!stash || stash.messages.length === 0) return;
-    onRestore(stash.messages, stash.state, stash.lang);
+    onRestore(stash.messages, stash.state, stash.lang, stash.worksheet);
     setStatus("saving");
     void post({ messages: stash.messages, state: stash.state, lang: stash.lang }, null).then(
       (outcome) => {

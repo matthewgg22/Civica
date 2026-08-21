@@ -19,14 +19,29 @@
 // whether an in-tab page change counts as closing it. On a shared machine the
 // next person still gets nothing.
 
+import type { PartialFacts } from "@civica/demeter-engine";
+import type { ScreeningClassification } from "@civica/demeter-engine";
 import type { SavedMsg } from "./demeter-conversations";
 
 const KEY = "demeter:chat";
+
+/** The estimate rail's whole state, as one carriable value (#898 P2-9). The
+ *  transcript used to survive a page change while the drafted application did
+ *  not — mode reset, facts remounted empty, verdict gone — which read as the
+ *  product deleting someone's work at exactly the moment they tried to keep
+ *  it. Everything in here is plain JSON already (facts and classification
+ *  both cross the worksheet API as JSON). */
+export interface WorksheetSnapshot {
+  mode: "ask" | "estimate";
+  facts: PartialFacts;
+  classification: ScreeningClassification | null;
+}
 
 export interface ChatSession {
   messages: SavedMsg[];
   state: string | null;
   lang: string;
+  worksheet?: WorksheetSnapshot;
 }
 
 /** Cheap ceiling so a very long conversation cannot fill the tab's quota and
@@ -51,9 +66,24 @@ export function readChatSession(): ChatSession | null {
     if (!raw) return null;
     const parsed: unknown = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object") return null;
-    const { messages, state, lang } = parsed as Partial<ChatSession>;
+    const { messages, state, lang, worksheet } = parsed as Partial<ChatSession>;
     if (!Array.isArray(messages) || messages.length === 0) return null;
-    return { messages, state: state ?? null, lang: typeof lang === "string" ? lang : "en" };
+    const session: ChatSession = {
+      messages,
+      state: state ?? null,
+      lang: typeof lang === "string" ? lang : "en",
+    };
+    // Tolerant on purpose: sessions stored before the worksheet existed, or a
+    // hand-corrupted mode, restore as a plain conversation rather than not at
+    // all.
+    if (worksheet && (worksheet.mode === "ask" || worksheet.mode === "estimate")) {
+      session.worksheet = {
+        mode: worksheet.mode,
+        facts: worksheet.facts ?? {},
+        classification: worksheet.classification ?? null,
+      };
+    }
+    return session;
   } catch {
     return null;
   }
