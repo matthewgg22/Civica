@@ -24,8 +24,8 @@ import { join } from "node:path";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 
 import { SnapDetail } from "../components/SnapOverview";
-import { agencyDisplayName } from "../lib/program-name";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
+import { agencyDisplayName } from "../lib/program-name";
 
 describe("the screen-reader state roster is user copy, not the research annexe (finding 1)", () => {
   it("renders no provenance annotations anywhere in the section", () => {
@@ -90,5 +90,77 @@ describe("visible em-dashes stay inside the budget (finding 2)", () => {
   it("the copy is American English", () => {
     const en = JSON.stringify(PAGE_COPY.en);
     expect(en).not.toMatch(/programme|neighbouring/);
+  });
+});
+
+// Findings 4, 5, 6 (same audit, second batch).
+//
+// FINDING 5: the hero's missing visual is the product itself — a REAL Demeter
+// answer (generated through the actual pipeline, shortened for space, and
+// labeled as exactly that) rendered server-side beside the orientation bar.
+// It is simultaneously the page's only product demonstration and the proof of
+// "every claim cited". It also resolves the standing taste call on the empty
+// top-right at desktop (#715).
+//
+// FINDING 4: two CTAs carried the same intent under different labels ("Ask
+// Demeter about your situation" up top, "Worried about something else? Ask
+// Demeter" at the bottom). One label per intent, everywhere.
+//
+// FINDING 6: differentiated the two adjacent definition-grid sections — the
+// trust list now reads label-left / body-right, a different family from the
+// stacked cells of "What SNAP is". ("How Demeter answers" was already a
+// numbered pipeline; the audit's 4× count was 2× on recount.)
+import { SnapOrientation, SnapFears } from "../components/SnapOverview";
+
+describe("a real example answer rides beside the hero (finding 5)", () => {
+  it("renders the question, the answer's own citation, and the way in", () => {
+    // No ✓ banner here, deliberately: the pipeline graded this exchange
+    // authority_not_retrieved (the household reg text is not in the corpus —
+    // #766/#785), so the demo shows exactly what the product produced: the
+    // answer with its inline citation, labeled a real answer shortened for
+    // space. Showing a verified badge the answer did not earn would be the
+    // product lying about itself on the page that sells its honesty.
+    const { container } = render(<SnapOrientation />);
+    const ex = container.querySelector(".dmex");
+    expect(ex).toBeTruthy();
+    const text = ex!.textContent ?? "";
+    expect(text).toMatch(/household/i);
+    expect(text).toMatch(/7 CFR 273\.1/);
+    // The honesty label and the way into the product from its own demo.
+    expect(text).toMatch(/real .*answer/i);
+    expect(ex!.querySelector("a[href*='/chat']")).toBeTruthy();
+  });
+
+  it("every language carries the full example, and none of it invents a dollar figure", () => {
+    for (const lang of ["en", "es", "vi", "zh"] as const) {
+      const ex = PAGE_COPY[lang].example;
+      expect(ex, lang).toBeTruthy();
+      for (const [k, v] of Object.entries(ex)) {
+        expect(String(v).trim(), `${lang}.example.${k}`).not.toBe("");
+        expect(String(v), `${lang}.example.${k}`).not.toMatch(/\$\s?\d/);
+      }
+    }
+  });
+});
+
+describe("one label per intent (finding 4)", () => {
+  it("the bottom ask-CTA repeats the top's label in every language", () => {
+    for (const lang of ["en", "es", "vi", "zh"] as const) {
+      expect(PAGE_COPY[lang].fearsCta, lang).toBe(PAGE_COPY[lang].askLink);
+    }
+  });
+
+  it("and the fears section actually renders it", () => {
+    const { container } = render(<SnapFears />);
+    expect(container.querySelector(".dmfear__ctalabel")?.textContent).toBe(
+      PAGE_COPY.en.askLink,
+    );
+  });
+});
+
+describe("the two definition grids are two families now (finding 6)", () => {
+  it("trust rows run label-left, body-right", () => {
+    const css = readFileSync(join(__dirname, "..", "app", "globals.css"), "utf8");
+    expect(css).toMatch(/\.dmx__trustrow\s*\{[^}]*grid-template-columns/);
   });
 });
