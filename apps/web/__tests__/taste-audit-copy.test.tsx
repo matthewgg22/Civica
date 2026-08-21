@@ -26,7 +26,6 @@ import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { SnapDetail } from "../components/SnapOverview";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { agencyDisplayName } from "../lib/program-name";
-import { PAGE_COPY } from "../lib/i18n/snap-page";
 
 describe("the screen-reader state roster is user copy, not the research annexe (finding 1)", () => {
   it("renders no provenance annotations anywhere in the section", () => {
@@ -114,15 +113,21 @@ describe("visible em-dashes stay inside the budget (finding 2)", () => {
 import { SnapOrientation, SnapFears } from "../components/SnapOverview";
 
 describe("a real example answer rides beside the hero (finding 5)", () => {
-  it("renders the question, the verdict mark, and the citation", () => {
+  it("renders the question, the answer's own citation, and the way in", () => {
+    // No ✓ banner here, deliberately: the pipeline graded this exchange
+    // authority_not_retrieved (the household reg text is not in the corpus —
+    // #766/#785), so the demo shows exactly what the product produced: the
+    // answer with its inline citation, labeled a real answer shortened for
+    // space. Showing a verified badge the answer did not earn would be the
+    // product lying about itself on the page that sells its honesty.
     const { container } = render(<SnapOrientation />);
     const ex = container.querySelector(".dmex");
     expect(ex).toBeTruthy();
     const text = ex!.textContent ?? "";
     expect(text).toMatch(/household/i);
-    expect(text).toContain("✓");
     expect(text).toMatch(/7 CFR 273\.1/);
-    // The way into the product from its own demo.
+    // The honesty label and the way into the product from its own demo.
+    expect(text).toMatch(/real .*answer/i);
     expect(ex!.querySelector("a[href*='/chat']")).toBeTruthy();
   });
 

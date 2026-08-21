@@ -35,6 +35,22 @@ export interface PageCopy {
   h1: string;
   productLede: string;
   snapLine: string;
+  /** The example exchange beside the hero (taste audit finding 5) — a REAL
+   *  answer generated through the actual pipeline on 2026-08-21 (audit line:
+   *  mode "eval", model claude-sonnet-5, verifier clean, citation 7 CFR
+   *  273.1 status "known"), shortened for space and labeled as exactly
+   *  that. NO verified/checkmark badge: the pipeline graded the exchange
+   *  authority_not_retrieved (household reg text is not in the corpus,
+   *  #766/#785), so the demo shows what the product truly produced — the
+   *  answer with its inline citation. Never edit `a` into something the
+   *  pipeline did not say; regenerate instead. */
+  example: {
+    label: string;
+    q: string;
+    a: string;
+    note: string;
+    cta: string;
+  };
   eyebrow: string;
   h2: string;
   lede: string;
@@ -177,6 +193,13 @@ const en: PageCopy = {
     "Demeter answers in plain language and quotes the federal regulation behind every claim and your state’s own manual, to help explain the benefit program to you.",
   snapLine:
     "SNAP is monthly money for groceries, paid onto an EBT card. Formerly called food stamps. Applying is free.",
+  example: {
+    label: "A real answer",
+    q: "My roommate and I live together and split rent, but we buy and cook our food separately. Are we one SNAP household?",
+    a: "If you buy and cook food separately, you're two separate SNAP households, even though you live together and split rent. Household grouping under federal SNAP rules is based on whether you customarily purchase and prepare meals together, not on shared housing (7 CFR 273.1).",
+    note: "A real Demeter answer, shortened for space.",
+    cta: "Ask your own",
+  },
   eyebrow: "Supplemental Nutrition Assistance Program",
   h2: "SNAP is monthly money for groceries, paid onto a card.",
   lede:
@@ -345,7 +368,7 @@ const en: PageCopy = {
       a: "The agency checks what you report: who lives with you, what you earn, what you pay for housing. That is routine verification and it happens on every application. It is not an investigation, and it is not an accusation.",
     },
   ],
-  fearsCta: "Worried about something else? Ask Demeter",
+  fearsCta: "Ask Demeter about your situation",
   fearsCtaNote: "Every answer quotes the rule it comes from, so you can check it.",
   timelineH2: "What happens after you apply",
   timelineBody:
@@ -424,6 +447,13 @@ const es: PageCopy = {
     "Demeter responde en lenguaje sencillo y cita el reglamento federal detrás de cada afirmación — y el manual de tu estado, donde hemos verificado uno.",
   snapLine:
     "SNAP es dinero mensual para comida, depositado en una tarjeta EBT. Antes llamado cupones de alimentos. Solicitar es gratis.",
+  example: {
+    label: "Una respuesta real",
+    q: "Mi compañero de cuarto y yo compartimos la renta. ¿Contamos como un solo hogar?",
+    a: "Compartir la renta no los convierte automáticamente en un solo hogar para SNAP. Lo que decide esto es si compran y cocinan la comida juntos o por separado — esa es la regla bajo 7 CFR 273.1(a).",
+    note: "Una respuesta real de Demeter, acortada por espacio.",
+    cta: "Haz tu propia pregunta",
+  },
   eyebrow: "Programa de Asistencia Nutricional Suplementaria",
   h2: "SNAP es dinero mensual para comida, depositado en una tarjeta.",
   lede:
@@ -592,7 +622,7 @@ const es: PageCopy = {
       a: "La agencia verifica lo que reportas: qui\u00e9n vive contigo, cu\u00e1nto ganas, cu\u00e1nto pagas de vivienda. Es verificaci\u00f3n de rutina y ocurre en todas las solicitudes. No es una investigaci\u00f3n ni una acusaci\u00f3n.",
     },
   ],
-  fearsCta: "\u00bfTe preocupa otra cosa? Preg\u00fantale a Demeter",
+  fearsCta: "Preg\u00fantale a Demeter sobre tu situaci\u00f3n",
   fearsCtaNote: "Cada respuesta cita la regla de la que proviene, para que puedas comprobarla.",
   timelineH2: "Qué pasa después de solicitar",
   timelineBody:
@@ -656,6 +686,13 @@ const vi: PageCopy = {
     "Demeter trả lời bằng ngôn ngữ dễ hiểu và trích dẫn quy định liên bang đứng sau mỗi khẳng định — cùng với sổ tay của tiểu bang bạn, nơi chúng tôi đã xác minh.",
   snapLine:
     "SNAP là tiền mua thực phẩm hằng tháng, nạp vào thẻ EBT. Trước đây gọi là tem phiếu thực phẩm. Nộp đơn miễn phí.",
+  example: {
+    label: "Một câu trả lời thật",
+    q: "Tôi và bạn cùng phòng chia tiền thuê nhà. Chúng tôi có tính là một hộ không?",
+    a: "Việc chia tiền thuê nhà không tự động khiến hai người thành một hộ trong SNAP. Theo quy định liên bang (7 CFR 273.1(a)), hai người sống chung chỉ được tính là một hộ nếu họ thường xuyên mua và nấu ăn chung với nhau.",
+    note: "Câu trả lời thật của Demeter, rút gọn cho vừa trang.",
+    cta: "Đặt câu hỏi của bạn",
+  },
   eyebrow: "Chương trình Hỗ trợ Dinh dưỡng Bổ sung",
   h2: "SNAP là tiền mua thực phẩm hằng tháng, nạp vào một tấm thẻ.",
   lede:
@@ -824,7 +861,7 @@ const vi: PageCopy = {
       a: "Cơ quan kiểm chứng những gì bạn khai: ai sống cùng bạn, bạn kiếm bao nhiêu, bạn trả bao nhiêu tiền nhà. Đó là việc xác minh thông thường, áp dụng cho mọi hồ sơ. Đó không phải điều tra và cũng không phải cáo buộc.",
     },
   ],
-  fearsCta: "Bạn lo điều gì khác? Hãy hỏi Demeter",
+  fearsCta: "Hỏi Demeter về hoàn cảnh của bạn",
   fearsCtaNote:
     "Mỗi câu trả lời đều trích dẫn điều luật mà nó dựa vào, để bạn tự kiểm chứng được.",
   timelineH2: "Sau khi nộp đơn thì điều gì xảy ra",
@@ -892,6 +929,13 @@ const zh: PageCopy = {
     // claim is that it knows which state's rules apply to you.
     "Demeter 用通俗语言回答，并为每一条结论引用相应的联邦法规——以及您所在州的手册，只要我们已核实。",
   snapLine: "SNAP 是每月打入 EBT 卡的食品补助，旧称食品券。申请免费。",
+  example: {
+    label: "一条真实回答",
+    q: "我和室友分摊房租。我们算一个家庭吗？",
+    a: "分摊房租本身不能决定你们是不是一个家庭。根据 7 CFR 273.1(a) 的规定，只有当你们共同购买食物、共同做饭时，才算作同一个 SNAP（食品救助）家庭。",
+    note: "Demeter 的真实回答，因篇幅有所缩短。",
+    cta: "提出你自己的问题",
+  },
   eyebrow: "补充营养援助计划",
   h2: "SNAP 是每月发放到卡上的食品补助。",
   lede:
@@ -1057,7 +1101,7 @@ const zh: PageCopy = {
       a: "机构会核实您申报的内容：谁与您同住、您收入多少、住房支出多少。这是常规核实，每份申请都会经过。这不是调查，也不是指控。",
     },
   ],
-  fearsCta: "还担心别的？问问 Demeter",
+  fearsCta: "就您的情况询问 Demeter",
   fearsCtaNote: "每条回答都会引用其依据的条文，方便您自行核对。",
   timelineH2: "递交申请之后会发生什么",
   timelineBody:

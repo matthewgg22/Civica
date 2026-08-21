@@ -118,13 +118,19 @@ export function formQuestionAnswer(q: FormQuestion, lang: AnswerLang = "en"): st
 export function SnapOrientation({ lang = "en" }: { lang?: AnswerLang }) {
   const c = PAGE_COPY[lang];
   return (
-    // SINGLE COLUMN, deliberately. This used to carry a second column of
-    // verified-state flags beside the h1 — moved down into the trust list
-    // (SnapDetail) on direct feedback: leading with fifty flags before a
-    // single word of orientation buried the actual claim in decoration, and
-    // the trust list already existed to make exactly that case, later, once
-    // there was something to trust yet. Nothing here needed `states` for
-    // anything else, so the prop is gone rather than kept and ignored.
+    // TWO COLUMNS at desktop: the orientation text, and one real answer.
+    //
+    // History, because this ground has moved twice. The bar once carried a
+    // second column of verified-state flags, removed on direct feedback:
+    // fifty flags before a single word of orientation buried the claim in
+    // decoration. It then ran single-column, which left the top-right empty
+    // at desktop — a standing taste call (#715). The taste audit's finding 5
+    // resolved both: the right column now holds the one thing the flags were
+    // not — the PRODUCT ITSELF, demonstrated. A real answer, generated
+    // through the actual pipeline (see the copy table's comment for the
+    // audit line), shortened and labeled as exactly that. It is the page's
+    // only demo and the proof of the lede's own claim, so unlike the flags
+    // it argues FOR the orientation rather than competing with it.
     <section className="dmo" aria-labelledby="demeter-h1">
       <div className="dmo__text">
         <p className="dmo__eyebrow">{c.eyebrow}</p>
@@ -134,6 +140,17 @@ export function SnapOrientation({ lang = "en" }: { lang?: AnswerLang }) {
         <p className="dmo__lede">{c.productLede}</p>
         <p className="dmo__snap">{c.snapLine}</p>
       </div>
+      <aside className="dmex" aria-label={c.example.label}>
+        <p className="dmex__label">{c.example.label}</p>
+        <p className="dmex__q">{c.example.q}</p>
+        <p className="dmex__a">{c.example.a}</p>
+        <p className="dmex__note">
+          {c.example.note}{" "}
+          <a className="dmex__cta" href={lang === "en" ? "/chat" : `/${lang}/chat`}>
+            {c.example.cta} →
+          </a>
+        </p>
+      </aside>
     </section>
   );
 }

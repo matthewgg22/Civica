@@ -5540,6 +5540,47 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    Type follows the house rule — serif speaks, sans labels. The h1 and both
    statements are Newsreader; only the eyebrow is Be Vietnam Pro. */
 .dmo { padding: clamp(1.75rem, 4vw, 2.75rem) 0 clamp(1.25rem, 2.5vw, 1.75rem); }
+/* Two columns at desktop (taste audit finding 5): orientation left, one real
+   answer right — the demo filling the top-right that sat empty since the
+   flags moved out (#715). Stacks on narrow viewports, example second: the
+   orientation stays the first thing read everywhere. */
+@media (min-width: 980px) {
+  .dmo { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(2rem, 4vw, 3.5rem); align-items: start; }
+}
+/* The example exchange — the product's own voice, in the product's own type
+   rule: sans for the question and labels (someone typing), serif for the
+   answer (Demeter speaking). Card treatment matches the chat's own answer
+   surfaces. */
+.dmex {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule-strong);
+  border-radius: 14px; padding: 1.1rem 1.25rem 1rem;
+  margin-top: clamp(1rem, 2vw, 0rem);
+}
+@media (max-width: 979.9px) {
+  .dmex { margin-top: 1.25rem; max-width: 34rem; }
+}
+.dmex__label {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-muted); margin: 0 0 0.7rem;
+}
+.dmex__q {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.88rem; line-height: 1.5; color: var(--demeter-ink);
+  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  border-radius: 10px; padding: 0.55rem 0.75rem; margin: 0 0 0.75rem;
+}
+.dmex__a {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.95rem; line-height: 1.62; color: var(--demeter-body);
+  margin: 0 0 0.8rem; text-wrap: pretty;
+}
+.dmex__note {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; color: var(--demeter-muted); margin: 0;
+  border-top: 1px solid var(--demeter-rule); padding-top: 0.65rem;
+}
+.dmex__cta { color: var(--demeter-terracotta-deep); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
 .dmo__eyebrow {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -6299,7 +6340,15 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
   gap: 1.75rem; margin-top: 1.5rem;
 }
-.dmx__trustrow { display: flex; flex-direction: column; gap: 0.25rem; }
+/* Label-left, body-right (taste audit finding 6): the trust list and the
+   "What SNAP is" grid were the same stacked label-over-body family twice in
+   a row. Turning this one's axis makes them two families; the states row
+   keeps its own full-width layout. */
+.dmx__trustrow { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 0.25rem 1rem; align-items: baseline; }
+.dmx__trustrow--states { display: flex; flex-direction: column; }
+@media (max-width: 640px) {
+  .dmx__trustrow { display: flex; flex-direction: column; }
+}
 /* The states-verified row spans every column .dmx__trustlist--wide auto-fits
    — see the comment where this class is applied. `grid-column: 1 / -1` spans
    from the first to the last generated track regardless of how many
