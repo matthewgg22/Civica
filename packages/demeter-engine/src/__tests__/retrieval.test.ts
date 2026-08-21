@@ -186,3 +186,47 @@ describe("Mae eCFR retrieval", { timeout: 60_000 }, () => {
     }
   });
 });
+
+// #766 / #813 — the two phrasings that failed LIVE, verbatim.
+//
+// The scorer weighted every matched token flatly, so near-uniform boilerplate
+// ("household" appears in almost every text chunk of Part 273) carried the
+// same per-hit weight as genuinely discriminative terms. The first band-aid
+// was adding the domain words to STOPWORDS — which then broke the OTHER
+// direction: a household-DEFINITION question lost its only routing term, and
+// the landing page's real example answer (taste audit finding 5) shipped
+// without its verified mark because 273.1's text — sitting right there in the
+// corpus — was never retrieved. Field-split IDF replaces both failure modes
+// and the keyword list: a term that is boilerplate in TEXTS can still be the
+// sharpest HEADING signal ("household" appears in exactly one heading:
+// § 273.1 Household concept).
+describe("bare-facts and household-definition routing (#766/#813)", { timeout: 60_000 }, () => {
+  it("the exact bare-facts phrasing routes to income rules, not resources", async () => {
+    const results = await retrieve("four people in my household; I make 4 k a month and im in boston");
+    const cites = results.map((r) => r.citation);
+    expect(cites.some((c) => c.startsWith("7 CFR 273.9") || c.startsWith("7 CFR 273.10"))).toBe(true);
+    // 273.8 may appear, but it must not be the ONLY read of this question.
+    expect(cites[0]).not.toContain("273.8");
+  });
+
+  it("the landing page's real example question retrieves the household definition", async () => {
+    // Verbatim from the hero card. Retrieval must surface 273.1 so the
+    // citation verifier can grade the answer in_sources instead of known.
+    const results = await retrieve(
+      "My roommate and I live together and split rent, but we buy and cook our food separately. Are we one SNAP household?",
+    );
+    expect(results.map((r) => r.citation).some((c) => c.startsWith("7 CFR 273.1(") || c === "7 CFR 273.1")).toBe(true);
+  });
+
+  it("the stopword list carries no domain terms — IDF owns that job now", async () => {
+    const src = await import("node:fs/promises").then((fs) =>
+      fs.readFile(new URL("../retrieval.ts", import.meta.url), "utf8"),
+    );
+    const stopBlock = src.slice(src.indexOf("const STOPWORDS"), src.indexOf("const EXPLICIT_CITE_RE"));
+    for (const domainTerm of ["household", "snap", "calfresh", "member", "applicant", "client"]) {
+      expect(stopBlock, `"${domainTerm}" belongs to IDF, not a hand list`).not.toMatch(
+        new RegExp(`"${domainTerm}s?"`),
+      );
+    }
+  });
+});
