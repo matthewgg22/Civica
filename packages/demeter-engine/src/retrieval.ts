@@ -174,11 +174,19 @@ const FEDERAL_EXTERNAL_TOPICS: ExternalTopic[] = [
 ];
 
 
+// FUNCTION WORDS ONLY. This list used to also carry domain terms — "snap",
+// "household", "member", "applicant" — added as a band-aid for #766 (the word
+// "household" is near-uniform boilerplate across Part 273's text and was
+// swamping the real routing signal). That hand list then broke the OPPOSITE
+// query: a household-DEFINITION question lost its only routing term, and the
+// landing page's real example answer shipped ungrounded with 273.1(a) sitting
+// right there in the corpus. Field-split IDF (below) replaces the list: a
+// term's weight now comes from how discriminative it actually is, per field,
+// with nothing to maintain (#813).
 const STOPWORDS = new Set([
   "the", "and", "for", "are", "what", "when", "how", "does", "can", "with", "that", "this",
   "from", "have", "has", "who", "whom", "which", "into", "about", "would", "should", "could",
   "you", "your", "our", "they", "their", "them", "but", "not", "all", "any", "may", "must",
-  "snap", "calfresh", "household", "households", "member", "members", "client", "applicant",
 ]);
 
 const EXPLICIT_CITE_RE = /\b(27[0-9])\.(\d+)((?:\([a-z0-9]+\))*)/gi;
@@ -192,6 +200,39 @@ function citeMatches(citation: string, prefix: string): boolean {
 function tokenize(q: string): string[] {
   return (q.toLowerCase().match(/[a-z0-9]+/g) ?? []).filter((t) => t.length >= 3 && !STOPWORDS.has(t));
 }
+
+/** Field-split document frequencies over the vendored corpus, built once.
+ *
+ *  SPLIT BY FIELD because discriminative power is a property of a term IN a
+ *  field, not of the term: "household" appears in nearly every chunk's TEXT
+ *  (boilerplate — "resources of the household", "the household's home"…) but
+ *  in only one HEADING (§ 273.1 Household concept), where it is the sharpest
+ *  routing signal on the page. One combined df would crush both. */
+let dfCache: { text: Map<string, number>; heading: Map<string, number>; n: number } | null = null;
+function docFreqs(): NonNullable<typeof dfCache> {
+  if (dfCache) return dfCache;
+  const text = new Map<string, number>();
+  const heading = new Map<string, number>();
+  for (const c of CHUNKS) {
+    for (const t of new Set(tokenize(c.text))) text.set(t, (text.get(t) ?? 0) + 1);
+    for (const t of new Set(tokenize(c.heading))) heading.set(t, (heading.get(t) ?? 0) + 1);
+  }
+  dfCache = { text, heading, n: CHUNKS.length };
+  return dfCache;
+}
+
+/** Smoothed IDF, normalized to (0, 1]: 1 for a term in one chunk, →0 for a
+ *  term in every chunk. Floored at 0.25 when applied (see the scorer) so a
+ *  real match never becomes worthless — the goal is proportion, not deletion:
+ *  boilerplate contributes a quarter-weight hit, not zero, and the existing
+ *  minScore floor keeps meaning for single strong matches. */
+function idf(map: Map<string, number>, tok: string, n: number): number {
+  const df = map.get(tok) ?? 0;
+  return Math.log((n + 1) / (df + 1)) / Math.log(n + 1);
+}
+const IDF_FLOOR = 0.25;
+const idfWeight = (map: Map<string, number>, tok: string, n: number): number =>
+  IDF_FLOOR + (1 - IDF_FLOOR) * idf(map, tok, n);
 
 function truncate(text: string, max: number): string {
   return text.length <= max ? text : `${text.slice(0, max).trimEnd()} […truncated; full text at the cited URL]`;
@@ -329,7 +370,13 @@ function queryHasTerm(words: Set<string>, normalized: string, term: string): boo
   if (term.includes(" ")) return normalized.includes(term);
   if (words.has(term)) return true;
   if (term.length >= 5) {
-    for (const w of words) if (w.startsWith(term)) return true;
+    // Prefix matching exists for MORPHOLOGY — "expedite" → "expedited",
+    // "verify" → "verifying" — so the remainder is capped at a suffix's
+    // length. Uncapped, it stemmed across lexemes: the asset hint's "house"
+    // matched "houseHOLD" and pushed 273.8 (+6) onto every query that said
+    // the word "household", which is most of them. That was the strongest
+    // single force behind #766's resource-rules misroute.
+    for (const w of words) if (w.startsWith(term) && w.length - term.length <= 3) return true;
   }
   return false;
 }
@@ -418,10 +465,16 @@ export async function retrieve(rawQuery: string, opts: RetrieveOptions = {}): Pr
       for (const h of hintedCites) if (citeMatches(c.citation, h)) score += 6;
       const heading = c.heading.toLowerCase();
       const text = c.text.toLowerCase();
+      // Per-token weights scale by field-split IDF (#813): a term carries
+      // routing signal in proportion to how discriminative it is IN THAT
+      // FIELD, so text boilerplate ("household" in nearly every chunk) drops
+      // to quarter-weight while the same word at full weight routes through
+      // the one heading it names. No keyword list to maintain.
+      const { text: dfText, heading: dfHeading, n } = docFreqs();
       for (const tok of tokens) {
-        if (heading.includes(tok)) score += 2;
+        if (heading.includes(tok)) score += 2 * idfWeight(dfHeading, tok, n);
         if (c.citation.toLowerCase().includes(tok)) score += 1;
-        if (text.includes(tok)) score += 0.3;
+        if (text.includes(tok)) score += 0.3 * idfWeight(dfText, tok, n);
       }
       score += SEMANTIC_WEIGHT * semFor(c.citation);
       return { c, score };
@@ -436,12 +489,26 @@ export async function retrieve(rawQuery: string, opts: RetrieveOptions = {}): Pr
     out.push(c);
     used += c.text.length;
   }
+  // SECTION DIVERSITY CAP. A section's subsections are separate chunks that
+  // score in a near-flat band (the semantic descriptor for "273.1" boosts all
+  // five of its children equally), so one section could spend the whole k on
+  // its own siblings: the bare-facts query in #766 filled five of six slots
+  // with 273.1(a)–(e) and pushed the income rules — ranked immediately below
+  // — out of the window entirely. Three chunks of one section is plenty to
+  // answer from; the freed slots carry the question's OTHER topics, which is
+  // also what gives the citation verifier a chance to grade more of the
+  // answer in_sources.
+  const MAX_PER_SECTION = 3;
+  const perSection = new Map<string, number>();
   for (const { c } of scored) {
     if (out.length >= k) break;
+    const seen = perSection.get(c.section) ?? 0;
+    if (seen >= MAX_PER_SECTION) continue;
     const t = selectPassages(c.text, maxChunkChars, passageTerms);
     if (used + t.length > charBudget && out.length > 0) continue;
     out.push({ ...c, text: t });
     used += t.length;
+    perSection.set(c.section, seen + 1);
   }
   return out;
 }
