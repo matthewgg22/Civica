@@ -76,7 +76,7 @@ describe("a conversation survives leaving the page", () => {
       classification: {
         outcome: "likely_eligible",
         summary: "Net income falls under the one-person limit.",
-        completeness: { computable: true, stillNeeded: [] },
+        completeness: { computable: true, stillNeeded: [], rawErrors: [] },
       },
     };
     saveChatSession({ ...CONVO, worksheet } as Parameters<typeof saveChatSession>[0]);

@@ -32,7 +32,12 @@ import { T } from "../lib/i18n/demeter-chat-copy";
 import { stateName } from "../lib/state-names";
 import { detectState, detectUncoveredPlace, type StateMention } from "../lib/detect-state";
 import type { SavedMsg } from "../lib/demeter-conversations";
-import { saveChatSession, readChatSession, clearChatSession } from "../lib/chat-session";
+import {
+  saveChatSession,
+  readChatSession,
+  clearChatSession,
+  type WorksheetSnapshot,
+} from "../lib/chat-session";
 
 /** Read the certainty verdict back off a finished answer.
  *
@@ -685,14 +690,31 @@ export function DemeterChat({
     setMessages(prior.messages);
     setState(prior.state);
     setLang(prior.lang as AnswerLang);
+    // The drafted application comes back WITH the transcript (#898 P2-9) —
+    // restoring the conversation while wiping the worksheet read as the
+    // product deleting someone's work at the moment they tried to keep it.
+    if (prior.worksheet) {
+      setWorksheetMode(prior.worksheet.mode);
+      factsRef.current = prior.worksheet.facts;
+      setClassification(prior.worksheet.classification);
+    }
   }, [initialMessages]);
 
   // Written on every change rather than on unload, because a client-side
-  // navigation gives no unload to hook.
+  // navigation gives no unload to hook. factsRef is a ref, so it cannot
+  // appear in the dependency list — but facts only ever change alongside
+  // `classification` (both are set together in refreshWorksheet and cleared
+  // together on mode switch), so writing on classification changes carries
+  // the fresh facts too.
   useEffect(() => {
     if (busy) return; // mid-stream, the last message is a half-typed answer
-    saveChatSession({ messages, state, lang });
-  }, [messages, state, lang, busy]);
+    saveChatSession({
+      messages,
+      state,
+      lang,
+      worksheet: { mode: worksheetMode, facts: factsRef.current, classification },
+    });
+  }, [messages, state, lang, busy, worksheetMode, classification]);
 
   useEffect(() => () => clearTimeout(rafRef.current), []);
   /** Back to one row. The composer grows as you type, so clearing the value
@@ -933,13 +955,36 @@ export function DemeterChat({
   }, [state, states, classification, t]);
 
   const restoreConversation = useCallback(
-    (restored: Msg[], restoredState: string | null, restoredLang: AnswerLang) => {
+    (
+      restored: Msg[],
+      restoredState: string | null,
+      restoredLang: AnswerLang,
+      worksheet?: WorksheetSnapshot,
+    ) => {
       setMessages(restored);
       setState(restoredState);
       setLang(restoredLang);
+      // The drafted application, back exactly as it was left (#898 P2-9).
+      if (worksheet) {
+        setWorksheetMode(worksheet.mode);
+        factsRef.current = worksheet.facts;
+        setClassification(worksheet.classification);
+      }
     },
     [],
   );
+
+  /** The worksheet as it stands RIGHT NOW, for the sign-in stash (#898 P2-9).
+   *  A getter so DemeterSave reads it at write time; stable identity because
+   *  it reads a ref and state via the render closure would go stale — so it
+   *  reads refs and the setters' current values through a second ref. */
+  const worksheetSnapRef = useRef<WorksheetSnapshot>({
+    mode: "ask",
+    facts: {},
+    classification: null,
+  });
+  worksheetSnapRef.current = { mode: worksheetMode, facts: factsRef.current, classification };
+  const snapshotWorksheet = useCallback(() => worksheetSnapRef.current, []);
 
   /** Update the right rail. Never throws into the caller and never surfaces an
    *  error in the chat: a quiet rail is an acceptable degradation, a chat that
@@ -1797,6 +1842,7 @@ export function DemeterChat({
             // setter's identity is stable across renders.
             onSavedChange={setConversationSaved}
             triggerSave={saveSignal}
+            worksheet={snapshotWorksheet}
             copy={t.save}
           />
           {/* CLEAR, for shared and public machines. On a library terminal the

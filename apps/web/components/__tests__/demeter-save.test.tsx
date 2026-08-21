@@ -254,7 +254,11 @@ describe("coming back from sign-in", () => {
 
     // Restored FIRST: landing on an empty chat with a "saved" badge would be a
     // worse outcome than not offering this at all.
-    await waitFor(() => expect(onRestore).toHaveBeenCalledWith(CONVERSATION, "CA", "en"));
+    // Fourth arg: the worksheet slot (#898 P2-9) — undefined for a stash
+    // written before it existed, and the restore must still work.
+    await waitFor(() =>
+      expect(onRestore).toHaveBeenCalledWith(CONVERSATION, "CA", "en", undefined),
+    );
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     expect(bodyOf()).toMatchObject({ messages: CONVERSATION });
     // Consumed, so a later reload cannot resurrect someone's transcript.
@@ -293,7 +297,7 @@ describe("the worksheet survives the trip through sign-in (#898 P2-9)", () => {
     classification: {
       outcome: "likely_eligible",
       summary: "Net income falls under the one-person limit.",
-      completeness: { computable: true, stillNeeded: [] },
+      completeness: { computable: true, stillNeeded: [], rawErrors: [] },
     },
   };
 

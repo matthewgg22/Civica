@@ -61,7 +61,7 @@ const SESSION = {
     classification: {
       outcome: "likely_eligible",
       summary: "Net income falls under the three-person limit.",
-      completeness: { computable: true, stillNeeded: [] },
+      completeness: { computable: true, stillNeeded: [], rawErrors: [] },
     },
   },
 };
@@ -90,7 +90,7 @@ describe("the worksheet survives a page change (#898 P2-9)", () => {
   });
 
   it("a session without a worksheet still restores, in the default mode", () => {
-    const { worksheet: _dropped, ...bare } = SESSION;
+    const bare = { messages: SESSION.messages, state: SESSION.state, lang: SESSION.lang };
     window.sessionStorage.setItem("demeter:chat", JSON.stringify(bare));
     render(<DemeterChat states={STATES} />);
 
