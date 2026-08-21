@@ -1847,8 +1847,16 @@ export function DemeterChat({
                     ? t.emailSent
                     : t.emailOutline}
               </button>
+              {/* next = the page we're on — '/chat' was a dead route from an
+                  old layout, and (not being /screen-prefixed) it ALSO flipped
+                  the sign-in page to the wrong product's branding (#898 P1-5). */}
               {emailState === "signin" && (
-                <a className="demeter__emailsignin" href="/sign-in?next=/chat">
+                <a
+                  className="demeter__emailsignin"
+                  href={`/sign-in?next=${encodeURIComponent(
+                    typeof window !== "undefined" ? window.location.pathname : "/screen/ask",
+                  )}`}
+                >
                   {t.emailSignIn}
                 </a>
               )}

@@ -34,7 +34,13 @@ function SignInForm() {
   // Where they came from decides what we promise. Arriving from the Demeter
   // chat's Save button and being told "Save your application" would describe a
   // commitment they have not made — and this page is shared by both flows.
-  const forConversation = next.startsWith("/screen");
+  //
+  // LOCALE-TOLERANT (#898 P1-5): the localized chat pages live at
+  // /es/screen/ask, /vi/…, /zh/… — a bare startsWith("/screen") sent every
+  // non-English Demeter user to the Civica apply-flow branding ("Save your
+  // application… for your navigator") at the exact moment they were deciding
+  // whether to trust this with their email.
+  const forConversation = /^\/(?:(?:es|vi|zh)\/)?screen(?:\/|$|\?)/.test(next);
 
   const [locale, setLocale] = useState<Locale>("en");
   const [email, setEmail] = useState("");

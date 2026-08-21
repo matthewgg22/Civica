@@ -84,3 +84,29 @@ describe("sign-in framing", () => {
     );
   });
 });
+
+// #898 P1-5 — the third-pass audit's screenshot showed the OLD Civica
+// "Save your application… for your navigator" page reached from the Demeter
+// chat. Two confirmed wrong-branch entries:
+//   1. every LOCALIZED chat page — /es/screen/ask etc. — failed the bare
+//      startsWith("/screen") check, so every Spanish/Vietnamese/Chinese
+//      user who pressed Save got the wrong product's sign-in;
+//   2. the "Email this to me" sign-in link hardcoded next=/chat (not a
+//      real route, and not /screen-prefixed).
+describe("Demeter framing survives localized paths (#898 P1-5)", () => {
+  afterEach(cleanup);
+
+  it("a Spanish chat page's save still reads as Demeter", async () => {
+    renderAt("next=%2Fes%2Fscreen%2Fask%3Fsave%3Dpending");
+    expect(await screen.findByText("Save your conversation")).toBeTruthy();
+    expect(screen.queryByText(/for your navigator/)).toBeNull();
+  });
+
+  it("Vietnamese and Chinese too", async () => {
+    renderAt("next=%2Fvi%2Fscreen%2Fask");
+    expect(await screen.findByText("Save your conversation")).toBeTruthy();
+    cleanup();
+    renderAt("next=%2Fzh%2Fscreen%2Fask");
+    expect(await screen.findByText("Save your conversation")).toBeTruthy();
+  });
+});
