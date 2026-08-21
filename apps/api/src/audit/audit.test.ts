@@ -32,11 +32,10 @@ class MockDb {
   }
 
   get db(): Kysely<DB> {
-    const self = this;
     return {
       transaction: () => ({
         execute: async <T>(fn: (trx: Trx) => Promise<T>): Promise<T> =>
-          fn(self.makeTrx()),
+          fn(this.makeTrx()),
       }),
     } as unknown as Kysely<DB>;
   }
