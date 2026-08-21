@@ -45,7 +45,7 @@ const COPY = {
     degraded:
       "We could not verify a summary of this, so we are quoting the source text directly rather than paraphrasing it.",
     notRetrieved:
-      "These are real authorities, but we did not have their text in front of us for this question — worth confirming at the source.",
+      "The rules named here are real, but we didn't pull their exact wording for this question — double-check with your SNAP office before relying on the details.",
     stateUnverified:
       "This is the federal baseline. Your state's own rules may differ, and we have not verified that state's policy yet.",
     labelCertain: "CERTAIN",
@@ -59,7 +59,7 @@ const COPY = {
     degraded:
       "No pudimos verificar un resumen de esto, así que estamos citando el texto fuente directamente en vez de parafrasearlo.",
     notRetrieved:
-      "Estas son autoridades reales, pero no teníamos su texto a la vista para esta pregunta — conviene confirmarlo en la fuente.",
+      "Las reglas mencionadas aquí son reales, pero no consultamos su texto exacto para esta pregunta — confírmalo con tu oficina de SNAP antes de confiar en los detalles.",
     stateUnverified:
       "Esta es la base federal. Las reglas de tu estado pueden diferir, y todavía no hemos verificado la política de ese estado.",
     labelCertain: "SEGURO",
@@ -73,7 +73,7 @@ const COPY = {
     degraded:
       "Chúng tôi không xác minh được phần tóm tắt, nên chúng tôi trích nguyên văn nguồn thay vì diễn giải lại.",
     notRetrieved:
-      "Đây là những căn cứ có thật, nhưng chúng tôi không có nội dung của chúng cho câu hỏi này — nên xác nhận tại nguồn.",
+      "Các quy định nêu ở đây là có thật, nhưng chúng tôi chưa tra đúng nguyên văn cho câu hỏi này — nên kiểm tra lại với văn phòng SNAP của bạn trước khi dựa vào chi tiết.",
     stateUnverified:
       "Đây là mức cơ bản của liên bang. Quy định riêng của tiểu bang bạn có thể khác, và chúng tôi chưa xác minh chính sách của tiểu bang đó.",
     labelCertain: "CHẮC CHẮN",
@@ -87,7 +87,7 @@ const COPY = {
     degraded:
       "我们无法核实摘要内容，因此直接引用来源原文，而不做转述。",
     notRetrieved:
-      "这些是真实的法规依据，但我们没有针对此问题调取其原文——建议到来源处确认。",
+      "这里提到的规定都是真实的，但我们没有为这个问题调取其原文——依赖细节前请先向您的 SNAP 办公室核实。",
     stateUnverified:
       "这是联邦最低标准。您所在州的规定可能不同，我们尚未核实该州的政策。",
     labelCertain: "确定",

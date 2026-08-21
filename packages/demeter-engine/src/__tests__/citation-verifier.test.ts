@@ -47,7 +47,7 @@ describe("Mae citation verifier", () => {
     ];
     const es = formatCitationTrailer(checks, "es");
     expect(es).toContain("Citas:");
-    expect(es).toContain("autoridad reconocida");
+    expect(es).toContain("una regla real"); // plain-language rewrite, #898 P1-4
     expect(es).toContain("NO reconocida");
     expect(es).not.toContain("recognized authority");
     // Default stays English.

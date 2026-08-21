@@ -258,7 +258,24 @@ export function pendingQuestion(answer: string): string | null {
  *
  *  Single newlines INSIDE a paragraph are preserved (bullets rely on them) and
  *  still render through pre-wrap. */
+/** Parenthetical legal citations, stripped from the BODY at display time
+ *  (#898 P1-4, the third audit pass to flag citation weight for lay
+ *  applicants). Head-token anchored so ordinary parentheticals survive, and
+ *  tolerant of one level of nested subsection parens — "(7 CFR
+ *  273.9(d)(4))" is one match. The raw text keeps every citation: the
+ *  server-side verifier reads them there, and the collapsed footnote still
+ *  shows the full breakdown. */
+const INLINE_CITE_RE =
+  /\s*\((?:see |under |per )?(?:(?:7|8)\s?CFR|ACL|ACIN|MPP|FNS Handbook|Pub\.?\s?L\.?)[^()]*(?:\([^()]*\)[^()]*)*\)/g;
+
 export function renderAnswer(text: string, opts?: { streaming?: boolean }): ReactNode[] {
+  // Strip inline citations from the BODY only — everything before the first
+  // trailer rule. The trailer keeps its citations; that is where they live.
+  const ruleAt = text.indexOf("\n---\n");
+  text =
+    ruleAt >= 0
+      ? text.slice(0, ruleAt).replace(INLINE_CITE_RE, "") + text.slice(ruleAt)
+      : text.replace(INLINE_CITE_RE, "");
   const out: ReactNode[] = [];
   let para: string[] = [];
   let n = 0;
@@ -427,11 +444,16 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
     (n) => (n as React.ReactElement<{ className?: string }>)?.props?.className === "demeter__rule",
   );
   if (cut === -1) return out;
+  // Collapsed by default (#898 P1-4): the verdict line is the summary, the
+  // full citation breakdown and source line sit one tap away. <details> is
+  // native — keyboard and screen-reader accessible with no JS.
+  const trailer = out.slice(cut + 1);
   return [
     ...out.slice(0, cut),
-    <div className="demeter__footnote" key="footnote">
-      {out.slice(cut + 1)}
-    </div>,
+    <details className="demeter__footnote" key="footnote">
+      <summary className="demeter__footnote-summary">{trailer[0]}</summary>
+      {trailer.slice(1)}
+    </details>,
   ];
 }
 

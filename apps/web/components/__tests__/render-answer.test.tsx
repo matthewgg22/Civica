@@ -75,7 +75,8 @@ describe("renderAnswer (chat markdown subset)", () => {
     // it in the answer's own face and size. It is reference, not answer, so it
     // is now a block of its own — the hairline is that block's top border.
     const nodes = renderAnswer("answer body\n\n---\n**Citation:**\n- ✓ ok");
-    expect(tags(nodes)).toContain("div");
+    // A collapsed <details> as of #898 P1-4 — still a block, still no <hr>.
+    expect(tags(nodes)).toContain("details");
     expect(tags(nodes)).not.toContain("hr");
     // The content is all still there, and still marked up.
     expect(tags(nodes)).toContain("strong");
@@ -124,9 +125,10 @@ describe("paragraphs are blocks, so they can be given space", () => {
 
   it("the citation rule closes the paragraph before it", () => {
     const nodes = renderAnswer("The answer.\n---\n7 CFR 273.9");
-    // Still two paragraphs — one in the answer, one inside the footnote.
+    // Still two paragraphs — one in the answer, one inside the footnote
+    // (which is a collapsed <details> as of #898 P1-4).
     expect(paragraphs(nodes)).toBe(2);
-    expect(tags(nodes)).toContain("div");
+    expect(tags(nodes)).toContain("details");
   });
 });
 
@@ -456,5 +458,62 @@ describe("streaming edge never duplicates the previous paragraph (#898 P1-3)", (
       if (isValidElement(n) && (n.props as { className?: string }).className === "demeter__streamtail") sawTail = true;
     });
     expect(sawTail).toBe(true);
+  });
+});
+
+// #898 P1-4 — citation presentation for laypeople (raised on three separate
+// audit passes). The BODY of an answer strips parenthetical legal citations
+// at render time only — the raw text keeps them (the server-side verifier
+// needs them, and the details view still shows the full apparatus) — and the
+// trailer collapses into a <details> so the certainty verdict reads as one
+// line with the full citation breakdown one tap away.
+describe("layperson citation presentation (#898 P1-4)", () => {
+  const BODY_WITH_CITES =
+    "Your son counts in your household since he's a minor in your care (7 CFR 273.1(b)). " +
+    "The dependent care deduction covers babysitting (7 CFR 273.9(d)(4)), and self-employment " +
+    "is counted after costs (7 CFR 273.11(a)(1)).";
+  const TRAILER =
+    "\n\n---\n✓ **CERTAIN** — Every rule cited here comes from regulation text pulled for your question.\n\n" +
+    "**Citation:**\n- ✓ regulatory text retrieved for this question: 7 CFR 273.9(d)(4)\n\n" +
+    "*Source: [eCFR 2026-06-02](https://www.ecfr.gov/current/title-7/part-273).*";
+
+  function textOf(nodes: ReturnType<typeof renderAnswer>): string {
+    let out = "";
+    walk(nodes, (n) => {
+      if (typeof n === "string") out += n;
+    });
+    return out;
+  }
+
+  it("strips parenthetical citations from the BODY, nested subsections included", () => {
+    const text = textOf(renderAnswer(BODY_WITH_CITES + TRAILER));
+    const body = text.split("CERTAIN")[0]!;
+    expect(body).not.toContain("(7 CFR");
+    expect(body).not.toContain("273.9(d)(4)");
+    // The sentences themselves survive intact.
+    expect(body).toContain("he's a minor in your care.");
+    expect(body).toContain("covers babysitting,");
+  });
+
+  it("keeps the citations inside the footnote details", () => {
+    const text = textOf(renderAnswer(BODY_WITH_CITES + TRAILER));
+    expect(text).toContain("7 CFR 273.9(d)(4)"); // still present overall (in the details)
+  });
+
+  it("renders the trailer as a collapsed <details> whose summary is the verdict line", () => {
+    const nodes = renderAnswer(BODY_WITH_CITES + TRAILER);
+    let details: React.ReactElement | null = null;
+    walk(nodes, (n) => {
+      if (isValidElement(n) && n.type === "details") details = n as React.ReactElement;
+    });
+    expect(details, "no <details> footnote rendered").not.toBeNull();
+    let summaryText = "";
+    let sawSummary = false;
+    walk([details], (n) => {
+      if (isValidElement(n) && n.type === "summary") sawSummary = true;
+    });
+    expect(sawSummary).toBe(true);
+    summaryText = textOf([details!]);
+    expect(summaryText).toContain("CERTAIN");
   });
 });
