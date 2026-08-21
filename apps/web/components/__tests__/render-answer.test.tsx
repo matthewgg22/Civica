@@ -416,3 +416,45 @@ describe("bullets are a real list", () => {
     expect(tags(renderAnswer("net income - deductions"))).toEqual([]);
   });
 });
+
+// #898 P1-3 — the "says the same thing twice while loading" glitch, finally
+// caught on a screenshot: "Apply. You have everything lined up to make a
+// strong application:" rendered TWICE in one bubble during streaming, once
+// in the final render. Mechanism (deterministic, no streaming required to
+// prove): the streaming-edge fade branch replaces out[lastPara] with a
+// paragraph rebuilt from lastParaLines — but flushBullets updates lastPara
+// WITHOUT updating lastParaLines. So a prose line followed by a bullet list
+// gets its list overwritten by a second copy of the preceding paragraph
+// while the stream is live.
+describe("streaming edge never duplicates the previous paragraph (#898 P1-3)", () => {
+  const PROSE = "Apply. You have everything lined up to make a strong application:";
+  const WITH_LIST = `${PROSE}\n- Apply at DTA Connect or by phone\n- Gather your documents before the interview`;
+
+  function textOf(nodes: ReturnType<typeof renderAnswer>): string {
+    let out = "";
+    walk(nodes, (n) => {
+      if (typeof n === "string") out += n;
+    });
+    return out;
+  }
+
+  it("prose followed by bullets, while streaming: the prose appears ONCE", () => {
+    const text = textOf(renderAnswer(WITH_LIST, { streaming: true }));
+    const occurrences = text.split("You have everything lined up").length - 1;
+    expect(occurrences).toBe(1);
+  });
+
+  it("and the bullet items are still on screen mid-stream, not overwritten", () => {
+    const text = textOf(renderAnswer(WITH_LIST, { streaming: true }));
+    expect(text).toContain("Apply at DTA Connect");
+  });
+
+  it("a plain streaming paragraph still gets its fading tail", () => {
+    const nodes = renderAnswer("The last word arrives dimmed and settles", { streaming: true });
+    let sawTail = false;
+    walk(nodes, (n) => {
+      if (isValidElement(n) && (n.props as { className?: string }).className === "demeter__streamtail") sawTail = true;
+    });
+    expect(sawTail).toBe(true);
+  });
+});
