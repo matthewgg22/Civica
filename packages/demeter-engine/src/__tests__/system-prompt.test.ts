@@ -232,3 +232,30 @@ describe("public system prompt — persona-specific", () => {
     expect(p).toMatch(/cannot be right|slip, not a new fact/);
   });
 });
+
+// Third-pass audit prompt rules (#898 P3). Each pins a failure that shipped
+// in a real conversation: a babysitter called "her" on no evidence, a
+// Massachusetts answer citing "the CDSS-equivalent DTA chart", and "Which
+// state are you in?" rendered as a follow-up chip — a question addressed TO
+// the reader, in a row of buttons that speak AS the reader.
+describe("public system prompt — third-pass audit rules (#898 P3)", () => {
+  it("defaults every third person to they/them until told otherwise", () => {
+    const p = PUBLIC_SYSTEM_PROMPT;
+    expect(p).toMatch(/they\/them/i);
+    expect(p.toLowerCase()).toContain("babysitter");
+    expect(p.toLowerCase()).toMatch(/misgender/);
+  });
+
+  it("bans other states' agencies and '-equivalent' constructions once a state is set", () => {
+    const p = PUBLIC_SYSTEM_PROMPT;
+    expect(p).toMatch(/-equivalent/);
+    expect(p.toLowerCase()).toMatch(/another state's agency/);
+  });
+
+  it("requires follow-up chips to be messages the reader could send verbatim", () => {
+    const p = PUBLIC_SYSTEM_PROMPT;
+    expect(p.toLowerCase()).toMatch(/message the reader could send/);
+    // The shipped failure, named so it cannot quietly return.
+    expect(p).toMatch(/addressed to the reader|asks the reader for a fact/i);
+  });
+});
