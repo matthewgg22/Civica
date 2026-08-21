@@ -236,8 +236,21 @@ describe("signed out — an invitation, never a wall", () => {
 
     await screen.findByText(COPY.panelTitle);
     const href = screen.getByRole("link", { name: COPY.panelCta }).getAttribute("href");
-    expect(href).toBe(`/sign-in?next=${encodeURIComponent("/es/screen/ask?save=pending")}`);
+    expect(href).toBe(
+      `/sign-in?next=${encodeURIComponent("/es/screen/ask?save=pending")}&lang=es`,
+    );
     window.history.replaceState({}, "", "/");
+  });
+
+  it("carries the chat's language to the sign-in page itself (#694)", async () => {
+    // The sign-in page can sniff /vi/… from next, but the explicit param is
+    // what keeps a Vietnamese reader in Vietnamese even if the path shape
+    // ever changes — same belt-and-braces as /screen/saved?lang=.
+    renderSave({ lang: "vi" });
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+    await screen.findByText(COPY.panelTitle);
+    const href = screen.getByRole("link", { name: COPY.panelCta }).getAttribute("href");
+    expect(href).toContain("&lang=vi");
   });
 });
 
