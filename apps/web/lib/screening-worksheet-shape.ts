@@ -13,7 +13,10 @@ export const OUTCOME_COPY: Record<
   expedited: { label: "Expedited", tone: "certain" },
   likely_eligible: { label: "Likely eligible", tone: "certain" },
   likely_ineligible: { label: "Likely ineligible", tone: "deny" },
-  needs_county_review: { label: "Needs county review", tone: "warn" },
+  // "Needs county review" scared a real MA user off applying (#898 P0-2)
+  // — most states have no county step. The internal key keeps its name;
+  // only the display copy is agency-neutral.
+  needs_county_review: { label: "Needs a caseworker's review", tone: "warn" },
   not_enough_information: { label: "Not enough information", tone: "pending" },
 };
 
