@@ -5590,6 +5590,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.95rem; line-height: 1.62; color: var(--demeter-body);
   margin: 0 0 0.8rem; text-wrap: pretty;
 }
+.dmex__verdict {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.75rem; line-height: 1.5; color: var(--demeter-terracotta-deep);
+  margin: 0 0 0.8rem;
+}
 .dmex__note {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.78rem; color: var(--demeter-muted); margin: 0;

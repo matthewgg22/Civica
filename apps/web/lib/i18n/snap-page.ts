@@ -38,18 +38,23 @@ export interface PageCopy {
   /** The skip link — the first focusable on every Demeter page. */
   skipToContent: string;
   /** The example exchange beside the hero (taste audit finding 5) — a REAL
-   *  answer generated through the actual pipeline on 2026-08-21 (audit line:
-   *  mode "eval", model claude-sonnet-5, verifier clean, citation 7 CFR
-   *  273.1 status "known"), shortened for space and labeled as exactly
-   *  that. NO verified/checkmark badge: the pipeline graded the exchange
-   *  authority_not_retrieved (household reg text is not in the corpus,
-   *  #766/#785), so the demo shows what the product truly produced — the
-   *  answer with its inline citation. Never edit `a` into something the
-   *  pipeline did not say; regenerate instead. */
+   *  answer generated through the actual pipeline, shortened for space and
+   *  labeled as exactly that. REGENERATED 2026-08-21 after the retrieval
+   *  cluster (#915): every language's audit line graded certainty=certain /
+   *  grounded, verifier clean, citation in_sources (en/es 7 CFR 273.1(a),
+   *  vi 273.1(b), zh 273.1) — which is what EARNS the `verdict` line; the
+   *  first shipped version deliberately carried none because its exchange
+   *  graded authority_not_retrieved. Never edit `a` into something the
+   *  pipeline did not say, and never keep `verdict` on a regeneration that
+   *  does not grade CERTAIN; regenerate instead. An "…" inside `a` marks
+   *  text omitted in shortening. */
   example: {
     label: string;
     q: string;
     a: string;
+    /** The certainty verdict the pipeline issued for exactly this exchange,
+     *  in the product's own words (certainty.ts), shortened. */
+    verdict: string;
     note: string;
     cta: string;
   };
@@ -199,7 +204,8 @@ const en: PageCopy = {
   example: {
     label: "A real answer",
     q: "My roommate and I live together and split rent, but we buy and cook our food separately. Are we one SNAP household?",
-    a: "If you buy and cook food separately, you're two separate SNAP households, even though you live together and split rent. Household grouping under federal SNAP rules is based on whether you customarily purchase and prepare meals together, not on shared housing (7 CFR 273.1).",
+    a: "You'd be two separate SNAP households. Under federal SNAP rules, people living together only count as one household if they customarily buy food and prepare meals together; if you keep your groceries and cooking separate, you each apply on your own (7 CFR 273.1(a)).",
+    verdict: "✓ CERTAIN: every rule cited comes from regulation text pulled for this question.",
     note: "A real Demeter answer, shortened for space.",
     cta: "Ask your own",
   },
@@ -453,8 +459,9 @@ const es: PageCopy = {
   skipToContent: "Saltar al contenido",
   example: {
     label: "Una respuesta real",
-    q: "Mi compañero de cuarto y yo compartimos la renta. ¿Contamos como un solo hogar?",
-    a: "Compartir la renta no los convierte automáticamente en un solo hogar para SNAP. Lo que decide esto es si compran y cocinan la comida juntos o por separado — esa es la regla bajo 7 CFR 273.1(a).",
+    q: "Mi compañero de cuarto y yo compartimos la renta, pero compramos y cocinamos nuestra comida por separado. ¿Contamos como un solo hogar para SNAP?",
+    a: "No, no cuentan como un solo hogar. Bajo las reglas federales de SNAP, si compran y preparan la comida por separado, cada uno es su propio hogar para efectos de SNAP, aunque compartan la renta y vivan en el mismo lugar (7 CFR 273.1(a)).",
+    verdict: "✓ SEGURO: cada regla citada proviene del texto regulatorio recuperado para esta pregunta.",
     note: "Una respuesta real de Demeter, acortada por espacio.",
     cta: "Haz tu propia pregunta",
   },
@@ -693,8 +700,9 @@ const vi: PageCopy = {
   skipToContent: "Bỏ qua đến nội dung",
   example: {
     label: "Một câu trả lời thật",
-    q: "Tôi và bạn cùng phòng chia tiền thuê nhà. Chúng tôi có tính là một hộ không?",
-    a: "Việc chia tiền thuê nhà không tự động khiến hai người thành một hộ trong SNAP. Theo quy định liên bang (7 CFR 273.1(a)), hai người sống chung chỉ được tính là một hộ nếu họ thường xuyên mua và nấu ăn chung với nhau.",
+    q: "Tôi và bạn cùng phòng sống chung và chia tiền thuê nhà, nhưng chúng tôi mua và nấu ăn riêng. Chúng tôi có tính là một hộ SNAP không?",
+    a: "Không. Nếu hai người mua thức ăn riêng và nấu ăn riêng, thì theo quy định liên bang, hai người được tính là hai hộ SNAP riêng biệt, ngay cả khi sống chung nhà và chia tiền thuê. … Quy định chỉ bắt buộc gộp chung thành một hộ trong một số trường hợp cụ thể, ví dụ như vợ/chồng, hoặc con dưới 22 tuổi sống cùng cha/mẹ (7 CFR 273.1(b)).",
+    verdict: "✓ CHẮC CHẮN: mọi quy định được trích dẫn đều lấy từ văn bản quy định được truy xuất cho câu hỏi này.",
     note: "Câu trả lời thật của Demeter, rút gọn cho vừa trang.",
     cta: "Đặt câu hỏi của bạn",
   },
@@ -937,8 +945,9 @@ const zh: PageCopy = {
   skipToContent: "跳到内容",
   example: {
     label: "一条真实回答",
-    q: "我和室友分摊房租。我们算一个家庭吗？",
-    a: "分摊房租本身不能决定你们是不是一个家庭。根据 7 CFR 273.1(a) 的规定，只有当你们共同购买食物、共同做饭时，才算作同一个 SNAP（食品救助）家庭。",
+    q: "我和室友住在一起分摊房租，但我们分开买菜、分开做饭。我们算一个 SNAP 家庭吗？",
+    a: "根据联邦规定,你们不算一个家庭。SNAP(联邦食品援助计划)的规则是:同住的人只有在一起买菜、一起做饭时才算一个家庭(7 CFR 273.1)。你们既然是分开采购、分开做饭,即使合租分摊房租,也应该各自作为独立的家庭单位申请。",
+    verdict: "✓ 确定：引用的每条规定都来自为这个问题检索到的法规原文。",
     note: "Demeter 的真实回答，因篇幅有所缩短。",
     cta: "提出你自己的问题",
   },
