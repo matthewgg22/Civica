@@ -174,7 +174,7 @@ export interface PageCopy {
 const en: PageCopy = {
   h1: "Ask about SNAP and get the actual rule.",
   productLede:
-    "Demeter answers in plain language and quotes the federal regulation behind every claim and your state’s own manual, to help explain the benefit programme to you.",
+    "Demeter answers in plain language and quotes the federal regulation behind every claim and your state’s own manual, to help explain the benefit program to you.",
   snapLine:
     "SNAP is monthly money for groceries, paid onto an EBT card. Formerly called food stamps. Applying is free.",
   eyebrow: "Supplemental Nutrition Assistance Program",
@@ -209,7 +209,7 @@ const en: PageCopy = {
     },
     {
       t: "What it buys",
-      d: "Groceries to take home and prepare, and seeds and plants that grow food. Not alcohol, household goods, or hot food made to eat right away — though some states let certain households buy restaurant meals.",
+      d: "Groceries to take home and prepare, and seeds and plants that grow food. Not alcohol, household goods, or hot food made to eat right away, though some states let certain households buy restaurant meals.",
     },
     {
       t: "What applying costs",
@@ -220,18 +220,18 @@ const en: PageCopy = {
   officialNote:
     "Demeter is not a government agency, and is not affiliated with or endorsed by USDA. For the official program and to find your own state agency:",
   officialFns: "USDA Food and Nutrition Service — SNAP",
-  officialDirectory: "SNAP state directory — find your agency",
+  officialDirectory: "SNAP state directory: find your agency",
   evidenceH2: "Better answers than a general AI assistant",
   evidenceBody:
-    "Ask a general assistant about SNAP and you get a fluent answer with nothing behind it. That is the specific failure Georgetown University’s Beeck Center found across twelve experiments on turning benefits policy into working code: models handling genuinely complex policy logic still need outside knowledge and a person checking the result. A language model is fluent enough to be wrong convincingly, and benefits rules are exactly where that costs someone money — a wrong income limit is a family that does not apply. So Demeter reads the actual regulation for each question, quotes the rule behind every claim, links it, and refuses to state a figure it could not verify. You do not have to trust the answer; you can read what it came from.",
+    "Ask a general assistant about SNAP and you get a fluent answer with nothing behind it. That is the specific failure Georgetown University’s Beeck Center found across twelve experiments on turning benefits policy into working code: models handling genuinely complex policy logic still need outside knowledge and a person checking the result. A language model is fluent enough to be wrong convincingly, and benefits rules are exactly where that costs someone money: a wrong income limit is a family that does not apply. So Demeter reads the actual regulation for each question, quotes the rule behind every claim, links it, and refuses to state a figure it could not verify. You do not have to trust the answer; you can read what it came from.",
   evidenceQuote: "still require external knowledge and human oversight",
   evidenceAttrib:
-    "Beeck Center for Social Impact + Innovation, Georgetown University — AI-Powered Rules as Code, February 2025",
+    "Beeck Center for Social Impact + Innovation, Georgetown University. AI-Powered Rules as Code, February 2025",
   evidenceReport: "Read the report",
   evidenceDemoDay: "The twelve Policy2Code experiments",
   decidesH2: "What actually decides whether you qualify",
   decidesBody:
-    "Not your income alone — that is the most common reason people who qualify never apply. Eligibility turns on what is left after the deductions you are entitled to, and on a short list of category rules.\n\nAnd this is why a straight answer is genuinely hard to find anywhere: almost everyone is an edge case. A student who works twenty hours, a household where one person is not eligible, self-employment income that changes every month, a parent applying for citizen children — each of those changes the arithmetic, and a general answer written for nobody in particular is wrong for most of them. That is the gap a conversation can close and a web page cannot.",
+    "Not your income alone. That is the most common reason people who qualify never apply. Eligibility turns on what is left after the deductions you are entitled to, and on a short list of category rules.\n\nAnd this is why a straight answer is genuinely hard to find anywhere: almost everyone is an edge case. A student who works twenty hours, a household where one person is not eligible, self-employment income that changes every month, a parent applying for citizen children — each of those changes the arithmetic, and a general answer written for nobody in particular is wrong for most of them. That is the gap a conversation can close and a web page cannot.",
   defs: [
     {
       t: "Household size",
@@ -239,7 +239,7 @@ const en: PageCopy = {
     },
     {
       t: "Income, after deductions",
-      d: "Rent, utilities, childcare, child support you pay, and — for members who are 60+ or disabled — medical costs above a set floor all come off before the limit is applied.",
+      d: "Rent, utilities, childcare, child support you pay, and, for members who are 60+ or disabled, medical costs above a set floor all come off before the limit is applied.",
     },
     {
       t: "Category rules",
@@ -273,7 +273,7 @@ const en: PageCopy = {
   steps: [
     {
       t: "Every claim carries its rule",
-      d: "Answers cite the federal regulation and, in verified states, that state’s own manual — linked, so you can read the rule yourself or show it to a caseworker who disagrees.",
+      d: "Answers cite the federal regulation and, in verified states, that state’s own manual, linked so you can read the rule yourself or show it to a caseworker who disagrees.",
     },
     {
       t: "It says when it is not sure",
@@ -286,7 +286,7 @@ const en: PageCopy = {
   ],
   faqH2: "What the application is actually asking",
   faqBody:
-    "These are the questions people get stuck on — the phrasing is legal, not conversational. Here is what each one means and the rule behind it.",
+    "These are the questions people get stuck on: the phrasing is legal, not conversational. Here is what each one means and the rule behind it.",
   faqHeading: (p) => `What does "${p}" mean on a SNAP application?`,
   questionsLink: "What the application is actually asking",
   questionsIntro:
@@ -300,16 +300,16 @@ const en: PageCopy = {
   retailSearchGo: "Find stores",
   retailSearchCount: "{n} stores in {zip} accept EBT",
   retailSearchNone:
-    "No stores are listed in {zip}. USDA's list is by store address, so try a neighbouring ZIP — the shop you use may be registered in one.",
+    "No stores are listed in {zip}. USDA's list is by store address, so try a neighboring ZIP; the store you use may be registered in one.",
   retailSearchError:
-    "That lookup did not come back. It does not mean there are no stores near you — try again, or check USDA's own locator.",
+    "That lookup did not come back. It does not mean there are no stores near you. Try again, or check USDA's own locator.",
   retailSearchMore: "Showing the first {n}. There are more.",
   retailSearchOpenMap: "Open in maps",
   retailMoreLabel: "Not seeing your store?",
   retailMoreLink: "Check USDA's SNAP Retailer Locator",
   retailersH3: "Where you can use your EBT card",
   retailersBody:
-    "{n} stores across every state and territory accept EBT — supermarkets, corner shops, many farmers markets, and online at some retailers.",
+    "{n} stores across every state and territory accept EBT: supermarkets, corner stores, many farmers markets, and online at some retailers.",
   retailersNote: "Store counts published by USDA, as of {date}.",
   foodNowLabel: "Need food this week?",
   foodNowBody:
@@ -318,15 +318,15 @@ const en: PageCopy = {
   foodNow211: "Call or visit 211",
   fearsH2: "The questions people actually ask first",
   fearsBody:
-    "Almost nobody starts with the income limits. These come up first, in about this order \u2014 and they are reasonable things to want settled before you hand a government agency your details. Here is what is actually true, including the one we cannot give you a flat answer on.",
+    "Almost nobody starts with the income limits. These come up first, in about this order, and they are reasonable things to want settled before you hand a government agency your details. Here is what is actually true, including the one we cannot give you a flat answer on.",
   fears: [
     {
       q: "Does this affect my immigration status?",
-      a: "This one is changing, so we will not give you a flat answer. Federal public charge rules have not counted SNAP since 2022 \u2014 but DHS has rescinded that rule effective 18 September 2026, and after that date officers can weigh benefits case by case. If anyone in your household is not a US citizen, talk to a free immigration legal aid before you apply \u2014 not to us, and not to a caseworker.",
+      a: "This one is changing, so we will not give you a flat answer. Federal public charge rules have not counted SNAP since 2022, but DHS has rescinded that rule effective 18 September 2026, and after that date officers can weigh benefits case by case. If anyone in your household is not a US citizen, talk to a free immigration legal aid before you apply \u2014 not to us, and not to a caseworker.",
     },
     {
       q: "Will I have to pay it back?",
-      a: "Not if what you reported was right. Benefits are not a loan. If an agency later finds it paid more than you were owed \u2014 usually a reporting mistake, on either side \u2014 it can ask for that overpayment back.",
+      a: "Not if what you reported was right. Benefits are not a loan. If an agency later finds it paid more than you were owed (usually a reporting mistake, on either side), it can ask for that overpayment back.",
     },
     {
       q: "Am I taking it from someone who needs it more?",
@@ -338,11 +338,11 @@ const en: PageCopy = {
     },
     {
       q: "Do I have to be unemployed?",
-      a: "No. Most SNAP households with a working-age adult have someone earning. Working does not disqualify you \u2014 earnings are counted after the deductions you are entitled to, which is why the limit is higher than most people assume.",
+      a: "No. Most SNAP households with a working-age adult have someone earning. Working does not disqualify you: earnings are counted after the deductions you are entitled to, which is why the limit is higher than most people assume.",
     },
     {
       q: "Will they investigate me?",
-      a: "The agency checks what you report \u2014 who lives with you, what you earn, what you pay for housing. That is routine verification and it happens on every application. It is not an investigation, and it is not an accusation.",
+      a: "The agency checks what you report: who lives with you, what you earn, what you pay for housing. That is routine verification and it happens on every application. It is not an investigation, and it is not an accusation.",
     },
   ],
   fearsCta: "Worried about something else? Ask Demeter",
@@ -373,9 +373,9 @@ const en: PageCopy = {
       img: "1-file",
     },
     {
-      when: "No deadline — 7 days if urgent",
+      when: "No deadline; 7 days if urgent",
       t: "The interview",
-      d: "Usually a phone call, and nobody is approved without one. Federal rules set no deadline for it, so waiting weeks is normal — unless you have almost nothing coming in. Say so when you file: both the interview and your benefits land within 7 days, and missing one just means rescheduling.",
+      d: "Usually a phone call, and nobody is approved without one. Federal rules set no deadline for it, so waiting weeks is normal, unless you have almost nothing coming in. Say so when you file: both the interview and your benefits land within 7 days, and missing one just means rescheduling.",
       img: "3-proof",
     },
     {
@@ -392,7 +392,7 @@ const en: PageCopy = {
     },
   ],
   timelineNote:
-    "Appealing a denial is free. Missing your recertification deadline is one of the most common ways people lose benefits they still qualify for. Federal floor, from 7 CFR 273.2. Your state may add steps of its own — ask Demeter about yours and the answer will cite that state's manual where we have verified one.",
+    "Appealing a denial is free. Missing your recertification deadline is one of the most common ways people lose benefits they still qualify for. Federal floor, from 7 CFR 273.2. Your state may add steps of its own. Ask Demeter about yours, and the answer will cite that state's manual where we have verified one.",
   brandSubtitle: "SNAP Enrollment and Eligibility Assistance",
   navAsk: "Ask Demeter",
   navQuestions: "Application questions",
@@ -410,7 +410,7 @@ const en: PageCopy = {
       "States without a verified pack are still answered from the federal rules. The map shows where we have also checked the state's own manual.",
     verified: "Verified",
   },
-  agenciesH2: "Your state runs the program — here is who",
+  agenciesH2: "Who runs SNAP in your state",
   agenciesBody:
     "Demeter never decides your case. Your state agency does. These are the agencies whose own published rules the verified answers are built from, and where you actually apply.",
   agenciesNote:
