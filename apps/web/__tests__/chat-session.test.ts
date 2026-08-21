@@ -65,6 +65,29 @@ describe("a conversation survives leaving the page", () => {
     expect(readChatSession()).toBeNull();
   });
 
+  // #898 P2-9: the transcript survived a page change but the drafted
+  // application did not — the worksheet (mode, gathered facts, engine
+  // classification) lived only in component state, so navigating out and back
+  // restored the conversation with the estimate rail wiped.
+  it("carries the worksheet — mode, facts and classification — through the round trip", () => {
+    const worksheet = {
+      mode: "estimate" as const,
+      facts: { household: [{ member_id: "a", age: 45, role: "head" }] },
+      classification: {
+        outcome: "likely_eligible",
+        summary: "Net income falls under the one-person limit.",
+        completeness: { computable: true, stillNeeded: [] },
+      },
+    };
+    saveChatSession({ ...CONVO, worksheet } as Parameters<typeof saveChatSession>[0]);
+    expect(readChatSession()).toEqual({ ...CONVO, worksheet });
+  });
+
+  it("a stored session from before the worksheet existed still reads back", () => {
+    window.sessionStorage.setItem("demeter:chat", JSON.stringify(CONVO));
+    expect(readChatSession()).toEqual(CONVO);
+  });
+
   it("uses sessionStorage, so closing the tab still ends it", () => {
     // The panel promises "close this tab and you cannot return to this
     // conversation". localStorage here would quietly make that untrue, and on
