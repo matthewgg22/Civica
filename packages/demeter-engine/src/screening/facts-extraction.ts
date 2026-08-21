@@ -58,7 +58,19 @@ const EXTRACT_TOOL = {
             role: { type: "string", enum: ["head", "spouse", "child", "other"] },
             disability: { type: "boolean" },
             elderly: { type: "boolean" },
-            student: { type: "string" },
+            // Was free text (#898 second pass): the model wrote "college" /
+            // "high school", and the engine's student gate matches only its
+            // exact fixture tokens — so a real transcript's full-time college
+            // student silently counted as a fully-eligible member. Small
+            // stated-facts enum, mapped to engine tokens after parsing.
+            student: {
+              type: "string",
+              enum: ["high_school", "higher_ed_half_time_plus", "higher_ed_less_than_half", "none"],
+              description:
+                "ONLY if stated. higher_ed_half_time_plus = college/university at least " +
+                "half-time; higher_ed_less_than_half = enrolled but less than half-time; " +
+                "none = explicitly not a student. Omit when enrollment wasn't mentioned.",
+            },
             // Was missing entirely (#895): completeness REQUIRES a per-member
             // immigration status, so with no way to record one, "we're both
             // citizens" was silently dropped and no extracted household could
@@ -210,6 +222,25 @@ export async function extractFacts(
       line.freq = "monthly";
     }
   }
+  // Student enrollment: the tool records stated facts in plain terms; the
+  // engine's student gate (7 CFR 273.5) reads its own exact tokens. Anything
+  // that is neither a tool enum value nor an engine token is DROPPED rather
+  // than passed through — an unconstrained string reaching the gate is
+  // exactly the silent-miscount this mapping exists to prevent, and an
+  // absent field is the permissive default (not subject), consistent with
+  // how the ABAWD gate treats an unknown work_class.
+  const STUDENT_TOKEN: Record<string, string> = {
+    high_school: "not",
+    higher_ed_less_than_half: "not",
+    none: "not",
+    higher_ed_half_time_plus: "he_halftime_subject",
+  };
+  for (const m of patch.household ?? []) {
+    if (m.student === undefined) continue;
+    const mapped = STUDENT_TOKEN[m.student];
+    if (mapped) m.student = mapped;
+    else if (!/^(not$|he_halftime_subject$|he_exempt:)/.test(m.student)) delete m.student;
+  }
   // The tool records utilities in plain terms; the engine's ShelterSchema
   // wants its SUA tier enum. Map here so BOTH consumers (worksheet merge,
   // chat grounding) receive engine-shaped facts.
@@ -244,7 +275,14 @@ export async function extractFacts(
 
 /** Merge a patch onto accumulated facts. Household members merge by
  *  member_id; everything else is a shallow overlay — a new value REPLACES
- *  the old one (a caseworker correcting "actually $1,300" should win). */
+ *  the old one (a caseworker correcting "actually $1,300" should win).
+ *
+ *  ⚠ DO NOT use this across INDEPENDENT extraction calls. member_id is a
+ *  slug the model re-invents per call, so merging two calls' outputs by id
+ *  duplicates every member ("child_1" + "son" = two people) — the exact
+ *  household-inflation bug of #898 P0-1. screenHousehold now uses
+ *  whole-conversation re-extraction + overlayFactsSnapshot instead; this
+ *  stays only for merging patches WITHIN one consistent id-space. */
 export function mergeFactsPatch(base: PartialFacts, patch: PartialFacts): PartialFacts {
   const household = [...(base.household ?? [])];
   for (const m of patch.household ?? []) {

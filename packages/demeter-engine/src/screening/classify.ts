@@ -41,6 +41,25 @@ function needsCountyReview(facts: PartialFacts): string | null {
   if (hasSelfEmployment) {
     return "Self-employment income requires a caseworker calculation.";
   }
+  // A MIXED household with an unexempt half-time+ student (#898 second
+  // pass): federal rules exclude the ineligible student from household size
+  // while still counting their income (7 CFR 273.5; 273.1(b)(7)(i)) — math
+  // the engine's household-global student gate can't do yet (it would DENY
+  // the whole family, a documented Wave-2 gap in gates/student.ts). Rather
+  // than compute a wrong number in either direction, route to a caseworker.
+  // A SINGLE-person at-risk student flows through: the engine's own DENY is
+  // correct there and matches its oracle coverage.
+  const household = facts.household ?? [];
+  const atRiskStudent = household.some(
+    (m) =>
+      m.age !== undefined &&
+      m.age >= 18 &&
+      m.age <= 49 &&
+      m.student === "he_halftime_subject",
+  );
+  if (atRiskStudent && household.length > 1) {
+    return "A student enrolled at least half-time is in the household — student eligibility needs a caseworker's review.";
+  }
   return null;
 }
 
