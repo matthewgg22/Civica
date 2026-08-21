@@ -35,11 +35,17 @@ export interface FrontDoorCase {
 
 export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   // ── Eligibility / "do I even qualify" ──────────────────────────────────────
-  { id: "elig-net-vs-gross", category: "Eligibility", question: "Do I make too much to qualify for SNAP?", expect: { kind: "grounded", section: "273.9" } },
+  // EVOLVED with #785: this used to expect 273.9 on top — the percentages —
+  // because percentages were all the corpus had. The published FY dollar
+  // tables now lead, which is the answer the question is actually asking for;
+  // 273.9 still rides in the retrieved set behind them.
+  { id: "elig-net-vs-gross", category: "Eligibility", question: "Do I make too much to qualify for SNAP?", expect: { kind: "external", citation: "FY 2026 COLA Memo — Income Eligibility" } },
   { id: "elig-what-is-income", category: "Eligibility", question: "What counts as income for SNAP — does SSI or child support received count?", expect: { kind: "grounded", section: "273.9" } },
   { id: "elig-assets", category: "Eligibility", question: "Do my savings, car, or house disqualify me?", expect: { kind: "grounded", section: "273.8" } },
   { id: "elig-cat-elig", category: "Eligibility", question: "I already get TANF and SSI — do I qualify automatically (categorical eligibility)?", expect: { kind: "grounded", section: "273.2" } },
-  { id: "elig-how-much", category: "Eligibility", question: "How much SNAP will I actually get — what is the maximum allotment by household size?", expect: { kind: "grounded", section: "273.10" } },
+  // EVOLVED with #785, same reasoning: the maximum-allotment TABLE is the
+  // answer to a maximum-allotment question; 273.10 carries the formula.
+  { id: "elig-how-much", category: "Eligibility", question: "How much SNAP will I actually get — what is the maximum allotment by household size?", expect: { kind: "external", citation: "FY 2026 COLA Memo — Maximum" } },
 
   // ── Immigration & mixed-status ─────────────────────────────────────────────
   { id: "imm-public-charge", category: "Immigration", question: "Will applying for SNAP hurt my immigration status or count as public charge?", expect: { kind: "external", citation: "8 CFR 212.21" } },
