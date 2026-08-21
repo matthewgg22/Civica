@@ -266,6 +266,13 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   /** The source lines of the paragraph at `lastPara`, kept so the streaming
    *  edge can be re-rendered with its final word faded — see below. */
   let lastParaLines: string[] = [];
+  /** Whether out[lastPara] IS the prose paragraph lastParaLines describes.
+   *  flushBullets moves lastPara without touching lastParaLines, so without
+   *  this flag the streaming-edge branch below rebuilt the PREVIOUS prose
+   *  paragraph over the top of a freshly-streamed bullet list — the reader
+   *  saw the same sentence twice and the list vanish until the stream
+   *  finished (#898 P1-3, screenshot-confirmed on a real conversation). */
+  let lastBlockIsProse = false;
 
   /** A run of "- " lines is a LIST, and should be one.
    *
@@ -277,6 +284,7 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
 
   const flushBullets = (items: string[], key: number) => {
     lastPara = out.length;
+    lastBlockIsProse = false;
     out.push(
       <ul className="demeter__list" key={`ul${key}`}>
         {items.map((item, i) => (
@@ -330,6 +338,7 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
       prose = [];
       lastPara = out.length;
       lastParaLines = p;
+      lastBlockIsProse = true;
       out.push(
         <p className="demeter__para" key={`p${key}-${out.length}`}>
           {p.flatMap((line, i) => [
@@ -383,7 +392,9 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   // the way it is typed. Something still has to say "more is coming" — an
   // answer that had finished and one that had stalled used to look identical —
   // and a word that has not finished settling says it without a mark.
-  if (opts?.streaming && lastPara >= 0 && lastParaLines.length > 0) {
+  // Only when the trailing block IS that prose paragraph — a trailing
+  // bullet list keeps its content and simply doesn't fade (#898 P1-3).
+  if (opts?.streaming && lastBlockIsProse && lastPara >= 0 && lastParaLines.length > 0) {
     const lines = lastParaLines.slice();
     const last = lines[lines.length - 1] ?? "";
     const cut = last.lastIndexOf(" ");
