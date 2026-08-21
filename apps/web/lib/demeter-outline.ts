@@ -30,6 +30,9 @@ export interface OutlineSection {
   heading: string;
   /** Lines already formatted "Label: value", or bare sentences. */
   lines: string[];
+  /** "checklist" marks a section whose lines are open items to resolve —
+   *  renderers that can draw a checkbox do; text renderers ignore this. */
+  kind?: "checklist";
 }
 
 /** How to name a household member on a document someone hands to a caseworker.
@@ -179,6 +182,7 @@ export function buildOutline(input: OutlineInput): OutlineSection[] {
     sections.push({
       heading: "Still to work out",
       lines: stillNeeded,
+      kind: "checklist",
     });
   }
 
