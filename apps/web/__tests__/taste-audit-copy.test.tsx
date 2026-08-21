@@ -113,22 +113,36 @@ describe("visible em-dashes stay inside the budget (finding 2)", () => {
 import { SnapOrientation, SnapFears } from "../components/SnapOverview";
 
 describe("a real example answer rides beside the hero (finding 5)", () => {
-  it("renders the question, the answer's own citation, and the way in", () => {
-    // No ✓ banner here, deliberately: the pipeline graded this exchange
-    // authority_not_retrieved (the household reg text is not in the corpus —
-    // #766/#785), so the demo shows exactly what the product produced: the
-    // answer with its inline citation, labeled a real answer shortened for
-    // space. Showing a verified badge the answer did not earn would be the
-    // product lying about itself on the page that sells its honesty.
+  it("renders the question, the citation, the EARNED verdict, and the way in", () => {
+    // HISTORY: this card first shipped WITHOUT a ✓, deliberately — the
+    // pipeline graded the original exchange authority_not_retrieved (the
+    // household reg text never surfaced, #766/#785), and a verified badge
+    // the answer did not earn would be the product lying about itself.
+    // After the retrieval cluster landed (#915), all four languages were
+    // REGENERATED through the fixed pipeline and every one graded
+    // certainty=certain / grounded with its citation in_sources — so the
+    // card now carries the verdict the product actually issued. If the
+    // example is ever regenerated and does not earn CERTAIN again, the
+    // verdict line comes OFF with it.
     const { container } = render(<SnapOrientation />);
     const ex = container.querySelector(".dmex");
     expect(ex).toBeTruthy();
     const text = ex!.textContent ?? "";
     expect(text).toMatch(/household/i);
     expect(text).toMatch(/7 CFR 273\.1/);
+    expect(text).toContain("✓");
+    expect(container.querySelector(".dmex__verdict")).toBeTruthy();
     // The honesty label and the way into the product from its own demo.
     expect(text).toMatch(/real .*answer/i);
     expect(ex!.querySelector("a[href*='/chat']")).toBeTruthy();
+  });
+
+  it("every language carries the earned verdict line", () => {
+    for (const lang of ["en", "es", "vi", "zh"] as const) {
+      const ex = PAGE_COPY[lang].example;
+      expect(ex.verdict?.trim(), lang).toBeTruthy();
+      expect(ex.verdict, lang).toContain("✓");
+    }
   });
 
   it("every language carries the full example, and none of it invents a dollar figure", () => {

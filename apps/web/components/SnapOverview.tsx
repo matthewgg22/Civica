@@ -145,6 +145,11 @@ export function SnapOrientation({ lang = "en" }: { lang?: AnswerLang }) {
         <p className="dmex__label">{c.example.label}</p>
         <p className="dmex__q">{c.example.q}</p>
         <p className="dmex__a">{shieldCitations(c.example.a, "dmex")}</p>
+        {/* The verdict the pipeline actually issued for this exchange —
+            regenerated post-#915, graded certain/grounded in every language.
+            The copy table's comment carries the rule: no CERTAIN grade, no
+            verdict line. */}
+        <p className="dmex__verdict">{c.example.verdict}</p>
         <p className="dmex__note">
           {c.example.note}{" "}
           <a className="dmex__cta" href={lang === "en" ? "/chat" : `/${lang}/chat`}>
