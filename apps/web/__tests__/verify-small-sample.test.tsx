@@ -55,10 +55,13 @@ describe("a tiny sample is reported as a count, not a rate", () => {
     expect(html).toContain("Early data");
   });
 
-  it("still reports the window size honestly alongside the count", async () => {
-    // The count replaces the percentage; it does not hide how few answers there are.
+  it("names the window, and does not repeat the denominator", async () => {
+    // Shipped once as "2 of 12 of the last 12 answers were marked CERTAIN":
+    // the count already states the denominator that the percentage branch
+    // needs spelled out after it. Each branch now carries its own unit text.
     const html = await renderVerify(stats(12, 2, 16.7));
-    expect(html).toContain("of the last 12 answers");
+    expect(html).toContain("answers in the last ");
+    expect(html).not.toContain("of the last 12 answers");
   });
 });
 

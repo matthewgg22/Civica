@@ -68,34 +68,62 @@ export default async function VerifyPage() {
         <section className="vstat" aria-label="Measured grounded rate">
           {stats.measured ? (
             <>
+              {/* The two branches carry their OWN unit text. Sharing one read
+                  "2 of 12 of the last 12 answers were marked CERTAIN" — the
+                  count already names the denominator the percentage needs
+                  spelled out after it. */}
               <div className="vstat__figure">
                 {isSmallSample ? (
-                  <span className="vstat__pct">
-                    {stats.certainAnswers} of {stats.totalAnswers}
-                  </span>
+                  <>
+                    <span className="vstat__pct">
+                      {stats.certainAnswers} of {stats.totalAnswers}
+                    </span>
+                    <span className="vstat__unit">
+                      answers in the last {stats.windowDays}{" "}
+                      days were marked{" "}
+                      <strong>CERTAIN</strong>
+                    </span>
+                  </>
                 ) : (
-                  <span className="vstat__pct">{stats.groundedRate}%</span>
+                  <>
+                    <span className="vstat__pct">{stats.groundedRate}%</span>
+                    <span className="vstat__unit">
+                      of the last {stats.totalAnswers.toLocaleString()} answers were marked{" "}
+                      <strong>CERTAIN</strong>
+                    </span>
+                  </>
                 )}
-                <span className="vstat__unit">
-                  of the last {stats.totalAnswers.toLocaleString()} answers were marked{" "}
-                  <strong>CERTAIN</strong>
-                </span>
               </div>
+              {/* Deliberately carries NO interpolated number: the figure above
+                  already states it, and every `{expr}`-to-word boundary on this
+                  page is a whitespace hazard (see below). */}
               {isSmallSample && (
                 <p className="vstat__flag">
-                  Early data. {stats.totalAnswers} real answers isn&apos;t enough yet to
-                  read as a rate &mdash; the next answer alone could swing a percentage by
-                  several points. We show the plain count instead of a percentage until
-                  there&apos;s a large enough sample for one to mean something.
+                  Early data. That is too few answers to read as a rate &mdash; the next
+                  one alone could swing a percentage by several points. We show the plain
+                  count until the sample is large enough for a rate to mean something.
                 </p>
               )}
               <p className="vstat__note">
-                Measured over the past {stats.windowDays} days from Demeter&apos;s own
+                {/* The {" "} here are LOAD-BEARING, not formatting.
+                    A JSX text child following an expression loses its leading
+                    space if that text spans a line break. `{stats.windowDays} days
+                    from Demeter's own\nanswer log` shipped to production as
+                    "past 30days"; the same shape cost us "12real answers" and
+                    "(4of them)". Text that stays on ONE line keeps its space,
+                    which is why `{n} answers were marked{" "}` above was always
+                    fine. An explicit {" "} compiles to a standalone string child
+                    and always survives.
+                    Vitest renders BOTH shapes correctly, so no unit test can
+                    catch this — it was found by reading the deployed HTML.
+                    If you reflow this paragraph, re-check the rendered output. */}
+                Measured over the past {stats.windowDays}{" "}
+                days from Demeter&apos;s own
                 answer log — not a target, not a claim. An answer only counts as
                 certain when every rule it cites is backed by regulation text pulled
                 for that specific question. Answers where Demeter fell back to quoting
-                sources verbatim count as <em>failures</em> here ({stats.degraded} of
-                them), so the number can&apos;t flatter itself.
+                sources verbatim count as <em>failures</em> here ({stats.degraded}{" "}
+                of them), so the number can&apos;t flatter itself.
                 {stats.topReason && REASON_LABEL[stats.topReason] ? (
                   <> The most common reason certainty was withheld:{" "}
                   {REASON_LABEL[stats.topReason]}.</>
