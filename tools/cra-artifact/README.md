@@ -8,6 +8,7 @@ Generates a 5-page US-Letter PDF (need → program + ask → PROJECTED sample re
 python3 -m src.generate --bank bank_irvine            # out/bank_irvine.{html,pdf} + oracle numbers
 python3 -m src.memo --bank bank_irvine --amount 15000 --date 2026-10-01   # qualification memo
 python3 -m src.memo --bank helm_bank --specimen       # unsigned sample memo for the pitch packet
+python3 -m src.quarterly --bank ocean_bank --amount 25000 --period "Q1 2027" --sample   # the deliverable
 python3 -m src.generate --bank bank_irvine --send     # + content-hash copy in sent/ (refuses verified:false)
 python3 -m pytest tests/ -q                           # 19 tests: golden fixture + edge cases + PDF smoke
 ```
@@ -54,3 +55,19 @@ weighting, never as "earns credit."
 layout; if a memo still renders past one page the generator raises
 `MemoOverflowError` rather than clip content. A test renders every loaded bank's
 memo through Chrome and asserts exactly one page.
+
+## The quarterly report (`src/quarterly.py`) — the end-of-project deliverable
+
+Five pages: headline result + exam-file block · delivery and service by county
+(Layer 1, observed) · outcomes from the consented panel with opt-in and response
+rates disclosed (Layer 2) · dollar traceability, the 63/15/12/10 split, and cost
+per submitted application · methodology, the measured mid-funnel finding, and
+what changes next quarter. Ships alongside the qualification memo; together they
+are the bank's complete exam evidence for the grant.
+
+**No measured-data source is wired yet, so the generator refuses to run without
+`--sample`** rather than emit invented numbers as observed. The sample is
+watermarked and its illustrative mid-funnel rates are deliberately set *below*
+the proposal's mid-range assumptions — a test asserts this — so the sample
+demonstrates the integrity promise: the quarter where the number misses is the
+quarter the report says so, on page 1.

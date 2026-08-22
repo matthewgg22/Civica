@@ -291,3 +291,50 @@ def test_every_loaded_bank_memo_is_exactly_one_page():
     for key in banks:
         rc = memo.main(["--bank", key, "--specimen"])  # raises MemoOverflowError if >1
         assert rc == 0
+
+
+# ---- quarterly report (the end-of-project deliverable) -----------------------
+from src import quarterly  # noqa: E402
+
+
+def test_quarterly_refuses_to_publish_unmeasured_data_as_measured():
+    """No measured-data source is wired; the generator must refuse rather than
+    emit invented numbers as if they were observed."""
+    with pytest.raises(SystemExit, match="never publish invented numbers"):
+        quarterly.main(["--bank", "ocean_bank", "--amount", "25000"])
+
+
+def test_quarterly_sample_is_labelled_and_honest():
+    banks, assumptions, org = generate.load_inputs()
+    class A:
+        amount = 25000.0; period = "Q1 2027"; sample = True
+    v = quarterly.build(banks["ocean_bank"], org, assumptions, A())
+    html = generate.render((TOOL_ROOT / "templates/quarterly.html").read_text(), v)
+    assert "SAMPLE" in html and "Sample deliverable" in html
+    # panel results carry opt-in AND response rates, never extrapolated
+    assert "response rate" in html and "respondents only" in html
+    assert "Extrapolating respondent rates" in html
+    # the miss is reported, not buried
+    assert "landed at the conservative end" in html
+    # exam-file block present
+    assert "12 CFR __.12(g)(2)" in html and "__.12(g)(2)—1" in html
+    # need framed as performance context, never credit
+    assert "not a representation about examination outcomes" in html
+    # no causal overclaim on approvals
+    assert "the household applied, the agency decided" in html
+
+
+def test_quarterly_measured_rates_sit_below_proposal_mid():
+    """The sample must demonstrate the integrity promise: it shows a miss."""
+    a = generate.load_inputs()[1]
+    m = quarterly.ILLUSTRATIVE_MEASURED
+    assert m["session_to_check"] < a["rates"]["session_to_check"]["mid"]
+    assert m["check_to_started"] < a["rates"]["check_to_app_started"]["mid"]
+
+
+@pytest.mark.skipif(not Path(generate.CHROME).exists(), reason="Chrome not installed")
+def test_quarterly_renders_five_pages():
+    rc = quarterly.main(["--bank", "ocean_bank", "--amount", "25000", "--sample"])
+    assert rc == 0
+    pdf = TOOL_ROOT / "out/quarterly-ocean_bank-sample.pdf"
+    assert memo.page_count(pdf) == 5
