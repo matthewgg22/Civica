@@ -31,6 +31,7 @@
 // row, and a sidebar contradicting the ✓ Saved badge a few inches away teaches
 // people not to believe either one.
 
+import type { ReactNode } from "react";
 import type { ScreeningClassification } from "@civica/demeter-engine";
 import {
   OUTCOME_COPY,
@@ -74,6 +75,11 @@ export interface DemeterWorksheetCopy {
   modeEstimate: string;
   modeAskNote: string;
   switchedToAsk: string;
+  /** The estimate's pre-listed section slots (owner refinement 2026-08-21):
+   *  what WILL fill in, shown up front. Copy, never data — the no-invented-
+   *  figures test walks every language. */
+  templateTitle: string;
+  template: readonly string[];
 }
 
 /** What this panel is for right now.
@@ -97,6 +103,7 @@ export function DemeterWorksheet({
   onPickState,
   mode,
   onModeChange,
+  footLinks,
 }: {
   classification: ScreeningClassification | null;
   stateSelected: boolean;
@@ -111,6 +118,10 @@ export function DemeterWorksheet({
   onPickState?: () => void;
   mode: WorksheetMode;
   onModeChange: (m: WorksheetMode) => void;
+  /** Standing links (state portal, how-we-verify) — facts about where the
+   *  answers come from, rendered at the card's foot with the retention
+   *  line, their natural family (owner rec, 2026-08-22). */
+  footLinks?: ReactNode;
 }) {
   const outcome = classification?.outcome;
   const outcomeCopy = outcome ? OUTCOME_COPY[outcome] : undefined;
@@ -182,6 +193,20 @@ export function DemeterWorksheet({
         <p className="dmw__empty">{copy.empty}</p>
       ) : null}
 
+      {/* THE TEMPLATE (owner refinement): the shape of the thing being
+          built, listed before anything has filled in — ghost slots, not a
+          waiting sentence. Gone the moment real rows exist. */}
+      {mode === "estimate" && !classification && (
+        <section className="dmw__template" aria-label={copy.templateTitle}>
+          <p className="dmw__section-title">{copy.templateTitle}</p>
+          <ul className="dmw__template-list">
+            {copy.template.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {outcomeCopy && (
         <section className={`dmw__result dmw__result--${outcomeCopy.tone}`}>
           <p className="dmw__result-label">{copy.result}</p>
@@ -230,6 +255,7 @@ export function DemeterWorksheet({
           stays in both modes — questions are logged either way, which is the
           whole reason it cannot be quietly dropped. */}
       {mode === "estimate" && <p className="dmw__disclaimer">{copy.disclaimer}</p>}
+      {footLinks && <div className="dmw__footlinks">{footLinks}</div>}
     </aside>
   );
 }

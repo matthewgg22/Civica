@@ -8,8 +8,12 @@ import { render, cleanup } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { renderToStaticMarkup } from "react-dom/server";
 import { renderAnswer } from "../components/DemeterChat";
-import { SnapDetail, SnapOrientation } from "../components/SnapOverview";
+import { shieldCitations } from "../lib/no-translate";
+import { SnapDetail } from "../components/SnapOverview";
+import { DemeterWorksheet } from "../components/DemeterWorksheet";
+import { T } from "../lib/i18n/demeter-chat-copy";
 import { DemeterNav } from "../components/DemeterNav";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 
@@ -40,14 +44,17 @@ describe("translate=\"no\" shields (finding 1)", () => {
     }
   });
 
-  it("the hero example's citation is shielded without shielding the prose", () => {
-    const { container } = render(<SnapOrientation />);
-    const a = container.querySelector(".dmex__a")!;
-    expect(a.getAttribute("translate")).toBeNull();
-    const shield = [...a.querySelectorAll('[translate="no"]')].find((el) =>
-      /7 CFR 273\.1/.test(el.textContent ?? ""),
-    );
-    expect(shield).toBeTruthy();
+  it("shieldCitations wraps the citation and only the citation", () => {
+    // EVOLVED: this used to assert against the hero example card's answer,
+    // but the mini chat replaced that card (2026-08-21) and no citations
+    // render on the landing anymore. The shield still guards the CHAT's
+    // trailer (DemeterChat renders through shieldCitations), so the
+    // invariant is pinned at the function: the citation is shielded, the
+    // prose around it is not.
+    const nodes = shieldCitations("Households apply separately (7 CFR 273.1(a)) in most cases.", "t");
+    const html = renderToStaticMarkup(<>{nodes}</>);
+    expect(html).toMatch(/translate="no"[^>]*>[^<]*7 CFR 273\.1/);
+    expect(html).not.toMatch(/translate="no"[^>]*>[^<]*Households/);
   });
 
   it("the brand name is shielded in the nav", () => {
@@ -94,12 +101,29 @@ describe("stylesheet pins (findings 4, 5, 7)", () => {
     expect(s).toMatch(/-webkit-tap-highlight-color/);
   });
 
-  it("the sidetools verify link keeps its 44px hit area while staying visually quiet (finding 7)", () => {
+  it("the verify link keeps its 44px hit area — at the selector that actually matches it", () => {
+    // FINDING 7 fixed a target silently shrunk to 21px. This test then kept
+    // passing after the link MOVED (2026-08-22) out of .demeter__sidetools
+    // and into the worksheet card's foot — because it only grepped the
+    // stylesheet. A rule that matches nothing passes a text search happily.
+    // So: assert the rule, AND assert the element really lives where the
+    // rule can reach it.
     const s = css();
-    const block = s.slice(s.indexOf(".dmchat .demeter__sidetools .demeter__how"));
+    const block = s.slice(s.indexOf(".dmw__footlinks .demeter__how"));
     const rule = block.slice(0, block.indexOf("}"));
-    expect(rule).not.toMatch(/min-height:\s*0/);
     expect(rule).toMatch(/min-height:\s*44px/);
+
+    const { container } = render(
+      <DemeterWorksheet
+        classification={null}
+        stateSelected={false}
+        copy={T.en.worksheet}
+        mode="ask"
+        onModeChange={() => {}}
+        footLinks={<a className="demeter__how" href="/verify">{T.en.howWeVerify}</a>}
+      />,
+    );
+    expect(container.querySelector(".dmw__footlinks .demeter__how")).toBeTruthy();
   });
 
   it("inline answer links carry an expanded hit area (finding 7)", () => {

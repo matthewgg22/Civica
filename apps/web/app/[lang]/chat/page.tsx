@@ -12,7 +12,6 @@ import { notFound } from "next/navigation";
 import { VERIFIED_STATES, VERIFIED_STATE_CODES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
 import { geoHint } from "../../../lib/geo-hint";
 import { DemeterChat } from "../../../components/DemeterChat";
-import { DemeterNav } from "../../../components/DemeterNav";
 import { PREFIXED_LANGS } from "../../../lib/i18n/routes";
 import { loadConversation } from "../../../lib/demeter-conversations-server";
 
@@ -58,7 +57,6 @@ export default async function LocalizedChatPage({
 
   return (
     <div className="dmchat" lang={LANG_TAG[l]}>
-      <DemeterNav lang={l} active="ask" path="/chat" />
       <main className="dmchat__body">
         <DemeterChat
           states={VERIFIED_STATES}

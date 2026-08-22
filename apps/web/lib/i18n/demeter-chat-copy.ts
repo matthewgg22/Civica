@@ -124,6 +124,26 @@ export const T = {
     // their exact toggle labels — the parity test holds them together.
     emptyModes:
       "SNAP looks complicated, but it runs on fixed rules and math — walking you through them is what this chat is for. Stay in “Just asking” to learn how the program works, or switch to “Build my estimate” and your answers build into an application outline as you go.",
+    // Pi redesign (2026-08-21): the empty state asks for the STATE, never a
+    // name — the retention line says "avoid names", and the pi-redesign test
+    // pins the ban in all four languages.
+    emptyAskState:
+      "Which state are you in? Choose it above — until then, answers use the federal rules.",
+    sidebarLabel: "Menu",
+    sidebarSaved: "Saved conversations",
+    sidebarSigninNote: "Sign in to keep your conversations.",
+    signin: "Sign in",
+    sidebarSignedIn: "Signed in as",
+    // The rail's settings bar (owner rec 2026-08-22): with the site nav gone
+    // from /chat, these are the ONLY route to the standing pages, so they
+    // live with the account controls rather than in a footer this surface
+    // does not have.
+    skipToComposer: "Skip to the message box",
+    sidebarSavedSignin: "Sign in for saved conversations",
+    settingsLabel: "Settings",
+    privacyLink: "Privacy policy",
+    feedbackLink: "Send feedback",
+    navQuestions: "Application questions",
     empty1: "Do I earn too much to qualify?",
     empty2: "I need food this week — can I get help faster?",
     empty3: "Will I have to do an interview?",
@@ -232,6 +252,13 @@ export const T = {
       modeEstimate: "Build my estimate",
       modeAskNote:
         "Nothing here goes into your estimate — ask a what-if, or about someone else. We keep the text to check our accuracy, in both modes.",
+      templateTitle: "What this will fill in",
+      template: [
+        "Who's in your household",
+        "Your monthly income",
+        "Rent, utilities, and other costs",
+        "Your estimated monthly benefit",
+      ],
       switchedToAsk: "Nothing is being gathered. Ask anything.",
     },
   },
@@ -301,6 +328,19 @@ export const T = {
     emptyLede: "Cada respuesta cita la regla de la que proviene, para que puedas comprobarla.",
     emptyModes:
       "SNAP parece complicado, pero funciona con reglas y cálculos fijos — y este chat existe para explicártelos. Quédate en «Solo preguntar» para entender cómo funciona el programa, o cambia a «Calcular mi estimado» y tus respuestas irán formando un esquema de solicitud.",
+    emptyAskState:
+      "¿En qué estado estás? Elígelo arriba — hasta entonces, las respuestas usan las reglas federales.",
+    sidebarLabel: "Menú",
+    sidebarSaved: "Conversaciones guardadas",
+    sidebarSigninNote: "Inicia sesión para conservar tus conversaciones.",
+    signin: "Iniciar sesión",
+    sidebarSignedIn: "Sesión iniciada:",
+    skipToComposer: "Saltar al cuadro de mensaje",
+    sidebarSavedSignin: "Inicia sesión para ver tus conversaciones",
+    settingsLabel: "Ajustes",
+    privacyLink: "Política de privacidad",
+    feedbackLink: "Enviar comentarios",
+    navQuestions: "Preguntas de la solicitud",
     empty1: "¿Gano demasiado para calificar?",
     empty2: "Necesito comida esta semana, ¿puedo recibir ayuda más rápido?",
     empty3: "¿Tendré que hacer una entrevista?",
@@ -380,6 +420,13 @@ export const T = {
       modeEstimate: "Calcular mi estimado",
       modeAskNote:
         "Nada de esto entra en tu estimado — pregunta un supuesto, o por otra persona. Guardamos el texto para verificar nuestra exactitud, en ambos modos.",
+      templateTitle: "Lo que se irá completando",
+      template: [
+        "Quiénes forman tu hogar",
+        "Tu ingreso mensual",
+        "Renta, servicios y otros gastos",
+        "Tu beneficio mensual estimado",
+      ],
       switchedToAsk: "Estimado borrado. No se está recogiendo nada.",
     },
   },
@@ -448,6 +495,19 @@ export const T = {
     emptyLede: "Mỗi câu trả lời đều trích dẫn điều luật mà nó dựa vào, để bạn tự kiểm chứng được.",
     emptyModes:
       "SNAP trông phức tạp, nhưng thật ra chỉ là các quy tắc và phép tính cố định — và trò chuyện này ở đây để giải thích chúng cho bạn. Cứ ở chế độ “Chỉ hỏi thôi” để tìm hiểu chương trình, hoặc chuyển sang “Tính mức ước tính” để các câu trả lời của bạn dần thành một bản phác thảo đơn.",
+    emptyAskState:
+      "Bạn ở tiểu bang nào? Chọn ở phía trên — trước đó, câu trả lời dùng quy định liên bang.",
+    sidebarLabel: "Trình đơn",
+    sidebarSaved: "Cuộc trò chuyện đã lưu",
+    sidebarSigninNote: "Đăng nhập để giữ các cuộc trò chuyện của bạn.",
+    signin: "Đăng nhập",
+    sidebarSignedIn: "Đã đăng nhập:",
+    skipToComposer: "Bỏ qua đến ô nhập tin nhắn",
+    sidebarSavedSignin: "Đăng nhập để xem cuộc trò chuyện đã lưu",
+    settingsLabel: "Cài đặt",
+    privacyLink: "Chính sách bảo mật",
+    feedbackLink: "Gửi phản hồi",
+    navQuestions: "Câu hỏi trên đơn",
     empty1: "Tôi kiếm được nhiều quá thì có còn đủ điều kiện không?",
     empty2: "Tuần này tôi cần thực phẩm — có cách nào nhận nhanh hơn không?",
     empty3: "Tôi có phải phỏng vấn không?",
@@ -527,6 +587,13 @@ export const T = {
       modeEstimate: "Tính mức ước tính",
       modeAskNote:
         "Không gì ở đây được đưa vào bản ước tính của bạn — cứ hỏi giả định, hoặc hỏi giúp người khác. Chúng tôi vẫn lưu nội dung để kiểm tra độ chính xác, ở cả hai chế độ.",
+      templateTitle: "Những phần sẽ được điền",
+      template: [
+        "Những ai trong hộ của bạn",
+        "Thu nhập hằng tháng của bạn",
+        "Tiền thuê nhà, điện nước và chi phí khác",
+        "Mức trợ cấp hằng tháng ước tính",
+      ],
       switchedToAsk: "Đã xóa ước tính. Không có gì đang được thu thập.",
     },
   },
@@ -591,6 +658,18 @@ export const T = {
     emptyLede: "每条回答都会引用其依据的条文，方便您自行核对。",
     emptyModes:
       "SNAP 看起来复杂，其实只是一套固定的规则和计算——这个对话就是为了给您讲清楚它们。想了解项目如何运作，就留在“只是问问”；切换到“帮我算估算”，您说的内容会逐步整理成一份申请提纲。",
+    emptyAskState: "您在哪个州？请在上方选择——在那之前，回答使用联邦规定。",
+    sidebarLabel: "菜单",
+    sidebarSaved: "已保存的对话",
+    sidebarSigninNote: "登录即可保留您的对话。",
+    signin: "登录",
+    sidebarSignedIn: "已登录：",
+    skipToComposer: "跳到输入框",
+    sidebarSavedSignin: "登录以查看已保存的对话",
+    settingsLabel: "设置",
+    privacyLink: "隐私政策",
+    feedbackLink: "发送反馈",
+    navQuestions: "申请表问题",
     empty1: "我赚得太多，就不符合条件了吗？",
     empty2: "这周就需要食物，能更快拿到吗？",
     empty3: "我需要参加面谈吗？",
@@ -668,6 +747,8 @@ export const T = {
       modeAsk: "只是问问",
       modeEstimate: "帮我算估算",
       modeAskNote: "这里说的内容不会进入您的估算——可以问假设情况，或替别人问。我们仍会保留内容以核查准确性，两种模式都是如此。",
+      templateTitle: "将要填写的部分",
+      template: ["您的家庭成员", "您的每月收入", "房租、水电及其他开支", "您的预计每月补助"],
       switchedToAsk: "估算已清除。没有在收集任何内容。",
     },
   },

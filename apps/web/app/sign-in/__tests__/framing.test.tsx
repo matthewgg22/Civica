@@ -105,6 +105,22 @@ describe("Demeter framing survives localized paths (#898 P1-5)", () => {
     expect(screen.queryByText(/for your navigator/)).toBeNull();
   });
 
+  // 2026-08-22 REGRESSION, the same defect one route later: #898 P1-5's note
+  // called /chat "not a real route", and by then it was not. It IS the chat
+  // now — the whole surface moved there — and /chat never matched the
+  // /screen-only branch, so EVERY sign-in from the live chat wore the old
+  // Civica "Save your application… for your navigator" card. Caught from a
+  // screenshot of the shipped preview.
+  it("the /chat surface reads as Demeter, English and localized", async () => {
+    renderAt("next=%2Fchat");
+    expect(await screen.findByText(SIGNIN_T.en.title)).toBeTruthy();
+    expect(screen.queryByText(/for your navigator/)).toBeNull();
+    cleanup();
+    renderAt("next=%2Fes%2Fchat");
+    expect(await screen.findByText(SIGNIN_T.es.title)).toBeTruthy();
+    expect(screen.queryByText(/for your navigator/)).toBeNull();
+  });
+
   it("Vietnamese and Chinese too", async () => {
     renderAt("next=%2Fvi%2Fscreen%2Fask");
     expect(await screen.findByText(SIGNIN_T.vi.title)).toBeTruthy();

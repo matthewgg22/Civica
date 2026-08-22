@@ -53,7 +53,7 @@ function SignInForm() {
   // non-English Demeter user to the Civica apply-flow branding ("Save your
   // application… for your navigator") at the exact moment they were deciding
   // whether to trust this with their email.
-  const forConversation = /^\/(?:(?:es|vi|zh)\/)?screen(?:\/|$|\?)/.test(next);
+  const forConversation = /^\/(?:(?:es|vi|zh)\/)?(?:screen|chat)(?:\/|$|\?)/.test(next);
 
   const [locale, setLocale] = useState<Locale>("en");
   // The Demeter branch's language (#694): four options, resolved from the

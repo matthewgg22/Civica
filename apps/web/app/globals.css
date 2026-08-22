@@ -4775,9 +4775,18 @@ html {
    565px transcript was empty, and pinning the chips to either end of that only
    moved the hole — they read as controls someone forgot either way. A mark, a
    question and the suggestions under it make the space deliberate. */
+/* PI REDESIGN: left-aligned and conversational rather than centered-poster —
+   the empty state reads as Demeter's opening turn of the conversation, in the
+   same position its answers will occupy. Content unchanged (the #898 P2-6
+   framing block is test-pinned); only the posture moved. */
 .demeter__empty {
-  display: flex; flex-direction: column; align-items: center; text-align: center;
-  gap: 0.6rem; margin: auto 0; padding: 1rem 0;
+  display: flex; flex-direction: column; align-items: flex-start; text-align: left;
+  gap: 0.6rem; margin: auto 0; padding: 1rem 0 9vh; max-width: 58ch;
+  /* Centered as a BLOCK in the column (text stays left inside) — Pi's
+     composition; hugging the column's left edge left the right half of the
+     screen dead. The bottom padding floats it slightly high of true center,
+     toward the composer's counterweight. */
+  align-self: center; width: 100%;
 }
 .demeter__emptytitle {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
@@ -4787,7 +4796,7 @@ html {
 .demeter__emptylede {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: 0.98rem; line-height: 1.55; color: var(--demeter-muted);
-  margin: 0 0 0.5rem; max-width: 44ch; text-wrap: pretty;
+  margin: 0 0 0.5rem; max-width: 58ch; text-wrap: pretty;
 }
 /* The two-mode framing (#898 P2-6). Sans, smaller and quieter than the lede —
    it is orientation, not the invitation — and a touch wider, since it names
@@ -4795,7 +4804,7 @@ html {
 .demeter__emptymodes {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.85rem; line-height: 1.6; color: var(--demeter-muted);
-  margin: 0 0 0.5rem; max-width: 54ch; text-wrap: pretty;
+  margin: 0 0 0.5rem; max-width: 58ch; text-wrap: pretty;
 }
 .demeter__suggests {
   display: flex; flex-direction: column; gap: 0.5rem; width: 100%; align-items: center;
@@ -4807,8 +4816,14 @@ html {
 }
 .demeter__suggest:active { border-color: var(--demeter-terracotta); background: #FBF1EC; }
 .demeter__msg { max-width: 88%; border-radius: var(--demeter-radius-card); padding: 0.7rem 0.95rem; font-size: 0.97rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
-.demeter__msg--user { align-self: flex-end; background: var(--demeter-terracotta); color: #fff; border-bottom-right-radius: 0.3rem; }
-.demeter__msg--assistant { align-self: flex-start; background: var(--demeter-card); color: var(--demeter-ink); border: 1px solid var(--demeter-rule); border-bottom-left-radius: 0.3rem; }
+/* PI REDESIGN (2026-08-21, owner brief): the transcript loses its boxes.
+   Demeter's answers are prose on the page — a bubble around every answer made
+   the product read as a widget; the words ARE the surface. The reader's own
+   messages keep a chip so the two voices stay visually distinct, but it is
+   the quiet neutral tint, not a brand-colored block: terracotta is for
+   actions, not for the reader's words. */
+.demeter__msg--user { align-self: flex-end; background: var(--demeter-tint); color: var(--demeter-ink); border: 1px solid var(--demeter-rule); border-bottom-right-radius: 0.3rem; }
+.demeter__msg--assistant { align-self: flex-start; background: transparent; color: var(--demeter-ink); border: 0; border-radius: 0; padding-left: 0; padding-right: 0; }
 .demeter__rule { border: 0; border-top: 1px solid var(--demeter-rule); margin: 0.6rem 0 0.4rem; }
 .demeter__thinking { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; color: var(--demeter-muted); font-style: italic; }
 .demeter__divider {
@@ -4821,7 +4836,39 @@ html {
   align-self: stretch; background: #FBEAE5; border: 1px solid #E9C2B4; color: var(--demeter-terracotta-deep);
   border-radius: var(--demeter-radius-card); padding: 0.7rem 0.9rem; font-size: 0.9rem;
 }
-.demeter__inputrow { display: flex; gap: 0.5rem; align-items: flex-end; padding-top: 0.5rem; }
+.demeter__inputrow { display: flex; gap: 0.5rem; align-items: flex-end; padding-top: 0.25rem; }
+/* Pi-grade composer on the chat surface: one rounded field, the send control
+   riding INSIDE it, and a QUIET focus — the field darkens its edge rather
+   than lighting a 2px ring the moment autofocus lands. Still visibly
+   focused (terracotta border), just not shouting. */
+.dmchat .demeter__inputrow { position: relative; }
+.dmchat .demeter__input {
+  border-radius: 1.55rem; padding-right: 3.4rem;
+  border-color: var(--demeter-rule-strong);
+}
+.dmchat .demeter__input:focus,
+.dmchat .demeter__input:focus-visible {
+  outline: none; border-color: var(--demeter-muted);
+  box-shadow: 0 2px 12px rgba(35, 34, 32, 0.07);
+}
+/* Pi's control: a compact circle riding inside the field. 40px in a 52px
+   single-line field = visually centered; when the textarea grows, it stays
+   pinned by the last line, where the next keystroke is. Empty box = quiet
+   neutral circle (NOT the faded wash of a disabled pill breaking the
+   border); typed = terracotta. */
+.dmchat .demeter__send {
+  position: absolute; right: 4px; bottom: 4px;
+  width: 44px; min-width: 44px; min-height: 44px; height: 44px; padding: 0;
+  /* 44, not 40: the touch-target floor (#917) applies to the one control
+     that sends — and 44 in a 52px field still reads centered. */
+  display: grid; place-items: center;
+  border-radius: var(--demeter-radius-pill);
+}
+.dmchat .demeter__send:disabled { opacity: 1; background: #B5B1A9; cursor: default; }
+/* #B5B1A9: one step darker than --demeter-rule-strong — at rule-strong the
+   idle circle read as a watermark. Disabled control; contrast rules do not
+   bind it, legibility taste does. */
+.dmchat .demeter__send--stop { background: var(--demeter-terracotta-deep); }
 .demeter__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: 1; resize: none; border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-card); background: var(--demeter-card);
@@ -5098,7 +5145,7 @@ html {
   border: 1px solid var(--demeter-terracotta); font-weight: 600;
 }
 .vcard__cta--agency:hover {
-  background: var(--demeter-paper); filter: none; color: var(--demeter-terracotta-deep);
+  background: var(--demeter-tint); filter: none; color: var(--demeter-terracotta-deep);
 }
 
 /* #27 — the tail is prose now, and the graphite footer closes the page. */
@@ -5197,11 +5244,12 @@ html {
      Uses: the mark, the nav's primary tab, a 2px rule under a source link, and
      the state-confirmation Yes. Never as text, never on white. */
   --demeter-wheat: #E8C547;
-  --demeter-ink: #1F2429;             /* cooled with the ground (palette B) — headings, answers */
-  --demeter-body: #494F56;            /* cooled with the ground (palette B) — running text */
-  --demeter-muted: #646C75;           /* cooled with the ground (palette B) — labels, placeholder text */
-  --demeter-paper: #F5F6F8;           /* palette B (taste finding 3, approved 2026-08-21): the ground cooled one step out of the warm family — was #F7F6F4, before that parchment #FCF8F1. Terracotta and wheat unchanged; the identity lives in them now. */
-  --demeter-card: #FFFFFF;            /* unchanged */
+  --demeter-ink: #232220;             /* neutral (white-ground decision, 2026-08-21) — headings, answers */
+  --demeter-body: #4B4A46;            /* neutral (white-ground decision) — running text */
+  --demeter-muted: #6C6A64;           /* neutral (white-ground decision) — labels, placeholder text; 5.4:1 on white */
+  --demeter-paper: #FFFFFF;           /* WHITE (owner decision, 2026-08-21, supersedes palette B): the cool #F5F6F8 ground read as a blue cast that muted the white cards. Ground is now true white; card separation moved to hairlines; the grays lost their blue bias the same day. History: #F5F6F8 (palette B) ← #F7F6F4 ← #FCF8F1 parchment. */
+  --demeter-card: #FFFFFF;            /* same as paper now — cards are drawn by their hairline borders */
+  --demeter-tint: #F6F5F3;            /* chip/input/hover fill — one neutral step off white, no blue */
   /* THE RADIUS SCALE (awesome-design-md recommendation, approved 2026-08-21):
      four steps, and every Demeter radius uses one. Exceptions are structural,
      not scale members: 50% circles, ≤6px hairline details, and the retailer
@@ -5210,8 +5258,8 @@ html {
   --demeter-radius-card: 12px;
   --demeter-radius-inner: 10px;
   --demeter-radius-input: 8px;
-  --demeter-rule: #E2E5E9;            /* cooled with the ground (palette B) — cards, dividers */
-  --demeter-rule-strong: #C5CAD1;     /* cooled with the ground (palette B) — inputs, table heads */
+  --demeter-rule: #E8E6E2;            /* neutral hairline (white-ground decision) — cards, dividers */
+  --demeter-rule-strong: #D2CFC9;     /* neutral (white-ground decision) — inputs, table heads */
 }
 
 /* --demeter-font-display (Newsreader, serif — "anything that speaks": answers,
@@ -5267,7 +5315,7 @@ html {
 .screening__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: 1; min-height: 2.6rem; max-height: 8rem; resize: none; border: 1px solid var(--demeter-rule-strong);
-  border-radius: var(--demeter-radius-card); padding: 0.6rem 0.85rem; font-size: 0.95rem; background: var(--demeter-paper);
+  border-radius: var(--demeter-radius-card); padding: 0.6rem 0.85rem; font-size: 0.95rem; background: var(--demeter-tint);
 }
 .screening__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .screening__send {
@@ -5385,7 +5433,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .screen-auth__label { font-size: 0.78rem; font-weight: 600; color: var(--demeter-muted); margin-top: 0.6rem; }
 .screen-auth__input {
   border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner); padding: 0.6rem 0.8rem; font-size: 0.95rem;
-  background: var(--demeter-paper); color: var(--demeter-ink);
+  background: var(--demeter-tint); color: var(--demeter-ink);
 }
 .screen-auth__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .screen-auth__error {
@@ -5418,10 +5466,28 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    a source link. Never a fill, never text. Same rule as the logo mark.
    ═════════════════════════════════════════════════════════════════════════ */
 
+/* THE DOCUMENT BEHIND THE PAGE. html/body carry the legacy Civica parchment
+   (#F7F5EF), and every Demeter surface paints its own ground on top — which
+   held visually until the ground went white: overscroll rubber-banding (and
+   any not-yet-painted region) exposes the DOCUMENT color, and a cream flash
+   behind a white page reads as a glitch. Wherever a Demeter root is present,
+   the document itself goes white. The legacy pine-branded pages keep their
+   parchment untouched. */
+html:has(.dmpage), body:has(.dmpage),
+html:has(.dmchat), body:has(.dmchat),
+html:has(.demeter-page), body:has(.demeter-page),
+html:has(.screening), body:has(.screening),
+html:has(.screen-landing), body:has(.screen-landing),
+html:has(.screen-auth), body:has(.screen-auth),
+html:has(.vpage), body:has(.vpage),
+html:has(.saved), body:has(.saved),
+html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surface="demeter"]) {
+  background: var(--demeter-paper);
+}
 .dmpage { min-height: 100dvh; background: var(--demeter-paper); display: block; }
 .dmpage__inner {
   width: 100%; max-width: 1180px; margin: 0 auto;
-  padding: 0 clamp(1rem, 4vw, 3.5rem) calc(4rem + env(safe-area-inset-bottom));
+  padding: 0 clamp(1rem, 4vw, 3.5rem) calc(3rem + env(safe-area-inset-bottom));
 }
 
 /* The chat, inside the page: drop the standalone 720px column and the forced
@@ -5539,7 +5605,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmst__search {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   width: 100%; min-height: 42px; padding: 0.45rem 0.7rem; font-size: 0.9rem;
-  color: var(--demeter-ink); background: var(--demeter-paper);
+  color: var(--demeter-ink); background: var(--demeter-tint);
   border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner);
 }
 .dmst__search:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
@@ -5550,10 +5616,22 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   padding: 0.55rem 0.7rem; text-align: left; cursor: pointer;
   background: transparent; border: 0; border-radius: var(--demeter-radius-inner); color: var(--demeter-ink);
 }
-.dmst__opt:hover { background: var(--demeter-paper); }
+.dmst__opt:hover { background: var(--demeter-tint); }
 .dmst__opt.is-sel { background: #FBF1EC; }
 .dmst__opt-name { font-size: 0.92rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; }
-.dmst__opt-sub { font-size: 0.78rem; color: var(--demeter-muted); }
+/* ONE LINE (owner rec 2026-08-22). The agency is confirmation, not
+   identification — the flag, code and program name above it are what
+   someone scans for, and the full agency shows on the trigger once chosen.
+   Letting it wrap ran rows to four lines and pushed the rest of the list
+   below the fold. */
+.dmst__opt-sub {
+  font-size: 0.78rem; color: var(--demeter-muted);
+  display: block; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* The text column has to be allowed to shrink, or the flex row lets it
+   overflow instead of ellipsing. */
+.dmst__opt-text { min-width: 0; }
 .dmst__opt-badge {
   font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--demeter-terracotta-deep); border: 1px solid #EAD9C8;
@@ -5597,28 +5675,84 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--demeter-muted); margin: 0 0 0.7rem;
 }
-.dmex__q {
+/* The dormant tally: quieter than the note above it — it is a fact, not a
+   pitch, and it earns its place by being measured (lib/live-counts.ts). */
+.dmex__tally {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.88rem; line-height: 1.5; color: var(--demeter-ink);
-  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
-  border-radius: var(--demeter-radius-inner); padding: 0.55rem 0.75rem; margin: 0 0 0.75rem;
+  font-size: 0.72rem; color: var(--demeter-muted); margin: 0.45rem 0 0;
+  font-variant-numeric: tabular-nums;
 }
-.dmex__a {
+
+/* ── The hero mini chat (owner redesign 2026-08-21) ──────────────────────
+   Replaced the cycling example card. Type rule holds: the greeting is
+   Demeter speaking (serif); everything that labels or operates is sans. */
+.dmc { display: flex; flex-direction: column; gap: 0.7rem; }
+.dmc__greeting {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 0.95rem; line-height: 1.62; color: var(--demeter-body);
-  margin: 0 0 0.8rem; text-wrap: pretty;
+  font-size: 1rem; line-height: 1.55; color: var(--demeter-body); margin: 0; text-wrap: pretty;
 }
-.dmex__verdict {
+.dmc__statelabel {
+  display: flex; flex-direction: column; gap: 0.3rem;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.75rem; line-height: 1.5; color: var(--demeter-terracotta-deep);
-  margin: 0 0 0.8rem;
+  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--demeter-muted);
 }
-.dmex__note {
+.dmc__state {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.78rem; color: var(--demeter-muted); margin: 0;
-  border-top: 1px solid var(--demeter-rule); padding-top: 0.65rem;
+  font-size: 0.9rem; color: var(--demeter-ink); background: var(--demeter-tint);
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
+  padding: 0.5rem 0.65rem; min-height: 44px;
 }
-.dmex__cta { color: var(--demeter-terracotta-deep); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.dmc__row { display: flex; gap: 0.5rem; }
+.dmc__input {
+  flex: 1; min-width: 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.95rem; color: var(--demeter-ink); background: var(--demeter-tint);
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
+  padding: 0.6rem 0.75rem; min-height: 44px;
+}
+.dmc__state:focus-visible, .dmc__input:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.dmc__send {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  background: var(--demeter-terracotta); color: #fff; font-weight: 700; font-size: 0.9rem;
+  border: 0; border-radius: var(--demeter-radius-input); padding: 0 1.1rem; min-height: 44px; cursor: pointer;
+}
+.dmc__send:hover { background: var(--demeter-terracotta-deep); }
+.dmc__send:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.dmc__starterslabel {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--demeter-muted);
+  margin: 0.3rem 0 0;
+}
+.dmc__starters { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.dmc__starter {
+  width: 100%; text-align: left; cursor: pointer;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; line-height: 1.4; color: var(--demeter-ink);
+  background: var(--demeter-tint); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-input); padding: 0.55rem 0.7rem; min-height: 44px;
+}
+.dmc__starter:hover { border-color: var(--demeter-terracotta); }
+.dmc__starter:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+
+/* ── The deep band (What SNAP is) ───────────────────────────────────
+   The one moment of weight on a quiet page: the program definition in light
+   type on Demeter's own deep ink. NOT pine — the parent brand's green stays
+   on the parent's surfaces; borrowing it here would cross the brand line
+   kept deliberate since the Demeter pivot. */
+.dmband {
+  background: var(--demeter-ink); border-radius: var(--demeter-radius-card);
+  padding: clamp(1.4rem, 3.5vw, 2.5rem);
+}
+.dmband .dmx__h2 { color: #FFFFFF; }
+.dmband .dmx__body { color: rgba(255, 255, 255, 0.82); }
+.dmband .dmx__defs { gap: 1rem; }
+.dmband .dmx__def {
+  background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--demeter-radius-inner); padding: 1rem 1.1rem;
+}
+/* The terracotta dt fails contrast on ink; labels go quiet-light instead. */
+.dmband .dmx__def dt { color: rgba(255, 255, 255, 0.65); }
+.dmband .dmx__def dd { color: rgba(255, 255, 255, 0.9); }
 .dmo__eyebrow {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -5676,10 +5810,10 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   .demeter__tagline { display: none; }
 }
 
-.dmx { padding: clamp(2.5rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--demeter-rule); }
+.dmx { padding: clamp(1.75rem, 3.5vw, 2.75rem) 0; border-top: 1px solid var(--demeter-rule); }
 /* The one internal link out of the chat page, to /questions. Reads as a door,
    not a footnote — moved content with a weak link is content nobody finds. */
-.dmx--outlink { padding: clamp(1.75rem, 4vw, 2.5rem) 0; }
+.dmx--outlink { padding: clamp(1.25rem, 2.5vw, 1.75rem) 0; }
 .dmx__outlink {
   display: block; text-decoration: none; background: var(--demeter-card);
   border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
@@ -5746,7 +5880,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
-.dmx--lede { border-top: 0; padding-top: clamp(2rem, 5vw, 3.5rem); }
+.dmx--lede { border-top: 0; padding-top: clamp(1.5rem, 3vw, 2.25rem); }
 .dmx__eyebrow {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -5921,7 +6055,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmret__livemap {
   width: 100%; height: 360px; border-radius: var(--demeter-radius-card); overflow: hidden;
   border: 1px solid var(--demeter-rule);
-  background: var(--demeter-paper); /* shows while tiles are still loading */
+  background: var(--demeter-tint); /* shows while tiles are still loading */
 }
 /* THE PANEL UNDER THE MAP. A permanent link, not a fallback that only shows
    up when a search comes up empty — the map's own 40-result cap and the
@@ -5932,7 +6066,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmret__more {
   margin: 0.85rem 0 0; padding: 0.85rem 1rem;
   border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
-  background: var(--demeter-paper);
+  background: var(--demeter-tint);
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.82rem; color: var(--demeter-muted); line-height: 1.5;
 }
@@ -6376,7 +6510,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    narrow stack. Same four claims, same words. */
 .dmx__trustlist--wide {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
-  gap: 1.75rem; margin-top: 1.5rem;
+  gap: 1.25rem; margin-top: 1.25rem;
 }
 /* Label-left, body-right (taste audit finding 6): the trust list and the
    "What SNAP is" grid were the same stacked label-over-body family twice in
@@ -6406,7 +6540,9 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 
 /* ── Chat body: conversation + the live estimate rail ─────────────────────── */
-.demeter__body { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+/* Single column by default — the tracking panel is the SIDEBAR now (owner
+   refinement 2026-08-21), a left column only while open. */
+.demeter__body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; align-items: start; }
 .demeter__main { display: flex; flex-direction: column; min-width: 0; }
 
 /* Card white, matching the picker directly above it. On --demeter-paper it was
@@ -6443,7 +6579,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmw__result--certain { border-color: #C9DCC4; background: #F3F8F1; }
 .dmw__result--warn { border-color: #E6D3A9; background: #FBF6EA; }
 .dmw__result--deny { border-color: #E9C2B4; background: #FBEAE5; }
-.dmw__result--pending { border-color: var(--demeter-rule-strong); }
+.dmw__result--pending { border-color: var(--demeter-rule-strong); background: var(--demeter-tint); }
 .dmw__result-label {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -6487,7 +6623,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmw__mode {
   display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem;
   margin: 0.75rem 0 0.9rem; padding: 0.25rem;
-  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  background: var(--demeter-tint); border: 1px solid var(--demeter-rule);
   border-radius: var(--demeter-radius-pill);
   position: relative;
 }
@@ -6752,8 +6888,38 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   background: var(--demeter-paper);
   color: var(--demeter-ink);
 }
+/* MODAL FRAMING (owner rec 2026-08-22): the card should take a small part of
+   a darkened, blurred ground rather than float on a full page of paper.
+   The scrim is a layer over this surface's own ground — we do not fake a
+   screenshot of the chat behind it. */
+.signin-page[data-surface="demeter"]::before {
+  content: ""; position: fixed; inset: 0; z-index: 0;
+  /* Light: at 0.55 this read as a grey sheet. The standalone route is now
+     mostly a magic-link/OAuth landing — the in-chat modal is the path most
+     people take — so it wants depth, not drama. */
+  background: rgba(35, 34, 32, 0.16);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+}
+.signin-page[data-surface="demeter"] > * { position: relative; z-index: 1; }
+.signin-page[data-surface="demeter"] .signin-main,
+.dmsi .signin-main {
+  display: grid; place-items: center; min-height: calc(100dvh - 6rem);
+}
+.signin-page[data-surface="demeter"] .signin-card,
+.dmsi .signin-card {
+  max-width: 24rem; width: min(24rem, 100%); margin-inline: auto;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-card);
+  box-shadow: 0 24px 60px rgba(35, 34, 32, 0.28);
+}
+.signin-page[data-surface="demeter"] .signin-header,
+.dmsi .signin-header { border-bottom: 0; }
+@media (prefers-reduced-transparency: reduce) {
+  .signin-page[data-surface="demeter"]::before { backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
 
-.signin-page[data-surface="demeter"] .signin-header {
+.signin-page[data-surface="demeter"] .signin-header,
+.dmsi .signin-header {
   border-bottom-color: var(--demeter-rule);
 }
 
@@ -6770,7 +6936,8 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-weight: 700;
 }
 
-.signin-page[data-surface="demeter"] .signin-card {
+.signin-page[data-surface="demeter"] .signin-card,
+.dmsi .signin-card {
   background: var(--demeter-card);
   border-color: var(--demeter-rule);
 }
@@ -6778,20 +6945,27 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 /* Serif for the heading, sans for everything functional — the type rule the
    rest of the Demeter surface follows. */
 .signin-page[data-surface="demeter"] .signin-title,
-.signin-page[data-surface="demeter"] .signin-sent-title {
+.dmsi .signin-title,
+.signin-page[data-surface="demeter"] .signin-sent-title,
+.dmsi .signin-sent-title {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   color: var(--demeter-ink);
 }
 
 .signin-page[data-surface="demeter"] .signin-subtitle,
+.dmsi .signin-subtitle,
 .signin-page[data-surface="demeter"] .signin-disclosure,
+.dmsi .signin-disclosure,
 .signin-page[data-surface="demeter"] .signin-otp-sent,
-.signin-page[data-surface="demeter"] .signin-label {
+.dmsi .signin-otp-sent,
+.signin-page[data-surface="demeter"] .signin-label,
+.dmsi .signin-label {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   color: var(--demeter-muted);
 }
 
-.signin-page[data-surface="demeter"] .signin-input {
+.signin-page[data-surface="demeter"] .signin-input,
+.dmsi .signin-input {
   border-color: var(--demeter-rule-strong);
   background: var(--demeter-card);
   color: var(--demeter-ink);
@@ -6799,18 +6973,21 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 
 /* Terracotta is Demeter's action colour. The Google button deliberately keeps
    its own treatment — Google's branding guidance governs that one, not ours. */
-.signin-page[data-surface="demeter"] .signin-cta {
+.signin-page[data-surface="demeter"] .signin-cta,
+.dmsi .signin-cta {
   background: var(--demeter-terracotta);
   border-color: var(--demeter-terracotta);
   color: #fff;
 }
 
-.signin-page[data-surface="demeter"] .signin-cta:disabled {
+.signin-page[data-surface="demeter"] .signin-cta:disabled,
+.dmsi .signin-cta:disabled {
   opacity: 0.5;
 }
 
 .signin-page[data-surface="demeter"] .locale-toggle,
-.signin-page[data-surface="demeter"] .signin-resend {
+.signin-page[data-surface="demeter"] .signin-resend,
+.dmsi .signin-resend {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   color: var(--demeter-terracotta-deep);
   border-color: var(--demeter-rule-strong);
@@ -6901,7 +7078,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    so "All states" never looks like a selection someone made. */
 .dmst__mark[data-federal] {
   color: var(--demeter-muted);
-  background: var(--demeter-paper);
+  background: var(--demeter-tint);
   border-color: var(--demeter-rule);
 }
 
@@ -7312,7 +7489,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 
 /* Undo the landing page's card chrome: on its own page the chat IS the page,
    so it needs no border, no shadow, and no capped scroll height. */
-.dmchat__body .demeter { max-width: none; min-height: 0; margin: 0; padding: 0; flex: 1; }
+/* PI'S THREAD GEOMETRY (owner rec 2026-08-22): the conversation is a single
+   NARROW centered column — greeting, transcript and composer share the same
+   two edges — not narrow content left-aligned inside a wide container,
+   which is what read as "listing left" in every wide screenshot. 46rem
+   (~780px at this stylesheet's 17px rem) is Pi's own thread width. */
+.dmchat__body .demeter { max-width: 46rem; min-height: 0; margin: 0 auto; width: 100%; padding: 0; flex: 1; }
 .dmchat__body .demeter__scroll { min-height: 0; max-height: none; flex: 1; }
 
 /* ═══ LANDING ENTRY CARD ═════════════════════════════════════════════════════
@@ -7358,7 +7540,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dment__chip {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.88rem; color: var(--demeter-body); text-align: left; cursor: pointer;
-  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  background: var(--demeter-tint); border: 1px solid var(--demeter-rule);
   border-radius: var(--demeter-radius-pill); padding: 0.5rem 0.95rem; min-height: 40px;
 }
 .dment__chip:hover { border-color: var(--demeter-terracotta); color: var(--demeter-ink); }
@@ -7391,7 +7573,313 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    the landing page where no nav sits above the card doing that job.
    (The card's <select> and the nav's links are the same control twice; the nav
    wins, because a link is something a crawler can follow.) */
-.dmchat .demeter__head { display: none; }
+/* Pi redesign: the head returns on /chat as the CHAT's chrome row — sidebar
+   toggle left, language + sign-in right. The brand block stays hidden here:
+   the nav one row above is the brand. */
+.dmchat .demeter__head {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 25;
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.5rem clamp(0.75rem, 3vw, 1.25rem);
+  background: var(--demeter-paper);
+}
+/* z-index 25 < the rail's 30, so an open rail covers the bar's left end —
+   where its own head toggle then sits, in the same screen position. The
+   right cluster stays visible in both states, which is what makes it
+   universal. */
+.dmchat__body { padding-top: 3.5rem; }
+.dmchat .demeter__brand { display: none; }
+
+.demeter__headright { display: flex; align-items: center; gap: 0.75rem; margin-left: auto; }
+/* Skip link: visible only on focus, first in the tab order. */
+.demeter__skip {
+  position: absolute; left: -9999px; top: 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; background: var(--demeter-ink); color: #fff;
+  padding: 0.5rem 0.9rem; border-radius: var(--demeter-radius-input); text-decoration: none; z-index: 60;
+}
+.demeter__skip:focus { left: 0.5rem; top: 0.5rem; position: fixed; }
+/* COLORED WHEN CLOSED (owner rec): as a bare outline on white the toggle
+   read as page furniture and the panel behind it went unfound. Wheat is
+   the next action on this surface. */
+.dmchat .demeter__sidebartoggle--closed {
+  background: var(--demeter-wheat); color: var(--demeter-ink);
+  border-radius: var(--demeter-radius-input);
+}
+.dmchat .demeter__sidebartoggle--closed:hover { background: #DDB93C; }
+/* Sign-in reads as a control, not a stray underline. */
+.dmchat .demeter__signin {
+  /* The filled terracotta the rail's foot button wore before it was retired
+     (owner rec): one sign-in on the surface, and it looks like the action
+     it is rather than a bordered label. */
+  text-decoration: none; padding: 0 1rem; min-height: 38px;
+  border: 0; border-radius: var(--demeter-radius-input);
+  color: #fff; background: var(--demeter-terracotta); font-weight: 700; font-size: 0.85rem;
+  display: inline-flex; align-items: center;
+}
+.dmchat .demeter__signin:hover { background: var(--demeter-terracotta-deep); }
+/* The reference page, beyond sign-in — what the retired nav carried here. */
+/* SIGN-IN OVER THE CHAT (owner rec 2026-08-22). The ground is the real
+   conversation, blurred — not a grey sheet — so the thing being saved is
+   visible while someone decides to save it. The tint is only deep enough to
+   hold contrast for the card's edge; the blur does the separating. */
+.dmsi {
+  position: fixed; inset: 0; z-index: 80;
+  display: grid; place-items: center; padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px) saturate(0.9); -webkit-backdrop-filter: blur(10px) saturate(0.9);
+  animation: dmsiIn 160ms ease-out both;
+}
+@keyframes dmsiIn { from { opacity: 0; } to { opacity: 1; } }
+.dmsi__card {
+  position: relative;
+  width: min(24rem, 100%); max-height: calc(100dvh - 2.5rem); overflow-y: auto;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-card); padding: 1.5rem;
+  box-shadow: 0 24px 60px rgba(35, 34, 32, 0.22);
+}
+.dmsi__card:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 3px; }
+.dmsi__close {
+  position: absolute; top: 0.6rem; right: 0.6rem;
+  width: 32px; height: 32px; display: grid; place-items: center;
+  background: transparent; border: 0; border-radius: var(--demeter-radius-pill);
+  color: var(--demeter-muted); cursor: pointer;
+}
+.dmsi__close:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
+/* Where transparency is turned down, the blur cannot separate the card from
+   the chat — so the tint carries it instead. */
+@media (prefers-reduced-transparency: reduce) {
+  .dmsi { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(35, 34, 32, 0.5); }
+}
+@media (prefers-reduced-motion: reduce) { .dmsi { animation: none; } }
+/* THE RAIL'S BOTTOM LINE (owner rec 2026-08-22): new conversation,
+   language, settings — three controls sharing one row, sized as tools
+   rather than as the two full-width buttons that used to shout from the
+   middle of the panel. */
+.demeter__railfoot {
+  display: flex; align-items: center; gap: 0.35rem;
+  padding-top: 0.6rem; border-top: 1px solid var(--demeter-rule);
+}
+.demeter__railicon {
+  display: grid; place-items: center; width: 44px; height: 44px; flex: none;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-input); color: var(--demeter-body); cursor: pointer;
+}
+.demeter__railicon:hover:not(:disabled) { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
+.demeter__railicon:disabled { opacity: 0.4; cursor: default; }
+.demeter__railicon:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+/* A LANGUAGE CONTROL, not a form field. The native select wore the OS
+   chrome — full-width, double-arrow, system font — which is the one thing
+   in the rail that looked unstyled. Same card+hairline as its neighbours,
+   the house sans, and a single quiet chevron drawn as a background so the
+   control keeps its native behaviour on every platform. */
+.demeter__lang--foot { flex: 1; min-width: 0; }
+.demeter__lang--foot .demeter__lang-select {
+  appearance: none; -webkit-appearance: none;
+  width: 100%; height: 44px; padding: 0 1.75rem 0 0.6rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; color: var(--demeter-body);
+  background-color: var(--demeter-card);
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none' stroke='%236C6A64' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.6rem center;
+  border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-input);
+  cursor: pointer;
+}
+.demeter__lang--foot .demeter__lang-select:hover { border-color: var(--demeter-rule-strong); color: var(--demeter-ink); }
+.demeter__lang--foot .demeter__lang-select:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+/* In the row the gear matches its neighbours' box rather than the bare
+   chrome-row treatment it had. */
+.demeter__railfoot .demeter__gearbtn {
+  width: 44px; height: 44px;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+}
+.demeter__railfoot .demeter__gearbtn:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
+/* The menu opens UPWARD here — this row sits at the bottom of the window. */
+.demeter__railfoot .demeter__gearmenu { top: auto; bottom: calc(100% + 0.35rem); }
+/* The confirm takes the whole row when it is showing: a destructive step
+   should not be a third of a line of icons. */
+.demeter__railfoot .demeter__clearconfirm { flex: 1; }
+/* The settings gear, on the sign-in line. <details> gives Escape and
+   outside-click for free and degrades to an open list without JS. */
+.demeter__gear { position: relative; }
+.demeter__gearbtn {
+  list-style: none; display: grid; place-items: center;
+  width: 38px; height: 38px; border-radius: var(--demeter-radius-input);
+  color: var(--demeter-body); cursor: pointer;
+}
+.demeter__gearbtn::-webkit-details-marker { display: none; }
+.demeter__gearbtn:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
+.demeter__gear[open] .demeter__gearbtn { background: var(--demeter-tint); color: var(--demeter-ink); }
+.demeter__gearmenu {
+  position: absolute; right: 0; top: calc(100% + 0.35rem); z-index: 40;
+  min-width: 12rem; display: flex; flex-direction: column;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-card); padding: 0.3rem;
+  box-shadow: 0 8px 24px rgba(35, 34, 32, 0.1);
+}
+.demeter__gearmenu .demeter__settingslink { padding: 0 0.6rem; border-radius: var(--demeter-radius-input); }
+.demeter__gearmenu .demeter__settingslink:hover { background: var(--demeter-tint); text-decoration: none; }
+/* Signed out, the saved-conversations entry IS the invitation — so it wears
+   the invitation's colour rather than a neutral card's. */
+/* Two classes deliberately: .demeter__sblabel is defined LATER in this
+   file, and at equal specificity source order would hand it the win. This
+   stylesheet is long enough that position is not a safe way to layer. */
+.demeter__sbmid .demeter__sblabel--signin {
+  background: var(--demeter-terracotta); border-color: transparent; color: #fff;
+}
+.demeter__sbmid .demeter__sblabel--signin:hover { background: var(--demeter-terracotta-deep); border-color: transparent; }
+.demeter__navlink {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; color: var(--demeter-body); text-decoration: none;
+  display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap;
+}
+.demeter__navlink:hover { color: var(--demeter-terracotta-deep); text-decoration: underline; text-underline-offset: 3px; }
+/* The settings bar: the only route to the standing pages from this surface. */
+.demeter__settingslabel {
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-muted); margin: 0 0 0.4rem;
+}
+.demeter__settingslinks { display: flex; flex-direction: column; gap: 0.1rem; margin-bottom: 0.8rem; }
+.demeter__settingslink {
+  font-size: 0.85rem; color: var(--demeter-body); text-decoration: none;
+  display: flex; align-items: center; min-height: 40px;
+}
+.demeter__settingslink:hover { color: var(--demeter-terracotta-deep); text-decoration: underline; text-underline-offset: 3px; }
+.demeter__sidebartoggle {
+  display: grid; place-items: center; width: 44px; height: 44px; flex: none;
+  background: transparent; border: 0; border-radius: var(--demeter-radius-input);
+  color: var(--demeter-ink); cursor: pointer;
+}
+.demeter__sidebartoggle:hover { background: var(--demeter-tint); }
+.demeter__sidebartoggle:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.demeter__signin {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; color: var(--demeter-terracotta-deep); text-decoration: underline;
+  text-underline-offset: 3px; white-space: nowrap; display: inline-flex; align-items: center; min-height: 44px;
+}
+/* The drawer. Off-canvas left, over the page, under nothing: it is the one
+   overlay on this surface. visibility+transform pair so it is neither
+   focusable nor painted while closed; inert (set in markup) removes it from
+   the accessibility tree with aria-hidden. */
+/* THE RAIL (Pi geometry, owner-approved rec set 2026-08-22). One element,
+   one behavior at every width: a FIXED, full-height column from under the
+   nav to the bottom of the window, touching the viewport's left edge, on
+   its own tint ground with a hairline right edge — a region, not a slab of
+   content floating in the page. Open: it slides in and the chat glides
+   right (see the :has rule on .dmchat__body); closed: it slides out and
+   the chat re-centers. On narrow screens the same rail simply overlays
+   instead of displacing. */
+.demeter__sidebar {
+  position: fixed; top: 0; bottom: 0; left: 0; z-index: 30;
+  /* top:0 — the site nav this used to clear is gone from /chat. */
+  width: min(21.5rem, 85vw);
+  background: var(--demeter-tint); border-right: 1px solid var(--demeter-rule);
+  padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: 1rem;
+  overflow-y: auto;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  transform: translateX(-100%); visibility: hidden;
+  transition: transform 200ms ease, visibility 0s linear 200ms;
+}
+.demeter__sidebar--open { transform: translateX(0); visibility: visible; transition: transform 200ms ease; }
+/* The rail head: brand flush left (Pi's own placement), toggle at the rail's
+   top right. White cards read against the tint below. */
+.demeter__sbhead { display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.25rem; }
+.demeter__sbhead .demeter__sidebartoggle { margin-left: auto; }
+.demeter__sidebar .demeter__sidebartoggle:hover { background: var(--demeter-card); }
+.demeter__sidebar .demeter__sidebarlink { background: var(--demeter-card); }
+.demeter__sbword {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  /* 1.35rem: the rail carries the identity alone now that /chat has no site
+     nav, so the brand is sized to lead the column rather than label it. */
+  font-size: 1.35rem; letter-spacing: -0.01em; font-weight: 700; color: var(--demeter-ink);
+}
+.demeter__sbbrand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; border-radius: var(--demeter-radius-input); }
+.demeter__sbbrand:hover .demeter__sbword { color: var(--demeter-terracotta-deep); }
+.demeter__sbbrand:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
+/* Ghost slots: the estimate's pre-listed template — dashed leaders say
+   "reserved", filled by conversation, never by copywriting. */
+.dmw__template-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.45rem; }
+.dmw__template-list li {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; line-height: 1.45; color: var(--demeter-muted);
+  border: 1px dashed var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
+  padding: 0.5rem 0.65rem; background: var(--demeter-tint);
+  animation: dmwSlotIn 260ms ease-out both;
+}
+/* STAGGERED, so the four slots read as one list arriving rather than four
+   boxes appearing at once — the mode switch is a state change worth
+   showing. Compositor-only (opacity + transform), and static under
+   prefers-reduced-motion. */
+.dmw__template-list li:nth-child(1) { animation-delay: 0ms; }
+.dmw__template-list li:nth-child(2) { animation-delay: 45ms; }
+.dmw__template-list li:nth-child(3) { animation-delay: 90ms; }
+.dmw__template-list li:nth-child(4) { animation-delay: 135ms; }
+@keyframes dmwSlotIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .dmw__template-list li { animation: none; }
+}
+/* Same rhythm as the still-needed list it becomes: same size, same gap, so
+   switching modes reads as the panel filling in rather than swapping. */
+.dmw__needed ul { display: flex; flex-direction: column; gap: 0.45rem; }
+/* The rail's middle zone: saved conversations, Pi's own geography (their
+   rail's middle is the conversation list). The label IS the link. */
+/* The void BELOW this block is deliberate (owner call 2026-08-22): Pi's own
+   rail keeps its list at the top, login at the bottom, and air between —
+   real saved conversations will fill it over time. Do not pin this block
+   to the foot to "fix" the gap. */
+.demeter__sbmid { display: flex; flex-direction: column; gap: 0.4rem; }
+.demeter__sblabel {
+  font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-ink); text-decoration: none; font-weight: 650;
+  padding: 0.55rem 0.65rem; border-radius: var(--demeter-radius-input);
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  min-height: 44px; display: flex; align-items: center;
+}
+.demeter__sblabel:hover { border-color: var(--demeter-terracotta); }
+/* The keep/verify tools read as one card against the tint, not loose ends. */
+.dmchat .demeter__sidetools {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-card); padding: 0.85rem 0.95rem;
+}
+/* The worksheet's foot links (portal, how-we-verify): standing facts at the
+   card's foot with the retention line. */
+.dmw__footlinks { display: flex; flex-direction: column; gap: 0.15rem; border-top: 1px solid var(--demeter-rule); margin-top: 0.5rem; padding-top: 0.25rem; }
+/* The tools card only exists when it holds an action — an empty white card
+   in the rail is worse than nothing. */
+.dmchat .demeter__sidetools:not(:has(button)):not(:has(a)) { display: none; }
+.demeter__sidebarauth .demeter__lang { display: block; margin-bottom: 0.8rem; }
+.demeter__sidebarauth .demeter__lang-select { width: 100%; }
+/* One picker visible at any width: the sidebar's instance from 901px, the
+   in-column instance below it — where the drawer starts closed and the
+   state must not hide behind it (mobile e2e pins this). */
+/* Rendered only on narrow viewports (state-driven — see narrowViewport in
+   DemeterChat: one picker instance in the DOM at any width). */
+.demeter__mobilepicker { margin-bottom: 0.75rem; }
+.demeter__sidebarlink {
+  font-size: 0.95rem; color: var(--demeter-ink); text-decoration: none;
+  padding: 0.6rem 0.7rem; border-radius: var(--demeter-radius-input);
+  border: 1px solid var(--demeter-rule); background: var(--demeter-tint);
+  min-height: 44px; display: flex; align-items: center;
+}
+.demeter__sidebarlink:hover { border-color: var(--demeter-terracotta); }
+.demeter__sidebarauth { margin-top: auto; border-top: 1px solid var(--demeter-rule); padding-top: 1rem; }
+.demeter__sidebarnote { font-size: 0.85rem; line-height: 1.5; color: var(--demeter-muted); margin: 0 0 0.6rem; overflow-wrap: anywhere; }
+.demeter__sidebarsignin {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px;
+  padding: 0 1.1rem; border-radius: var(--demeter-radius-input);
+  background: var(--demeter-terracotta); color: #fff; font-weight: 700; font-size: 0.9rem; text-decoration: none;
+}
+.demeter__sidebarsignin:hover { background: var(--demeter-terracotta-deep); }
+/* The onboarding ask, in Demeter's own voice (serif — it speaks). */
+.demeter__emptyask {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.6; color: var(--demeter-body); margin: 0.5rem 0 0;
+  max-width: 58ch; text-wrap: pretty;
+}
+@media (prefers-reduced-motion: reduce) {
+  .demeter__sidebar, .demeter__sidebar--open { transition: none; }
+  .dmchat__body { transition: none; }
+}
 
 /* Fill the viewport properly: the transcript takes the slack and the composer
    sits at the BOTTOM of the screen rather than floating halfway up it, which is
@@ -7415,7 +7903,49 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    unscoped it kept two columns on a phone and handed 21rem of a 356px screen
    to the rail — measured, .demeter__main came out 0px wide. */
 @media (min-width: 901px) {
-  .dmchat .demeter__body { grid-template-columns: minmax(0, 1fr) minmax(0, 21rem); column-gap: 2.5rem; }
+  .dmchat .demeter__body { grid-template-columns: minmax(0, 1fr); column-gap: 2.5rem; }
+  /* The FIXED rail displaces the page: the body slides right to clear it
+     (and the chat re-centers in the remaining space via its own max-width),
+     animated in step with the rail's 200ms slide so open/close is one
+     glide, not a pop. :has because the open state lives on the rail
+     element inside. */
+  /* ONE ANIMATED PROPERTY (2026-08-22). Opening used to change three things
+     on this box: margin-left eased over 200ms while width (100%->auto) and
+     margin-right (auto->0) SNAPPED at frame zero. The inner column recentred
+     instantly against the new box and then slid — the text moved twice, in
+     two different ways, which is the whole of the roughness.
+
+     Now the box is full-width and flush in BOTH states and only its LEFT
+     PADDING animates; the thread centres inside whatever content box is
+     left, so opening and closing are one continuous motion on the same
+     200ms and easing as the rail's own slide.
+
+     Layout still runs per frame. A transform would be compositor-only, but
+     it would also make this box the containing block for the fixed rail and
+     chrome bar and jump both — so this is fewer properties, not zero cost. */
+  .dmchat__body {
+    max-width: none; margin-inline: 0; width: 100%;
+    transition: padding-left 200ms ease;
+  }
+  /* Driven by a data attribute the component sets, not by :has() reading a
+     descendant's class. Two honest reasons, neither of them a bug report:
+     the state is owned by React, so inferring it back out of the DOM is the
+     long way round; and :has() only reached Firefox in 121 — load-bearing
+     LAYOUT should not need it on a service whose readers are often on old
+     devices. (An earlier comment here claimed a :has() invalidation bug. It
+     was a measurement artifact: the preview pane was hidden, and a hidden
+     renderer defers style recalc, so every reading was stale.) */
+  :root[data-demeter-rail="open"] .dmchat__body {
+    padding-left: calc(21.5rem + clamp(1rem, 4vw, 2rem));
+  }
+  /* (The 46rem centered column above applies in both rail states.) */
+  /* One brand on screen: while the rail is open it carries the mark and the
+     name — the nav's brand fully collapses and the tabs + languages pack
+     right as one cluster, so the bar reads as chrome rather than a layout
+     with a hole in it. Closed rail: the brand returns. */
+  /* (The nav-yields-to-rail rules that lived here are gone with the nav
+     itself: /chat renders no DemeterNav at all now, so there is no second
+     brand and no second language control to suppress.) */
 
   /* The controls row now lives INSIDE the conversation column (see the JSX), so
      it needs no grid of its own — it is already the width of the column it
@@ -7425,10 +7955,10 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
      floated alone in the right column between them, belonging to neither. */
   .dmchat .demeter__scope { padding-top: 0; }
 
-  /* Flush with the composer at rest, so the two read as one control rather than
-     a tall box with a short button parked at its corner. They stay bottom
-     aligned as the composer grows. */
-  .dmchat .demeter__send { min-height: 52px; border-radius: var(--demeter-radius-card); padding: 0 1.6rem; }
+  /* RETIRED (owner rec 2026-08-22): the send is a 40px circle riding INSIDE
+     the field now — the flush-pill sizing above fought that geometry from
+     later in the cascade and won on order. The circle rule lives with the
+     composer block (~.demeter__inputrow). */
 }
 
 /* The measure, capped in CHARACTERS rather than as a percentage of whatever the
@@ -7652,17 +8182,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    `align-self: start` on the column (not the panel) is what lets sticky work at
    all: a stretched grid item is already as tall as the row, so it has nothing
    to travel within. */
+/* Inside a fixed, self-scrolling rail: no sticky, no own max-height — the
+   rail is the scroll container now. */
 .dmchat .demeter__side {
-  align-self: start;
-  position: sticky;
-  top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
-  /* Never taller than the viewport, or the bottom of the panel becomes
-     unreachable — it scrolls within itself instead. */
-  max-height: calc(100dvh - 2rem);
-  overflow-y: auto;
 }
 /* `flex: 1 1 22rem` was written for the horizontal row this used to sit in, so
    the 22rem basis meant WIDTH. In a column it means HEIGHT, and the picker
@@ -7760,15 +8285,32 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 
 /* Quieter than either button, and last: a standing promise about how answers
-   are checked, not something to do right now. */
-.dmchat .demeter__sidetools .demeter__how {
+   are checked, not something to do right now.
+   
+   RETARGETED 2026-08-22. This was scoped to `.demeter__sidetools .demeter__how`
+   and the links moved into the worksheet card's foot (`.dmw__footlinks`) the
+   same day — so the rule stopped matching the element it protects and the
+   link fell back to the base 0.8rem, which is why it read a size larger than
+   the "your state agency" link it belongs beside. The finding-7 test kept
+   passing because it greps this stylesheet rather than the rendered link; it
+   now asserts the element's real ancestry too.
+   
+   Matched to `.demeter__link` — the "your state agency" link under the
+   composer — because they are the same KIND of thing: a quiet pointer to
+   where an answer can be checked. Same size, same colour, same underline. */
+.dmchat .demeter__sidetools .demeter__how,
+.dmw__footlinks .demeter__how {
   /* Visually quiet, but the HIT AREA stays 44px: the old zeroed height and
      padding here silently shrank the target to 21px (measured) while the
      base rule still declared 44 (vercel-guidelines finding 7). The negative
      block margin gives the padding back to the layout, so the rail reads
-     exactly as before. */
+     exactly as before.
+     
+     44, not the WCAG 2.2 AA minimum of 24: DEMETER-DESIGN.md commits to 44
+     on every control, and this audience reaches for it on phones. Exceeding
+     the floor is the point. */
   min-height: 44px; padding: 0.7rem 0; margin-block: -0.7rem;
-  font-size: 0.78rem; align-self: flex-start;
+  font-size: 0.72rem; align-self: flex-start; width: fit-content;
 }
 
 @media (max-width: 900px) {
@@ -7840,7 +8382,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
      line above the choices rather than competing with them. */
   display: flex; flex-direction: column; align-items: stretch; gap: 0.6rem;
   padding: 0.8rem 0.9rem; border-radius: var(--demeter-radius-card);
-  background: var(--demeter-paper); border: 1px solid var(--demeter-rule-strong);
+  background: var(--demeter-tint); border: 1px solid var(--demeter-rule-strong);
 }
 .demeter__clearnote {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -7866,7 +8408,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__piihint {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.74rem; line-height: 1.5; color: var(--demeter-muted);
-  text-align: center; padding: 0.35rem 1rem 0; margin: 0; max-width: 56ch;
+  text-align: center; padding: 0.25rem 1rem 0; margin: 0; max-width: 56ch;
   margin-left: auto; margin-right: auto;
 }
 /* One line. 56ch broke it across two at ~476px when the column had 830 to give,
@@ -7964,7 +8506,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmflag[data-noflag] .dmflag__code {
   display: grid; place-items: center;
   width: 2.15rem; height: 2.15rem; border-radius: var(--demeter-radius-inner);
-  color: var(--demeter-muted); background: var(--demeter-paper);
+  color: var(--demeter-muted); background: var(--demeter-tint);
   border: 1px solid var(--demeter-rule);
 }
 

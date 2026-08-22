@@ -24,11 +24,12 @@ import {
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 import Image from "next/image";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
+import { COUNT_FLOOR } from "../lib/live-counts";
 import { programDisplayName, agencyDisplayName } from "../lib/program-name";
-import { shieldCitations } from "../lib/no-translate";
 import { StateFlag } from "./StateFlag";
 import { UsCoverageMap } from "./UsCoverageMap";
 import { SnapRetailerMap } from "./SnapRetailerMap";
+import { SnapMiniChat } from "./SnapMiniChat";
 
 /** The three verified codes in VERIFIED_STATES that are not states — DC is a
  *  federal district, Guam and the U.S. Virgin Islands are territories. Both
@@ -116,8 +117,25 @@ export function formQuestionAnswer(q: FormQuestion, lang: AnswerLang = "en"): st
  *  Not deleted — every word is still server-rendered on this URL. They are
  *  credibility, and credibility is what you read after you see the thing, not
  *  the wall you climb to reach it. */
-export function SnapOrientation({ lang = "en" }: { lang?: AnswerLang }) {
+export function SnapOrientation({
+  lang = "en",
+  publicCount = null,
+  states = [],
+  initialState = null,
+}: {
+  lang?: AnswerLang;
+  /** Live count of public questions answered (lib/live-counts.ts), passed in
+   *  by the page so this component stays synchronous and testable. Null (the
+   *  default) means unavailable, and unavailable renders NOTHING. */
+  publicCount?: number | null;
+  /** Verified jurisdictions for the mini chat's state select. */
+  states?: PackMeta[];
+  /** ?state= param or the geo hint — preselects the mini chat's state the
+   *  same way /chat preselects its own picker. */
+  initialState?: string | null;
+}) {
   const c = PAGE_COPY[lang];
+  const chatPath = lang === "en" ? "/chat" : `/${lang}/chat`;
   return (
     // TWO COLUMNS at desktop: the orientation text, and one real answer.
     //
@@ -143,19 +161,30 @@ export function SnapOrientation({ lang = "en" }: { lang?: AnswerLang }) {
       </div>
       <aside className="dmex" aria-label={c.example.label}>
         <p className="dmex__label">{c.example.label}</p>
-        <p className="dmex__q">{c.example.q}</p>
-        <p className="dmex__a">{shieldCitations(c.example.a, "dmex")}</p>
-        {/* The verdict the pipeline actually issued for this exchange —
-            regenerated post-#915, graded certain/grounded in every language.
-            The copy table's comment carries the rule: no CERTAIN grade, no
-            verdict line. */}
-        <p className="dmex__verdict">{c.example.verdict}</p>
-        <p className="dmex__note">
-          {c.example.note}{" "}
-          <a className="dmex__cta" href={lang === "en" ? "/chat" : `/${lang}/chat`}>
-            {c.example.cta} →
-          </a>
-        </p>
+        {/* The mini chat (owner redesign 2026-08-21) — it REPLACED the
+            cycling example card: the real way in beats a demo of it. The
+            vetted exchanges survive as its starter chips; their earned
+            verdicts are why these three questions get offered at all (data
+            tests in taste-audit-copy pin that quality). Handoff is a native
+            GET form to /chat — one chat, reachable two ways, and the typed
+            path works with no JavaScript at all. */}
+        <SnapMiniChat
+          chatPath={chatPath}
+          states={states}
+          initialState={initialState}
+          starters={c.example.items.map((item) => item.q)}
+          copy={c.miniChat}
+        />
+        {/* DORMANT UNTIL TRUE (approved 2026-08-21). The requested "Over 300
+            people" line was refused — prod truth at the time was 12 questions
+            ever — so the card carries a usage claim only when the MEASURED
+            count clears the floor. No placeholder, no "be the first": below
+            the floor this renders nothing at all. */}
+        {publicCount !== null && publicCount >= COUNT_FLOOR ? (
+          <p className="dmex__tally">
+            {c.example.tally.replace("{n}", String(publicCount))}
+          </p>
+        ) : null}
       </aside>
     </section>
   );
@@ -251,18 +280,26 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
           never actually described. One line in the orientation bar was carrying
           the whole definition. */}
       <section className="dmx" aria-labelledby="what-is-snap">
-        <h2 id="what-is-snap" className="dmx__h2">
-          {c.snapH2}
-        </h2>
-        <p className="dmx__body">{c.snapBody}</p>
-        <dl className="dmx__defs">
-          {c.snapFacts.map((f) => (
-            <div className="dmx__def" key={f.t}>
-              <dt>{f.t}</dt>
-              <dd>{f.d}</dd>
-            </div>
-          ))}
-        </dl>
+        {/* THE DEEP BAND (owner redesign 2026-08-21, FeelBetterBot-inspired
+            structure): the program definition is the page's one moment of
+            weight, set as light type on deep ink — Demeter's own near-black,
+            deliberately NOT the parent brand's pine (the iOS/Demeter brand
+            line stays drawn). The USDA attribution box stays OUTSIDE the
+            band below: it is a legal disclaimer, not brand theater. */}
+        <div className="dmband">
+          <h2 id="what-is-snap" className="dmx__h2">
+            {c.snapH2}
+          </h2>
+          <p className="dmx__body">{c.snapBody}</p>
+          <dl className="dmx__defs">
+            {c.snapFacts.map((f) => (
+              <div className="dmx__def" key={f.t}>
+                <dt>{f.t}</dt>
+                <dd>{f.d}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
 
         {/* Pointing at USDA is exactly the place to say we are not USDA. A
             benefits site that links the federal program without disclaiming

@@ -23,11 +23,15 @@ import type { Metadata } from "next";
 import { VERIFIED_STATES, VERIFIED_STATE_CODES } from "@civica/demeter-engine/packs";
 import { geoHint } from "../../lib/geo-hint";
 import { DemeterChat } from "../../components/DemeterChat";
-import { DemeterNav } from "../../components/DemeterNav";
 import { loadConversation } from "../../lib/demeter-conversations-server";
 import type { WorksheetSnapshot } from "../../lib/chat-session";
 
-export const viewport = { themeColor: "#F5F6F8" };
+// NO SITE NAV HERE (owner rec 2026-08-22). It duplicated the rail's brand
+// and language control and spent a band of height on the one surface that
+// wants it. The chat's own chrome row is this page's top bar: rail toggle
+// left, sign-in and the reference page right; the rail carries the brand,
+// the language switch, and the settings links the footer used to.
+export const viewport = { themeColor: "#FFFFFF" };
 
 export const metadata: Metadata = {
   title: "Ask Demeter — SNAP answers with the rule attached",
@@ -55,7 +59,6 @@ export default async function ChatPage({
 
   return (
     <div className="dmchat">
-      <DemeterNav active="ask" />
       <main className="dmchat__body" id="main-content">
         <DemeterChat
           states={VERIFIED_STATES}
