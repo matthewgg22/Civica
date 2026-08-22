@@ -2,11 +2,5 @@
   "framework": "nextjs",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "buildCommand": "pnpm turbo run build --filter=civica-web",
-  "outputDirectory": ".next",
-  "crons": [
-    {
-      "path": "/api/cron/retention-purge",
-      "schedule": "0 8 * * *"
-    }
-  ]
+  "outputDirectory": ".next"
 }
