@@ -5088,7 +5088,7 @@ html {
   border: 1px solid var(--demeter-terracotta); font-weight: 600;
 }
 .vcard__cta--agency:hover {
-  background: var(--demeter-paper); filter: none; color: var(--demeter-terracotta-deep);
+  background: var(--demeter-tint); filter: none; color: var(--demeter-terracotta-deep);
 }
 
 /* #27 — the tail is prose now, and the graphite footer closes the page. */
@@ -5187,11 +5187,12 @@ html {
      Uses: the mark, the nav's primary tab, a 2px rule under a source link, and
      the state-confirmation Yes. Never as text, never on white. */
   --demeter-wheat: #E8C547;
-  --demeter-ink: #1F2429;             /* cooled with the ground (palette B) — headings, answers */
-  --demeter-body: #494F56;            /* cooled with the ground (palette B) — running text */
-  --demeter-muted: #646C75;           /* cooled with the ground (palette B) — labels, placeholder text */
-  --demeter-paper: #F5F6F8;           /* palette B (taste finding 3, approved 2026-08-21): the ground cooled one step out of the warm family — was #F7F6F4, before that parchment #FCF8F1. Terracotta and wheat unchanged; the identity lives in them now. */
-  --demeter-card: #FFFFFF;            /* unchanged */
+  --demeter-ink: #232220;             /* neutral (white-ground decision, 2026-08-21) — headings, answers */
+  --demeter-body: #4B4A46;            /* neutral (white-ground decision) — running text */
+  --demeter-muted: #6C6A64;           /* neutral (white-ground decision) — labels, placeholder text; 5.4:1 on white */
+  --demeter-paper: #FFFFFF;           /* WHITE (owner decision, 2026-08-21, supersedes palette B): the cool #F5F6F8 ground read as a blue cast that muted the white cards. Ground is now true white; card separation moved to hairlines; the grays lost their blue bias the same day. History: #F5F6F8 (palette B) ← #F7F6F4 ← #FCF8F1 parchment. */
+  --demeter-card: #FFFFFF;            /* same as paper now — cards are drawn by their hairline borders */
+  --demeter-tint: #F6F5F3;            /* chip/input/hover fill — one neutral step off white, no blue */
   /* THE RADIUS SCALE (awesome-design-md recommendation, approved 2026-08-21):
      four steps, and every Demeter radius uses one. Exceptions are structural,
      not scale members: 50% circles, ≤6px hairline details, and the retailer
@@ -5200,8 +5201,8 @@ html {
   --demeter-radius-card: 12px;
   --demeter-radius-inner: 10px;
   --demeter-radius-input: 8px;
-  --demeter-rule: #E2E5E9;            /* cooled with the ground (palette B) — cards, dividers */
-  --demeter-rule-strong: #C5CAD1;     /* cooled with the ground (palette B) — inputs, table heads */
+  --demeter-rule: #E8E6E2;            /* neutral hairline (white-ground decision) — cards, dividers */
+  --demeter-rule-strong: #D2CFC9;     /* neutral (white-ground decision) — inputs, table heads */
 }
 
 /* --demeter-font-display (Newsreader, serif — "anything that speaks": answers,
@@ -5257,7 +5258,7 @@ html {
 .screening__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: 1; min-height: 2.6rem; max-height: 8rem; resize: none; border: 1px solid var(--demeter-rule-strong);
-  border-radius: var(--demeter-radius-card); padding: 0.6rem 0.85rem; font-size: 0.95rem; background: var(--demeter-paper);
+  border-radius: var(--demeter-radius-card); padding: 0.6rem 0.85rem; font-size: 0.95rem; background: var(--demeter-tint);
 }
 .screening__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .screening__send {
@@ -5375,7 +5376,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .screen-auth__label { font-size: 0.78rem; font-weight: 600; color: var(--demeter-muted); margin-top: 0.6rem; }
 .screen-auth__input {
   border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner); padding: 0.6rem 0.8rem; font-size: 0.95rem;
-  background: var(--demeter-paper); color: var(--demeter-ink);
+  background: var(--demeter-tint); color: var(--demeter-ink);
 }
 .screen-auth__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .screen-auth__error {
@@ -5408,10 +5409,28 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    a source link. Never a fill, never text. Same rule as the logo mark.
    ═════════════════════════════════════════════════════════════════════════ */
 
+/* THE DOCUMENT BEHIND THE PAGE. html/body carry the legacy Civica parchment
+   (#F7F5EF), and every Demeter surface paints its own ground on top — which
+   held visually until the ground went white: overscroll rubber-banding (and
+   any not-yet-painted region) exposes the DOCUMENT color, and a cream flash
+   behind a white page reads as a glitch. Wherever a Demeter root is present,
+   the document itself goes white. The legacy pine-branded pages keep their
+   parchment untouched. */
+html:has(.dmpage), body:has(.dmpage),
+html:has(.dmchat), body:has(.dmchat),
+html:has(.demeter-page), body:has(.demeter-page),
+html:has(.screening), body:has(.screening),
+html:has(.screen-landing), body:has(.screen-landing),
+html:has(.screen-auth), body:has(.screen-auth),
+html:has(.vpage), body:has(.vpage),
+html:has(.saved), body:has(.saved),
+html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surface="demeter"]) {
+  background: var(--demeter-paper);
+}
 .dmpage { min-height: 100dvh; background: var(--demeter-paper); display: block; }
 .dmpage__inner {
   width: 100%; max-width: 1180px; margin: 0 auto;
-  padding: 0 clamp(1rem, 4vw, 3.5rem) calc(4rem + env(safe-area-inset-bottom));
+  padding: 0 clamp(1rem, 4vw, 3.5rem) calc(3rem + env(safe-area-inset-bottom));
 }
 
 /* The chat, inside the page: drop the standalone 720px column and the forced
@@ -5529,7 +5548,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmst__search {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   width: 100%; min-height: 42px; padding: 0.45rem 0.7rem; font-size: 0.9rem;
-  color: var(--demeter-ink); background: var(--demeter-paper);
+  color: var(--demeter-ink); background: var(--demeter-tint);
   border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner);
 }
 .dmst__search:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
@@ -5540,7 +5559,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   padding: 0.55rem 0.7rem; text-align: left; cursor: pointer;
   background: transparent; border: 0; border-radius: var(--demeter-radius-inner); color: var(--demeter-ink);
 }
-.dmst__opt:hover { background: var(--demeter-paper); }
+.dmst__opt:hover { background: var(--demeter-tint); }
 .dmst__opt.is-sel { background: #FBF1EC; }
 .dmst__opt-name { font-size: 0.92rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; }
 .dmst__opt-sub { font-size: 0.78rem; color: var(--demeter-muted); }
@@ -5590,7 +5609,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmex__q {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.88rem; line-height: 1.5; color: var(--demeter-ink);
-  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  background: var(--demeter-tint); border: 1px solid var(--demeter-rule);
   border-radius: var(--demeter-radius-inner); padding: 0.55rem 0.75rem; margin: 0 0 0.75rem;
 }
 .dmex__a {
@@ -5617,7 +5636,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 @media (prefers-reduced-motion: reduce) {
   .dmex__item { transition: none; }
 }
-.dmex__dots { display: flex; gap: 0.25rem; margin: 0.1rem 0 0.65rem; }
+.dmex__dots { display: flex; gap: 0.25rem; margin: 0 0 0.5rem; }
 .dmex__dot {
   width: 8px; height: 8px; border-radius: var(--demeter-radius-pill);
   border: 1px solid var(--demeter-rule-strong);
@@ -5700,10 +5719,10 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   .demeter__tagline { display: none; }
 }
 
-.dmx { padding: clamp(2.5rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--demeter-rule); }
+.dmx { padding: clamp(1.75rem, 3.5vw, 2.75rem) 0; border-top: 1px solid var(--demeter-rule); }
 /* The one internal link out of the chat page, to /questions. Reads as a door,
    not a footnote — moved content with a weak link is content nobody finds. */
-.dmx--outlink { padding: clamp(1.75rem, 4vw, 2.5rem) 0; }
+.dmx--outlink { padding: clamp(1.25rem, 2.5vw, 1.75rem) 0; }
 .dmx__outlink {
   display: block; text-decoration: none; background: var(--demeter-card);
   border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
@@ -5770,7 +5789,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
-.dmx--lede { border-top: 0; padding-top: clamp(2rem, 5vw, 3.5rem); }
+.dmx--lede { border-top: 0; padding-top: clamp(1.5rem, 3vw, 2.25rem); }
 .dmx__eyebrow {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -5945,7 +5964,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmret__livemap {
   width: 100%; height: 360px; border-radius: var(--demeter-radius-card); overflow: hidden;
   border: 1px solid var(--demeter-rule);
-  background: var(--demeter-paper); /* shows while tiles are still loading */
+  background: var(--demeter-tint); /* shows while tiles are still loading */
 }
 /* THE PANEL UNDER THE MAP. A permanent link, not a fallback that only shows
    up when a search comes up empty — the map's own 40-result cap and the
@@ -5956,7 +5975,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmret__more {
   margin: 0.85rem 0 0; padding: 0.85rem 1rem;
   border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
-  background: var(--demeter-paper);
+  background: var(--demeter-tint);
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.82rem; color: var(--demeter-muted); line-height: 1.5;
 }
@@ -6400,7 +6419,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    narrow stack. Same four claims, same words. */
 .dmx__trustlist--wide {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
-  gap: 1.75rem; margin-top: 1.5rem;
+  gap: 1.25rem; margin-top: 1.25rem;
 }
 /* Label-left, body-right (taste audit finding 6): the trust list and the
    "What SNAP is" grid were the same stacked label-over-body family twice in
@@ -6511,7 +6530,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmw__mode {
   display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem;
   margin: 0.75rem 0 0.9rem; padding: 0.25rem;
-  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  background: var(--demeter-tint); border: 1px solid var(--demeter-rule);
   border-radius: var(--demeter-radius-pill);
   position: relative;
 }
@@ -6925,7 +6944,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    so "All states" never looks like a selection someone made. */
 .dmst__mark[data-federal] {
   color: var(--demeter-muted);
-  background: var(--demeter-paper);
+  background: var(--demeter-tint);
   border-color: var(--demeter-rule);
 }
 
@@ -7382,7 +7401,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dment__chip {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.88rem; color: var(--demeter-body); text-align: left; cursor: pointer;
-  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  background: var(--demeter-tint); border: 1px solid var(--demeter-rule);
   border-radius: var(--demeter-radius-pill); padding: 0.5rem 0.95rem; min-height: 40px;
 }
 .dment__chip:hover { border-color: var(--demeter-terracotta); color: var(--demeter-ink); }
@@ -7864,7 +7883,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
      line above the choices rather than competing with them. */
   display: flex; flex-direction: column; align-items: stretch; gap: 0.6rem;
   padding: 0.8rem 0.9rem; border-radius: var(--demeter-radius-card);
-  background: var(--demeter-paper); border: 1px solid var(--demeter-rule-strong);
+  background: var(--demeter-tint); border: 1px solid var(--demeter-rule-strong);
 }
 .demeter__clearnote {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -7988,7 +8007,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmflag[data-noflag] .dmflag__code {
   display: grid; place-items: center;
   width: 2.15rem; height: 2.15rem; border-radius: var(--demeter-radius-inner);
-  color: var(--demeter-muted); background: var(--demeter-paper);
+  color: var(--demeter-muted); background: var(--demeter-tint);
   border: 1px solid var(--demeter-rule);
 }
 

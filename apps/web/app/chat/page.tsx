@@ -27,7 +27,7 @@ import { DemeterNav } from "../../components/DemeterNav";
 import { loadConversation } from "../../lib/demeter-conversations-server";
 import type { WorksheetSnapshot } from "../../lib/chat-session";
 
-export const viewport = { themeColor: "#F5F6F8" };
+export const viewport = { themeColor: "#FFFFFF" };
 
 export const metadata: Metadata = {
   title: "Ask Demeter — SNAP answers with the rule attached",

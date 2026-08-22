@@ -56,11 +56,11 @@ Font.register({
 // screening-pdf.tsx gives: react-pdf's StyleSheet cannot resolve CSS custom
 // properties. Wheat is the measured logo gold (#E8C547), not the older guess.
 const TERRACOTTA_DEEP = "#8E3A26";
-const INK = "#1F2429";
-const BODY = "#494F56";
-const MUTED = "#646C75";
-const RULE = "#E2E5E9";
-const LEADER = "#C5CAD1";
+const INK = "#232220";
+const BODY = "#4B4A46";
+const MUTED = "#6C6A64";
+const RULE = "#E8E6E2";
+const LEADER = "#D2CFC9";
 const WHEAT = "#E8C547";
 
 const styles = StyleSheet.create({

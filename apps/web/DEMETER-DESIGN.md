@@ -78,18 +78,22 @@ not add an eleventh without deleting one.
 | `--demeter-terracotta` | `#C0553B` | CTAs, links, marks |
 | `--demeter-terracotta-deep` | `#8E3A26` | wordmark "AI", hover, error, small text |
 | `--demeter-wheat` | `#E8C547` | logo mark, a 2px rule under a source link, **and the next action** (nav "Ask Demeter" + one in-content CTA at a time). Never text. |
-| `--demeter-ink` | `#1F2429` | headings, answers |
-| `--demeter-body` | `#494F56` | running text |
-| `--demeter-muted` | `#646C75` | labels, placeholder text |
-| `--demeter-paper` | `#F5F6F8` | page background |
-| `--demeter-card` | `#FFFFFF` | cards |
-| `--demeter-rule` | `#E2E5E9` | cards, dividers |
-| `--demeter-rule-strong` | `#C5CAD1` | inputs, table heads |
+| `--demeter-ink` | `#232220` | headings, answers |
+| `--demeter-body` | `#4B4A46` | running text |
+| `--demeter-muted` | `#6C6A64` | labels, placeholder text |
+| `--demeter-paper` | `#FFFFFF` | page background |
+| `--demeter-card` | `#FFFFFF` | cards (drawn by hairline borders — same value as paper) |
+| `--demeter-tint` | `#F6F5F3` | chip/input/hover fill — one neutral step off white |
+| `--demeter-rule` | `#E8E6E2` | cards, dividers |
+| `--demeter-rule-strong` | `#D2CFC9` | inputs, table heads |
 
-**Palette decision (2026-08-21):** the ground runs COOL (paper `#F5F6F8`, cool rules and
-neutrals) — "palette B" from the taste audit. The warm parchment family was retired in two
-steps (full tint → quarter tint → cool); the brand's warmth now lives entirely in the
-terracotta, the wheat, and the serif, which are unchanged. Do not re-warm the neutrals.
+**Palette decision (2026-08-21, second revision — owner call, supersedes palette B):**
+the ground is TRUE WHITE (`#FFFFFF`) and every gray is HUE-NEUTRAL. Palette B's cool
+ground (`#F5F6F8`) read as a blue cast that muted the white cards, so the blue bias came
+out of the whole neutral family the same day it went in. Cards are now drawn by their
+hairline borders; chips, inputs and hover states sit on `--demeter-tint` (`#F6F5F3`).
+The parchment family stays retired — this is *white*, not a re-warm; the brand's warmth
+still lives entirely in the terracotta, the wheat, and the serif, which are unchanged.
 
 **Machine-readable companion:** [`DESIGN.md`](DESIGN.md) in this directory carries this
 system as measured tokens in the Google Stitch / awesome-design-md format, for AI
