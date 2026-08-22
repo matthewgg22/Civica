@@ -279,6 +279,45 @@ export function pendingQuestion(answer: string): string | null {
 const INLINE_CITE_RE =
   /\s*\((?:see |under |per )?(?:(?:7|8)\s?CFR|ACL|ACIN|MPP|FNS Handbook|Pub\.?\s?L\.?)[^()]*(?:\([^()]*\)[^()]*)*\)/g;
 
+/** How many trailing words settle independently at the streaming edge.
+ *
+ *  Sized against the drain: at the catch-up ceiling a short word is revealed
+ *  every ~70–100ms, so five words cover the full 420ms settle — a word is
+ *  always finished fading before it leaves the window, and nothing ever
+ *  jumps from mid-fade to opaque. */
+const STREAM_WINDOW_WORDS = 5;
+
+/** Split a streaming line into a head (rendered normally) and a window of
+ *  trailing words, each destined for its own settle span. `at` is the word's
+ *  character offset in the line — text only ever appends, so offsets are
+ *  stable across renders and make React keys that mount each word exactly
+ *  once. (One reused span was the choppiness: the settle animation ran on
+ *  first mount only, and every word after it popped in at full opacity.) */
+function splitStreamWindow(line: string): {
+  head: string;
+  window: { at: number; text: string }[];
+} {
+  if (line === "") return { head: "", window: [] };
+  const starts: number[] = [];
+  let i = line.length;
+  while (starts.length < STREAM_WINDOW_WORDS) {
+    const sp = line.lastIndexOf(" ", i - 1);
+    if (sp <= 0) {
+      starts.unshift(0);
+      break;
+    }
+    starts.unshift(sp);
+    i = sp;
+  }
+  return {
+    head: line.slice(0, starts[0]!),
+    window: starts.map((at, k) => ({
+      at,
+      text: line.slice(at, starts[k + 1] ?? line.length),
+    })),
+  };
+}
+
 export function renderAnswer(text: string, opts?: { streaming?: boolean }): ReactNode[] {
   // Strip inline citations from the BODY only — everything before the first
   // trailer rule. The trailer keeps its citations; that is where they live.
@@ -301,6 +340,12 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
    *  saw the same sentence twice and the list vanish until the stream
    *  finished (#898 P1-3, screenshot-confirmed on a real conversation). */
   let lastBlockIsProse = false;
+  /** The source items of the list at `lastPara` when the last block is a
+   *  list, so the streaming edge can rebuild its final item with the settle
+   *  window — the list edge previously had no settle at all (#898 P1-3 fixed
+   *  content loss here, not motion), and SNAP answers are bullet-heavy. */
+  let lastListItems: string[] = [];
+  let lastListKey = 0;
 
   /** A run of "- " lines is a LIST, and should be one.
    *
@@ -313,6 +358,8 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   const flushBullets = (items: string[], key: number) => {
     lastPara = out.length;
     lastBlockIsProse = false;
+    lastListItems = items;
+    lastListKey = key;
     out.push(
       <ul className="demeter__list" key={`ul${key}`}>
         {items.map((item, i) => (
@@ -414,31 +461,81 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   // sentence as it arrived — a cursor is right for a thing you are typing into
   // and wrong for a thing being read to you.
   //
-  // Instead the newest word arrives dimmed and settles. Reveal is on WORD
+  // Instead the newest words arrive dimmed and settle. Reveal is on WORD
   // boundaries too (see drawStream), so words appear whole rather than letter
   // by letter; between the two, text arrives the way it is read rather than
   // the way it is typed. Something still has to say "more is coming" — an
   // answer that had finished and one that had stalled used to look identical —
   // and a word that has not finished settling says it without a mark.
-  // Only when the trailing block IS that prose paragraph — a trailing
-  // bullet list keeps its content and simply doesn't fade (#898 P1-3).
-  if (opts?.streaming && lastBlockIsProse && lastPara >= 0 && lastParaLines.length > 0) {
+  //
+  // A WINDOW of words, not one reused span: React kept the single tail node
+  // across renders, so its settle animation ran once per answer and every
+  // word after ~400ms popped in fully opaque — the pacing work upstream
+  // (drawStream) made no visual difference. Each word in the window has its
+  // own span keyed by character offset; a word mounts once, fades once, and
+  // sits settled while newer words fade in behind it.
+  //
+  // The window words render as PLAIN TEXT (no renderInline): inline markup
+  // spanning a word boundary cannot be split across spans. Any raw markers
+  // are on screen for the few hundred ms the window covers, same as the old
+  // single-word tail. Guarded to the FINAL block only — a trailing CTA link
+  // or the trailer rule ends the fade rather than re-animating text above it.
+  if (
+    opts?.streaming &&
+    lastBlockIsProse &&
+    lastPara === out.length - 1 &&
+    lastParaLines.length > 0
+  ) {
     const lines = lastParaLines.slice();
     const last = lines[lines.length - 1] ?? "";
-    const cut = last.lastIndexOf(" ");
-    const head = cut > 0 ? last.slice(0, cut) : "";
-    const tail = cut > 0 ? last.slice(cut) : last;
+    const { head, window } = splitStreamWindow(last);
     lines[lines.length - 1] = head;
+    // Offsets are within the PARAGRAPH, not the line — a soft line break must
+    // not re-key (and so re-fade) words that have already settled.
+    const base = lines.slice(0, -1).reduce((n, l) => n + l.length + 1, 0);
     out[lastPara] = (
       <p className="demeter__para" key="p-stream">
         {lines.flatMap((line, i) => [
           ...(i > 0 ? ["\n"] : []),
           ...renderInline(line, `pstream${i}`),
         ])}
-        <span className="demeter__streamtail" key="tail">
-          {tail}
-        </span>
+        {window.map((w) => (
+          <span className="demeter__streamtail" key={`stw${base + w.at}`}>
+            {w.text}
+          </span>
+        ))}
       </p>
+    );
+  } else if (
+    // THE LIST EDGE SETTLES TOO. #898 P1-3 stopped this branch's predecessor
+    // from destroying a streaming list; it left the list with no settle at
+    // all, so the bullet-heavy answers — most of the corpus — were the ones
+    // that still popped. Same window, applied to the final item; finished
+    // items above it keep their keys and are not re-animated.
+    opts?.streaming &&
+    !lastBlockIsProse &&
+    lastPara === out.length - 1 &&
+    lastPara >= 0 &&
+    lastListItems.length > 0
+  ) {
+    const items = lastListItems;
+    const key = lastListKey;
+    const lastIdx = items.length - 1;
+    const { head, window } = splitStreamWindow(items[lastIdx]!.replace(BULLET, ""));
+    out[lastPara] = (
+      <ul className="demeter__list" key={`ul${key}`}>
+        {items.slice(0, lastIdx).map((item, i) => (
+          <li key={`ul${key}i${i}`}>{renderInline(item.replace(BULLET, ""), `ul${key}i${i}`)}</li>
+        ))}
+        <li key={`ul${key}i${lastIdx}`}>
+          {renderInline(head, `ul${key}i${lastIdx}`)}
+          {window.map((w) => (
+            <span className="demeter__streamtail" key={`stw${w.at}`}>
+              {w.text}
+            </span>
+          ))}
+        </li>
+      </ul>
     );
   }
 
