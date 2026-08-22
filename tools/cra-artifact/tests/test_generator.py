@@ -338,3 +338,26 @@ def test_quarterly_renders_five_pages():
     assert rc == 0
     pdf = TOOL_ROOT / "out/quarterly-ocean_bank-sample.pdf"
     assert memo.page_count(pdf) == 5
+
+
+# ---- research-claim + indirect-rate guards ---------------------------------
+def test_no_fabricated_credit_score_claim_in_any_artifact():
+    """A non-existent 'NBER SNAP credit-score' citation was caught in review.
+    No generated artifact may claim a credit-score gain from SNAP enrollment."""
+    banned = ["raises credit scores", "improve credit scores", "credit score points",
+              "increases credit scores", "credit-score gain"]
+    for tpl in ("artifact.html", "memo.html", "quarterly.html"):
+        text = (TOOL_ROOT / "templates" / tpl).read_text().lower()
+        for phrase in banned:
+            assert phrase not in text, f"{tpl} contains banned claim: {phrase}"
+
+
+def test_indirect_rate_is_the_federal_de_minimis():
+    from src import quarterly as q
+    rate = dict((k, v) for k, v in q.SPLIT)
+    indirect = [v for k, v in q.SPLIT if "de minimis" in k]
+    assert indirect == [0.15], "indirect must be the 15% federal de minimis rate"
+    assert abs(sum(v for _, v in q.SPLIT) - 1.0) < 1e-9
+    # program share must clear BBB Wise Giving Standard 8 (>=65% on programs)
+    program = sum(v for k, v in q.SPLIT if "de minimis" not in k)
+    assert program >= 0.65
