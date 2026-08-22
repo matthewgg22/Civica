@@ -1,0 +1,17 @@
+{
+  "methodology": "MA fact-base family (tools/ma-snap-gap) + CA-style fractional tract-count PUMA->county allocation. Gross-income test only (HINCP x ADJINC vs 1.30 x 2023 HHS FPL by household size); occupied non-GQ households; FS=1 receipt / FS=2 no receipt; WGTP household weights; person counts = WGTP x NP.",
+  "known_biases": [
+    "Gross-income proxy ignores the TX asset/vehicle test -> overstates eligible.",
+    "ACS under-reports SNAP receipt -> overstates non-enrollment.",
+    "No net-income or deduction modeling.",
+    "Fractional tract-count allocation assumes eligibility uniform within PUMA.",
+    "ABAWD time limits and immigrant-eligibility rules not modeled."
+  ],
+  "n_households_sample": 114187,
+  "n_eligible_households_sample_130fpl": 17180,
+  "acs_vintage": "2023 1-Year PUMS",
+  "fpl_vintage": "2023 HHS Poverty Guidelines (48 states)",
+  "gross_income_multiplier": 1.3,
+  "built": "2026-08-22T17:38:07.727015+00:00",
+  "consistency_check": "FNS FY2022 modeled TX eligible ~3.85M persons at 74% participation (~1.0M unenrolled) under FULL eligibility rules; this gross-income-only fact base will differ (see known_biases)."
+}

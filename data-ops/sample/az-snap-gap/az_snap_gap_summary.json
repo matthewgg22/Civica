@@ -1,0 +1,11 @@
+{
+  "state": "AZ",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 427479.0,
+  "eligible_persons_weighted_130fpl": 996449.0,
+  "eligible_no_snap_households_130fpl": 292047.0,
+  "eligible_no_snap_persons_130fpl": 611312.0,
+  "weighted_non_enrollment_rate_130fpl": 0.683184437130245,
+  "n_counties": 15,
+  "n_pumas": 57
+}

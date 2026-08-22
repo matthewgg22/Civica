@@ -1,0 +1,11 @@
+{
+  "state": "MS",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 283282.0,
+  "eligible_persons_weighted_130fpl": 624680.0,
+  "eligible_no_snap_households_130fpl": 182402.0,
+  "eligible_no_snap_persons_130fpl": 364387.0,
+  "weighted_non_enrollment_rate_130fpl": 0.6438884221376578,
+  "n_counties": 82,
+  "n_pumas": 21
+}
