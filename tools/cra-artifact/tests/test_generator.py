@@ -333,11 +333,50 @@ def test_quarterly_measured_rates_sit_below_proposal_mid():
 
 
 @pytest.mark.skipif(not Path(generate.CHROME).exists(), reason="Chrome not installed")
-def test_quarterly_renders_five_pages():
+def test_quarterly_renders_six_pages():
+    """Six since the research-implied tier got its own page -- it overflowed
+    page 4 when squeezed in beside dollar traceability, and a clipped page is
+    a silently wrong document."""
     rc = quarterly.main(["--bank", "ocean_bank", "--amount", "25000", "--sample"])
     assert rc == 0
     pdf = TOOL_ROOT / "out/quarterly-ocean_bank-sample.pdf"
-    assert memo.page_count(pdf) == 5
+    assert memo.page_count(pdf) == 6
+
+
+def test_research_implied_tier_is_never_presented_as_measured():
+    """The deliverable applies WP 34434 effect sizes to households we served.
+    That is defensible ONLY while it is unmistakably a third tier, separate
+    from observed counts and from panel estimates. Strip the disclaimers and
+    it becomes a claim that we measured credit outcomes, which we cannot."""
+    tpl = (TOOL_ROOT / "templates/quarterly.html").read_text()
+    i = tpl.index("Research-implied financial outcomes")
+    j = tpl.index("Page 6 of 6")          # section runs to the end of its page
+    section = " ".join(tpl[i:j].split()).lower()   # normalise HTML wrapping
+    assert "not a measurement" in section
+    assert "upper bound" in section
+    assert "we do not observe credit outcomes" in section
+    assert "preliminary" in section and "subject to revision" in section
+    # the marginal-household mismatch is the load-bearing caveat
+    assert "marginal" in section
+    assert "would have enrolled without us" in section
+
+
+def test_research_implied_totals_scale_from_approved_households():
+    """The applied column must derive from the households we actually served,
+    not from a headline the reader cannot audit."""
+    banks, assumptions, org = generate.load_inputs()
+
+    class A:
+        amount, period, sample = 25000, "Q1 2027", True
+    v = quarterly.build(banks["ocean_bank"], org, assumptions, A())
+    approved = float(v["approved"].replace(",", ""))   # displayed, rounded
+    savings = float(v["ri_savings_total"].replace("$", "").replace(",", ""))
+    # within one household of the displayed count -- the totals carry full
+    # precision internally while the count is rendered rounded
+    per = quarterly.WP34434["borrower_savings_usd"]
+    assert abs(savings - approved * per) < per
+    delinq = float(v["ri_delinq_households"].replace(",", ""))
+    assert abs(delinq - approved * quarterly.WP34434["delinquency_pp"]) < 1.0
 
 
 # ---- research-claim + indirect-rate guards ---------------------------------

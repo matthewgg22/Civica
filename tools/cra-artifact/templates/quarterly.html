@@ -41,7 +41,7 @@
 <!-- P1 — headline -->
 <div class="page">
   [[sample_mark]]
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 1 of 5</div></div>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 1 of 6</div></div>
   [[sample_banner]]
   <div class="big">[[submitted]]</div>
   <div class="biglabel">SNAP applications submitted with assistance by residents of your assessment area this quarter.</div>
@@ -62,7 +62,7 @@
 <!-- P2 — delivery & service -->
 <div class="page">
   [[sample_mark]]
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 2 of 5</div></div>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 2 of 6</div></div>
   <h2>Delivery and service</h2>
   <h3>Observed in-product — every row is a recorded system event</h3>
   <table>
@@ -92,7 +92,7 @@
 <!-- P3 — outcomes -->
 <div class="page">
   [[sample_mark]]
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 3 of 5</div></div>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 3 of 6</div></div>
   <h2>Outcomes</h2>
   <h3>Consented follow-up panel — respondent-based, not extrapolated</h3>
   <p class="body">We cannot observe a state agency's determination. Participants may opt into a 30/60-day check-in; results below describe respondents only, with opt-in and response rates stated so you can weigh them.</p>
@@ -126,7 +126,7 @@
 <!-- P4 — dollar traceability -->
 <div class="page">
   [[sample_mark]]
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 4 of 5</div></div>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 4 of 6</div></div>
   <h2>Where the money went</h2>
   <table>
     <thead><tr><th>Use</th><th>Share</th><th>This grant</th></tr></thead>
@@ -148,13 +148,54 @@
   </table>
   <h3>Community need addressed</h3>
   <p class="body">An estimated [[unserved]] residents of [[counties_line]] are income-eligible for [[program_ref]] but not enrolled. Examiners are directed to consider information an institution provides about community development needs when establishing performance context, and responsiveness to identified needs is a criterion under each applicable test. This figure is offered as input to your needs narrative — a documented community need, not a representation about examination outcomes.</p>
-  <div class="foot">Need estimate: [[model_note]]. Known biases and vintages: page 5.</div>
+  <div class="foot">Need estimate: [[model_note]]. Known biases and vintages: page 6.</div>
 </div>
 
-<!-- P5 — methodology & what we learned -->
+<!-- P5 — research-implied outcomes (NOT measured) -->
 <div class="page">
   [[sample_mark]]
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 5 of 5</div></div>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 5 of 6</div></div>
+  <h2>Research-implied financial outcomes</h2>
+  <div class="banner"><strong>This section is not a measurement.</strong> We do not observe credit
+  outcomes and hold no credit-bureau linkage. It applies published effect sizes from independent
+  research on this exact intervention to the households we assisted, so you can see what the
+  literature implies. Treat every figure here as an upper bound and cite it as research, not as
+  our result.</div>
+  <table>
+    <thead><tr><th>Per marginal household, from the research</th><th>Effect</th><th>Applied to [[ri_households]] approved households</th></tr></thead>
+    <tbody>
+      <tr><td>Credit-card balance, by year three</td><td>&minus;[[ri_debt_each]]</td><td>&minus;[[ri_debt_total]] in revolving balances</td></tr>
+      <tr><td>Likelihood of carrying a delinquent account</td><td>&minus;[[ri_delinq_each]]</td><td>[[ri_delinq_households]] fewer households delinquent</td></tr>
+      <tr><td>Credit score, off a 634 average</td><td>+[[ri_score_each]]</td><td>&mdash;</td></tr>
+      <tr><td>Borrower savings from the score change, annual</td><td>&gt;$100</td><td>[[ri_savings_total]] per year</td></tr>
+    </tbody>
+  </table>
+  <p class="note"><strong>Why this is an upper bound.</strong> The published effects are
+  treatment-on-the-treated among <em>marginal</em> applicants &mdash; households whose enrollment
+  changed because the interview requirement got easier. Some households we assisted would have
+  enrolled without us, and for those the research implies nothing. The effects also accrue over
+  three years, not within this quarter. Source: Homonoff, Lee &amp; Meckel, NBER Working Paper
+  34434 (preliminary draft, November 2025; estimates subject to revision), linking SNAP
+  administrative records to credit reports across ~65,000 Los Angeles and ~40,000 San Francisco
+  applicants. Credit-score effects are the least precisely estimated in that study; the debt and
+  delinquency effects are stronger. The $100 borrower-savings figure is the authors&rsquo; own
+  translation via Brevoort et al. (2020), reproduced rather than re-derived. Population and period
+  differ from yours: Los Angeles 2020&ndash;21, San Francisco 2014&ndash;16.</p>
+  <div class="callout">
+    <div class="h">Why we include a section we did not measure</div>
+    <p>The pages before this one report what we observed. This page reports what independent
+    research implies about the households behind those counts &mdash; because the financial
+    consequence of a benefit denial is the part of this work an examiner and a credit committee
+    are both equipped to evaluate, and we would rather show you the literature plainly, with its
+    limits attached, than either omit it or blur it into our own results.</p>
+  </div>
+  <div class="foot">No figure on this page is a Civica Torrey measurement. Full citation and caveats above.</div>
+</div>
+
+<!-- P6 — methodology & what we learned -->
+<div class="page">
+  [[sample_mark]]
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 6 of 6</div></div>
   <h2>What we measured, and what missed</h2>
   <div class="callout">
     <div class="h">The pilot's stated learning goal, now measured</div>

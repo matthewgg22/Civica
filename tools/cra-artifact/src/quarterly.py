@@ -47,6 +47,18 @@ ILLUSTRATIVE_MEASURED = {
     "approval_rate": 0.55,
 }
 
+# NBER WP 34434 (preliminary draft, Nov 2025) treatment-on-the-treated effects,
+# Los Angeles arm. These are effects on the MARGINAL household -- one whose
+# enrollment actually changed because the interview requirement got easier.
+# Applying them to every approved household therefore yields an UPPER BOUND,
+# and the report says so in those words. We do not observe credit outcomes.
+WP34434 = {
+    "debt_yr3_usd": 2436,          # credit card balance, year 3 (-51% off $4,778)
+    "delinquency_pp": 0.101,       # likelihood of any delinquent account, off 41%
+    "score_points": 17,            # credit score, off a 634 mean
+    "borrower_savings_usd": 100,   # authors' own translation via Brevoort et al. (2020)
+}
+
 # Program budget split — identical at every bank (the replicability claim).
 SPLIT = [("Outreach in your assessment area", 0.60),
          ("Measurement & reporting", 0.15),
@@ -139,6 +151,16 @@ def build(bank, org, assumptions, args):
         "approval_pct": f"{m['approval_rate']*100:.0f}%",
         "annual_benefit": f"${annual_benefit/1e6:.2f}M" if annual_benefit >= 1e6 else f"${fmt(annual_benefit)}",
         "cost_per_submitted": f"${budget/submitted:.0f}",
+        # Research-implied tier -- NOT measured. See WP34434 above.
+        "ri_debt_each": f"${WP34434['debt_yr3_usd']:,}",
+        "ri_delinq_each": f"{WP34434['delinquency_pp']*100:.1f} pts",
+        "ri_score_each": f"{WP34434['score_points']} pts",
+        "ri_households": fmt(approved),
+        "ri_debt_total": f"${approved*WP34434['debt_yr3_usd']/1e6:.1f}M"
+                         if approved*WP34434['debt_yr3_usd'] >= 1e6
+                         else f"${approved*WP34434['debt_yr3_usd']:,.0f}",
+        "ri_delinq_households": fmt(approved*WP34434['delinquency_pp']),
+        "ri_savings_total": f"${approved*WP34434['borrower_savings_usd']:,.0f}",
         "benefit_per_dollar": f"${annual_benefit/budget:,.0f}",
         "unserved": fmt(need["unenrolled"]),
     }
