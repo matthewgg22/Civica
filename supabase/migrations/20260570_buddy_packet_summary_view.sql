@@ -1,3 +1,22 @@
+-- REPAIRED 2026-08-22 (#679) — SYNCED TO PROD, not rewritten from scratch.
+--
+-- This file could not apply to an empty database: it referenced
+-- snap_packets.user_id (the column is applicant_id) and selected
+-- p.current_section, a column that exists in no migration and no database.
+--
+-- Prod HAS a working buddy_packet_summary_view and
+-- buddy_packet_summary_rows() — someone applied a corrected version by hand
+-- and the repo kept the broken one. So the repair is not invention: the
+-- function body, the view columns and the applicant_read_own_packet predicate
+-- below are taken verbatim from the live definitions
+-- (pg_get_functiondef / pg_policies, read 2026-08-22). Prod's version also
+-- drops current_section and gates on status NOT IN ('Handed Off','Closed')
+-- rather than the four lowercase statuses this file used to name.
+--
+-- That divergence IS the drift #679 is about: the repo stopped describing the
+-- database, and nothing noticed because the chain could not be replayed to
+-- find out.
+
 -- Buddy Add: column-level PII restriction via summary view.
 --
 -- Why: the existing buddy_read_active_packet policy in 20260568_buddy_rls.sql
@@ -10,7 +29,7 @@
 -- that exposes only the columns a buddy should see, and removes the buddy branch
 -- from the snap_packets RLS policy so direct queries no longer leak.
 --
--- Applicants retain direct snap_packets access via user_id = auth.uid().
+-- Applicants retain direct snap_packets access via applicants.auth_uid.
 --
 -- Surfaced by: /plan-eng-review 2026-05-22 (T3, P2).
 -- Closes: TODO-19, rls-row-vs-column-restriction pitfall.
@@ -21,7 +40,14 @@ DROP POLICY IF EXISTS "buddy_read_active_packet" ON snap_enrollment.snap_packets
 
 CREATE POLICY "applicant_read_own_packet" ON snap_enrollment.snap_packets
   FOR SELECT USING (
-    user_id = auth.uid()
+    -- was: user_id = auth.uid(). snap_packets has no user_id; the applicant is
+    -- an applicants.applicant_id, resolved through applicants.auth_uid. This
+    -- is verbatim the predicate prod's live policy carries.
+    applicant_id IN (
+      SELECT a.applicant_id
+      FROM snap_enrollment.applicants a
+      WHERE a.auth_uid = auth.uid()
+    )
   );
 
 -- 2. Buddy summary view — only the columns a buddy needs.
@@ -42,7 +68,6 @@ RETURNS TABLE (
   applicant_user_id  UUID,
   status             TEXT,
   state_code         TEXT,
-  current_section    TEXT,
   updated_at         TIMESTAMPTZ,
   created_at         TIMESTAMPTZ
 )
@@ -52,21 +77,21 @@ SET search_path = snap_enrollment, pg_catalog
 AS $$
   SELECT
     p.packet_id,
-    p.user_id          AS applicant_user_id,
-    p.status,
-    p.state_code,
-    p.current_section,
+    a.auth_uid          AS applicant_user_id,
+    p.status::TEXT,
+    p.state_code::TEXT,
     p.updated_at,
     p.created_at
   FROM snap_enrollment.snap_packets p
+  JOIN snap_enrollment.applicants a ON a.applicant_id = p.applicant_id
   WHERE EXISTS (
     SELECT 1
     FROM snap_enrollment.buddy_relationship br
     WHERE br.buddy_user_id     = auth.uid()
-      AND br.applicant_user_id = p.user_id
+      AND br.applicant_user_id = a.auth_uid
       AND br.status            = 'active'
   )
-  AND p.status NOT IN ('submitted', 'approved', 'denied', 'withdrawn')
+  AND p.status NOT IN ('Handed Off', 'Closed')
   AND p.deleted_at IS NULL;
 $$;
 

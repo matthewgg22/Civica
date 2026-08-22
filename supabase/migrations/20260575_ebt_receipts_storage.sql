@@ -1,3 +1,14 @@
+-- REPAIRED 2026-08-22 (#679). This migration could not be applied to an empty
+-- database: it referenced snap_enrollment.buddy_relationships (plural) — the table created at 20260567 is buddy_relationship, so `supabase start`
+-- aborted here and nobody could stand up a Postgres from this repo.
+--
+-- Editing an applied migration is normally wrong. It is right here because
+-- Supabase tracks applied migrations BY VERSION, so this file will never
+-- re-run against prod — and leaving it broken means the chain can never
+-- replay, which is what let prod and the repo drift apart unseen in the first
+-- place. Prod's own convergence is handled by a forward migration
+-- (20260822_repair_hour_log_navigator_policy.sql), not by this edit.
+
 -- Phase 2 Lane F: ebt_receipts storage bucket + RLS
 --
 -- Creates the Supabase Storage bucket used for uploaded receipt images.
@@ -41,7 +52,7 @@ CREATE POLICY "ebt_receipts_storage_select_owner"
 
 -- RLS: navigators can SELECT receipt objects for applicants they are
 -- actively linked to (buddy or explicit navigator relationship).
--- We join through the snap_enrollment.buddy_relationships table to avoid
+-- We join through the snap_enrollment.buddy_relationship table to avoid
 -- exposing arbitrary cross-user access.
 CREATE POLICY "ebt_receipts_storage_select_navigator"
   ON storage.objects
@@ -51,7 +62,7 @@ CREATE POLICY "ebt_receipts_storage_select_navigator"
     bucket_id = 'ebt-receipts'
     AND EXISTS (
       SELECT 1
-      FROM snap_enrollment.buddy_relationships br
+      FROM snap_enrollment.buddy_relationship br
       WHERE br.buddy_user_id = auth.uid()
         AND br.applicant_user_id::text = (storage.foldername(name))[1]
         AND br.status = 'active'

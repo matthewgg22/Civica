@@ -213,3 +213,69 @@ jobs:
           name: demeter-playwright-report
           path: apps/web/playwright-report/
           retention-days: 7
+
+  migration-replay:
+    name: Migration chain replays onto a clean database
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: replay_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      REPLAY_DATABASE_URL: postgres://postgres:postgres@localhost:5433/replay_test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bootstrap the Supabase-shaped objects migrations assume
+        # Vanilla Postgres has no auth schema, no anon/authenticated/service_role
+        # and no auth.uid(); every RLS policy in the chain fails to parse
+        # without them. Same bootstrap the pg-specs job uses.
+        run: |
+          psql "$REPLAY_DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE SCHEMA IF NOT EXISTS auth;
+          CREATE SCHEMA IF NOT EXISTS storage;
+          CREATE EXTENSION IF NOT EXISTS pgcrypto;
+          DO $$ BEGIN
+            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'anon') THEN CREATE ROLE anon NOLOGIN; END IF;
+            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'authenticated') THEN CREATE ROLE authenticated NOLOGIN; END IF;
+            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'service_role') THEN CREATE ROLE service_role NOLOGIN; END IF;
+            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'supabase_auth_admin') THEN CREATE ROLE supabase_auth_admin NOLOGIN; END IF;
+          END $$;
+          GRANT USAGE ON SCHEMA auth TO anon, authenticated, service_role;
+          CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$
+            SELECT coalesce(
+              nullif(current_setting('request.jwt.claim.sub', true), ''),
+              (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')
+            )::uuid
+          $$;
+          CREATE OR REPLACE FUNCTION auth.jwt() RETURNS jsonb LANGUAGE sql STABLE AS $$
+            SELECT coalesce(
+              nullif(current_setting('request.jwt.claim', true), ''),
+              nullif(current_setting('request.jwt.claims', true), '')
+            )::jsonb
+          $$;
+          SQL
+
+      - name: Apply EVERY migration in version order
+        # THE POINT OF THIS JOB (#679). The pg-specs job above applies a
+        # hand-picked list in dependency order, which is why a chain that
+        # cannot replay went unnoticed for months: nothing ever ran all of it.
+        # Here the whole directory applies in filename order, ON_ERROR_STOP, so
+        # any migration that references an object no earlier migration creates
+        # fails this job instead of failing a person on a clean laptop.
+        run: |
+          set -euo pipefail
+          for f in supabase/migrations/*.sql; do
+            echo "── $f"
+            psql "$REPLAY_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$f"
+          done
+          echo "The chain replays onto an empty database."
