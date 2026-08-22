@@ -264,18 +264,34 @@ jobs:
             raw_user_meta_data jsonb DEFAULT '{}'::jsonb,
             created_at timestamptz DEFAULT now()
           );
+          -- Full Supabase column set, not a guess: the migrations INSERT into
+          -- buckets with file_size_limit and allowed_mime_types, so a thin
+          -- stub just moves the failure one column at a time.
           CREATE TABLE IF NOT EXISTS storage.buckets (
             id text PRIMARY KEY,
-            name text,
+            name text NOT NULL,
+            owner uuid,
+            owner_id text,
             public boolean DEFAULT false,
-            created_at timestamptz DEFAULT now()
+            avif_autodetection boolean DEFAULT false,
+            file_size_limit bigint,
+            allowed_mime_types text[],
+            created_at timestamptz DEFAULT now(),
+            updated_at timestamptz DEFAULT now()
           );
           CREATE TABLE IF NOT EXISTS storage.objects (
             id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
             bucket_id text REFERENCES storage.buckets(id),
             name text,
             owner uuid,
-            created_at timestamptz DEFAULT now()
+            owner_id text,
+            metadata jsonb,
+            user_metadata jsonb,
+            path_tokens text[],
+            version text,
+            created_at timestamptz DEFAULT now(),
+            updated_at timestamptz DEFAULT now(),
+            last_accessed_at timestamptz DEFAULT now()
           );
           CREATE OR REPLACE FUNCTION storage.foldername(name text)
             RETURNS text[] LANGUAGE sql IMMUTABLE AS $$
