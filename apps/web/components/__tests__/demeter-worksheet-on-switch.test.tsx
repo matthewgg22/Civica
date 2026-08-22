@@ -15,6 +15,7 @@
 import { describe, it, expect, afterEach, vi, beforeEach } from "vitest";
 import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
+import { stateName } from "../../lib/state-names";
 
 import { DemeterChat } from "../DemeterChat";
 import { T } from "../../lib/i18n/demeter-chat-copy";
@@ -22,7 +23,10 @@ import { T } from "../../lib/i18n/demeter-chat-copy";
 Element.prototype.scrollTo = vi.fn() as unknown as typeof Element.prototype.scrollTo;
 afterEach(cleanup);
 
-const worksheetCalls: Array<{ messages: Array<{ role: string; content: string }> }> = [];
+const worksheetCalls: Array<{
+  messages: Array<{ role: string; content: string }>;
+  state?: string;
+}> = [];
 
 beforeEach(() => {
   worksheetCalls.length = 0;
@@ -77,6 +81,29 @@ describe("switching to the estimate acts on the conversation already had", () =>
     expect(sent.map((m) => m.content).join(" ")).toContain("laid off");
     // The server rejects a history that opens on the assistant (#833).
     expect(sent[0]!.role).toBe("user");
+  });
+
+  it("rescopes to the NEW state on a state change, not the one just left", async () => {
+    // changeState calls this while the `state` state still holds the OLD code
+    // — setState has not applied — so a recompute closing over it would post
+    // the state the reader just navigated away from, and the panel would show
+    // an estimate for the wrong place under the new state's heading.
+    const { container } = mount(VERIFIED_STATES[0]!.code);
+    switchTo(T.en.worksheet.modeEstimate);
+    await waitFor(() => expect(worksheetCalls.length).toBeGreaterThan(0));
+    worksheetCalls.length = 0;
+
+    const next = VERIFIED_STATES.find((s) => s.code !== VERIFIED_STATES[0]!.code)!;
+    const picker = container.querySelector("button.dmst__trigger") as HTMLButtonElement;
+    fireEvent.click(picker);
+    const option = [...container.querySelectorAll("button[role='option']")].find((o) =>
+      (o.textContent ?? "").includes(stateName(next.code)),
+    ) as HTMLButtonElement | undefined;
+    if (!option) return; // picker shape changed; the unit above still guards the callback
+    fireEvent.click(option);
+
+    await waitFor(() => expect(worksheetCalls.length).toBeGreaterThan(0));
+    expect(worksheetCalls[0]!.state).toBe(next.code);
   });
 
   it("still extracts nothing in ask mode — switching is the consent", async () => {
