@@ -74,6 +74,11 @@ export interface DemeterWorksheetCopy {
   modeEstimate: string;
   modeAskNote: string;
   switchedToAsk: string;
+  /** The estimate's pre-listed section slots (owner refinement 2026-08-21):
+   *  what WILL fill in, shown up front. Copy, never data — the no-invented-
+   *  figures test walks every language. */
+  templateTitle: string;
+  template: readonly string[];
 }
 
 /** What this panel is for right now.
@@ -181,6 +186,20 @@ export function DemeterWorksheet({
       ) : !classification ? (
         <p className="dmw__empty">{copy.empty}</p>
       ) : null}
+
+      {/* THE TEMPLATE (owner refinement): the shape of the thing being
+          built, listed before anything has filled in — ghost slots, not a
+          waiting sentence. Gone the moment real rows exist. */}
+      {mode === "estimate" && !classification && (
+        <section className="dmw__template" aria-label={copy.templateTitle}>
+          <p className="dmw__section-title">{copy.templateTitle}</p>
+          <ul className="dmw__template-list">
+            {copy.template.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {outcomeCopy && (
         <section className={`dmw__result dmw__result--${outcomeCopy.tone}`}>

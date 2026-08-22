@@ -6481,7 +6481,9 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 }
 
 /* ── Chat body: conversation + the live estimate rail ─────────────────────── */
-.demeter__body { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+/* Single column by default — the tracking panel is the SIDEBAR now (owner
+   refinement 2026-08-21), a left column only while open. */
+.demeter__body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; align-items: start; }
 .demeter__main { display: flex; flex-direction: column; min-width: 0; }
 
 /* Card white, matching the picker directly above it. On --demeter-paper it was
@@ -7500,6 +7502,35 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   transition: transform 200ms ease, visibility 0s linear 200ms;
 }
 .demeter__sidebar--open { transform: translateX(0); visibility: visible; transition: transform 200ms ease; }
+/* From 901px the drawer becomes a LAYOUT COLUMN: no overlay, no transform,
+   no fixed positioning — it holds the tracking panel beside the chat. */
+@media (min-width: 901px) {
+  .demeter__sidebar {
+    position: static; transform: none; width: auto; z-index: auto;
+    border-right: 0; padding: 0; transition: none;
+    display: none; visibility: hidden;
+  }
+  .demeter__sidebar--open { display: flex; visibility: visible; }
+}
+.demeter__sbhead { display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.25rem; }
+.demeter__sbword {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.05rem; font-weight: 700; color: var(--demeter-ink);
+}
+.demeter__sbbrand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; border-radius: var(--demeter-radius-input); }
+.demeter__sbbrand:hover .demeter__sbword { color: var(--demeter-terracotta-deep); }
+.demeter__sbbrand:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
+/* Ghost slots: the estimate's pre-listed template — dashed leaders say
+   "reserved", filled by conversation, never by copywriting. */
+.dmw__template-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.45rem; }
+.dmw__template-list li {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; line-height: 1.45; color: var(--demeter-muted);
+  border: 1px dashed var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
+  padding: 0.5rem 0.65rem; background: var(--demeter-tint);
+}
+.demeter__sidebarauth .demeter__lang { display: block; margin-bottom: 0.8rem; }
+.demeter__sidebarauth .demeter__lang-select { width: 100%; }
 .demeter__sidebarlink {
   font-size: 0.95rem; color: var(--demeter-ink); text-decoration: none;
   padding: 0.6rem 0.7rem; border-radius: var(--demeter-radius-input);
@@ -7546,7 +7577,12 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    unscoped it kept two columns on a phone and handed 21rem of a 356px screen
    to the rail — measured, .demeter__main came out 0px wide. */
 @media (min-width: 901px) {
-  .dmchat .demeter__body { grid-template-columns: minmax(0, 1fr) minmax(0, 21rem); column-gap: 2.5rem; }
+  .dmchat .demeter__body { grid-template-columns: minmax(0, 1fr); column-gap: 2.5rem; }
+  /* The sidebar column sits LEFT (Pi's own geometry); DOM order stays
+     main-first for keyboard and reader order, and the grid places it. */
+  .dmchat .demeter__body--sb { grid-template-columns: minmax(0, 21rem) minmax(0, 1fr); }
+  .dmchat .demeter__body--sb .demeter__sidebar { grid-column: 1; grid-row: 1; }
+  .dmchat .demeter__body--sb .demeter__main { grid-column: 2; grid-row: 1; }
 
   /* The controls row now lives INSIDE the conversation column (see the JSX), so
      it needs no grid of its own — it is already the width of the column it

@@ -229,6 +229,13 @@ export const T = {
       modeEstimate: "Build my estimate",
       modeAskNote:
         "Nothing here goes into your estimate — ask a what-if, or about someone else. We keep the text to check our accuracy, in both modes.",
+      templateTitle: "What this will fill in",
+      template: [
+        "Who's in your household",
+        "Your monthly income",
+        "Rent, utilities, and other costs",
+        "Your estimated monthly benefit",
+      ],
       switchedToAsk: "Nothing is being gathered. Ask anything.",
     },
   },
@@ -371,6 +378,13 @@ export const T = {
       modeEstimate: "Calcular mi estimado",
       modeAskNote:
         "Nada de esto entra en tu estimado — pregunta un supuesto, o por otra persona. Guardamos el texto para verificar nuestra exactitud, en ambos modos.",
+      templateTitle: "Lo que se irá completando",
+      template: [
+        "Quiénes forman tu hogar",
+        "Tu ingreso mensual",
+        "Renta, servicios y otros gastos",
+        "Tu beneficio mensual estimado",
+      ],
       switchedToAsk: "Estimado borrado. No se está recogiendo nada.",
     },
   },
@@ -512,6 +526,13 @@ export const T = {
       modeEstimate: "Tính mức ước tính",
       modeAskNote:
         "Không gì ở đây được đưa vào bản ước tính của bạn — cứ hỏi giả định, hoặc hỏi giúp người khác. Chúng tôi vẫn lưu nội dung để kiểm tra độ chính xác, ở cả hai chế độ.",
+      templateTitle: "Những phần sẽ được điền",
+      template: [
+        "Những ai trong hộ của bạn",
+        "Thu nhập hằng tháng của bạn",
+        "Tiền thuê nhà, điện nước và chi phí khác",
+        "Mức trợ cấp hằng tháng ước tính",
+      ],
       switchedToAsk: "Đã xóa ước tính. Không có gì đang được thu thập.",
     },
   },
@@ -646,6 +667,8 @@ export const T = {
       modeAsk: "只是问问",
       modeEstimate: "帮我算估算",
       modeAskNote: "这里说的内容不会进入您的估算——可以问假设情况，或替别人问。我们仍会保留内容以核查准确性，两种模式都是如此。",
+      templateTitle: "将要填写的部分",
+      template: ["您的家庭成员", "您的每月收入", "房租、水电及其他开支", "您的预计每月补助"],
       switchedToAsk: "估算已清除。没有在收集任何内容。",
     },
   },

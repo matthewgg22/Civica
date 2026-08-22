@@ -663,7 +663,16 @@ export function DemeterChat({
    *  component as new answers land. */
   const modeOfferedAtTurnRef = useRef<number | null>(null);
   // ── Pi redesign chrome (2026-08-21) ──────────────────────────────────────
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // OPEN BY DEFAULT (owner refinement): the sidebar IS the tracking panel —
+  // state scope, the outlined application, the verify links — and someone
+  // arriving should see what the product is keeping for them, not discover
+  // it behind an icon. On narrow screens it becomes an overlay and starts
+  // closed instead (the effect below), because an auto-open overlay covering
+  // the composer is the drawer deciding for the reader.
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
+  }, []);
   /** Signed-in email, or null. NULL IS THE DEFAULT AND THE FALLBACK: the
    *  probe runs once, and any failure — missing env (jsdom, CI builds), a
    *  network error, a thrown client — leaves the chat signed-out rather
@@ -679,11 +688,14 @@ export function DemeterChat({
       setAuthEmail(null);
     }
   }, []);
-  // Escape closes the drawer from anywhere — it is the one overlay here.
+  // Escape closes the drawer ONLY while it is an overlay (narrow screens):
+  // there it covers the chat and Escape is the reflex. As a desktop column
+  // it covers nothing, and Escape vanishing a standing panel would read as
+  // the page breaking.
   useEffect(() => {
     if (!sidebarOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSidebarOpen(false);
+      if (e.key === "Escape" && window.innerWidth < 1024) setSidebarOpen(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -1542,19 +1554,24 @@ export function DemeterChat({
             the CHAT's own chrome row: sidebar toggle left, language + sign-in
             right; the brand block stays for any surface without the nav and
             is CSS-hidden under .dmchat where the nav already carries it. */}
-        <button
-          type="button"
-          className="demeter__sidebartoggle"
-          aria-expanded={sidebarOpen}
-          aria-controls="demeter-sidebar"
-          aria-label={t.sidebarLabel}
-          onClick={() => setSidebarOpen((o) => !o)}
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6">
-            <rect x="2.5" y="3.5" width="15" height="13" rx="2" />
-            <line x1="7.5" y1="3.5" x2="7.5" y2="16.5" />
-          </svg>
-        </button>
+        {/* Shown only while the sidebar is CLOSED — while open, the toggle in
+            the sidebar's own head (next to the mark) is the one control, so
+            there are never two identical icons on screen. */}
+        {!sidebarOpen && (
+          <button
+            type="button"
+            className="demeter__sidebartoggle"
+            aria-expanded={sidebarOpen}
+            aria-controls="demeter-sidebar"
+            aria-label={t.sidebarLabel}
+            onClick={() => setSidebarOpen((o) => !o)}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6">
+              <rect x="2.5" y="3.5" width="15" height="13" rx="2" />
+              <line x1="7.5" y1="3.5" x2="7.5" y2="16.5" />
+            </svg>
+          </button>
+        )}
         <div className="demeter__brand">
           <span className="demeter__avatar" aria-hidden>
             <DemeterMark size={40} />
@@ -1575,23 +1592,11 @@ export function DemeterChat({
             in its OWN language — someone looking for Tiếng Việt is not helped by
             the word "Vietnamese". */}
         <div className="demeter__headright">
-          <label className="demeter__lang">
-            <span className="sr-only">{t.languageLabel}</span>
-            <select
-              className="demeter__lang-select"
-              value={lang}
-              aria-label={t.languageLabel}
-              onChange={(e) => setLang(e.target.value as AnswerLang)}
-            >
-              {ANSWER_LANGS.map((code) => (
-                <option key={code} value={code}>
-                  {LANG_NATIVE_NAME[code]}
-                </option>
-              ))}
-            </select>
-          </label>
-          {/* Signed out only, Pi-style: signed-in state lives in the sidebar.
-              The auth probe fails closed to signed-out (see its effect). */}
+          {/* The chrome row keeps ONLY sign-in now (owner refinement): the
+              language picker moved into the sidebar with the rest of the
+              standing context, so the top bar carries no select at all.
+              Signed-in state lives in the sidebar; the auth probe fails
+              closed to signed-out (see its effect). */}
           {authEmail === null && (
             <a className="demeter__signin" href={signInHref}>
               {t.signin}
@@ -1600,41 +1605,10 @@ export function DemeterChat({
         </div>
       </header>
 
-      {/* THE SIDEBAR DRAWER (Pi redesign). Off-canvas, keyboard-closable,
-          inert while closed so it holds no tab stops. Navigation and auth
-          state only — no destructive actions live here: "start a new
-          conversation" keeps its confirm step at the composer, and a drawer
-          is exactly where a mis-tap wipes a conversation. */}
-      <nav
-        id="demeter-sidebar"
-        className={`demeter__sidebar${sidebarOpen ? " demeter__sidebar--open" : ""}`}
-        aria-hidden={!sidebarOpen}
-        aria-label={t.sidebarLabel}
-        {...(!sidebarOpen ? { inert: true } : {})}
-      >
-        <a className="demeter__sidebarlink" href="/screen/saved">
-          {t.sidebarSaved}
-        </a>
-        <div className="demeter__sidebarauth">
-          {authEmail === null ? (
-            <>
-              <p className="demeter__sidebarnote">{t.sidebarSigninNote}</p>
-              <a className="demeter__sidebarsignin" href={signInHref}>
-                {t.signin}
-              </a>
-            </>
-          ) : (
-            <p className="demeter__sidebarnote">
-              {t.sidebarSignedIn} <span translate="no">{authEmail}</span>
-            </p>
-          )}
-        </div>
-      </nav>
-
       {/* One control, one selected state — replaces the chip row that ate a
           full row and still clipped this link off the right edge at 1280px. */}
 
-      <div className="demeter__body">
+      <div className={`demeter__body${sidebarOpen ? " demeter__body--sb" : ""}`}>
         <div className="demeter__main">
           {/* The controls live INSIDE the conversation column, not in a full-width
               row above it. Out here they started 68px above the rail and left
@@ -2023,13 +1997,51 @@ export function DemeterChat({
         .
       </p>
         </div>
-        {/* THE RIGHT COLUMN IS THE STANDING CONTEXT: which state this is scoped
-            to, and what is known so far. The picker moved here from the
-            conversation column because it is not a control you press once — it
-            is the fact every figure in every answer depends on, and it should
-            stay in view while you scroll rather than sit at the top of a
-            transcript you have read past. */}
-        <div className="demeter__side">
+        {/* THE SIDEBAR IS THE TRACKING PANEL (owner refinement, 2026-08-21):
+            which state this is scoped to, the outlined application, and the
+            keep/verify tools — everything the product is holding for the
+            reader — branded, toggleable, and OPEN by default on desktop
+            (someone arriving should see what is being kept for them, not
+            discover it behind an icon). A layout column when there is room;
+            an off-canvas overlay on narrow screens, starting closed there,
+            inert while closed so it holds no tab stops. The standing-context
+            rationale survives from the old right rail: the state is the fact
+            every figure depends on, and it stays in view while you scroll. */}
+        <aside
+          id="demeter-sidebar"
+          className={`demeter__sidebar${sidebarOpen ? " demeter__sidebar--open" : ""}`}
+          aria-hidden={!sidebarOpen}
+          aria-label={t.sidebarLabel}
+          {...(!sidebarOpen ? { inert: true } : {})}
+        >
+          <div className="demeter__sbhead">
+            <button
+              type="button"
+              className="demeter__sidebartoggle"
+              aria-expanded={sidebarOpen}
+              aria-controls="demeter-sidebar"
+              aria-label={t.sidebarLabel}
+              onClick={() => setSidebarOpen((o) => !o)}
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6">
+                <rect x="2.5" y="3.5" width="15" height="13" rx="2" />
+                <line x1="7.5" y1="3.5" x2="7.5" y2="16.5" />
+              </svg>
+            </button>
+            {/* The brand is the way home (owner refinement): tapping the mark
+                or the name leaves the tool for the main page, same as the nav
+                brand above — two doors, one destination. */}
+            <a
+              className="demeter__sbbrand"
+              href={lang === "en" ? "/screen/ask" : `/${lang}/screen/ask`}
+            >
+              <DemeterMark size={26} />
+              <span className="demeter__sbword" translate="no">
+                Demeter
+              </span>
+            </a>
+          </div>
+          <div className="demeter__side">
           <DemeterStatePicker
             states={states}
             value={state}
@@ -2196,6 +2208,44 @@ export function DemeterChat({
           </a>
         </div>
         </div>
+          {/* Language + account, at the sidebar's foot — Pi's own placement.
+              The select is the mid-conversation language switch (client
+              state, keeps the transcript); the nav's language LINKS above
+              navigate between localized pages instead. The probe fails
+              closed to signed-out; auth is never load-bearing here. */}
+          <div className="demeter__sidebarauth">
+            <label className="demeter__lang">
+              <span className="sr-only">{t.languageLabel}</span>
+              <select
+                className="demeter__lang-select"
+                value={lang}
+                aria-label={t.languageLabel}
+                onChange={(e) => setLang(e.target.value as AnswerLang)}
+              >
+                {ANSWER_LANGS.map((code) => (
+                  <option key={code} value={code}>
+                    {LANG_NATIVE_NAME[code]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <a className="demeter__sidebarlink" href="/screen/saved">
+              {t.sidebarSaved}
+            </a>
+            {authEmail === null ? (
+              <>
+                <p className="demeter__sidebarnote">{t.sidebarSigninNote}</p>
+                <a className="demeter__sidebarsignin" href={signInHref}>
+                  {t.signin}
+                </a>
+              </>
+            ) : (
+              <p className="demeter__sidebarnote">
+                {t.sidebarSignedIn} <span translate="no">{authEmail}</span>
+              </p>
+            )}
+          </div>
+        </aside>
       </div>
     </div>
   );
