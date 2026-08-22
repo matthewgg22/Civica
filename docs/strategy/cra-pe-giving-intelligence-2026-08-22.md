@@ -52,3 +52,18 @@ Five Star's examiners praised a **contracted professional** providing free couns
 FDIC PEs **anonymize every grantee** — across seven evaluations not one recipient organization is named (only "a CDC," "a Title I school," "a non-profit organization that provides…"). PEs therefore supply grant *sizes*, *categories*, and *examiner-identified needs*, but they cannot produce a peer-grantee target list. The only named organizations across all seven are intermediaries: **Neighborhood Lending Partners of Florida**, funded by all three Miami banks, plus Center for Financial Training International and Miami-Dade County Public Schools.
 
 Sources: FDIC Performance Evaluations at crapes.fdic.gov — Helm 32718 (6/16/2025) · Banco do Brasil Americas 26725 (5/12/2025) · Ocean Bank 24156 (6/6/2023) · Hanmi 24170 (6/5/2023) · Five Star 35361 (7/22/2024) · Bank of Marin 32779 (11/6/2023) · American Business Bank 34788 (1/29/2024).
+
+---
+
+## Why the grant lines are so small (structural, not stinginess)
+
+Grants are a rounding error in CRA by design. Ratio of grants to CD investment dollars across the set: **Helm 0.03%** ($25K of $83.0M) · **Hanmi 0.5%** ($346K of $65.2M) · **Ocean 2.4%** ($492K of $20.9M) · **Bank of Marin 3.3%** ($1.58M of $46.1M).
+
+The Investment Test counts *qualified investments* — LIHTC funds, affordable-housing MBS, municipal bonds — balance-sheet transactions that earn a return and move the test in millions. A rational CRA officer satisfies the dollar test with securities and treats donations as discretionary. Helm passed its CD Test on $83M of MBS while granting $25,161.
+
+Compounding factors for these banks specifically: they are **niche/commercial institutions** (Helm — Colombian roots; Banco do Brasil Americas — Brazilian expat; Hanmi — Korean-American commercial), with no consumer brand needing local goodwill and no LMI retail franchise, so philanthropy is a compliance cost rather than marketing; and none has a corporate foundation or grants staff — the budget likely sits on one compliance officer's discretionary line. Hanmi's trajectory shows the behavioral pattern: NTI 2021 → spend → Satisfactory 2023 → giving cut from $519,840 to $281,080. Spend to fix the rating, then pull back — which also means an exam year should push it back up.
+
+**Two strategic consequences:**
+1. **No single bank funds the pilot.** Per-bank capacity is $7.5K–$50K. A $15–50K quarter needs two or three banks, and the real revenue targets are the ones with actual grant budgets (ABB $1.64M · Bank of Marin $1.58M · Five Star $1.27M) — not the most desperate NTI banks.
+2. **The ceiling on the grant strategy is the grant line itself.** Note that **Neighborhood Lending Partners of Florida is funded by all three Miami banks** — because it is a *loan pool*, an investment, not a grantee. Millions flow to investment vehicles; thousands flow to grantees. If this channel ever needs to scale past six figures, the unlock is a structure banks can **invest in** (CDFI participation, loan-pool participation), not donate to. Far off, gated behind the pilot, but it is the honest ceiling to know now.
+\n
