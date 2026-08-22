@@ -3,7 +3,7 @@ import { Pool } from "pg";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { RETENTION_DAYS } from "../legal/types";
+import { RETENTION_DAYS, RETENTION_JOB_LIVE } from "../legal/types";
 
 // The retention sweep vs REAL Postgres (#926).
 //
@@ -170,6 +170,19 @@ describe("the migration is scheduled and safe to replay", () => {
     // Unguarded, this migration would have to join the skip list — and then
     // the FUNCTION would never be replay-tested either.
     expect(sql).toMatch(/if exists \(select 1 from pg_extension where extname = 'pg_cron'\)/i);
+    expect(sql).toContain("cron.schedule(");
+  });
+
+  it("RETENTION_JOB_LIVE cannot be true without the job that makes it true", () => {
+    // The constant asserts something about PROD, which no test can reach. What
+    // a test CAN do is stop the assertion outliving its own mechanism: if this
+    // migration is ever deleted, renamed, or stripped of its schedule while
+    // the flag still reads true, the Privacy Policy would be making a
+    // retention promise with nothing behind it — the exact failure the flag
+    // was invented to prevent, arriving from the other direction.
+    if (!RETENTION_JOB_LIVE) return;
+    expect(sql).toContain("purge_mae_query_log_retention");
+    expect(sql).toContain("demeter-purge-query-log-daily");
     expect(sql).toContain("cron.schedule(");
   });
 
