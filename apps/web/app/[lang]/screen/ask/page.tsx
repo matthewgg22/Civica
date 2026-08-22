@@ -15,7 +15,8 @@
 
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { VERIFIED_STATES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
+import { VERIFIED_STATES, VERIFIED_STATE_CODES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
+import { geoHint } from "../../../../lib/geo-hint";
 import { DemeterNav } from "../../../../components/DemeterNav";
 import { DemeterFooter } from "../../../../components/DemeterFooter";
 import {
@@ -101,14 +102,20 @@ export default async function LocalizedAskPage({
       ? state.toUpperCase()
       : null;
 
-  // Same dormant-until-true tally as the English page.
+  // Same dormant-until-true tally and geo-hinted mini chat as the English page.
   const publicCount = await publicQuestionCount();
+  const hint = await geoHint(VERIFIED_STATE_CODES);
 
   return (
     <main className="dmpage" lang={LANG_TAG[l]}>
       <DemeterNav lang={l} path="/screen/ask" />
       <div className="dmpage__inner">
-        <SnapOrientation lang={l} publicCount={publicCount} />
+        <SnapOrientation
+          lang={l}
+          publicCount={publicCount}
+          states={VERIFIED_STATES}
+          initialState={initialState ?? hint}
+        />
         {/* Composer, picker and suggestions all live on /chat now — same
             as the English page. This one explains and hands over. Ahead of
             the urgent-need aside — same reasoning as the English page. */}

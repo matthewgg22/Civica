@@ -112,37 +112,28 @@ describe("visible em-dashes stay inside the budget (finding 2)", () => {
 // numbered pipeline; the audit's 4× count was 2× on recount.)
 import { SnapOrientation, SnapFears } from "../components/SnapOverview";
 
-describe("a real example answer rides beside the hero (finding 5)", () => {
-  it("renders the question, the citation, the EARNED verdict, and the way in", () => {
-    // HISTORY: this card first shipped WITHOUT a ✓, deliberately — the
-    // pipeline graded the original exchange authority_not_retrieved (the
-    // household reg text never surfaced, #766/#785), and a verified badge
-    // the answer did not earn would be the product lying about itself.
-    // After the retrieval cluster landed (#915), all four languages were
-    // REGENERATED through the fixed pipeline and every one graded
-    // certainty=certain / grounded with its citation in_sources — so the
-    // card now carries the verdict the product actually issued. If the
-    // example is ever regenerated and does not earn CERTAIN again, the
-    // verdict line comes OFF with it.
+describe("the hero's right column is the way in (finding 5, twice evolved)", () => {
+  // HISTORY, because this ground has moved three times. Finding 5 put ONE
+  // real answer beside the hero (the card first shipped WITHOUT a ✓ until
+  // the retrieval cluster made the pipeline earn it — #766/#785/#915). The
+  // 2026-08-21 request made it a rotation of three. The owner redesign the
+  // same week replaced the demo with the PRODUCT: a mini chat that hands
+  // off to /chat. The exchanges did not die — their questions are the
+  // starter chips, and the data tests below still pin their quality.
+  it("the mini chat rides beside the hero and hands off to the one chat", () => {
     const { container } = render(<SnapOrientation />);
     const ex = container.querySelector(".dmex");
     expect(ex).toBeTruthy();
-    const text = ex!.textContent ?? "";
-    expect(text).toMatch(/household/i);
-    expect(text).toMatch(/7 CFR 273\.1/);
-    expect(text).toContain("✓");
-    expect(container.querySelector(".dmex__verdict")).toBeTruthy();
-    // The honesty label and the way into the product from its own demo.
-    expect(text).toMatch(/real .*answer/i);
-    expect(ex!.querySelector("a[href*='/chat']")).toBeTruthy();
+    expect(ex!.querySelector("form.dmc")).toBeTruthy();
+    expect(ex!.querySelector("form.dmc")!.getAttribute("action")).toBe("/chat");
   });
 
-  it("every language cycles through three real exchanges, each cited, each with its earned verdict", () => {
-    // The card became a rotation (2026-08-21 request): household, timing,
-    // student — all twelve exchanges regenerated through the live pipeline
-    // and every one graded certainty=certain, so every one carries the
-    // verdict. The standing rule is per-item: an exchange that does not
-    // grade CERTAIN ships without a verdict line or not at all.
+  it("every language keeps three vetted exchanges, each cited, each with its earned verdict", () => {
+    // These are the STARTER BANK now: the chips offer their questions, and
+    // the reason these three questions are offered at all is that their
+    // answers were regenerated through the live pipeline and every one
+    // graded certainty=certain. The standing rule is per-item: an exchange
+    // that does not grade CERTAIN loses its verdict field — and its seat.
     for (const lang of ["en", "es", "vi", "zh"] as const) {
       const ex = PAGE_COPY[lang].example;
       expect(ex.items.length, lang).toBe(3);
@@ -156,22 +147,12 @@ describe("a real example answer rides beside the hero (finding 5)", () => {
     }
   });
 
-  it("the rotator renders all exchanges in the DOM with manual dot controls", () => {
-    const { container } = render(<SnapOrientation />);
-    expect(container.querySelectorAll(".dmex__item").length).toBe(3);
-    expect(container.querySelectorAll(".dmex__dot").length).toBe(3);
-    // Server HTML carries every exchange for crawlers; inactive ones hidden.
-    expect(container.querySelectorAll('.dmex__item[aria-hidden="true"]').length).toBe(2);
-  });
-
-  it("every language carries the full example, and none of it invents a dollar figure", () => {
+  it("the card label survives in every language without invented figures", () => {
     for (const lang of ["en", "es", "vi", "zh"] as const) {
       const ex = PAGE_COPY[lang].example;
       expect(ex, lang).toBeTruthy();
-      for (const v of [ex.label, ex.note, ex.cta]) {
-        expect(String(v).trim(), lang).not.toBe("");
-        expect(String(v), lang).not.toMatch(/\$\s?\d/);
-      }
+      expect(String(ex.label).trim(), lang).not.toBe("");
+      expect(String(ex.label), lang).not.toMatch(/\$\s?\d/);
     }
   });
 });

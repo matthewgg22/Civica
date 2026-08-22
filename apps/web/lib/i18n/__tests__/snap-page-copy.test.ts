@@ -55,7 +55,9 @@ describe("landing copy — meaning, not just presence", () => {
     for (const lang of ANSWER_LANGS) {
       for (const s of allStrings(lang)) {
         expect(s.trim(), `${lang} has an empty string`).not.toBe("");
-        expect(s, `${lang}: "${s}" looks like a placeholder`).not.toMatch(/^(TODO|TBD|FIXME|XXX)/i);
+        // \b so Spanish "Todos los estados…" doesn't trip the TODO guard —
+        // a placeholder marker ends at a word boundary; "Todos" continues.
+        expect(s, `${lang}: "${s}" looks like a placeholder`).not.toMatch(/^(TODO|TBD|FIXME|XXX)\b/i);
       }
     }
   });

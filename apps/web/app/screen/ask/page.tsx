@@ -31,8 +31,9 @@
 // hreflang annotations — a one-directional hreflang set is silently ignored.
 
 import type { Metadata } from "next";
-import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
+import { VERIFIED_STATES, VERIFIED_STATE_CODES } from "@civica/demeter-engine/packs";
 import { redirect } from "next/navigation";
+import { geoHint } from "../../../lib/geo-hint";
 import {
   SnapOrientation,
   SnapDetail,
@@ -88,12 +89,19 @@ export default async function ScreenAskPage({
   // Dormant-until-true: null (unavailable or below floor logic in the
   // component) renders nothing. See lib/live-counts.ts for the history.
   const publicCount = await publicQuestionCount();
+  // The mini chat preselects the state the same way /chat does: an explicit
+  // ?state= wins, the geo hint fills in behind it.
+  const hint = await geoHint(VERIFIED_STATE_CODES);
 
   return (
     <main className="dmpage" id="main-content">
       <DemeterNav />
       <div className="dmpage__inner">
-        <SnapOrientation publicCount={publicCount} />
+        <SnapOrientation
+          publicCount={publicCount}
+          states={VERIFIED_STATES}
+          initialState={initialState ?? hint}
+        />
         {/* The composer, the state picker and the suggested questions all live
             on /chat now. This page explains and hands over; it does not start
             the conversation and then forward it. First action before the
