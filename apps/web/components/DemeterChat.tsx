@@ -636,6 +636,19 @@ export function DemeterChat({
   // conversation stores one on its row (#905) — the saved-state privacy line
   // says so.
   const factsRef = useRef<PartialFacts>(initialWorksheet?.facts ?? {});
+  // A STATE MIRROR of factsRef, purely so the panel re-renders when the facts
+  // change. The ref stays the source of truth for what gets POSTED (it must be
+  // readable synchronously inside send()), but mutating a ref renders nothing
+  // — and the panel's new "from what you've told me" section would otherwise
+  // update only on the turns that also produced a classification, which is
+  // exactly the turns where the reader least needs it.
+  const [factsView, setFactsView] = useState<PartialFacts>(
+    initialWorksheet?.facts ?? {},
+  );
+  const rememberFacts = useCallback((next: PartialFacts) => {
+    factsRef.current = next;
+    setFactsView(next);
+  }, []);
   const [classification, setClassification] = useState<ScreeningClassification | null>(
     initialWorksheet?.classification ?? null,
   );
@@ -900,10 +913,10 @@ export function DemeterChat({
     // product deleting someone's work at the moment they tried to keep it.
     if (prior.worksheet) {
       setWorksheetMode(prior.worksheet.mode);
-      factsRef.current = prior.worksheet.facts;
+      rememberFacts(prior.worksheet.facts);
       setClassification(prior.worksheet.classification);
     }
-  }, [initialMessages]);
+  }, [initialMessages, rememberFacts]);
 
   // Written on every change rather than on unload, because a client-side
   // navigation gives no unload to hook. factsRef is a ref, so it cannot
@@ -1083,7 +1096,7 @@ export function DemeterChat({
     resetInputHeight();
     setError(null);
     setClassification(null);
-    factsRef.current = {};
+    rememberFacts({});
     setConfirmClear(false);
     // The pending-save stash holds a full transcript in localStorage for 30
     // minutes (see DemeterSave). Leaving it behind would mean "cleared" left
@@ -1098,7 +1111,7 @@ export function DemeterChat({
     // page load the old one straight back.
     clearChatSession();
     setAnnouncement(t.cleared);
-  }, [t, resetInputHeight]);
+  }, [t, resetInputHeight, rememberFacts]);
 
   /** Send the outlined application to the address on the account.
    *
@@ -1200,11 +1213,11 @@ export function DemeterChat({
       // The drafted application, back exactly as it was left (#898 P2-9).
       if (worksheet) {
         setWorksheetMode(worksheet.mode);
-        factsRef.current = worksheet.facts;
+        rememberFacts(worksheet.facts);
         setClassification(worksheet.classification);
       }
     },
-    [],
+    [rememberFacts],
   );
 
   /** The worksheet as it stands RIGHT NOW, for the sign-in stash (#898 P2-9).
@@ -1236,7 +1249,7 @@ export function DemeterChat({
           facts?: PartialFacts;
           classification?: ScreeningClassification | null;
         };
-        if (data.facts) factsRef.current = data.facts;
+        if (data.facts) rememberFacts(data.facts);
         // Null classification = the route soft-failed or found nothing yet.
         // Keep whatever is already on screen rather than blanking the panel.
         if (data.classification) setClassification(data.classification);
@@ -1244,7 +1257,7 @@ export function DemeterChat({
         /* soft by design */
       }
     },
-    [state],
+    [state, rememberFacts],
   );
 
   const send = useCallback(async () => {
@@ -2211,6 +2224,7 @@ export function DemeterChat({
             </>
           }
           onPickState={() => setOpenPicker((n) => n + 1)}
+          facts={factsView}
           mode={worksheetMode}
           onModeChange={(m) => {
             setWorksheetMode(m);
@@ -2245,7 +2259,7 @@ export function DemeterChat({
             // mean "nothing is gathered from now on", which is not what it
             // says.
             if (m === "ask") {
-              factsRef.current = {};
+              rememberFacts({});
               setClassification(null);
               setAnnouncement(t.worksheet.switchedToAsk);
             }
@@ -2286,7 +2300,7 @@ export function DemeterChat({
               keep was the one thing they could not carry away. Shown only once
               there is something in it: mailing an empty template reads as the
               product failing rather than as there being nothing yet. */}
-          {worksheetMode === "estimate" && (factsRef.current.household?.length ?? 0) > 0 && (
+          {worksheetMode === "estimate" && (factsView.household?.length ?? 0) > 0 && (
             <div className="demeter__emailrow">
               <button
                 type="button"

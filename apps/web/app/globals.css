@@ -8886,3 +8886,28 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 
 /* One-line state picker: no eyebrow above the value any more. */
 .dmst__trigger-text { flex-direction: row; align-items: center; }
+
+/* "From what you've told me" — the panel's record of what it HEARD, above the
+   list of what it still lacks. Same row rhythm as the calc list so the two
+   read as one ledger rather than two widgets. */
+.dmw__captured { margin-top: 0.9rem; }
+.dmw__captured-list { margin: 0.35rem 0 0; padding: 0; }
+.dmw__captured-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem;
+  padding: 0.28rem 0; border-bottom: 1px dashed var(--demeter-rule);
+}
+.dmw__captured-row:last-child { border-bottom: 0; }
+.dmw__captured-row dt {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; color: var(--demeter-muted); margin: 0;
+}
+.dmw__captured-row dd {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.8rem; font-weight: 600; color: var(--demeter-ink); margin: 0;
+  font-variant-numeric: tabular-nums; text-align: right;
+}
+.dmw__captured-note {
+  margin: 0.45rem 0 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; line-height: 1.45; color: var(--demeter-muted);
+}
