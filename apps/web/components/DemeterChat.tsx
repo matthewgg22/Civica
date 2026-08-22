@@ -30,6 +30,7 @@ import { DemeterFeedback } from "./DemeterFeedback";
 import { DemeterSave } from "./DemeterSave";
 import { T } from "../lib/i18n/demeter-chat-copy";
 import { supabaseBrowser } from "../lib/supabase-browser";
+import { DemeterSignInModal } from "./DemeterSignInModal";
 import { stateName } from "../lib/state-names";
 import { detectState, detectUncoveredPlace, type StateMention } from "../lib/detect-state";
 import type { SavedMsg } from "../lib/demeter-conversations";
@@ -670,6 +671,11 @@ export function DemeterChat({
   // closed instead (the effect below), because an auto-open overlay covering
   // the composer is the drawer deciding for the reader.
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  /** Sign-in opens OVER the chat (owner rec 2026-08-22) so the conversation
+   *  being saved stays visible, blurred, behind the card. The route is still
+   *  the fallback: every sign-in link keeps its href and this only takes over
+   *  when JavaScript is there to handle it. */
+  const [signInOpen, setSignInOpen] = useState(false);
   useEffect(() => {
     if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
   }, []);
@@ -1633,7 +1639,17 @@ export function DemeterChat({
             </div>
           </details>
           {authEmail === null && (
-            <a className="demeter__signin" href={signInHref}>
+            <a
+              className="demeter__signin"
+              href={signInHref}
+              onClick={(e) => {
+                // Modifier-clicks and middle-clicks still mean "open the
+                // route", which is what the href is for.
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+                e.preventDefault();
+                setSignInOpen(true);
+              }}
+            >
               {t.signin}
             </a>
           )}
@@ -2295,6 +2311,12 @@ export function DemeterChat({
             <a
               className={`demeter__sblabel${authEmail === null ? " demeter__sblabel--signin" : ""}`}
               href={authEmail === null ? signInHref : "/screen/saved"}
+              onClick={(e) => {
+                if (authEmail !== null) return;
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+                e.preventDefault();
+                setSignInOpen(true);
+              }}
             >
               {authEmail === null ? t.sidebarSavedSignin : t.sidebarSaved} →
             </a>
@@ -2333,6 +2355,13 @@ export function DemeterChat({
           </div>
         </aside>
       </div>
+      {signInOpen && (
+        <DemeterSignInModal
+          next={lang === "en" ? "/chat" : `/${lang}/chat`}
+          lang={lang}
+          onClose={() => setSignInOpen(false)}
+        />
+      )}
     </div>
   );
 }

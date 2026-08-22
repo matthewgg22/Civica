@@ -158,6 +158,52 @@ describe("sign-in at the top right", () => {
   });
 });
 
+describe("sign-in opens over the chat (owner rec 2026-08-22)", () => {
+  it("the chrome link opens the modal instead of navigating — but keeps its href", () => {
+    // The ROUTE stays the fallback: magic-link returns, OAuth error
+    // redirects, shared links and no-JS all still land on /sign-in. The
+    // click handler only takes over when JavaScript is there.
+    const { container } = mountChat();
+    const link = container.querySelector(".demeter__head a.demeter__signin") as HTMLAnchorElement;
+    expect(link.getAttribute("href")).toContain("/sign-in");
+    expect(container.querySelector(".dmsi")).toBeNull();
+    fireEvent.click(link, { button: 0 });
+    const modal = container.querySelector(".dmsi")!;
+    expect(modal).toBeTruthy();
+    expect(modal.querySelector("[role='dialog']")?.getAttribute("aria-modal")).toBe("true");
+  });
+
+  it("a modifier-click still means open-the-route", () => {
+    const { container } = mountChat();
+    const link = container.querySelector(".demeter__head a.demeter__signin")!;
+    fireEvent.click(link, { metaKey: true, button: 0 });
+    expect(container.querySelector(".dmsi")).toBeNull();
+  });
+
+  it("Escape closes it", () => {
+    const { container } = mountChat();
+    fireEvent.click(container.querySelector(".demeter__head a.demeter__signin")!, { button: 0 });
+    expect(container.querySelector(".dmsi")).toBeTruthy();
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(container.querySelector(".dmsi")).toBeNull();
+  });
+
+  it("the rail's saved-conversations entry opens the same modal", () => {
+    const { container } = mountChat();
+    fireEvent.click(container.querySelector("#demeter-sidebar a.demeter__sblabel")!, { button: 0 });
+    expect(container.querySelector(".dmsi")).toBeTruthy();
+  });
+
+  it("the chat is NOT filtered — the overlay blurs it, so the fixed rail stays put", () => {
+    // A `filter` on the chat would make it the containing block for the
+    // fixed rail and chrome row, jumping both the moment the card opened.
+    // The blur belongs to the overlay's backdrop-filter instead.
+    const s = readFileSync(join(__dirname, "..", "..", "app", "globals.css"), "utf8");
+    expect(s).toMatch(/\.dmsi\s*\{[^}]*backdrop-filter:\s*blur/);
+    expect(s).not.toMatch(/\.demeter--behindmodal/);
+  });
+});
+
 describe("state-first onboarding", () => {
   it("the empty state asks for the state and never a name", () => {
     const { container } = mountChat();

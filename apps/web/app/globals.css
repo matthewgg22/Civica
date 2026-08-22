@@ -6872,22 +6872,32 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    screenshot of the chat behind it. */
 .signin-page[data-surface="demeter"]::before {
   content: ""; position: fixed; inset: 0; z-index: 0;
-  background: rgba(35, 34, 32, 0.55);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  /* Light: at 0.55 this read as a grey sheet. The standalone route is now
+     mostly a magic-link/OAuth landing — the in-chat modal is the path most
+     people take — so it wants depth, not drama. */
+  background: rgba(35, 34, 32, 0.16);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
 }
 .signin-page[data-surface="demeter"] > * { position: relative; z-index: 1; }
-.signin-page[data-surface="demeter"] .signin-card {
-  max-width: 24rem; margin-inline: auto;
+.signin-page[data-surface="demeter"] .signin-main,
+.dmsi .signin-main {
+  display: grid; place-items: center; min-height: calc(100dvh - 6rem);
+}
+.signin-page[data-surface="demeter"] .signin-card,
+.dmsi .signin-card {
+  max-width: 24rem; width: min(24rem, 100%); margin-inline: auto;
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
   border-radius: var(--demeter-radius-card);
   box-shadow: 0 24px 60px rgba(35, 34, 32, 0.28);
 }
-.signin-page[data-surface="demeter"] .signin-header { border-bottom: 0; }
+.signin-page[data-surface="demeter"] .signin-header,
+.dmsi .signin-header { border-bottom: 0; }
 @media (prefers-reduced-transparency: reduce) {
   .signin-page[data-surface="demeter"]::before { backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
 
-.signin-page[data-surface="demeter"] .signin-header {
+.signin-page[data-surface="demeter"] .signin-header,
+.dmsi .signin-header {
   border-bottom-color: var(--demeter-rule);
 }
 
@@ -6904,7 +6914,8 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   font-weight: 700;
 }
 
-.signin-page[data-surface="demeter"] .signin-card {
+.signin-page[data-surface="demeter"] .signin-card,
+.dmsi .signin-card {
   background: var(--demeter-card);
   border-color: var(--demeter-rule);
 }
@@ -6912,20 +6923,27 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 /* Serif for the heading, sans for everything functional — the type rule the
    rest of the Demeter surface follows. */
 .signin-page[data-surface="demeter"] .signin-title,
-.signin-page[data-surface="demeter"] .signin-sent-title {
+.dmsi .signin-title,
+.signin-page[data-surface="demeter"] .signin-sent-title,
+.dmsi .signin-sent-title {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   color: var(--demeter-ink);
 }
 
 .signin-page[data-surface="demeter"] .signin-subtitle,
+.dmsi .signin-subtitle,
 .signin-page[data-surface="demeter"] .signin-disclosure,
+.dmsi .signin-disclosure,
 .signin-page[data-surface="demeter"] .signin-otp-sent,
-.signin-page[data-surface="demeter"] .signin-label {
+.dmsi .signin-otp-sent,
+.signin-page[data-surface="demeter"] .signin-label,
+.dmsi .signin-label {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   color: var(--demeter-muted);
 }
 
-.signin-page[data-surface="demeter"] .signin-input {
+.signin-page[data-surface="demeter"] .signin-input,
+.dmsi .signin-input {
   border-color: var(--demeter-rule-strong);
   background: var(--demeter-card);
   color: var(--demeter-ink);
@@ -6933,18 +6951,21 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 
 /* Terracotta is Demeter's action colour. The Google button deliberately keeps
    its own treatment — Google's branding guidance governs that one, not ours. */
-.signin-page[data-surface="demeter"] .signin-cta {
+.signin-page[data-surface="demeter"] .signin-cta,
+.dmsi .signin-cta {
   background: var(--demeter-terracotta);
   border-color: var(--demeter-terracotta);
   color: #fff;
 }
 
-.signin-page[data-surface="demeter"] .signin-cta:disabled {
+.signin-page[data-surface="demeter"] .signin-cta:disabled,
+.dmsi .signin-cta:disabled {
   opacity: 0.5;
 }
 
 .signin-page[data-surface="demeter"] .locale-toggle,
-.signin-page[data-surface="demeter"] .signin-resend {
+.signin-page[data-surface="demeter"] .signin-resend,
+.dmsi .signin-resend {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   color: var(--demeter-terracotta-deep);
   border-color: var(--demeter-rule-strong);
@@ -7575,6 +7596,39 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 }
 .dmchat .demeter__signin:hover { background: var(--demeter-terracotta-deep); }
 /* The reference page, beyond sign-in — what the retired nav carried here. */
+/* SIGN-IN OVER THE CHAT (owner rec 2026-08-22). The ground is the real
+   conversation, blurred — not a grey sheet — so the thing being saved is
+   visible while someone decides to save it. The tint is only deep enough to
+   hold contrast for the card's edge; the blur does the separating. */
+.dmsi {
+  position: fixed; inset: 0; z-index: 80;
+  display: grid; place-items: center; padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px) saturate(0.9); -webkit-backdrop-filter: blur(10px) saturate(0.9);
+  animation: dmsiIn 160ms ease-out both;
+}
+@keyframes dmsiIn { from { opacity: 0; } to { opacity: 1; } }
+.dmsi__card {
+  position: relative;
+  width: min(24rem, 100%); max-height: calc(100dvh - 2.5rem); overflow-y: auto;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-card); padding: 1.5rem;
+  box-shadow: 0 24px 60px rgba(35, 34, 32, 0.22);
+}
+.dmsi__card:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 3px; }
+.dmsi__close {
+  position: absolute; top: 0.6rem; right: 0.6rem;
+  width: 32px; height: 32px; display: grid; place-items: center;
+  background: transparent; border: 0; border-radius: var(--demeter-radius-pill);
+  color: var(--demeter-muted); cursor: pointer;
+}
+.dmsi__close:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
+/* Where transparency is turned down, the blur cannot separate the card from
+   the chat — so the tint carries it instead. */
+@media (prefers-reduced-transparency: reduce) {
+  .dmsi { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(35, 34, 32, 0.5); }
+}
+@media (prefers-reduced-motion: reduce) { .dmsi { animation: none; } }
 /* The settings gear, on the sign-in line. <details> gives Escape and
    outside-click for free and degrades to an open list without JS. */
 .demeter__gear { position: relative; }
