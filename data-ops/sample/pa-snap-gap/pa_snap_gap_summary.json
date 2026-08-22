@@ -1,0 +1,12 @@
+{
+  "state": "PA",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 811557.0,
+  "eligible_persons_weighted_130fpl": 1716551.0,
+  "eligible_no_snap_households_130fpl": 426962.0,
+  "eligible_no_snap_persons_130fpl": 803435.0,
+  "weighted_non_enrollment_rate_130fpl": 0.5261022947248314,
+  "n_counties": 67,
+  "n_pumas": 95,
+  "fns_divergence_note": "CAUTION \u2014 large FNS divergence: FNS FY2022 rates PA participation at 100% (capped) under full eligibility rules, i.e. a statistically-zero gap; this gross-income-only fact base shows 803K persons in non-receipt households. In PA the proxy's known upward biases dominate. Use these figures ONLY as geographic ranking (which counties, relative need), never as an absolute-gap claim; pitch framing should lean on consent-order geographies (ESSA/Citadel \u2014 Philadelphia) and the NTI cluster, not on a headline gap number."
+}
