@@ -19,7 +19,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { NAP_JURISDICTIONS, napJurisdiction, type PackMeta } from "@civica/demeter-engine/packs";
 import { StateFlag } from "./StateFlag";
-import { programDisplayName, agencyDisplayName } from "../lib/program-name";
+import { agencyDisplayName, programDisplayName } from "../lib/program-name";
 import { stateName } from "../lib/state-names";
 
 export interface StatePickerCopy {
@@ -200,14 +200,14 @@ export function DemeterStatePicker({
       {selected && !open && (
         <div className="dmst__scope">
           <span className="dmst__scope-agency">
-            {copy.scopeAgency}: {selected.agency}
+            {copy.scopeAgency}: {agencyDisplayName(selected.agency)}
           </span>
         </div>
       )}
       {napSelected && !open && (
         <div className="dmst__scope dmst__scope--nap">
           <span className="dmst__scope-agency">
-            {napSelected.program} · {napSelected.agency}
+            {programDisplayName(napSelected.program)} · {agencyDisplayName(napSelected.agency)}
           </span>
           {napSelected.agencyUrl && (
             <a
@@ -317,7 +317,7 @@ export function DemeterStatePicker({
                       <StateFlag code={j.code} />
                       <span className="dmst__opt-text">
                         <span className="dmst__opt-name">{j.name}</span>
-                        <span className="dmst__opt-sub">{j.program}</span>
+                        <span className="dmst__opt-sub">{programDisplayName(j.program)}</span>
                       </span>
                     </button>
                   </li>

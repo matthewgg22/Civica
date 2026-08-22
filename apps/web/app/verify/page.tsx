@@ -9,7 +9,7 @@ import Link from "next/link";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { certaintyStats, REASON_LABEL } from "../../lib/certainty-stats";
 import { publicVerification } from "../../lib/verification-summary";
-import { programDisplayName } from "../../lib/program-name";
+import { agencyDisplayName, programDisplayName } from "../../lib/program-name";
 import { StateFlag } from "../../components/StateFlag";
 import { DemeterNav } from "../../components/DemeterNav";
 import { DemeterFooter } from "../../components/DemeterFooter";
@@ -215,7 +215,7 @@ export default async function VerifyPage() {
               <dl className="vcard__facts">
                 <div>
                   <dt>Administered by</dt>
-                  <dd>{s.agency}</dd>
+                  <dd>{agencyDisplayName(s.agency)}</dd>
                 </div>
                 <div>
                   <dt>Built from</dt>
