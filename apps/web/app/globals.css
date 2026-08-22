@@ -5636,6 +5636,13 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   border-top: 1px solid var(--demeter-rule); padding-top: 0.65rem;
 }
 .dmex__cta { color: var(--demeter-terracotta-deep); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+/* The dormant tally: quieter than the note above it — it is a fact, not a
+   pitch, and it earns its place by being measured (lib/live-counts.ts). */
+.dmex__tally {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; color: var(--demeter-muted); margin: 0.45rem 0 0;
+  font-variant-numeric: tabular-nums;
+}
 .dmo__eyebrow {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
