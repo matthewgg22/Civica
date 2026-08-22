@@ -5609,7 +5609,19 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 .dmst__opt:hover { background: var(--demeter-tint); }
 .dmst__opt.is-sel { background: #FBF1EC; }
 .dmst__opt-name { font-size: 0.92rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; }
-.dmst__opt-sub { font-size: 0.78rem; color: var(--demeter-muted); }
+/* ONE LINE (owner rec 2026-08-22). The agency is confirmation, not
+   identification — the flag, code and program name above it are what
+   someone scans for, and the full agency shows on the trigger once chosen.
+   Letting it wrap ran rows to four lines and pushed the rest of the list
+   below the fold. */
+.dmst__opt-sub {
+  font-size: 0.78rem; color: var(--demeter-muted);
+  display: block; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* The text column has to be allowed to shrink, or the flex row lets it
+   overflow instead of ellipsing. */
+.dmst__opt-text { min-width: 0; }
 .dmst__opt-badge {
   font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--demeter-terracotta-deep); border: 1px solid #EAD9C8;
