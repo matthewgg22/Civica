@@ -14,7 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:pg": "vitest run .pg.test",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "legal:md": "tsx scripts/generate-legal-md.ts"
   },
   "dependencies": {
     "@civica/demeter-engine": "workspace:*",

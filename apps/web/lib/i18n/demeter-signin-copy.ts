@@ -35,6 +35,13 @@ export interface DemeterSigninCopy {
   emailSentBody: string;
   emailRetry: string;
   emailDisclosure: string;
+  termsAssent: {
+    before: string;
+    terms: string;
+    between: string;
+    privacy: string;
+    after: string;
+  };
   errorInvalidEmail: string;
   errorRateLimited: string;
   errorGeneric: string;
@@ -42,6 +49,16 @@ export interface DemeterSigninCopy {
 
 export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
   en: {
+    // Sign-in-wrap: notice adjacent to the button that creates the account.
+    // See the matching note in demeter-chat-copy.ts — same reason, other half of
+    // the surface. Anonymous chat assents at the composer; accounts assent here.
+    termsAssent: {
+      before: 'By creating an account you agree to our ',
+      terms: 'Terms',
+      between: ' and ',
+      privacy: 'Privacy Policy',
+      after: '.',
+    },
     title: "Save your conversation",
     subtitle:
       "Sign in and this conversation will be here when you come back. The chat itself is always free — an account is only for saving.",
@@ -65,6 +82,16 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     errorGeneric: "Something went wrong. Please try again.",
   },
   es: {
+    // Sign-in-wrap: notice adjacent to the button that creates the account.
+    // See the matching note in demeter-chat-copy.ts — same reason, other half of
+    // the surface. Anonymous chat assents at the composer; accounts assent here.
+    termsAssent: {
+      before: 'Al crear una cuenta, aceptas nuestros ',
+      terms: 'Términos',
+      between: ' y la ',
+      privacy: 'Política de Privacidad',
+      after: '.',
+    },
     title: "Guarda tu conversación",
     subtitle:
       "Inicia sesión y esta conversación estará aquí cuando regreses. El chat siempre es gratis — la cuenta es solo para guardar.",
@@ -88,6 +115,16 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     errorGeneric: "Algo salió mal. Por favor intenta de nuevo.",
   },
   vi: {
+    // Sign-in-wrap: notice adjacent to the button that creates the account.
+    // See the matching note in demeter-chat-copy.ts — same reason, other half of
+    // the surface. Anonymous chat assents at the composer; accounts assent here.
+    termsAssent: {
+      before: 'Bằng cách tạo tài khoản, bạn đồng ý với ',
+      terms: 'Điều khoản',
+      between: ' và ',
+      privacy: 'Chính sách quyền riêng tư',
+      after: ' của chúng tôi.',
+    },
     title: "Lưu cuộc trò chuyện của bạn",
     subtitle:
       "Đăng nhập và cuộc trò chuyện này sẽ ở đây khi bạn quay lại. Trò chuyện luôn miễn phí — tài khoản chỉ dùng để lưu.",
@@ -111,6 +148,16 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     errorGeneric: "Đã xảy ra lỗi. Vui lòng thử lại.",
   },
   zh: {
+    // Sign-in-wrap: notice adjacent to the button that creates the account.
+    // See the matching note in demeter-chat-copy.ts — same reason, other half of
+    // the surface. Anonymous chat assents at the composer; accounts assent here.
+    termsAssent: {
+      before: '创建账户即表示您同意我们的',
+      terms: '服务条款',
+      between: '和',
+      privacy: '隐私政策',
+      after: '。',
+    },
     title: "保存您的对话",
     subtitle: "登录后，这段对话会在您回来时依然在这里。聊天本身永远免费——账户只用于保存。",
     continueGoogle: "使用 Google 继续",

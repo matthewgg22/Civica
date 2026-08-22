@@ -2084,6 +2084,22 @@ export function DemeterChat({
         </a>
         .
       </p>
+      {/* THE ASSENT NOTICE. Sits here — adjacent to the composer, visible at the
+          moment someone decides to type — because that is the act that manifests
+          agreement for an anonymous user who never signs in. Terms reachable only
+          from a footer link is browsewrap, and an unenforceable agreement takes
+          the arbitration clause and every disclaimer in it down together. */}
+      <p className="demeter__disclaimer">
+        {t.termsNotice.before}
+        <a className="demeter__link" href="/terms">
+          {t.termsNotice.terms}
+        </a>
+        {t.termsNotice.between}
+        <a className="demeter__link" href="/privacy">
+          {t.termsNotice.privacy}
+        </a>
+        {t.termsNotice.after}
+      </p>
         </div>
         {/* THE SIDEBAR IS THE TRACKING PANEL (owner refinement, 2026-08-21):
             which state this is scoped to, the outlined application, and the

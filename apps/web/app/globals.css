@@ -687,6 +687,16 @@ button {
   margin: var(--civica-space-md) 0 0;
   line-height: 1.5;
 }
+/* Links inside the disclosures under the sign-in button. UNDERLINED and set in
+   the body ink rather than the muted grey around them: this is the notice that
+   makes the Terms binding, and notice a reader cannot see they can follow is
+   not notice. */
+.signin-link {
+  color: var(--civica-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.signin-link:hover { color: var(--civica-pine); }
 
 /* "or" rule between the Google button and the email form. The line is drawn
    with a border on the pseudo-elements so it never overlaps the word. */
@@ -8607,4 +8617,105 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 }
 @media (prefers-reduced-motion: reduce) {
   .dmmap__state--on { transition: none; }
+}
+
+/* ===== Legal documents: /privacy, /terms, /safety =====
+
+   Joins the growth-page family (.vpage/.gpage/.spage) but narrower: legal prose
+   is read line by line, and 780px of serif is a tiring measure for it. Type per
+   DEMETER-DESIGN.md — the document speaks in the display serif, and everything
+   that labels it (contents, table head, dates, draft banner) is sans. */
+.lgl {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+  color: var(--demeter-body);
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+}
+.lgl__head { border-bottom: 1px solid var(--demeter-rule); padding-bottom: 1.25rem; margin-bottom: 1.5rem; }
+.lgl__title { font-size: 2rem; font-weight: 700; line-height: 1.15; color: var(--demeter-ink); margin-bottom: 0.6rem; }
+.lgl__lede { font-size: 1.05rem; line-height: 1.6; color: var(--demeter-body); margin-bottom: 0.75rem; }
+.lgl__updated {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; color: var(--demeter-muted); text-transform: uppercase; letter-spacing: 0.04em;
+}
+
+/* Deliberately loud. A draft that reads like live policy is the thing this
+   whole status flag exists to prevent. */
+.lgl__draft {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; line-height: 1.55; color: var(--demeter-ink);
+  background: #FBF1EC; border: 1px solid var(--demeter-terracotta);
+  border-radius: 8px; padding: 0.75rem 0.9rem; margin-top: 1rem;
+}
+.lgl__draft strong { color: var(--demeter-terracotta-deep); }
+
+.lgl__docnav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.1rem; }
+.lgl__docnav-link {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; font-weight: 600; text-decoration: none;
+  color: var(--demeter-body); background: var(--demeter-card);
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-pill);
+  padding: 0.4rem 0.9rem; min-height: 36px; display: inline-flex; align-items: center;
+}
+.lgl__docnav-link:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
+.lgl__docnav-link.is-current { background: var(--demeter-terracotta); border-color: var(--demeter-terracotta); color: #fff; }
+
+.lgl__toc {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: 2rem;
+}
+.lgl__toc-label {
+  font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--demeter-muted); margin-bottom: 0.5rem;
+}
+.lgl__toc-list { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.3rem; font-size: 0.88rem; }
+.lgl__toc-list a { color: var(--demeter-body); text-decoration: none; }
+.lgl__toc-list a:hover { color: var(--demeter-terracotta-deep); text-decoration: underline; }
+
+/* scroll-margin so an anchored heading does not land under the sticky nav. */
+.lgl__section { margin-bottom: 2.25rem; scroll-margin-top: 5rem; }
+.lgl__h2 {
+  font-size: 1.3rem; font-weight: 700; line-height: 1.25; color: var(--demeter-ink);
+  margin-bottom: 0.7rem; padding-top: 0.25rem;
+}
+.lgl__p { font-size: 1rem; line-height: 1.7; margin-bottom: 0.9rem; }
+.lgl__ul { margin: 0 0 1rem 0; padding-left: 1.2rem; display: grid; gap: 0.5rem; }
+.lgl__ul li { font-size: 1rem; line-height: 1.65; }
+
+/* Promise vs warning. Wheat marks the promises — DEMETER-DESIGN.md forbids it
+   as text but a rule is exactly what it is for; terracotta marks the ones the
+   law wants conspicuous. */
+.lgl__callout {
+  font-size: 1rem; line-height: 1.6; margin-bottom: 0.85rem;
+  padding: 0.8rem 1rem; border-radius: 8px; border-left: 3px solid;
+  background: var(--demeter-card); color: var(--demeter-ink);
+}
+.lgl__callout--promise { border-left-color: var(--demeter-wheat); font-weight: 600; }
+.lgl__callout--warning {
+  border-left-color: var(--demeter-terracotta-deep); background: #FBF1EC;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.9rem; font-weight: 600;
+}
+
+.lgl__tablewrap { overflow-x: auto; margin-bottom: 1.1rem; -webkit-overflow-scrolling: touch; }
+.lgl__table {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  width: 100%; min-width: 460px; border-collapse: collapse; font-size: 0.86rem;
+}
+.lgl__table th {
+  text-align: left; font-weight: 700; color: var(--demeter-ink);
+  border-bottom: 2px solid var(--demeter-rule-strong); padding: 0.55rem 0.7rem 0.55rem 0;
+}
+.lgl__table td {
+  vertical-align: top; line-height: 1.5; color: var(--demeter-body);
+  border-bottom: 1px solid var(--demeter-rule); padding: 0.65rem 0.7rem 0.65rem 0;
+}
+.lgl__table td:first-child { color: var(--demeter-ink); font-weight: 600; }
+
+@media (min-width: 720px) {
+  .lgl { padding: 3rem 1.5rem 5rem; }
+  .lgl__title { font-size: 2.35rem; }
+  .lgl__toc-list { grid-template-columns: 1fr 1fr; }
 }

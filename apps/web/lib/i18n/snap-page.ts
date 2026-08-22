@@ -192,6 +192,8 @@ export interface PageCopy {
   navAsk: string;
   navQuestions: string;
   footerPrivacy: string;
+  footerTerms: string;
+  footerSafety: string;
   footerSupporters: string;
   /** /feedback — general product/site feedback, distinct from the per-answer
    *  thumbs in the chat. Added 2026-08-15: there was no footer link, and no
@@ -472,6 +474,8 @@ const en: PageCopy = {
   navAsk: "Ask Demeter",
   navQuestions: "Application questions",
   footerPrivacy: "Privacy",
+  footerTerms: "Terms",
+  footerSafety: "Safety",
   footerSupporters: "Supporters",
   footerFeedback: "Feedback",
   footerDisclaimer:
@@ -734,6 +738,8 @@ const es: PageCopy = {
   navAsk: "Pregúntale a Demeter",
   navQuestions: "Preguntas de la solicitud",
   footerPrivacy: "Privacidad",
+  footerTerms: "Términos",
+  footerSafety: "Seguridad",
   footerSupporters: "Patrocinadores",
   footerFeedback: "Comentarios",
   footerDisclaimer:
@@ -997,6 +1003,8 @@ const vi: PageCopy = {
   navAsk: "Hỏi Demeter",
   navQuestions: "Câu hỏi trên đơn",
   footerPrivacy: "Quyền riêng tư",
+  footerTerms: "Điều khoản",
+  footerSafety: "An toàn",
   footerSupporters: "Nhà tài trợ",
   footerFeedback: "Phản hồi",
   footerDisclaimer:
@@ -1259,6 +1267,8 @@ const zh: PageCopy = {
   navAsk: "询问 Demeter",
   navQuestions: "申请表问题",
   footerPrivacy: "隐私政策",
+  footerTerms: "服务条款",
+  footerSafety: "安全",
   footerSupporters: "支持者",
   footerFeedback: "反馈",
   footerDisclaimer:

@@ -27,6 +27,33 @@ const RULES: Rule[] = [
   { tag: "[ID]", re: /\b\d{11,}\b/g }, // case / EBT / account numbers (16-19 digits etc.)
 ];
 
+/** SSN FRAGMENTS. "My last four are 6789" is the way a real person volunteers
+ *  part of an SSN, and four bare digits match none of the rules above — so the
+ *  fragment was being stored while the policy promised no part of an SSN is
+ *  kept. Making the promise true is cheaper than narrowing it.
+ *
+ *  TWO NARROW RULES RATHER THAN ONE BROAD ONE, because the obvious broad version
+ *  is actively dangerous here. This product reasons about incomes, household
+ *  sizes and years, and in SNAP specifically, "social security" usually means
+ *  SSI or SSDI INCOME — a countable income source — not an identifier. A gate on
+ *  the bare phrase redacted the 1450 in "I get social security of 1450 a month",
+ *  which corrupts the eligibility conversation to protect a number that was
+ *  never an SSN. Likewise a loose "last 4" gate eats the 2400 in "in the last 4
+ *  months I made 2400".
+ *
+ *  So: the identifier rule fires only on wording that means the NUMBER (ssn,
+ *  "social security number", "soc sec #"), and the last-four rule requires the
+ *  digits to follow almost immediately, with only a connective between.
+ *
+ *  Each keeps the introducing phrase and replaces only the digits, so the
+ *  question still reads. */
+const SSN_FRAGMENT_RULES: RegExp[] = [
+  // "ssn 6789", "SSN ends in 6789", "social security number is 6789", "soc sec # 6789"
+  /\b((?:ssn|soc(?:ial)?\.?\s*sec(?:urity)?\.?\s*(?:(?:number|num|no)\b|#))[^\d\n]{0,24})(\d{4})\b/gi,
+  // "my last four are 6789", "last 4 digits 6789", "last four of my ssn is 6789"
+  /\b((?:last\s*(?:four|4)(?:\s*(?:digits?|numbers?))?)\s*(?:of\s*(?:my|her|his|their)\s*(?:ssn|social(?:\s*security)?)\s*)?(?:is|are|:|=|#)?\s*)(\d{4})\b/gi,
+];
+
 export interface RedactionResult {
   redacted: string;
   /** Count of identifiers scrubbed (for the audit log / transparency). */
@@ -41,6 +68,14 @@ export function redactPii(text: string): RedactionResult {
     out = out.replace(re, () => {
       found += 1;
       return tag;
+    });
+  }
+  // After the full-value rules, so a complete SSN is already [SSN] and cannot
+  // be double-counted by the fragment pass.
+  for (const re of SSN_FRAGMENT_RULES) {
+    out = out.replace(re, (_m, lead: string) => {
+      found += 1;
+      return `${lead}[SSN]`;
     });
   }
   return { redacted: out, found };

@@ -19,9 +19,23 @@ const LINK_PATHS = {
   verify: "/verify",
   questions: "/questions",
   privacy: "/privacy",
+  terms: "/terms",
+  safety: "/safety",
   supporters: "/supporters",
   feedback: "/feedback",
 } as const;
+
+/** Paths with no localized route — always linked canonically. The three legal
+ *  documents are published in English only for now, so a /es/terms would 404;
+ *  when a translated one ships, drop it from here and add the [lang] route in
+ *  the SAME change. */
+const UNLOCALIZED: readonly string[] = [
+  LINK_PATHS.privacy,
+  LINK_PATHS.terms,
+  LINK_PATHS.safety,
+  LINK_PATHS.feedback,
+  LINK_PATHS.supporters,
+];
 
 /** English is un-prefixed; everything else lives under /es|/vi|/zh. Privacy,
  *  feedback and supporters are exceptions — none has a localized route, so
@@ -31,9 +45,7 @@ const LINK_PATHS = {
  *  ever ships, remove it from this list and add the [lang] route in the same
  *  change. */
 function href(path: string, lang: AnswerLang): string {
-  if (path === LINK_PATHS.privacy || path === LINK_PATHS.feedback || path === LINK_PATHS.supporters) {
-    return path;
-  }
+  if (UNLOCALIZED.includes(path)) return path;
   return lang === "en" ? path : `/${lang}${path}`;
 }
 
@@ -62,6 +74,12 @@ export function DemeterFooter({ lang = "en" }: { lang?: AnswerLang }) {
           </Link>
           <Link className="dmft__link" href={LINK_PATHS.privacy}>
             {c.footerPrivacy}
+          </Link>
+          <Link className="dmft__link" href={LINK_PATHS.terms}>
+            {c.footerTerms}
+          </Link>
+          <Link className="dmft__link" href={LINK_PATHS.safety}>
+            {c.footerSafety}
           </Link>
           <Link className="dmft__link" href={href(LINK_PATHS.supporters, lang)}>
             {c.footerSupporters}
