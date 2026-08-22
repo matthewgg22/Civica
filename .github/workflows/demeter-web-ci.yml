@@ -162,7 +162,10 @@ jobs:
             20260614_demeter_public_feedback.sql \
             20260616_feedback_upsert_index.sql \
             20260617_demeter_conversations.sql \
-            20260821_demeter_conversations_worksheet.sql
+            20260821_demeter_conversations_worksheet.sql \
+            20260606_mae_query_log.sql \
+            20260612_demeter_certainty_metrics.sql \
+            20260824_demeter_query_log_retention_purge.sql
           do
             psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f "supabase/migrations/$f"
           done
