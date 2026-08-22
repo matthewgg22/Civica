@@ -205,11 +205,20 @@ export const T = {
       // worked out" made it sound like the lesser of the two. It is the escape
       // hatch, and people who are nervous about the system need to know it is
       // there.
+      //
+      // SHORT (like `privacy` above): this ran three sentences plus a
+      // parenthetical — longer than the panel it explains. Two sentences,
+      // every load-bearing clause kept: nothing here enters your estimate,
+      // what-ifs and other people's situations are what it is FOR, and the
+      // disclosure that we keep the text to check accuracy in both modes.
+      // That last clause is the one that may never be cut for room — dropping
+      // it would turn a disclosure into a secret. Budget pinned in
+      // worksheet-mode.test.tsx.
       modeLabel: "What do you want from this?",
       modeAsk: "Just asking",
       modeEstimate: "Build my estimate",
       modeAskNote:
-        "Nothing you say here goes into the document Demeter is building for you. Switch to this any time you want to ask a what-if, or about someone else, without it counting toward your own answers. (We still keep the question and answer to check our accuracy — that is true in both modes.)",
+        "Nothing here goes into your estimate — ask a what-if, or about someone else. We keep the text to check our accuracy, in both modes.",
       switchedToAsk: "Nothing is being gathered. Ask anything.",
     },
   },
@@ -344,7 +353,7 @@ export const T = {
       modeAsk: "Solo preguntar",
       modeEstimate: "Calcular mi estimado",
       modeAskNote:
-        "Nada de lo que digas aquí entra en el documento que Demeter arma para ti. Cámbiate a esto cuando quieras preguntar un supuesto, o por otra persona, sin que cuente para tus propias respuestas. (Igual guardamos la pregunta y la respuesta para verificar nuestra exactitud — eso vale en los dos modos.)",
+        "Nada de esto entra en tu estimado — pregunta un supuesto, o por otra persona. Guardamos el texto para verificar nuestra exactitud, en ambos modos.",
       switchedToAsk: "Estimado borrado. No se está recogiendo nada.",
     },
   },
@@ -478,7 +487,7 @@ export const T = {
       modeAsk: "Chỉ hỏi thôi",
       modeEstimate: "Tính mức ước tính",
       modeAskNote:
-        "Những gì bạn nói ở đây không được đưa vào bản tài liệu Demeter đang lập cho bạn. Hãy chuyển sang mục này khi bạn muốn hỏi giả định, hoặc hỏi giúp người khác, mà không ảnh hưởng đến hồ sơ của chính bạn. (Chúng tôi vẫn lưu câu hỏi và câu trả lời để kiểm tra độ chính xác — điều này đúng với cả hai chế độ.)",
+        "Không gì ở đây được đưa vào bản ước tính của bạn — cứ hỏi giả định, hoặc hỏi giúp người khác. Chúng tôi vẫn lưu nội dung để kiểm tra độ chính xác, ở cả hai chế độ.",
       switchedToAsk: "Đã xóa ước tính. Không có gì đang được thu thập.",
     },
   },
@@ -606,7 +615,7 @@ export const T = {
       modeLabel: "您希望在这里得到什么？",
       modeAsk: "只是问问",
       modeEstimate: "帮我算估算",
-      modeAskNote: "您在这里说的内容不会进入 Demeter 为您整理的那份文件。任何时候想问假设情况、或替别人问，都可以切到这里，不会影响您自己的材料。（我们仍会保留问题和回答以核查准确性——两种模式都是如此。）",
+      modeAskNote: "这里说的内容不会进入您的估算——可以问假设情况，或替别人问。我们仍会保留内容以核查准确性，两种模式都是如此。",
       switchedToAsk: "估算已清除。没有在收集任何内容。",
     },
   },
