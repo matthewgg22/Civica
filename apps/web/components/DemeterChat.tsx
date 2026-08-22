@@ -2248,10 +2248,21 @@ export function DemeterChat({
           </a>
         </div>
         </div>
-          {/* Language + account, at the sidebar's foot — Pi's own placement.
-              The select is the mid-conversation language switch (client
-              state, keeps the transcript); the nav's language LINKS above
-              navigate between localized pages instead. The probe fails
+          {/* THE MIDDLE ZONE — saved conversations, Pi's own geography (their
+              rail's middle is the conversation list). The label is the link;
+              the sign-in invitation rides under it while signed out. */}
+          <div className="demeter__sbmid">
+            <a className="demeter__sblabel" href="/screen/saved">
+              {t.sidebarSaved} →
+            </a>
+            {authEmail === null && (
+              <p className="demeter__sidebarnote">{t.sidebarSigninNote}</p>
+            )}
+          </div>
+          {/* THE FOOT: language + account only, pinned to the window bottom —
+              Pi's own placement. The select is the mid-conversation language
+              switch (client state, keeps the transcript); the nav's language
+              LINKS navigate between localized pages instead. The probe fails
               closed to signed-out; auth is never load-bearing here. */}
           <div className="demeter__sidebarauth">
             <label className="demeter__lang">
@@ -2269,16 +2280,10 @@ export function DemeterChat({
                 ))}
               </select>
             </label>
-            <a className="demeter__sidebarlink" href="/screen/saved">
-              {t.sidebarSaved}
-            </a>
             {authEmail === null ? (
-              <>
-                <p className="demeter__sidebarnote">{t.sidebarSigninNote}</p>
-                <a className="demeter__sidebarsignin" href={signInHref}>
-                  {t.signin}
-                </a>
-              </>
+              <a className="demeter__sidebarsignin" href={signInHref}>
+                {t.signin}
+              </a>
             ) : (
               <p className="demeter__sidebarnote">
                 {t.sidebarSignedIn} <span translate="no">{authEmail}</span>

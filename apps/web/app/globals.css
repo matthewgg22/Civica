@@ -4781,7 +4781,7 @@ html {
 .demeter__emptylede {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: 0.98rem; line-height: 1.55; color: var(--demeter-muted);
-  margin: 0 0 0.5rem; max-width: 44ch; text-wrap: pretty;
+  margin: 0 0 0.5rem; max-width: 58ch; text-wrap: pretty;
 }
 /* The two-mode framing (#898 P2-6). Sans, smaller and quieter than the lede —
    it is orientation, not the invitation — and a touch wider, since it names
@@ -4789,7 +4789,7 @@ html {
 .demeter__emptymodes {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.85rem; line-height: 1.6; color: var(--demeter-muted);
-  margin: 0 0 0.5rem; max-width: 54ch; text-wrap: pretty;
+  margin: 0 0 0.5rem; max-width: 58ch; text-wrap: pretty;
 }
 .demeter__suggests {
   display: flex; flex-direction: column; gap: 0.5rem; width: 100%; align-items: center;
@@ -4822,6 +4822,24 @@ html {
   border-radius: var(--demeter-radius-card); padding: 0.7rem 0.9rem; font-size: 0.9rem;
 }
 .demeter__inputrow { display: flex; gap: 0.5rem; align-items: flex-end; padding-top: 0.5rem; }
+/* Pi-grade composer on the chat surface: one rounded field, the send control
+   riding INSIDE it, and a QUIET focus — the field darkens its edge rather
+   than lighting a 2px ring the moment autofocus lands. Still visibly
+   focused (terracotta border), just not shouting. */
+.dmchat .demeter__inputrow { position: relative; }
+.dmchat .demeter__input {
+  border-radius: 1.35rem; padding-right: 6.5rem;
+  border-color: var(--demeter-rule-strong);
+}
+.dmchat .demeter__input:focus,
+.dmchat .demeter__input:focus-visible {
+  outline: none; border-color: var(--demeter-terracotta);
+  box-shadow: 0 2px 12px rgba(35, 34, 32, 0.07);
+}
+.dmchat .demeter__send {
+  position: absolute; right: 7px; bottom: 7px;
+  min-height: 38px; height: 38px; border-radius: var(--demeter-radius-pill);
+}
 .demeter__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: 1; resize: none; border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-card); background: var(--demeter-card);
@@ -7533,6 +7551,22 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   border: 1px dashed var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
   padding: 0.5rem 0.65rem; background: var(--demeter-tint);
 }
+/* The rail's middle zone: saved conversations, Pi's own geography (their
+   rail's middle is the conversation list). The label IS the link. */
+.demeter__sbmid { display: flex; flex-direction: column; gap: 0.4rem; }
+.demeter__sblabel {
+  font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-ink); text-decoration: none; font-weight: 650;
+  padding: 0.55rem 0.65rem; border-radius: var(--demeter-radius-input);
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  min-height: 44px; display: flex; align-items: center;
+}
+.demeter__sblabel:hover { border-color: var(--demeter-terracotta); }
+/* The keep/verify tools read as one card against the tint, not loose ends. */
+.dmchat .demeter__sidetools {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-card); padding: 0.85rem 0.95rem;
+}
 .demeter__sidebarauth .demeter__lang { display: block; margin-bottom: 0.8rem; }
 .demeter__sidebarauth .demeter__lang-select { width: 100%; }
 /* One picker visible at any width: the sidebar's instance from 901px, the
@@ -7559,7 +7593,8 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 /* The onboarding ask, in Demeter's own voice (serif — it speaks). */
 .demeter__emptyask {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1rem; line-height: 1.6; color: var(--demeter-body); margin: 0.5rem 0 0; text-wrap: pretty;
+  font-size: 1rem; line-height: 1.6; color: var(--demeter-body); margin: 0.5rem 0 0;
+  max-width: 58ch; text-wrap: pretty;
 }
 @media (prefers-reduced-motion: reduce) {
   .demeter__sidebar, .demeter__sidebar--open { transition: none; }
@@ -7597,9 +7632,17 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   .dmchat__body { transition: margin-left 200ms ease; }
   .dmchat__body:has(.demeter__sidebar--open) {
     margin-left: 21.5rem;
+    width: auto; /* NOT the base width:100% — a margin on a 100%-width box
+                    shoves the whole viewport-wide body off the right edge
+                    (measured: right=1816 on a 1450 viewport). auto lets the
+                    margin shrink the box; the right edge never moves. */
     max-width: none;
   }
-  .dmchat__body:has(.demeter__sidebar--open) .demeter { max-width: 68rem; margin: 0 auto; width: 100%; }
+  .dmchat__body:has(.demeter__sidebar--open) .demeter { max-width: 64rem; margin: 0 auto; width: 100%; }
+  /* One brand on screen: while the rail is open it carries the mark and the
+     name, so the nav's own brand yields (visibility keeps the tab row from
+     shifting). Closed rail: the nav brand returns. */
+  .dmchat:has(.demeter__sidebar--open) .dmnav__brand { visibility: hidden; }
 
   /* The controls row now lives INSIDE the conversation column (see the JSX), so
      it needs no grid of its own — it is already the width of the column it
