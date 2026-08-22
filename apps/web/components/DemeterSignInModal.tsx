@@ -38,15 +38,45 @@ export function DemeterSignInModal({
   const emailRef = useRef<HTMLInputElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Escape closes, and focus starts inside the card — a dialog the keyboard
-  // cannot reach or leave is a trap either way.
+  // FOCUS, all three parts of it:
+  //  - it starts inside the card, so the dialog is reachable;
+  //  - Tab CYCLES within the card rather than walking out into the blurred
+  //    chat behind, which is unreachable to a mouse but was still in the
+  //    tab order — a modal you can tab out of is a modal in name only;
+  //  - and it RETURNS to whatever opened this on close, so the keyboard is
+  //    left where it was rather than back at the document top.
   useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null;
     cardRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") return onClose();
+      if (e.key !== "Tab") return;
+      const card = cardRef.current;
+      if (!card) return;
+      const focusable = [
+        ...card.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ].filter((el) => el.offsetParent !== null || el === document.activeElement);
+      if (focusable.length === 0) return;
+      const first = focusable[0]!;
+      const last = focusable[focusable.length - 1]!;
+      const active = document.activeElement;
+      // The card itself holds focus on open (tabIndex -1), so the first Tab
+      // has to be steered too, not just the wrap at either end.
+      if (!e.shiftKey && (active === last || active === card)) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && (active === first || active === card)) {
+        e.preventDefault();
+        last.focus();
+      }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      opener?.focus?.();
+    };
   }, [onClose]);
 
   const submit = async (e: FormEvent) => {
@@ -91,6 +121,19 @@ export function DemeterSignInModal({
           <div role="status">
             <p className="signin-sent-title">{dt.emailSentTitle}</p>
             <p className="signin-otp-sent">{dt.emailSentBody.replace("{email}", email)}</p>
+            {/* A way back, same as the route has: a mistyped address or a
+                link that never arrives otherwise leaves this card with no
+                exit but closing it and starting over. */}
+            <button
+              type="button"
+              className="signin-resend"
+              onClick={() => {
+                setState("idle");
+                setEmail("");
+              }}
+            >
+              {dt.emailRetry}
+            </button>
           </div>
         ) : (
           <>

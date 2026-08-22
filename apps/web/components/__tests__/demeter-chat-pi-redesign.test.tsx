@@ -194,6 +194,31 @@ describe("sign-in opens over the chat (owner rec 2026-08-22)", () => {
     expect(container.querySelector(".dmsi")).toBeTruthy();
   });
 
+  it("focus starts in the card, cycles inside it, and returns to the opener on close", () => {
+    const { container } = mountChat();
+    const opener = container.querySelector(".demeter__head a.demeter__signin") as HTMLElement;
+    opener.focus();
+    fireEvent.click(opener, { button: 0 });
+    const card = container.querySelector(".dmsi__card") as HTMLElement;
+    expect(document.activeElement).toBe(card);
+
+    // Tab from the card lands on the first control INSIDE it, not on
+    // whatever sits behind the overlay.
+    fireEvent.keyDown(window, { key: "Tab" });
+    expect(card.contains(document.activeElement)).toBe(true);
+
+    // Shift+Tab from the first control wraps to the last, still inside.
+    const focusable = [...card.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled])')];
+    focusable[0]!.focus();
+    fireEvent.keyDown(window, { key: "Tab", shiftKey: true });
+    expect(card.contains(document.activeElement)).toBe(true);
+
+    // Closing hands focus back to what opened it.
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(container.querySelector(".dmsi")).toBeNull();
+    expect(document.activeElement).toBe(opener);
+  });
+
   it("the chat is NOT filtered — the overlay blurs it, so the fixed rail stays put", () => {
     // A `filter` on the chat would make it the containing block for the
     // fixed rail and chrome row, jumping both the moment the card opened.
