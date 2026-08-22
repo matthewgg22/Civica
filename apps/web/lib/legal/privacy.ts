@@ -151,6 +151,11 @@ export const PRIVACY_POLICY: LegalDocument = {
         },
         {
           kind: "callout",
+          tone: "promise",
+          text: "We do not store Social Security numbers, and we do not store any part of one. If you type a full number it is replaced outright before anything is saved, and so is a fragment like the last four digits. Nothing of it is kept, and none of it reaches the AI model.",
+        },
+        {
+          kind: "callout",
           tone: "warning",
           text: "The filter does not remove names. Detecting names automatically is unreliable, and a filter that guessed would mangle real questions. Please do not type your name or anyone else's.",
         },

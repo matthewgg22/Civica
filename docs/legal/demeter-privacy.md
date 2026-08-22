@@ -57,6 +57,8 @@ We do not collect your name, your Social Security number, your address, your dat
 
 Before your question leaves our server, it passes through a filter that removes structured identifiers: Social Security numbers, phone numbers, email addresses, dates written as dates, and long account, EBT or case numbers. The filter runs before the question is sent to the AI model, before it is used to search our policy sources, and before it is written to our accuracy record.
 
+> We do not store Social Security numbers, and we do not store any part of one. If you type a full number it is replaced outright before anything is saved, and so is a fragment like the last four digits. Nothing of it is kept, and none of it reaches the AI model.
+
 > **The filter does not remove names. Detecting names automatically is unreliable, and a filter that guessed would mangle real questions. Please do not type your name or anyone else's.**
 
 The filtered question is then sent to Anthropic, the company whose AI model writes Demeter's answers. Under the commercial terms we use, Anthropic processes the question to produce an answer and does not use it to train its models.
