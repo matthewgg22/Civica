@@ -113,3 +113,20 @@ Sources: crapes.fdic.gov Bank Irvine PE PDF · FDIC Q3+Q4 2026 exam schedules (a
 
 **Next actions (order):** MA/CA registry filings + Ad Grants application + findCRA profile (parallel, this week) → confirm Project Bread thread → /plan-eng-review + /plan-design-review on the artifact spec → build T5 (PDF artifact, Bank Irvine parameterization first) → verify score (T6) → call guide (T7) → first sends via FDIC SF + direct to Bank Irvine.
 
+---
+
+## T1-FL — Florida FDACS charitable-solicitation registration (COMPLETE, 2026-08-22)
+
+**Verdict: Florida GATES the Miami outreach. Ch. 496 F.S. treats grant/sponsorship requests to for-profit corporations (banks) as regulated solicitation — the only grant carve-outs are government entities and FDACS-registered tax-exempts. Registration (or the exempt filing) must be submitted/approved BEFORE the first email or call to Helm, Banco do Brasil Americas, or Ocean Bank.**
+
+Two paths:
+1. **Small Charitable Organization exemption (§496.406(1)(d))** — FREE, form FDACS-10110, filed before soliciting, renewed annually. Requires: <$50K contributions/FY, fundraising exclusively by uncompensated volunteers/officers, and **no part of assets/income paid to any officer**. ⚠️ If any officer draws compensation, the exemption arguably fails (broad inurement clause) — counsel sanity-check or take path 2.
+2. **Full registration (FDACS-10100, rev. 12/24)** — $10 (<$5K prior-FY contributions) to $75 ($5K–$99K). Attachments: IRS determination letter, current-FY **budget in lieu of 990s** (explicitly allowed for orgs with no financial history — fits Civica Torrey exactly), officer list. Online portal or mail. **May not solicit until FDACS approves**; statutory 15-business-day action clock; budget 2–4 weeks.
+
+Penalties for soliciting unregistered: up to $5K/act administrative (501(c)(3) failure-to-register capped at $500/violation, §496.419), cease-and-desist power, and willful violations are a third-degree felony (§496.417). Renewals annual both paths; late-renewal $25/month; hit $50K contributions mid-year → full registration within 30 days.
+
+**Recommended: file FDACS-10100 ($10–$75) regardless** — removes the officer-compensation interpretive risk for trivial cost, and start the clock now: FL approval (~2–4 wks) is on the critical path for the Miami sends the same way the MA certificate gates MA.
+
+**Updated national filings picture:** MA (mandatory, certificate gates MA solicitation, ~2–6 wks) · CA (CT-1 before CA sends) · FL (FDACS approval gates FL sends, ~2–4 wks) · future states each need their own check before outreach (charitable-registration requirements are state-by-state; NY/TX/AZ next if those pitches activate — NY CHAR410 is known-onerous).
+
+Sources: §§496.404/405/406/417/419 F.S. (statute text) · fdacs.gov solicitation-of-contributions page · FDACS-10100 + FDACS-10110 forms (forms.fdacs.gov) · Rivero Gordimer on the $50K contributions amendment · Harbor Compliance (processing-time inference).
