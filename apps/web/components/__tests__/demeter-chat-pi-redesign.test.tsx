@@ -193,6 +193,14 @@ describe("boxless messages (CSS contract)", () => {
     expect(rule).not.toMatch(/var\(--demeter-terracotta\)/);
   });
 
+  it("one language control at a time — the nav's links yield to the open rail's select", () => {
+    // Owner catch (2026-08-22): with the rail open, the nav's language links
+    // and the rail's language select were both on screen. Same dedup rule as
+    // the brand and sign-in, pinned at the stylesheet.
+    const s = css();
+    expect(s).toMatch(/\.dmchat:has\(\.demeter__sidebar--open\) \.dmnav__langs \{ display: none; \}/);
+  });
+
   it("the sidebar respects reduced motion", () => {
     const s = css();
     const reduced = s.slice(s.indexOf("prefers-reduced-motion"), s.length);

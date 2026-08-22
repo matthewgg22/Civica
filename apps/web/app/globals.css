@@ -7683,6 +7683,11 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
      right as one cluster, so the bar reads as chrome rather than a layout
      with a hole in it. Closed rail: the brand returns. */
   .dmchat:has(.demeter__sidebar--open) .dmnav__brand { display: none; }
+  /* Same dedup as the brand and sign-in: while the rail is open its foot
+     select is THE language control (it switches answers in place, keeping
+     the transcript); the nav's language links return when the rail closes.
+     One language control on screen at a time. */
+  .dmchat:has(.demeter__sidebar--open) .dmnav__langs { display: none; }
   .dmchat:has(.demeter__sidebar--open) .dmnav__inner { justify-content: flex-end; gap: 1.5rem; }
 
   /* The controls row now lives INSIDE the conversation column (see the JSX), so
