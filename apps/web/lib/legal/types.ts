@@ -63,10 +63,14 @@ export const CONTACT = {
  *
  *  PINNED HERE AND ASSERTED BY lib/legal/__tests__/legal-claims.test.ts so the
  *  published number cannot drift from the number the purge job enforces. When
- *  the purge job is built it MUST import these constants rather than restating
- *  them — a policy promising 7 days over a job that deletes at 90 is a false
- *  statement about privacy, which is the one kind of error this product cannot
- *  afford. */
+ *  the purge job is built it MUST NOT restate these numbers unchecked — a
+ *  policy promising 7 days over a job that deletes at 90 is a false statement
+ *  about privacy, which is the one kind of error this product cannot afford.
+ *
+ *  The job now lives in SQL (20260824), which cannot import a TS constant. So
+ *  the check moved rather than lapsed: demeter-retention.pg.test.ts runs the
+ *  real function against a real database and asserts the OBSERVED cutoff is
+ *  the value below, on both sides of the boundary. */
 export const RETENTION_DAYS = {
   /** Question and answer text on an ordinary row. */
   questionText: 7,
@@ -76,19 +80,27 @@ export const RETENTION_DAYS = {
 
 /** Whether the job that actually enforces RETENTION_DAYS exists AND RUNS.
  *
- *  THE JOB NOW EXISTS (#926): lib/retention-purge.ts, invoked daily by the
- *  Vercel cron declared in apps/web/vercel.json, importing the windows above
- *  rather than restating them.
+ *  THE JOB NOW EXISTS (#926), as a database function on the pg_cron schedule
+ *  this project already runs: snap_enrollment.purge_mae_query_log_retention(),
+ *  scheduled daily at 04:10 UTC by migration 20260824.
+ *
+ *  It was previously a Vercel cron calling a TypeScript route, which could not
+ *  begin working until an operator set CRON_SECRET — the route failed closed
+ *  without it. Moving enforcement next to the data removed that step: pasting
+ *  the migration is the whole install.
  *
  *  IT IS STILL FALSE, and that is not an oversight. This constant means the
- *  policy's retention promise is TRUE OF THE RUNNING SYSTEM — and the route
- *  fails closed without CRON_SECRET, so until that is set in Vercel and a
- *  first run is confirmed, nothing is being purged and the promise would
- *  still be intent wearing the grammar of fact. Flipping this on the strength
- *  of merged code rather than observed behaviour is precisely the failure the
- *  guard was built to prevent.
+ *  policy's retention promise is TRUE OF THE RUNNING SYSTEM. Migrations in this
+ *  project are applied by hand, so until 20260824 is pasted into prod nothing
+ *  is being purged, and flipping this on the strength of merged code rather
+ *  than observed behaviour is precisely the failure the guard was built to
+ *  prevent.
  *
- *  To flip: set CRON_SECRET in Vercel → GET the route with ?dryRun=1 and read
- *  the count (the first sweep covers every row since launch) → let the real
- *  run happen → flip this to true. */
+ *  To flip: paste 20260824 → confirm the schedule is registered
+ *  (`select jobname, active from cron.job`) → confirm the first sweep ran
+ *  (`select * from snap_enrollment.purge_mae_query_log_retention(true)`
+ *  returning 0 once it has caught up) → flip this to true. Both confirmations
+ *  are readable over the read-only connection, so nobody has to report a
+ *  number by hand. Measured 2026-08-22, before the first run: 12 ordinary rows
+ *  pending, 0 flagged, out of 13 in the table. */
 export const RETENTION_JOB_LIVE = false;
