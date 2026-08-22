@@ -18,12 +18,14 @@
 // the ones doing comma-or-period work were rewritten. This test pins the
 // budget so the count cannot silently creep back up.
 import { describe, it, expect } from "vitest";
-import { render } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 
 import { SnapDetail } from "../components/SnapOverview";
+import { DemeterStatePicker } from "../components/DemeterStatePicker";
+import { T } from "../lib/i18n/demeter-chat-copy";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { agencyDisplayName } from "../lib/program-name";
 
@@ -77,6 +79,46 @@ describe("the screen-reader state roster is user copy, not the research annexe (
     expect(src).toContain("agencyDisplayName(");
     // The raw field must not reach either render site.
     expect(src).not.toMatch(/\{chosen\.agency\}/);
+  });
+});
+
+// FINDING 1, third render site (2026-08-22). The audit cleaned the map panel
+// and the screen-reader roster; the STATE PICKER's dropdown was missed and
+// kept rendering pack.agency raw. Washington's is the test case
+// agencyDisplayName itself uses — the annotation ran the row to four lines
+// in the rail, which is how it was noticed.
+describe("the state picker's dropdown is user copy too (finding 1, third site)", () => {
+  it("renders no provenance annotation in any option, and no em-dash tail", async () => {
+    const { container } = render(
+      <DemeterStatePicker
+        states={VERIFIED_STATES}
+        value={null}
+        onChange={() => {}}
+        copy={T.en.picker}
+        hint={null}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: T.en.picker.label }));
+    // The federal row's sub-line is AUTHORED copy ("Federal floor — state
+    // figures deferred to your agency") and its em-dash is legitimate; only
+    // the pack-derived agency lines are under test here.
+    const subs = [...container.querySelectorAll(".dmst__opt-sub")].filter(
+      (el) => el.textContent !== T.en.picker.federalHint,
+    );
+    expect(subs.length).toBeGreaterThan(10);
+    for (const sub of subs) {
+      const line = sub.textContent ?? "";
+      // The annotation always rides behind an em-dash in these fields.
+      expect(line, line.slice(0, 60)).not.toContain("—");
+      expect(line, line.slice(0, 60)).not.toMatch(/PROVENANCE|LEGACY|OPPOSITE of/i);
+    }
+  });
+
+  it("keeps every agency line to one row so the list stays scannable", () => {
+    const css = readFileSync(join(__dirname, "..", "app", "globals.css"), "utf8");
+    const rule = css.match(/\.dmst__opt-sub\s*\{[^}]*\}/)?.[0] ?? "";
+    expect(rule).toMatch(/text-overflow:\s*ellipsis/);
+    expect(rule).toMatch(/white-space:\s*nowrap/);
   });
 });
 

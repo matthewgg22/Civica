@@ -22,6 +22,8 @@ export interface DemeterSigninCopy {
   title: string;
   subtitle: string;
   continueGoogle: string;
+  /** Dismiss label for the in-chat modal (2026-08-22). */
+  close: string;
   googleDisclosure: string;
   or: string;
   emailLabel: string;
@@ -44,6 +46,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     subtitle:
       "Sign in and this conversation will be here when you come back. The chat itself is always free — an account is only for saving.",
     continueGoogle: "Continue with Google",
+    close: "Close",
     googleDisclosure:
       "We only use your Google account to sign you in and save your conversation.",
     or: "or",
@@ -66,6 +69,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     subtitle:
       "Inicia sesión y esta conversación estará aquí cuando regreses. El chat siempre es gratis — la cuenta es solo para guardar.",
     continueGoogle: "Continúa con Google",
+    close: "Cerrar",
     googleDisclosure:
       "Solo usamos tu cuenta de Google para iniciar sesión y guardar tu conversación.",
     or: "o",
@@ -88,6 +92,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     subtitle:
       "Đăng nhập và cuộc trò chuyện này sẽ ở đây khi bạn quay lại. Trò chuyện luôn miễn phí — tài khoản chỉ dùng để lưu.",
     continueGoogle: "Tiếp tục với Google",
+    close: "Đóng",
     googleDisclosure:
       "Chúng tôi chỉ dùng tài khoản Google của bạn để đăng nhập và lưu cuộc trò chuyện.",
     or: "hoặc",
@@ -109,6 +114,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     title: "保存您的对话",
     subtitle: "登录后，这段对话会在您回来时依然在这里。聊天本身永远免费——账户只用于保存。",
     continueGoogle: "使用 Google 继续",
+    close: "关闭",
     googleDisclosure: "我们只使用您的 Google 账户来登录和保存您的对话。",
     or: "或",
     emailLabel: "电子邮箱",

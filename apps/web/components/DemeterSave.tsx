@@ -106,6 +106,7 @@ export function DemeterSave({
   lang,
   busy,
   pendingSave,
+  showButton = true,
   initialSavedId,
   onRestore,
   onSavedChange,
@@ -139,6 +140,12 @@ export function DemeterSave({
    *  Mirrors openPicker's signal-number pattern: any CHANGE triggers a
    *  save, the value itself is meaningless. Undefined/unset never fires. */
   triggerSave?: number;
+  /** Render the button, or only the status region (2026-08-22). The rail's
+   *  own Save button was retired, but this component still has to be mounted:
+   *  it owns the pendingSave restore after a sign-in round trip AND the save
+   *  the transcript's nudge fires through `triggerSave`. Unmounting it to
+   *  hide a button would silently break both. */
+  showButton?: boolean;
   /** Getter, not a value: read at the moment the stash is written so the
    *  drafted application crosses sign-in exactly as it stood (#898 P2-9). A
    *  getter also keeps this out of every effect dependency list — the
@@ -328,14 +335,16 @@ export function DemeterSave({
 
   return (
     <span className="demeter__savewrap">
-      <button
-        type="button"
-        className="demeter__save"
-        onClick={() => void save()}
-        disabled={status === "saving"}
-      >
-        {status === "saving" ? copy.saving : copy.save}
-      </button>
+      {showButton && (
+        <button
+          type="button"
+          className="demeter__save"
+          onClick={() => void save()}
+          disabled={status === "saving"}
+        >
+          {status === "saving" ? copy.saving : copy.save}
+        </button>
+      )}
       {(status === "limit" || status === "error") && (
         <span className="demeter__save-error" role="alert">
           {status === "limit" ? copy.limit(limitValue) : copy.error}

@@ -93,9 +93,14 @@ describe("DemeterChat state switching", () => {
     render(<DemeterChat states={STATES} initialState="CA" />);
     const link = screen.getByRole("link", { name: /BenefitsCal/ });
     expect(link.getAttribute("href")).toBe("https://benefitscal.com");
-    // Same parent as "How we verify" — i.e. actually relocated there, not
-    // just present somewhere else on the page by coincidence.
-    expect(link.parentElement).toBe(screen.getByText(T.en.howWeVerify).parentElement);
+    // The point of the 2026-08-15 move was that this link sits with the
+    // STANDING FACTS at the worksheet card's foot rather than stacked under
+    // the picker with the agency line. It used to be pinned by sharing a
+    // parent with "How we verify"; that link moved into the settings gear
+    // (2026-08-22, it was duplicated in the rail), so the invariant is now
+    // asserted directly: the foot links, not the picker.
+    expect(link.closest(".dmw__footlinks")).toBeTruthy();
+    expect(link.closest(".dmst")).toBeNull();
   });
 
   // Real feedback, 2026-08-15: once the chat was already going, a plain
@@ -212,6 +217,18 @@ describe("DemeterChat state switching", () => {
 // after the SNAP <h2> in document order — an inverted heading hierarchy, and a
 // card claiming to be the whole page. The <h1> now lives in the orientation bar
 // above it (SnapOrientation), on both mount points.
+describe("the state list says nothing that is true of every row", () => {
+  it("carries no VERIFIED badge — every state offered here is verified", () => {
+    // Owner rec (2026-08-22): a badge on all of them distinguished none of
+    // them, and it crowded the program name it sat beside.
+    const { container } = render(<DemeterChat states={STATES} />);
+    fireEvent.click(screen.getByRole("button", { name: "Your state" }));
+    expect(container.querySelector(".dmst__opt-badge")).toBeNull();
+    // The state and its agency still identify the row.
+    expect(screen.getByRole("option", { name: /TX/ })).toBeTruthy();
+  });
+});
+
 describe("DemeterChat heading level", () => {
   it("renders its title as a non-heading, leaving the page h1 to the orientation bar", () => {
     render(<DemeterChat states={STATES} />);

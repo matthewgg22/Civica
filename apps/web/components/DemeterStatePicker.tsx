@@ -19,7 +19,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { NAP_JURISDICTIONS, napJurisdiction, type PackMeta } from "@civica/demeter-engine/packs";
 import { StateFlag } from "./StateFlag";
-import { programDisplayName } from "../lib/program-name";
+import { programDisplayName, agencyDisplayName } from "../lib/program-name";
 import { stateName } from "../lib/state-names";
 
 export interface StatePickerCopy {
@@ -282,9 +282,14 @@ export function DemeterStatePicker({
                   <span className="dmst__opt-text">
                     <span className="dmst__opt-name">
                       {programDisplayName(s.program)}
-                      <span className="dmst__opt-badge">{copy.verified}</span>
                     </span>
-                    <span className="dmst__opt-sub">{s.agency}</span>
+                    {/* agencyDisplayName, like the map panel and the
+                        screen-reader roster (taste audit finding 1). This
+                        site was missed: pack.agency is written for the MODEL
+                        and carries the research annexe behind an em-dash, so
+                        Washington's row rendered its "— Community Services
+                        Division" tail and ran to four lines in the rail. */}
+                    <span className="dmst__opt-sub">{agencyDisplayName(s.agency)}</span>
                   </span>
                 </button>
               </li>

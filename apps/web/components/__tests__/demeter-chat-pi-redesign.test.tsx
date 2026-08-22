@@ -158,6 +158,77 @@ describe("sign-in at the top right", () => {
   });
 });
 
+describe("sign-in opens over the chat (owner rec 2026-08-22)", () => {
+  it("the chrome link opens the modal instead of navigating — but keeps its href", () => {
+    // The ROUTE stays the fallback: magic-link returns, OAuth error
+    // redirects, shared links and no-JS all still land on /sign-in. The
+    // click handler only takes over when JavaScript is there.
+    const { container } = mountChat();
+    const link = container.querySelector(".demeter__head a.demeter__signin") as HTMLAnchorElement;
+    expect(link.getAttribute("href")).toContain("/sign-in");
+    expect(container.querySelector(".dmsi")).toBeNull();
+    fireEvent.click(link, { button: 0 });
+    const modal = container.querySelector(".dmsi")!;
+    expect(modal).toBeTruthy();
+    expect(modal.querySelector("[role='dialog']")?.getAttribute("aria-modal")).toBe("true");
+  });
+
+  it("a modifier-click still means open-the-route", () => {
+    const { container } = mountChat();
+    const link = container.querySelector(".demeter__head a.demeter__signin")!;
+    fireEvent.click(link, { metaKey: true, button: 0 });
+    expect(container.querySelector(".dmsi")).toBeNull();
+  });
+
+  it("Escape closes it", () => {
+    const { container } = mountChat();
+    fireEvent.click(container.querySelector(".demeter__head a.demeter__signin")!, { button: 0 });
+    expect(container.querySelector(".dmsi")).toBeTruthy();
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(container.querySelector(".dmsi")).toBeNull();
+  });
+
+  it("the rail's saved-conversations entry opens the same modal", () => {
+    const { container } = mountChat();
+    fireEvent.click(container.querySelector("#demeter-sidebar a.demeter__sblabel")!, { button: 0 });
+    expect(container.querySelector(".dmsi")).toBeTruthy();
+  });
+
+  it("focus starts in the card, cycles inside it, and returns to the opener on close", () => {
+    const { container } = mountChat();
+    const opener = container.querySelector(".demeter__head a.demeter__signin") as HTMLElement;
+    opener.focus();
+    fireEvent.click(opener, { button: 0 });
+    const card = container.querySelector(".dmsi__card") as HTMLElement;
+    expect(document.activeElement).toBe(card);
+
+    // Tab from the card lands on the first control INSIDE it, not on
+    // whatever sits behind the overlay.
+    fireEvent.keyDown(window, { key: "Tab" });
+    expect(card.contains(document.activeElement)).toBe(true);
+
+    // Shift+Tab from the first control wraps to the last, still inside.
+    const focusable = [...card.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled])')];
+    focusable[0]!.focus();
+    fireEvent.keyDown(window, { key: "Tab", shiftKey: true });
+    expect(card.contains(document.activeElement)).toBe(true);
+
+    // Closing hands focus back to what opened it.
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(container.querySelector(".dmsi")).toBeNull();
+    expect(document.activeElement).toBe(opener);
+  });
+
+  it("the chat is NOT filtered — the overlay blurs it, so the fixed rail stays put", () => {
+    // A `filter` on the chat would make it the containing block for the
+    // fixed rail and chrome row, jumping both the moment the card opened.
+    // The blur belongs to the overlay's backdrop-filter instead.
+    const s = readFileSync(join(__dirname, "..", "..", "app", "globals.css"), "utf8");
+    expect(s).toMatch(/\.dmsi\s*\{[^}]*backdrop-filter:\s*blur/);
+    expect(s).not.toMatch(/\.demeter--behindmodal/);
+  });
+});
+
 describe("state-first onboarding", () => {
   it("the empty state asks for the state and never a name", () => {
     const { container } = mountChat();
@@ -225,17 +296,42 @@ describe("boxless messages (CSS contract)", () => {
     expect(container.querySelector(".demeter__headright a.demeter__navlink")).toBeTruthy();
   });
 
-  it("the settings gear reaches the standing pages the retired footer carried", () => {
-    // /chat has no nav and no footer: without these the privacy policy is
-    // unreachable from inside the tool. They live behind a gear on the
-    // sign-in line now (owner rec) rather than in the rail's foot.
+  it("the rail's bottom line holds new-conversation, language and settings", () => {
+    // Owner rec (2026-08-22): the rail's two full-width buttons are retired
+    // and these three share one row at its foot — the body tracks, the row
+    // acts. /chat still has no nav and no footer, so the gear remains the
+    // only route to the standing pages from inside the tool.
     const { container } = mountChat();
-    const gear = container.querySelector(".demeter__head details.demeter__gear")!;
-    expect(gear).toBeTruthy();
+    const row = container.querySelector("#demeter-sidebar .demeter__railfoot")!;
+    expect(row).toBeTruthy();
+    expect(row.querySelector("button.demeter__railicon")?.getAttribute("aria-label")).toBe(T.en.clear);
+    expect(row.querySelector("select.demeter__lang-select")).toBeTruthy();
+    const gear = row.querySelector("details.demeter__gear")!;
     expect(gear.querySelector("a[href='/privacy']")).toBeTruthy();
     expect(gear.querySelector("a[href*='/feedback']")).toBeTruthy();
     // A native disclosure, so Escape and outside-click need no JS.
     expect(gear.querySelector("summary")).toBeTruthy();
+    // The retired buttons are really gone, and the gear is not left behind
+    // in the chrome row as a second copy.
+    expect(container.querySelector(".demeter__sidebtns")).toBeNull();
+    expect(container.querySelector(".demeter__head details.demeter__gear")).toBeNull();
+  });
+
+  it("Save is still MOUNTED with its button hidden — not deleted", () => {
+    // The rail's Save button went, but the component owns the pendingSave
+    // round trip after sign-in AND the save the transcript's nudge fires
+    // through triggerSave. Unmounting it to hide a button would break both
+    // silently, so this pins the distinction: no button in the DOM, and the
+    // component still rendered with showButton={false}.
+    //
+    // Asserted at the source because DemeterSave renders null until there is
+    // an answer to save — a DOM check on a fresh chat proves nothing either
+    // way.
+    const { container } = mountChat();
+    expect(container.querySelector("button.demeter__save")).toBeNull();
+    const src = readFileSync(join(__dirname, "..", "DemeterChat.tsx"), "utf8");
+    expect(src).toMatch(/<DemeterSave\s+showButton=\{false\}/);
+    expect(src).toMatch(/triggerSave=\{saveSignal\}/);
   });
 
   it("the sidebar respects reduced motion", () => {

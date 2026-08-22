@@ -12,6 +12,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { renderAnswer } from "../components/DemeterChat";
 import { shieldCitations } from "../lib/no-translate";
 import { SnapDetail } from "../components/SnapOverview";
+import { DemeterWorksheet } from "../components/DemeterWorksheet";
+import { T } from "../lib/i18n/demeter-chat-copy";
 import { DemeterNav } from "../components/DemeterNav";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 
@@ -99,12 +101,29 @@ describe("stylesheet pins (findings 4, 5, 7)", () => {
     expect(s).toMatch(/-webkit-tap-highlight-color/);
   });
 
-  it("the sidetools verify link keeps its 44px hit area while staying visually quiet (finding 7)", () => {
+  it("the verify link keeps its 44px hit area — at the selector that actually matches it", () => {
+    // FINDING 7 fixed a target silently shrunk to 21px. This test then kept
+    // passing after the link MOVED (2026-08-22) out of .demeter__sidetools
+    // and into the worksheet card's foot — because it only grepped the
+    // stylesheet. A rule that matches nothing passes a text search happily.
+    // So: assert the rule, AND assert the element really lives where the
+    // rule can reach it.
     const s = css();
-    const block = s.slice(s.indexOf(".dmchat .demeter__sidetools .demeter__how"));
+    const block = s.slice(s.indexOf(".dmw__footlinks .demeter__how"));
     const rule = block.slice(0, block.indexOf("}"));
-    expect(rule).not.toMatch(/min-height:\s*0/);
     expect(rule).toMatch(/min-height:\s*44px/);
+
+    const { container } = render(
+      <DemeterWorksheet
+        classification={null}
+        stateSelected={false}
+        copy={T.en.worksheet}
+        mode="ask"
+        onModeChange={() => {}}
+        footLinks={<a className="demeter__how" href="/verify">{T.en.howWeVerify}</a>}
+      />,
+    );
+    expect(container.querySelector(".dmw__footlinks .demeter__how")).toBeTruthy();
   });
 
   it("inline answer links carry an expanded hit area (finding 7)", () => {
