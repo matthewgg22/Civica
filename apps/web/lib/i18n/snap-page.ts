@@ -61,6 +61,14 @@ export interface PageCopy {
     dotLabel: string;
     note: string;
     cta: string;
+    /** The dormant-until-true tally (approved 2026-08-21). {n} is the LIVE
+     *  count of public-mode audit rows — the requested "Over 300 people"
+     *  line was refused (prod truth at the time: 12 questions ever), and
+     *  this template is the honest replacement: it renders only once the
+     *  measured count clears COUNT_FLOOR (lib/live-counts.ts), and it may
+     *  never contain a digit of its own. Both pinned in
+     *  hero-live-counter.test.tsx. */
+    tally: string;
   };
   eyebrow: string;
   h2: string;
@@ -225,6 +233,7 @@ const en: PageCopy = {
       },
     ],
     dotLabel: "Example {n}",
+    tally: "{n} questions answered here so far.",
     note: "Real Demeter answers, shortened for space.",
     cta: "Ask your own",
   },
@@ -496,6 +505,7 @@ const es: PageCopy = {
       },
     ],
     dotLabel: "Ejemplo {n}",
+    tally: "{n} preguntas respondidas aquí hasta ahora.",
     note: "Respuestas reales de Demeter, acortadas por espacio.",
     cta: "Haz tu propia pregunta",
   },
@@ -752,6 +762,7 @@ const vi: PageCopy = {
       },
     ],
     dotLabel: "Ví dụ {n}",
+    tally: "Đã trả lời {n} câu hỏi tại đây.",
     note: "Câu trả lời thật của Demeter, rút gọn cho vừa trang.",
     cta: "Đặt câu hỏi của bạn",
   },
@@ -1012,6 +1023,7 @@ const zh: PageCopy = {
       },
     ],
     dotLabel: "示例 {n}",
+    tally: "到目前为止，这里已回答 {n} 个问题。",
     note: "Demeter 的真实回答，因篇幅有所缩短。",
     cta: "提出你自己的问题",
   },

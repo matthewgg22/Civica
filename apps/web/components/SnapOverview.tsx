@@ -24,6 +24,7 @@ import {
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 import Image from "next/image";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
+import { COUNT_FLOOR } from "../lib/live-counts";
 import { programDisplayName, agencyDisplayName } from "../lib/program-name";
 import { shieldCitations } from "../lib/no-translate";
 import { StateFlag } from "./StateFlag";
@@ -117,7 +118,16 @@ export function formQuestionAnswer(q: FormQuestion, lang: AnswerLang = "en"): st
  *  Not deleted — every word is still server-rendered on this URL. They are
  *  credibility, and credibility is what you read after you see the thing, not
  *  the wall you climb to reach it. */
-export function SnapOrientation({ lang = "en" }: { lang?: AnswerLang }) {
+export function SnapOrientation({
+  lang = "en",
+  publicCount = null,
+}: {
+  lang?: AnswerLang;
+  /** Live count of public questions answered (lib/live-counts.ts), passed in
+   *  by the page so this component stays synchronous and testable. Null (the
+   *  default) means unavailable, and unavailable renders NOTHING. */
+  publicCount?: number | null;
+}) {
   const c = PAGE_COPY[lang];
   return (
     // TWO COLUMNS at desktop: the orientation text, and one real answer.
@@ -163,6 +173,16 @@ export function SnapOrientation({ lang = "en" }: { lang?: AnswerLang }) {
             {c.example.cta} →
           </a>
         </p>
+        {/* DORMANT UNTIL TRUE (approved 2026-08-21). The requested "Over 300
+            people" line was refused — prod truth at the time was 12 questions
+            ever — so the card carries a usage claim only when the MEASURED
+            count clears the floor. No placeholder, no "be the first": below
+            the floor this renders nothing at all. */}
+        {publicCount !== null && publicCount >= COUNT_FLOOR ? (
+          <p className="dmex__tally">
+            {c.example.tally.replace("{n}", String(publicCount))}
+          </p>
+        ) : null}
       </aside>
     </section>
   );

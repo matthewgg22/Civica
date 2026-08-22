@@ -43,6 +43,7 @@ import {
 import { DemeterFooter } from "../../../components/DemeterFooter";
 import { DemeterNav } from "../../../components/DemeterNav";
 import { alternateLanguages, askUrl } from "../../../lib/i18n/routes";
+import { publicQuestionCount } from "../../../lib/live-counts";
 import { askStructuredData, EN_TITLE, EN_DESCRIPTION } from "./structured-data";
 
 /** The browser frame matches the paper (vercel-guidelines finding 4). */
@@ -84,11 +85,15 @@ export default async function ScreenAskPage({
       ? state.toUpperCase()
       : null;
 
+  // Dormant-until-true: null (unavailable or below floor logic in the
+  // component) renders nothing. See lib/live-counts.ts for the history.
+  const publicCount = await publicQuestionCount();
+
   return (
     <main className="dmpage" id="main-content">
       <DemeterNav />
       <div className="dmpage__inner">
-        <SnapOrientation />
+        <SnapOrientation publicCount={publicCount} />
         {/* The composer, the state picker and the suggested questions all live
             on /chat now. This page explains and hands over; it does not start
             the conversation and then forward it. First action before the
