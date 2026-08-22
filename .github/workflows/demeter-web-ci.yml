@@ -349,7 +349,12 @@ jobs:
           # allowed here are ones that fail on `CREATE EXTENSION`, and each
           # names which one. 20260529 schedules the snap retention purge
           # through pg_cron (live in prod as snap-purge-retention-daily).
-          SKIP_NEEDS_EXTENSION="20260529_snap_enrollment_13_retention_purge.sql"
+          # The only two files in the chain that need an extension the stock
+          # postgres image does not ship: pg_cron and pgsodium, both Supabase
+          # platform extensions. Every other CREATE EXTENSION in the chain is
+          # pgcrypto or uuid-ossp, which contrib provides. Each skip is printed
+          # by name below so this never reads as full coverage when it isn't.
+          SKIP_NEEDS_EXTENSION="20260529_snap_enrollment_13_retention_purge.sql 20260576_ebt_cookie_encryption.sql"
           skipped=0
           for f in supabase/migrations/*.sql; do
             base=$(basename "$f")
