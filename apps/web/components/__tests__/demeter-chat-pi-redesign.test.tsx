@@ -296,17 +296,42 @@ describe("boxless messages (CSS contract)", () => {
     expect(container.querySelector(".demeter__headright a.demeter__navlink")).toBeTruthy();
   });
 
-  it("the settings gear reaches the standing pages the retired footer carried", () => {
-    // /chat has no nav and no footer: without these the privacy policy is
-    // unreachable from inside the tool. They live behind a gear on the
-    // sign-in line now (owner rec) rather than in the rail's foot.
+  it("the rail's bottom line holds new-conversation, language and settings", () => {
+    // Owner rec (2026-08-22): the rail's two full-width buttons are retired
+    // and these three share one row at its foot — the body tracks, the row
+    // acts. /chat still has no nav and no footer, so the gear remains the
+    // only route to the standing pages from inside the tool.
     const { container } = mountChat();
-    const gear = container.querySelector(".demeter__head details.demeter__gear")!;
-    expect(gear).toBeTruthy();
+    const row = container.querySelector("#demeter-sidebar .demeter__railfoot")!;
+    expect(row).toBeTruthy();
+    expect(row.querySelector("button.demeter__railicon")?.getAttribute("aria-label")).toBe(T.en.clear);
+    expect(row.querySelector("select.demeter__lang-select")).toBeTruthy();
+    const gear = row.querySelector("details.demeter__gear")!;
     expect(gear.querySelector("a[href='/privacy']")).toBeTruthy();
     expect(gear.querySelector("a[href*='/feedback']")).toBeTruthy();
     // A native disclosure, so Escape and outside-click need no JS.
     expect(gear.querySelector("summary")).toBeTruthy();
+    // The retired buttons are really gone, and the gear is not left behind
+    // in the chrome row as a second copy.
+    expect(container.querySelector(".demeter__sidebtns")).toBeNull();
+    expect(container.querySelector(".demeter__head details.demeter__gear")).toBeNull();
+  });
+
+  it("Save is still MOUNTED with its button hidden — not deleted", () => {
+    // The rail's Save button went, but the component owns the pendingSave
+    // round trip after sign-in AND the save the transcript's nudge fires
+    // through triggerSave. Unmounting it to hide a button would break both
+    // silently, so this pins the distinction: no button in the DOM, and the
+    // component still rendered with showButton={false}.
+    //
+    // Asserted at the source because DemeterSave renders null until there is
+    // an answer to save — a DOM check on a fresh chat proves nothing either
+    // way.
+    const { container } = mountChat();
+    expect(container.querySelector("button.demeter__save")).toBeNull();
+    const src = readFileSync(join(__dirname, "..", "DemeterChat.tsx"), "utf8");
+    expect(src).toMatch(/<DemeterSave\s+showButton=\{false\}/);
+    expect(src).toMatch(/triggerSave=\{saveSignal\}/);
   });
 
   it("the sidebar respects reduced motion", () => {

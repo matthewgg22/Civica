@@ -282,7 +282,6 @@ export function DemeterStatePicker({
                   <span className="dmst__opt-text">
                     <span className="dmst__opt-name">
                       {programDisplayName(s.program)}
-                      <span className="dmst__opt-badge">{copy.verified}</span>
                     </span>
                     <span className="dmst__opt-sub">{s.agency}</span>
                   </span>

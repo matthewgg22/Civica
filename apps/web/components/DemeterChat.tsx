@@ -1615,29 +1615,6 @@ export function DemeterChat({
               right always offers it, and the rail's settings bar groups a
               second one with privacy and feedback, where someone looking
               for account things goes. */}
-          {/* SETTINGS, on the same line as sign-in (owner rec): a gear that
-              discloses the standing pages. <details> rather than custom
-              popover state — Escape and outside-click come free, and it
-              works with no JavaScript. */}
-          <details className="demeter__gear">
-            <summary className="demeter__gearbtn" aria-label={t.settingsLabel}>
-              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-              </svg>
-            </summary>
-            <div className="demeter__gearmenu">
-              <a className="demeter__settingslink" href="/privacy">
-                {t.privacyLink}
-              </a>
-              <a
-                className="demeter__settingslink"
-                href={lang === "en" ? "/feedback" : `/${lang}/feedback`}
-              >
-                {t.feedbackLink}
-              </a>
-            </div>
-          </details>
           {authEmail === null && (
             <a
               className="demeter__signin"
@@ -2192,8 +2169,13 @@ export function DemeterChat({
               Both act on the WHOLE conversation, which is why they belong to
               the panel that tracks it rather than under the composer, which
               acts on the next thing typed. */}
-          <div className="demeter__sidebtns">
+          {/* The rail's Save and New-conversation buttons are retired (owner
+              rec 2026-08-22) — the rail tracks, the bottom row acts. Save is
+              still MOUNTED and still saves: the transcript's nudge fires it
+              through triggerSave, and the pendingSave round trip after
+              sign-in restores through it. Only its button is gone. */}
           <DemeterSave
+            showButton={false}
             messages={messages}
             state={state}
             lang={lang}
@@ -2201,43 +2183,11 @@ export function DemeterChat({
             pendingSave={pendingSave}
             initialSavedId={savedConversationId}
             onRestore={restoreConversation}
-            // Plain setter, not an inline arrow: it lands in an effect's
-            // dependency list in DemeterSave, and React guarantees a state
-            // setter's identity is stable across renders.
             onSavedChange={setConversationSaved}
             triggerSave={saveSignal}
             worksheet={snapshotWorksheet}
             copy={t.save}
           />
-          {/* CLEAR, for shared and public machines. On a library terminal the
-              next person otherwise sees the previous person's questions about
-              their income, their household, their felony record.
-              Renders only once there is something to clear. */}
-          {hasChat &&
-            (confirmClear ? (
-              <span className="demeter__clearconfirm" role="group" aria-label={t.clear}>
-                <span className="demeter__clearnote">{t.clearNote}</span>
-                <button type="button" className="demeter__clearyes" onClick={clearConversation}>
-                  {t.clear}
-                </button>
-                <button
-                  type="button"
-                  className="demeter__clearno"
-                  onClick={() => setConfirmClear(false)}
-                >
-                  {t.save.panelDismiss}
-                </button>
-              </span>
-            ) : (
-              <button
-                type="button"
-                className="demeter__clear"
-                onClick={() => setConfirmClear(true)}
-              >
-                {t.clear}
-              </button>
-            ))}
-          </div>
           {/* TAKE IT WITH YOU. The outline existed only on the screen it was
               built on — close the tab and the one thing someone most wants to
               keep was the one thing they could not carry away. Shown only once
@@ -2321,27 +2271,84 @@ export function DemeterChat({
               {authEmail === null ? t.sidebarSavedSignin : t.sidebarSaved} →
             </a>
           </div>
-          {/* THE FOOT: language + account only, pinned to the window bottom —
-              Pi's own placement. The select is the mid-conversation language
-              switch (client state, keeps the transcript); the nav's language
-              LINKS navigate between localized pages instead. The probe fails
-              closed to signed-out; auth is never load-bearing here. */}
-          <div className="demeter__sidebarauth">
-            <label className="demeter__lang">
-              <span className="sr-only">{t.languageLabel}</span>
-              <select
-                className="demeter__lang-select"
-                value={lang}
-                aria-label={t.languageLabel}
-                onChange={(e) => setLang(e.target.value as AnswerLang)}
+          {/* ONE BOTTOM LINE (owner rec 2026-08-22): new conversation,
+              language, settings — everything you DO to the conversation, at
+              a size that says so. The rail's body above it only tracks. */}
+          <div className="demeter__railfoot">
+            {confirmClear ? (
+              <span className="demeter__clearconfirm" role="group" aria-label={t.clear}>
+                <span className="demeter__clearnote">{t.clearNote}</span>
+                <button type="button" className="demeter__clearyes" onClick={clearConversation}>
+                  {t.clear}
+                </button>
+                <button
+                  type="button"
+                  className="demeter__clearno"
+                  onClick={() => setConfirmClear(false)}
+                >
+                  {t.save.panelDismiss}
+                </button>
+              </span>
+            ) : (
+              <>
+                {/* An icon, but the accessible name stays the whole sentence:
+                    "Start a new conversation" is what it does, and that is
+                    what a screen reader (and the clear-behaviour tests) go
+                    by. Disabled until there is a conversation to end. */}
+                <button
+                  type="button"
+                  className="demeter__railicon"
+                  onClick={() => setConfirmClear(true)}
+                  aria-label={t.clear}
+                  title={t.clear}
+                  disabled={!hasChat}
+                >
+                  <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10 4.5v11M4.5 10h11" />
+                  </svg>
+                </button>
+                <label className="demeter__lang demeter__lang--foot">
+                  <span className="sr-only">{t.languageLabel}</span>
+                  <select
+                    className="demeter__lang-select"
+                    value={lang}
+                    aria-label={t.languageLabel}
+                    onChange={(e) => setLang(e.target.value as AnswerLang)}
+                  >
+                    {ANSWER_LANGS.map((code) => (
+                      <option key={code} value={code}>
+                        {LANG_NATIVE_NAME[code]}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+          {/* SETTINGS, on the same line as sign-in (owner rec): a gear that
+              discloses the standing pages. <details> rather than custom
+              popover state — Escape and outside-click come free, and it
+              works with no JavaScript. */}
+          <details className="demeter__gear">
+            <summary className="demeter__gearbtn" aria-label={t.settingsLabel}>
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+            </summary>
+            <div className="demeter__gearmenu">
+              <a className="demeter__settingslink" href="/privacy">
+                {t.privacyLink}
+              </a>
+              <a
+                className="demeter__settingslink"
+                href={lang === "en" ? "/feedback" : `/${lang}/feedback`}
               >
-                {ANSWER_LANGS.map((code) => (
-                  <option key={code} value={code}>
-                    {LANG_NATIVE_NAME[code]}
-                  </option>
-                ))}
-              </select>
-            </label>
+                {t.feedbackLink}
+              </a>
+            </div>
+          </details>
+              </>
+            )}
+          </div>
+          <div className="demeter__sidebarauth">
             {/* No sign-in button here any more (owner rec 2026-08-22): the
                 saved-conversations entry above IS the invitation while
                 signed out, and the chrome row carries the standing one.

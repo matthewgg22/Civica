@@ -7629,6 +7629,53 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   .dmsi { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(35, 34, 32, 0.5); }
 }
 @media (prefers-reduced-motion: reduce) { .dmsi { animation: none; } }
+/* THE RAIL'S BOTTOM LINE (owner rec 2026-08-22): new conversation,
+   language, settings — three controls sharing one row, sized as tools
+   rather than as the two full-width buttons that used to shout from the
+   middle of the panel. */
+.demeter__railfoot {
+  display: flex; align-items: center; gap: 0.35rem;
+  padding-top: 0.6rem; border-top: 1px solid var(--demeter-rule);
+}
+.demeter__railicon {
+  display: grid; place-items: center; width: 44px; height: 44px; flex: none;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-input); color: var(--demeter-body); cursor: pointer;
+}
+.demeter__railicon:hover:not(:disabled) { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
+.demeter__railicon:disabled { opacity: 0.4; cursor: default; }
+.demeter__railicon:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+/* A LANGUAGE CONTROL, not a form field. The native select wore the OS
+   chrome — full-width, double-arrow, system font — which is the one thing
+   in the rail that looked unstyled. Same card+hairline as its neighbours,
+   the house sans, and a single quiet chevron drawn as a background so the
+   control keeps its native behaviour on every platform. */
+.demeter__lang--foot { flex: 1; min-width: 0; }
+.demeter__lang--foot .demeter__lang-select {
+  appearance: none; -webkit-appearance: none;
+  width: 100%; height: 44px; padding: 0 1.75rem 0 0.6rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; color: var(--demeter-body);
+  background-color: var(--demeter-card);
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none' stroke='%236C6A64' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.6rem center;
+  border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-input);
+  cursor: pointer;
+}
+.demeter__lang--foot .demeter__lang-select:hover { border-color: var(--demeter-rule-strong); color: var(--demeter-ink); }
+.demeter__lang--foot .demeter__lang-select:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+/* In the row the gear matches its neighbours' box rather than the bare
+   chrome-row treatment it had. */
+.demeter__railfoot .demeter__gearbtn {
+  width: 44px; height: 44px;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+}
+.demeter__railfoot .demeter__gearbtn:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
+/* The menu opens UPWARD here — this row sits at the bottom of the window. */
+.demeter__railfoot .demeter__gearmenu { top: auto; bottom: calc(100% + 0.35rem); }
+/* The confirm takes the whole row when it is showing: a destructive step
+   should not be a third of a line of icons. */
+.demeter__railfoot .demeter__clearconfirm { flex: 1; }
 /* The settings gear, on the sign-in line. <details> gives Escape and
    outside-click for free and degrades to an open list without JS. */
 .demeter__gear { position: relative; }
