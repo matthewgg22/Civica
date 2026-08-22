@@ -217,6 +217,36 @@ describe("DemeterChat state switching", () => {
 // after the SNAP <h2> in document order — an inverted heading hierarchy, and a
 // card claiming to be the whole page. The <h1> now lives in the orientation bar
 // above it (SnapOrientation), on both mount points.
+describe("an annotated pack never reaches the transcript (#931)", () => {
+  // THE WORST OF THE LEAKS. Picking a state posts a hand-off message into
+  // the conversation — "In {state}, you apply through {agency}." — built
+  // from the RAW field. Iowa's agency string continues "— no rebrand-lag
+  // issue this pack found: Iowa HHS is the current, consistent name used
+  // throughout the Employees' Manual…", so an Iowa reader was told about
+  // this pack's research inside an answer.
+  const ANNOTATED: PackMeta[] = [
+    {
+      code: "IA",
+      program: "Food Assistance — Iowa's own public-facing name; see PROVENANCE.md Finding 3",
+      agency:
+        "Iowa Department of Health and Human Services (Iowa HHS) — no rebrand-lag issue this pack found: Iowa HHS is the current name used throughout the Employees' Manual",
+      adminModel: "state",
+      portal: { name: "Iowa HHS Services Portal", url: "https://hhs.iowa.gov" },
+      verified: true,
+      verification,
+    },
+  ];
+
+  it("the portal hand-off carries the agency's NAME, not its annexe", async () => {
+    render(<DemeterChat states={ANNOTATED} />);
+    pickState(/IA/);
+    const transcript = document.body.textContent ?? "";
+    expect(transcript).toContain("Iowa Department of Health and Human Services (Iowa HHS)");
+    expect(transcript).not.toContain("rebrand-lag");
+    expect(transcript).not.toContain("PROVENANCE");
+  });
+});
+
 describe("the state list says nothing that is true of every row", () => {
   it("carries no VERIFIED badge — every state offered here is verified", () => {
     // Owner rec (2026-08-22): a badge on all of them distinguished none of

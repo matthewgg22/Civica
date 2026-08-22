@@ -16,6 +16,7 @@
 // same path as everything else.
 
 import { type NapJurisdiction } from "@civica/demeter-engine/packs";
+import { agencyDisplayName, programDisplayName } from "./program-name";
 
 const COPY = {
   en: {
@@ -40,7 +41,7 @@ const COPY = {
 /** The full streamed body for a NAP jurisdiction. */
 export function napHandoff(j: NapJurisdiction, lang: "en" | "es"): string {
   const c = COPY[lang] ?? COPY.en;
-  const lines = [c.lead(j.name, j.program), "", c.why, "", c.who(j.agency)];
+  const lines = [c.lead(j.name, programDisplayName(j.program)), "", c.why, "", c.who(agencyDisplayName(j.agency))];
   if (j.agencyUrl) lines.push(j.agencyUrl);
   lines.push("", "---", c.banner, "", c.source);
   return lines.join("\n");

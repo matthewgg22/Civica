@@ -39,6 +39,7 @@ import { stateName } from "../lib/state-names";
 import { detectState, detectUncoveredPlace, type StateMention } from "../lib/detect-state";
 import type { SavedMsg } from "../lib/demeter-conversations";
 import { shieldCitations } from "../lib/no-translate";
+import { agencyDisplayName } from "../lib/program-name";
 import {
   saveChatSession,
   readChatSession,
@@ -1043,7 +1044,7 @@ export function DemeterChat({
       const portal =
         pack?.portal && name
           ? [
-              t.portalLead.replace("{state}", name).replace("{agency}", pack.agency),
+              t.portalLead.replace("{state}", name).replace("{agency}", agencyDisplayName(pack.agency)),
               t.portalCta
                 .replace("{portal}", pack.portal.name)
                 .replace(/^(.*)$/, `[$1](${pack.portal.url})`),
@@ -1118,7 +1119,7 @@ export function DemeterChat({
           facts: factsRef.current,
           stillNeeded: classification?.completeness?.stillNeeded ?? [],
           stateName: state ? stateName(state) : null,
-          agency: pack?.agency ?? null,
+          agency: pack?.agency ? agencyDisplayName(pack.agency) : null,
           portalName: pack?.portal?.name ?? null,
           portalUrl: pack?.portal?.url ?? null,
         }),
@@ -1156,7 +1157,7 @@ export function DemeterChat({
           facts: factsRef.current,
           stillNeeded: classification?.completeness?.stillNeeded ?? [],
           stateName: state ? stateName(state) : null,
-          agency: pack?.agency ?? null,
+          agency: pack?.agency ? agencyDisplayName(pack.agency) : null,
           portalName: pack?.portal?.name ?? null,
           portalUrl: pack?.portal?.url ?? null,
         }),
