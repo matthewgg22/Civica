@@ -70,9 +70,9 @@
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 1 of 5</div></div>
   <div class="big">[[headline_unenrolled]]</div>
-  <div class="head-sentence">eligible residents of <em>your assessment area</em> are not receiving SNAP benefits they qualify for.</div>
+  <div class="head-sentence">eligible residents of <em>your assessment area</em> are not receiving [[program_ref]] benefits they qualify for.</div>
   <div class="subline">That is an estimated <strong>[[benefit_range]] per year</strong> in unclaimed federal nutrition benefits that would be spent in [[aa_label]] grocery stores.</div>
-  <div class="qualifier">Modeled estimate from 2023 ACS 1-Year PUMS; dollar range reflects household-size assumptions, not a confidence interval. Methodology and known biases: page 5.</div>
+  <div class="qualifier">Estimated from 2023 ACS 1-Year PUMS ([[method_short]]); dollar range reflects household-size assumptions, not a confidence interval. Methodology and known biases: page 5.</div>
   [[ratio_line]]
   <div class="maprow">
     <div class="mapbox">
@@ -86,7 +86,7 @@
       <div class="stat"><div class="label">Avg. household benefit</div><div class="value">$[[benefit_monthly]]/mo</div><div class="note">USDA FNS, FY2024 national average</div></div>
     </div>
   </div>
-  <div class="pagefoot">[[data_gaps_note]]Sources: eligibility &amp; enrollment modeled from 2023 ACS 1-Year PUMS (LightGBM, CV AUC 0.80). Known biases in the gross-income proxy and ACS benefit under-reporting may overstate the eligible-unenrolled population — see page 5. Assessment area as delineated in [[bank_name]]'s [[pe_date]] CRA Performance Evaluation ([[regulator]]). Benefit figures: USDA FNS FY2024. [[org_name]], a 501(c)(3) organization.</div>
+  <div class="pagefoot">[[data_gaps_note]]Sources: eligibility &amp; enrollment [[model_note]]. Known biases in the gross-income proxy and ACS benefit under-reporting may overstate the eligible-unenrolled population — see page 5. Assessment area as delineated in [[bank_name]]'s [[pe_date]] CRA Performance Evaluation ([[regulator]]). Benefit figures: USDA FNS FY2024. [[org_name]], a 501(c)(3) organization.</div>
 </div>
 
 <!-- PAGE 2 — the program + the ask -->
@@ -96,7 +96,7 @@
   <div class="cred">[[org_name]] is [[status_line_lc]] [[engine_line]]</div>
   <div class="body-block">
     <h3>What the pilot does</h3>
-    Factual, geo-targeted digital outreach ("You may qualify for CalFresh — check in 5 minutes") across your assessment area drives residents to a free eligibility check and application support. Ads state facts and never pressure; we accept no per-enrollment compensation. A Google Ad Grant (up to $10,000/month of donated search advertising) stretches every grant dollar — your funding primarily buys reach beyond the grant and the measurement itself.
+    Factual, geo-targeted digital outreach ("You may qualify for [[program_ref]] — check in 5 minutes") across your assessment area drives residents to a free eligibility check and application support. Ads state facts and never pressure; we accept no per-enrollment compensation. A Google Ad Grant (up to $10,000/month of donated search advertising) stretches every grant dollar — your funding primarily buys reach beyond the grant and the measurement itself.
   </div>
   <div class="body-block">
     <h3>What you receive</h3>
@@ -160,7 +160,7 @@
   <div class="method">
     <h3>Eligibility and enrollment estimates</h3>
     <ul>
-      <li>Modeled from the 2023 American Community Survey 1-Year Public Use Microdata Sample (PUMS) with a gradient-boosted classifier (cross-validated AUC 0.80), allocated from Public Use Microdata Areas to counties by a tract-weighted crosswalk.</li>
+      <li>[[method_bullet]]</li>
       <li><strong>Known bias, disclosed:</strong> the model uses a gross-income proxy for SNAP eligibility, and ACS respondents under-report benefit receipt. Both effects push the estimated eligible-unenrolled population <em>upward</em>. Figures here should be read as an upper-range estimate of unmet need.</li>
       <li>County-level estimates carry sampling uncertainty from 1-Year ACS data; the dollar range on page 1 reflects household-size assumptions ([[hh_high]]–[[hh_low]] persons per eligible household), not a statistical confidence interval.</li>
     </ul>

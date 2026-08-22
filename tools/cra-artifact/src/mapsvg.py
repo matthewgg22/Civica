@@ -11,6 +11,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CA_COUNTIES = REPO_ROOT / "data-ops/reference/ca_counties.geojson"
+US_COUNTIES = REPO_ROOT / "data-ops/reference/us_counties_20m.geojson"
 
 ACCENT = "#1d4d3b"
 # Lightness-ordered ramp, low need -> high need (survives grayscale).
@@ -24,9 +25,15 @@ class GeometryGapError(Exception):
     """A county with metrics is missing from the geojson (hard error)."""
 
 
-def _load_features(path=CA_COUNTIES):
-    g = json.loads(Path(path).read_text())
-    return {f["properties"]["name"]: f["geometry"] for f in g["features"]}
+def _load_features(geojson_kind="ca_named", state_fips=None):
+    """Name-keyed geometry dict. 'ca_named' = legacy CA file; 'national' =
+    Census 20m national file filtered to state_fips, keyed by NAME."""
+    if geojson_kind == "ca_named":
+        g = json.loads(CA_COUNTIES.read_text())
+        return {f["properties"]["name"]: f["geometry"] for f in g["features"]}
+    g = json.loads(US_COUNTIES.read_text())
+    return {f["properties"]["NAME"]: f["geometry"]
+            for f in g["features"] if f.get("id", "").startswith(state_fips)}
 
 
 def _rings(geom):
@@ -63,9 +70,10 @@ def _ramp_color(rate, rates):
     return RAMP[i]
 
 
-def regional_map_svg(aa_counties, metrics, width=560, height=430):
+def regional_map_svg(aa_counties, metrics, width=560, height=430,
+                     geojson_kind="ca_named", state_fips=None):
     """SVG string: AA in accent, neighbors ramped by need, no-data gray."""
-    geoms = _load_features()
+    geoms = _load_features(geojson_kind, state_fips)
     for c in aa_counties:
         if c in metrics and c not in geoms:
             raise GeometryGapError(f"county has metrics but no geometry: {c}")
