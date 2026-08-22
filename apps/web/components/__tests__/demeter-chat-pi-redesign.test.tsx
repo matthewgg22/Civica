@@ -137,20 +137,19 @@ describe("the sidebar — the tracking panel, open by default", () => {
 });
 
 describe("sign-in at the top right", () => {
-  it("shows exactly one sign-in: chrome row while the rail is closed, rail foot while open", () => {
-    // Owner rec (2026-08-22): with the rail open, its foot button is THE
-    // sign-in; a second underlined link floating in the chrome row was an
-    // orphan. Closed rail: the chrome link returns to keep the toggle
-    // company.
+  it("offers sign-in at the top right in BOTH rail states, and in the settings bar", () => {
+    // SUPERSEDES the earlier one-sign-in-on-screen rule (owner rec, same
+    // day): the top right is universal — it does not move or vanish when
+    // the rail opens — and the rail's settings bar groups a second one with
+    // privacy and feedback, where someone hunting account things looks.
     const { container } = mountChat();
     const head = container.querySelector(".demeter__head")!;
     const drawer = container.querySelector("#demeter-sidebar")!;
-    // Open (default): rail foot only.
-    expect(head.querySelector("a[href*='/sign-in']")).toBeNull();
+    expect(head.querySelector("a.demeter__signin[href*='/sign-in']")).toBeTruthy();
     expect(drawer.querySelector("a[href*='/sign-in']")).toBeTruthy();
-    // Close the rail: the chrome link appears.
+    // Still there with the rail closed — that is what "universal" means.
     fireEvent.click(drawer.querySelector("button.demeter__sidebartoggle")!);
-    expect(head.querySelector("a[href*='/sign-in']")).toBeTruthy();
+    expect(head.querySelector("a.demeter__signin[href*='/sign-in']")).toBeTruthy();
   });
 });
 
@@ -193,12 +192,41 @@ describe("boxless messages (CSS contract)", () => {
     expect(rule).not.toMatch(/var\(--demeter-terracotta\)/);
   });
 
-  it("one language control at a time — the nav's links yield to the open rail's select", () => {
-    // Owner catch (2026-08-22): with the rail open, the nav's language links
-    // and the rail's language select were both on screen. Same dedup rule as
-    // the brand and sign-in, pinned at the stylesheet.
-    const s = css();
-    expect(s).toMatch(/\.dmchat:has\(\.demeter__sidebar--open\) \.dmnav__langs \{ display: none; \}/);
+  it("no site nav on /chat — so one brand, one language control, structurally", () => {
+    // EVOLVED from a CSS dedup rule. The duplicate brand and duplicate
+    // language control were both symptoms of the site nav riding a surface
+    // that already has its own chrome; the owner's call (2026-08-22) was to
+    // remove the nav from /chat entirely. Asserted at the SOURCE rather than
+    // the stylesheet: a hidden nav is still a nav, and this is the fact that
+    // makes the dedup rules unnecessary.
+    for (const page of ["app/chat/page.tsx", "app/[lang]/chat/page.tsx"]) {
+      const src = readFileSync(join(__dirname, "..", "..", page), "utf8");
+      expect(src, page).not.toMatch(/DemeterNav/);
+    }
+    // And the rail still carries the one language control.
+    const { container } = mountChat();
+    expect(container.querySelectorAll("select.demeter__lang-select").length).toBe(1);
+  });
+
+  it("the chrome row carries the skip link, the reference page, and a boxed sign-in", () => {
+    // What the retired nav is replaced by: the composer skip target (a
+    // keyboard reader would otherwise cross the whole rail to reach the
+    // box), the reference page, and sign-in — the rest of the nav's job
+    // moved into the rail.
+    const { container } = mountChat();
+    const skip = container.querySelector("a.demeter__skip")!;
+    expect(skip.getAttribute("href")).toBe("#demeter-composer");
+    expect(container.querySelector("form#demeter-composer")).toBeTruthy();
+    expect(container.querySelector(".demeter__headright a.demeter__navlink")).toBeTruthy();
+  });
+
+  it("the settings bar reaches the standing pages the retired footer carried", () => {
+    // /chat has no nav and no footer: without these the privacy policy is
+    // unreachable from inside the tool.
+    const { container } = mountChat();
+    const rail = container.querySelector("#demeter-sidebar")!;
+    expect(rail.querySelector("a[href='/privacy']")).toBeTruthy();
+    expect(rail.querySelector("a[href*='/feedback']")).toBeTruthy();
   });
 
   it("the sidebar respects reduced motion", () => {

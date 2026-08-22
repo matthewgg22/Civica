@@ -1569,13 +1569,27 @@ export function DemeterChat({
             the CHAT's own chrome row: sidebar toggle left, language + sign-in
             right; the brand block stays for any surface without the nav and
             is CSS-hidden under .dmchat where the nav already carries it. */}
-        {/* Shown only while the sidebar is CLOSED — while open, the toggle in
-            the sidebar's own head (next to the mark) is the one control, so
-            there are never two identical icons on screen. */}
+        {/* THE PAGE'S ONLY TOP ROW (owner rec 2026-08-22): the site nav is
+            gone from /chat — it duplicated the rail's brand and languages and
+            cost a band of height on the one surface that wants the height.
+            What the nav carried that this surface still needs lives here:
+            the way to the reference page, and the way to sign in.
+
+            FIRST focusable, and it now earns its keep more than the nav's did:
+            a keyboard reader would otherwise cross the toggle, two links and
+            the entire rail — picker, mode switch, template, settings — before
+            reaching the box they came to type in. */}
+        <a className="demeter__skip" href="#demeter-composer">
+          {t.skipToComposer}
+        </a>
+        {/* Universal LEFT. Rendered only while the rail is closed (open, the
+            rail's own head carries it in the same screen position) — and
+            COLORED when closed: as a bare outline on white it read as page
+            furniture, and nobody found the panel behind it. */}
         {!sidebarOpen && (
           <button
             type="button"
-            className="demeter__sidebartoggle"
+            className="demeter__sidebartoggle demeter__sidebartoggle--closed"
             aria-expanded={sidebarOpen}
             aria-controls="demeter-sidebar"
             aria-label={t.sidebarLabel}
@@ -1587,36 +1601,22 @@ export function DemeterChat({
             </svg>
           </button>
         )}
-        <div className="demeter__brand">
-          <span className="demeter__avatar" aria-hidden>
-            <DemeterMark size={40} />
-          </span>
-          <div>
-            {/* A <p>, not an <h1>. The page's <h1> is the orientation bar
-                above this card (SnapOrientation). This used to BE the h1, which
-                put it after the SNAP <h2> in document order — an inverted
-                heading hierarchy, and a card that claimed to be the page. Both
-                mount points render the orientation bar, so nothing is left
-                without a heading. */}
-            <p className="demeter__title">{t.title}</p>
-            <p className="demeter__tagline">{t.tagline}</p>
-          </div>
-        </div>
-        {/* A real picker, not a two-way toggle: the engine now answers in four
-            languages, and a toggle cannot express that. Each option is labelled
-            in its OWN language — someone looking for Tiếng Việt is not helped by
-            the word "Vietnamese". */}
+        {/* Universal RIGHT: sign in (boxed, so it reads as a control rather
+            than a stray underline), then the reference page beyond it. */}
         <div className="demeter__headright">
-          {/* The chrome row keeps ONLY sign-in now (owner refinement): the
-              language picker moved into the sidebar with the rest of the
-              standing context, so the top bar carries no select at all.
-              Signed-in state lives in the sidebar; the auth probe fails
-              closed to signed-out (see its effect). */}
-          {authEmail === null && !sidebarOpen && (
+          {/* UNIVERSAL, both rail states (owner rec 2026-08-22 — this
+              supersedes the earlier one-sign-in-on-screen rule): the top
+              right always offers it, and the rail's settings bar groups a
+              second one with privacy and feedback, where someone looking
+              for account things goes. */}
+          {authEmail === null && (
             <a className="demeter__signin" href={signInHref}>
               {t.signin}
             </a>
           )}
+          <a className="demeter__navlink" href={lang === "en" ? "/questions" : `/${lang}/questions`}>
+            {t.navQuestions}
+          </a>
         </div>
       </header>
 
@@ -1948,6 +1948,7 @@ export function DemeterChat({
       )}
 
       <form
+        id="demeter-composer"
         className="demeter__inputrow"
         onSubmit={(e) => {
           e.preventDefault();
@@ -1982,6 +1983,7 @@ export function DemeterChat({
           <button
             type="button"
             className="demeter__send demeter__send--stop"
+            aria-label={t.stop}
             onClick={() => {
               abortRef.current?.abort();
               // Stop pacing and show what already arrived. Continuing to type
@@ -2000,7 +2002,9 @@ export function DemeterChat({
               });
             }}
           >
-            {t.stop}
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden fill="currentColor">
+              <path d="M6.2 1h5.6L16 5.2v5.6L11.8 15H6.2L2 10.8V5.2z" />
+            </svg>
           </button>
         ) : (
           // A compact arrow, Pi's own control — the accessible name stays
@@ -2067,7 +2071,7 @@ export function DemeterChat({
               className="demeter__sbbrand"
               href={lang === "en" ? "/screen/ask" : `/${lang}/screen/ask`}
             >
-              <DemeterMark size={26} />
+              <DemeterMark size={34} />
               <span className="demeter__sbword" translate="no">
                 Demeter
               </span>
@@ -2293,6 +2297,22 @@ export function DemeterChat({
                 ))}
               </select>
             </label>
+            {/* THE SETTINGS BAR (owner rec 2026-08-22). /chat has no site
+                nav and no footer, so without this the standing pages are
+                unreachable from the tool — someone mid-conversation could
+                not find the privacy policy at all. */}
+            <p className="demeter__settingslabel">{t.settingsLabel}</p>
+            <div className="demeter__settingslinks">
+              <a className="demeter__settingslink" href="/privacy">
+                {t.privacyLink}
+              </a>
+              <a
+                className="demeter__settingslink"
+                href={lang === "en" ? "/feedback" : `/${lang}/feedback`}
+              >
+                {t.feedbackLink}
+              </a>
+            </div>
             {authEmail === null ? (
               <a className="demeter__sidebarsignin" href={signInHref}>
                 {t.signin}

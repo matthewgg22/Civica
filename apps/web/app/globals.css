@@ -6557,7 +6557,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 .dmw__result--certain { border-color: #C9DCC4; background: #F3F8F1; }
 .dmw__result--warn { border-color: #E6D3A9; background: #FBF6EA; }
 .dmw__result--deny { border-color: #E9C2B4; background: #FBEAE5; }
-.dmw__result--pending { border-color: var(--demeter-rule-strong); }
+.dmw__result--pending { border-color: var(--demeter-rule-strong); background: var(--demeter-tint); }
 .dmw__result-label {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -7513,10 +7513,61 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 /* Pi redesign: the head returns on /chat as the CHAT's chrome row — sidebar
    toggle left, language + sign-in right. The brand block stays hidden here:
    the nav one row above is the brand. */
-.dmchat .demeter__head { display: flex; padding: 0 0 0.4rem; }
+.dmchat .demeter__head {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 25;
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.5rem clamp(0.75rem, 3vw, 1.25rem);
+  background: var(--demeter-paper);
+}
+/* z-index 25 < the rail's 30, so an open rail covers the bar's left end —
+   where its own head toggle then sits, in the same screen position. The
+   right cluster stays visible in both states, which is what makes it
+   universal. */
+.dmchat__body { padding-top: 3.5rem; }
 .dmchat .demeter__brand { display: none; }
 
 .demeter__headright { display: flex; align-items: center; gap: 0.75rem; margin-left: auto; }
+/* Skip link: visible only on focus, first in the tab order. */
+.demeter__skip {
+  position: absolute; left: -9999px; top: 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; background: var(--demeter-ink); color: #fff;
+  padding: 0.5rem 0.9rem; border-radius: var(--demeter-radius-input); text-decoration: none; z-index: 60;
+}
+.demeter__skip:focus { left: 0.5rem; top: 0.5rem; position: fixed; }
+/* COLORED WHEN CLOSED (owner rec): as a bare outline on white the toggle
+   read as page furniture and the panel behind it went unfound. Wheat is
+   the next action on this surface. */
+.dmchat .demeter__sidebartoggle--closed {
+  background: var(--demeter-wheat); color: var(--demeter-ink);
+  border-radius: var(--demeter-radius-input);
+}
+.dmchat .demeter__sidebartoggle--closed:hover { background: #DDB93C; }
+/* Sign-in reads as a control, not a stray underline. */
+.dmchat .demeter__signin {
+  text-decoration: none; padding: 0 0.85rem; min-height: 38px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
+  color: var(--demeter-ink); background: var(--demeter-card);
+}
+.dmchat .demeter__signin:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
+/* The reference page, beyond sign-in — what the retired nav carried here. */
+.demeter__navlink {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; color: var(--demeter-body); text-decoration: none;
+  display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap;
+}
+.demeter__navlink:hover { color: var(--demeter-terracotta-deep); text-decoration: underline; text-underline-offset: 3px; }
+/* The settings bar: the only route to the standing pages from this surface. */
+.demeter__settingslabel {
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-muted); margin: 0 0 0.4rem;
+}
+.demeter__settingslinks { display: flex; flex-direction: column; gap: 0.1rem; margin-bottom: 0.8rem; }
+.demeter__settingslink {
+  font-size: 0.85rem; color: var(--demeter-body); text-decoration: none;
+  display: flex; align-items: center; min-height: 40px;
+}
+.demeter__settingslink:hover { color: var(--demeter-terracotta-deep); text-decoration: underline; text-underline-offset: 3px; }
 .demeter__sidebartoggle {
   display: grid; place-items: center; width: 44px; height: 44px; flex: none;
   background: transparent; border: 0; border-radius: var(--demeter-radius-input);
@@ -7542,7 +7593,8 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    the chat re-centers. On narrow screens the same rail simply overlays
    instead of displacing. */
 .demeter__sidebar {
-  position: fixed; top: 57px; bottom: 0; left: 0; z-index: 30;
+  position: fixed; top: 0; bottom: 0; left: 0; z-index: 30;
+  /* top:0 — the site nav this used to clear is gone from /chat. */
   width: min(21.5rem, 85vw);
   background: var(--demeter-tint); border-right: 1px solid var(--demeter-rule);
   padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
@@ -7561,7 +7613,9 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 .demeter__sidebar .demeter__sidebarlink { background: var(--demeter-card); }
 .demeter__sbword {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1.05rem; font-weight: 700; color: var(--demeter-ink);
+  /* 1.35rem: the rail carries the identity alone now that /chat has no site
+     nav, so the brand is sized to lead the column rather than label it. */
+  font-size: 1.35rem; letter-spacing: -0.01em; font-weight: 700; color: var(--demeter-ink);
 }
 .demeter__sbbrand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; border-radius: var(--demeter-radius-input); }
 .demeter__sbbrand:hover .demeter__sbword { color: var(--demeter-terracotta-deep); }
@@ -7574,7 +7628,23 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   font-size: 0.85rem; line-height: 1.45; color: var(--demeter-muted);
   border: 1px dashed var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
   padding: 0.5rem 0.65rem; background: var(--demeter-tint);
+  animation: dmwSlotIn 260ms ease-out both;
 }
+/* STAGGERED, so the four slots read as one list arriving rather than four
+   boxes appearing at once — the mode switch is a state change worth
+   showing. Compositor-only (opacity + transform), and static under
+   prefers-reduced-motion. */
+.dmw__template-list li:nth-child(1) { animation-delay: 0ms; }
+.dmw__template-list li:nth-child(2) { animation-delay: 45ms; }
+.dmw__template-list li:nth-child(3) { animation-delay: 90ms; }
+.dmw__template-list li:nth-child(4) { animation-delay: 135ms; }
+@keyframes dmwSlotIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .dmw__template-list li { animation: none; }
+}
+/* Same rhythm as the still-needed list it becomes: same size, same gap, so
+   switching modes reads as the panel filling in rather than swapping. */
+.dmw__needed ul { display: flex; flex-direction: column; gap: 0.45rem; }
 /* The rail's middle zone: saved conversations, Pi's own geography (their
    rail's middle is the conversation list). The label IS the link. */
 /* The void BELOW this block is deliberate (owner call 2026-08-22): Pi's own
@@ -7682,13 +7752,9 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
      name — the nav's brand fully collapses and the tabs + languages pack
      right as one cluster, so the bar reads as chrome rather than a layout
      with a hole in it. Closed rail: the brand returns. */
-  .dmchat:has(.demeter__sidebar--open) .dmnav__brand { display: none; }
-  /* Same dedup as the brand and sign-in: while the rail is open its foot
-     select is THE language control (it switches answers in place, keeping
-     the transcript); the nav's language links return when the rail closes.
-     One language control on screen at a time. */
-  .dmchat:has(.demeter__sidebar--open) .dmnav__langs { display: none; }
-  .dmchat:has(.demeter__sidebar--open) .dmnav__inner { justify-content: flex-end; gap: 1.5rem; }
+  /* (The nav-yields-to-rail rules that lived here are gone with the nav
+     itself: /chat renders no DemeterNav at all now, so there is no second
+     brand and no second language control to suppress.) */
 
   /* The controls row now lives INSIDE the conversation column (see the JSX), so
      it needs no grid of its own — it is already the width of the column it
