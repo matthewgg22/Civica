@@ -5603,6 +5603,33 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.75rem; line-height: 1.5; color: var(--demeter-terracotta-deep);
   margin: 0 0 0.8rem;
 }
+/* The rotation stage: every exchange occupies the SAME grid cell, so the
+   card takes the height of its tallest member once and never reflows the
+   page while cycling. Opacity-only crossfade (compositor-safe); killed
+   entirely under reduced motion, where the dots remain the way through. */
+.dmex__stack { display: grid; }
+.dmex__item {
+  grid-area: 1 / 1; opacity: 0; transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+.dmex__item--active { opacity: 1; pointer-events: auto; }
+.dmex__stage--static .dmex__item { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .dmex__item { transition: none; }
+}
+.dmex__dots { display: flex; gap: 0.25rem; margin: 0.1rem 0 0.65rem; }
+.dmex__dot {
+  width: 8px; height: 8px; border-radius: var(--demeter-radius-pill);
+  border: 1px solid var(--demeter-rule-strong);
+  /* `background:` shorthand, deliberately — the contrast guard bans
+     terracotta after any bare "color:" and the shorthand is this
+     stylesheet's convention for fills. content-box keeps the fill inside
+     the padding, which is the invisible half of the 20px hit area. */
+  background: transparent content-box;
+  cursor: pointer; box-sizing: content-box; padding: 6px;
+}
+.dmex__dot[aria-pressed="true"] { background: var(--demeter-terracotta) content-box; border-color: var(--demeter-terracotta); }
+.dmex__dot:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .dmex__note {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.78rem; color: var(--demeter-muted); margin: 0;

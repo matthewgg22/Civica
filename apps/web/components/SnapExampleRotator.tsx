@@ -37,11 +37,13 @@ export interface ExampleExchange {
 
 export function SnapExampleRotator({
   items,
-  dotLabel,
+  dotLabelTemplate,
 }: {
   items: ExampleExchange[];
-  /** Localized accessible label for dot n, e.g. (n) => `Example ${n}`. */
-  dotLabel: (n: number) => string;
+  /** Localized accessible label for the dots, with {n} standing in for the
+   *  1-based index — a STRING template, not a function, because this prop
+   *  crosses the server→client boundary and must serialize. */
+  dotLabelTemplate: string;
 }) {
   const [active, setActive] = useState(0);
   const [manual, setManual] = useState(false);
@@ -49,6 +51,9 @@ export function SnapExampleRotator({
   const pausedRef = useRef(false);
 
   useEffect(() => {
+    // Guarded: jsdom (and some legacy embedded views) lack matchMedia; the
+    // safe default is the motion path with its own pause affordances.
+    if (typeof window.matchMedia !== "function") return;
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReduced(mq.matches);
     const onChange = (e: MediaQueryListEvent) => setReduced(e.matches);
@@ -95,7 +100,7 @@ export function SnapExampleRotator({
               key={i}
               type="button"
               className="dmex__dot"
-              aria-label={dotLabel(i + 1)}
+              aria-label={dotLabelTemplate.replace("{n}", String(i + 1))}
               aria-pressed={i === active}
               onClick={() => {
                 setActive(i);

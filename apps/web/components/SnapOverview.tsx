@@ -29,6 +29,7 @@ import { shieldCitations } from "../lib/no-translate";
 import { StateFlag } from "./StateFlag";
 import { UsCoverageMap } from "./UsCoverageMap";
 import { SnapRetailerMap } from "./SnapRetailerMap";
+import { SnapExampleRotator } from "./SnapExampleRotator";
 
 /** The three verified codes in VERIFIED_STATES that are not states — DC is a
  *  federal district, Guam and the U.S. Virgin Islands are territories. Both
@@ -143,13 +144,19 @@ export function SnapOrientation({ lang = "en" }: { lang?: AnswerLang }) {
       </div>
       <aside className="dmex" aria-label={c.example.label}>
         <p className="dmex__label">{c.example.label}</p>
-        <p className="dmex__q">{c.example.q}</p>
-        <p className="dmex__a">{shieldCitations(c.example.a, "dmex")}</p>
-        {/* The verdict the pipeline actually issued for this exchange —
-            regenerated post-#915, graded certain/grounded in every language.
-            The copy table's comment carries the rule: no CERTAIN grade, no
-            verdict line. */}
-        <p className="dmex__verdict">{c.example.verdict}</p>
+        {/* Three real exchanges, cycling (2026-08-21 request). Every verdict
+            was EARNED — twelve pipeline runs, twelve certain/grounded audit
+            lines; the copy table's comment carries the per-item rule. The
+            rotator pauses for readers, stops for choosers, and goes fully
+            static under prefers-reduced-motion. */}
+        <SnapExampleRotator
+          dotLabelTemplate={c.example.dotLabel}
+          items={c.example.items.map((item) => ({
+            q: item.q,
+            a: shieldCitations(item.a, "dmex"),
+            ...(item.verdict ? { verdict: item.verdict } : {}),
+          }))}
+        />
         <p className="dmex__note">
           {c.example.note}{" "}
           <a className="dmex__cta" href={lang === "en" ? "/chat" : `/${lang}/chat`}>
