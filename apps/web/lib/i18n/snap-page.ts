@@ -50,11 +50,15 @@ export interface PageCopy {
    *  text omitted in shortening. */
   example: {
     label: string;
-    q: string;
-    a: string;
-    /** The certainty verdict the pipeline issued for exactly this exchange,
-     *  in the product's own words (certainty.ts), shortened. */
-    verdict: string;
+    /** Three real exchanges the card cycles through. Every `a` is a verbatim
+     *  contiguous prefix of the pipeline's final answer (an "…" marks an
+     *  omitted middle); `verdict` renders ONLY on exchanges the pipeline
+     *  graded CERTAIN — currently all of them, regenerated 2026-08-21 with
+     *  every audit line grading certain/grounded. */
+    items: { q: string; a: string; verdict?: string }[];
+    /** Accessible label for the rotator's dots; {n} is the 1-based index.
+     *  A string template, not a function — it crosses the RSC boundary. */
+    dotLabel: string;
     note: string;
     cta: string;
   };
@@ -202,11 +206,26 @@ const en: PageCopy = {
     "SNAP is monthly money for groceries, paid onto an EBT card. Formerly called food stamps. Applying is free.",
   skipToContent: "Skip to content",
   example: {
-    label: "A real answer",
-    q: "My roommate and I live together and split rent, but we buy and cook our food separately. Are we one SNAP household?",
-    a: "You'd be two separate SNAP households. Under federal SNAP rules, people living together only count as one household if they customarily buy food and prepare meals together; if you keep your groceries and cooking separate, you each apply on your own (7 CFR 273.1(a)).",
-    verdict: "✓ CERTAIN: every rule cited comes from regulation text pulled for this question.",
-    note: "A real Demeter answer, shortened for space.",
+    label: "Real answers",
+    items: [
+      {
+        q: "My roommate and I live together and split rent, but we buy and cook our food separately. Are we one SNAP household?",
+        a: "You'd be two separate SNAP households. Under federal SNAP rules, people living together only count as one household if they customarily buy food and prepare meals together; if you keep your groceries and cooking separate, you each apply on your own (7 CFR 273.1(a)).",
+        verdict: "✓ CERTAIN: every rule cited comes from regulation text pulled for this question.",
+      },
+      {
+        q: "How long does it take to get SNAP after I apply?",
+        a: "Most applications are processed within 30 days of the day you apply. If your household has very little income or cash on hand, you may qualify for expedited service, which gets benefits to you within 7 days instead (7 CFR 273.2(i)).",
+        verdict: "✓ CERTAIN: every rule cited comes from regulation text pulled for this question.",
+      },
+      {
+        q: "I'm a college student. Can I get SNAP?",
+        a: "Being a student doesn't automatically disqualify you, but if you're enrolled at least half-time in college, federal SNAP rules make you ineligible unless you meet a specific exemption (7 CFR 273.5(a)).",
+        verdict: "✓ CERTAIN: every rule cited comes from regulation text pulled for this question.",
+      },
+    ],
+    dotLabel: "Example {n}",
+    note: "Real Demeter answers, shortened for space.",
     cta: "Ask your own",
   },
   eyebrow: "Supplemental Nutrition Assistance Program",
@@ -458,11 +477,26 @@ const es: PageCopy = {
     "SNAP es dinero mensual para comida, depositado en una tarjeta EBT. Antes llamado cupones de alimentos. Solicitar es gratis.",
   skipToContent: "Saltar al contenido",
   example: {
-    label: "Una respuesta real",
-    q: "Mi compañero de cuarto y yo compartimos la renta, pero compramos y cocinamos nuestra comida por separado. ¿Contamos como un solo hogar para SNAP?",
-    a: "No, no cuentan como un solo hogar. Bajo las reglas federales de SNAP, si compran y preparan la comida por separado, cada uno es su propio hogar para efectos de SNAP, aunque compartan la renta y vivan en el mismo lugar (7 CFR 273.1(a)).",
-    verdict: "✓ SEGURO: cada regla citada proviene del texto regulatorio recuperado para esta pregunta.",
-    note: "Una respuesta real de Demeter, acortada por espacio.",
+    label: "Respuestas reales",
+    items: [
+      {
+        q: "Mi compañero de cuarto y yo compartimos la renta, pero compramos y cocinamos nuestra comida por separado. ¿Contamos como un solo hogar para SNAP?",
+        a: "No, no cuentan como un solo hogar. Bajo las reglas federales de SNAP, si compran y preparan la comida por separado, cada uno es su propio hogar para efectos de SNAP, aunque compartan la renta y vivan en el mismo lugar (7 CFR 273.1(a)).",
+        verdict: "✓ SEGURO: cada regla citada proviene del texto regulatorio recuperado para esta pregunta.",
+      },
+      {
+        q: "¿Cuánto tiempo tarda en llegar SNAP después de solicitar?",
+        a: "Depende de si su situación es de emergencia o no. Servicio normal: la agencia estatal tiene hasta 30 días desde la fecha en que presentó la solicitud para decidir y, si es aprobado, entregar los beneficios (7 CFR 273.2). Servicio expedito: si su ingreso y sus recursos son muy bajos, puede calificar para recibir los beneficios en un plazo de 7 días desde que solicita (7 CFR 273.2(i)).",
+        verdict: "✓ SEGURO: cada regla citada proviene del texto regulatorio recuperado para esta pregunta.",
+      },
+      {
+        q: "Soy estudiante universitario. ¿Puedo recibir SNAP?",
+        a: "Ser estudiante universitario no te descalifica automáticamente, pero si estás inscrito al menos medio tiempo en la universidad, la regla general es que no eres elegible a menos que califiques para una excepción (7 CFR 273.5(a)).",
+        verdict: "✓ SEGURO: cada regla citada proviene del texto regulatorio recuperado para esta pregunta.",
+      },
+    ],
+    dotLabel: "Ejemplo {n}",
+    note: "Respuestas reales de Demeter, acortadas por espacio.",
     cta: "Haz tu propia pregunta",
   },
   eyebrow: "Programa de Asistencia Nutricional Suplementaria",
@@ -699,10 +733,25 @@ const vi: PageCopy = {
     "SNAP là tiền mua thực phẩm hằng tháng, nạp vào thẻ EBT. Trước đây gọi là tem phiếu thực phẩm. Nộp đơn miễn phí.",
   skipToContent: "Bỏ qua đến nội dung",
   example: {
-    label: "Một câu trả lời thật",
-    q: "Tôi và bạn cùng phòng sống chung và chia tiền thuê nhà, nhưng chúng tôi mua và nấu ăn riêng. Chúng tôi có tính là một hộ SNAP không?",
-    a: "Không. Nếu hai người mua thức ăn riêng và nấu ăn riêng, thì theo quy định liên bang, hai người được tính là hai hộ SNAP riêng biệt, ngay cả khi sống chung nhà và chia tiền thuê. … Quy định chỉ bắt buộc gộp chung thành một hộ trong một số trường hợp cụ thể, ví dụ như vợ/chồng, hoặc con dưới 22 tuổi sống cùng cha/mẹ (7 CFR 273.1(b)).",
-    verdict: "✓ CHẮC CHẮN: mọi quy định được trích dẫn đều lấy từ văn bản quy định được truy xuất cho câu hỏi này.",
+    label: "Những câu trả lời thật",
+    items: [
+      {
+        q: "Tôi và bạn cùng phòng sống chung và chia tiền thuê nhà, nhưng chúng tôi mua và nấu ăn riêng. Chúng tôi có tính là một hộ SNAP không?",
+        a: "Không. Nếu hai người mua thức ăn riêng và nấu ăn riêng, thì theo quy định liên bang, hai người được tính là hai hộ SNAP riêng biệt, ngay cả khi sống chung nhà và chia tiền thuê. … Quy định chỉ bắt buộc gộp chung thành một hộ trong một số trường hợp cụ thể, ví dụ như vợ/chồng, hoặc con dưới 22 tuổi sống cùng cha/mẹ (7 CFR 273.1(b)).",
+        verdict: "✓ CHẮC CHẮN: mọi quy định được trích dẫn đều lấy từ văn bản quy định được truy xuất cho câu hỏi này.",
+      },
+      {
+        q: "Sau khi nộp đơn thì bao lâu tôi nhận được SNAP?",
+        a: "Theo quy định liên bang, cơ quan phụ trách phải xử lý đơn của bạn trong vòng tối đa 30 ngày kể từ ngày nộp đơn (7 CFR 273.2(a)). Nếu hộ gia đình bạn có thu nhập và tài sản rất thấp, bạn có thể được xét vào diện xử lý khẩn cấp (expedited service) — khi đó trợ cấp phải được cấp trong vòng 7 ngày.",
+        verdict: "✓ CHẮC CHẮN: mọi quy định được trích dẫn đều lấy từ văn bản quy định được truy xuất cho câu hỏi này.",
+      },
+      {
+        q: "Tôi là sinh viên đại học. Tôi có thể nhận SNAP không?",
+        a: "Là sinh viên đại học học ít nhất nửa thời gian (half-time), theo quy định liên bang bạn không đủ điều kiện nhận SNAP trừ khi rơi vào một trong các trường hợp miễn trừ (7 CFR 273.5(a)). Một số trường hợp miễn trừ phổ biến gồm: làm việc ít nhất 20 giờ/tuần, tham gia chương trình work-study, đang nuôi con nhỏ, hoặc đang nhận trợ cấp TANF (7 CFR 273.5(b)).",
+        verdict: "✓ CHẮC CHẮN: mọi quy định được trích dẫn đều lấy từ văn bản quy định được truy xuất cho câu hỏi này.",
+      },
+    ],
+    dotLabel: "Ví dụ {n}",
     note: "Câu trả lời thật của Demeter, rút gọn cho vừa trang.",
     cta: "Đặt câu hỏi của bạn",
   },
@@ -944,10 +993,25 @@ const zh: PageCopy = {
   snapLine: "SNAP 是每月打入 EBT 卡的食品补助，旧称食品券。申请免费。",
   skipToContent: "跳到内容",
   example: {
-    label: "一条真实回答",
-    q: "我和室友住在一起分摊房租，但我们分开买菜、分开做饭。我们算一个 SNAP 家庭吗？",
-    a: "根据联邦规定,你们不算一个家庭。SNAP(联邦食品援助计划)的规则是:同住的人只有在一起买菜、一起做饭时才算一个家庭(7 CFR 273.1)。你们既然是分开采购、分开做饭,即使合租分摊房租,也应该各自作为独立的家庭单位申请。",
-    verdict: "✓ 确定：引用的每条规定都来自为这个问题检索到的法规原文。",
+    label: "真实回答",
+    items: [
+      {
+        q: "我和室友住在一起分摊房租，但我们分开买菜、分开做饭。我们算一个 SNAP 家庭吗？",
+        a: "根据联邦规定,你们不算一个家庭。SNAP(联邦食品援助计划)的规则是:同住的人只有在一起买菜、一起做饭时才算一个家庭(7 CFR 273.1)。你们既然是分开采购、分开做饭,即使合租分摊房租,也应该各自作为独立的家庭单位申请。",
+        verdict: "✓ 确定：引用的每条规定都来自为这个问题检索到的法规原文。",
+      },
+      {
+        q: "申请 SNAP 之后要多久才能拿到？",
+        a: "通常情况下，符合条件的家庭最多在提交申请后 30 天内收到通知并拿到福利。如果家庭收入和资金非常低，可以申请“加急服务”（expedited service），最快可以在申请后 7 天内拿到福利。… 这条规则来自 7 CFR 273.2(i)。",
+        verdict: "✓ 确定：引用的每条规定都来自为这个问题检索到的法规原文。",
+      },
+      {
+        q: "我是大学生。我可以领 SNAP 吗？",
+        a: "如果你在大学或其他高等院校半时以上注册，按照联邦规定通常不能领取SNAP，除非符合特定的豁免条件（7 CFR 273.5(a)）。",
+        verdict: "✓ 确定：引用的每条规定都来自为这个问题检索到的法规原文。",
+      },
+    ],
+    dotLabel: "示例 {n}",
     note: "Demeter 的真实回答，因篇幅有所缩短。",
     cta: "提出你自己的问题",
   },
