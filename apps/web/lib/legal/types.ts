@@ -89,18 +89,22 @@ export const RETENTION_DAYS = {
  *  without it. Moving enforcement next to the data removed that step: pasting
  *  the migration is the whole install.
  *
- *  IT IS STILL FALSE, and that is not an oversight. This constant means the
- *  policy's retention promise is TRUE OF THE RUNNING SYSTEM. Migrations in this
- *  project are applied by hand, so until 20260824 is pasted into prod nothing
- *  is being purged, and flipping this on the strength of merged code rather
- *  than observed behaviour is precisely the failure the guard was built to
- *  prevent.
+ *  TRUE SINCE 2026-08-22, on observed behaviour rather than on merged code —
+ *  which is the distinction this constant exists to hold. What was checked, in
+ *  prod, over the read-only connection:
  *
- *  To flip: paste 20260824 → confirm the schedule is registered
- *  (`select jobname, active from cron.job`) → confirm the first sweep ran
- *  (`select * from snap_enrollment.purge_mae_query_log_retention(true)`
- *  returning 0 once it has caught up) → flip this to true. Both confirmations
- *  are readable over the read-only connection, so nobody has to report a
- *  number by hand. Measured 2026-08-22, before the first run: 12 ordinary rows
- *  pending, 0 flagged, out of 13 in the table. */
-export const RETENTION_JOB_LIVE = false;
+ *    - migration 20260824 applied, and the LIVE function definition is
+ *      byte-identical to the repo's copy (this project has a history of
+ *      migrations being hand-edited at paste time and the repo never
+ *      learning — see 20260569 and 20260570);
+ *    - `demeter-purge-query-log-daily` registered, `10 4 * * *`, active;
+ *    - the first sweep RAN: 12 ordinary rows blanked, 0 flagged;
+ *    - afterwards 12 rows carry the tombstone, 0 of them still hold answer
+ *      text, and all 13 rows are still present — the text expired, the row
+ *      did not, which is the whole design;
+ *    - a dry run now returns 0 for both tiers, so the job is caught up and
+ *      idempotent.
+ *
+ *  Flipping this back to false is the correct move if that job is ever paused
+ *  or unscheduled — the promise is about the running system, not the code. */
+export const RETENTION_JOB_LIVE = true;
