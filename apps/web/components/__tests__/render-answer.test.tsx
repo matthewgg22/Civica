@@ -185,15 +185,76 @@ describe("the question the composer echoes", () => {
   });
 });
 
+/** The settle spans at the streaming edge, in document order. */
+function streamSpans(nodes: Nodes): string[] {
+  const out: string[] = [];
+  walk(nodes, (n) => {
+    if (
+      isValidElement(n) &&
+      (n.props as { className?: string }).className === "demeter__streamtail"
+    ) {
+      let text = "";
+      walk([n], (c) => {
+        if (typeof c === "string") text += c;
+      });
+      out.push(text);
+    }
+  });
+  return out;
+}
+
 describe("the streaming edge", () => {
   // Was a blinking block caret — the loudest thing on a page of quiet type,
   // sitting at the end of every sentence as it arrived. A cursor belongs in a
   // field you type into, not in prose being read to you. The newest word now
   // arrives dimmed and settles instead.
-  it("wraps the newest word, inside the last paragraph", () => {
+  //
+  // THEN it was ONE span, reused: the paced drain reveals a word every
+  // ~100–200ms, but React kept the same tail node across renders, so the
+  // 420ms settle animation ran once on first mount and every word after it
+  // popped in at full opacity — network pacing made visible again, which is
+  // exactly what read as choppy. Now the last few words each get their OWN
+  // span, keyed by character offset (stable while text appends), so each word
+  // mounts once, fades once, and stays settled while newer words fade in
+  // behind it — a soft cascade instead of a pop.
+  it("wraps each of the trailing words in its own settle span", () => {
     const nodes = renderAnswer("First.\n\nStill writing", { streaming: true });
     expect(paragraphs(nodes)).toBe(2);
-    expect(tags(nodes)).toEqual(["span"]);
+    expect(tags(nodes)).toEqual(["span", "span"]);
+  });
+
+  it("caps the settling window, and keeps every word across the split", () => {
+    const nodes = renderAnswer("First.\n\nOne two three four five six seven eight", {
+      streaming: true,
+    });
+    const spans = streamSpans(nodes);
+    expect(spans.length).toBe(5);
+    // The window is the TAIL of the sentence, whole and in order…
+    expect(spans.join("")).toBe(" four five six seven eight");
+    // …and nothing was dropped or doubled around the head/window seam.
+    expect(texts(nodes).replace(/\s+/g, " ")).toContain(
+      "One two three four five six seven eight",
+    );
+  });
+
+  it("fades the streaming edge of a trailing bullet list too", () => {
+    // SNAP answers are bullet-heavy — "you can apply:" followed by options is
+    // the shape of half the corpus. The list edge previously had NO settle at
+    // all (#898 P1-3 fixed content loss, not motion), so the exact answers
+    // most worth reading were the ones that still popped.
+    const nodes = renderAnswer("You can:\n\n- apply online\n- call the county office", {
+      streaming: true,
+    });
+    const spans = streamSpans(nodes);
+    expect(spans.length).toBeGreaterThanOrEqual(2);
+    expect(texts(nodes).replace(/\s+/g, " ")).toContain("call the county office");
+    // The finished items above the edge are untouched.
+    expect(texts(nodes)).toContain("apply online");
+  });
+
+  it("leaves a finished bullet list alone", () => {
+    const nodes = renderAnswer("You can:\n\n- apply online\n- call the county office");
+    expect(streamSpans(nodes)).toEqual([]);
   });
 
   it("keeps every word — the edge is a wrapper, not a truncation", () => {
