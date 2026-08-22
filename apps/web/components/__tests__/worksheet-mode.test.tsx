@@ -103,4 +103,20 @@ describe("the estimate is something you turn on", () => {
       }
     }
   });
+
+  it("keeps the ask-mode note sidebar-sized, without losing the retention disclosure", () => {
+    // It ran three sentences plus a parenthetical — longer than the estimate
+    // panel it explains. Two sentences now, and this pins the budget the same
+    // way the em-dash test pins the page copy. The one clause that must
+    // SURVIVE any shortening is the honest one: we keep the text to check our
+    // accuracy, in both modes — cutting that to save room would turn a
+    // disclosure into a secret.
+    for (const lang of ANSWER_LANGS) {
+      const note = T[lang].worksheet.modeAskNote;
+      expect(note.length, `${lang} length`).toBeLessThanOrEqual(lang === "zh" ? 80 : 175);
+      expect(note, `${lang} keeps the accuracy disclosure`).toMatch(
+        /accuracy|exactitud|chính xác|准确/,
+      );
+    }
+  });
 });
