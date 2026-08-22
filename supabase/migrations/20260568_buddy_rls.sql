@@ -51,7 +51,12 @@ CREATE POLICY "buddy_read_active_packet" ON snap_enrollment.snap_packets
       WHERE br.buddy_user_id = auth.uid()
         AND a.applicant_id = snap_enrollment.snap_packets.applicant_id
         AND br.status = 'active'
-        AND snap_enrollment.snap_packets.status NOT IN ('submitted', 'approved')
+        -- REPLAY REPAIR (#679): was NOT IN ('submitted','approved') — neither
+        -- is a packet_status label, so this file could never execute against
+        -- a fresh database ("invalid input value for enum"). The terminal set
+        -- is ('Handed Off','Closed'), which is also what prod's live
+        -- buddy_packet_summary_view and buddy_auto_revoke_on_terminal use.
+        AND snap_enrollment.snap_packets.status NOT IN ('Handed Off', 'Closed')
     )
   );
 
