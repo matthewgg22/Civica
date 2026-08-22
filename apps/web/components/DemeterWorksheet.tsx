@@ -32,7 +32,7 @@
 // people not to believe either one.
 
 import type { ReactNode } from "react";
-import type { ScreeningClassification } from "@civica/demeter-engine";
+import type { ScreeningClassification, PartialFacts } from "@civica/demeter-engine";
 import {
   OUTCOME_COPY,
   CALC_ROWS,
@@ -80,6 +80,75 @@ export interface DemeterWorksheetCopy {
    *  figures test walks every language. */
   templateTitle: string;
   template: readonly string[];
+  /** "From what you've told me" — the panel's record of what it HEARD.
+   *  Previously it showed only the verdict and what was still missing, so a
+   *  mis-heard income or household size stayed invisible. */
+  captured: string;
+  capturedNote: string;
+  capturedHousehold: string;
+  capturedHouseholdOne: string;
+  capturedHouseholdN: string;
+  capturedIncome: string;
+  capturedIncomeNone: string;
+  capturedRent: string;
+  capturedUtilities: string;
+  capturedHomeless: string;
+  capturedHomelessYes: string;
+  capturedAssets: string;
+  capturedExpedited: string;
+}
+
+/** The facts the extractor has HEARD, as label/value pairs for display.
+ *
+ *  ONLY WHAT WAS SAID. The extractor is instructed never to infer, so an
+ *  omitted field means "not mentioned" and gets no row — a blank is honest
+ *  here and a zero would not be. `income: []` is the one exception worth
+ *  distinguishing: an explicit empty income array is the model recording
+ *  "they told me they have none", which is a different and load-bearing fact
+ *  from never having been asked.
+ */
+function capturedRows(
+  facts: PartialFacts | null | undefined,
+  copy: DemeterWorksheetCopy,
+): Array<[string, string]> {
+  if (!facts) return [];
+  const rows: Array<[string, string]> = [];
+
+  const size = facts.household?.length ?? 0;
+  if (size > 0) {
+    rows.push([
+      copy.capturedHousehold,
+      size === 1 ? copy.capturedHouseholdOne : copy.capturedHouseholdN.replace("{n}", String(size)),
+    ]);
+  }
+
+  if (facts.income) {
+    const monthly = facts.income.reduce((n, line) => n + (Number(line.amount) || 0), 0);
+    rows.push([
+      copy.capturedIncome,
+      facts.income.length === 0 || monthly === 0 ? copy.capturedIncomeNone : money(monthly),
+    ]);
+  }
+
+  const shelter = facts.shelter;
+  if (shelter?.homeless_deduction === true) {
+    rows.push([copy.capturedHomeless, copy.capturedHomelessYes]);
+  }
+  if (typeof shelter?.rent === "number") {
+    rows.push([copy.capturedRent, money(shelter.rent)]);
+  }
+  if (typeof shelter?.sua_amount === "number" && shelter.sua_amount > 0) {
+    rows.push([copy.capturedUtilities, money(shelter.sua_amount)]);
+  }
+
+  if (facts.assets !== undefined && facts.assets !== null) {
+    const n = Number(facts.assets);
+    rows.push([copy.capturedAssets, Number.isFinite(n) ? money(n) : String(facts.assets)]);
+  }
+
+  if (facts.expedited === true) rows.push([copy.capturedExpedited, ""]);
+
+  return rows;
 }
 
 /** What this panel is for right now.
@@ -97,6 +166,7 @@ export type WorksheetMode = "ask" | "estimate";
 
 export function DemeterWorksheet({
   classification,
+  facts,
   stateSelected,
   saved,
   copy,
@@ -106,6 +176,9 @@ export function DemeterWorksheet({
   footLinks,
 }: {
   classification: ScreeningClassification | null;
+  /** What the extractor has HEARD so far. Rendered as its own section so the
+   *  reader can catch a mis-heard figure before it reaches the estimate. */
+  facts?: PartialFacts | null;
   stateSelected: boolean;
   /** Whether this conversation has a saved row. Only decides which privacy
    *  sentence is true; the panel holds no saved state of its own. */
@@ -129,6 +202,9 @@ export function DemeterWorksheet({
   // Only rows the calculation actually produced — an empty worksheet should
   // not print eight $0 lines at someone.
   const rows = calc ? CALC_ROWS.filter(([k]) => calc[k] !== undefined) : [];
+  // Only in estimate mode: ask mode extracts nothing, so there is nothing
+  // heard to show, and rendering an empty section would imply otherwise.
+  const captured = mode === "estimate" ? capturedRows(facts, copy) : [];
 
   return (
     <aside className="dmw" aria-label={copy.title}>
@@ -231,6 +307,27 @@ export function DemeterWorksheet({
               </div>
             ))}
           </dl>
+        </section>
+      )}
+
+      {/* WHAT IT HEARD, before what it lacks. The panel used to show only the
+          verdict and the missing list, so a mis-heard figure — an income read
+          as monthly when it was weekly, a household of one recorded as two —
+          was invisible until it surfaced in the estimate, if it ever did.
+          Putting it on screen makes correcting it a sentence in the chat
+          rather than a discovery at the end. */}
+      {captured.length > 0 && (
+        <section className="dmw__captured">
+          <p className="dmw__section-title">{copy.captured}</p>
+          <dl className="dmw__captured-list">
+            {captured.map(([label, value]) => (
+              <div className="dmw__captured-row" key={label}>
+                <dt>{label}</dt>
+                {value ? <dd>{value}</dd> : null}
+              </div>
+            ))}
+          </dl>
+          <p className="dmw__captured-note">{copy.capturedNote}</p>
         </section>
       )}
 

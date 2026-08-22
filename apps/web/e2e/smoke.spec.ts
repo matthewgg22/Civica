@@ -89,7 +89,13 @@ test.describe("chat surface", () => {
   }) => {
     await page.goto("/chat");
     const picker = page.getByRole("button", { name: "Your state", exact: true });
-    await expect(picker).toContainText("All states");
+    // ONE LINE since 2026-08-22: unset, the trigger shows its label as a
+    // placeholder instead of the old "All states (federal rules)" value. What
+    // this test is really here for is that the picker is REACHABLE on a phone
+    // — it once got buried inside a closed drawer — so it asserts visible and
+    // unselected, not a particular value string.
+    await expect(picker).toBeVisible();
+    await expect(picker).toContainText("Your state");
     await expect(composer(page)).toBeVisible();
     // THE STARTERS ARE GONE, deliberately. There were three, and none was what
     // someone actually opens with; two carried a discouraging premise before a

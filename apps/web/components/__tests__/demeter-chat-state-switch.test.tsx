@@ -118,9 +118,13 @@ describe("DemeterChat state switching", () => {
 
   it("starts on the federal floor and sends state: null", async () => {
     render(<DemeterChat states={STATES} />);
-    expect(screen.getByRole("button", { name: "Your state" }).textContent).toContain(
-      "All states",
-    );
+    // The trigger is ONE line since 2026-08-22 — unset it shows the label as a
+    // placeholder rather than the old "All states (federal rules)" value. What
+    // is pinned is that nothing is selected, which the next assertion proves
+    // where it actually counts: the request carries state: null.
+    const trigger = screen.getByRole("button", { name: "Your state" });
+    expect(trigger.textContent).toContain(T.en.picker.label);
+    expect(trigger.textContent, "no state may look chosen").not.toMatch(/California|Texas/);
     await sendQuestion("What is SNAP?");
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.state).toBeNull();

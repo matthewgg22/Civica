@@ -166,14 +166,19 @@ export function DemeterStatePicker({
           // "All states" never look like a selection someone made.
           <span className="dmst__mark" data-federal="true">US</span>
         )}
+        {/* ONE LINE (owner, 2026-08-22). This was a two-row stack — the label
+            "Your state" above the value "All states (federal rules)" — which
+            spent two lines and an eyebrow on a control with one job. Unset it
+            now reads as a placeholder; set, it is the state's own name, so the
+            row always answers "which state?" without a caption explaining
+            that it is about states.
+
+            The federal-floor caveat is not lost with the old value string: the
+            empty state still closes on "until then, answers use the federal
+            rules", and the scope line beneath this names the agency. */}
         <span className="dmst__trigger-text">
-          <span className="dmst__trigger-label">{copy.label}</span>
           <span className="dmst__trigger-value">
-            {/* The STATE, under a label that says YOUR STATE. This showed the
-                PROGRAM, so Massachusetts read "Supplemental Nutrition
-                Assistance Program (SNAP)" where the state belongs. The program
-                and agency are already named on the scope line beneath. */}
-            {selected ? stateName(selected.code) : copy.federal}
+            {selected ? stateName(selected.code) : copy.label}
           </span>
         </span>
         {selected ? <span className="dmst__check" aria-hidden>✓</span> : null}
@@ -280,16 +285,24 @@ export function DemeterStatePicker({
                       reason the flag is there at all. */}
                   <StateFlag code={s.code} size={34} />
                   <span className="dmst__opt-text">
-                    <span className="dmst__opt-name">
-                      {programDisplayName(s.program)}
-                    </span>
-                    {/* agencyDisplayName, like the map panel and the
-                        screen-reader roster (taste audit finding 1). This
-                        site was missed: pack.agency is written for the MODEL
-                        and carries the research annexe behind an em-dash, so
-                        Washington's row rendered its "— Community Services
-                        Division" tail and ran to four lines in the rail. */}
-                    <span className="dmst__opt-sub">{agencyDisplayName(s.agency)}</span>
+                    {/* THE STATE LEADS (owner, 2026-08-22). This showed the
+                        PROGRAM name, so typing "verm" returned a row headed
+                        "3SquaresVT" — Vermont's real name for SNAP, but not a
+                        word the person searching typed, and the row never said
+                        "Vermont" at all. Nine states brand SNAP differently
+                        (CalFresh, 3SquaresVT, SnapEd…), so this was not one
+                        odd row. The state answers "did my search work?"; the
+                        programme name below answers "what will it be called
+                        when I get there?", which is worth knowing but is not
+                        the thing being searched for.
+
+                        The agency moves off this row — it is already named on
+                        the scope line under the trigger once a state is
+                        chosen, and in the answer itself. pack.agency is
+                        written for the MODEL and carries a research annexe
+                        behind an em-dash, so it ran to four lines here. */}
+                    <span className="dmst__opt-name">{stateName(s.code)}</span>
+                    <span className="dmst__opt-sub">{programDisplayName(s.program)}</span>
                   </span>
                 </button>
               </li>

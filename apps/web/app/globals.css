@@ -8846,3 +8846,68 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    whatever the panel's height happens to be — which moved between the two
    worksheet modes, so the controls shifted when the mode changed. */
 .demeter__railfoot { margin-top: auto; justify-content: center; }
+
+/* ── The empty state speaks in ONE voice (owner, 2026-08-22) ──────────────
+   It had four paragraphs in THREE type families, three sizes and three
+   colours — and the modes line switched from the display serif to the sans
+   mid-block, which is what made the group read as mismatched rather than
+   layered. DEMETER-DESIGN's rule is "serif speaks, sans labels": all four of
+   these are prose, so all four are serif. Hierarchy now comes from COLOUR
+   alone, which is the one axis that can differ without looking like a
+   different typeface got loose. */
+.demeter__emptylede {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--demeter-body);
+}
+.demeter__emptymodes {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--demeter-muted);
+}
+
+/* The rail's descriptor is a LABEL, not a sentence — so it wears the sans in
+   caps, matching "YOUR STATE" and "YOUR OUTLINED APPLICATION" directly below
+   it, rather than sitting in the serif as a second, quieter headline. */
+.demeter__sbtag {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  color: var(--demeter-muted);
+}
+
+/* The rail's floor. .demeter__sidebarauth ALSO carried margin-top:auto, and
+   two auto margins in one flex column SPLIT the free space between them —
+   which is exactly why the bottom row floated short of the bottom. */
+.demeter__sidebarauth { margin-top: 0; }
+
+/* One-line state picker: no eyebrow above the value any more. */
+.dmst__trigger-text { flex-direction: row; align-items: center; }
+
+/* "From what you've told me" — the panel's record of what it HEARD, above the
+   list of what it still lacks. Same row rhythm as the calc list so the two
+   read as one ledger rather than two widgets. */
+.dmw__captured { margin-top: 0.9rem; }
+.dmw__captured-list { margin: 0.35rem 0 0; padding: 0; }
+.dmw__captured-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem;
+  padding: 0.28rem 0; border-bottom: 1px dashed var(--demeter-rule);
+}
+.dmw__captured-row:last-child { border-bottom: 0; }
+.dmw__captured-row dt {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; color: var(--demeter-muted); margin: 0;
+}
+.dmw__captured-row dd {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.8rem; font-weight: 600; color: var(--demeter-ink); margin: 0;
+  font-variant-numeric: tabular-nums; text-align: right;
+}
+.dmw__captured-note {
+  margin: 0.45rem 0 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; line-height: 1.45; color: var(--demeter-muted);
+}

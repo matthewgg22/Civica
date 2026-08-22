@@ -32,7 +32,7 @@ export const T = {
       after: '.',
     },
     title: "Demeter",
-    tagline: "Verified answers about SNAP — for any state.",
+    tagline: "SNAP enrollment and eligibility assistance",
     inputPlaceholder: "Happy to answer any questions about SNAP…",
     // Once the chat is already going and the last answer didn't end in a
     // specific question to fall back on (pendingQuestion returns null), the
@@ -71,7 +71,10 @@ export const T = {
     stateOffer: "You mentioned {place}. Answer for {state}?",
     // Asked once, after the first answer — the toggle for this lives in the
     // right-hand panel, which nobody reads while taking in their first reply.
-    modeOffer: "Shall I start gathering your answers as we go, so you can take them to the application? Or keep this as just questions for now?",
+    // ONE LINE (owner, 2026-08-22). It ran to three lines beside two buttons
+    // that already SAY the two options — "Just asking" and "Gather my
+    // answers" — so the sentence spent its length re-describing them.
+    modeOffer: "Want me to gather your answers into an application outline as we go?",
     modeOfferEstimate: "Gather my answers",
     modeOfferAsk: "Just asking",
     // Shown after several turns if the conversation hasn't been saved yet.
@@ -219,6 +222,23 @@ export const T = {
       result: "Where this lands",
       estimate: "Estimated monthly benefit:",
       calc: "How that was worked out",
+      // WHAT IT HEARD, not just what it lacks. The panel listed "still
+      // needed" and the final number but never showed the facts it was
+      // working from, so a mis-heard income or household size was invisible
+      // until it came out in the estimate — if it ever did.
+      captured: "From what you\u2019ve told me",
+      capturedNote: "Wrong? Say so in the chat and I\u2019ll correct it.",
+      capturedHousehold: "Household",
+      capturedHouseholdOne: "Just you",
+      capturedHouseholdN: "{n} people",
+      capturedIncome: "Monthly income",
+      capturedIncomeNone: "None right now",
+      capturedRent: "Rent",
+      capturedUtilities: "Utilities",
+      capturedHomeless: "Housing",
+      capturedHomelessYes: "No fixed address",
+      capturedAssets: "Savings and assets",
+      capturedExpedited: "May qualify for expedited service",
       stillNeeded: "Still needed",
       empty:
         "Tell Demeter about your household — who lives with you, what you earn, what you pay in rent — and your estimate builds here.",
@@ -258,7 +278,7 @@ export const T = {
       modeAsk: "Just asking",
       modeEstimate: "Build my estimate",
       modeAskNote:
-        "Nothing here goes into your estimate — ask a what-if, or about someone else. We keep the text to check our accuracy, in both modes.",
+        "Nothing here goes into an estimate — ask a what-if, or about someone else.",
       templateTitle: "What this will fill in",
       template: [
         "Who's in your household",
@@ -284,7 +304,7 @@ export const T = {
       after: '.',
     },
     title: "Demeter",
-    tagline: "Respuestas verificadas sobre SNAP — para cualquier estado.",
+    tagline: "Ayuda con la inscripción y elegibilidad de SNAP",
     inputPlaceholder: "Con gusto respondo cualquier pregunta sobre SNAP…",
     inputPlaceholderContinue: "Haz una pregunta de seguimiento…",
     inputPlaceholderEstimate: "Cuéntame sobre tu hogar y lo voy armando…",
@@ -414,6 +434,19 @@ export const T = {
       result: "Dónde queda esto",
       estimate: "Beneficio mensual estimado:",
       calc: "Cómo se calculó",
+      captured: "Por lo que me has dicho",
+      capturedNote: "\u00bfAlgo mal? Dímelo en el chat y lo corrijo.",
+      capturedHousehold: "Hogar",
+      capturedHouseholdOne: "Solo tú",
+      capturedHouseholdN: "{n} personas",
+      capturedIncome: "Ingreso mensual",
+      capturedIncomeNone: "Ninguno por ahora",
+      capturedRent: "Alquiler",
+      capturedUtilities: "Servicios",
+      capturedHomeless: "Vivienda",
+      capturedHomelessYes: "Sin domicilio fijo",
+      capturedAssets: "Ahorros y bienes",
+      capturedExpedited: "Puede calificar para servicio acelerado",
       stillNeeded: "Todavía falta",
       empty:
         "Cuéntale a Demeter sobre tu hogar — quién vive contigo, cuánto ganas, cuánto pagas de renta — y tu estimado se arma aquí.",
@@ -428,7 +461,7 @@ export const T = {
       modeAsk: "Solo preguntar",
       modeEstimate: "Calcular mi estimado",
       modeAskNote:
-        "Nada de esto entra en tu estimado — pregunta un supuesto, o por otra persona. Guardamos el texto para verificar nuestra exactitud, en ambos modos.",
+        "Nada de esto entra en un estimado — pregunta un supuesto, o por otra persona.",
       templateTitle: "Lo que se irá completando",
       template: [
         "Quiénes forman tu hogar",
@@ -454,7 +487,7 @@ export const T = {
       after: ' của chúng tôi.',
     },
     title: "Demeter",
-    tagline: "Câu trả lời đã được xác minh về SNAP — cho mọi tiểu bang.",
+    tagline: "Hỗ trợ ghi danh và điều kiện SNAP",
     inputPlaceholder: "Rất sẵn lòng giải đáp mọi câu hỏi về SNAP…",
     inputPlaceholderContinue: "Đặt một câu hỏi tiếp theo…",
     inputPlaceholderEstimate: "Kể cho tôi về hộ của bạn, tôi sẽ dựng dần lên…",
@@ -583,6 +616,19 @@ export const T = {
       result: "Kết quả tạm tính",
       estimate: "Trợ cấp hàng tháng ước tính:",
       calc: "Cách tính ra con số đó",
+      captured: "Theo những gì bạn đã nói",
+      capturedNote: "Có gì chưa đúng? Cứ nhắn trong khung chat, tôi sẽ sửa.",
+      capturedHousehold: "Hộ gia đình",
+      capturedHouseholdOne: "Chỉ mình bạn",
+      capturedHouseholdN: "{n} người",
+      capturedIncome: "Thu nhập hàng tháng",
+      capturedIncomeNone: "Hiện không có",
+      capturedRent: "Tiền thuê nhà",
+      capturedUtilities: "Tiện ích",
+      capturedHomeless: "Chỗ ở",
+      capturedHomelessYes: "Không có địa chỉ cố định",
+      capturedAssets: "Tiết kiệm và tài sản",
+      capturedExpedited: "Có thể đủ điều kiện xử lý nhanh",
       stillNeeded: "Còn thiếu",
       empty:
         "Hãy cho Demeter biết về hộ gia đình của bạn — ai sống cùng bạn, bạn kiếm được bao nhiêu, bạn trả bao nhiêu tiền thuê nhà — và ước tính sẽ hiện ở đây.",
@@ -597,7 +643,7 @@ export const T = {
       modeAsk: "Chỉ hỏi thôi",
       modeEstimate: "Tính mức ước tính",
       modeAskNote:
-        "Không gì ở đây được đưa vào bản ước tính của bạn — cứ hỏi giả định, hoặc hỏi giúp người khác. Chúng tôi vẫn lưu nội dung để kiểm tra độ chính xác, ở cả hai chế độ.",
+        "Không gì ở đây được đưa vào bản ước tính — cứ hỏi giả định, hoặc hỏi giúp người khác.",
       templateTitle: "Những phần sẽ được điền",
       template: [
         "Những ai trong hộ của bạn",
@@ -623,7 +669,7 @@ export const T = {
       after: '。',
     },
     title: "Demeter",
-    tagline: "经过核实的 SNAP 答案——适用于任何州。",
+    tagline: "SNAP 申请与资格协助",
     inputPlaceholder: "关于 SNAP 的任何问题，都很乐意解答…",
     inputPlaceholderContinue: "还有什么想问的…",
     inputPlaceholderEstimate: "跟我说说您的家庭情况，我来逐步整理…",
@@ -746,6 +792,19 @@ export const T = {
       result: "初步结果",
       estimate: "每月估计补助：",
       calc: "计算方式",
+      captured: "根据您告诉我的",
+      capturedNote: "有不对的地方？在对话里说一声，我来更正。",
+      capturedHousehold: "家庭人数",
+      capturedHouseholdOne: "只有您",
+      capturedHouseholdN: "{n} 人",
+      capturedIncome: "每月收入",
+      capturedIncomeNone: "目前没有",
+      capturedRent: "房租",
+      capturedUtilities: "水电等费用",
+      capturedHomeless: "住所",
+      capturedHomelessYes: "没有固定住址",
+      capturedAssets: "存款与资产",
+      capturedExpedited: "可能符合加急办理",
       stillNeeded: "仍需提供",
       empty:
         "告诉 Demeter 您的家庭情况——谁和您同住、收入多少、房租多少——估算就会在这里逐步生成。",
@@ -759,7 +818,7 @@ export const T = {
       modeLabel: "您希望在这里得到什么？",
       modeAsk: "只是问问",
       modeEstimate: "帮我算估算",
-      modeAskNote: "这里说的内容不会进入您的估算——可以问假设情况，或替别人问。我们仍会保留内容以核查准确性，两种模式都是如此。",
+      modeAskNote: "这里说的内容不会进入估算——可以问假设情况，或替别人问。",
       templateTitle: "将要填写的部分",
       template: ["您的家庭成员", "您的每月收入", "房租、水电及其他开支", "您的预计每月补助"],
       switchedToAsk: "估算已清除。没有在收集任何内容。",
