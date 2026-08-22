@@ -15,6 +15,13 @@
   .letterhead .org { font-size:9.5pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent); white-space:nowrap; }
   .letterhead .doc { font-size:8pt; color:var(--muted); white-space:nowrap; padding-left:12px; }
   h2.pagehead { font-family:'Source Serif 4',serif; font-size:20pt; font-weight:600; margin-top:26px; }
+  .research { border-top:1.5px solid var(--accent); margin-top:13px; padding-top:8px; }
+  .research .rlabel { font-size:8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent); font-weight:600; }
+  .rstats { display:flex; gap:.32in; margin-top:7px; }
+  .rstats > div { flex:1; }
+  .rstats b { display:block; font-family:'Source Serif 4',serif; font-size:17pt; font-weight:600; line-height:1; font-variant-numeric:tabular-nums; }
+  .rstats span { display:block; font-size:8.2pt; line-height:1.35; color:#3c3c3c; margin-top:3px; }
+  .rsrc { font-size:7.4pt; line-height:1.4; color:var(--muted); margin-top:7px; }
   .pagefoot { border-top:1px solid var(--hair); margin-top:auto; padding-top:8px; font-size:8pt; line-height:1.5; color:var(--muted); }
   /* ---------- Page 1 ---------- */
   .big { font-family:'Source Serif 4',serif; font-size:86pt; line-height:.95; letter-spacing:-.01em; margin-top:30px; }
@@ -85,6 +92,15 @@
       <div class="stat"><div class="label">Currently enrolled, est.</div><div class="value">[[aa_enrolled_pct]]%</div><div class="note">vs. [[state_enrolled_pct]]% statewide</div></div>
       <div class="stat"><div class="label">Avg. household benefit</div><div class="value">$[[benefit_monthly]]/mo</div><div class="note">USDA FNS, FY2024 national average</div></div>
     </div>
+  </div>
+  <div class="research">
+    <div class="rlabel">What changes when the paperwork gets easier</div>
+    <div class="rstats">
+      <div><b>&minus;$2,436</b><span>in credit-card debt by year three &mdash; a 51% reduction</span></div>
+      <div><b>&minus;10.1 pts</b><span>less likely to carry a delinquent account, off a 41% baseline</span></div>
+      <div><b>+17 pts</b><span>credit score, from a 634 average &mdash; the subprime range</span></div>
+    </div>
+    <div class="rsrc">Treatment-on-the-treated effects among ~65,000 Los Angeles SNAP applicants, from administrative records linked to credit reports; households that fell out at recertification in San Francisco moved the other way, losing 15 to 19 points. Homonoff, Lee &amp; Meckel, NBER Working Paper 34434 (preliminary draft, November 2025; estimates subject to revision). Credit-score effects are the least precisely estimated of the three; the debt and delinquency effects are stronger. This is research on SNAP access generally, not a measurement of [[org_name]]'s program.</div>
   </div>
   <div class="pagefoot">[[data_gaps_note]]Sources: eligibility &amp; enrollment [[model_note]]. Known biases in the gross-income proxy and ACS benefit under-reporting may overstate the eligible-unenrolled population — see page 5. Assessment area as delineated in [[bank_name]]'s [[pe_date]] CRA Performance Evaluation ([[regulator]]). Benefit figures: USDA FNS FY2024. [[org_name]], a 501(c)(3) organization.</div>
 </div>
