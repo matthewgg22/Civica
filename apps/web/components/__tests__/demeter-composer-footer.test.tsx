@@ -123,3 +123,52 @@ describe("the footer is one line at rest", () => {
     expect(text).toContain(T.en.termsNotice.before.trim());
   });
 });
+
+// The chrome row's second link, renamed 2026-08-22 ("change the Application
+// Questions to What is SNAP?").
+//
+// The rename forced a retarget. /questions is the page about what the
+// APPLICATION asks; a link labelled "What is SNAP?" pointing there would
+// disagree with itself, which is worse than the clumsy label it replaced. It
+// now goes to the landing band that answers the question it names — and that
+// band renders on /screen/ask, NOT on "/", which is still the older Civica
+// marketing page.
+describe("the What is SNAP? link goes where it says", () => {
+  it("is labelled for the question it answers", () => {
+    const { container } = mountChat();
+    const link = container.querySelector(".demeter__navlink")!;
+    expect(link.textContent).toBe(T.en.navQuestions);
+    expect(T.en.navQuestions).toBe("What is SNAP?");
+  });
+
+  it("targets the band carrying that heading, not the application-questions page", () => {
+    const { container } = mountChat();
+    const href = container.querySelector(".demeter__navlink")!.getAttribute("href")!;
+    expect(href).toContain("#what-is-snap");
+    expect(href, "/ is the Civica marketing page; the band is on /screen/ask").toContain(
+      "/screen/ask",
+    );
+    expect(href, "the label no longer describes /questions").not.toContain("/questions");
+  });
+
+  it("the anchor it points at actually exists in the rendered band", () => {
+    // A hash link is only as good as its target. Read from source rather than
+    // trusted: SnapOverview is where the heading lives.
+    const overview = readFileSync(
+      join(__dirname, "..", "SnapOverview.tsx"),
+      "utf8",
+    );
+    expect(overview).toContain('id="what-is-snap"');
+  });
+
+  it("every language got the rename", () => {
+    for (const lang of ["en", "es", "vi", "zh"] as const) {
+      expect(T[lang].navQuestions, lang).toBeTruthy();
+      // The old label named the application; none of the new ones should.
+      expect(T[lang].navQuestions, lang).not.toBe(T[lang].save?.panelDismiss);
+    }
+    expect(T.es.navQuestions).toBe("¿Qué es SNAP?");
+    expect(T.vi.navQuestions).toBe("SNAP là gì?");
+    expect(T.zh.navQuestions).toBe("什么是 SNAP？");
+  });
+});
