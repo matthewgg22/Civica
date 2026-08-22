@@ -7887,19 +7887,34 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
      animated in step with the rail's 200ms slide so open/close is one
      glide, not a pop. :has because the open state lives on the rail
      element inside. */
-  .dmchat__body { transition: margin-left 200ms ease; }
-  .dmchat__body:has(.demeter__sidebar--open) {
-    margin-left: 21.5rem;
-    margin-right: 0; /* the base rule's margin:0 AUTO survives otherwise —
-      and a flex item with an auto cross-margin refuses to stretch, so the
-      body shrank to fit and hugged the rail (measured: 850px wide in a
-      1084px space). Zeroing it restores the stretch; the inner column's
-      own auto margins then center it. */
-    width: auto; /* NOT the base width:100% — a margin on a 100%-width box
-                    shoves the whole viewport-wide body off the right edge
-                    (measured: right=1816 on a 1450 viewport). auto lets the
-                    margin shrink the box; the right edge never moves. */
-    max-width: none;
+  /* ONE ANIMATED PROPERTY (2026-08-22). Opening used to change three things
+     on this box: margin-left eased over 200ms while width (100%->auto) and
+     margin-right (auto->0) SNAPPED at frame zero. The inner column recentred
+     instantly against the new box and then slid — the text moved twice, in
+     two different ways, which is the whole of the roughness.
+
+     Now the box is full-width and flush in BOTH states and only its LEFT
+     PADDING animates; the thread centres inside whatever content box is
+     left, so opening and closing are one continuous motion on the same
+     200ms and easing as the rail's own slide.
+
+     Layout still runs per frame. A transform would be compositor-only, but
+     it would also make this box the containing block for the fixed rail and
+     chrome bar and jump both — so this is fewer properties, not zero cost. */
+  .dmchat__body {
+    max-width: none; margin-inline: 0; width: 100%;
+    transition: padding-left 200ms ease;
+  }
+  /* Driven by a data attribute the component sets, not by :has() reading a
+     descendant's class. Two honest reasons, neither of them a bug report:
+     the state is owned by React, so inferring it back out of the DOM is the
+     long way round; and :has() only reached Firefox in 121 — load-bearing
+     LAYOUT should not need it on a service whose readers are often on old
+     devices. (An earlier comment here claimed a :has() invalidation bug. It
+     was a measurement artifact: the preview pane was hidden, and a hidden
+     renderer defers style recalc, so every reading was stale.) */
+  :root[data-demeter-rail="open"] .dmchat__body {
+    padding-left: calc(21.5rem + clamp(1rem, 4vw, 2rem));
   }
   /* (The 46rem centered column above applies in both rail states.) */
   /* One brand on screen: while the rail is open it carries the mark and the

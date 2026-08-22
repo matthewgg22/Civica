@@ -10,7 +10,11 @@
 //  - EN/ES toggle (answers only — citations stay verbatim);
 //  - 429 / at-capacity / unconfigured states render honest, warm errors.
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+
+/** useLayoutEffect warns when React renders this on the server; useEffect
+ *  would let a layout land a frame late. Pick per environment. */
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 import {
   RECOMPOSE_MARKER,
   FOLLOWUP_MARKER,
@@ -694,6 +698,25 @@ export function DemeterChat({
       setAuthEmail(null);
     }
   }, []);
+  // THE RAIL'S STATE, PUBLISHED ON THE DOCUMENT.
+  //
+  // The layout shift that clears the rail used to hang off
+  // `.dmchat__body:has(.demeter__sidebar--open)` — CSS inferring, from a
+  // descendant's class, a state React already owns. Publishing it instead is
+  // the shorter path, and it keeps load-bearing layout off :has(), which
+  // only reached Firefox in 121; this service's readers are often on old
+  // devices.
+  //
+  // Layout effect, not effect, so it lands before paint and the rail's
+  // default-open state does not flash unpadded on arrival.
+  useIsomorphicLayoutEffect(() => {
+    const root = document.documentElement;
+    root.dataset.demeterRail = sidebarOpen ? "open" : "closed";
+    return () => {
+      delete root.dataset.demeterRail;
+    };
+  }, [sidebarOpen]);
+
   // Escape closes the drawer ONLY while it is an overlay (narrow screens):
   // there it covers the chat and Escape is the reflex. As a desktop column
   // it covers nothing, and Escape vanishing a standing panel would read as
@@ -2136,9 +2159,6 @@ export function DemeterChat({
                   {t.picker.scopeApply} {selectedPack.portal.name} ↗
                 </a>
               )}
-              <a className="demeter__how" href="/verify">
-                {t.howWeVerify}
-              </a>
             </>
           }
           onPickState={() => setOpenPicker((n) => n + 1)}
@@ -2334,6 +2354,9 @@ export function DemeterChat({
               </svg>
             </summary>
             <div className="demeter__gearmenu">
+              <a className="demeter__settingslink" href="/verify">
+                {t.howWeVerify}
+              </a>
               <a className="demeter__settingslink" href="/privacy">
                 {t.privacyLink}
               </a>

@@ -93,9 +93,14 @@ describe("DemeterChat state switching", () => {
     render(<DemeterChat states={STATES} initialState="CA" />);
     const link = screen.getByRole("link", { name: /BenefitsCal/ });
     expect(link.getAttribute("href")).toBe("https://benefitscal.com");
-    // Same parent as "How we verify" — i.e. actually relocated there, not
-    // just present somewhere else on the page by coincidence.
-    expect(link.parentElement).toBe(screen.getByText(T.en.howWeVerify).parentElement);
+    // The point of the 2026-08-15 move was that this link sits with the
+    // STANDING FACTS at the worksheet card's foot rather than stacked under
+    // the picker with the agency line. It used to be pinned by sharing a
+    // parent with "How we verify"; that link moved into the settings gear
+    // (2026-08-22, it was duplicated in the rail), so the invariant is now
+    // asserted directly: the foot links, not the picker.
+    expect(link.closest(".dmw__footlinks")).toBeTruthy();
+    expect(link.closest(".dmst")).toBeNull();
   });
 
   // Real feedback, 2026-08-15: once the chat was already going, a plain
