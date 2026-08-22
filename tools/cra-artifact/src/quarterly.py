@@ -48,10 +48,10 @@ ILLUSTRATIVE_MEASURED = {
 }
 
 # Program budget split — identical at every bank (the replicability claim).
-SPLIT = [("Outreach media in your assessment area", 0.63),
+SPLIT = [("Outreach media in your assessment area", 0.60),
          ("Measurement & reporting", 0.15),
-         ("Creative, ad operations & Spanish localization", 0.12),
-         ("Administration", 0.10)]
+         ("Creative, ad operations & Spanish localization", 0.10),
+         ("Indirect costs — federal de minimis rate, 2 CFR 200.414(f)", 0.15)]
 
 
 def fmt(n, dec=0):
