@@ -104,6 +104,47 @@ describe("the estimate is something you turn on", () => {
     }
   });
 
+  it("estimate mode lists the template of what will fill in, before anything has", () => {
+    // Owner refinement (2026-08-21): "Build my estimate" should show the
+    // shape of the thing it is building — the section slots, listed up
+    // front — rather than a single waiting sentence. The slots are copy,
+    // not data: no numbers, no dollars, nothing fabricated (test below).
+    render(
+      <DemeterWorksheet
+        classification={null}
+        stateSelected
+        copy={copy}
+        mode="estimate"
+        onModeChange={() => {}}
+      />,
+    );
+    for (const item of copy.template) {
+      expect(screen.getByText(item)).toBeTruthy();
+    }
+    expect(screen.getByText(copy.templateTitle)).toBeTruthy();
+  });
+
+  it("the template stays out of ask mode, and invents no figures in any language", () => {
+    render(
+      <DemeterWorksheet
+        classification={null}
+        stateSelected
+        copy={copy}
+        mode="ask"
+        onModeChange={() => {}}
+      />,
+    );
+    expect(screen.queryByText(copy.templateTitle)).toBeNull();
+    for (const lang of ANSWER_LANGS) {
+      const w = T[lang].worksheet;
+      expect(w.template.length, `${lang} has slots`).toBeGreaterThanOrEqual(3);
+      for (const item of [w.templateTitle, ...w.template]) {
+        expect(item.trim(), `${lang}`).not.toBe("");
+        expect(item, `${lang} no dollars`).not.toMatch(/\$\s?\d/);
+      }
+    }
+  });
+
   it("keeps the ask-mode note sidebar-sized, without losing the retention disclosure", () => {
     // It ran three sentences plus a parenthetical — longer than the estimate
     // panel it explains. Two sentences now, and this pins the budget the same
