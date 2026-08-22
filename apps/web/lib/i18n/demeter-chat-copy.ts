@@ -32,7 +32,7 @@ export const T = {
       after: '.',
     },
     title: "Demeter",
-    tagline: "Verified answers about SNAP — for any state.",
+    tagline: "SNAP enrollment and eligibility assistance",
     inputPlaceholder: "Happy to answer any questions about SNAP…",
     // Once the chat is already going and the last answer didn't end in a
     // specific question to fall back on (pendingQuestion returns null), the
@@ -258,7 +258,7 @@ export const T = {
       modeAsk: "Just asking",
       modeEstimate: "Build my estimate",
       modeAskNote:
-        "Nothing here goes into your estimate — ask a what-if, or about someone else. We keep the text to check our accuracy, in both modes.",
+        "Nothing here goes into an estimate — ask a what-if, or about someone else.",
       templateTitle: "What this will fill in",
       template: [
         "Who's in your household",
@@ -284,7 +284,7 @@ export const T = {
       after: '.',
     },
     title: "Demeter",
-    tagline: "Respuestas verificadas sobre SNAP — para cualquier estado.",
+    tagline: "Ayuda con la inscripción y elegibilidad de SNAP",
     inputPlaceholder: "Con gusto respondo cualquier pregunta sobre SNAP…",
     inputPlaceholderContinue: "Haz una pregunta de seguimiento…",
     inputPlaceholderEstimate: "Cuéntame sobre tu hogar y lo voy armando…",
@@ -428,7 +428,7 @@ export const T = {
       modeAsk: "Solo preguntar",
       modeEstimate: "Calcular mi estimado",
       modeAskNote:
-        "Nada de esto entra en tu estimado — pregunta un supuesto, o por otra persona. Guardamos el texto para verificar nuestra exactitud, en ambos modos.",
+        "Nada de esto entra en un estimado — pregunta un supuesto, o por otra persona.",
       templateTitle: "Lo que se irá completando",
       template: [
         "Quiénes forman tu hogar",
@@ -454,7 +454,7 @@ export const T = {
       after: ' của chúng tôi.',
     },
     title: "Demeter",
-    tagline: "Câu trả lời đã được xác minh về SNAP — cho mọi tiểu bang.",
+    tagline: "Hỗ trợ ghi danh và điều kiện SNAP",
     inputPlaceholder: "Rất sẵn lòng giải đáp mọi câu hỏi về SNAP…",
     inputPlaceholderContinue: "Đặt một câu hỏi tiếp theo…",
     inputPlaceholderEstimate: "Kể cho tôi về hộ của bạn, tôi sẽ dựng dần lên…",
@@ -597,7 +597,7 @@ export const T = {
       modeAsk: "Chỉ hỏi thôi",
       modeEstimate: "Tính mức ước tính",
       modeAskNote:
-        "Không gì ở đây được đưa vào bản ước tính của bạn — cứ hỏi giả định, hoặc hỏi giúp người khác. Chúng tôi vẫn lưu nội dung để kiểm tra độ chính xác, ở cả hai chế độ.",
+        "Không gì ở đây được đưa vào bản ước tính — cứ hỏi giả định, hoặc hỏi giúp người khác.",
       templateTitle: "Những phần sẽ được điền",
       template: [
         "Những ai trong hộ của bạn",
@@ -623,7 +623,7 @@ export const T = {
       after: '。',
     },
     title: "Demeter",
-    tagline: "经过核实的 SNAP 答案——适用于任何州。",
+    tagline: "SNAP 申请与资格协助",
     inputPlaceholder: "关于 SNAP 的任何问题，都很乐意解答…",
     inputPlaceholderContinue: "还有什么想问的…",
     inputPlaceholderEstimate: "跟我说说您的家庭情况，我来逐步整理…",
@@ -759,7 +759,7 @@ export const T = {
       modeLabel: "您希望在这里得到什么？",
       modeAsk: "只是问问",
       modeEstimate: "帮我算估算",
-      modeAskNote: "这里说的内容不会进入您的估算——可以问假设情况，或替别人问。我们仍会保留内容以核查准确性，两种模式都是如此。",
+      modeAskNote: "这里说的内容不会进入估算——可以问假设情况，或替别人问。",
       templateTitle: "将要填写的部分",
       template: ["您的家庭成员", "您的每月收入", "房租、水电及其他开支", "您的预计每月补助"],
       switchedToAsk: "估算已清除。没有在收集任何内容。",

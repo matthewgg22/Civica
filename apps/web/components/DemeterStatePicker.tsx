@@ -166,14 +166,19 @@ export function DemeterStatePicker({
           // "All states" never look like a selection someone made.
           <span className="dmst__mark" data-federal="true">US</span>
         )}
+        {/* ONE LINE (owner, 2026-08-22). This was a two-row stack — the label
+            "Your state" above the value "All states (federal rules)" — which
+            spent two lines and an eyebrow on a control with one job. Unset it
+            now reads as a placeholder; set, it is the state's own name, so the
+            row always answers "which state?" without a caption explaining
+            that it is about states.
+
+            The federal-floor caveat is not lost with the old value string: the
+            empty state still closes on "until then, answers use the federal
+            rules", and the scope line beneath this names the agency. */}
         <span className="dmst__trigger-text">
-          <span className="dmst__trigger-label">{copy.label}</span>
           <span className="dmst__trigger-value">
-            {/* The STATE, under a label that says YOUR STATE. This showed the
-                PROGRAM, so Massachusetts read "Supplemental Nutrition
-                Assistance Program (SNAP)" where the state belongs. The program
-                and agency are already named on the scope line beneath. */}
-            {selected ? stateName(selected.code) : copy.federal}
+            {selected ? stateName(selected.code) : copy.label}
           </span>
         </span>
         {selected ? <span className="dmst__check" aria-hidden>✓</span> : null}

@@ -2452,18 +2452,23 @@ export function DemeterChat({
               </>
             )}
           </div>
+          {/* Signed OUT this rendered an empty div that still carried a
+              border-top and a flex gap — a stray hairline at the rail's floor,
+              and a second margin-top:auto competing with the one on the row
+              above (two auto margins SPLIT the free space, which is why the
+              controls floated in the middle instead of sitting on the floor). */}
+          {authEmail !== null && (
           <div className="demeter__sidebarauth">
             {/* No sign-in button here any more (owner rec 2026-08-22): the
                 saved-conversations entry above IS the invitation while
                 signed out, and the chrome row carries the standing one.
                 Settings moved to the chrome row's gear. Signed-in identity
                 stays — it belongs with the account, not with an action. */}
-            {authEmail !== null && (
-              <p className="demeter__sidebarnote">
-                {t.sidebarSignedIn} <span translate="no">{authEmail}</span>
-              </p>
-            )}
+            <p className="demeter__sidebarnote">
+              {t.sidebarSignedIn} <span translate="no">{authEmail}</span>
+            </p>
           </div>
+          )}
         </aside>
       </div>
       {signInOpen && (

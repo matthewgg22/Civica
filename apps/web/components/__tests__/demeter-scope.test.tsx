@@ -51,8 +51,15 @@ describe("the location hint is an offer, never a selection", () => {
       <DemeterStatePicker states={STATES} value={null} onChange={onChange} copy={COPY} hint="CA" />,
     );
     expect(onChange).not.toHaveBeenCalled();
-    // And the trigger still shows the federal floor, not California.
-    expect(screen.getByRole("button", { name: COPY.label }).textContent).toContain(COPY.federal);
+    // And the trigger still shows nothing selected, not California. The
+    // one-line trigger (2026-08-22) shows the label as its placeholder, so the
+    // assertion that carries the meaning is the NEGATIVE one: a geo hint must
+    // never leave the control looking like the reader picked that state.
+    const trigger = screen.getByRole("button", { name: COPY.label });
+    expect(trigger.textContent).toContain(COPY.label);
+    expect(trigger.textContent, "the hint must not read as a selection").not.toContain(
+      "California",
+    );
   });
 
   it("names the state it is offering", () => {
