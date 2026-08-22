@@ -90,13 +90,18 @@ describe("the sidebar — the tracking panel, open by default", () => {
     Object.defineProperty(window, "innerWidth", { configurable: true, value: 1024 });
   });
 
-  it("carries the saved-conversations link and, signed out, the sign-in invitation", () => {
+  it("signed out, the saved-conversations entry IS the sign-in invitation", () => {
+    // Owner rec (2026-08-22): the rail's foot sign-in button is gone. Rather
+    // than a bare "Saved conversations" link plus a separate invitation two
+    // controls away, the entry says what signing in buys and goes there.
     const { container } = mountChat();
-    const drawer = container.querySelector("#demeter-sidebar")!;
-    expect(drawer.querySelector("a[href*='/screen/saved']")).toBeTruthy();
-    const signin = drawer.querySelector("a[href*='/sign-in']");
-    expect(signin).toBeTruthy();
-    expect(signin!.getAttribute("href")).toContain("next=");
+    const entry = container.querySelector("#demeter-sidebar a.demeter__sblabel")!;
+    expect(entry.getAttribute("href")).toContain("/sign-in");
+    expect(entry.getAttribute("href")).toContain("next=");
+    expect(entry.className).toContain("demeter__sblabel--signin");
+    expect(entry.textContent).toContain(T.en.sidebarSavedSignin);
+    // And the retired foot button really is gone.
+    expect(container.querySelector(".demeter__sidebarsignin")).toBeNull();
   });
 
   it("holds the language picker — the top bar control moved in here", () => {
@@ -220,13 +225,17 @@ describe("boxless messages (CSS contract)", () => {
     expect(container.querySelector(".demeter__headright a.demeter__navlink")).toBeTruthy();
   });
 
-  it("the settings bar reaches the standing pages the retired footer carried", () => {
+  it("the settings gear reaches the standing pages the retired footer carried", () => {
     // /chat has no nav and no footer: without these the privacy policy is
-    // unreachable from inside the tool.
+    // unreachable from inside the tool. They live behind a gear on the
+    // sign-in line now (owner rec) rather than in the rail's foot.
     const { container } = mountChat();
-    const rail = container.querySelector("#demeter-sidebar")!;
-    expect(rail.querySelector("a[href='/privacy']")).toBeTruthy();
-    expect(rail.querySelector("a[href*='/feedback']")).toBeTruthy();
+    const gear = container.querySelector(".demeter__head details.demeter__gear")!;
+    expect(gear).toBeTruthy();
+    expect(gear.querySelector("a[href='/privacy']")).toBeTruthy();
+    expect(gear.querySelector("a[href*='/feedback']")).toBeTruthy();
+    // A native disclosure, so Escape and outside-click need no JS.
+    expect(gear.querySelector("summary")).toBeTruthy();
   });
 
   it("the sidebar respects reduced motion", () => {

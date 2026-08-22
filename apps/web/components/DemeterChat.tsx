@@ -1609,6 +1609,29 @@ export function DemeterChat({
               right always offers it, and the rail's settings bar groups a
               second one with privacy and feedback, where someone looking
               for account things goes. */}
+          {/* SETTINGS, on the same line as sign-in (owner rec): a gear that
+              discloses the standing pages. <details> rather than custom
+              popover state — Escape and outside-click come free, and it
+              works with no JavaScript. */}
+          <details className="demeter__gear">
+            <summary className="demeter__gearbtn" aria-label={t.settingsLabel}>
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+            </summary>
+            <div className="demeter__gearmenu">
+              <a className="demeter__settingslink" href="/privacy">
+                {t.privacyLink}
+              </a>
+              <a
+                className="demeter__settingslink"
+                href={lang === "en" ? "/feedback" : `/${lang}/feedback`}
+              >
+                {t.feedbackLink}
+              </a>
+            </div>
+          </details>
           {authEmail === null && (
             <a className="demeter__signin" href={signInHref}>
               {t.signin}
@@ -2269,12 +2292,12 @@ export function DemeterChat({
               rail's middle is the conversation list). The label is the link;
               the sign-in invitation rides under it while signed out. */}
           <div className="demeter__sbmid">
-            <a className="demeter__sblabel" href="/screen/saved">
-              {t.sidebarSaved} →
+            <a
+              className={`demeter__sblabel${authEmail === null ? " demeter__sblabel--signin" : ""}`}
+              href={authEmail === null ? signInHref : "/screen/saved"}
+            >
+              {authEmail === null ? t.sidebarSavedSignin : t.sidebarSaved} →
             </a>
-            {authEmail === null && (
-              <p className="demeter__sidebarnote">{t.sidebarSigninNote}</p>
-            )}
           </div>
           {/* THE FOOT: language + account only, pinned to the window bottom —
               Pi's own placement. The select is the mid-conversation language
@@ -2297,27 +2320,12 @@ export function DemeterChat({
                 ))}
               </select>
             </label>
-            {/* THE SETTINGS BAR (owner rec 2026-08-22). /chat has no site
-                nav and no footer, so without this the standing pages are
-                unreachable from the tool — someone mid-conversation could
-                not find the privacy policy at all. */}
-            <p className="demeter__settingslabel">{t.settingsLabel}</p>
-            <div className="demeter__settingslinks">
-              <a className="demeter__settingslink" href="/privacy">
-                {t.privacyLink}
-              </a>
-              <a
-                className="demeter__settingslink"
-                href={lang === "en" ? "/feedback" : `/${lang}/feedback`}
-              >
-                {t.feedbackLink}
-              </a>
-            </div>
-            {authEmail === null ? (
-              <a className="demeter__sidebarsignin" href={signInHref}>
-                {t.signin}
-              </a>
-            ) : (
+            {/* No sign-in button here any more (owner rec 2026-08-22): the
+                saved-conversations entry above IS the invitation while
+                signed out, and the chrome row carries the standing one.
+                Settings moved to the chrome row's gear. Signed-in identity
+                stays — it belongs with the account, not with an action. */}
+            {authEmail !== null && (
               <p className="demeter__sidebarnote">
                 {t.sidebarSignedIn} <span translate="no">{authEmail}</span>
               </p>

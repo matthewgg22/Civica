@@ -6866,6 +6866,26 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   background: var(--demeter-paper);
   color: var(--demeter-ink);
 }
+/* MODAL FRAMING (owner rec 2026-08-22): the card should take a small part of
+   a darkened, blurred ground rather than float on a full page of paper.
+   The scrim is a layer over this surface's own ground — we do not fake a
+   screenshot of the chat behind it. */
+.signin-page[data-surface="demeter"]::before {
+  content: ""; position: fixed; inset: 0; z-index: 0;
+  background: rgba(35, 34, 32, 0.55);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.signin-page[data-surface="demeter"] > * { position: relative; z-index: 1; }
+.signin-page[data-surface="demeter"] .signin-card {
+  max-width: 24rem; margin-inline: auto;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-card);
+  box-shadow: 0 24px 60px rgba(35, 34, 32, 0.28);
+}
+.signin-page[data-surface="demeter"] .signin-header { border-bottom: 0; }
+@media (prefers-reduced-transparency: reduce) {
+  .signin-page[data-surface="demeter"]::before { backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
 
 .signin-page[data-surface="demeter"] .signin-header {
   border-bottom-color: var(--demeter-rule);
@@ -7545,12 +7565,45 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 .dmchat .demeter__sidebartoggle--closed:hover { background: #DDB93C; }
 /* Sign-in reads as a control, not a stray underline. */
 .dmchat .demeter__signin {
-  text-decoration: none; padding: 0 0.85rem; min-height: 38px;
-  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
-  color: var(--demeter-ink); background: var(--demeter-card);
+  /* The filled terracotta the rail's foot button wore before it was retired
+     (owner rec): one sign-in on the surface, and it looks like the action
+     it is rather than a bordered label. */
+  text-decoration: none; padding: 0 1rem; min-height: 38px;
+  border: 0; border-radius: var(--demeter-radius-input);
+  color: #fff; background: var(--demeter-terracotta); font-weight: 700; font-size: 0.85rem;
+  display: inline-flex; align-items: center;
 }
-.dmchat .demeter__signin:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
+.dmchat .demeter__signin:hover { background: var(--demeter-terracotta-deep); }
 /* The reference page, beyond sign-in — what the retired nav carried here. */
+/* The settings gear, on the sign-in line. <details> gives Escape and
+   outside-click for free and degrades to an open list without JS. */
+.demeter__gear { position: relative; }
+.demeter__gearbtn {
+  list-style: none; display: grid; place-items: center;
+  width: 38px; height: 38px; border-radius: var(--demeter-radius-input);
+  color: var(--demeter-body); cursor: pointer;
+}
+.demeter__gearbtn::-webkit-details-marker { display: none; }
+.demeter__gearbtn:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
+.demeter__gear[open] .demeter__gearbtn { background: var(--demeter-tint); color: var(--demeter-ink); }
+.demeter__gearmenu {
+  position: absolute; right: 0; top: calc(100% + 0.35rem); z-index: 40;
+  min-width: 12rem; display: flex; flex-direction: column;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-card); padding: 0.3rem;
+  box-shadow: 0 8px 24px rgba(35, 34, 32, 0.1);
+}
+.demeter__gearmenu .demeter__settingslink { padding: 0 0.6rem; border-radius: var(--demeter-radius-input); }
+.demeter__gearmenu .demeter__settingslink:hover { background: var(--demeter-tint); text-decoration: none; }
+/* Signed out, the saved-conversations entry IS the invitation — so it wears
+   the invitation's colour rather than a neutral card's. */
+/* Two classes deliberately: .demeter__sblabel is defined LATER in this
+   file, and at equal specificity source order would hand it the win. This
+   stylesheet is long enough that position is not a safe way to layer. */
+.demeter__sbmid .demeter__sblabel--signin {
+  background: var(--demeter-terracotta); border-color: transparent; color: #fff;
+}
+.demeter__sbmid .demeter__sblabel--signin:hover { background: var(--demeter-terracotta-deep); border-color: transparent; }
 .demeter__navlink {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.85rem; color: var(--demeter-body); text-decoration: none;

@@ -126,6 +126,7 @@ export const T = {
     // live with the account controls rather than in a footer this surface
     // does not have.
     skipToComposer: "Skip to the message box",
+    sidebarSavedSignin: "Sign in for saved conversations",
     settingsLabel: "Settings",
     privacyLink: "Privacy policy",
     feedbackLink: "Send feedback",
@@ -309,6 +310,7 @@ export const T = {
     signin: "Iniciar sesión",
     sidebarSignedIn: "Sesión iniciada:",
     skipToComposer: "Saltar al cuadro de mensaje",
+    sidebarSavedSignin: "Inicia sesión para ver tus conversaciones",
     settingsLabel: "Ajustes",
     privacyLink: "Política de privacidad",
     feedbackLink: "Enviar comentarios",
@@ -462,6 +464,7 @@ export const T = {
     signin: "Đăng nhập",
     sidebarSignedIn: "Đã đăng nhập:",
     skipToComposer: "Bỏ qua đến ô nhập tin nhắn",
+    sidebarSavedSignin: "Đăng nhập để xem cuộc trò chuyện đã lưu",
     settingsLabel: "Cài đặt",
     privacyLink: "Chính sách bảo mật",
     feedbackLink: "Gửi phản hồi",
@@ -610,6 +613,7 @@ export const T = {
     signin: "登录",
     sidebarSignedIn: "已登录：",
     skipToComposer: "跳到输入框",
+    sidebarSavedSignin: "登录以查看已保存的对话",
     settingsLabel: "设置",
     privacyLink: "隐私政策",
     feedbackLink: "发送反馈",
