@@ -218,7 +218,10 @@ const en: PageCopy = {
     items: [
       {
         q: "My roommate and I live together and split rent, but we buy and cook our food separately. Are we one SNAP household?",
-        a: "You'd be two separate SNAP households. Under federal SNAP rules, people living together only count as one household if they customarily buy food and prepare meals together; if you keep your groceries and cooking separate, you each apply on your own (7 CFR 273.1(a)).",
+        // Trimmed 2026-08-21 (UI pass): the card sizes to its tallest member,
+        // and this exchange ran 45% past the shortest — the difference was the
+        // void above the dots. Still a verbatim prefix; "…" marks the cut.
+        a: "You'd be two separate SNAP households. Under federal SNAP rules, people living together only count as one household if they customarily buy food and prepare meals together … (7 CFR 273.1(a)).",
         verdict: "✓ CERTAIN: every rule cited comes from regulation text pulled for this question.",
       },
       {
@@ -490,12 +493,12 @@ const es: PageCopy = {
     items: [
       {
         q: "Mi compañero de cuarto y yo compartimos la renta, pero compramos y cocinamos nuestra comida por separado. ¿Contamos como un solo hogar para SNAP?",
-        a: "No, no cuentan como un solo hogar. Bajo las reglas federales de SNAP, si compran y preparan la comida por separado, cada uno es su propio hogar para efectos de SNAP, aunque compartan la renta y vivan en el mismo lugar (7 CFR 273.1(a)).",
+        a: "No, no cuentan como un solo hogar. Bajo las reglas federales de SNAP, si compran y preparan la comida por separado, cada uno es su propio hogar para efectos de SNAP … (7 CFR 273.1(a)).",
         verdict: "✓ SEGURO: cada regla citada proviene del texto regulatorio recuperado para esta pregunta.",
       },
       {
         q: "¿Cuánto tiempo tarda en llegar SNAP después de solicitar?",
-        a: "Depende de si su situación es de emergencia o no. Servicio normal: la agencia estatal tiene hasta 30 días desde la fecha en que presentó la solicitud para decidir y, si es aprobado, entregar los beneficios (7 CFR 273.2). Servicio expedito: si su ingreso y sus recursos son muy bajos, puede calificar para recibir los beneficios en un plazo de 7 días desde que solicita (7 CFR 273.2(i)).",
+        a: "Depende de si su situación es de emergencia o no. Servicio normal: la agencia estatal tiene hasta 30 días desde la fecha en que presentó la solicitud … Servicio expedito: si su ingreso y sus recursos son muy bajos, puede calificar para recibir los beneficios en un plazo de 7 días desde que solicita (7 CFR 273.2(i)).",
         verdict: "✓ SEGURO: cada regla citada proviene del texto regulatorio recuperado para esta pregunta.",
       },
       {
@@ -747,7 +750,7 @@ const vi: PageCopy = {
     items: [
       {
         q: "Tôi và bạn cùng phòng sống chung và chia tiền thuê nhà, nhưng chúng tôi mua và nấu ăn riêng. Chúng tôi có tính là một hộ SNAP không?",
-        a: "Không. Nếu hai người mua thức ăn riêng và nấu ăn riêng, thì theo quy định liên bang, hai người được tính là hai hộ SNAP riêng biệt, ngay cả khi sống chung nhà và chia tiền thuê. … Quy định chỉ bắt buộc gộp chung thành một hộ trong một số trường hợp cụ thể, ví dụ như vợ/chồng, hoặc con dưới 22 tuổi sống cùng cha/mẹ (7 CFR 273.1(b)).",
+        a: "Không. Nếu hai người mua thức ăn riêng và nấu ăn riêng, thì theo quy định liên bang, hai người được tính là hai hộ SNAP riêng biệt, ngay cả khi sống chung nhà và chia tiền thuê. … (7 CFR 273.1(b)).",
         verdict: "✓ CHẮC CHẮN: mọi quy định được trích dẫn đều lấy từ văn bản quy định được truy xuất cho câu hỏi này.",
       },
       {
@@ -757,7 +760,7 @@ const vi: PageCopy = {
       },
       {
         q: "Tôi là sinh viên đại học. Tôi có thể nhận SNAP không?",
-        a: "Là sinh viên đại học học ít nhất nửa thời gian (half-time), theo quy định liên bang bạn không đủ điều kiện nhận SNAP trừ khi rơi vào một trong các trường hợp miễn trừ (7 CFR 273.5(a)). Một số trường hợp miễn trừ phổ biến gồm: làm việc ít nhất 20 giờ/tuần, tham gia chương trình work-study, đang nuôi con nhỏ, hoặc đang nhận trợ cấp TANF (7 CFR 273.5(b)).",
+        a: "Là sinh viên đại học học ít nhất nửa thời gian (half-time), theo quy định liên bang bạn không đủ điều kiện nhận SNAP trừ khi rơi vào một trong các trường hợp miễn trừ (7 CFR 273.5(a)).",
         verdict: "✓ CHẮC CHẮN: mọi quy định được trích dẫn đều lấy từ văn bản quy định được truy xuất cho câu hỏi này.",
       },
     ],

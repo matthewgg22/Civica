@@ -15,13 +15,14 @@ description: The design language of Demeter AI, a public SNAP benefits assistant
 -->
 
 colors:
-  paper: "#F5F6F8"
+  paper: "#FFFFFF"
   card: "#FFFFFF"
-  ink: "#1F2429"
-  body: "#494F56"
-  muted: "#646C75"
-  rule: "#E2E5E9"
-  rule-strong: "#C5CAD1"
+  ink: "#232220"
+  body: "#4B4A46"
+  muted: "#6C6A64"
+  rule: "#E8E6E2"
+  rule-strong: "#D2CFC9"
+  tint: "#F6F5F3"
   terracotta: "#C0553B"
   terracotta-deep: "#8E3A26"
   wheat: "#E8C547"
@@ -108,11 +109,11 @@ Four languages are first-class (English, Spanish, Vietnamese, Chinese): every st
 
 ## Colors
 
-- `{colors.paper}` **#F5F6F8** — the page. A cool near-white (palette B, 2026-08-21: the ground stepped out of the warm family; the identity lives in the terracotta, the wheat, and the serif); never pure white.
+- `{colors.paper}` **#FFFFFF** — the page. True white (owner decision 2026-08-21, superseding palette B's cool near-white, whose blue cast muted the cards). Cards share the value and are drawn by hairline borders; chips and inputs sit on `{colors.tint}` **#F6F5F3**.
 - `{colors.card}` **#FFFFFF** — every raised surface. Elevation is a border, not a shadow.
-- `{colors.ink}` **#1F2429** — headings and Demeter's own answers. Never pure black.
-- `{colors.body}` **#494F56** / `{colors.muted}` **#646C75** — running text / labels & placeholders.
-- `{colors.rule}` **#E2E5E9** / `{colors.rule-strong}` **#C5CAD1** — card borders & dividers / inputs and emphasized edges.
+- `{colors.ink}` **#232220** — headings and Demeter's own answers. Never pure black, never blue-biased.
+- `{colors.body}` **#4B4A46** / `{colors.muted}` **#6C6A64** — running text / labels & placeholders (hue-neutral grays).
+- `{colors.rule}` **#E8E6E2** / `{colors.rule-strong}` **#D2CFC9** — card borders & dividers / inputs and emphasized edges.
 - `{colors.terracotta}` **#C0553B** — the single action color: CTAs, active states, marks. **Fill and border only — never running text** (a stylesheet test enforces this).
 - `{colors.terracotta-deep}` **#8E3A26** — the readable terracotta: links, hover, small text, the wordmark's "AI".
 - `{colors.wheat}` **#E8C547** — the brand's gold. The logo mark, the hand-off CTA card, and the 3px left rule on clarifying callouts. A clarification, never an alarm; **never a text color**.
