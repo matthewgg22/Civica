@@ -25,6 +25,10 @@ import { T } from "../../lib/i18n/demeter-chat-copy";
 
 afterEach(cleanup);
 
+// jsdom has no Element.scrollTo; the transcript's follow-scroll calls it on
+// every render (same stub as the other DemeterChat suites).
+Element.prototype.scrollTo = vi.fn() as unknown as typeof Element.prototype.scrollTo;
+
 function mountChat() {
   return render(
     <DemeterChat

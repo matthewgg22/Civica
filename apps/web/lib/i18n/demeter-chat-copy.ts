@@ -111,6 +111,16 @@ export const T = {
     // their exact toggle labels — the parity test holds them together.
     emptyModes:
       "SNAP looks complicated, but it runs on fixed rules and math — walking you through them is what this chat is for. Stay in “Just asking” to learn how the program works, or switch to “Build my estimate” and your answers build into an application outline as you go.",
+    // Pi redesign (2026-08-21): the empty state asks for the STATE, never a
+    // name — the retention line says "avoid names", and the pi-redesign test
+    // pins the ban in all four languages.
+    emptyAskState:
+      "Which state are you in? Choose it above — until then, answers use the federal rules.",
+    sidebarLabel: "Menu",
+    sidebarSaved: "Saved conversations",
+    sidebarSigninNote: "Sign in to keep your conversations.",
+    signin: "Sign in",
+    sidebarSignedIn: "Signed in as",
     empty1: "Do I earn too much to qualify?",
     empty2: "I need food this week — can I get help faster?",
     empty3: "Will I have to do an interview?",
@@ -275,6 +285,13 @@ export const T = {
     emptyLede: "Cada respuesta cita la regla de la que proviene, para que puedas comprobarla.",
     emptyModes:
       "SNAP parece complicado, pero funciona con reglas y cálculos fijos — y este chat existe para explicártelos. Quédate en «Solo preguntar» para entender cómo funciona el programa, o cambia a «Calcular mi estimado» y tus respuestas irán formando un esquema de solicitud.",
+    emptyAskState:
+      "¿En qué estado estás? Elígelo arriba — hasta entonces, las respuestas usan las reglas federales.",
+    sidebarLabel: "Menú",
+    sidebarSaved: "Conversaciones guardadas",
+    sidebarSigninNote: "Inicia sesión para conservar tus conversaciones.",
+    signin: "Iniciar sesión",
+    sidebarSignedIn: "Sesión iniciada:",
     empty1: "¿Gano demasiado para calificar?",
     empty2: "Necesito comida esta semana, ¿puedo recibir ayuda más rápido?",
     empty3: "¿Tendré que hacer una entrevista?",
@@ -409,6 +426,13 @@ export const T = {
     emptyLede: "Mỗi câu trả lời đều trích dẫn điều luật mà nó dựa vào, để bạn tự kiểm chứng được.",
     emptyModes:
       "SNAP trông phức tạp, nhưng thật ra chỉ là các quy tắc và phép tính cố định — và trò chuyện này ở đây để giải thích chúng cho bạn. Cứ ở chế độ “Chỉ hỏi thôi” để tìm hiểu chương trình, hoặc chuyển sang “Tính mức ước tính” để các câu trả lời của bạn dần thành một bản phác thảo đơn.",
+    emptyAskState:
+      "Bạn ở tiểu bang nào? Chọn ở phía trên — trước đó, câu trả lời dùng quy định liên bang.",
+    sidebarLabel: "Trình đơn",
+    sidebarSaved: "Cuộc trò chuyện đã lưu",
+    sidebarSigninNote: "Đăng nhập để giữ các cuộc trò chuyện của bạn.",
+    signin: "Đăng nhập",
+    sidebarSignedIn: "Đã đăng nhập:",
     empty1: "Tôi kiếm được nhiều quá thì có còn đủ điều kiện không?",
     empty2: "Tuần này tôi cần thực phẩm — có cách nào nhận nhanh hơn không?",
     empty3: "Tôi có phải phỏng vấn không?",
@@ -539,6 +563,12 @@ export const T = {
     emptyLede: "每条回答都会引用其依据的条文，方便您自行核对。",
     emptyModes:
       "SNAP 看起来复杂，其实只是一套固定的规则和计算——这个对话就是为了给您讲清楚它们。想了解项目如何运作，就留在“只是问问”；切换到“帮我算估算”，您说的内容会逐步整理成一份申请提纲。",
+    emptyAskState: "您在哪个州？请在上方选择——在那之前，回答使用联邦规定。",
+    sidebarLabel: "菜单",
+    sidebarSaved: "已保存的对话",
+    sidebarSigninNote: "登录即可保留您的对话。",
+    signin: "登录",
+    sidebarSignedIn: "已登录：",
     empty1: "我赚得太多，就不符合条件了吗？",
     empty2: "这周就需要食物，能更快拿到吗？",
     empty3: "我需要参加面谈吗？",

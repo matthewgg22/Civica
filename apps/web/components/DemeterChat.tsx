@@ -29,6 +29,7 @@ import { DemeterWorksheet, type WorksheetMode } from "./DemeterWorksheet";
 import { DemeterFeedback } from "./DemeterFeedback";
 import { DemeterSave } from "./DemeterSave";
 import { T } from "../lib/i18n/demeter-chat-copy";
+import { supabaseBrowser } from "../lib/supabase-browser";
 import { stateName } from "../lib/state-names";
 import { detectState, detectUncoveredPlace, type StateMention } from "../lib/detect-state";
 import type { SavedMsg } from "../lib/demeter-conversations";
@@ -661,6 +662,34 @@ export function DemeterChat({
    *  needs to trigger its own render: answeredCount already re-renders this
    *  component as new answers land. */
   const modeOfferedAtTurnRef = useRef<number | null>(null);
+  // ── Pi redesign chrome (2026-08-21) ──────────────────────────────────────
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  /** Signed-in email, or null. NULL IS THE DEFAULT AND THE FALLBACK: the
+   *  probe runs once, and any failure — missing env (jsdom, CI builds), a
+   *  network error, a thrown client — leaves the chat signed-out rather
+   *  than broken. Auth is never load-bearing for asking questions. */
+  const [authEmail, setAuthEmail] = useState<string | null>(null);
+  useEffect(() => {
+    try {
+      supabaseBrowser()
+        .auth.getSession()
+        .then(({ data }) => setAuthEmail(data.session?.user?.email ?? null))
+        .catch(() => setAuthEmail(null));
+    } catch {
+      setAuthEmail(null);
+    }
+  }, []);
+  // Escape closes the drawer from anywhere — it is the one overlay here.
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSidebarOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [sidebarOpen]);
+  const signInHref = `/sign-in?next=${encodeURIComponent(lang === "en" ? "/chat" : `/${lang}/chat`)}`;
+
   /** Emailing the outline to yourself: idle → sending → sent | signin | error.
    *  Mirrors DemeterSave's shape deliberately — they are the same decision
    *  ("keep this") reached from two directions, and behaving differently would
@@ -1508,6 +1537,24 @@ export function DemeterChat({
   return (
     <div className="demeter">
       <header className="demeter__head">
+        {/* Pi redesign (2026-08-21): the head was display:none on /chat (the
+            nav is the brand chrome there), which left it vestigial. It is now
+            the CHAT's own chrome row: sidebar toggle left, language + sign-in
+            right; the brand block stays for any surface without the nav and
+            is CSS-hidden under .dmchat where the nav already carries it. */}
+        <button
+          type="button"
+          className="demeter__sidebartoggle"
+          aria-expanded={sidebarOpen}
+          aria-controls="demeter-sidebar"
+          aria-label={t.sidebarLabel}
+          onClick={() => setSidebarOpen((o) => !o)}
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6">
+            <rect x="2.5" y="3.5" width="15" height="13" rx="2" />
+            <line x1="7.5" y1="3.5" x2="7.5" y2="16.5" />
+          </svg>
+        </button>
         <div className="demeter__brand">
           <span className="demeter__avatar" aria-hidden>
             <DemeterMark size={40} />
@@ -1527,22 +1574,62 @@ export function DemeterChat({
             languages, and a toggle cannot express that. Each option is labelled
             in its OWN language — someone looking for Tiếng Việt is not helped by
             the word "Vietnamese". */}
-        <label className="demeter__lang">
-          <span className="sr-only">{t.languageLabel}</span>
-          <select
-            className="demeter__lang-select"
-            value={lang}
-            aria-label={t.languageLabel}
-            onChange={(e) => setLang(e.target.value as AnswerLang)}
-          >
-            {ANSWER_LANGS.map((code) => (
-              <option key={code} value={code}>
-                {LANG_NATIVE_NAME[code]}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="demeter__headright">
+          <label className="demeter__lang">
+            <span className="sr-only">{t.languageLabel}</span>
+            <select
+              className="demeter__lang-select"
+              value={lang}
+              aria-label={t.languageLabel}
+              onChange={(e) => setLang(e.target.value as AnswerLang)}
+            >
+              {ANSWER_LANGS.map((code) => (
+                <option key={code} value={code}>
+                  {LANG_NATIVE_NAME[code]}
+                </option>
+              ))}
+            </select>
+          </label>
+          {/* Signed out only, Pi-style: signed-in state lives in the sidebar.
+              The auth probe fails closed to signed-out (see its effect). */}
+          {authEmail === null && (
+            <a className="demeter__signin" href={signInHref}>
+              {t.signin}
+            </a>
+          )}
+        </div>
       </header>
+
+      {/* THE SIDEBAR DRAWER (Pi redesign). Off-canvas, keyboard-closable,
+          inert while closed so it holds no tab stops. Navigation and auth
+          state only — no destructive actions live here: "start a new
+          conversation" keeps its confirm step at the composer, and a drawer
+          is exactly where a mis-tap wipes a conversation. */}
+      <nav
+        id="demeter-sidebar"
+        className={`demeter__sidebar${sidebarOpen ? " demeter__sidebar--open" : ""}`}
+        aria-hidden={!sidebarOpen}
+        aria-label={t.sidebarLabel}
+        {...(!sidebarOpen ? { inert: true } : {})}
+      >
+        <a className="demeter__sidebarlink" href="/screen/saved">
+          {t.sidebarSaved}
+        </a>
+        <div className="demeter__sidebarauth">
+          {authEmail === null ? (
+            <>
+              <p className="demeter__sidebarnote">{t.sidebarSigninNote}</p>
+              <a className="demeter__sidebarsignin" href={signInHref}>
+                {t.signin}
+              </a>
+            </>
+          ) : (
+            <p className="demeter__sidebarnote">
+              {t.sidebarSignedIn} <span translate="no">{authEmail}</span>
+            </p>
+          )}
+        </div>
+      </nav>
 
       {/* One control, one selected state — replaces the chip row that ate a
           full row and still clipped this link off the right edge at 1280px. */}
@@ -1568,6 +1655,11 @@ export function DemeterChat({
                 modes. A full-length real conversation ended without the
                 tester ever learning either. */}
             <p className="demeter__emptymodes">{t.emptyModes}</p>
+            {/* STATE-FIRST onboarding (Pi redesign, state-only by decision —
+                the retention line says avoid names, so the greeting asks for
+                the one thing answers actually depend on). Gone the moment a
+                state is chosen. */}
+            {!state && <p className="demeter__emptyask">{t.emptyAskState}</p>}
             {/* NO STARTER QUESTIONS. There were three — "Do I earn too much to
                 qualify?", "I need food this week", "Will I have to do an
                 interview?" — and none of them is what someone actually opens
