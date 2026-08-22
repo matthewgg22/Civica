@@ -116,14 +116,20 @@ export const T = {
     // The empty chat's own words. Three bare buttons floating in 414px of
     // measured whitespace read as stray controls; a mark, a line, and the
     // questions grouped under it read as an invitation.
-    emptyTitle: "What would you like to know?",
-    emptyLede: "Every answer quotes the rule it comes from, so you can check it.",
+    emptyTitle: "Ask me anything about SNAP",
+    // SAYS WHAT IT DOES, and stops short of what it does not (owner, 2026-08-22).
+    // "likely to qualify", never "find out if you are eligible": this produces
+    // an ESTIMATE, and the panel two inches away says "an estimate, not a
+    // decision". A chat that opens by promising an eligibility answer has
+    // already made the claim the whole product is built to avoid.
+    emptyLede:
+      "I can help you see whether you\u2019re likely to qualify and build up your application as we go \u2014 quoting the rule behind every answer, so you can check it.",
     // Pre-chat framing (#898 P2-6): a real tester finished a full 25-turn
     // conversation without ever being told that SNAP is formula work this
     // chat can walk through, or that TWO modes exist. Names the modes by
     // their exact toggle labels — the parity test holds them together.
     emptyModes:
-      "SNAP looks complicated, but it runs on fixed rules and math — walking you through them is what this chat is for. Stay in “Just asking” to learn how the program works, or switch to “Build my estimate” and your answers build into an application outline as you go.",
+      "\u201cJust asking\u201d explains how the program works. \u201cBuild my estimate\u201d turns your answers into an application outline as you go.",
     // Pi redesign (2026-08-21): the empty state asks for the STATE, never a
     // name — the retention line says "avoid names", and the pi-redesign test
     // pins the ban in all four languages.
@@ -325,10 +331,11 @@ export const T = {
     errNetwork: "No pudimos conectar con Demeter. Revisa tu conexión e intenta de nuevo.",
     errRequest: "Demeter no pudo leer eso. Empezar una conversación nueva suele resolverlo — una conversación muy larga es la causa más común.",
     thinking: "Un momento",
-    emptyTitle: "¿Qué te gustaría saber?",
-    emptyLede: "Cada respuesta cita la regla de la que proviene, para que puedas comprobarla.",
+    emptyTitle: "Pregúntame lo que quieras sobre SNAP",
+    emptyLede:
+      "Puedo ayudarte a ver si es probable que califiques e ir armando tu solicitud sobre la marcha — citando la regla detrás de cada respuesta, para que puedas comprobarla.",
     emptyModes:
-      "SNAP parece complicado, pero funciona con reglas y cálculos fijos — y este chat existe para explicártelos. Quédate en «Solo preguntar» para entender cómo funciona el programa, o cambia a «Calcular mi estimado» y tus respuestas irán formando un esquema de solicitud.",
+      "«Solo preguntar» explica cómo funciona el programa. «Calcular mi estimado» convierte tus respuestas en un esquema de solicitud sobre la marcha.",
     emptyAskState:
       "¿En qué estado estás? Elígelo arriba — hasta entonces, las respuestas usan las reglas federales.",
     sidebarLabel: "Menú",
@@ -493,10 +500,11 @@ export const T = {
     errNetwork: "Không kết nối được với Demeter. Hãy kiểm tra mạng và thử lại.",
     errRequest: "Demeter không đọc được nội dung đó. Bắt đầu cuộc trò chuyện mới thường xử lý được — nguyên nhân hay gặp là cuộc trò chuyện quá dài.",
     thinking: "Chờ một chút",
-    emptyTitle: "Bạn muốn biết điều gì?",
-    emptyLede: "Mỗi câu trả lời đều trích dẫn điều luật mà nó dựa vào, để bạn tự kiểm chứng được.",
+    emptyTitle: "Hỏi tôi bất cứ điều gì về SNAP",
+    emptyLede:
+      "Tôi có thể giúp bạn xem mình có khả năng đủ điều kiện hay không và dần dựng nên đơn xin — kèm trích dẫn điều luật cho mỗi câu trả lời, để bạn tự kiểm chứng.",
     emptyModes:
-      "SNAP trông phức tạp, nhưng thật ra chỉ là các quy tắc và phép tính cố định — và trò chuyện này ở đây để giải thích chúng cho bạn. Cứ ở chế độ “Chỉ hỏi thôi” để tìm hiểu chương trình, hoặc chuyển sang “Tính mức ước tính” để các câu trả lời của bạn dần thành một bản phác thảo đơn.",
+      "“Chỉ hỏi thôi” giải thích chương trình hoạt động ra sao. “Tính mức ước tính” biến câu trả lời của bạn thành bản phác thảo đơn xin.",
     emptyAskState:
       "Bạn ở tiểu bang nào? Chọn ở phía trên — trước đó, câu trả lời dùng quy định liên bang.",
     sidebarLabel: "Trình đơn",
@@ -657,10 +665,11 @@ export const T = {
     errNetwork: "连接不上 Demeter。请检查网络后再试一次。",
     errRequest: "Demeter 读不了这条内容。开始新的对话通常就能解决——最常见的原因是对话太长。",
     thinking: "请稍候",
-    emptyTitle: "您想了解什么？",
-    emptyLede: "每条回答都会引用其依据的条文，方便您自行核对。",
+    emptyTitle: "关于 SNAP，什么都可以问我",
+    emptyLede:
+      "我可以帮您看看是否可能符合资格，并一步步整理出您的申请内容——每条回答都会附上依据的条文，方便您自行核对。",
     emptyModes:
-      "SNAP 看起来复杂，其实只是一套固定的规则和计算——这个对话就是为了给您讲清楚它们。想了解项目如何运作，就留在“只是问问”；切换到“帮我算估算”，您说的内容会逐步整理成一份申请提纲。",
+      "“只是问问”讲解这个项目如何运作。“帮我算估算”会把您说的内容逐步整理成一份申请提纲。",
     emptyAskState: "您在哪个州？请在上方选择——在那之前，回答使用联邦规定。",
     sidebarLabel: "菜单",
     sidebarSaved: "已保存的对话",
