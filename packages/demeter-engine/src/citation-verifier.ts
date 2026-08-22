@@ -174,25 +174,21 @@ const TRAILER_STRINGS = {
   en: {
     header: "**Citation:**",
     bad: "⚠️ **NOT recognized — likely an error, verify before relying:**",
-    inSrc: "✓ checked against the official rule text we pulled for this question:",
     known: "◑ a real rule, but we didn't pull its wording this time — double-check:",
   },
   es: {
     header: "**Citas:**",
     bad: "⚠️ **NO reconocida — probablemente un error, verifica antes de confiar:**",
-    inSrc: "✓ verificado contra el texto oficial que consultamos para esta pregunta:",
     known: "◑ una regla real, pero esta vez no consultamos su texto — confírmalo:",
   },
   vi: {
     header: "**Trích dẫn:**",
     bad: "⚠️ **KHÔNG nhận dạng được — có thể là lỗi, hãy xác minh trước khi dựa vào:**",
-    inSrc: "✓ đã đối chiếu với nguyên văn quy định chúng tôi tra cho câu hỏi này:",
     known: "◑ quy định có thật, nhưng lần này chúng tôi chưa tra nguyên văn — nên kiểm tra lại:",
   },
   zh: {
     header: "**引用：**",
     bad: "⚠️ **无法识别——可能有误，依赖前请先核实：**",
-    inSrc: "✓ 已对照我们为这个问题调取的官方原文核对：",
     known: "◑ 规定真实，但这次未调取其原文——请再核实：",
   },
 } as const;
@@ -205,9 +201,23 @@ export function formatCitationTrailer(checks: CitationCheck[], lang: AnswerLang 
   const known = checks.filter((c) => c.status === "known").map((c) => c.citation);
   const bad = checks.filter((c) => c.status === "unrecognized").map((c) => c.citation);
 
+  // ALL CLEAR → ONE LINE. Every citation checked out, and the certainty banner
+  // directly above already says so ("Every rule cited here comes from
+  // regulation text pulled for your question"). Repeating it per citation —
+  // "✓ checked against the official rule text we pulled for this question:
+  // 7 CFR 273.5" — made the same assertion three times in four stacked blocks
+  // (owner, 2026-08-22: "the sources are a little too much"). The ✓ carries it.
+  //
+  // WARNINGS ARE NOT COMPRESSED. Below, `bad` and `known` keep their full
+  // sentences and their own bullets: shortening a reassurance costs nothing,
+  // shortening a caveat costs the reader the reason they should not rely on it.
+  if (!bad.length && !known.length) {
+    return ["\n\n---", `${t.header} ✓ ${inSrc.join(", ")}`].join("\n");
+  }
+
   const lines: string[] = ["\n\n---", t.header];
   if (bad.length) lines.push(`- ${t.bad} ${bad.join(", ")}`);
-  if (inSrc.length) lines.push(`- ${t.inSrc} ${inSrc.join(", ")}`);
+  if (inSrc.length) lines.push(`- ✓ ${inSrc.join(", ")}`);
   if (known.length) lines.push(`- ${t.known} ${known.join(", ")}`);
   return lines.join("\n");
 }

@@ -1655,7 +1655,20 @@ export function DemeterChat({
               {t.signin}
             </a>
           )}
-          <a className="demeter__navlink" href={lang === "en" ? "/questions" : `/${lang}/questions`}>
+          {/* RETARGETED with the rename (owner, 2026-08-22). The label became
+              "What is SNAP?", and /questions is the page about what the
+              APPLICATION asks — a different question, and a link whose label
+              disagrees with where it goes is worse than a clumsy label. It now
+              points at the landing page's own "What SNAP is" band, which
+              already carries id="what-is-snap" — that band lives in
+              SnapOverview, which renders on /screen/ask (the Demeter landing),
+              NOT on "/" (still the older Civica marketing page). /questions
+              keeps its entry from the landing form cards, so nothing is
+              orphaned. */}
+          <a
+            className="demeter__navlink"
+            href={lang === "en" ? "/screen/ask#what-is-snap" : `/${lang}/screen/ask#what-is-snap`}
+          >
             {t.navQuestions}
           </a>
         </div>

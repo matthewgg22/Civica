@@ -59,7 +59,11 @@ export function assessFreshness(now: Date, corpusDate: string, state?: string | 
     );
   }
 
-  const asOf = `eCFR ${corpusDate || "unknown"}; federal figures FY26 (current through 2026-09-30)`;
+  // Terse on purpose: this sits at the foot of EVERY answer, so it is read far
+  // more often than it is acted on. "federal figures FY26 (current through
+  // 2026-09-30)" became "FY26 figures through 2026-09-30" — same two facts
+  // (which fiscal year, when they lapse), fewer words competing with the answer.
+  const asOf = `eCFR ${corpusDate || "unknown"} · FY26 figures through 2026-09-30`;
   return { asOf, warnings };
 }
 
@@ -75,7 +79,7 @@ export function formatFreshnessFooter(
   const { asOf, warnings } = assessFreshness(now, corpusDate, state);
   const asOfLocalized =
     lang === "es"
-      ? asOf.replace("federal figures FY26 (current through", "cifras federales FY26 (vigentes hasta")
+      ? asOf.replace("FY26 figures through", "cifras FY26 vigentes hasta")
       : asOf;
   // "Source", not "Sources as of". It sits at the foot of every answer, so it
   // is read hundreds of times more often than it is acted on, and the shorter
