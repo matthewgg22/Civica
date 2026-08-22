@@ -20,7 +20,18 @@ Verbatim from the abstract: *"households screened out of SNAP due to administrat
 
 Per NYU's release on the paper: households that gained access were *"less likely to end up with a delinquent credit card account, and had higher credit scores,"* and carried *"hundreds of dollars less"* debt than denied applicants.
 
-⚠️ **Exact magnitudes are not in the abstract or the press release, and the working paper is gated.** Cite the findings qualitatively as above until the full paper or its published version is in hand; then record the effect sizes here. Do not invent or estimate magnitudes for it.
+**Headline estimates (treatment-on-the-treated).** Full tables, caveats, and the audit obligation live in [cra-wp34434-estimates.md](cra-wp34434-estimates.md) — read that before quoting anything.
+
+- **Los Angeles (gaining access):** credit card balances −$2,436 by year 3 (−51% vs. a $4,778 control mean); delinquent-account likelihood −10.1 pp off a 41% baseline; severe delinquency −13.0 pp (−68%); credit score **+17 points** off a 634 mean.
+- **San Francisco (losing access at recertification):** balances +$500 (+26%); credit score **−15 points**, ranging to −19; number of delinquent accounts +0.41 (+87%).
+- **No effect on bankruptcy filings** in either county.
+- **The authors' own dollar translation:** citing Brevoort et al. (2020) — a 10-point score increase yields $45–$70 in annual borrower savings — they conclude their observed increases *"translate to savings of over $100 per year."*
+
+⚠️ **Citation posture.** The draft says *"PRELIMINARY—PLEASE DO NOT CITE OR DISTRIBUTE."* We cite it regardless, because it is a publicly issued NBER working paper that NYU publicized by press release — but **only in version-stamped form**, and never without the word "preliminary":
+
+> NBER Working Paper 34434 (preliminary draft, November 2025; estimates subject to revision)
+
+The stamp is the entire basis on which this is defensible. A reader opening a CRA exam file in three years must be able to see which draft we relied on. A courtesy note to the authors offering our characterization for correction is drafted at [cra-homonoff-permission-request.md](cra-homonoff-permission-request.md). **The credit-score results are the paper's weakest** — marginally significant in SF, significant only in the final quarter in LA — so when precision is challenged, lead with delinquencies and balances, which are also what a lender underwrites on.
 
 **Why this one matters most:** the intervention studied — reducing procedural burden at SNAP intake — is the intervention Civica Torrey runs, and the outcome measured is the outcome a bank cares about. Previous framing had to route through work-requirement research on a different population; this does not.
 

@@ -357,17 +357,6 @@ def test_credit_claims_are_never_first_person_and_always_sourced():
                 f"{tpl} mentions credit scores without a citation")
 
 
-def test_no_invented_magnitude_for_the_gated_paper():
-    """WP 34434's effect sizes are not public yet — direction only, no numbers."""
-    text = (TOOL_ROOT / "templates/artifact.html").read_text()
-    i = text.find("34434")
-    assert i > 0
-    window = text[max(0, i - 400):i]
-    for bad in ("points", "%", "$"):
-        seg = window.split("Independent research")[-1]
-        assert f" {bad}" not in seg or "more debt" in seg
-
-
 def test_indirect_rate_is_the_federal_de_minimis():
     from src import quarterly as q
     rate = dict((k, v) for k, v in q.SPLIT)
@@ -377,3 +366,56 @@ def test_indirect_rate_is_the_federal_de_minimis():
     # program share must clear BBB Wise Giving Standard 8 (>=65% on programs)
     program = sum(v for k, v in q.SPLIT if "de minimis" not in k)
     assert program >= 0.65
+
+
+def test_wp34434_numbers_always_carry_the_preliminary_version_stamp():
+    """WP 34434 is cited from a PRELIMINARY draft under R&R, against the
+    draft's own "do not cite" notice. That is defensible ONLY because every
+    use is version-stamped: a reader opening a CRA exam file years later must
+    see which draft we relied on and that a published version supersedes it.
+    Drop the stamp and the citation posture collapses."""
+    repo = TOOL_ROOT.parent.parent
+    targets = [TOOL_ROOT / "templates" / t
+               for t in ("artifact.html", "memo.html", "quarterly.html")]
+    targets.append(repo / "docs/strategy/cra-officer-call-guide.md")
+    for f in targets:
+        if not f.exists():
+            continue
+        text = f.read_text()
+        if "34434" not in text:
+            continue
+        low = text.lower()
+        assert "preliminary" in low, (
+            f"{f.name} cites WP 34434 without the word 'preliminary'")
+        assert "november 2025" in low, (
+            f"{f.name} cites WP 34434 without the draft date")
+        assert "subject to revision" in low, (
+            f"{f.name} cites WP 34434 without 'estimates subject to revision'")
+
+
+def test_wp34434_precision_caveat_travels_with_the_credit_score_figure():
+    """The credit-score results are the paper's weakest -- marginally
+    significant in SF, significant only in the final quarter in LA. Anywhere
+    we print the 17-point figure we also say the debt/delinquency effects are
+    the stronger ones, so no reader takes the softest number as the firmest."""
+    for f in [TOOL_ROOT / "templates/artifact.html"]:
+        text = f.read_text()
+        if "17 points" in text or "17</strong> points" in text:
+            low = text.lower()
+            assert "least precisely estimated" in low or "weakest" in low, (
+                f"{f.name} prints the credit-score effect without its "
+                f"precision caveat")
+
+
+def test_no_aggregated_credit_savings_claim():
+    """The authors' '$100 per year' is a PER-BORROWER figure from their own
+    arithmetic. Multiplying it by our projected enrollments would manufacture
+    exactly the invented aggregate this channel has refused since day one."""
+    import re
+    for tpl in ("artifact.html", "memo.html", "quarterly.html"):
+        text = (TOOL_ROOT / "templates" / tpl).read_text().lower()
+        for m in re.finditer(r"\$100", text):
+            window = text[m.start():m.start() + 200]
+            for bad in ("per household across", "total savings", "aggregate"):
+                assert bad not in window, (
+                    f"{tpl} aggregates the per-borrower savings figure")
