@@ -1612,7 +1612,7 @@ export function DemeterChat({
               standing context, so the top bar carries no select at all.
               Signed-in state lives in the sidebar; the auth probe fails
               closed to signed-out (see its effect). */}
-          {authEmail === null && (
+          {authEmail === null && !sidebarOpen && (
             <a className="demeter__signin" href={signInHref}>
               {t.signin}
             </a>
@@ -2003,8 +2003,17 @@ export function DemeterChat({
             {t.stop}
           </button>
         ) : (
-          <button type="submit" className="demeter__send" disabled={!input.trim()}>
-            {t.send}
+          // A compact arrow, Pi's own control — the accessible name stays
+          // "Send" (tests and screen readers agree), the visual is the icon.
+          <button
+            type="submit"
+            className="demeter__send"
+            disabled={!input.trim()}
+            aria-label={t.send}
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 15V3M4 8l5-5 5 5" />
+            </svg>
           </button>
         )}
       </form>
@@ -2095,6 +2104,23 @@ export function DemeterChat({
           stateSelected={state !== null}
           saved={conversationSaved}
           copy={t.worksheet}
+          footLinks={
+            <>
+              {selectedPack?.portal && (
+                <a
+                  className="demeter__how"
+                  href={selectedPack.portal.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t.picker.scopeApply} {selectedPack.portal.name} ↗
+                </a>
+              )}
+              <a className="demeter__how" href="/verify">
+                {t.howWeVerify}
+              </a>
+            </>
+          }
           onPickState={() => setOpenPicker((n) => n + 1)}
           mode={worksheetMode}
           onModeChange={(m) => {
@@ -2233,19 +2259,6 @@ export function DemeterChat({
               since both this and "How we verify" are the same kind of thing:
               a fact about where this answer comes from / where to check it,
               not an action for the moment you pick a state. */}
-          {selectedPack?.portal && (
-            <a
-              className="demeter__how"
-              href={selectedPack.portal.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t.picker.scopeApply} {selectedPack.portal.name} ↗
-            </a>
-          )}
-          <a className="demeter__how" href="/verify">
-            {t.howWeVerify}
-          </a>
         </div>
         </div>
           {/* THE MIDDLE ZONE — saved conversations, Pi's own geography (their

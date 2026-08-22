@@ -137,9 +137,19 @@ describe("the sidebar — the tracking panel, open by default", () => {
 });
 
 describe("sign-in at the top right", () => {
-  it("shows a sign-in link in the chat header while signed out", () => {
+  it("shows exactly one sign-in: chrome row while the rail is closed, rail foot while open", () => {
+    // Owner rec (2026-08-22): with the rail open, its foot button is THE
+    // sign-in; a second underlined link floating in the chrome row was an
+    // orphan. Closed rail: the chrome link returns to keep the toggle
+    // company.
     const { container } = mountChat();
     const head = container.querySelector(".demeter__head")!;
+    const drawer = container.querySelector("#demeter-sidebar")!;
+    // Open (default): rail foot only.
+    expect(head.querySelector("a[href*='/sign-in']")).toBeNull();
+    expect(drawer.querySelector("a[href*='/sign-in']")).toBeTruthy();
+    // Close the rail: the chrome link appears.
+    fireEvent.click(drawer.querySelector("button.demeter__sidebartoggle")!);
     expect(head.querySelector("a[href*='/sign-in']")).toBeTruthy();
   });
 });
@@ -198,7 +208,8 @@ describe("auth probe fails closed to signed-out", () => {
   it("mounts without Supabase env and shows the signed-out affordances", () => {
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
     const { container } = mountChat();
-    expect(container.querySelector(".demeter__head a[href*='/sign-in']")).toBeTruthy();
+    // Rail open by default → the rail's foot carries the sign-in.
+    expect(container.querySelector("#demeter-sidebar a[href*='/sign-in']")).toBeTruthy();
     spy.mockRestore();
   });
 });

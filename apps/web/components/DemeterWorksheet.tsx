@@ -31,6 +31,7 @@
 // row, and a sidebar contradicting the ✓ Saved badge a few inches away teaches
 // people not to believe either one.
 
+import type { ReactNode } from "react";
 import type { ScreeningClassification } from "@civica/demeter-engine";
 import {
   OUTCOME_COPY,
@@ -102,6 +103,7 @@ export function DemeterWorksheet({
   onPickState,
   mode,
   onModeChange,
+  footLinks,
 }: {
   classification: ScreeningClassification | null;
   stateSelected: boolean;
@@ -116,6 +118,10 @@ export function DemeterWorksheet({
   onPickState?: () => void;
   mode: WorksheetMode;
   onModeChange: (m: WorksheetMode) => void;
+  /** Standing links (state portal, how-we-verify) — facts about where the
+   *  answers come from, rendered at the card's foot with the retention
+   *  line, their natural family (owner rec, 2026-08-22). */
+  footLinks?: ReactNode;
 }) {
   const outcome = classification?.outcome;
   const outcomeCopy = outcome ? OUTCOME_COPY[outcome] : undefined;
@@ -249,6 +255,7 @@ export function DemeterWorksheet({
           stays in both modes — questions are logged either way, which is the
           whole reason it cannot be quietly dropped. */}
       {mode === "estimate" && <p className="dmw__disclaimer">{copy.disclaimer}</p>}
+      {footLinks && <div className="dmw__footlinks">{footLinks}</div>}
     </aside>
   );
 }

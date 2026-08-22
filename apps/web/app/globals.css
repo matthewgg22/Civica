@@ -4771,7 +4771,12 @@ html {
    framing block is test-pinned); only the posture moved. */
 .demeter__empty {
   display: flex; flex-direction: column; align-items: flex-start; text-align: left;
-  gap: 0.6rem; margin: auto 0; padding: 1rem 0; max-width: 68ch;
+  gap: 0.6rem; margin: auto 0; padding: 1rem 0 9vh; max-width: 58ch;
+  /* Centered as a BLOCK in the column (text stays left inside) — Pi's
+     composition; hugging the column's left edge left the right half of the
+     screen dead. The bottom padding floats it slightly high of true center,
+     toward the composer's counterweight. */
+  align-self: center; width: 100%;
 }
 .demeter__emptytitle {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
@@ -4821,25 +4826,36 @@ html {
   align-self: stretch; background: #FBEAE5; border: 1px solid #E9C2B4; color: var(--demeter-terracotta-deep);
   border-radius: var(--demeter-radius-card); padding: 0.7rem 0.9rem; font-size: 0.9rem;
 }
-.demeter__inputrow { display: flex; gap: 0.5rem; align-items: flex-end; padding-top: 0.5rem; }
+.demeter__inputrow { display: flex; gap: 0.5rem; align-items: flex-end; padding-top: 0.25rem; }
 /* Pi-grade composer on the chat surface: one rounded field, the send control
    riding INSIDE it, and a QUIET focus — the field darkens its edge rather
    than lighting a 2px ring the moment autofocus lands. Still visibly
    focused (terracotta border), just not shouting. */
 .dmchat .demeter__inputrow { position: relative; }
 .dmchat .demeter__input {
-  border-radius: 1.35rem; padding-right: 6.5rem;
+  border-radius: 1.55rem; padding-right: 3.4rem;
   border-color: var(--demeter-rule-strong);
 }
 .dmchat .demeter__input:focus,
 .dmchat .demeter__input:focus-visible {
-  outline: none; border-color: var(--demeter-terracotta);
+  outline: none; border-color: var(--demeter-muted);
   box-shadow: 0 2px 12px rgba(35, 34, 32, 0.07);
 }
+/* Pi's control: a compact circle riding inside the field. 40px in a 52px
+   single-line field = visually centered; when the textarea grows, it stays
+   pinned by the last line, where the next keystroke is. Empty box = quiet
+   neutral circle (NOT the faded wash of a disabled pill breaking the
+   border); typed = terracotta. */
 .dmchat .demeter__send {
-  position: absolute; right: 7px; bottom: 7px;
-  min-height: 38px; height: 38px; border-radius: var(--demeter-radius-pill);
+  position: absolute; right: 4px; bottom: 4px;
+  width: 44px; min-width: 44px; min-height: 44px; height: 44px; padding: 0;
+  /* 44, not 40: the touch-target floor (#917) applies to the one control
+     that sends — and 44 in a 52px field still reads centered. */
+  display: grid; place-items: center;
+  border-radius: var(--demeter-radius-pill);
 }
+.dmchat .demeter__send:disabled { opacity: 1; background: var(--demeter-rule-strong); cursor: default; }
+.dmchat .demeter__send--stop { background: var(--demeter-terracotta-deep); }
 .demeter__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: 1; resize: none; border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-card); background: var(--demeter-card);
@@ -7567,6 +7583,12 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
   border-radius: var(--demeter-radius-card); padding: 0.85rem 0.95rem;
 }
+/* The worksheet's foot links (portal, how-we-verify): standing facts at the
+   card's foot with the retention line. */
+.dmw__footlinks { display: flex; flex-direction: column; gap: 0.15rem; border-top: 1px solid var(--demeter-rule); margin-top: 0.5rem; padding-top: 0.25rem; }
+/* The tools card only exists when it holds an action — an empty white card
+   in the rail is worse than nothing. */
+.dmchat .demeter__sidetools:not(:has(button)):not(:has(a)) { display: none; }
 .demeter__sidebarauth .demeter__lang { display: block; margin-bottom: 0.8rem; }
 .demeter__sidebarauth .demeter__lang-select { width: 100%; }
 /* One picker visible at any width: the sidebar's instance from 901px, the
@@ -7640,9 +7662,11 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   }
   .dmchat__body:has(.demeter__sidebar--open) .demeter { max-width: 64rem; margin: 0 auto; width: 100%; }
   /* One brand on screen: while the rail is open it carries the mark and the
-     name, so the nav's own brand yields (visibility keeps the tab row from
-     shifting). Closed rail: the nav brand returns. */
-  .dmchat:has(.demeter__sidebar--open) .dmnav__brand { visibility: hidden; }
+     name — the nav's brand fully collapses and the tabs + languages pack
+     right as one cluster, so the bar reads as chrome rather than a layout
+     with a hole in it. Closed rail: the brand returns. */
+  .dmchat:has(.demeter__sidebar--open) .dmnav__brand { display: none; }
+  .dmchat:has(.demeter__sidebar--open) .dmnav__inner { justify-content: flex-end; gap: 1.5rem; }
 
   /* The controls row now lives INSIDE the conversation column (see the JSX), so
      it needs no grid of its own — it is already the width of the column it
@@ -7652,10 +7676,10 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
      floated alone in the right column between them, belonging to neither. */
   .dmchat .demeter__scope { padding-top: 0; }
 
-  /* Flush with the composer at rest, so the two read as one control rather than
-     a tall box with a short button parked at its corner. They stay bottom
-     aligned as the composer grows. */
-  .dmchat .demeter__send { min-height: 52px; border-radius: var(--demeter-radius-card); padding: 0 1.6rem; }
+  /* RETIRED (owner rec 2026-08-22): the send is a 40px circle riding INSIDE
+     the field now — the flush-pill sizing above fought that geometry from
+     later in the cascade and won on order. The circle rule lives with the
+     composer block (~.demeter__inputrow). */
 }
 
 /* The measure, capped in CHARACTERS rather than as a percentage of whatever the
@@ -8088,7 +8112,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 .demeter__piihint {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.74rem; line-height: 1.5; color: var(--demeter-muted);
-  text-align: center; padding: 0.35rem 1rem 0; margin: 0; max-width: 56ch;
+  text-align: center; padding: 0.25rem 1rem 0; margin: 0; max-width: 56ch;
   margin-left: auto; margin-right: auto;
 }
 /* One line. 56ch broke it across two at ~476px when the column had 830 to give,
