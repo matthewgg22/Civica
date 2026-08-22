@@ -106,3 +106,38 @@ describe("stylesheet pins (findings 4, 5, 7)", () => {
     expect(css()).toMatch(/\.demeter__link\s*\{[^}]*padding-block/);
   });
 });
+
+// ── awesome-design-md recommendations 1+2, and palette B (approved 2026-08-21) ──
+describe("radius scale + design-doc linkage + palette sync", () => {
+  it("Demeter declares its four radius tokens and no stray mid-band raw radii remain", () => {
+    const s = css();
+    for (const t of ["--demeter-radius-pill", "--demeter-radius-card", "--demeter-radius-inner", "--demeter-radius-input"]) {
+      expect(s).toContain(`${t}:`);
+    }
+    // The consolidated band: 9-20px raw values (and their rem equivalents)
+    // all resolve to a token now. Values ≤6px are structural hairline
+    // details; 50% is a circle; the retailer map's concentric set is nested
+    // geometry — all documented exceptions, not scale members.
+    const strays = [...s.matchAll(/border-radius:\s*(9px|14px|16px|18px|20px|0\.6rem|0\.7rem|0\.75rem|0\.85rem|0\.9rem|1rem|1\.25rem)\s*;/g)];
+    expect(strays.map((m) => m[1]), "raw mid-band radii should use the tokens").toEqual([]);
+  });
+
+  it("the governing design doc names its machine-readable companion", () => {
+    const doc = readFileSync(join(__dirname, "..", "DEMETER-DESIGN.md"), "utf8");
+    expect(doc).toMatch(/DESIGN\.md/);
+    expect(doc).toMatch(/regenerat/i);
+  });
+
+  it("the PDF renderers' hardcoded palette matches the live tokens — palette drift guard", () => {
+    const s = css();
+    const token = (name: string) => new RegExp(`--demeter-${name}:\\s*(#[0-9A-Fa-f]{6})`).exec(s)?.[1]?.toUpperCase();
+    for (const file of ["lib/outline-pdf.tsx", "lib/screening-pdf.tsx"]) {
+      const src = readFileSync(join(__dirname, "..", file), "utf8");
+      const c = (name: string) => new RegExp(`const ${name} = "(#[0-9A-Fa-f]{6})"`).exec(src)?.[1]?.toUpperCase();
+      expect(c("INK"), `${file} INK`).toBe(token("ink"));
+      expect(c("BODY"), `${file} BODY`).toBe(token("body"));
+      expect(c("MUTED"), `${file} MUTED`).toBe(token("muted"));
+      expect(c("RULE"), `${file} RULE`).toBe(token("rule"));
+    }
+  });
+});
