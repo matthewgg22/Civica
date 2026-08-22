@@ -1,0 +1,15 @@
+{
+  "banks": {
+    "bank_irvine": {
+      "cert": "59296",
+      "name": "Bank Irvine",
+      "aa_counties": ["Orange"],
+      "pe_date": "2024-10-15",
+      "pe_url": "https://crapes.fdic.gov/publish/2024/59296_241015.PDF",
+      "regulator": "FDIC",
+      "ask_usd": 15000,
+      "verified": false,
+      "verify_note": "AA read from the FDIC PE by research agent 2026-08-22 — Matthew must re-read the PE and flip verified:true before any send. Branch list check on bankirvine.com also required (PE is from 10/2024)."
+    }
+  }
+}

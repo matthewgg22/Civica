@@ -1,0 +1,26 @@
+{
+  "version": "2026-08-22.1",
+  "cpc_usd": {
+    "google": { "low": 3.50, "mid": 2.00, "high": 1.25 },
+    "meta":   { "low": 1.20, "mid": 0.70, "high": 0.45 }
+  },
+  "budget_split": { "google": 0.6, "meta": 0.4 },
+  "rates": {
+    "click_to_session":     { "low": 0.60, "mid": 0.75, "high": 0.85 },
+    "session_to_check":     { "low": 0.15, "mid": 0.30, "high": 0.45 },
+    "check_to_app_started": { "low": 0.15, "mid": 0.25, "high": 0.35 },
+    "started_to_submitted": 0.67,
+    "approval":             { "low": 0.50, "mid": 0.55, "high": 0.65 }
+  },
+  "benefit": {
+    "avg_household_monthly_usd": 351.49,
+    "source": "USDA FNS FY2024 national average per household"
+  },
+  "household_size_eligible": {
+    "low_dollar": 2.5,
+    "high_dollar": 1.6,
+    "note": "Persons per eligible household. Drives the headline dollar range: fewer persons/household => more households => higher $. Range is an assumption band, NOT a statistical confidence interval — never label it as CI."
+  },
+  "ratio_display_threshold": 1.15,
+  "mock_report_policy": "submitted-basis; render LOW and MID scenarios only; the HIGH scenario must never appear in any generated artifact"
+}

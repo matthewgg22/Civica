@@ -1,0 +1,20 @@
+{
+  "assessment_areas.json": {
+    "source": "Per-bank FDIC/OCC CRA Performance Evaluation PDFs (public), hand-entered",
+    "pulled": "2026-08-22",
+    "note": "Each bank entry carries verified:false until Matthew re-reads its PE. The generator refuses --send for unverified banks."
+  },
+  "funnel_assumptions.json": {
+    "source": "T3 funnel research 2026-08-22 (docs/strategy/cra-pilot-research-2026-08-22.md): WordStream 2025 CPC benchmarks, SuperAds nonprofit Meta CPC, USDA FNS FY2024 benefit averages, Code for America / mRelief published funnel context",
+    "pulled": "2026-08-22",
+    "note": "Mid-funnel rates (session->check->app) have NO published benchmark; measuring them is the pilot's stated learning goal."
+  },
+  "county_metrics.csv": {
+    "source": "data-ops/analysis/track1-food-desert/artifacts/county_metrics.csv (existing repo artifact)",
+    "derived_from": "ca-snap-gap LightGBM model over 2023 ACS 1-Year PUMS (CV AUC 0.80), PUMA->county tract-weighted crosswalk",
+    "note": "2023 ACS 1-YEAR, not 5-year. Known upward biases (gross-income proxy; ACS benefit under-reporting) are disclosed in every generated PDF."
+  },
+  "ca_counties.geojson": {
+    "source": "data-ops/reference/ca_counties.geojson (existing repo artifact)"
+  }
+}
