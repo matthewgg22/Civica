@@ -341,15 +341,31 @@ def test_quarterly_renders_five_pages():
 
 
 # ---- research-claim + indirect-rate guards ---------------------------------
-def test_no_fabricated_credit_score_claim_in_any_artifact():
-    """A non-existent 'NBER SNAP credit-score' citation was caught in review.
-    No generated artifact may claim a credit-score gain from SNAP enrollment."""
-    banned = ["raises credit scores", "improve credit scores", "credit score points",
-              "increases credit scores", "credit-score gain"]
+def test_credit_claims_are_never_first_person_and_always_sourced():
+    """Two failures caught in review: (1) a citation described from memory that
+    a first search pass could not find, and (2) the risk of claiming OUR program
+    moves credit scores. Rule: templates may report the research finding, never
+    claim it as our own effect, and never without the citation."""
+    first_person = ["we improve credit", "we raise credit", "our program improves credit",
+                    "our program raises credit", "civica improves credit"]
     for tpl in ("artifact.html", "memo.html", "quarterly.html"):
         text = (TOOL_ROOT / "templates" / tpl).read_text().lower()
-        for phrase in banned:
-            assert phrase not in text, f"{tpl} contains banned claim: {phrase}"
+        for phrase in first_person:
+            assert phrase not in text, f"{tpl} claims a first-person credit effect: {phrase}"
+        if "credit score" in text:
+            assert "nber" in text or "homonoff" in text, (
+                f"{tpl} mentions credit scores without a citation")
+
+
+def test_no_invented_magnitude_for_the_gated_paper():
+    """WP 34434's effect sizes are not public yet — direction only, no numbers."""
+    text = (TOOL_ROOT / "templates/artifact.html").read_text()
+    i = text.find("34434")
+    assert i > 0
+    window = text[max(0, i - 400):i]
+    for bad in ("points", "%", "$"):
+        seg = window.split("Independent research")[-1]
+        assert f" {bad}" not in seg or "more debt" in seg
 
 
 def test_indirect_rate_is_the_federal_de_minimis():
