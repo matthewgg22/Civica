@@ -1,0 +1,182 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>[[org_name]] — [[bank_name]]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Tokens — design review 2026-08-22. Print minimums: body >=10pt, footer >=8pt. */
+  :root { --ink:#1a1f1c; --accent:#1d4d3b; --muted:#5c6660; --hair:#d8ddda; --nodata:#e8eae9; --tint:#eef3f0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  @page { size: Letter; margin: 0; }
+  body { font-family:'IBM Plex Sans',sans-serif; color:var(--ink); background:#fff; }
+  .serif { font-family:'Source Serif 4',Georgia,serif; }
+  .page { width:8.5in; height:11in; padding:.75in .7in .42in; display:flex; flex-direction:column; page-break-after:always; position:relative; overflow:hidden; }
+  .page:last-child { page-break-after:auto; }
+  .letterhead { display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid var(--accent); padding-bottom:8px; }
+  .letterhead .org { font-size:10.5pt; letter-spacing:.12em; text-transform:uppercase; font-weight:600; color:var(--accent); }
+  .letterhead .doc { font-size:8.5pt; color:var(--muted); }
+  h2.pagehead { font-family:'Source Serif 4',serif; font-size:20pt; font-weight:600; margin-top:26px; }
+  .pagefoot { border-top:1px solid var(--hair); margin-top:auto; padding-top:8px; font-size:8pt; line-height:1.5; color:var(--muted); }
+  /* ---------- Page 1 ---------- */
+  .big { font-family:'Source Serif 4',serif; font-size:86pt; line-height:.95; letter-spacing:-.01em; margin-top:30px; }
+  .head-sentence { font-family:'Source Serif 4',serif; font-size:17pt; line-height:1.35; margin-top:8px; max-width:5.6in; }
+  .head-sentence em { font-style:normal; border-bottom:2.5px solid var(--accent); }
+  .subline { font-size:11pt; color:var(--muted); margin-top:10px; max-width:5.4in; }
+  .subline strong { color:var(--ink); }
+  .qualifier { font-size:8.5pt; color:var(--muted); margin-top:5px; }
+  .ratio-line { font-size:10pt; color:var(--accent); font-weight:600; margin-top:6px; }
+  .maprow { display:flex; gap:.28in; margin-top:26px; flex:1; min-height:0; }
+  .mapbox { flex:1.45; border:1px solid var(--hair); position:relative; background:#fbfcfb; display:flex; align-items:center; justify-content:center; padding:26px 10px 30px; }
+  .mapbox svg { max-width:100%; max-height:100%; }
+  .maplabel { position:absolute; top:8px; left:10px; font-size:7.5pt; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+  .legend { position:absolute; bottom:8px; left:10px; font-size:7.5pt; color:var(--muted); display:flex; gap:10px; }
+  .sw { display:inline-block; width:12px; height:9px; margin-right:3px; vertical-align:baseline; }
+  .stats { flex:1; display:flex; flex-direction:column; justify-content:center; gap:18px; }
+  .stat { border-top:1px solid var(--hair); padding-top:8px; }
+  .stat .label { font-size:8pt; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+  .stat .value { font-size:24pt; font-weight:600; font-variant-numeric:tabular-nums; }
+  .stat .note { font-size:8.5pt; color:var(--muted); }
+  /* ---------- Page 2 ---------- */
+  .cred { font-size:11pt; line-height:1.55; margin-top:14px; max-width:6.2in; }
+  .body-block { font-size:10.5pt; line-height:1.55; margin-top:16px; max-width:6.4in; }
+  .body-block h3 { font-family:'Source Serif 4',serif; font-size:13pt; font-weight:600; margin-bottom:4px; }
+  .tiers { display:flex; gap:.22in; margin-top:18px; }
+  .tier { flex:1; border:1px solid var(--hair); border-top:3px solid var(--accent); padding:12px; }
+  .tier .name { font-size:8.5pt; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  .tier .amt { font-family:'Source Serif 4',serif; font-size:19pt; font-weight:600; margin-top:2px; }
+  .tier .desc { font-size:9pt; line-height:1.45; color:var(--muted); margin-top:6px; }
+  .cta { border:2.5px solid var(--accent); margin-top:auto; margin-bottom:14px; padding:16px 18px; }
+  .cta .ask { font-family:'Source Serif 4',serif; font-size:15pt; font-weight:600; }
+  .cta .who { font-size:10.5pt; margin-top:6px; }
+  .brightline { font-size:8.5pt; color:var(--muted); margin-top:8px; max-width:6.4in; }
+  /* ---------- Page 3 (PROJECTED) ---------- */
+  .projected-wrap { position:relative; margin-top:18px; }
+  .watermark { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+  .watermark span { font-family:'IBM Plex Sans',sans-serif; font-weight:600; font-size:54pt; letter-spacing:.18em; color:var(--accent); opacity:.08; transform:rotate(-24deg); }
+  .chip { display:inline-block; background:var(--accent); color:#fff; font-size:8pt; font-weight:600; letter-spacing:.1em; padding:3px 8px; text-transform:uppercase; }
+  table.report { width:100%; border-collapse:collapse; margin-top:10px; font-variant-numeric:tabular-nums; }
+  table.report caption { text-align:left; font-size:9pt; color:var(--muted); margin-bottom:6px; caption-side:top; }
+  table.report th { background:var(--tint); border-bottom:2px solid var(--accent); font-size:9pt; text-align:right; padding:7px 10px; }
+  table.report th:first-child { text-align:left; }
+  table.report td { border-bottom:1px solid var(--hair); font-size:10pt; text-align:right; padding:7px 10px; }
+  table.report td:first-child { text-align:left; }
+  .repnote { font-size:8.5pt; color:var(--muted); margin-top:10px; line-height:1.5; }
+  /* ---------- Page 4 / 5 ---------- */
+  .measure li, .method li { font-size:10pt; line-height:1.55; margin:7px 0 7px 16px; }
+  .method h3, .measure h3 { font-family:'Source Serif 4',serif; font-size:12.5pt; font-weight:600; margin-top:16px; }
+  .disclose { border-left:3px solid var(--accent); background:var(--tint); padding:10px 14px; font-size:9.5pt; line-height:1.55; margin-top:14px; }
+</style></head><body>
+
+<!-- PAGE 1 — the need -->
+<div class="page">
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 1 of 5</div></div>
+  <div class="big">[[headline_unenrolled]]</div>
+  <div class="head-sentence">eligible residents of <em>your assessment area</em> are not receiving SNAP benefits they qualify for.</div>
+  <div class="subline">That is an estimated <strong>[[benefit_range]] per year</strong> in unclaimed federal nutrition benefits that would be spent in [[aa_label]] grocery stores.</div>
+  <div class="qualifier">Modeled estimate from 2023 ACS 1-Year PUMS; dollar range reflects household-size assumptions, not a confidence interval. Methodology and known biases: page 5.</div>
+  [[ratio_line]]
+  <div class="maprow">
+    <div class="mapbox">
+      <div class="maplabel">[[map_caption]]</div>
+      [[map_svg]]
+      <div class="legend"><span><span class="sw" style="background:#1d4d3b"></span>assessment area</span><span><span class="sw" style="background:#3f7360"></span>higher need</span><span><span class="sw" style="background:#cdddd5"></span>lower need</span><span><span class="sw" style="background:#e8eae9;border:1px solid #d8ddda"></span>no data</span></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="label">Eligible residents, est.</div><div class="value">[[eligible_fmt]]</div><div class="note">in covered assessment-area counties</div></div>
+      <div class="stat"><div class="label">Currently enrolled, est.</div><div class="value">[[aa_enrolled_pct]]%</div><div class="note">vs. [[state_enrolled_pct]]% statewide</div></div>
+      <div class="stat"><div class="label">Avg. household benefit</div><div class="value">$[[benefit_monthly]]/mo</div><div class="note">USDA FNS, FY2024 national average</div></div>
+    </div>
+  </div>
+  <div class="pagefoot">[[data_gaps_note]]Sources: eligibility &amp; enrollment modeled from 2023 ACS 1-Year PUMS (LightGBM, CV AUC 0.80). Known biases in the gross-income proxy and ACS benefit under-reporting may overstate the eligible-unenrolled population — see page 5. Assessment area as delineated in [[bank_name]]'s [[pe_date]] CRA Performance Evaluation ([[regulator]]). Benefit figures: USDA FNS FY2024. [[org_name]], a 501(c)(3) organization.</div>
+</div>
+
+<!-- PAGE 2 — the program + the ask -->
+<div class="page">
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 2 of 5</div></div>
+  <h2 class="pagehead">A benefits-access pilot in your assessment area</h2>
+  <div class="cred">[[org_name]] is [[status_line_lc]] [[engine_line]]</div>
+  <div class="body-block">
+    <h3>What the pilot does</h3>
+    Factual, geo-targeted digital outreach ("You may qualify for CalFresh — check in 5 minutes") across your assessment area drives residents to a free eligibility check and application support. Ads state facts and never pressure; we accept no per-enrollment compensation. A Google Ad Grant (up to $10,000/month of donated search advertising) stretches every grant dollar — your funding primarily buys reach beyond the grant and the measurement itself.
+  </div>
+  <div class="body-block">
+    <h3>What you receive</h3>
+    A quarterly report (sample on page 3) documenting outreach delivered, residents served, and applications generated in your assessment area, with dollar-traceability from grant to outcome — prepared so your team can use it directly in CRA documentation. Activities of this type are typically considered community development services under the community-services prong; your compliance team makes that determination.
+  </div>
+  <div class="tiers">
+    <div class="tier"><div class="name">Community Sponsor</div><div class="amt">$5,000–$10,000</div><div class="desc">One quarter of outreach in selected tracts. Fast to say yes to; designed for sponsorship budgets.</div></div>
+    <div class="tier"><div class="name">Pilot Grant</div><div class="amt">$[[ask_fmt]]</div><div class="desc">A full quarter across the assessment area, with the complete measurement program and quarterly report.</div></div>
+    <div class="tier"><div class="name">Program Grant</div><div class="amt">$30,000–$50,000</div><div class="desc">Two or more quarters; adds funnel-measurement depth and a year-end summary for exam files.</div></div>
+  </div>
+  <div class="cta">
+    <div class="ask">The ask: a 30-minute conversation.</div>
+    <div class="who">[[contact_name]], [[contact_title]] · [[contact_email]][[contact_phone_line]]</div>
+  </div>
+  <div class="pagefoot brightline">Program guardrail: our tools never steer applicants toward any funder's products or services. Any future referral integration would be a separate, explicitly disclosed agreement — never part of this pilot.</div>
+</div>
+
+<!-- PAGE 3 — sample quarterly report (PROJECTED) -->
+<div class="page">
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 3 of 5</div></div>
+  <h2 class="pagehead">Sample quarterly report <span class="chip">Projected — not measured</span></h2>
+  <div class="projected-wrap">
+    <div class="watermark"><span>PROJECTED</span></div>
+    <table class="report">
+      <caption>Illustrative one-quarter pilot at $[[ask_fmt]], [[aa_label]]. Conservative and mid-range scenarios; all figures projected from the assumption set on page 4.</caption>
+      <thead><tr><th>Quarterly outcome</th><th>Conservative</th><th>Mid-range</th></tr></thead>
+      <tbody>
+        <tr><td>Ad clicks delivered in assessment area</td><td>[[low_clicks]]</td><td>[[mid_clicks]]</td></tr>
+        <tr><td>Eligibility-check sessions</td><td>[[low_sessions]]</td><td>[[mid_sessions]]</td></tr>
+        <tr><td>Eligibility checks completed</td><td>[[low_checks]]</td><td>[[mid_checks]]</td></tr>
+        <tr><td>Applications started</td><td>[[low_started]]</td><td>[[mid_started]]</td></tr>
+        <tr><td><strong>Applications submitted</strong></td><td><strong>[[low_submitted]]</strong></td><td><strong>[[mid_submitted]]</strong></td></tr>
+        <tr><td>Est. approved households</td><td>[[low_approved]]</td><td>[[mid_approved]]</td></tr>
+        <tr><td><strong>Est. annual benefits unlocked</strong></td><td><strong>[[low_benefit]]</strong></td><td><strong>[[mid_benefit]]</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="repnote">A funded report replaces every projection above with measured values, reports <em>submitted</em> applications as the primary outcome, and states the measured mid-funnel rates alongside these assumptions. Where measured performance lands at the conservative end, the report says so plainly.</div>
+  </div>
+  <div class="pagefoot">All figures on this page are projections labeled as such; none represent measured performance. Assumption set: version [[assumptions_version]], page 4.</div>
+</div>
+
+<!-- PAGE 4 — how measurement works -->
+<div class="page">
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 4 of 5</div></div>
+  <h2 class="pagehead">How measurement works</h2>
+  <div class="body-block">This pilot's stated learning goal is measuring the step no published benchmark covers: how many residents who start an eligibility check go on to submit an application. The measurement plan, in the order data flows:</div>
+  <ul class="measure">
+    <li><strong>Delivery:</strong> ad-platform reporting of impressions and clicks by geography, reconciled monthly against invoices — the dollar-traceability chain starts at your grant and ends at a submitted application.</li>
+    <li><strong>Service:</strong> the eligibility assistant records sessions, checks completed, clarification questions answered, and applications started, with the user's self-reported ZIP code mapped to county.</li>
+    <li><strong>Outcomes:</strong> applications submitted (primary metric), with approval estimates clearly separated from measured counts.</li>
+    <li><strong>Known limits, stated up front:</strong> ZIP codes straddle county lines; some users will click from outside the assessment area; session-to-application rates are the pilot's measurement target, not a promise. The first report quantifies each of these rather than hiding them.</li>
+  </ul>
+  <div class="disclose"><strong>Why we report this way.</strong> Payment is never tied to enrollment counts, ads are factual rather than persuasive, and projections are labeled until they are measurements. A report your examiner can trust is worth more to both of us than a bigger number.</div>
+  <div class="pagefoot">Assumption set version [[assumptions_version]] — conservative/mid-range scenario parameters available on request as a machine-readable file with source citations.</div>
+</div>
+
+<!-- PAGE 5 — methodology & disclosures -->
+<div class="page">
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 5 of 5</div></div>
+  <h2 class="pagehead">Methodology &amp; disclosures</h2>
+  <div class="method">
+    <h3>Eligibility and enrollment estimates</h3>
+    <ul>
+      <li>Modeled from the 2023 American Community Survey 1-Year Public Use Microdata Sample (PUMS) with a gradient-boosted classifier (cross-validated AUC 0.80), allocated from Public Use Microdata Areas to counties by a tract-weighted crosswalk.</li>
+      <li><strong>Known bias, disclosed:</strong> the model uses a gross-income proxy for SNAP eligibility, and ACS respondents under-report benefit receipt. Both effects push the estimated eligible-unenrolled population <em>upward</em>. Figures here should be read as an upper-range estimate of unmet need.</li>
+      <li>County-level estimates carry sampling uncertainty from 1-Year ACS data; the dollar range on page 1 reflects household-size assumptions ([[hh_high]]–[[hh_low]] persons per eligible household), not a statistical confidence interval.</li>
+    </ul>
+    <h3>Geography</h3>
+    <ul>
+      <li>Assessment area as delineated in [[bank_name]]'s [[pe_date]] CRA Performance Evaluation ([[regulator]]): [[aa_counties_list]]. Map shows the assessment area in regional context at county grain.</li>
+    </ul>
+    <h3>Benefit figures</h3>
+    <ul>
+      <li>Average monthly benefit of $[[benefit_monthly]] per household: USDA Food and Nutrition Service, FY2024 national average. Annualized at 12 months.</li>
+    </ul>
+    <h3>Data vintages</h3>
+    <ul>
+      <li>Need model: 2023 ACS 1-Year PUMS · County allocation: 2020 tract-to-PUMA crosswalk · Benefit averages: USDA FY2024 · Assessment area: [[pe_date]] performance evaluation · Document generated [[prepared_date]].</li>
+    </ul>
+  </div>
+  <div class="pagefoot">[[org_name]] · [[status_line]] · Contact: [[contact_name]], [[contact_email]][[contact_phone_line]] · Determination letter and full methodology available on request.</div>
+</div>
+</body></html>

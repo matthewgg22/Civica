@@ -722,3 +722,53 @@ Helper: `pillarReductionAtFullEngagement()` returns the per-pillar pp breakdown 
 **Effort:** S (human ~1hr / CC ~15min)
 **Priority:** P3
 **Depends on:** access_requests table created (T3 in auth-streamline PR).
+
+---
+
+## TODO-55 — CRA: full public named bank ranking (post-verdict)
+
+**What:** Upgrade the gated CA SNAP-Gap Bank Index to a fully public, named, ranked list once the 3-week CRA demand loop returns a verdict. Includes methodology page hardened for scrutiny and a press/advocacy angle.
+**Why:** Maximum inbound/press leverage, but publicly ranking prospects before any relationship exists reads adversarial. Gated variant ships first (CEO plan 2026-08-22-cra-benefits-access-pilot).
+**Effort:** M
+**Priority:** P3
+**Depends on:** Gated index shipped; demand verdict from officer calls.
+
+## TODO-56 — CRA: Approach B ad-to-report pipeline
+
+**What:** Zip→tract geocoding, KPI events from Demeter audit sink, Google Ads ops (Meta radius fallback), quarterly attribution-report generator, per-bank parameterization.
+**Why:** Only build after a funded yes — design doc 2026-08-22 explicitly defers this (report-first validation).
+**Effort:** L
+**Priority:** P2 once funded, not before
+**Depends on:** A signed bank grant or sponsorship.
+
+## TODO-57 — CRA: real estimated-benefit-$ methodology
+
+**What:** Replace the illustrative formula (applications started × avg CA allotment × 12) with a defensible methodology agreed with the grantor; document assumptions.
+**Why:** Open Question 5 of the CRA design doc; required before any REAL (non-mock) report ships to a bank.
+**Effort:** S
+**Priority:** P2 once funded
+**Depends on:** TODO-56 pipeline emitting real KPIs.
+
+## TODO-58 — CRA: tract-level + MA gap modeling (post-demand-verdict)
+
+**What:** Re-derive CA SNAP-gap estimates at census-tract level (new estimation approach over ACS tract tables) and build a comparable MA eligible-but-unenrolled model, replacing the raw-S2201 stopgap. Unifies methodology across states.
+**Why:** The current `ca-snap-gap` data is PUMA-level (281 PUMAs) — CRA artifact claims are footprint-level for honesty. This unlocks true tract-level claims if a bank asks, and removes the CA-modeled vs MA-raw methodology fork.
+**Effort:** L (human ~2wks / CC ~2-3 days)
+**Priority:** P3 — gated on a bank asking for tract precision or a funded pilot.
+**Depends on:** CRA demand verdict (design doc 2026-08-22). Note: TODO-55's gated index is also cut from round one per the outside-voice review — it and this share the post-verdict gate.
+
+## TODO-59 — CRA: FDIC SOD automation (when target list scales)
+
+**What:** Automated branch/footprint ingestion from FDIC Summary of Deposits with the four known traps handled: STCNTYBR read as string (leading-zero CA FIPS), schema pinned to the current BankFind Suite export via a real pull, June-30 as-of date printed (not pull date; data is ~14 months stale by late summer), SERVTYPE limited-service filtering, CERT-active/merger check via BankFind API.
+**Why:** Manual PE-PDF reading (round-one approach, docs/designs/cra-artifact-build-spec.md) stops scaling around 10-15 banks.
+**Effort:** M (human ~2d / CC ~half day)
+**Priority:** P3 — gated on demand verdict + target list outgrowing manual reads.
+**Depends on:** CRA demand verdict; tools/cra-artifact/ generator existing.
+
+## TODO-60 — Minimal Civica Torrey org page (funder diligence landing spot)
+
+**What:** Single static page: about, board/officers, IRS determination letter PDF, programs (Benefits Access Program + Demeter as engine), contact. Then add its URL to the CRA PDF footer on next regeneration.
+**Why:** Design review Pass 7 (2026-08-22) chose email-only PDF footer for round one; this is the upgrade. Patches the no-990 credibility gap for ALL funder outreach (foundation queue included). Embedded decision: subdomain vs separate domain.
+**Effort:** S (human ~half day / CC ~1h)
+**Priority:** P2
+**Depends on:** Nothing — ship any time.
