@@ -18,6 +18,19 @@
 // edits this table next.
 export const T = {
   en: {
+    // ASSENT, not decoration. Terms in a footer link is browsewrap, which courts
+    // routinely refuse to enforce — and an unenforceable agreement takes the
+    // arbitration clause and every disclaimer down with it. Notice has to be
+    // conspicuous and ADJACENT to the act that manifests agreement, which for an
+    // anonymous chat is sending the first message. Do not move this into the
+    // footer, and do not shrink it below the disclaimer beside it.
+    termsNotice: {
+      before: 'By sending a message you agree to our ',
+      terms: 'Terms',
+      between: ' and ',
+      privacy: 'Privacy Policy',
+      after: '.',
+    },
     title: "Demeter",
     tagline: "Verified answers about SNAP — for any state.",
     inputPlaceholder: "Happy to answer any questions about SNAP…",
@@ -223,6 +236,19 @@ export const T = {
     },
   },
   es: {
+    // ASSENT, not decoration. Terms in a footer link is browsewrap, which courts
+    // routinely refuse to enforce — and an unenforceable agreement takes the
+    // arbitration clause and every disclaimer down with it. Notice has to be
+    // conspicuous and ADJACENT to the act that manifests agreement, which for an
+    // anonymous chat is sending the first message. Do not move this into the
+    // footer, and do not shrink it below the disclaimer beside it.
+    termsNotice: {
+      before: 'Al enviar un mensaje, aceptas nuestros ',
+      terms: 'Términos',
+      between: ' y la ',
+      privacy: 'Política de Privacidad',
+      after: '.',
+    },
     title: "Demeter",
     tagline: "Respuestas verificadas sobre SNAP — para cualquier estado.",
     inputPlaceholder: "Con gusto respondo cualquier pregunta sobre SNAP…",
@@ -358,6 +384,19 @@ export const T = {
     },
   },
   vi: {
+    // ASSENT, not decoration. Terms in a footer link is browsewrap, which courts
+    // routinely refuse to enforce — and an unenforceable agreement takes the
+    // arbitration clause and every disclaimer down with it. Notice has to be
+    // conspicuous and ADJACENT to the act that manifests agreement, which for an
+    // anonymous chat is sending the first message. Do not move this into the
+    // footer, and do not shrink it below the disclaimer beside it.
+    termsNotice: {
+      before: 'Bằng cách gửi tin nhắn, bạn đồng ý với ',
+      terms: 'Điều khoản',
+      between: ' và ',
+      privacy: 'Chính sách quyền riêng tư',
+      after: ' của chúng tôi.',
+    },
     title: "Demeter",
     tagline: "Câu trả lời đã được xác minh về SNAP — cho mọi tiểu bang.",
     inputPlaceholder: "Rất sẵn lòng giải đáp mọi câu hỏi về SNAP…",
@@ -492,6 +531,19 @@ export const T = {
     },
   },
   zh: {
+    // ASSENT, not decoration. Terms in a footer link is browsewrap, which courts
+    // routinely refuse to enforce — and an unenforceable agreement takes the
+    // arbitration clause and every disclaimer down with it. Notice has to be
+    // conspicuous and ADJACENT to the act that manifests agreement, which for an
+    // anonymous chat is sending the first message. Do not move this into the
+    // footer, and do not shrink it below the disclaimer beside it.
+    termsNotice: {
+      before: '发送消息即表示您同意我们的',
+      terms: '服务条款',
+      between: '和',
+      privacy: '隐私政策',
+      after: '。',
+    },
     title: "Demeter",
     tagline: "经过核实的 SNAP 答案——适用于任何州。",
     inputPlaceholder: "关于 SNAP 的任何问题，都很乐意解答…",

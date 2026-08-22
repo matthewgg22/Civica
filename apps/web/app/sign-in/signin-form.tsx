@@ -258,6 +258,24 @@ function SignInForm() {
             {forConversation ? dt.emailDisclosure : snapT(locale, "signin_email_disclosure")}
           </p>
 
+          {/* Sign-in-wrap. Adjacent to the button that creates the account,
+              because notice buried elsewhere is not assent. Demeter branch only:
+              the Civica application flow is governed by its own terms, which
+              these documents deliberately do not cover. */}
+          {forConversation && (
+            <p className="signin-disclosure">
+              {dt.termsAssent.before}
+              <a className="signin-link" href="/terms">
+                {dt.termsAssent.terms}
+              </a>
+              {dt.termsAssent.between}
+              <a className="signin-link" href="/privacy">
+                {dt.termsAssent.privacy}
+              </a>
+              {dt.termsAssent.after}
+            </p>
+          )}
+
           {linkError && (
             <div className="signin-error" role="alert">
               {linkError}

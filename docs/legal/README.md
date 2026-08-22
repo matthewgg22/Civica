@@ -69,40 +69,55 @@ that still contains a bracketed placeholder.
 
 ---
 
-## What counsel needs to decide
+## Review status
 
-1. **Arbitration, §13.** Included in standard form — class waiver, jury waiver,
-   mass-dispute procedure, 30-day opt-out — at the operator's explicit
-   direction. The tradeoff was raised before drafting: binding a population
-   applying for food assistance out of court carries reputational risk and can
-   disqualify us from legal-aid referral partnerships, and the fee-free nature
-   of the service means there is little revenue exposure being protected.
-   Please confirm the clause is enforceable as drafted, particularly §13.9 and
-   the §13.12 public-injunctive-relief carve-out.
+A full review pass has been done and its findings applied — see
+**[COUNSEL-REVIEW.md](COUNSEL-REVIEW.md)** for the memo: applicability analysis,
+ten findings ranked by severity, and what remains open. That memo is not legal
+advice and was not written by a lawyer; three items in it are marked
+**[NEEDS COUNSEL]** and genuinely require a bar-admitted attorney.
 
-2. **The $100 liability cap** (§11) against a service whose failure mode is
-   telling someone they may not qualify when they do. Standard, but worth your
-   view on how it reads next to §2.
+The headline from that review, because it reframes everything else: **FTC Act §5
+applies at every size with no threshold**, while essentially none of the state
+privacy statutes are triggered yet. So the enforceable constraint is not "did we
+comply with CCPA" — it is "is every sentence we voluntarily wrote actually true."
+That is why the drafting throughout prefers narrow-and-true over broad-and-warm,
+and why the retention claim is gated in code rather than merely flagged.
 
-3. **No age floor for asking** (§3). Pi and OpenEvidence both bar under-18s.
-   Demeter deliberately does not, because SNAP is a household benefit and
-   teenagers are frequently the household member handling paperwork. Accounts
-   remain closed to under-13s. Please confirm the COPPA posture.
+Two findings were serious enough to name here:
 
-4. **The immigration section** of the Privacy Policy. It states that we do not
-   share with immigration authorities and that asking a question creates no
-   government record. Both are true today. Please advise on how to phrase the
-   response to legal process so the commitment stays accurate under subpoena.
+1. **There was no assent mechanism.** Terms reachable only from a footer link is
+   browsewrap. If the agreement does not form, *nothing in it binds* — including
+   the arbitration clause, the liability cap, and the "not an eligibility
+   determination" disclaimer. Fixed with conspicuous notice at the composer and
+   at sign-in, in four languages, pinned by tests.
 
-5. **SNAP confidentiality.** The Privacy Policy references 7 U.S.C. §2020(e)(8)
-   and 7 C.F.R. §272.1(c) as applying where we handle information under an
-   agreement with an agency or partner. Please confirm the framing.
+2. **Massachusetts 201 CMR 17.00** requires a Written Information Security
+   Program from anyone holding personal information about a MA resident, with no
+   size threshold. It does not exist. It is not a documents fix.
 
-6. **Entity details.** `Civica Technologies LLC` is used throughout. State of
-   incorporation is not stated anywhere; governing law is set to California
-   (§14). Confirm both.
+## Still open
 
----
+**Needs a licensed attorney:** the assent implementation as rendered and §13's
+enforceability; the Colorado AI Act analysis and effective date; per-state
+unauthorized-practice review if the product widens beyond information.
+
+**Needs you:**
+
+1. **Entity.** `Civica Technologies LLC` is used throughout, per instruction —
+   but the 501(c)(3) is recorded elsewhere as `Civica Torrey Inc`. Which entity
+   operates Demeter? Governing law, the §13.2 notice address, and the WISP
+   obligation all follow from the answer. One constant (`ENTITY` in
+   `apps/web/lib/legal/types.ts`) plus a regenerate.
+2. **`[MAILING ADDRESS]`** in Terms §13.2 — the only unfilled placeholder.
+3. **Mailboxes.** `privacy@civica.app` and `legal@civica.app` must exist.
+4. **DPAs** with Anthropic, Supabase, Vercel, Resend and Sentry. The policy says
+   these vendors are contractually bound; that has to be true.
+5. **The WISP**, and **the retention job (#926)** before anything leaves draft.
+
+Decisions already made and recorded, not open: arbitration in standard form
+(operator's explicit direction, tradeoff raised first); no age floor for asking;
+English-only legal text for now; scope limited to the Demeter chat surfaces.
 
 ## The data-flow map these documents describe
 

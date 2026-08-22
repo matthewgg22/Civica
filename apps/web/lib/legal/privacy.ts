@@ -40,7 +40,7 @@ export const PRIVACY_POLICY: LegalDocument = {
         {
           kind: "callout",
           tone: "promise",
-          text: "We are not the government. We do not report you to any agency, and we do not give what you tell us to immigration authorities.",
+          text: "We are not the government. We do not report you to anyone, and we never volunteer what you tell us to immigration authorities. If we were ever legally forced to hand something over, there is almost nothing to hand: we do not store your name or your status, and the chat is anonymous by design.",
         },
         {
           kind: "callout",
@@ -69,6 +69,29 @@ export const PRIVACY_POLICY: LegalDocument = {
         {
           kind: "p",
           text: "It does not cover the separate Civica application tool, which collects documents and sends an application packet to a state agency. That tool has its own terms, and this policy does not describe it.",
+        },
+        {
+          kind: "p",
+          text: "Demeter is built for people in the United States, because SNAP is a United States program. We do not offer or direct it to people in the European Economic Area, the United Kingdom, or Switzerland, and it is not designed to meet those regions' data protection rules.",
+        },
+      ],
+    },
+    {
+      id: "sensitive",
+      heading: "Sensitive information",
+      blocks: [
+        {
+          kind: "p",
+          text: "Some of what people mention while asking about SNAP is sensitive by any measure, and treated as sensitive by several state privacy laws: immigration status, disability, health conditions, and the fact that you are seeking public assistance at all.",
+        },
+        {
+          kind: "callout",
+          tone: "promise",
+          text: "We do not use sensitive information to infer characteristics about you, to build a profile, to target anything at you, or for any purpose other than answering the question in front of us.",
+        },
+        {
+          kind: "p",
+          text: "We do not ask for any of it. The structured-identifier filter runs on everything before it is stored. And the record we keep is not connected to your identity, because for anonymous chat we never had one.",
         },
       ],
     },
@@ -133,7 +156,11 @@ export const PRIVACY_POLICY: LegalDocument = {
         },
         {
           kind: "p",
-          text: "The filtered question is then sent to Anthropic, the company whose AI model writes Demeter's answers. Under our agreement with Anthropic, they process the question to produce an answer and do not use it to train their models.",
+          text: "The filtered question is then sent to Anthropic, the company whose AI model writes Demeter's answers. Under the commercial terms we use, Anthropic processes the question to produce an answer and does not use it to train its models.",
+        },
+        {
+          kind: "p",
+          text: "Anthropic keeps its own short-term copy for abuse prevention, on its own schedule and under its own terms. We tell you this because our deletion schedule below applies to our systems, and it would be misleading to describe it as if it reached everyone's.",
         },
         {
           kind: "p",
@@ -210,7 +237,7 @@ export const PRIVACY_POLICY: LegalDocument = {
         {
           kind: "callout",
           tone: "promise",
-          text: "We are not a government agency. We are not part of the Department of Homeland Security, USCIS, or any immigration authority, and we do not share information with them.",
+          text: "We are not a government agency. We are not part of the Department of Homeland Security, USCIS, or any immigration authority, and we never voluntarily share information with them.",
         },
         {
           kind: "p",
@@ -219,6 +246,10 @@ export const PRIVACY_POLICY: LegalDocument = {
         {
           kind: "p",
           text: "Asking Demeter a question is not an application, is not reported to anyone, and creates no record with any government agency.",
+        },
+        {
+          kind: "p",
+          text: "We will not promise you something we could be forced to break. Any company can be served with a valid court order. What we can promise is that we have built this so there is little to take: no name, no immigration status, no reversible IP address, and — for anyone using the chat without an account — nothing tying a question to a person at all. We would require valid legal process, give only what it actually compels, and challenge anything overbroad. See the next section.",
         },
       ],
     },
@@ -286,7 +317,21 @@ export const PRIVACY_POLICY: LegalDocument = {
         },
         {
           kind: "p",
-          text: "Counts and measurements that identify nobody — how many questions were asked, how often citations verified — are kept indefinitely, because they are how we show the service works.",
+          text: "Counts and measurements that identify nobody — how many questions were asked, how often citations verified — are kept indefinitely, because they are how we show the service works. We keep that data in de-identified form, we do not attempt to re-identify it, and we require anyone we share it with to do the same.",
+        },
+      ],
+    },
+    {
+      id: "security",
+      heading: "Security, and what happens if we get it wrong",
+      blocks: [
+        {
+          kind: "p",
+          text: "Information is encrypted in transit and at rest. Saved conversations are walled off at the database level rather than only in our code. Sign-in uses an emailed link, so there is no password of yours for us to lose. Access to the accuracy record is limited to the people who review answers for accuracy.",
+        },
+        {
+          kind: "p",
+          text: "No system is perfectly secure, and we will not claim otherwise. If personal information is ever exposed in a way that puts you at risk, we will notify you and the authorities we are required to notify, without unreasonable delay, and tell you what happened and what to do about it.",
         },
       ],
     },
@@ -304,7 +349,16 @@ export const PRIVACY_POLICY: LegalDocument = {
         },
         {
           kind: "p",
-          text: "Depending on where you live, you may have the right to know what personal information we hold about you, to get a copy, to correct it, to delete it, and not to be treated differently for asking. To exercise any of these rights, email us at " + CONTACT.privacy + ".",
+          text: "Some states give their residents the right to know what personal information a company holds about them, to get a copy, to correct it, to delete it, and not to be treated differently for asking.",
+        },
+        {
+          kind: "callout",
+          tone: "promise",
+          text: "We extend those rights to everyone who uses Demeter, whatever state you live in and whatever your immigration status. We are not going to ask you to prove you live somewhere before we will delete your data.",
+        },
+        {
+          kind: "p",
+          text: "To exercise any of them, email us at " + CONTACT.privacy + ". We will respond within 45 days. If we need to refuse a request, we will tell you why, and you can ask us to reconsider by replying to that answer.",
         },
         {
           kind: "p",
@@ -336,7 +390,11 @@ export const PRIVACY_POLICY: LegalDocument = {
         },
         {
           kind: "p",
-          text: "But we do not knowingly collect personal information from children under 13, and accounts are not available to them. If you believe a child under 13 has given us personal information, email " + CONTACT.privacy + " and we will delete it.",
+          text: "Demeter is a general-audience service about a household benefit program. It is not designed for or directed to children, it carries no advertising, and it has no features meant to appeal to them.",
+        },
+        {
+          kind: "p",
+          text: "We do not knowingly collect personal information from children under 13, and accounts are not available to them. If you believe a child under 13 has given us personal information, email " + CONTACT.privacy + " and we will delete it promptly.",
         },
       ],
     },

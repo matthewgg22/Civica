@@ -687,6 +687,16 @@ button {
   margin: var(--civica-space-md) 0 0;
   line-height: 1.5;
 }
+/* Links inside the disclosures under the sign-in button. UNDERLINED and set in
+   the body ink rather than the muted grey around them: this is the notice that
+   makes the Terms binding, and notice a reader cannot see they can follow is
+   not notice. */
+.signin-link {
+  color: var(--civica-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.signin-link:hover { color: var(--civica-pine); }
 
 /* "or" rule between the Google button and the email form. The line is drawn
    with a border on the pseudo-elements so it never overlaps the word. */

@@ -14,7 +14,9 @@
 
 ## 1. This agreement
 
-These Terms of Service ("Terms") govern your use of Demeter, a free service operated by Civica Technologies LLC ("Civica", "we", "us") that answers questions about the Supplemental Nutrition Assistance Program ("SNAP"). By using Demeter you agree to these Terms. If you do not agree, please do not use it.
+These Terms of Service ("Terms") govern your use of Demeter, a free service operated by Civica Technologies LLC ("Civica", "we", "us") that answers questions about the Supplemental Nutrition Assistance Program ("SNAP").
+
+You agree to these Terms when you send Demeter a message or create an account. We tell you so at both of those moments, with a link to this page, rather than burying it in a footer and calling that agreement. If you do not agree, please do not use Demeter — and you can still get the same information from your state SNAP agency or by calling 211.
 
 Our Privacy Policy is part of these Terms and describes what we collect and what we do not.
 
@@ -29,6 +31,8 @@ Demeter is an information service. It explains the rules, cites where they come 
 Demeter uses artificial intelligence and can be wrong. It can misread a rule, miss a rule your state applies, or be out of date. Do not decide whether to apply based only on what Demeter tells you. If Demeter suggests you may not qualify, you are still entitled to apply and to receive a decision from your agency — applying is free, and the agency decides, not us.
 
 Demeter does not give legal advice and using it does not create an attorney-client relationship. For advice about your specific case, contact your state SNAP agency, a local legal aid organization, or a community organization that helps with benefits.
+
+SNAP rules let you name an authorized representative to act for you with your agency. Demeter is not one, and using it does not make us one. We do not act for you, speak for you, or represent you to any agency.
 
 ## 3. Who can use Demeter
 
@@ -100,7 +104,9 @@ These limits do not apply to liability that cannot be limited under applicable l
 
 ## 12. Indemnification
 
-If someone brings a claim against us because of how you used Demeter or because you violated these Terms or someone else's rights, you agree to defend and indemnify us against that claim and its reasonable costs, to the extent permitted by law. This does not apply to claims arising from our own conduct.
+If you misuse Demeter — by breaking the rules in Section 6, by violating the law, or by infringing someone else's rights — and a third party brings a claim against us because of it, you agree to defend and indemnify us against that claim and its reasonable costs, to the extent permitted by law.
+
+This does not apply to ordinary use of Demeter. Asking questions, saving a conversation, emailing yourself an outline, or relying on an answer that turned out to be wrong are not things you owe us anything for. It also does not apply to claims arising from our own conduct.
 
 ## 13. Dispute resolution and binding arbitration
 
@@ -132,7 +138,9 @@ If someone brings a claim against us because of how you used Demeter or because 
 
 ## 14. Governing law and venue
 
-These Terms are governed by the laws of the State of California, without regard to its conflict of laws rules, except where federal law controls. For any dispute not subject to arbitration, you and Civica consent to the exclusive jurisdiction of the state and federal courts located in California. Nothing here takes away rights you have under the mandatory law of the place you live.
+These Terms are governed by the laws of the Commonwealth of Massachusetts, without regard to its conflict of laws rules, except where federal law controls. For any dispute not subject to arbitration, you and Civica consent to the exclusive jurisdiction of the state and federal courts located in Massachusetts.
+
+Nothing in these Terms takes away a right you have under the mandatory consumer-protection law of the state where you live, and nothing in them prevents you from reporting a concern to a state attorney general, a federal agency, or your state SNAP agency.
 
 ## 15. Other terms
 
@@ -142,6 +150,9 @@ These Terms are governed by the laws of the State of California, without regard 
 - Severability. If a provision is unenforceable, it is limited or removed to the minimum extent necessary and the rest remains in effect.
 - Entire agreement. These Terms and the Privacy Policy are the entire agreement between you and Civica about Demeter.
 - Notices. We may give you notice by posting on the site or, if you have an account, by email. You give us notice at legal@civica.app.
+- No third-party beneficiaries. These Terms are between you and Civica. They do not give anyone else rights to enforce them.
+- Email. We send only the messages the service needs to work — your sign-in link, and an outline if you ask for one. We do not send marketing email. If that ever changes, it will be something you opt into, with a working unsubscribe link.
+- No agency relationship. Nothing here makes you and Civica partners, employer and employee, or agents of one another.
 
 ## 16. Contact
 
