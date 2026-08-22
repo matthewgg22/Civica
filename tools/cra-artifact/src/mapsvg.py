@@ -80,8 +80,11 @@ def regional_map_svg(aa_counties, metrics, width=560, height=430):
               for ring in _rings(geoms[c]) for p in ring]
     alons, alats = [p[0] for p in aa_pts], [p[1] for p in aa_pts]
     cx, cy = (min(alons) + max(alons)) / 2, (min(alats) + max(alats)) / 2
-    half_w = max((max(alons) - min(alons)) / 2, 0.2) * 2.2
-    half_h = max((max(alats) - min(alats)) / 2, 0.2) * 2.2
+    # Single-county AAs need generous surrounding context (2.2x); multi-county
+    # AAs already are the context — expand just enough for neighbor slivers.
+    expand = 2.2 if len(aa_counties) == 1 else 1.15
+    half_w = max((max(alons) - min(alons)) / 2, 0.2) * expand
+    half_h = max((max(alats) - min(alats)) / 2, 0.2) * expand
     lons = [cx - half_w, cx + half_w]
     lats = [cy - half_h, cy + half_h]
     lat0 = math.radians(cy)
@@ -91,10 +94,13 @@ def regional_map_svg(aa_counties, metrics, width=560, height=430):
     sx = (width - 2 * pad) / (maxx - minx)
     sy = (height - 2 * pad) / (maxy - miny)
     s = min(sx, sy)
+    # Center the fitted content in the box (min-scale fit leaves slack on one axis).
+    ox = (width - (maxx - minx) * s) / 2
+    oy = (height - (maxy - miny) * s) / 2
 
     def project(lon, lat):
-        x = pad + (lon * math.cos(lat0) - minx) * s
-        y = pad + (maxy - lat) * s
+        x = ox + (lon * math.cos(lat0) - minx) * s
+        y = oy + (maxy - lat) * s
         return f"{x:.1f},{y:.1f}"
 
     shapes = []

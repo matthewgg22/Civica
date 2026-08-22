@@ -3,13 +3,89 @@
     "bank_irvine": {
       "cert": "59296",
       "name": "Bank Irvine",
-      "aa_counties": ["Orange"],
+      "aa_counties": [
+        "Orange"
+      ],
       "pe_date": "2024-10-15",
       "pe_url": "https://crapes.fdic.gov/publish/2024/59296_241015.PDF",
       "regulator": "FDIC",
       "ask_usd": 15000,
       "verified": false,
-      "verify_note": "AA read from the FDIC PE by research agent 2026-08-22 — Matthew must re-read the PE and flip verified:true before any send. Branch list check on bankirvine.com also required (PE is from 10/2024)."
+      "verify_note": "AA read from the FDIC PE by research agent 2026-08-22 \u2014 Matthew must re-read the PE and flip verified:true before any send. Branch list check on bankirvine.com also required (PE is from 10/2024)."
+    },
+    "hanmi_bank": {
+      "cert": "24170",
+      "name": "Hanmi Bank",
+      "aa_counties": [
+        "Los Angeles",
+        "Orange",
+        "San Diego",
+        "San Francisco",
+        "Santa Clara"
+      ],
+      "aa_note": " (California assessment areas only; Hanmi's TX/IL/NJ-NY/VA assessment areas are outside this document's scope)",
+      "pe_date": "2023-06-05",
+      "pe_url": "https://crapes.fdic.gov/publish/2023/24170_230606.PDF",
+      "regulator": "FDIC",
+      "ask_usd": 30000,
+      "verified": false,
+      "verify_note": "CA counties from PE p.12 (agent-read 2026-08-22): LA+Orange full-scope + SD/SF/Santa Clara limited-scope, all whole counties. Multi-state bank; document covers CA only. Prior PE (2021) was Needs to Improve. FDIC Q3 2026 exam window."
+    },
+    "five_star_bank": {
+      "cert": "35361",
+      "name": "Five Star Bank",
+      "aa_counties": [
+        "El Dorado",
+        "Placer",
+        "Sacramento",
+        "Yolo",
+        "Yuba",
+        "Sutter",
+        "Butte",
+        "Shasta"
+      ],
+      "pe_date": "2024-07-22",
+      "pe_url": "https://crapes.fdic.gov/publish/2024/35361_240722.PDF",
+      "regulator": "FDIC",
+      "ask_usd": 30000,
+      "verified": false,
+      "verify_note": "From PE p.4 (agent-read 2026-08-22): Sacramento AA (El Dorado, Placer, Sacramento, Yolo, Yuba, Sutter) + Chico AA (Butte) + Redding AA (Shasta, limited-scope). FDIC Q4 2026 exam."
+    },
+    "bank_of_marin": {
+      "cert": "32779",
+      "name": "Bank of Marin",
+      "aa_counties": [
+        "Marin",
+        "Napa",
+        "San Francisco",
+        "Sonoma",
+        "Sacramento",
+        "Placer",
+        "Amador"
+      ],
+      "aa_note": " (Alameda County, a partial-county assessment area in the bank's PE, is excluded from all figures \u2014 county-level data would overstate a tract-defined area)",
+      "pe_date": "2023-11-06",
+      "pe_url": "https://crapes.fdic.gov/publish/2023/32779_231106.PDF",
+      "regulator": "FDIC",
+      "ask_usd": 15000,
+      "verified": false,
+      "verify_note": "From PE p.4 (agent-read 2026-08-22). CERT is 32779 (NOT 21956 = Montecito Bank & Trust). Alameda is PARTIAL (10-mile-radius tracts), deliberately EXCLUDED (conservative). Formal annual grant program. FDIC Q3 2026 exam."
+    },
+    "american_business_bank": {
+      "cert": "34788",
+      "name": "American Business Bank",
+      "aa_counties": [
+        "Los Angeles",
+        "Orange",
+        "San Bernardino",
+        "Riverside"
+      ],
+      "pe_date": "2024-01-29",
+      "pe_url": "https://crapes.fdic.gov/publish/2024/34788_240129.PDF",
+      "regulator": "FDIC",
+      "ask_usd": 30000,
+      "verified": false,
+      "verify_note": "From PE p.4 (agent-read 2026-08-22): four whole counties (LA CSA). NOT a designated wholesale bank \u2014 Large Institution procedures; one full-service branch + LPOs. FDIC Q4 2026 exam."
     }
   }
 }

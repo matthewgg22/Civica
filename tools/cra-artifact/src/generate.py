@@ -102,8 +102,9 @@ def build_values(bank, assumptions, org, metrics):
         "bank_name": bank["name"],
         "regulator": bank["regulator"],
         "pe_date": bank["pe_date"],
-        "aa_counties_list": ", ".join(bank["aa_counties"]) + " County"
-                             + ("ies" if len(bank["aa_counties"]) > 1 else ""),
+        "aa_counties_list": (", ".join(bank["aa_counties"])
+                             + (" Counties" if len(bank["aa_counties"]) > 1 else " County")
+                             + bank.get("aa_note", "")),
         "aa_label": aa_label,
         "prepared_date": datetime.date.today().strftime("%B %Y"),
         "headline_unenrolled": fmt_int(round(need["unenrolled"], -3)),
