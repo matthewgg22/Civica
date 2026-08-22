@@ -49,10 +49,10 @@ Font.register({
 // own copy, same pattern the old file already used.
 const TERRACOTTA = "#C0553B";
 const TERRACOTTA_DEEP = "#8E3A26";
-const INK = "#241E1A";
-const BODY = "#55504C";
-const MUTED = "#6E655E";
-const RULE = "#E3E0DB";
+const INK = "#1F2429";
+const BODY = "#494F56";
+const MUTED = "#646C75";
+const RULE = "#E2E5E9";
 
 const styles = StyleSheet.create({
   page: { padding: "0.9in", fontSize: 11, lineHeight: 17 / 11, color: INK, fontFamily: "Newsreader" },

@@ -46,7 +46,7 @@ import { alternateLanguages, askUrl } from "../../../lib/i18n/routes";
 import { askStructuredData, EN_TITLE, EN_DESCRIPTION } from "./structured-data";
 
 /** The browser frame matches the paper (vercel-guidelines finding 4). */
-export const viewport = { themeColor: "#F7F6F4" };
+export const viewport = { themeColor: "#F5F6F8" };
 
 export const metadata: Metadata = {
   title: EN_TITLE,
