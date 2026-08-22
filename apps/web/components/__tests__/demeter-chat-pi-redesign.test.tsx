@@ -111,11 +111,20 @@ describe("the sidebar — the tracking panel, open by default", () => {
   it("keeps a state picker OUTSIDE the drawer for narrow screens", () => {
     // REGRESSION (caught by the mobile-first e2e suite): moving the tracking
     // panel into the drawer buried the state control behind a closed overlay
-    // on phones. The state is the fact every figure depends on — a second
-    // picker instance lives in the conversation column, and CSS shows
-    // exactly one of the two at any width.
+    // on phones. The state is the fact every figure depends on — on narrow
+    // viewports a picker instance renders in the conversation column
+    // instead, and exactly ONE instance ever exists in the DOM (state-driven,
+    // not CSS-hidden: two controls in the accessibility tree is two
+    // controls, whatever the stylesheet says).
+    vi.stubGlobal("matchMedia", (q: string) => ({
+      matches: /max-width:\s*900px/.test(q),
+      media: q, addEventListener: () => {}, removeEventListener: () => {},
+      addListener: () => {}, removeListener: () => {}, onchange: null, dispatchEvent: () => false,
+    }));
     const { container } = mountChat();
     expect(container.querySelector(".demeter__mobilepicker .dmst")).toBeTruthy();
+    expect(container.querySelectorAll(".dmst").length).toBe(1);
+    vi.unstubAllGlobals();
   });
 
   it("the sidebar brand links back to the main page", () => {

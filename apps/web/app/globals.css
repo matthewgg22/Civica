@@ -7534,11 +7534,9 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 /* One picker visible at any width: the sidebar's instance from 901px, the
    in-column instance below it — where the drawer starts closed and the
    state must not hide behind it (mobile e2e pins this). */
-.demeter__mobilepicker { display: none; }
-@media (max-width: 900px) {
-  .demeter__mobilepicker { display: block; margin-bottom: 0.75rem; }
-  .demeter__sidebar .dmst { display: none; }
-}
+/* Rendered only on narrow viewports (state-driven — see narrowViewport in
+   DemeterChat: one picker instance in the DOM at any width). */
+.demeter__mobilepicker { margin-bottom: 0.75rem; }
 .demeter__sidebarlink {
   font-size: 0.95rem; color: var(--demeter-ink); text-decoration: none;
   padding: 0.6rem 0.7rem; border-radius: var(--demeter-radius-input);

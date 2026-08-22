@@ -701,6 +701,21 @@ export function DemeterChat({
     return () => window.removeEventListener("keydown", onKey);
   }, [sidebarOpen]);
   const signInHref = `/sign-in?next=${encodeURIComponent(lang === "en" ? "/chat" : `/${lang}/chat`)}`;
+  /** Narrow-viewport flag for the in-column picker instance. STATE, not
+   *  CSS-only: two picker instances in the DOM read as two controls to the
+   *  accessibility tree (and to every role query in the tests) even when a
+   *  stylesheet hides one — so exactly one instance ever renders. False on
+   *  the server and wherever matchMedia is missing; phones pick it up at
+   *  hydration. */
+  const [narrowViewport, setNarrowViewport] = useState(false);
+  useEffect(() => {
+    if (typeof window.matchMedia !== "function") return;
+    const mq = window.matchMedia("(max-width: 900px)");
+    setNarrowViewport(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setNarrowViewport(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   /** Emailing the outline to yourself: idle → sending → sent | signin | error.
    *  Mirrors DemeterSave's shape deliberately — they are the same decision
@@ -1622,16 +1637,18 @@ export function DemeterChat({
               decision: the picker goes first, above the transcript. Same
               lifted state as the sidebar's instance; CSS shows exactly one
               of the two at any width. */}
-          <div className="demeter__mobilepicker">
-            <DemeterStatePicker
-              states={states}
-              value={state}
-              onChange={changeState}
-              copy={t.picker}
-              hint={geoHint}
-              openSignal={openPicker}
-            />
-          </div>
+          {narrowViewport && (
+            <div className="demeter__mobilepicker">
+              <DemeterStatePicker
+                states={states}
+                value={state}
+                onChange={changeState}
+                copy={t.picker}
+                hint={geoHint}
+                openSignal={openPicker}
+              />
+            </div>
+          )}
       <div className="demeter__scroll" ref={scrollRef}>
         {!hasChat && (
           // A composed block, centred in the space rather than three buttons
@@ -2060,14 +2077,18 @@ export function DemeterChat({
             </a>
           </div>
           <div className="demeter__side">
-          <DemeterStatePicker
-            states={states}
-            value={state}
-            onChange={changeState}
-            copy={t.picker}
-            hint={geoHint}
-            openSignal={openPicker}
-          />
+          {/* Yields to the in-column instance on narrow viewports — exactly
+              one picker in the DOM at any width (see narrowViewport). */}
+          {!narrowViewport && (
+            <DemeterStatePicker
+              states={states}
+              value={state}
+              onChange={changeState}
+              copy={t.picker}
+              hint={geoHint}
+              openSignal={openPicker}
+            />
+          )}
         <DemeterWorksheet
           classification={classification}
           stateSelected={state !== null}
