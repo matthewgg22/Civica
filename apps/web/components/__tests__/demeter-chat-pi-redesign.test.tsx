@@ -108,6 +108,16 @@ describe("the sidebar — the tracking panel, open by default", () => {
     expect(container.querySelector(".demeter__head select")).toBeNull();
   });
 
+  it("keeps a state picker OUTSIDE the drawer for narrow screens", () => {
+    // REGRESSION (caught by the mobile-first e2e suite): moving the tracking
+    // panel into the drawer buried the state control behind a closed overlay
+    // on phones. The state is the fact every figure depends on — a second
+    // picker instance lives in the conversation column, and CSS shows
+    // exactly one of the two at any width.
+    const { container } = mountChat();
+    expect(container.querySelector(".demeter__mobilepicker .dmst")).toBeTruthy();
+  });
+
   it("the sidebar brand links back to the main page", () => {
     const { container } = mountChat();
     const brand = container.querySelector("#demeter-sidebar a.demeter__sbbrand")!;

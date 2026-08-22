@@ -7531,6 +7531,14 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 }
 .demeter__sidebarauth .demeter__lang { display: block; margin-bottom: 0.8rem; }
 .demeter__sidebarauth .demeter__lang-select { width: 100%; }
+/* One picker visible at any width: the sidebar's instance from 901px, the
+   in-column instance below it — where the drawer starts closed and the
+   state must not hide behind it (mobile e2e pins this). */
+.demeter__mobilepicker { display: none; }
+@media (max-width: 900px) {
+  .demeter__mobilepicker { display: block; margin-bottom: 0.75rem; }
+  .demeter__sidebar .dmst { display: none; }
+}
 .demeter__sidebarlink {
   font-size: 0.95rem; color: var(--demeter-ink); text-decoration: none;
   padding: 0.6rem 0.7rem; border-radius: var(--demeter-radius-input);

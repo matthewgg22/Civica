@@ -1614,6 +1614,24 @@ export function DemeterChat({
               row above it. Out here they started 68px above the rail and left
               "How we verify" floating alone in the right column, belonging to
               neither. In here both columns begin on the same line. */}
+          {/* THE PICKER STAYS VISIBLE ON PHONES. Moving the tracking panel
+              into the drawer buried the state control behind a closed
+              overlay on narrow screens — and the state is the fact every
+              figure in every answer depends on, so it must stay SEEN. Caught by
+              the mobile-first e2e suite (Pixel profile), which pins the old
+              decision: the picker goes first, above the transcript. Same
+              lifted state as the sidebar's instance; CSS shows exactly one
+              of the two at any width. */}
+          <div className="demeter__mobilepicker">
+            <DemeterStatePicker
+              states={states}
+              value={state}
+              onChange={changeState}
+              copy={t.picker}
+              hint={geoHint}
+              openSignal={openPicker}
+            />
+          </div>
       <div className="demeter__scroll" ref={scrollRef}>
         {!hasChat && (
           // A composed block, centred in the space rather than three buttons
