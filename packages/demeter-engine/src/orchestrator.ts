@@ -34,6 +34,7 @@ import { isVerifiedState } from "./packs";
 import { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audit";
 import { retrievalMode } from "./embeddings";
 import { detectDistress, DISTRESS_SYSTEM_ADDENDUM } from "./distress";
+import { detectCrisis, CRISIS_SYSTEM_ADDENDUM } from "./crisis";
 import { verifyNumericEquivalence } from "./numeric-check";
 import { answerInstruction, degradeWrapper, degradeLeads, type AnswerLang } from "./lang";
 import { classifyQuestionTopic } from "./form-questions";
@@ -313,6 +314,14 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   const distressed = detectDistress(lastUser);
   if (distressed) {
     systemBlocks.push({ type: "text", text: DISTRESS_SYSTEM_ADDENDUM });
+  }
+  // Crisis gate (#927) — pushed AFTER the distress addendum so it is the last
+  // instruction the model reads, and therefore the one that leads. Both can
+  // fire at once: someone thinking about suicide may also have no food, and
+  // the safety line comes first.
+  const crisis = detectCrisis(lastUser);
+  if (crisis) {
+    systemBlocks.push({ type: "text", text: CRISIS_SYSTEM_ADDENDUM(crisis) });
   }
   // Non-English answers are composed from the verified ENGLISH sources;
   // citations stay verbatim. The numeric-equivalence gate below then applies
@@ -638,6 +647,9 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     certaintyCode: verdict.code,
     retrievalMode: retrievalMode(),
     distress: distressed,
+    // #927: which crisis gate fired, so precision can be reviewed
+    // against real messages instead of guessed at.
+    crisis,
     // Summed over the whole answer, retry included — see MaeAuditRecord. Until
     // this landed, spend could not be attributed to a turn, a state, the retry
     // path, or the separate extraction call.

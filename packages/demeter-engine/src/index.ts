@@ -26,6 +26,7 @@ export { formatFreshnessFooter } from "./freshness";
 export { redactPii } from "./pii";
 export { warmupEmbeddings, semanticLayerStatus, retrievalMode } from "./embeddings";
 export { detectDistress, DISTRESS_SYSTEM_ADDENDUM } from "./distress";
+export { detectCrisis, CRISIS_SYSTEM_ADDENDUM, type CrisisKind } from "./crisis";
 export { verifyNumericEquivalence, type NumericCheckResult } from "./numeric-check";
 export { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audit";
 export { getStatePack, registeredStates, DEFAULT_STATE, type StateCode, type StatePack } from "./states";
