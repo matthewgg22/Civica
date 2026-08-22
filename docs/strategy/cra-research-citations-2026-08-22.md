@@ -2,32 +2,43 @@
 
 Compiled 2026-08-22 after a verification pass on every research claim in the CRA channel. **A claim repeated throughout this project's early drafts turned out not to exist.** This file is the standing reference so it does not recur.
 
-## The correction
+## Correction history (read this first)
 
-Earlier work in this channel referred to "an NBER study using a SNAP interview-scheduling discontinuity that measured credit outcomes for marginally-enrolled versus marginally-denied applicants." **That paper does not exist.** Two real and separate literatures were merged:
+**Round 1 (wrong):** a verification pass concluded that the remembered "NBER study using a SNAP interview-scheduling discontinuity measuring credit outcomes" did not exist, and that no study measured credit outcomes for marginally-enrolled vs. marginally-denied applicants.
 
-- The **administrative-burden discontinuity** papers are real, but their outcomes are approvals, participation, and benefit dollars — **no credit-bureau outcomes at all**.
-- The **credit-outcomes** paper is real, but it is a **Federal Reserve Board** paper using ABAWD work-requirement waivers, not interview scheduling, and it is not an NBER working paper.
+**Round 2 (correct):** the paper does exist — it was simply too recent for that pass to surface. **Homonoff, Lee & Meckel, "The Financial Consequences of Being Denied Benefit Access," NBER Working Paper 34434 (October 2025; publicized December 2025).** It is exactly the design originally described: administrative-burden variation in mandatory intake interviews, linked to credit-report data, estimating effects on marginally-excluded households.
 
-**No study anywhere measures credit outcomes for marginally-enrolled vs. marginally-denied SNAP applicants.** There is no "SNAP enrollment raises credit scores by X points" finding.
+The lesson kept: **a "not found" result from one search pass is not proof of non-existence**, especially for work published within the last year. Verify twice before writing a correction into the record.
 
 ## Cite these (verified)
 
-**1. Dodini, Larrimore & Tranfaglia — "Financial Repercussions of SNAP Work Requirements."** Federal Reserve Board FEDS 2022-030; *Journal of Public Economics* 229 (2024), DOI 10.1016/j.jpubeco.2023.105034. FRBNY/Equifax Consumer Credit Panel, 2010–2017, ~6.28M person-quarters; difference-in-differences within commuting zones plus a difference-in-discontinuities at the age-50 ABAWD cutoff.
+**1. Homonoff, Lee & Meckel — "The Financial Consequences of Being Denied Benefit Access."** NBER Working Paper 34434, October 2025. Tatiana Homonoff (NYU Wagner), Min S. Lee and Katherine Meckel (UC San Diego). **This is the primary citation for the channel** — it is the closest study in existence to what the pilot does.
+
+Design: experimental and quasi-random variation in the flexibility of mandatory SNAP intake interviews, linked to credit-report data — Los Angeles (2020–21, ~65,000 applicants, a hotline allowing applicants to schedule their own interviews) and San Francisco (2014–16, ~40,000 recertification applicants given additional time to reschedule a missed appointment).
+
+Verbatim from the abstract: *"households screened out of SNAP due to administrative barriers suffer tangible downstream economic consequences. Specifically, we find that process-related denials increase debt and delinquencies, and decrease credit scores."*
+
+Per NYU's release on the paper: households that gained access were *"less likely to end up with a delinquent credit card account, and had higher credit scores,"* and carried *"hundreds of dollars less"* debt than denied applicants.
+
+⚠️ **Exact magnitudes are not in the abstract or the press release, and the working paper is gated.** Cite the findings qualitatively as above until the full paper or its published version is in hand; then record the effect sizes here. Do not invent or estimate magnitudes for it.
+
+**Why this one matters most:** the intervention studied — reducing procedural burden at SNAP intake — is the intervention Civica Torrey runs, and the outcome measured is the outcome a bank cares about. Previous framing had to route through work-requirement research on a different population; this does not.
+
+**2. Dodini, Larrimore & Tranfaglia — "Financial Repercussions of SNAP Work Requirements."** Federal Reserve Board FEDS 2022-030; *Journal of Public Economics* 229 (2024), DOI 10.1016/j.jpubeco.2023.105034. FRBNY/Equifax Consumer Credit Panel, 2010–2017, ~6.28M person-quarters; difference-in-differences within commuting zones plus a difference-in-discontinuities at the age-50 ABAWD cutoff.
 
 When households lose SNAP access through work requirements: credit inquiries **+12.9%**, probability of a new card **+1.82 pp**, total card limit **+$392 (+9.9%)**, card balances **+$132 (+7.9%)**, probability of any past-due card **+0.48 pp**, and **application success rates fall** — distress borrowing, not improved creditworthiness. Equifax Risk Score **−1.65 points**.
 
 ⚠️ Conditions on the −1.65: it is (a) a *decline from benefit loss*, not a gain from enrollment; (b) an **intent-to-treat** estimate; (c) averaged over a proxy sample in which **only ~10% are actually affected ABAWDs**, so it is attenuated toward zero; and (d) presented by the authors as a *mechanism test*, not a headline. State all four or don't use the number. Also: figures above come from the April 2023 working-paper draft — **re-check Tables 2 and 3 against the published 2024 version before printing them**.
 
-**2. Giannella, Homonoff, Rino & Somerville — "Administrative Burden and Procedural Denials: Experimental Evidence from SNAP."** NBER WP 31239 (2023). Field experiment, **65,000 LA County applicants**: flexible applicant-initiated interviews raised approvals **+6 pp**, doubled early approvals, and raised long-term participation **+2 pp**. *This is the strongest evidence that our actual intervention — reducing procedural burden at intake — works.*
+**3. Giannella, Homonoff, Rino & Somerville — "Administrative Burden and Procedural Denials: Experimental Evidence from SNAP."** NBER WP 31239 (2023). Field experiment, **65,000 LA County applicants**: flexible applicant-initiated interviews raised approvals **+6 pp**, doubled early approvals, and raised long-term participation **+2 pp**. *This is the strongest evidence that our actual intervention — reducing procedural burden at intake — works.*
 
-**3. Homonoff & Somerville — "Program Recertification Costs: Evidence from SNAP."** NBER WP 27311 → *AEJ: Policy* 13(4), 2021. Households given later recertification interview dates are **>20% less likely to recertify** and lose **~$600 in benefits** over the following year.
+**4. Homonoff & Somerville — "Program Recertification Costs: Evidence from SNAP."** NBER WP 27311 → *AEJ: Policy* 13(4), 2021. Households given later recertification interview dates are **>20% less likely to recertify** and lose **~$600 in benefits** over the following year.
 
-**4. Brookings — Cox, East & Pula (June 2024), "Beyond hunger."** Use for framing only. It reports **no independent magnitudes**; it restates Dodini et al. directionally. Never quote it for numbers.
+**5. Brookings — Cox, East & Pula (June 2024), "Beyond hunger."** Use for framing only. It reports **no independent magnitudes**; it restates Dodini et al. directionally. Never quote it for numbers.
 
 ## Do NOT cite
 
-- **Any credit-score point gain attributed to SNAP enrollment.** Does not exist. Inverting the −1.65 ITT into a positive claim fails twice: on sign and on attenuation.
+- **Any specific credit-score *point* figure attributed to SNAP enrollment.** WP 34434 establishes the direction (denial lowers scores; access is associated with higher scores) but its magnitudes are not yet in hand, and the only published point estimate — Dodini et al.'s −1.65 — is an ITT from a different population and design. State direction, not magnitude, until the WP 34434 numbers are read from the paper.
 - **The +21/+33 point financial-coaching effect** (Theodos et al., Urban/CFPB RCT 2015) **as if it applied to us.** That tested one-on-one coaching over ~22 months, and the *same* RCT's second site produced **+3 points, not significant**. The effect isn't even portable across sites of the same intervention, let alone across intervention types.
 - **"FEC clients increased scores by 35+ points."** A self-set program threshold counted pre/post with no counterfactual; the report explicitly disclaims causality and publishes **no average point figure**. (Also: it was authored in-house by the CFE Fund, not Urban Institute, and studied five replication cities — not New York.)
 - **Working Credit's 42/30-point figures or Neighborhood Trust's "67% improved."** Program self-report on self-selected participants. Urban Institute studied Working Credit and pointedly declined to publish a point change.
@@ -37,7 +48,7 @@ When households lose SNAP access through work requirements: credit inquiries **+
 
 ## The approved framing
 
-> Federally-evaluated research shows that when low-income households lose SNAP access, they substitute into unsecured credit — more inquiries, more accounts, ~8% higher card balances, and measurably more past-due card debt — while their credit scores and loan approval rates fall. Enrollment assistance addresses that substitution at its source. Separately, field-experimental evidence shows that reducing procedural burden in SNAP intake raises approvals by six percentage points across 65,000 applicants.
+> Reducing procedural burden at SNAP intake raises approvals by six percentage points across 65,000 Los Angeles County applicants (Giannella, Homonoff, Rino & Somerville, NBER 31239). Linking those same administrative records to credit reports, Homonoff, Lee & Meckel find that households screened out of SNAP by administrative barriers carry more debt, more delinquencies, and lower credit scores than those who got through (NBER 34434, 2025) — and Federal Reserve research on benefit loss shows the same substitution into unsecured credit, with loan approval rates falling as balances rise (Dodini, Larrimore & Tranfaglia, J. Public Economics 229, 2024). The intervention is the paperwork; the outcome shows up on a credit report.
 
 Fully sourced, no borrowed effect sizes, and it survives a regulator reading the underlying papers.
 

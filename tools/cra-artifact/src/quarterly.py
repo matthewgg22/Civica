@@ -48,7 +48,7 @@ ILLUSTRATIVE_MEASURED = {
 }
 
 # Program budget split — identical at every bank (the replicability claim).
-SPLIT = [("Outreach media in your assessment area", 0.60),
+SPLIT = [("Outreach in your assessment area", 0.60),
          ("Measurement & reporting", 0.15),
          ("Creative, ad operations & Spanish localization", 0.10),
          ("Indirect costs — federal de minimis rate, 2 CFR 200.414(f)", 0.15)]
