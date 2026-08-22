@@ -257,13 +257,37 @@ jobs:
           -- auth.users and the storage policies reference storage.objects, so a
           -- vanilla Postgres cannot replay the chain without stubs. Shapes are
           -- the subset the migrations actually touch, not full fidelity.
+          -- GoTrue's real column set, near enough: the UAT seed migrations
+          -- INSERT instance_id/aud/role/encrypted_password/confirmation_token
+          -- and friends, so a minimal stub just relocates the failure.
           CREATE TABLE IF NOT EXISTS auth.users (
+            instance_id uuid,
             id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-            email text,
+            aud varchar(255),
+            role varchar(255),
+            email varchar(255),
+            encrypted_password varchar(255),
+            email_confirmed_at timestamptz,
+            invited_at timestamptz,
+            confirmation_token varchar(255),
+            confirmation_sent_at timestamptz,
+            recovery_token varchar(255),
+            recovery_sent_at timestamptz,
+            email_change_token_new varchar(255),
+            email_change varchar(255),
+            email_change_sent_at timestamptz,
+            last_sign_in_at timestamptz,
             raw_app_meta_data jsonb DEFAULT '{}'::jsonb,
             raw_user_meta_data jsonb DEFAULT '{}'::jsonb,
-            created_at timestamptz DEFAULT now()
+            is_super_admin boolean,
+            created_at timestamptz DEFAULT now(),
+            updated_at timestamptz DEFAULT now(),
+            phone text,
+            phone_confirmed_at timestamptz,
+            banned_until timestamptz,
+            deleted_at timestamptz
           );
+          CREATE UNIQUE INDEX IF NOT EXISTS auth_users_email_key ON auth.users (email);
           -- Full Supabase column set, not a guess: the migrations INSERT into
           -- buckets with file_size_limit and allowed_mime_types, so a thin
           -- stub just moves the failure one column at a time.
