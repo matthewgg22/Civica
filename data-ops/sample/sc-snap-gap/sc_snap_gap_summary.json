@@ -1,0 +1,11 @@
+{
+  "state": "SC",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 376368.0,
+  "eligible_persons_weighted_130fpl": 823470.0,
+  "eligible_no_snap_households_130fpl": 249034.0,
+  "eligible_no_snap_persons_130fpl": 503535.0,
+  "weighted_non_enrollment_rate_130fpl": 0.6616768694469243,
+  "n_counties": 46,
+  "n_pumas": 41
+}

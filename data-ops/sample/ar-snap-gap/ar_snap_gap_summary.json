@@ -1,0 +1,11 @@
+{
+  "state": "AR",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 255653.0,
+  "eligible_persons_weighted_130fpl": 553633.0,
+  "eligible_no_snap_households_130fpl": 191125.0,
+  "eligible_no_snap_persons_130fpl": 391687.0,
+  "weighted_non_enrollment_rate_130fpl": 0.7475953734163104,
+  "n_counties": 75,
+  "n_pumas": 20
+}
