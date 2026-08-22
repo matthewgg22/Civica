@@ -6,14 +6,14 @@ The T7 artifact (design doc D3.5). One page of preparation per call; the calls a
 
 "We generate documented, exam-ready community-development activity — SNAP enrollment outreach for provably-LMI residents of your assessment area — and we deliver the qualification memo with the grant, not months later on request."
 
-## Ammunition (verified citations — use them, sparingly)
+## Ammunition (plain English first, citation in the pocket)
 
-- **SNAP is a named LMI proxy.** Interagency Q&A §__.12(g)(2)—1 expressly lists "recipients of government assistance programs that have income qualifications equivalent to, or stricter than" LMI, naming "U.S. Department of Agriculture's… Supplemental Nutrition Assistance programs." Their examiner does not have to interpret anything — the proxy is verbatim in the guidance their exam runs on.
-- **Grants are qualified investments.** Q&A §__.12(t)—5: charitable contributions, cash or in-kind, are "grants"; tax deduction doesn't disqualify.
-- **Documentation burden is theirs — we remove it.** Q&A §__.12(h)—8: "institutions… should be prepared to demonstrate the activities' qualifications." Our packet (memo + annual impact letter, county-level geography) is exam-file-ready on day one.
-- **A binding multi-year pledge counts NOW.** Q&A §__.23(e)—2: legally binding up-front commitments booked under GAAP count in full at commitment, and outstanding balances keep counting at later exams (§__.12(t)—8: prior-period investments with multi-year impact can outweigh same-size current ones). → A 2-year binding pledge signed before their exam is worth more than two annual checks.
-- **Program dollars, not galas.** Examiners commonly disallow event-sponsorship portions spent on catering/venue. All our dollars are program delivery — say so.
-- **ISB nuance:** for intermediate small banks ($~350M–$1.4B), "innovativeness" is NOT a factor (Q&A §__.21(a)—2) — volume, responsiveness, and documentation are. Don't oversell novelty to an ISB; sell clean paper.
+- **The rulebook already says SNAP counts.** The official examiner FAQ lists acceptable proof that a grant helps low- and moderate-income people — and "people who receive SNAP" is literally one of the examples on the list. You never argue that your users are low-income; the bank just points at the list. *(Pocket cite: Interagency Q&A §__.12(g)(2)—1, naming USDA's Supplemental Nutrition Assistance programs.)*
+- **Grants count as "qualified investments."** Cash or in-kind, and the bank's tax deduction doesn't disqualify it. *(§__.12(t)—5.)*
+- **A promise to give for two years counts the same day it's signed.** A legally binding two-year pledge gets full credit immediately AND keeps showing up at future exams — so for a bank with an exam in three months, a 2-year pledge beats a 1-year check at the same annual cost. Offer it in question 4. *(§__.23(e)—2; prior-period credit §__.12(t)—8.)*
+- **The paperwork burden is the bank's — and we're offering to do their homework.** At exam time the bank must prove each grant qualified: who got it, that beneficiaries were low-income, that it happened in their territory. Most nonprofits send a thank-you note; we deliver the completed exam-file memo with the check. This pain is real enough that a company (findCRA) exists just to sell banks these memos. *(Burden language: §__.12(h)—8 — "should be prepared to demonstrate the activities' qualifications.")*
+- **Every dollar counts — no gala haircut.** Examiners routinely subtract the catering-and-ballroom share of event sponsorships; only program spend counts. Our money is 100% program delivery by design — say that sentence on calls, CRA officers feel it personally.
+- **Mid-size banks buy paperwork, not novelty.** Banks ~$350M–$1.4B are graded on volume and documentation; "innovativeness" earns them nothing extra at their test. Pitch clean paper and reliable quarterly numbers, not cleverness. *(§__.21(a)—2.)*
 
 ## The questions (in order; the loop's open items each have an owner-question)
 
