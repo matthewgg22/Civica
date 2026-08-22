@@ -774,7 +774,7 @@ button {
 .wizard__progress {
   height: 4px;
   background: rgba(0, 0, 0, 0.06);
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   overflow: hidden;
   margin: var(--civica-space-sm) 0 var(--civica-space-lg);
 }
@@ -862,7 +862,7 @@ button {
   font-size: 0.75rem;
   font-weight: 600;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background: rgba(0, 0, 0, 0.06);
   color: var(--civica-graphite);
   letter-spacing: 0.02em;
@@ -1047,7 +1047,7 @@ button {
   font-size: 0.75rem;
   font-weight: 600;
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background: rgba(0, 0, 0, 0.06);
   color: var(--civica-graphite);
 }
@@ -1238,7 +1238,7 @@ button {
   font-size: 0.75rem;
   font-weight: 600;
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background: rgba(0, 0, 0, 0.06);
   color: var(--civica-graphite);
 }
@@ -1499,7 +1499,7 @@ html {
   top: 2px;
   width: 15px;
   height: 15px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background:
     var(--civica-pine)
     url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.5 5L4 7.5L8.5 2.5' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
@@ -1564,7 +1564,7 @@ html {
   max-width: 560px;
   padding: var(--civica-space-lg) var(--civica-space-xl);
   background: var(--civica-pine-surface);
-  border-radius: 12px;
+  border-radius: var(--demeter-radius-card);
   display: flex;
   flex-direction: column;
   gap: var(--civica-space-sm);
@@ -1690,7 +1690,7 @@ html {
   top: 3px;
   width: 16px;
   height: 16px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background:
     var(--civica-pine)
     url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.5 5L4 7.5L8.5 2.5' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
@@ -1909,7 +1909,7 @@ html {
   top: 2px;
   width: 15px;
   height: 15px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background:
     var(--civica-pine)
     url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.5 5L4 7.5L8.5 2.5' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
@@ -2126,7 +2126,7 @@ html {
   flex-shrink: 0;
   width: 32px;
   height: 32px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background: var(--civica-pine);
   color: #fff;
   display: flex;
@@ -2399,7 +2399,7 @@ html {
   color: var(--civica-warning);
   border: 1px solid var(--civica-warning);
   background: color-mix(in srgb, var(--civica-warning) 8%, transparent);
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   padding: 4px 10px;
 }
 
@@ -2407,7 +2407,7 @@ html {
   content: "";
   width: 6px;
   height: 6px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background: var(--civica-warning);
 }
 
@@ -2552,7 +2552,7 @@ html {
   text-transform: uppercase;
   color: var(--civica-brick);
   border: 1px solid var(--civica-brick);
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   padding: 2px 10px;
 }
 
@@ -2620,7 +2620,7 @@ html {
   font-size: 0.75rem;
   font-weight: 600;
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background: rgba(0, 0, 0, 0.08);
   color: var(--civica-ink);
   margin: 0 0 var(--civica-space-md);
@@ -2767,7 +2767,7 @@ html {
   flex-shrink: 0;
   width: 28px;
   height: 28px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2817,7 +2817,7 @@ html {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background: var(--civica-ink);
   color: var(--civica-paper);
 }
@@ -2851,7 +2851,7 @@ html {
 .status-dash__action-dot {
   width: 8px;
   height: 8px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background: var(--civica-brick);
   flex-shrink: 0;
 }
@@ -2897,7 +2897,7 @@ html {
   font-size: 0.75rem;
   font-weight: 600;
   padding: 2px 10px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background: rgba(0, 0, 0, 0.06);
   color: var(--civica-graphite);
 }
@@ -3103,7 +3103,7 @@ html {
 .apply-header__save-dot {
   width: 7px;
   height: 7px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background: var(--civica-pine);
   flex-shrink: 0;
 }
@@ -3193,7 +3193,7 @@ html {
   background: var(--civica-pine);
   color: #fff;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   padding: 9px 16px 9px 9px;
   font-family: inherit;
   font-size: 0.9375rem;
@@ -3210,7 +3210,7 @@ html {
 .mae-panel__avatar {
   width: 26px;
   height: 26px;
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   background: var(--civica-wheat);
   color: var(--civica-ink);
   display: inline-flex;
@@ -3527,7 +3527,7 @@ html {
   gap: 8px;
   padding: 9px 11px;
   background: rgba(45, 90, 69, 0.13);
-  border-radius: 10px;
+  border-radius: var(--demeter-radius-inner);
   margin-bottom: 12px;
 }
 
@@ -3637,7 +3637,7 @@ html {
   font-weight: 600;
   text-align: center;
   padding: 11px 0;
-  border-radius: 12px;
+  border-radius: var(--demeter-radius-card);
   margin: 12px 0 0;
   letter-spacing: -0.1px;
 }
@@ -3778,7 +3778,7 @@ html {
   width: 96px;
   height: 28px;
   background: #000;
-  border-radius: 20px;
+  border-radius: var(--demeter-radius-card);
   margin: 0 auto 10px;
 }
 
@@ -3864,7 +3864,7 @@ html {
   margin: 0 12px 4px;
   padding: 10px 12px;
   background: rgba(45, 90, 69, 0.13);
-  border-radius: 10px;
+  border-radius: var(--demeter-radius-inner);
 }
 
 .pm__banner-icon {
@@ -3994,7 +3994,7 @@ html {
   font-weight: 600;
   text-align: center;
   padding: 11px 0;
-  border-radius: 10px;
+  border-radius: var(--demeter-radius-inner);
   letter-spacing: -0.1px;
 }
 
@@ -4016,13 +4016,13 @@ html {
   width: 52px;
   height: 12px;
   background: #000;
-  border-radius: 8px;
+  border-radius: var(--demeter-radius-input);
   margin: 0 auto 8px;
 }
 
 .phone-mockup__screen {
   background: var(--civica-surface);
-  border-radius: 18px;
+  border-radius: var(--demeter-radius-card);
   overflow: hidden;
 }
 
@@ -4118,7 +4118,7 @@ html {
   margin: 0 10px 0;
   padding: 7px 9px;
   background: rgba(45, 90, 69, 0.13);
-  border-radius: 8px;
+  border-radius: var(--demeter-radius-input);
 }
 .phone-banner__icon {
   width: 14px;
@@ -4751,7 +4751,7 @@ html {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: none; display: inline-flex; align-items: center; gap: 0.3rem; min-height: 44px;
   border: 1px solid var(--demeter-rule-strong); background: var(--demeter-card); color: var(--demeter-ink);
-  border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.85rem; font-weight: 600;
+  border-radius: var(--demeter-radius-pill); padding: 0.4rem 0.85rem; font-size: 0.85rem; font-weight: 600;
 }
 .demeter__state.is-active { background: var(--demeter-terracotta); border-color: var(--demeter-terracotta); color: #fff; }
 .demeter__badge { color: var(--demeter-terracotta-deep); font-weight: 700; }
@@ -4793,10 +4793,10 @@ html {
 .demeter__suggest {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   text-align: left; border: 1px solid var(--demeter-rule-strong); background: var(--demeter-card); color: var(--demeter-ink);
-  border-radius: 0.9rem; padding: 0.8rem 1rem; font-size: 0.95rem; min-height: 44px;
+  border-radius: var(--demeter-radius-card); padding: 0.8rem 1rem; font-size: 0.95rem; min-height: 44px;
 }
 .demeter__suggest:active { border-color: var(--demeter-terracotta); background: #FBF1EC; }
-.demeter__msg { max-width: 88%; border-radius: 1rem; padding: 0.7rem 0.95rem; font-size: 0.97rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+.demeter__msg { max-width: 88%; border-radius: var(--demeter-radius-card); padding: 0.7rem 0.95rem; font-size: 0.97rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
 .demeter__msg--user { align-self: flex-end; background: var(--demeter-terracotta); color: #fff; border-bottom-right-radius: 0.3rem; }
 .demeter__msg--assistant { align-self: flex-start; background: var(--demeter-card); color: var(--demeter-ink); border: 1px solid var(--demeter-rule); border-bottom-left-radius: 0.3rem; }
 .demeter__rule { border: 0; border-top: 1px solid var(--demeter-rule); margin: 0.6rem 0 0.4rem; }
@@ -4804,17 +4804,17 @@ html {
 .demeter__divider {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   align-self: center; text-align: center; font-size: 0.78rem; color: var(--demeter-muted);
-  background: #FBF1EC; border-radius: 999px; padding: 0.35rem 0.9rem; margin: 0.25rem 0;
+  background: #FBF1EC; border-radius: var(--demeter-radius-pill); padding: 0.35rem 0.9rem; margin: 0.25rem 0;
 }
 .demeter__error {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   align-self: stretch; background: #FBEAE5; border: 1px solid #E9C2B4; color: var(--demeter-terracotta-deep);
-  border-radius: 0.75rem; padding: 0.7rem 0.9rem; font-size: 0.9rem;
+  border-radius: var(--demeter-radius-card); padding: 0.7rem 0.9rem; font-size: 0.9rem;
 }
 .demeter__inputrow { display: flex; gap: 0.5rem; align-items: flex-end; padding-top: 0.5rem; }
 .demeter__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  flex: 1; resize: none; border: 1px solid var(--demeter-rule-strong); border-radius: 1rem; background: var(--demeter-card);
+  flex: 1; resize: none; border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-card); background: var(--demeter-card);
   padding: 0.75rem 1rem; font-size: 1rem; color: var(--demeter-ink); min-height: 48px; max-height: 12rem;
 }
 /* Taller on the chat page, where the composer is the main thing you act on
@@ -4840,7 +4840,7 @@ html {
 .demeter__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .demeter__send {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  flex: none; min-height: 48px; min-width: 44px; border: none; border-radius: 999px;
+  flex: none; min-height: 48px; min-width: 44px; border: none; border-radius: var(--demeter-radius-pill);
   background: var(--demeter-terracotta); color: #fff; font-weight: 700; font-size: 0.95rem; padding: 0 1.2rem;
 }
 .demeter__send:disabled { opacity: 0.5; }
@@ -4874,7 +4874,7 @@ html {
 }
 .vcard {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: 16px; padding: 1.15rem 1.25rem;
+  border-radius: var(--demeter-radius-card); padding: 1.15rem 1.25rem;
   display: flex; flex-direction: column; gap: 0.5rem;
 }
 .vcard__head { display: flex; align-items: center; gap: 0.55rem; }
@@ -4889,7 +4889,7 @@ html {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.66rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--demeter-terracotta-deep); border: 1px solid var(--demeter-terracotta);
-  border-radius: 999px; padding: 0.2rem 0.55rem; margin-left: auto;
+  border-radius: var(--demeter-radius-pill); padding: 0.2rem 0.55rem; margin-left: auto;
 }
 .vcard__program {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
@@ -4912,44 +4912,44 @@ html {
   margin-top: auto; align-self: flex-start;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
-  border-radius: 999px; padding: 0.55rem 1.1rem; font-weight: 600; font-size: 0.88rem;
+  border-radius: var(--demeter-radius-pill); padding: 0.55rem 1.1rem; font-weight: 600; font-size: 0.88rem;
   text-decoration: none; min-height: 44px; display: inline-flex; align-items: center;
 }
 .vcard__cta:hover { background: var(--demeter-ink); }
-.gpage__cta { margin-top: auto; align-self: flex-start; background: var(--civica-pine); color: #fff; border-radius: 999px; padding: 0.55rem 1.1rem; font-weight: 700; font-size: 0.9rem; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+.gpage__cta { margin-top: auto; align-self: flex-start; background: var(--civica-pine); color: #fff; border-radius: var(--demeter-radius-pill); padding: 0.55rem 1.1rem; font-weight: 700; font-size: 0.9rem; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
 .vpage__foot, .gpage__foot, .spage__foot { font-size: 0.85rem; color: var(--civica-graphite); border-top: 1px solid #E4DFD5; padding-top: 1rem; margin-top: 2rem; }
 .gpage__crumb { font-size: 0.8rem; color: var(--civica-muted); margin-bottom: 0.4rem; }
 .gpage__badge { font-size: 0.85rem; color: var(--civica-pine); font-weight: 600; margin: 0.4rem 0 1rem; }
-.gpage__facts { background: #fff; border: 1px solid #E4DFD5; border-radius: 1rem; padding: 1rem 1.2rem; margin-bottom: 1.5rem; }
+.gpage__facts { background: #fff; border: 1px solid #E4DFD5; border-radius: var(--demeter-radius-card); padding: 1rem 1.2rem; margin-bottom: 1.5rem; }
 .gpage__facts dt { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--civica-muted); margin-top: 0.7rem; }
 .gpage__facts dd { font-size: 0.92rem; line-height: 1.55; }
 .gpage__ask h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.4rem; }
 .gpage__questions { display: flex; flex-direction: column; gap: 0.5rem; margin: 0.8rem 0 1rem; }
-.gpage__questions a { display: block; background: #fff; border: 1px solid #D8D3C8; border-radius: 0.9rem; padding: 0.75rem 1rem; font-size: 0.95rem; color: var(--civica-ink); text-decoration: none; min-height: 44px; }
+.gpage__questions a { display: block; background: #fff; border: 1px solid #D8D3C8; border-radius: var(--demeter-radius-card); padding: 0.75rem 1rem; font-size: 0.95rem; color: var(--civica-ink); text-decoration: none; min-height: 44px; }
 .gpage__questions a:hover { background: var(--civica-pine-surface); }
 .spage__count { font-weight: 700; margin: 1.2rem 0 0.6rem; }
 .spage__list { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; padding: 0; }
-.spage__org { background: #fff; border: 1px solid #E4DFD5; border-radius: 999px; padding: 0.5rem 1rem; font-weight: 600; font-size: 0.92rem; display: inline-flex; align-items: center; gap: 0.45rem; }
+.spage__org { background: #fff; border: 1px solid #E4DFD5; border-radius: var(--demeter-radius-pill); padding: 0.5rem 1rem; font-weight: 600; font-size: 0.92rem; display: inline-flex; align-items: center; gap: 0.45rem; }
 .spage__org.is-founding { border-color: var(--civica-wheat-pressed); background: var(--civica-wheat-surface); }
 .spage__org a { color: inherit; text-decoration: none; }
 .spage__founding { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--civica-wheat-pressed); }
-.ssignon { background: #fff; border: 1px solid #E4DFD5; border-radius: 1rem; padding: 1.2rem 1.3rem; margin-top: 2rem; }
+.ssignon { background: #fff; border: 1px solid #E4DFD5; border-radius: var(--demeter-radius-card); padding: 1.2rem 1.3rem; margin-top: 2rem; }
 .ssignon__title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem; }
 .ssignon__sub { font-size: 0.85rem; color: var(--civica-graphite); margin-bottom: 0.9rem; }
 .ssignon__form { display: flex; flex-direction: column; gap: 0.8rem; }
 .ssignon__form label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; font-weight: 600; }
-.ssignon__form input, .ssignon__form textarea { border: 1px solid #D8D3C8; border-radius: 0.6rem; padding: 0.65rem 0.8rem; font: inherit; font-size: 0.95rem; min-height: 44px; }
+.ssignon__form input, .ssignon__form textarea { border: 1px solid #D8D3C8; border-radius: var(--demeter-radius-inner); padding: 0.65rem 0.8rem; font: inherit; font-size: 0.95rem; min-height: 44px; }
 .ssignon__form textarea { min-height: auto; }
 .ssignon__form input:focus, .ssignon__form textarea:focus { outline: 2px solid var(--civica-pine); outline-offset: 1px; }
 .ssignon__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-.ssignon__error { color: #7C3A1D; background: #FBEFE9; border-radius: 0.6rem; padding: 0.6rem 0.8rem; font-size: 0.88rem; }
-.ssignon__submit { align-self: flex-start; background: var(--civica-pine); color: #fff; border: none; border-radius: 999px; padding: 0.7rem 1.4rem; font-weight: 700; font-size: 0.95rem; min-height: 48px; }
+.ssignon__error { color: #7C3A1D; background: #FBEFE9; border-radius: var(--demeter-radius-inner); padding: 0.6rem 0.8rem; font-size: 0.88rem; }
+.ssignon__submit { align-self: flex-start; background: var(--civica-pine); color: #fff; border: none; border-radius: var(--demeter-radius-pill); padding: 0.7rem 1.4rem; font-weight: 700; font-size: 0.95rem; min-height: 48px; }
 .ssignon__submit:disabled { background: var(--civica-pine-disabled); }
 
 /* /verify — measured grounded-rate readout. Deliberately restrained: this is
    evidence, not a marketing stat, so no gradient, no oversized number. */
 .vstat { margin: 1.75rem 0 0; padding: 1.25rem 1.35rem; background: #fff;
-  border: 1px solid #E4DFD5; border-radius: 1rem; }
+  border: 1px solid #E4DFD5; border-radius: var(--demeter-radius-card); }
 .vstat__figure { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.6rem; }
 .vstat__pct { font-size: 2.1rem; font-weight: 650; color: var(--civica-pine); line-height: 1; }
 .vstat__unit { font-size: 0.97rem; color: var(--civica-ink); }
@@ -4982,7 +4982,7 @@ html {
 }
 .vpage__foot a { color: var(--demeter-terracotta-deep); }
 .vstat {
-  background: var(--demeter-card); border: 1px solid var(--demeter-rule); border-radius: 16px;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
 }
 .vstat__pct {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
@@ -5001,7 +5001,7 @@ html {
 .vstat__flag {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.85rem; line-height: 1.5; color: var(--demeter-terracotta-deep);
-  background: #FBF1EC; border: 1px solid var(--demeter-rule-strong); border-radius: 10px;
+  background: #FBF1EC; border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner);
   padding: 0.6rem 0.85rem; margin: 0.85rem 0 0;
 }
 
@@ -5030,7 +5030,7 @@ html {
 .vusda {
   margin: 2.25rem 0 1.25rem; padding: 1.15rem 1.35rem;
   background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
-  border-radius: 16px;
+  border-radius: var(--demeter-radius-card);
 }
 .vusda__eyebrow {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -5125,7 +5125,7 @@ html {
 .fbform__field textarea {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 1rem; min-height: 48px; padding: 0.6rem 0.9rem;
-  border: 1px solid var(--demeter-rule-strong); border-radius: 12px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-card);
   background: var(--demeter-card); color: var(--demeter-ink);
 }
 .fbform__field textarea { min-height: auto; resize: vertical; }
@@ -5137,13 +5137,13 @@ html {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.88rem; color: var(--demeter-terracotta-deep);
   background: var(--demeter-card); border: 1px solid var(--demeter-terracotta);
-  border-radius: 10px; padding: 0.7rem 0.9rem;
+  border-radius: var(--demeter-radius-inner); padding: 0.7rem 0.9rem;
 }
 .fbform__submit {
   align-self: flex-start;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.95rem; font-weight: 600; min-height: 48px; padding: 0 1.5rem;
-  border: 0; border-radius: 12px; cursor: pointer;
+  border: 0; border-radius: var(--demeter-radius-card); cursor: pointer;
   background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
 }
 .fbform__submit:disabled { opacity: 0.45; cursor: default; }
@@ -5187,13 +5187,21 @@ html {
      Uses: the mark, the nav's primary tab, a 2px rule under a source link, and
      the state-confirmation Yes. Never as text, never on white. */
   --demeter-wheat: #E8C547;
-  --demeter-ink: #241E1A;             /* was #2A211C — headings, answers */
-  --demeter-body: #55504C;            /* was #5E4F45 — running text */
-  --demeter-muted: #6E655E;           /* replaces secondary/mono/placeholder — labels, placeholder text */
-  --demeter-paper: #F7F6F4;           /* was --demeter-parchment #FCF8F1 — page background, a quarter of the old tint */
+  --demeter-ink: #1F2429;             /* cooled with the ground (palette B) — headings, answers */
+  --demeter-body: #494F56;            /* cooled with the ground (palette B) — running text */
+  --demeter-muted: #646C75;           /* cooled with the ground (palette B) — labels, placeholder text */
+  --demeter-paper: #F5F6F8;           /* palette B (taste finding 3, approved 2026-08-21): the ground cooled one step out of the warm family — was #F7F6F4, before that parchment #FCF8F1. Terracotta and wheat unchanged; the identity lives in them now. */
   --demeter-card: #FFFFFF;            /* unchanged */
-  --demeter-rule: #E3E0DB;            /* was --demeter-border #E5D9C9 / --demeter-border-card #EFE4D6 — cards, dividers */
-  --demeter-rule-strong: #C9C4BD;     /* was --demeter-border-clay #E4CDB8 — inputs, table heads */
+  /* THE RADIUS SCALE (awesome-design-md recommendation, approved 2026-08-21):
+     four steps, and every Demeter radius uses one. Exceptions are structural,
+     not scale members: 50% circles, ≤6px hairline details, and the retailer
+     map's concentric nested set. */
+  --demeter-radius-pill: 999px;
+  --demeter-radius-card: 12px;
+  --demeter-radius-inner: 10px;
+  --demeter-radius-input: 8px;
+  --demeter-rule: #E2E5E9;            /* cooled with the ground (palette B) — cards, dividers */
+  --demeter-rule-strong: #C5CAD1;     /* cooled with the ground (palette B) — inputs, table heads */
 }
 
 /* --demeter-font-display (Newsreader, serif — "anything that speaks": answers,
@@ -5231,7 +5239,7 @@ html {
 .screening__chat { display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--demeter-rule); }
 .screening__scroll { flex: 1; overflow-y: auto; padding: 1.1rem; display: flex; flex-direction: column; gap: 0.7rem; }
 
-.screening__msg { max-width: 88%; border-radius: 1rem; padding: 0.7rem 0.95rem; font-size: 0.95rem; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.screening__msg { max-width: 88%; border-radius: var(--demeter-radius-card); padding: 0.7rem 0.95rem; font-size: 0.95rem; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
 .screening__msg--user { align-self: flex-end; background: var(--demeter-terracotta); color: #fff; border-bottom-right-radius: 0.3rem; }
 .screening__msg--system { align-self: flex-start; background: var(--demeter-card); border: 1px solid var(--demeter-rule); border-bottom-left-radius: 0.3rem; }
 .screening__msg--outcome { font-weight: 600; }
@@ -5240,7 +5248,7 @@ html {
 .screening__empty-lede { font-size: 1.05rem; font-weight: 600; }
 .screening__starter {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  text-align: left; background: var(--demeter-card); border: 1px solid var(--demeter-rule); border-radius: 0.85rem;
+  text-align: left; background: var(--demeter-card); border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
   padding: 0.85rem 1rem; font-size: 0.92rem; color: var(--demeter-body); cursor: pointer;
 }
 .screening__starter:hover { border-color: var(--demeter-terracotta); }
@@ -5249,17 +5257,17 @@ html {
 .screening__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: 1; min-height: 2.6rem; max-height: 8rem; resize: none; border: 1px solid var(--demeter-rule-strong);
-  border-radius: 0.85rem; padding: 0.6rem 0.85rem; font-size: 0.95rem; background: var(--demeter-paper);
+  border-radius: var(--demeter-radius-card); padding: 0.6rem 0.85rem; font-size: 0.95rem; background: var(--demeter-paper);
 }
 .screening__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .screening__send {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  background: var(--demeter-terracotta); color: #fff; border: none; border-radius: 999px; padding: 0 1.3rem;
+  background: var(--demeter-terracotta); color: #fff; border: none; border-radius: var(--demeter-radius-pill); padding: 0 1.3rem;
   font-size: 0.92rem; font-weight: 600; cursor: pointer; min-width: 44px;
 }
 .screening__send:disabled { opacity: 0.5; cursor: default; }
 .screening__disclaimer { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; padding: 0 1rem 0.7rem; font-size: 0.72rem; color: var(--demeter-muted); text-align: center; }
-.screening__error { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; align-self: flex-start; background: #FBEAE5; border: 1px solid #E9C2B4; color: var(--demeter-terracotta-deep); padding: 0.6rem 0.85rem; border-radius: 0.7rem; font-size: 0.88rem; }
+.screening__error { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; align-self: flex-start; background: #FBEAE5; border: 1px solid #E9C2B4; color: var(--demeter-terracotta-deep); padding: 0.6rem 0.85rem; border-radius: var(--demeter-radius-inner); font-size: 0.88rem; }
 
 /* Worksheet (right panel) — a structured results/data panel, not prose, so
    it defaults to the sans (labels/operates) face like the design spec's own
@@ -5275,7 +5283,7 @@ html {
 .worksheet__case--guest { color: var(--demeter-muted); font-weight: 500; }
 .worksheet__policy { font-size: 0.8rem; color: var(--demeter-muted); margin: -0.5rem 0 0; }
 
-.worksheet__result { border-radius: 0.9rem; padding: 0.85rem 1rem; border: 1px solid var(--demeter-rule); background: var(--demeter-card); }
+.worksheet__result { border-radius: var(--demeter-radius-card); padding: 0.85rem 1rem; border: 1px solid var(--demeter-rule); background: var(--demeter-card); }
 .worksheet__result--certain { border-color: #BFDACB; background: #F1F8F4; }
 .worksheet__result--deny { border-color: var(--demeter-rule-strong); background: #FBF1EC; }
 .worksheet__result--warn { border-color: #EAD9AE; background: #FBF4E4; }
@@ -5293,10 +5301,10 @@ html {
 .worksheet__calc-row dd { margin: 0; font-weight: 600; }
 .worksheet__needed ul { margin: 0; padding-left: 1.1rem; font-size: 0.85rem; color: var(--demeter-body); display: flex; flex-direction: column; gap: 0.3rem; }
 .worksheet__empty { font-size: 0.85rem; color: var(--demeter-muted); }
-.worksheet__guest-note { font-size: 0.8rem; color: var(--demeter-terracotta-deep); background: #FBF1EC; border: 1px solid var(--demeter-rule-strong); border-radius: 0.6rem; padding: 0.55rem 0.7rem; }
+.worksheet__guest-note { font-size: 0.8rem; color: var(--demeter-terracotta-deep); background: #FBF1EC; border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner); padding: 0.55rem 0.7rem; }
 .worksheet__export {
   display: block; text-align: center; text-decoration: none; border: 1px solid var(--demeter-rule-strong);
-  background: var(--demeter-card); color: var(--demeter-muted); border-radius: 999px;
+  background: var(--demeter-card); color: var(--demeter-muted); border-radius: var(--demeter-radius-pill);
   padding: 0.55rem 1rem; font-size: 0.85rem; font-weight: 600; cursor: not-allowed;
 }
 a.worksheet__export { color: #fff; background: var(--demeter-terracotta); border-color: var(--demeter-terracotta); cursor: pointer; }
@@ -5304,13 +5312,13 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .worksheet__disclaimer { font-size: 0.72rem; color: var(--demeter-muted); }
 
 .worksheet__paywall {
-  border: 1px solid var(--demeter-rule-strong); background: #FBF1EC; border-radius: 0.9rem;
+  border: 1px solid var(--demeter-rule-strong); background: #FBF1EC; border-radius: var(--demeter-radius-card);
   padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.6rem;
 }
 .worksheet__paywall-text { font-size: 0.85rem; color: var(--demeter-terracotta-deep); margin: 0; line-height: 1.5; }
 .worksheet__paywall-cta {
   align-self: flex-start; background: var(--demeter-terracotta); color: #fff; text-decoration: none;
-  border-radius: 999px; padding: 0.5rem 1.1rem; font-size: 0.85rem; font-weight: 650;
+  border-radius: var(--demeter-radius-pill); padding: 0.5rem 1.1rem; font-size: 0.85rem; font-weight: 650;
 }
 .worksheet__paywall-cta:hover { background: var(--demeter-terracotta-deep); }
 
@@ -5343,7 +5351,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .screen-landing__actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
 .screen-landing__cta {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  display: inline-flex; align-items: center; justify-content: center; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center; border-radius: var(--demeter-radius-pill);
   padding: 0.94rem 1.875rem; font-size: 1rem; font-weight: 500; text-decoration: none; cursor: pointer;
 }
 .screen-landing__cta--primary { background: var(--demeter-terracotta); color: #fff; }
@@ -5358,7 +5366,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .screen-auth__main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1.25rem; }
 .screen-auth__card {
   width: 100%; max-width: 24rem; background: var(--demeter-card); border: 1px solid #E7DACA;
-  border-radius: 1.25rem; padding: 1.75rem 1.6rem; box-shadow: 0 30px 60px -34px rgba(72, 32, 18, 0.4);
+  border-radius: var(--demeter-radius-card); padding: 1.75rem 1.6rem; box-shadow: 0 30px 60px -34px rgba(72, 32, 18, 0.4);
 }
 /* Design spec's "Card heading" scale: 21/1.25/600/-0.02em. */
 .screen-auth__title { font-size: 1.3125rem; font-weight: 600; line-height: 1.25; letter-spacing: -0.02em; margin: 0 0 0.3rem; }
@@ -5366,22 +5374,22 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .screen-auth__form { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; display: flex; flex-direction: column; gap: 0.4rem; }
 .screen-auth__label { font-size: 0.78rem; font-weight: 600; color: var(--demeter-muted); margin-top: 0.6rem; }
 .screen-auth__input {
-  border: 1px solid var(--demeter-rule-strong); border-radius: 0.6rem; padding: 0.6rem 0.8rem; font-size: 0.95rem;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner); padding: 0.6rem 0.8rem; font-size: 0.95rem;
   background: var(--demeter-paper); color: var(--demeter-ink);
 }
 .screen-auth__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .screen-auth__error {
   font-size: 0.85rem; color: var(--demeter-terracotta-deep); background: #FBEAE5; border: 1px solid #E9C2B4;
-  border-radius: 0.6rem; padding: 0.55rem 0.75rem; margin-top: 0.7rem;
+  border-radius: var(--demeter-radius-inner); padding: 0.55rem 0.75rem; margin-top: 0.7rem;
 }
 .screen-auth__submit {
-  margin-top: 1rem; background: var(--demeter-terracotta); color: #fff; border: none; border-radius: 0.7rem;
+  margin-top: 1rem; background: var(--demeter-terracotta); color: #fff; border: none; border-radius: var(--demeter-radius-inner);
   padding: 0.7rem; font-size: 0.95rem; font-weight: 650; cursor: pointer;
 }
 .screen-auth__submit:disabled { opacity: 0.6; cursor: default; }
 .screen-auth__sso {
   width: 100%; margin-top: 0.75rem; background: var(--demeter-card); color: var(--demeter-muted);
-  border: 1px solid var(--demeter-rule-strong); border-radius: 0.7rem; padding: 0.68rem; font-size: 0.88rem;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner); padding: 0.68rem; font-size: 0.88rem;
   font-weight: 600; cursor: not-allowed;
 }
 .screen-auth__links { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; display: flex; justify-content: space-between; margin-top: 1.1rem; font-size: 0.82rem; }
@@ -5414,7 +5422,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 .dmpage__chat {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: 20px; padding: clamp(1rem, 2.5vw, 1.75rem);
+  border-radius: var(--demeter-radius-card); padding: clamp(1rem, 2.5vw, 1.75rem);
   box-shadow: 0 30px 60px -34px rgba(72, 32, 18, 0.4);
   scroll-margin-top: 1rem;
 }
@@ -5436,7 +5444,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.8rem; min-height: 44px; padding: 0.4rem 0.85rem; cursor: pointer;
   background: transparent; color: var(--demeter-terracotta-deep);
-  border: 1px solid var(--demeter-rule-strong); border-radius: 10px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner);
 }
 .demeter__save:hover:not(:disabled) { border-color: var(--demeter-terracotta); }
 .demeter__save:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
@@ -5461,7 +5469,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   flex: 1 1 100%;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   background: var(--demeter-card); border: 1px solid var(--demeter-rule-strong);
-  border-radius: 12px; padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.5rem;
+  border-radius: var(--demeter-radius-card); padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.5rem;
 }
 /* The panel spaces its children with the flex gap above; the UA's default
    <p> margins stacked on top of it (measured: 16.15/14.45/13.26px — uneven
@@ -5474,7 +5482,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__savepanel-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
 .demeter__savepanel-cta {
   display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1rem;
-  background: var(--demeter-terracotta); color: #fff; border-radius: 10px;
+  background: var(--demeter-terracotta); color: #fff; border-radius: var(--demeter-radius-inner);
   font-size: 0.85rem; font-weight: 600; text-decoration: none;
 }
 .demeter__savepanel-dismiss {
@@ -5489,7 +5497,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   display: flex; align-items: center; gap: 0.6rem; width: 100%; min-height: 48px;
   padding: 0.5rem 0.9rem; text-align: left; cursor: pointer;
   background: var(--demeter-card); color: var(--demeter-ink);
-  border: 1px solid var(--demeter-rule-strong); border-radius: 12px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-card);
 }
 .dmst__trigger:hover { border-color: var(--demeter-terracotta); }
 .dmst__trigger:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
@@ -5515,14 +5523,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmst__panel {
   position: absolute; z-index: 40; top: calc(100% + 0.35rem); left: 0; right: 0;
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: 14px; box-shadow: 0 24px 48px -28px rgba(72, 32, 18, 0.45);
+  border-radius: var(--demeter-radius-card); box-shadow: 0 24px 48px -28px rgba(72, 32, 18, 0.45);
   padding: 0.5rem; display: flex; flex-direction: column; gap: 0.4rem;
 }
 .dmst__search {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   width: 100%; min-height: 42px; padding: 0.45rem 0.7rem; font-size: 0.9rem;
   color: var(--demeter-ink); background: var(--demeter-paper);
-  border: 1px solid var(--demeter-rule-strong); border-radius: 9px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner);
 }
 .dmst__search:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .dmst__list { list-style: none; margin: 0; padding: 0; max-height: 17rem; overflow-y: auto; }
@@ -5530,7 +5538,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   display: flex; flex-direction: column; gap: 0.15rem; width: 100%; min-height: 48px;
   padding: 0.55rem 0.7rem; text-align: left; cursor: pointer;
-  background: transparent; border: 0; border-radius: 9px; color: var(--demeter-ink);
+  background: transparent; border: 0; border-radius: var(--demeter-radius-inner); color: var(--demeter-ink);
 }
 .dmst__opt:hover { background: var(--demeter-paper); }
 .dmst__opt.is-sel { background: #FBF1EC; }
@@ -5568,7 +5576,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    surfaces. */
 .dmex {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule-strong);
-  border-radius: 14px; padding: 1.1rem 1.25rem 1rem;
+  border-radius: var(--demeter-radius-card); padding: 1.1rem 1.25rem 1rem;
   margin-top: clamp(1rem, 2vw, 0rem);
 }
 @media (max-width: 979.9px) {
@@ -5583,7 +5591,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.88rem; line-height: 1.5; color: var(--demeter-ink);
   background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
-  border-radius: 10px; padding: 0.55rem 0.75rem; margin: 0 0 0.75rem;
+  border-radius: var(--demeter-radius-inner); padding: 0.55rem 0.75rem; margin: 0 0 0.75rem;
 }
 .dmex__a {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
@@ -5628,7 +5636,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmo__cta {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   display: inline-flex; align-items: center; min-height: 44px; margin-top: 1.1rem;
-  padding: 0 1.2rem; border-radius: 999px; background: var(--demeter-terracotta);
+  padding: 0 1.2rem; border-radius: var(--demeter-radius-pill); background: var(--demeter-terracotta);
   color: #fff; font-weight: 700; font-size: 0.95rem; text-decoration: none;
 }
 .dmo__cta:hover { background: var(--demeter-terracotta-deep); }
@@ -5664,7 +5672,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx--outlink { padding: clamp(1.75rem, 4vw, 2.5rem) 0; }
 .dmx__outlink {
   display: block; text-decoration: none; background: var(--demeter-card);
-  border: 1px solid var(--demeter-rule); border-radius: 20px;
+  border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
   padding: clamp(1.25rem, 2.5vw, 1.75rem);
   /* CAPPED, not full section width. Every outlink card's own text stops at
      52ch (.dmx__outlink-body) — the card's border and background used to
@@ -5795,7 +5803,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    the heading does. */
 .dmx__official {
   margin: 2rem 0 0; padding: 1.25rem 1.35rem;
-  border: 1px solid var(--demeter-rule); border-radius: 14px;
+  border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
   background: var(--demeter-card);
   display: grid; grid-template-columns: auto minmax(0, 1fr);
   column-gap: clamp(1.25rem, 3vw, 2rem); row-gap: 0; align-items: center;
@@ -5901,7 +5909,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    flies in, without letting the map outgrow the text column beside it on a
    normal-height search result. */
 .dmret__livemap {
-  width: 100%; height: 360px; border-radius: 14px; overflow: hidden;
+  width: 100%; height: 360px; border-radius: var(--demeter-radius-card); overflow: hidden;
   border: 1px solid var(--demeter-rule);
   background: var(--demeter-paper); /* shows while tiles are still loading */
 }
@@ -5913,7 +5921,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    blank is a side effect of adding this, not the reason for it. */
 .dmret__more {
   margin: 0.85rem 0 0; padding: 0.85rem 1rem;
-  border: 1px solid var(--demeter-rule); border-radius: 12px;
+  border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
   background: var(--demeter-paper);
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.82rem; color: var(--demeter-muted); line-height: 1.5;
@@ -6003,14 +6011,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmret__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 1rem; width: 8.5rem; min-height: 48px; padding: 0 0.9rem;
-  border: 1px solid var(--demeter-rule-strong); border-radius: 12px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-card);
   background: var(--demeter-card); color: var(--demeter-ink);
 }
 .dmret__input:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .dmret__go {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.9rem; font-weight: 600; min-height: 48px; padding: 0 1.2rem;
-  border: 0; border-radius: 12px; cursor: pointer;
+  border: 0; border-radius: var(--demeter-radius-card); cursor: pointer;
   background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
 }
 .dmret__go:disabled { opacity: 0.45; cursor: default; }
@@ -6124,7 +6132,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmfear__cta {
   display: flex; flex-direction: column; gap: 0.2rem;
   margin: 1.75rem 0 0; padding: 1.1rem 1.35rem;
-  border: 0; border-radius: 16px;
+  border: 0; border-radius: var(--demeter-radius-card);
   text-decoration: none; background: var(--demeter-wheat);
 }
 .dmfear__cta:hover { filter: brightness(0.96); }
@@ -6298,7 +6306,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
 .dmx__card {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: 20px; padding: 1.4rem;
+  border-radius: var(--demeter-radius-card); padding: 1.4rem;
 }
 .dmx__card .dmx__body { margin: 0; font-size: 0.95rem; }
 
@@ -6307,7 +6315,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx__num {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.72rem; letter-spacing: 0.1em; color: var(--demeter-terracotta-deep);
-  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-pill);
   padding: 0.3rem 0.6rem; flex: none;
 }
 .dmx__step .dmx__body { margin: 0; }
@@ -6315,7 +6323,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx__agencies { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr)); gap: 1rem; }
 .dmx__agency {
   display: flex; gap: 0.85rem; align-items: flex-start;
-  border: 1px solid var(--demeter-rule); border-radius: 14px;
+  border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
   background: var(--demeter-card); padding: 1rem 1.1rem;
 }
 .dmx__agency-code {
@@ -6340,7 +6348,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 
 @media (max-width: 640px) {
-  .dmpage__chat { border-radius: 16px; }
+  .dmpage__chat { border-radius: var(--demeter-radius-card); }
   .dmst { flex-basis: 100%; }
   .demeter__scope { gap: 0.5rem; }
 }
@@ -6350,7 +6358,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx__ledegrid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
 .dmx__trust {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: 20px; padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  border-radius: var(--demeter-radius-card); padding: clamp(1.25rem, 2.5vw, 1.75rem);
 }
 .dmx__trustlist { margin: 0; display: flex; flex-direction: column; gap: 1.1rem; }
 /* Trust moved out of the old right-hand lede column and below the chat, where
@@ -6397,7 +6405,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    same kind of thing: standing context about this conversation. */
 .dmw {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: 16px; padding: 1.1rem; display: flex; flex-direction: column; gap: 1rem;
+  border-radius: var(--demeter-radius-card); padding: 1.1rem; display: flex; flex-direction: column; gap: 1rem;
   position: sticky; top: 1rem;
 }
 .dmw__head { display: flex; flex-direction: column; gap: 0.15rem; }
@@ -6421,7 +6429,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmw__privacy, .dmw__disclaimer { font-size: 0.72rem; line-height: 1.45; }
 .dmw__privacy { padding-top: 0.65rem; border-top: 1px solid var(--demeter-rule); }
 
-.dmw__result { border-radius: 12px; padding: 0.85rem; border: 1px solid var(--demeter-rule); background: var(--demeter-card); }
+.dmw__result { border-radius: var(--demeter-radius-card); padding: 0.85rem; border: 1px solid var(--demeter-rule); background: var(--demeter-card); }
 .dmw__result--certain { border-color: #C9DCC4; background: #F3F8F1; }
 .dmw__result--warn { border-color: #E6D3A9; background: #FBF6EA; }
 .dmw__result--deny { border-color: #E9C2B4; background: #FBEAE5; }
@@ -6470,7 +6478,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem;
   margin: 0.75rem 0 0.9rem; padding: 0.25rem;
   background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
-  border-radius: 999px;
+  border-radius: var(--demeter-radius-pill);
   position: relative;
 }
 /* THE THUMB MOVES. The filled pill used to appear on the other half instantly,
@@ -6481,7 +6489,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   content: ""; position: absolute; z-index: 0;
   top: 0.25rem; bottom: 0.25rem; left: 0.25rem;
   width: calc(50% - 0.375rem);
-  background: var(--demeter-terracotta-deep); border-radius: 999px;
+  background: var(--demeter-terracotta-deep); border-radius: var(--demeter-radius-pill);
   transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .dmw__mode[data-mode="estimate"]::before { transform: translateX(calc(100% + 0.25rem)); }
@@ -6489,7 +6497,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmw__modeopt {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.78rem; font-weight: 600; line-height: 1.2;
-  min-height: 36px; padding: 0.4rem 0.6rem; border: 0; border-radius: 999px;
+  min-height: 36px; padding: 0.4rem 0.6rem; border: 0; border-radius: var(--demeter-radius-pill);
   background: transparent; color: var(--demeter-muted); cursor: pointer;
   transition: background 140ms ease-out, color 140ms ease-out;
 }
@@ -6561,7 +6569,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   min-height: 44px; padding: 0.4rem 0.7rem; font-size: 0.85rem; font-weight: 500; cursor: pointer;
   color: var(--demeter-ink); background: var(--demeter-card);
-  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-pill);
 }
 .demeter__lang-select:hover { color: var(--demeter-terracotta-deep); border-color: var(--demeter-terracotta); }
 .demeter__lang-select:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
@@ -6570,7 +6578,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx__faq { margin: 1.75rem 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr)); gap: 1.25rem; }
 .dmx__faqitem {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: 20px; padding: 1.35rem;
+  border-radius: var(--demeter-radius-card); padding: 1.35rem;
 }
 .dmx__faqtopic {
   display: block; margin-bottom: 0.4rem;
@@ -6606,27 +6614,27 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmfb__btn {
   font-family: inherit; font-size: 0.78rem; min-height: 32px; padding: 0.25rem 0.7rem;
   cursor: pointer; color: var(--demeter-body); background: var(--demeter-card);
-  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-pill);
 }
 .dmfb__btn:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
 .dmfb__reasons { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .dmfb__reason {
   font-family: inherit; font-size: 0.75rem; min-height: 32px; padding: 0.25rem 0.6rem;
   cursor: pointer; text-align: left; color: var(--demeter-body);
-  background: var(--demeter-card); border: 1px solid var(--demeter-rule); border-radius: 8px;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-input);
 }
 .dmfb__reason.is-sel { border-color: var(--demeter-terracotta); background: #FBF1EC; color: var(--demeter-terracotta-deep); }
 .dmfb__note {
   font-family: inherit; font-size: 0.82rem; padding: 0.5rem 0.6rem; resize: vertical;
   color: var(--demeter-ink); background: var(--demeter-card);
-  border: 1px solid var(--demeter-rule-strong); border-radius: 8px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
 }
 .dmfb__note:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .dmfb__actions { display: flex; gap: 0.5rem; }
 .dmfb__send {
   font-family: inherit; font-size: 0.8rem; min-height: 36px; padding: 0.3rem 1rem;
   cursor: pointer; color: #fff; background: var(--demeter-terracotta);
-  border: 0; border-radius: 999px; font-weight: 500;
+  border: 0; border-radius: var(--demeter-radius-pill); font-weight: 500;
 }
 .dmfb__send:hover { background: var(--demeter-terracotta-deep); }
 .dmfb__skip {
@@ -6649,7 +6657,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.82rem; font-weight: 500; min-height: 40px; padding: 0.4rem 1rem;
   cursor: pointer; color: #fff; background: var(--demeter-terracotta);
-  border: 0; border-radius: 999px;
+  border: 0; border-radius: var(--demeter-radius-pill);
 }
 .dmw__pickbtn:hover { background: var(--demeter-terracotta-deep); }
 .dmw__pickbtn:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
@@ -6675,7 +6683,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .saved__item {
   display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
   background: var(--demeter-card); border: 1px solid var(--demeter-rule-strong);
-  border-radius: 12px; padding: 0.9rem 1rem;
+  border-radius: var(--demeter-radius-card); padding: 0.9rem 1rem;
 }
 .saved__main { min-width: 0; flex: 1; }
 .saved__title {
@@ -6691,7 +6699,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .saved__open {
   display: inline-flex; align-items: center; min-height: 44px; padding: 0.4rem 0.9rem;
   font-size: 0.82rem; font-weight: 600; text-decoration: none;
-  color: #fff; background: var(--demeter-terracotta); border-radius: 10px;
+  color: #fff; background: var(--demeter-terracotta); border-radius: var(--demeter-radius-inner);
 }
 .saved__open:hover { background: var(--demeter-terracotta-deep); }
 /* Deliberately not red. A destructive-red button on every row turns the page
@@ -6699,20 +6707,20 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .saved__delete {
   min-height: 44px; padding: 0.4rem 0.75rem; cursor: pointer;
   font-size: 0.82rem; color: var(--demeter-muted);
-  background: transparent; border: 1px solid var(--demeter-rule-strong); border-radius: 10px;
+  background: transparent; border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner);
 }
 .saved__delete:hover:not(:disabled) { border-color: var(--demeter-terracotta); color: var(--demeter-ink); }
 .saved__delete:disabled { opacity: 0.6; cursor: default; }
 
 .saved__empty {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule-strong);
-  border-radius: 12px; padding: 1.5rem; text-align: center;
+  border-radius: var(--demeter-radius-card); padding: 1.5rem; text-align: center;
 }
 .saved__empty-title { font-weight: 600; margin: 0 0 0.4rem; }
 .saved__empty-body { font-size: 0.87rem; color: var(--demeter-muted); line-height: 1.55; margin: 0 0 1rem; }
 .saved__empty-cta {
   display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1.1rem;
-  background: var(--demeter-terracotta); color: #fff; border-radius: 10px;
+  background: var(--demeter-terracotta); color: #fff; border-radius: var(--demeter-radius-inner);
   font-size: 0.87rem; font-weight: 600; text-decoration: none;
 }
 
@@ -6873,7 +6881,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmst__mark {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   flex: none; display: grid; place-items: center;
-  width: 2.15rem; height: 2.15rem; border-radius: 10px;
+  width: 2.15rem; height: 2.15rem; border-radius: var(--demeter-radius-inner);
   font-size: 0.9rem; font-weight: 600; letter-spacing: 0.01em;
   color: var(--demeter-terracotta-deep);
   background: #F7EDE4;
@@ -7017,7 +7025,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   align-self: flex-start; display: inline-flex; align-items: center; gap: 0.15rem;
   background: var(--demeter-wheat); color: var(--demeter-ink);
   font-weight: 700; font-size: 0.9rem; text-decoration: none;
-  border-radius: 999px; padding: 0 1.05rem; min-height: 44px;
+  border-radius: var(--demeter-radius-pill); padding: 0 1.05rem; min-height: 44px;
   margin: 0.35rem 0;
 }
 .demeter__gocta:hover { filter: brightness(0.94); }
@@ -7208,7 +7216,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   transform: translateY(-300%);
   background: var(--demeter-ink); color: var(--demeter-paper);
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.85rem; padding: 0.55rem 0.9rem; border-radius: 8px;
+  font-size: 0.85rem; padding: 0.55rem 0.9rem; border-radius: var(--demeter-radius-input);
   text-decoration: none;
 }
 .dmnav__skip:focus-visible {
@@ -7236,7 +7244,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.9rem; font-weight: 500; color: var(--demeter-body);
   text-decoration: none; padding: 0 0.85rem; min-height: 44px;
-  display: inline-flex; align-items: center; border-radius: 999px;
+  display: inline-flex; align-items: center; border-radius: var(--demeter-radius-pill);
 }
 .dmnav__tab:hover { color: var(--demeter-ink); background: rgba(0, 0, 0, 0.035); }
 /* The current tab is marked by weight and ink, not a background pill. */
@@ -7325,12 +7333,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: 1; min-width: 0; min-height: 52px; padding: 0.75rem 1rem; font-size: 1rem;
   color: var(--demeter-ink); background: var(--demeter-card);
-  border: 1px solid var(--demeter-rule-strong); border-radius: 14px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-card);
 }
 .dment__input:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .dment__send {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  flex: none; min-height: 52px; padding: 0 1.4rem; border: 0; border-radius: 14px;
+  flex: none; min-height: 52px; padding: 0 1.4rem; border: 0; border-radius: var(--demeter-radius-card);
   background: var(--demeter-terracotta); color: #fff; font-weight: 700; font-size: 0.95rem;
   cursor: pointer;
 }
@@ -7341,7 +7349,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.88rem; color: var(--demeter-body); text-align: left; cursor: pointer;
   background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
-  border-radius: 999px; padding: 0.5rem 0.95rem; min-height: 40px;
+  border-radius: var(--demeter-radius-pill); padding: 0.5rem 0.95rem; min-height: 40px;
 }
 .dment__chip:hover { border-color: var(--demeter-terracotta); color: var(--demeter-ink); }
 @media (max-width: 560px) {
@@ -7356,7 +7364,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmnav__lang {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.82rem; color: var(--demeter-muted); text-decoration: none;
-  padding: 0 0.5rem; min-height: 44px; display: inline-flex; align-items: center; border-radius: 999px;
+  padding: 0 0.5rem; min-height: 44px; display: inline-flex; align-items: center; border-radius: var(--demeter-radius-pill);
 }
 .dmnav__lang:hover { color: var(--demeter-ink); }
 .dmnav__lang[aria-current] { color: var(--demeter-ink); font-weight: 600; }
@@ -7410,7 +7418,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   /* Flush with the composer at rest, so the two read as one control rather than
      a tall box with a short button parked at its corner. They stay bottom
      aligned as the composer grows. */
-  .dmchat .demeter__send { min-height: 52px; border-radius: 1rem; padding: 0 1.6rem; }
+  .dmchat .demeter__send { min-height: 52px; border-radius: var(--demeter-radius-card); padding: 0 1.6rem; }
 }
 
 /* The measure, capped in CHARACTERS rather than as a percentage of whatever the
@@ -7461,7 +7469,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.86rem; line-height: 1.3; text-align: left; cursor: pointer;
   color: var(--demeter-terracotta-deep); background: transparent;
-  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-pill);
   padding: 0.45rem 0.85rem; min-height: 36px;
   transition: border-color 140ms ease-out, background-color 140ms ease-out;
 }
@@ -7477,7 +7485,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmfb__btn--icon {
   display: inline-flex; align-items: center; justify-content: center;
   width: 34px; height: 34px; min-height: 34px; padding: 0;
-  border-radius: 999px; color: var(--demeter-muted);
+  border-radius: var(--demeter-radius-pill); color: var(--demeter-muted);
   transition: color 140ms ease-out, border-color 140ms ease-out, background-color 140ms ease-out;
 }
 .dmfb__btn--icon:hover {
@@ -7497,7 +7505,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__modeoffer {
   display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem;
   margin: 0.6rem 0 0; padding: 0.7rem 0.9rem;
-  border: 1px solid var(--demeter-rule-strong); border-radius: 14px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-card);
   background: var(--demeter-card);
   /* IT ARRIVES, it does not appear. A plain fade on a block that also pushes
      the composer down reads as a jump — the thing you were about to type into
@@ -7518,7 +7526,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__modeoffer-yes, .demeter__modeoffer-no {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.85rem; font-weight: 600; min-height: 36px; padding: 0 0.9rem;
-  border-radius: 999px; cursor: pointer; white-space: nowrap;
+  border-radius: var(--demeter-radius-pill); cursor: pointer; white-space: nowrap;
 }
 .demeter__modeoffer-yes {
   background: var(--demeter-wheat); color: var(--demeter-ink); border: 0;
@@ -7534,7 +7542,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__stateoffer {
   display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem;
   margin: 0.6rem 0 0; padding: 0.7rem 0.9rem;
-  border: 1px solid var(--demeter-terracotta); border-radius: 14px;
+  border: 1px solid var(--demeter-terracotta); border-radius: var(--demeter-radius-card);
   background: var(--demeter-card);
   animation: dmTrailerIn 220ms ease-out both;
 }
@@ -7546,7 +7554,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__stateoffer-yes, .demeter__stateoffer-no {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.85rem; font-weight: 600; min-height: 36px; padding: 0 0.9rem;
-  border-radius: 999px; cursor: pointer;
+  border-radius: var(--demeter-radius-pill); cursor: pointer;
 }
 /* WHEAT — the logo colour — because this is the one place the product asks the
    reader for something rather than telling them. Terracotta is used for every
@@ -7678,7 +7686,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   min-height: 40px; justify-content: center; text-align: center;
   font-size: 0.78rem; font-weight: 600; padding: 0 0.6rem;
   color: var(--demeter-body); background: var(--demeter-card);
-  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-pill);
 }
 .dmchat .demeter__sidebtns .demeter__save:hover:not(:disabled),
 .dmchat .demeter__sidebtns .demeter__clear:hover {
@@ -7714,7 +7722,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmchat .demeter__emailrow { display: flex; flex-direction: column; gap: 0.35rem; }
 .dmchat .demeter__emailbtn {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  width: 100%; min-height: 40px; border: 0; border-radius: 999px; cursor: pointer;
+  width: 100%; min-height: 40px; border: 0; border-radius: var(--demeter-radius-pill); cursor: pointer;
   background: var(--demeter-wheat); color: var(--demeter-ink);
   font-size: 0.78rem; font-weight: 700;
 }
@@ -7725,7 +7733,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    they are the same document by two routes. */
 .dmchat .demeter__pdfbtn {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  width: 100%; min-height: 36px; border-radius: 999px; cursor: pointer;
+  width: 100%; min-height: 36px; border-radius: var(--demeter-radius-pill); cursor: pointer;
   background: var(--demeter-card); color: var(--demeter-body);
   border: 1px solid var(--demeter-rule-strong);
   font-size: 0.76rem; font-weight: 600;
@@ -7807,7 +7815,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: none; font-size: 0.8rem; font-weight: 500; cursor: pointer;
   color: var(--demeter-muted); background: transparent;
-  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-pill);
   padding: 0 0.85rem; min-height: 44px; display: inline-flex; align-items: center;
 }
 .demeter__clear:hover { color: var(--demeter-ink); border-color: var(--demeter-muted); }
@@ -7821,7 +7829,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
      strip rather than as a question. Room to breathe, and the note gets its own
      line above the choices rather than competing with them. */
   display: flex; flex-direction: column; align-items: stretch; gap: 0.6rem;
-  padding: 0.8rem 0.9rem; border-radius: 14px;
+  padding: 0.8rem 0.9rem; border-radius: var(--demeter-radius-card);
   background: var(--demeter-paper); border: 1px solid var(--demeter-rule-strong);
 }
 .demeter__clearnote {
@@ -7830,7 +7838,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 .demeter__clearyes, .demeter__clearno {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.8rem; font-weight: 600; cursor: pointer; border-radius: 999px;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer; border-radius: var(--demeter-radius-pill);
   padding: 0 0.85rem; min-height: 44px; display: inline-flex; align-items: center;
 }
 .demeter__clearyes {
@@ -7877,7 +7885,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   display: flex; align-items: center; gap: 0.6rem; width: 100%; text-align: left;
   margin-bottom: 0.35rem; padding: 0.5rem 0.7rem; cursor: pointer;
   font-size: 0.9rem; color: var(--demeter-ink);
-  background: #F7EDE4; border: 1px solid #E8D5C4; border-radius: 10px;
+  background: #F7EDE4; border: 1px solid #E8D5C4; border-radius: var(--demeter-radius-inner);
   min-height: 48px;
 }
 .dmst__hint:hover { border-color: var(--demeter-terracotta); }
@@ -7945,7 +7953,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    in the same chip the monogram used, so a gap never looks like a broken image. */
 .dmflag[data-noflag] .dmflag__code {
   display: grid; place-items: center;
-  width: 2.15rem; height: 2.15rem; border-radius: 10px;
+  width: 2.15rem; height: 2.15rem; border-radius: var(--demeter-radius-inner);
   color: var(--demeter-muted); background: var(--demeter-paper);
   border: 1px solid var(--demeter-rule);
 }
@@ -8013,7 +8021,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 
 .dmmap__card {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: 16px; padding: clamp(1rem, 2vw, 1.35rem);
+  border-radius: var(--demeter-radius-card); padding: clamp(1rem, 2vw, 1.35rem);
   display: flex; flex-direction: column; gap: 0.5rem;
   /* Reserves its own height so selecting a state does not shove the page
      around — the layout jump this whole design pass has been removing. */

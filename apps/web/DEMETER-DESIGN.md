@@ -78,13 +78,24 @@ not add an eleventh without deleting one.
 | `--demeter-terracotta` | `#C0553B` | CTAs, links, marks |
 | `--demeter-terracotta-deep` | `#8E3A26` | wordmark "AI", hover, error, small text |
 | `--demeter-wheat` | `#E8C547` | logo mark, a 2px rule under a source link, **and the next action** (nav "Ask Demeter" + one in-content CTA at a time). Never text. |
-| `--demeter-ink` | `#241E1A` | headings, answers |
-| `--demeter-body` | `#55504C` | running text |
-| `--demeter-muted` | `#6E655E` | labels, placeholder text |
-| `--demeter-paper` | `#F7F6F4` | page background |
+| `--demeter-ink` | `#1F2429` | headings, answers |
+| `--demeter-body` | `#494F56` | running text |
+| `--demeter-muted` | `#646C75` | labels, placeholder text |
+| `--demeter-paper` | `#F5F6F8` | page background |
 | `--demeter-card` | `#FFFFFF` | cards |
-| `--demeter-rule` | `#E3E0DB` | cards, dividers |
-| `--demeter-rule-strong` | `#C9C4BD` | inputs, table heads |
+| `--demeter-rule` | `#E2E5E9` | cards, dividers |
+| `--demeter-rule-strong` | `#C5CAD1` | inputs, table heads |
+
+**Palette decision (2026-08-21):** the ground runs COOL (paper `#F5F6F8`, cool rules and
+neutrals) — "palette B" from the taste audit. The warm parchment family was retired in two
+steps (full tint → quarter tint → cool); the brand's warmth now lives entirely in the
+terracotta, the wheat, and the serif, which are unchanged. Do not re-warm the neutrals.
+
+**Machine-readable companion:** [`DESIGN.md`](DESIGN.md) in this directory carries this
+system as measured tokens in the Google Stitch / awesome-design-md format, for AI
+generation tools. THIS file governs; that file is an extraction. Whenever tokens here or
+in `app/globals.css` change, regenerate `DESIGN.md` from the live stylesheet — a test
+guards the PDF renderers' copies of these values, and the same discipline applies there.
 
 **Approach: restrained.** One accent (terracotta) plus warm neutrals.
 
