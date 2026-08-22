@@ -377,3 +377,27 @@ def test_indirect_rate_is_the_federal_de_minimis():
     # program share must clear BBB Wise Giving Standard 8 (>=65% on programs)
     program = sum(v for k, v in q.SPLIT if "de minimis" not in k)
     assert program >= 0.65
+
+
+def test_embargoed_magnitudes_never_appear_in_bank_facing_text():
+    """NBER WP 34434's draft is marked "PRELIMINARY-PLEASE DO NOT CITE OR
+    DISTRIBUTE" and is under R&R, so its estimates may still move. Bank
+    artifacts land in a CRA exam file; a figure that later changes is a
+    credibility problem. Direction is citable, magnitude is not -- until the
+    authors grant permission or AEJ:Policy publishes."""
+    import re
+    repo = TOOL_ROOT.parent.parent
+    targets = [TOOL_ROOT / "templates" / t
+               for t in ("artifact.html", "memo.html", "quarterly.html")]
+    targets.append(repo / "docs/strategy/cra-officer-call-guide.md")
+    # "N points"/"N-point" within 300 chars of a credit-score mention
+    pat = re.compile(r"\d+[\s-]?point", re.I)
+    for f in targets:
+        if not f.exists():
+            continue
+        text = f.read_text()
+        for m in re.finditer(r"credit score", text, re.I):
+            window = text[max(0, m.start() - 300):m.end() + 300]
+            assert not pat.search(window), (
+                f"{f.name} quotes a credit-score point magnitude near a credit "
+                f"mention; WP 34434 estimates are embargoed (direction only)")

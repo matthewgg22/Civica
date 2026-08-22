@@ -20,7 +20,14 @@ Verbatim from the abstract: *"households screened out of SNAP due to administrat
 
 Per NYU's release on the paper: households that gained access were *"less likely to end up with a delinquent credit card account, and had higher credit scores,"* and carried *"hundreds of dollars less"* debt than denied applicants.
 
-⚠️ **Exact magnitudes are not in the abstract or the press release, and the working paper is gated.** Cite the findings qualitatively as above until the full paper or its published version is in hand; then record the effect sizes here. Do not invent or estimate magnitudes for it.
+⚠️ **Magnitudes are embargoed by the authors — direction only.** The full draft is *not* gated: Katherine Meckel hosts an open PDF on her UCSD faculty page (`SNAP_CCP-19.pdf`, dated November 3 2025). NBER's copy is paywalled; the author's copy is not. **But the draft's title page reads "PRELIMINARY—PLEASE DO NOT CITE OR DISTRIBUTE,"** and the paper is under Revise & Resubmit at *AEJ: Economic Policy*, so its estimates can still move.
+
+That instruction governs our use of it:
+
+- ✅ **Citable:** existence, authorship, design, and the *qualitative* finding — NBER publishes the abstract openly and NYU issued a press release, so those statements are public.
+- ❌ **Not citable:** any magnitude read out of the draft — credit-score points, dollar figures, percentage-point changes, or the paper's own translation of score gains into borrower savings.
+
+This is stricter than ordinary academic courtesy would require, and deliberately so: our artifacts go into a **bank's CRA examination file**. A figure that moves between the preliminary draft and the published version, sitting in an exam file under our name, damages the bank and us. Two paths unlock magnitudes — the authors grant permission, or AEJ:Policy publishes. The first is drafted at [cra-homonoff-permission-request.md](cra-homonoff-permission-request.md). Never estimate, interpolate, or reconstruct a magnitude in the meantime.
 
 **Why this one matters most:** the intervention studied — reducing procedural burden at SNAP intake — is the intervention Civica Torrey runs, and the outcome measured is the outcome a bank cares about. Previous framing had to route through work-requirement research on a different population; this does not.
 
