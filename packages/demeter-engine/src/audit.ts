@@ -48,6 +48,11 @@ export interface MaeAuditRecord {
   retrievalMode?: string | undefined;
   /** True when the distress gate fired on this question. */
   distress?: boolean | undefined;
+  /** Which crisis gate fired, if any: "self_harm" | "abuse" (#927). Recorded
+   *  so the gate's real-world precision can be reviewed against messages
+   *  rather than guessed at — the v1 patterns deliberately leave ambiguous
+   *  phrasing out, and this is the evidence that would justify adding it. */
+  crisis?: string | null | undefined;
   /** TOKENS, so spend can be attributed to something.
    *
    *  Reported: fewer than 30 short prompts cost about a dollar. That could not
