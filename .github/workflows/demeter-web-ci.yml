@@ -213,3 +213,157 @@ jobs:
           name: demeter-playwright-report
           path: apps/web/playwright-report/
           retention-days: 7
+
+  migration-replay:
+    name: Migration chain replays onto a clean database
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: replay_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      REPLAY_DATABASE_URL: postgres://postgres:postgres@localhost:5433/replay_test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bootstrap the Supabase-shaped objects migrations assume
+        # Vanilla Postgres has no auth schema, no anon/authenticated/service_role
+        # and no auth.uid(); every RLS policy in the chain fails to parse
+        # without them. Same bootstrap the pg-specs job uses.
+        run: |
+          psql "$REPLAY_DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE SCHEMA IF NOT EXISTS auth;
+          CREATE SCHEMA IF NOT EXISTS storage;
+          CREATE EXTENSION IF NOT EXISTS pgcrypto;
+          DO $$ BEGIN
+            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'anon') THEN CREATE ROLE anon NOLOGIN; END IF;
+            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'authenticated') THEN CREATE ROLE authenticated NOLOGIN; END IF;
+            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'service_role') THEN CREATE ROLE service_role NOLOGIN; END IF;
+            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'supabase_auth_admin') THEN CREATE ROLE supabase_auth_admin NOLOGIN; END IF;
+          END $$;
+          GRANT USAGE ON SCHEMA auth TO anon, authenticated, service_role;
+          GRANT USAGE ON SCHEMA storage TO anon, authenticated, service_role;
+          -- Supabase-MANAGED tables. These are not created by any migration in
+          -- this repo (the platform provides them), but 35 migrations FK to
+          -- auth.users and the storage policies reference storage.objects, so a
+          -- vanilla Postgres cannot replay the chain without stubs. Shapes are
+          -- the subset the migrations actually touch, not full fidelity.
+          -- GoTrue's real column set, near enough: the UAT seed migrations
+          -- INSERT instance_id/aud/role/encrypted_password/confirmation_token
+          -- and friends, so a minimal stub just relocates the failure.
+          CREATE TABLE IF NOT EXISTS auth.users (
+            instance_id uuid,
+            id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+            aud varchar(255),
+            role varchar(255),
+            email varchar(255),
+            encrypted_password varchar(255),
+            email_confirmed_at timestamptz,
+            invited_at timestamptz,
+            confirmation_token varchar(255),
+            confirmation_sent_at timestamptz,
+            recovery_token varchar(255),
+            recovery_sent_at timestamptz,
+            email_change_token_new varchar(255),
+            email_change varchar(255),
+            email_change_sent_at timestamptz,
+            last_sign_in_at timestamptz,
+            raw_app_meta_data jsonb DEFAULT '{}'::jsonb,
+            raw_user_meta_data jsonb DEFAULT '{}'::jsonb,
+            is_super_admin boolean,
+            created_at timestamptz DEFAULT now(),
+            updated_at timestamptz DEFAULT now(),
+            phone text,
+            phone_confirmed_at timestamptz,
+            banned_until timestamptz,
+            deleted_at timestamptz
+          );
+          CREATE UNIQUE INDEX IF NOT EXISTS auth_users_email_key ON auth.users (email);
+          -- Full Supabase column set, not a guess: the migrations INSERT into
+          -- buckets with file_size_limit and allowed_mime_types, so a thin
+          -- stub just moves the failure one column at a time.
+          CREATE TABLE IF NOT EXISTS storage.buckets (
+            id text PRIMARY KEY,
+            name text NOT NULL,
+            owner uuid,
+            owner_id text,
+            public boolean DEFAULT false,
+            avif_autodetection boolean DEFAULT false,
+            file_size_limit bigint,
+            allowed_mime_types text[],
+            created_at timestamptz DEFAULT now(),
+            updated_at timestamptz DEFAULT now()
+          );
+          CREATE TABLE IF NOT EXISTS storage.objects (
+            id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+            bucket_id text REFERENCES storage.buckets(id),
+            name text,
+            owner uuid,
+            owner_id text,
+            metadata jsonb,
+            user_metadata jsonb,
+            path_tokens text[],
+            version text,
+            created_at timestamptz DEFAULT now(),
+            updated_at timestamptz DEFAULT now(),
+            last_accessed_at timestamptz DEFAULT now()
+          );
+          CREATE OR REPLACE FUNCTION storage.foldername(name text)
+            RETURNS text[] LANGUAGE sql IMMUTABLE AS $$
+            SELECT string_to_array(name, '/')
+          $$;
+          CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$
+            SELECT coalesce(
+              nullif(current_setting('request.jwt.claim.sub', true), ''),
+              (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')
+            )::uuid
+          $$;
+          CREATE OR REPLACE FUNCTION auth.jwt() RETURNS jsonb LANGUAGE sql STABLE AS $$
+            SELECT coalesce(
+              nullif(current_setting('request.jwt.claim', true), ''),
+              nullif(current_setting('request.jwt.claims', true), '')
+            )::jsonb
+          $$;
+          SQL
+
+      - name: Apply EVERY migration in version order
+        # THE POINT OF THIS JOB (#679). The pg-specs job above applies a
+        # hand-picked list in dependency order, which is why a chain that
+        # cannot replay went unnoticed for months: nothing ever ran all of it.
+        # Here the whole directory applies in filename order, ON_ERROR_STOP, so
+        # any migration that references an object no earlier migration creates
+        # fails this job instead of failing a person on a clean laptop.
+        run: |
+          set -euo pipefail
+          # Migrations needing a Postgres extension the stock image does not
+          # ship. NOT a way to excuse a broken migration — the only entries
+          # allowed here are ones that fail on `CREATE EXTENSION`, and each
+          # names which one. 20260529 schedules the snap retention purge
+          # through pg_cron (live in prod as snap-purge-retention-daily).
+          # The only two files in the chain that need an extension the stock
+          # postgres image does not ship: pg_cron and pgsodium, both Supabase
+          # platform extensions. Every other CREATE EXTENSION in the chain is
+          # pgcrypto or uuid-ossp, which contrib provides. Each skip is printed
+          # by name below so this never reads as full coverage when it isn't.
+          SKIP_NEEDS_EXTENSION="20260529_snap_enrollment_13_retention_purge.sql 20260576_ebt_cookie_encryption.sql"
+          skipped=0
+          for f in supabase/migrations/*.sql; do
+            base=$(basename "$f")
+            if grep -qF "$base" <<< "$SKIP_NEEDS_EXTENSION"; then
+              echo "── $f  (SKIPPED: requires an extension this image lacks)"
+              skipped=$((skipped + 1))
+              continue
+            fi
+            echo "── $f"
+            psql "$REPLAY_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$f"
+          done
+          echo "The chain replays onto an empty database ($skipped skipped for extensions)." 

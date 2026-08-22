@@ -1,3 +1,14 @@
+-- REPAIRED 2026-08-22 (#679). This migration could not be applied to an empty
+-- database: it referenced an object that exists nowhere, so `supabase start`
+-- aborted here and nobody could stand up a Postgres from this repo.
+--
+-- Editing an applied migration is normally wrong. It is right here because
+-- Supabase tracks applied migrations BY VERSION, so this file will never
+-- re-run against prod — and leaving it broken means the chain can never
+-- replay, which is what let prod and the repo drift apart unseen in the first
+-- place. Prod's own convergence is handled by a forward migration
+-- (20260822_repair_hour_log_navigator_policy.sql), not by this edit.
+
 -- ---------------------------------------------------------------------------
 -- Work requirement hour logs — OBBBA §10102 / 7 CFR 273.24
 --
@@ -60,12 +71,15 @@ CREATE POLICY "navigator_read_hour_logs"
   FOR SELECT
   USING (
     EXISTS (
+      -- was: JOIN snap_enrollment.org_members om ON om.org_id = p.org_id
+      --      AND om.user_id = auth.uid()
+      -- org_members is created by no migration and exists in no database.
+      -- is_navigator_in_org() (20260522002) is what every other staff policy
+      -- in this schema uses, and it resolves staff_users -> staff_roles.
       SELECT 1
       FROM snap_enrollment.snap_packets p
-      JOIN snap_enrollment.org_members om
-        ON om.org_id = p.org_id
-       AND om.user_id = auth.uid()
       WHERE p.packet_id = work_requirement_hour_logs.packet_id
+        AND snap_enrollment.is_navigator_in_org(p.org_id)
     )
   );
 
