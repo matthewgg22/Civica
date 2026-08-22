@@ -44,5 +44,5 @@ export { FORM_QUESTIONS, matchFormQuestion, classifyQuestionTopic, type FormQues
 
 // Language registry — the picker and any caller that threads `lang` need
 // these, and they carry no corpus weight.
-export { ANSWER_LANGS, isAnswerLang, LANG_NATIVE_NAME, LANG_TAG, expandQuery, type AnswerLang } from "./lang";
+export { ANSWER_LANGS, isAnswerLang, LANG_NATIVE_NAME, LANG_SHORT_CODE, LANG_TAG, expandQuery, type AnswerLang } from "./lang";
 export { FORM_QUESTION_I18N, untranslatedTopics, type TranslatedLang } from "./form-questions.i18n";

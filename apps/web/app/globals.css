@@ -8719,3 +8719,98 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   .lgl__title { font-size: 2.35rem; }
   .lgl__toc-list { grid-template-columns: 1fr 1fr; }
 }
+
+/* ── Composer footer, compressed (owner, 2026-08-22) ──────────────────────
+   Three stacked lines became one. The PII hint now renders only before the
+   first message (and permanently in the gear menu), and the AI disclaimer and
+   the assent notice share a paragraph. Appended at the END of this file on
+   purpose: at equal specificity the LAST rule wins, and this stylesheet is far
+   too long for position-in-file to be a safe way to layer anything. */
+.dmchat .demeter__disclaimer {
+  padding: 0.3rem 1rem 0.5rem;
+  line-height: 1.45;
+  /* NOT capped at a reading measure. The usual 60-65ch rule is for prose
+     someone reads through; this is a notice scanned once, and capping it
+     narrower than the composer above forced a THIRD line for no gain. Matching
+     the composer's width is what actually compresses it. */
+  max-width: none;
+  text-wrap: pretty;
+}
+/* The assent must not read as smaller or fainter than the disclaimer it now
+   shares a line with — conspicuousness is the whole basis for enforceability.
+   Same size, same colour; the only distinction is that it starts a sentence. */
+.dmchat .demeter__assent {
+  font-size: inherit;
+  color: inherit;
+  white-space: normal;
+}
+.dmchat .demeter__piihint { padding: 0.25rem 1rem 0; }
+.demeter__gearnote {
+  margin: 0.3rem 0.6rem 0.2rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--demeter-rule);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--demeter-muted);
+  max-width: 14rem;
+}
+
+/* ── Language picker: a disclosure, not an OS dropdown ────────────────────
+   The native <select> rendered the operating system's own menu — unstyleable,
+   ignoring every token here, and wide enough to take a third of the rail's
+   bottom row on its own. This is the same <details> pattern as the gear, so
+   the two controls beside each other now look like siblings. */
+.demeter__langmenu { position: relative; }
+.demeter__langbtn {
+  list-style: none;
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  height: 38px; padding: 0 0.5rem;
+  border-radius: var(--demeter-radius-input);
+  color: var(--demeter-body); cursor: pointer;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; letter-spacing: 0.02em;
+}
+.demeter__langbtn::-webkit-details-marker { display: none; }
+.demeter__langbtn:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
+.demeter__langmenu[open] .demeter__langbtn { background: var(--demeter-tint); color: var(--demeter-ink); }
+.demeter__langcode { font-variant-numeric: tabular-nums; }
+/* Opens UPWARD. This control sits on the last row of the rail, so a menu
+   dropping down would open off the bottom of the viewport. */
+.demeter__langlist {
+  position: absolute; left: 0; bottom: calc(100% + 0.35rem); z-index: 40;
+  min-width: 10.5rem; display: flex; flex-direction: column;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-card); padding: 0.3rem;
+  box-shadow: 0 8px 24px rgba(35, 34, 32, 0.1);
+}
+.demeter__langopt {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.4rem 0.6rem; border-radius: var(--demeter-radius-input);
+  background: none; border: 0; cursor: pointer; text-align: left;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; color: var(--demeter-body);
+}
+.demeter__langopt:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
+.demeter__langopt[aria-pressed="true"] { color: var(--demeter-ink); font-weight: 600; }
+/* Fixed-width gutter so the four names start on the same x, checked or not —
+   a tick that shifts the label is the cheapest way to make a menu feel loose. */
+.demeter__langtick { width: 0.85rem; flex: none; color: var(--demeter-terracotta-deep); }
+@media (prefers-reduced-motion: no-preference) {
+  .demeter__langlist { animation: dmlangin 120ms ease-out; }
+  @keyframes dmlangin {
+    from { opacity: 0; transform: translateY(3px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+/* The gear lives on the rail's LAST row, at the rail's left edge. Its menu
+   inherited `right: 0; top: 100%` from when the control sat in the chrome row
+   at the top right — which now anchors a 12rem panel off the left of the
+   viewport and drops it below the fold. Both axes flip inside the rail foot.
+   (Pre-existing; the standing safety note added here made it visible.) */
+.demeter__railfoot .demeter__gearmenu {
+  right: auto;
+  left: 0;
+  top: auto;
+  bottom: calc(100% + 0.35rem);
+}
