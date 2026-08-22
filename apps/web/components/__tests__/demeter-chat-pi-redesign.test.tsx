@@ -18,7 +18,7 @@ import { describe, it, expect, afterEach, vi } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
+import { VERIFIED_STATES, ANSWER_LANGS } from "@civica/demeter-engine/packs";
 
 import { DemeterChat } from "../DemeterChat";
 import { T } from "../../lib/i18n/demeter-chat-copy";
@@ -109,8 +109,15 @@ describe("the sidebar — the tracking panel, open by default", () => {
     // only sign-in. One language control, not two.
     const { container } = mountChat();
     const drawer = container.querySelector("#demeter-sidebar")!;
-    expect(drawer.querySelector("select.demeter__lang-select")).toBeTruthy();
+    // A <details> disclosure since 2026-08-22, not a native <select> — the OS
+    // dropdown ignored the design system. What is pinned is the INVARIANT,
+    // not the element: the picker is in the drawer, it offers every answer
+    // language, and the chrome row has no second copy of it.
+    const picker = drawer.querySelector("details.demeter__langmenu")!;
+    expect(picker).toBeTruthy();
+    expect(picker.querySelectorAll("button.demeter__langopt").length).toBe(ANSWER_LANGS.length);
     expect(container.querySelector(".demeter__head select")).toBeNull();
+    expect(container.querySelector(".demeter__head .demeter__langmenu")).toBeNull();
   });
 
   it("keeps a state picker OUTSIDE the drawer for narrow screens", () => {
@@ -281,7 +288,7 @@ describe("boxless messages (CSS contract)", () => {
     }
     // And the rail still carries the one language control.
     const { container } = mountChat();
-    expect(container.querySelectorAll("select.demeter__lang-select").length).toBe(1);
+    expect(container.querySelectorAll(".demeter__langmenu").length).toBe(1);
   });
 
   it("the chrome row carries the skip link, the reference page, and a boxed sign-in", () => {
@@ -305,7 +312,7 @@ describe("boxless messages (CSS contract)", () => {
     const row = container.querySelector("#demeter-sidebar .demeter__railfoot")!;
     expect(row).toBeTruthy();
     expect(row.querySelector("button.demeter__railicon")?.getAttribute("aria-label")).toBe(T.en.clear);
-    expect(row.querySelector("select.demeter__lang-select")).toBeTruthy();
+    expect(row.querySelector("details.demeter__langmenu")).toBeTruthy();
     const gear = row.querySelector("details.demeter__gear")!;
     expect(gear.querySelector("a[href='/privacy']")).toBeTruthy();
     expect(gear.querySelector("a[href*='/feedback']")).toBeTruthy();

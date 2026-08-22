@@ -185,6 +185,7 @@ export {
   ANSWER_LANGS,
   isAnswerLang,
   LANG_NATIVE_NAME,
+  LANG_SHORT_CODE,
   LANG_TAG,
   type AnswerLang,
 } from "./lang";

@@ -20,6 +20,7 @@ import {
   FOLLOWUP_MARKER,
   ANSWER_LANGS,
   LANG_NATIVE_NAME,
+  LANG_SHORT_CODE,
   type PackMeta,
   type AnswerLang,
 } from "@civica/demeter-engine/packs";
@@ -1654,7 +1655,20 @@ export function DemeterChat({
               {t.signin}
             </a>
           )}
-          <a className="demeter__navlink" href={lang === "en" ? "/questions" : `/${lang}/questions`}>
+          {/* RETARGETED with the rename (owner, 2026-08-22). The label became
+              "What is SNAP?", and /questions is the page about what the
+              APPLICATION asks — a different question, and a link whose label
+              disagrees with where it goes is worse than a clumsy label. It now
+              points at the landing page's own "What SNAP is" band, which
+              already carries id="what-is-snap" — that band lives in
+              SnapOverview, which renders on /screen/ask (the Demeter landing),
+              NOT on "/" (still the older Civica marketing page). /questions
+              keeps its entry from the landing form cards, so nothing is
+              orphaned. */}
+          <a
+            className="demeter__navlink"
+            href={lang === "en" ? "/screen/ask#what-is-snap" : `/${lang}/screen/ask#what-is-snap`}
+          >
             {t.navQuestions}
           </a>
         </div>
@@ -2066,12 +2080,27 @@ export function DemeterChat({
           widths where the rail stacks below the conversation — no place at all.
           redactPii strips structured identifiers but deliberately NOT names, so
           this asks rather than promises. */}
-      <p className="demeter__piihint">{t.piiHint}</p>
+      {/* COMPRESSED (owner, 2026-08-22): this used to be the first of three
+          stacked lines under the composer. It now shows only before the first
+          message — the moment someone is most likely to paste an SSN or a case
+          number — and lives permanently in the gear menu after that, so the
+          resting state of an ongoing conversation is a single line. */}
+      {!hasChat && <p className="demeter__piihint">{t.piiHint}</p>}
       {/* "Demeter is AI" leads, because someone who knows that reads
           everything above it differently. And the agency is a real link:
           telling somebody to check with an office without saying which office
           is the same as not telling them. It points at their own state's
           agency once one is set, and at the directory otherwise. */}
+      {/* ONE line, not two. The AI disclaimer and THE ASSENT NOTICE now share a
+          paragraph — but the assent is still HERE, adjacent to the composer and
+          visible at the moment someone decides to type, because sending the
+          first message is the act that manifests agreement for a user who never
+          signs in. It is not in the gear menu and must not be moved there:
+          terms reachable only from a menu is browsewrap, which courts routinely
+          refuse to enforce, and an unenforceable agreement takes the
+          arbitration clause and every disclaimer in it down together. Merging
+          the two lines costs nothing legally — both remain conspicuous, and
+          neither is smaller than the other. Burying one would. */}
       <p className="demeter__disclaimer">
         {t.disclaimer}{" "}
         <a
@@ -2082,23 +2111,18 @@ export function DemeterChat({
         >
           {t.disclaimerAgency}
         </a>
-        .
-      </p>
-      {/* THE ASSENT NOTICE. Sits here — adjacent to the composer, visible at the
-          moment someone decides to type — because that is the act that manifests
-          agreement for an anonymous user who never signs in. Terms reachable only
-          from a footer link is browsewrap, and an unenforceable agreement takes
-          the arbitration clause and every disclaimer in it down together. */}
-      <p className="demeter__disclaimer">
-        {t.termsNotice.before}
-        <a className="demeter__link" href="/terms">
-          {t.termsNotice.terms}
-        </a>
-        {t.termsNotice.between}
-        <a className="demeter__link" href="/privacy">
-          {t.termsNotice.privacy}
-        </a>
-        {t.termsNotice.after}
+        .{" "}
+        <span className="demeter__assent">
+          {t.termsNotice.before}
+          <a className="demeter__link" href="/terms">
+            {t.termsNotice.terms}
+          </a>
+          {t.termsNotice.between}
+          <a className="demeter__link" href="/privacy">
+            {t.termsNotice.privacy}
+          </a>
+          {t.termsNotice.after}
+        </span>
       </p>
         </div>
         {/* THE SIDEBAR IS THE TRACKING PANEL (owner refinement, 2026-08-21):
@@ -2344,21 +2368,46 @@ export function DemeterChat({
                     <path d="M10 4.5v11M4.5 10h11" />
                   </svg>
                 </button>
-                <label className="demeter__lang demeter__lang--foot">
-                  <span className="sr-only">{t.languageLabel}</span>
-                  <select
-                    className="demeter__lang-select"
-                    value={lang}
-                    aria-label={t.languageLabel}
-                    onChange={(e) => setLang(e.target.value as AnswerLang)}
-                  >
+                {/* A native <select> here rendered the OS dropdown — an
+                    unstyleable box that ignored every token in the design
+                    system and swallowed a third of the rail's bottom row.
+                    Same <details> disclosure the gear uses (Escape and
+                    outside-click come free, works with no JavaScript), but
+                    showing a globe and the CURRENT language's own short code:
+                    visual, and it still answers "what am I reading in?"
+                    without opening anything. Each option carries its native
+                    name, because someone looking for Vietnamese is scanning
+                    for "Tiếng Việt", not for a flag or an ISO code. */}
+                <details className="demeter__langmenu">
+                  <summary className="demeter__langbtn" aria-label={t.languageLabel} title={t.languageLabel}>
+                    <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18" />
+                    </svg>
+                    <span className="demeter__langcode">{LANG_SHORT_CODE[lang]}</span>
+                  </summary>
+                  <div className="demeter__langlist" role="group" aria-label={t.languageLabel}>
                     {ANSWER_LANGS.map((code) => (
-                      <option key={code} value={code}>
+                      <button
+                        key={code}
+                        type="button"
+                        className="demeter__langopt"
+                        aria-pressed={lang === code}
+                        onClick={(e) => {
+                          setLang(code);
+                          // Close the disclosure the same way a real menu
+                          // would; <details> has no auto-close on activation.
+                          e.currentTarget.closest("details")?.removeAttribute("open");
+                        }}
+                      >
+                        <span className="demeter__langtick" aria-hidden>
+                          {lang === code ? "✓" : ""}
+                        </span>
                         {LANG_NATIVE_NAME[code]}
-                      </option>
+                      </button>
                     ))}
-                  </select>
-                </label>
+                  </div>
+                </details>
           {/* SETTINGS, on the same line as sign-in (owner rec): a gear that
               discloses the standing pages. <details> rather than custom
               popover state — Escape and outside-click come free, and it
@@ -2374,6 +2423,9 @@ export function DemeterChat({
               <a className="demeter__settingslink" href="/verify">
                 {t.howWeVerify}
               </a>
+              <a className="demeter__settingslink" href="/terms">
+                {t.termsLink}
+              </a>
               <a className="demeter__settingslink" href="/privacy">
                 {t.privacyLink}
               </a>
@@ -2383,6 +2435,10 @@ export function DemeterChat({
               >
                 {t.feedbackLink}
               </a>
+              {/* The permanent home for the safety hint that used to occupy a
+                  line under the composer forever. Reachable for the whole
+                  conversation, not only before the first message. */}
+              <p className="demeter__gearnote">{t.piiHint}</p>
             </div>
           </details>
               </>

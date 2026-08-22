@@ -32,6 +32,17 @@ export const LANG_NATIVE_NAME: Record<AnswerLang, string> = {
   zh: "中文",
 };
 
+/** The compact badge for a collapsed language control — what the picker shows
+ *  when it is closed. Latin-script languages get their ISO code; Chinese gets
+ *  its own name, because "ZH" is not something a Chinese reader recognises as
+ *  a label for their language, while 中文 is legible at any size. */
+export const LANG_SHORT_CODE: Record<AnswerLang, string> = {
+  en: "EN",
+  es: "ES",
+  vi: "VI",
+  zh: "中文",
+};
+
 /** BCP-47 tags for `lang=` attributes and `Intl` consumers. */
 export const LANG_TAG: Record<AnswerLang, string> = {
   en: "en",

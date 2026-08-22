@@ -40,7 +40,11 @@ describe("Mae freshness monitoring", () => {
   it("localizes the as-of line for Spanish answers", () => {
     const es = formatFreshnessFooter(new Date("2026-06-15T00:00:00Z"), CORPUS, undefined, "es");
     expect(es).toContain("Fuente:");
-    expect(es).toContain("cifras federales FY26 (vigentes hasta");
+    // Shortened with the English 2026-08-22 ("the sources are a little too
+    // much"); what is pinned is that Spanish still gets a SPANISH as-of line,
+    // not the exact wording.
+    expect(es).toContain("cifras FY26 vigentes hasta");
+    expect(es).not.toContain("FY26 figures through");
     expect(es).not.toContain("Source:");
   });
 
