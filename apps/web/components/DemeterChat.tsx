@@ -2050,6 +2050,19 @@ export function DemeterChat({
           {...(!sidebarOpen ? { inert: true } : {})}
         >
           <div className="demeter__sbhead">
+            {/* Brand flush left, toggle at the rail's top right — Pi's own
+                head order. The brand is the way home: tapping the mark or
+                the name leaves the tool for the main page, same as the nav
+                brand above — two doors, one destination. */}
+            <a
+              className="demeter__sbbrand"
+              href={lang === "en" ? "/screen/ask" : `/${lang}/screen/ask`}
+            >
+              <DemeterMark size={26} />
+              <span className="demeter__sbword" translate="no">
+                Demeter
+              </span>
+            </a>
             <button
               type="button"
               className="demeter__sidebartoggle"
@@ -2063,18 +2076,6 @@ export function DemeterChat({
                 <line x1="7.5" y1="3.5" x2="7.5" y2="16.5" />
               </svg>
             </button>
-            {/* The brand is the way home (owner refinement): tapping the mark
-                or the name leaves the tool for the main page, same as the nav
-                brand above — two doors, one destination. */}
-            <a
-              className="demeter__sbbrand"
-              href={lang === "en" ? "/screen/ask" : `/${lang}/screen/ask`}
-            >
-              <DemeterMark size={26} />
-              <span className="demeter__sbword" translate="no">
-                Demeter
-              </span>
-            </a>
           </div>
           <div className="demeter__side">
           {/* Yields to the in-column instance on narrow viewports — exactly
