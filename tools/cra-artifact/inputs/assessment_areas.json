@@ -9,9 +9,11 @@
       "pe_date": "2024-10-15",
       "pe_url": "https://crapes.fdic.gov/publish/2024/59296_241015.PDF",
       "regulator": "FDIC",
-      "ask_usd": 15000,
+      "ask_usd": 10000,
       "verified": false,
-      "verify_note": "AA read from the FDIC PE by research agent 2026-08-22 \u2014 Matthew must re-read the PE and flip verified:true before any send. Branch list check on bankirvine.com also required (PE is from 10/2024)."
+      "verify_note": "AA read from the FDIC PE by research agent 2026-08-22 \u2014 Matthew must re-read the PE and flip verified:true before any send. Branch list check on bankirvine.com also required (PE is from 10/2024).",
+      "pe_giving": "SMALL BANK procedures \u2014 streamlined lending test only; CD activity is OPTIONAL and counts only toward an Outstanding. NTI is a lending-distribution failure ('very poor' geographic distribution), which a grant does not fix. Weakest structural fit of the eight despite the strongest pressure signal; pitch as sponsorship, expect a long shot.",
+      "pe_mined": "2026-08-22"
     },
     "hanmi_bank": {
       "cert": "24170",
@@ -27,9 +29,11 @@
       "pe_date": "2023-06-05",
       "pe_url": "https://crapes.fdic.gov/publish/2023/24170_230606.PDF",
       "regulator": "FDIC",
-      "ask_usd": 30000,
+      "ask_usd": 15000,
       "verified": false,
-      "verify_note": "CA counties from PE p.12 (agent-read 2026-08-22): LA+Orange full-scope + SD/SF/Santa Clara limited-scope, all whole counties. Multi-state bank; document covers CA only. Prior PE (2021) was Needs to Improve. FDIC Q3 2026 exam window."
+      "verify_note": "CA counties from PE p.12 (agent-read 2026-08-22): LA+Orange full-scope + SD/SF/Santa Clara limited-scope, all whole counties. Multi-state bank; document covers CA only. Prior PE (2021) was Needs to Improve. FDIC Q3 2026 exam window.",
+      "pe_giving": "Large Bank \u2014 Investment Test = Low Satisfactory, 'rarely in a leadership position.' Bank-wide grants only 36 totaling $346,000 on a $6B deposit base \u2014 smallest philanthropic footprint of the set, and DECLINING (LA giving fell from $519,840/52 grants to $281,080/14). LARGEST DISCLOSED GRANT ANYWHERE IN THE PE IS $15,000 \u2014 that is the ceiling. 3,496 CD service hours, 3,116 in Community Services.",
+      "pe_mined": "2026-08-22"
     },
     "five_star_bank": {
       "cert": "35361",
@@ -49,7 +53,10 @@
       "regulator": "FDIC",
       "ask_usd": 30000,
       "verified": false,
-      "verify_note": "From PE p.4 (agent-read 2026-08-22): Sacramento AA (El Dorado, Placer, Sacramento, Yolo, Yuba, Sutter) + Chico AA (Butte) + Redding AA (Shasta, limited-scope). FDIC Q4 2026 exam."
+      "verify_note": "From PE p.4 (agent-read 2026-08-22): Sacramento AA (El Dorado, Placer, Sacramento, Yolo, Yuba, Sutter) + Chico AA (Butte) + Redding AA (Shasta, limited-scope). FDIC Q4 2026 exam.",
+      "pe_giving": "Large Bank \u2014 Investment Test = High Satisfactory ('excellent' in Sacramento AA); outperformed similarly situated institutions. 195 donations totaling $1.27M, including a single $900,000 gift to a school where 97% qualify for free/reduced lunch. Service Test = Low Satisfactory (no branch in a low-income tract). PRECEDENT WORTH CITING: examiners called a bank-funded contract counselor providing free counseling 'especially innovative' \u2014 direct support for funding paid navigator capacity rather than employee volunteering.",
+      "pe_need_quote": "poverty and homelessness, unemployment, and a lack of knowledge for financial resources \u2026 more can be done to meet economic needs",
+      "pe_mined": "2026-08-22"
     },
     "bank_of_marin": {
       "cert": "32779",
@@ -67,9 +74,12 @@
       "pe_date": "2023-11-06",
       "pe_url": "https://crapes.fdic.gov/publish/2023/32779_231106.PDF",
       "regulator": "FDIC",
-      "ask_usd": 15000,
+      "ask_usd": 10000,
       "verified": false,
-      "verify_note": "From PE p.4 (agent-read 2026-08-22). CERT is 32779 (NOT 21956 = Montecito Bank & Trust). Alameda is PARTIAL (10-mile-radius tracts), deliberately EXCLUDED (conservative). Formal annual grant program. FDIC Q3 2026 exam."
+      "verify_note": "From PE p.4 (agent-read 2026-08-22). CERT is 32779 (NOT 21956 = Montecito Bank & Trust). Alameda is PARTIAL (10-mile-radius tracts), deliberately EXCLUDED (conservative). Formal annual grant program. FDIC Q3 2026 exam.",
+      "pe_giving": "Large Bank \u2014 Low Satisfactory on ALL THREE tests. 436 grants totaling $1.58M but averaging only ~$3,600; largest disclosed is $10,000/yr to a workforce development program. Entire $46.1M investment book is affordable-housing MBS \u2014 ZERO community-services investments, so every non-housing dollar came through the grant line. CD service hours fell 17% and are 'below the ratio range of similarly situated institutions.' Amador AA: zero grants, zero services, zero investments.",
+      "pe_need_quote": "CD opportunities exist in the AA with \u2026 business technical assistance, and financial literacy education",
+      "pe_mined": "2026-08-22"
     },
     "american_business_bank": {
       "cert": "34788",
@@ -83,9 +93,12 @@
       "pe_date": "2024-01-29",
       "pe_url": "https://crapes.fdic.gov/publish/2024/34788_240129.PDF",
       "regulator": "FDIC",
-      "ask_usd": 30000,
+      "ask_usd": 50000,
       "verified": false,
-      "verify_note": "From PE p.4 (agent-read 2026-08-22): four whole counties (LA CSA). NOT a designated wholesale bank \u2014 Large Institution procedures; one full-service branch + LPOs. FDIC Q4 2026 exam."
+      "verify_note": "From PE p.4 (agent-read 2026-08-22): four whole counties (LA CSA). NOT a designated wholesale bank \u2014 Large Institution procedures; one full-service branch + LPOs. FDIC Q4 2026 exam.",
+      "pe_giving": "Large Bank \u2014 Investment Test = High Satisfactory. 258 grants totaling $1.64M, UP 185.7% by dollar from the prior exam and 'doubled the grants at one comparable bank and tripled the grants at the other.' Demonstrated six-figure single-grantee capacity: $458,000 combined to one CDC. Employees provided free income tax preparation for low-income families \u2014 the closest analogue in the set to benefits-application assistance. Highest realistic ask of the eight.",
+      "pe_need_quote": "the need for affordable housing as well as community service needs",
+      "pe_mined": "2026-08-22"
     },
     "helm_bank": {
       "cert": "32718",
@@ -103,9 +116,12 @@
       "pe_date": "2025-06-16",
       "pe_url": "https://crapes.fdic.gov/publish/2025/32718_250616.PDF",
       "regulator": "FDIC",
-      "ask_usd": 30000,
+      "ask_usd": 7500,
       "verified": false,
-      "verify_note": "AAs verbatim from PE p.3 (agent-read 8/22). NTI rating; Q4 2026 re-exam; Credicorp acquisition pending Fed approval \u2014 quadruple signal. Orlando AA unexamined = clean-slate opportunity framing."
+      "verify_note": "AAs verbatim from PE p.3 (agent-read 8/22). NTI rating; Q4 2026 re-exam; Credicorp acquisition pending Fed approval \u2014 quadruple signal. Orlando AA unexamined = clean-slate opportunity framing.",
+      "pe_giving": "ISB \u2014 Community Development Test (not an Investment Test). Entire grant program over the 3.2-yr period: 19 donations totaling $25,161 (~$1,300 avg); 18 of 19 were Community Services. CD services 16, 'below the performance of similarly situated institutions.' NTI is driven by the LENDING test ('strategy of lending to affluent non-resident aliens'), not by CD \u2014 CD Test was Satisfactory. ASK THE SPONSOR TIER: $30K would exceed their entire historical giving.",
+      "pe_need_quote": "a significant need for \u2026 financial literacy education to low- and moderate-income individuals",
+      "pe_mined": "2026-08-22"
     },
     "banco_do_brasil_americas": {
       "cert": "26725",
@@ -121,9 +137,12 @@
       "pe_date": "2025-05-12",
       "pe_url": "https://crapes.fdic.gov/publish/2025/26725_250512.PDF",
       "regulator": "FDIC",
-      "ask_usd": 30000,
+      "ask_usd": 15000,
       "verified": false,
-      "verify_note": "AAs verbatim from PE p.4 (agent-read 8/22). THIRD consecutive NTI; Q3 2026 accelerated re-exam. No Palm Beach."
+      "verify_note": "AAs verbatim from PE p.4 (agent-read 8/22). THIRD consecutive NTI; Q3 2026 accelerated re-exam. No Palm Beach.",
+      "pe_giving": "Large Bank \u2014 Investment Test = High Satisfactory. 60 donations totaling $246,765 (~$4,100 avg), up 6.3x from $39,000 at the prior exam. Miami AA: 44 donations / $117,000. CLOSEST PEER GRANTS IN THE SET: six donations totaling $20,500 to a nonprofit providing 'crisis care, food and household subsidy, and employment training'; five totaling $10,000 to one providing 'emergency food and shelter, rent and utility assistance, and financial literacy education.' Orlando AA had ONE CD service all period.",
+      "pe_need_quote": "a significant need for \u2026 financial literacy education to low- and moderate-income individuals",
+      "pe_mined": "2026-08-22"
     },
     "ocean_bank": {
       "cert": "24156",
@@ -138,9 +157,12 @@
       "pe_date": "2023-06-06",
       "pe_url": "https://crapes.fdic.gov/publish/2023/24156_230606.PDF",
       "regulator": "FDIC",
-      "ask_usd": 30000,
+      "ask_usd": 25000,
       "verified": false,
-      "verify_note": "AAs from PE p.4 (agent-read 8/22). Satisfactory rating; Q3 2026 exam scheduled \u2014 largest independent FL community bank."
+      "verify_note": "AAs from PE p.4 (agent-read 8/22). Satisfactory rating; Q3 2026 exam scheduled \u2014 largest independent FL community bank.",
+      "pe_giving": "Large Bank \u2014 Investment Test = Low Satisfactory, 'adequate... although rarely in a leadership position'; volume 'below four similarly situated banks'; services 'below all but one institution.' 42 grants totaling $492,000 (~$11,700 avg); one $100,000 gift to an education org. 29 of 42 grants (84% of grant dollars) are Community Services. THE OPENING: the Fort Lauderdale/Broward AA received ZERO grants and ZERO CD services benefiting only that AA.",
+      "pe_need_quote": "the high percentage of low- and moderate-income families, at 39.6 percent, and the poverty rate indicate needs for financial literacy",
+      "pe_mined": "2026-08-22"
     }
   }
 }

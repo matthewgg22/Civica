@@ -106,6 +106,13 @@ def build_memo_values(bank, org, args) -> dict:
         "counties_line": counties,
         "nexus_paragraph": nexus,
         "responsiveness_paragraph": responsiveness,
+        # When the bank's own evaluation records a matching need, quote it back:
+        # examiners weigh responsiveness to needs identified in performance context.
+        "pe_need_block": (
+            f'<div class="quote">The institution\'s {bank["pe_date"]} Performance '
+            f'Evaluation records this need in its own performance context: '
+            f'"…{bank["pe_need_quote"]}."</div>'
+            if bank.get("pe_need_quote") else ""),
         "model_note": meta["model_note"],
         "specimen_mark": ('<div class="specimen"><span>SPECIMEN</span></div>'
                           if args.specimen else ""),
