@@ -1,0 +1,12 @@
+{
+  "state": "NJ",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 429215.0,
+  "eligible_persons_weighted_130fpl": 966020.0,
+  "eligible_no_snap_households_130fpl": 258054.0,
+  "eligible_no_snap_persons_130fpl": 534602.0,
+  "weighted_non_enrollment_rate_130fpl": 0.6012231632165698,
+  "n_counties": 21,
+  "n_pumas": 74,
+  "fns_divergence_note": "CAUTION \u2014 FNS divergence: FNS FY2022 rates NJ at 91% (~70K unenrolled under full rules) vs 535K here on the gross-income basis. Use as geographic ranking; for absolute claims, present the FNS figure alongside. NJ pitch anchor = active consent orders (OceanFirst: Middlesex/Monmouth/Ocean; Lakeland/Provident: Newark-Essex) whose geographies match our top counties (Essex 64K, Middlesex 50K, Ocean 50K)."
+}
