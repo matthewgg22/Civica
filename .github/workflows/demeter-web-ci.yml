@@ -140,36 +140,6 @@ jobs:
           -- saved-conversations spec, which asserts anon cannot reach the table.
           GRANT USAGE ON SCHEMA snap_enrollment TO authenticated, service_role;
           GRANT USAGE ON SCHEMA auth TO anon, authenticated, service_role;
-          GRANT USAGE ON SCHEMA storage TO anon, authenticated, service_role;
-          -- Supabase-MANAGED tables. These are not created by any migration in
-          -- this repo (the platform provides them), but 35 migrations FK to
-          -- auth.users and the storage policies reference storage.objects, so a
-          -- vanilla Postgres cannot replay the chain without stubs. Shapes are
-          -- the subset the migrations actually touch, not full fidelity.
-          CREATE TABLE IF NOT EXISTS auth.users (
-            id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-            email text,
-            raw_app_meta_data jsonb DEFAULT '{}'::jsonb,
-            raw_user_meta_data jsonb DEFAULT '{}'::jsonb,
-            created_at timestamptz DEFAULT now()
-          );
-          CREATE TABLE IF NOT EXISTS storage.buckets (
-            id text PRIMARY KEY,
-            name text,
-            public boolean DEFAULT false,
-            created_at timestamptz DEFAULT now()
-          );
-          CREATE TABLE IF NOT EXISTS storage.objects (
-            id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-            bucket_id text REFERENCES storage.buckets(id),
-            name text,
-            owner uuid,
-            created_at timestamptz DEFAULT now()
-          );
-          CREATE OR REPLACE FUNCTION storage.foldername(name text)
-            RETURNS text[] LANGUAGE sql IMMUTABLE AS $$
-            SELECT string_to_array(name, '/')
-          $$;
           CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$
             SELECT coalesce(
               nullif(current_setting('request.jwt.claim.sub', true), ''),
@@ -281,6 +251,36 @@ jobs:
             IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'supabase_auth_admin') THEN CREATE ROLE supabase_auth_admin NOLOGIN; END IF;
           END $$;
           GRANT USAGE ON SCHEMA auth TO anon, authenticated, service_role;
+          GRANT USAGE ON SCHEMA storage TO anon, authenticated, service_role;
+          -- Supabase-MANAGED tables. These are not created by any migration in
+          -- this repo (the platform provides them), but 35 migrations FK to
+          -- auth.users and the storage policies reference storage.objects, so a
+          -- vanilla Postgres cannot replay the chain without stubs. Shapes are
+          -- the subset the migrations actually touch, not full fidelity.
+          CREATE TABLE IF NOT EXISTS auth.users (
+            id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+            email text,
+            raw_app_meta_data jsonb DEFAULT '{}'::jsonb,
+            raw_user_meta_data jsonb DEFAULT '{}'::jsonb,
+            created_at timestamptz DEFAULT now()
+          );
+          CREATE TABLE IF NOT EXISTS storage.buckets (
+            id text PRIMARY KEY,
+            name text,
+            public boolean DEFAULT false,
+            created_at timestamptz DEFAULT now()
+          );
+          CREATE TABLE IF NOT EXISTS storage.objects (
+            id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+            bucket_id text REFERENCES storage.buckets(id),
+            name text,
+            owner uuid,
+            created_at timestamptz DEFAULT now()
+          );
+          CREATE OR REPLACE FUNCTION storage.foldername(name text)
+            RETURNS text[] LANGUAGE sql IMMUTABLE AS $$
+            SELECT string_to_array(name, '/')
+          $$;
           CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$
             SELECT coalesce(
               nullif(current_setting('request.jwt.claim.sub', true), ''),
