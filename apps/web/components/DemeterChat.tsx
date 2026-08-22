@@ -2214,6 +2214,30 @@ export function DemeterChat({
           mode={worksheetMode}
           onModeChange={(m) => {
             setWorksheetMode(m);
+            // TURNING IT ON READS THE CONVERSATION YOU ALREADY HAD.
+            // Extraction used to run only inside send(), so switching to
+            // "Build my estimate" after a full conversation changed the
+            // heading and nothing else — the outline sat on its empty
+            // template until you happened to send another message, which
+            // reads as broken at the exact moment you asked for the feature.
+            // The facts were already there: state, household size and income
+            // are usually settled long before anyone thinks to switch.
+            //
+            // Consistent with the privacy line, not a hole in it: ask mode
+            // still extracts NOTHING and makes no paid call. Switching is the
+            // consent, and this acts on it immediately instead of waiting for
+            // an unrelated keystroke. Same tail-window and user-first repair
+            // as send() — the server rejects a history that opens on the
+            // assistant (#833).
+            if (m === "estimate" && state) {
+              const turns = messages.filter(
+                (x): x is { role: "user" | "assistant"; content: string } =>
+                  x.role !== "divider" && Boolean(x.content),
+              );
+              let window = turns.slice(-20);
+              if (window[0]?.role !== "user") window = window.slice(1);
+              if (window.length) void refreshWorksheet(window);
+            }
             // Turning it OFF throws away what was gathered. Leaving the last
             // estimate on screen under "Just asking" would contradict the
             // sentence right beneath it, and keeping the facts in memory
