@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: Demeter-design-system
-description: The design language of Demeter AI, a public SNAP benefits assistant. A printed-paper editorial system — warm off-white ground, near-shadowless bordered surfaces, a variable serif (Newsreader) for everything that speaks and a workhorse sans (Be Vietnam Pro) for everything that labels, with terracotta as the single action color and a wheat gold reserved for the brand mark and clarifying callouts. Built for trust under stress; every visual choice defers to legibility, citation integrity, and four-language parity (en/es/vi/zh).
+description: The design language of Demeter AI, a public SNAP benefits assistant. A printed-paper editorial system — cool near-white ground, near-shadowless bordered surfaces, a variable serif (Newsreader) for everything that speaks and a workhorse sans (Be Vietnam Pro) for everything that labels, with terracotta as the single action color and a wheat gold reserved for the brand mark and clarifying callouts. Built for trust under stress; every visual choice defers to legibility, citation integrity, and four-language parity (en/es/vi/zh).
 ---
 
 <!--
@@ -15,13 +15,13 @@ description: The design language of Demeter AI, a public SNAP benefits assistant
 -->
 
 colors:
-  paper: "#F7F6F4"
+  paper: "#F5F6F8"
   card: "#FFFFFF"
-  ink: "#241E1A"
-  body: "#55504C"
-  muted: "#6E655E"
-  rule: "#E3E0DB"
-  rule-strong: "#C9C4BD"
+  ink: "#1F2429"
+  body: "#494F56"
+  muted: "#646C75"
+  rule: "#E2E5E9"
+  rule-strong: "#C5CAD1"
   terracotta: "#C0553B"
   terracotta-deep: "#8E3A26"
   wheat: "#E8C547"
@@ -80,7 +80,6 @@ typography:
 rounded:
   pill: 999px
   card: 12px
-  card-large: 14px
   inner: 10px
   input: 8px
 
@@ -93,28 +92,28 @@ spacing:
   touch-target: "44px"
 
 components:
-  cta-card: "Full-width wheat-gold card, serif title + sans body, 16px radius, links to the chat"
-  answer-card: "White card, 1px rule border, 14px radius; sans question bubble on paper, serif answer, terracotta-deep citation links, sans micro footer"
+  cta-card: "Full-width wheat-gold card, serif title + sans body, card radius, links to the chat"
+  answer-card: "White card, 1px rule border, card radius; sans question bubble on paper, serif answer, terracotta-deep citation links, sans micro footer"
   trust-list: "Definition rows — uppercase sans label left (terracotta-deep), serif body right"
   callout: "White card with a 3px wheat left rule for clarification; brick-red left rule only for urgent-need asides"
-  chat-bubble: "User: sans on paper, 10px radius. Demeter: serif ink on transparent, no bubble"
+  chat-bubble: "User: sans on paper, inner radius. Demeter: serif ink on transparent, no bubble"
   worksheet-rail: "White card rail; uppercase sans section labels, serif verdict line, tonal result band"
   footnote: "Native <details>; sans summary with rotating ▸ marker, citation lines inside"
 
 ## Overview
 
-Demeter answers SNAP (food assistance) questions with the governing regulation attached. The design job is **trust under stress**: readers are often anxious, on phones, and deciding whether to hand a government-adjacent tool their details. The system therefore reads as a *printed explainer, not an app* — warm paper ground, bordered (almost never shadowed) white surfaces, generous measure caps, and a strict two-voice type system. Nothing pulses, floats, or auto-animates. One accent acts (terracotta); one accent clarifies (wheat); everything else is ink on paper.
+Demeter answers SNAP (food assistance) questions with the governing regulation attached. The design job is **trust under stress**: readers are often anxious, on phones, and deciding whether to hand a government-adjacent tool their details. The system therefore reads as a *printed explainer, not an app* — cool paper ground, bordered (almost never shadowed) white surfaces, generous measure caps, and a strict two-voice type system. Nothing pulses, floats, or auto-animates. One accent acts (terracotta); one accent clarifies (wheat); everything else is ink on paper.
 
 Four languages are first-class (English, Spanish, Vietnamese, Chinese): every string ships in all four, CJK serif/sans stacks pair with the Latin faces, and citation tokens are shielded from machine translation with `translate="no"`.
 
 ## Colors
 
-- `{colors.paper}` **#F7F6F4** — the page. A quarter-strength warm tint; never pure white.
+- `{colors.paper}` **#F5F6F8** — the page. A cool near-white (palette B, 2026-08-21: the ground stepped out of the warm family; the identity lives in the terracotta, the wheat, and the serif); never pure white.
 - `{colors.card}` **#FFFFFF** — every raised surface. Elevation is a border, not a shadow.
-- `{colors.ink}` **#241E1A** — headings and Demeter's own answers. Never pure black.
-- `{colors.body}` **#55504C** / `{colors.muted}` **#6E655E** — running text / labels & placeholders.
-- `{colors.rule}` **#E3E0DB** / `{colors.rule-strong}` **#C9C4BD** — card borders & dividers / inputs and emphasized edges.
-- `{colors.terracotta}` **#C0553B** — the single action color: CTAs, active states, marks. **Fill and border only — never running text** (4.22:1 on paper; a stylesheet test enforces this).
+- `{colors.ink}` **#1F2429** — headings and Demeter's own answers. Never pure black.
+- `{colors.body}` **#494F56** / `{colors.muted}` **#646C75** — running text / labels & placeholders.
+- `{colors.rule}` **#E2E5E9** / `{colors.rule-strong}` **#C5CAD1** — card borders & dividers / inputs and emphasized edges.
+- `{colors.terracotta}` **#C0553B** — the single action color: CTAs, active states, marks. **Fill and border only — never running text** (a stylesheet test enforces this).
 - `{colors.terracotta-deep}` **#8E3A26** — the readable terracotta: links, hover, small text, the wordmark's "AI".
 - `{colors.wheat}` **#E8C547** — the brand's gold. The logo mark, the hand-off CTA card, and the 3px left rule on clarifying callouts. A clarification, never an alarm; **never a text color**.
 
@@ -148,7 +147,7 @@ Do not add drop shadows to cards; a shadowed card reads as a different, glossier
 
 ## Shapes
 
-- `{rounded.pill}` for chips and pill controls; `{rounded.card}`/`{rounded.card-large}` for cards; `{rounded.inner}` for nested surfaces (child radius always ≤ parent); `{rounded.input}` for fields.
+- `{rounded.pill}` for chips and pill controls; `{rounded.card}` for every card; `{rounded.inner}` for nested surfaces (child radius always ≤ parent); `{rounded.input}` for fields.
 - The brand mark is a wheat circle bearing a grain glyph; it appears at 28–52px and is the only circular brand element.
 
 ## Components
