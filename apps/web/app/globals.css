@@ -4854,7 +4854,10 @@ html {
   display: grid; place-items: center;
   border-radius: var(--demeter-radius-pill);
 }
-.dmchat .demeter__send:disabled { opacity: 1; background: var(--demeter-rule-strong); cursor: default; }
+.dmchat .demeter__send:disabled { opacity: 1; background: #B5B1A9; cursor: default; }
+/* #B5B1A9: one step darker than --demeter-rule-strong — at rule-strong the
+   idle circle read as a watermark. Disabled control; contrast rules do not
+   bind it, legibility taste does. */
 .dmchat .demeter__send--stop { background: var(--demeter-terracotta-deep); }
 .demeter__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -7423,7 +7426,12 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 
 /* Undo the landing page's card chrome: on its own page the chat IS the page,
    so it needs no border, no shadow, and no capped scroll height. */
-.dmchat__body .demeter { max-width: none; min-height: 0; margin: 0; padding: 0; flex: 1; }
+/* PI'S THREAD GEOMETRY (owner rec 2026-08-22): the conversation is a single
+   NARROW centered column — greeting, transcript and composer share the same
+   two edges — not narrow content left-aligned inside a wide container,
+   which is what read as "listing left" in every wide screenshot. 46rem
+   (~780px at this stylesheet's 17px rem) is Pi's own thread width. */
+.dmchat__body .demeter { max-width: 46rem; min-height: 0; margin: 0 auto; width: 100%; padding: 0; flex: 1; }
 .dmchat__body .demeter__scroll { min-height: 0; max-height: none; flex: 1; }
 
 /* ═══ LANDING ENTRY CARD ═════════════════════════════════════════════════════
@@ -7569,6 +7577,10 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 }
 /* The rail's middle zone: saved conversations, Pi's own geography (their
    rail's middle is the conversation list). The label IS the link. */
+/* The void BELOW this block is deliberate (owner call 2026-08-22): Pi's own
+   rail keeps its list at the top, login at the bottom, and air between —
+   real saved conversations will fill it over time. Do not pin this block
+   to the foot to "fix" the gap. */
 .demeter__sbmid { display: flex; flex-direction: column; gap: 0.4rem; }
 .demeter__sblabel {
   font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -7654,13 +7666,18 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   .dmchat__body { transition: margin-left 200ms ease; }
   .dmchat__body:has(.demeter__sidebar--open) {
     margin-left: 21.5rem;
+    margin-right: 0; /* the base rule's margin:0 AUTO survives otherwise —
+      and a flex item with an auto cross-margin refuses to stretch, so the
+      body shrank to fit and hugged the rail (measured: 850px wide in a
+      1084px space). Zeroing it restores the stretch; the inner column's
+      own auto margins then center it. */
     width: auto; /* NOT the base width:100% — a margin on a 100%-width box
                     shoves the whole viewport-wide body off the right edge
                     (measured: right=1816 on a 1450 viewport). auto lets the
                     margin shrink the box; the right edge never moves. */
     max-width: none;
   }
-  .dmchat__body:has(.demeter__sidebar--open) .demeter { max-width: 64rem; margin: 0 auto; width: 100%; }
+  /* (The 46rem centered column above applies in both rail states.) */
   /* One brand on screen: while the rail is open it carries the mark and the
      name — the nav's brand fully collapses and the tabs + languages pack
      right as one cluster, so the bar reads as chrome rather than a layout
