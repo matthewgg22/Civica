@@ -71,7 +71,10 @@ export const T = {
     stateOffer: "You mentioned {place}. Answer for {state}?",
     // Asked once, after the first answer — the toggle for this lives in the
     // right-hand panel, which nobody reads while taking in their first reply.
-    modeOffer: "Shall I start gathering your answers as we go, so you can take them to the application? Or keep this as just questions for now?",
+    // ONE LINE (owner, 2026-08-22). It ran to three lines beside two buttons
+    // that already SAY the two options — "Just asking" and "Gather my
+    // answers" — so the sentence spent its length re-describing them.
+    modeOffer: "Want me to gather your answers into an application outline as we go?",
     modeOfferEstimate: "Gather my answers",
     modeOfferAsk: "Just asking",
     // Shown after several turns if the conversation hasn't been saved yet.
