@@ -8,8 +8,10 @@ import { render, cleanup } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { renderToStaticMarkup } from "react-dom/server";
 import { renderAnswer } from "../components/DemeterChat";
-import { SnapDetail, SnapOrientation } from "../components/SnapOverview";
+import { shieldCitations } from "../lib/no-translate";
+import { SnapDetail } from "../components/SnapOverview";
 import { DemeterNav } from "../components/DemeterNav";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 
@@ -40,14 +42,17 @@ describe("translate=\"no\" shields (finding 1)", () => {
     }
   });
 
-  it("the hero example's citation is shielded without shielding the prose", () => {
-    const { container } = render(<SnapOrientation />);
-    const a = container.querySelector(".dmex__a")!;
-    expect(a.getAttribute("translate")).toBeNull();
-    const shield = [...a.querySelectorAll('[translate="no"]')].find((el) =>
-      /7 CFR 273\.1/.test(el.textContent ?? ""),
-    );
-    expect(shield).toBeTruthy();
+  it("shieldCitations wraps the citation and only the citation", () => {
+    // EVOLVED: this used to assert against the hero example card's answer,
+    // but the mini chat replaced that card (2026-08-21) and no citations
+    // render on the landing anymore. The shield still guards the CHAT's
+    // trailer (DemeterChat renders through shieldCitations), so the
+    // invariant is pinned at the function: the citation is shielded, the
+    // prose around it is not.
+    const nodes = shieldCitations("Households apply separately (7 CFR 273.1(a)) in most cases.", "t");
+    const html = renderToStaticMarkup(<>{nodes}</>);
+    expect(html).toMatch(/translate="no"[^>]*>[^<]*7 CFR 273\.1/);
+    expect(html).not.toMatch(/translate="no"[^>]*>[^<]*Households/);
   });
 
   it("the brand name is shielded in the nav", () => {

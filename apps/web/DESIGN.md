@@ -178,7 +178,7 @@ Do not add drop shadows to cards; a shadowed card reads as a different, glossier
 
 ## Responsive Behavior
 
-- Hero collapses to single column below 980px; the example card stacks between lede and CTA.
+- Hero collapses to single column below 980px; the mini chat card (owner redesign 2026-08-21 — replaced the example rotation) stacks between lede and CTA.
 - All multi-column grids collapse to one column ≤640–860px (per-section breakpoints; nothing relies on JS measurement).
 - Composer font stays ≥16px on mobile (no iOS zoom); nothing sticks on phones — pinned panels surrender the viewport.
 - Light-only by commitment: `color-scheme: light` is declared, `theme-color` matches the paper, and dark-mode devices get a light page with matching chrome rather than an unconsidered inversion.

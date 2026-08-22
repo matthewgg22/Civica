@@ -105,9 +105,12 @@ describe("the deep-ink band (What SNAP is)", () => {
     expect(band).toBeTruthy();
     // The four facts live inside the band.
     expect(band!.querySelectorAll(".dmx__def").length).toBeGreaterThanOrEqual(4);
-    // The USDA attribution box stays OUTSIDE the band — it is a legal
-    // disclaimer, not brand theater.
-    expect(band!.textContent).not.toMatch(/USDA|not affiliated/i);
+    // The USDA attribution BOX stays OUTSIDE the band — it is a legal
+    // disclaimer, not brand theater. (The fact copy inside the band may
+    // legitimately mention USDA; the box is identified by its links and
+    // its disclaimer line, not by the word.)
+    expect(band!.querySelector("a[href*='usda.gov']")).toBeNull();
+    expect(band!.textContent).not.toMatch(/not affiliated/i);
   });
 
   it("the band is deep ink with light type — Demeter's own palette, no borrowed pine", () => {

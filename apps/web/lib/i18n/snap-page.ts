@@ -56,11 +56,6 @@ export interface PageCopy {
      *  graded CERTAIN — currently all of them, regenerated 2026-08-21 with
      *  every audit line grading certain/grounded. */
     items: { q: string; a: string; verdict?: string }[];
-    /** Accessible label for the rotator's dots; {n} is the 1-based index.
-     *  A string template, not a function — it crosses the RSC boundary. */
-    dotLabel: string;
-    note: string;
-    cta: string;
     /** The dormant-until-true tally (approved 2026-08-21). {n} is the LIVE
      *  count of public-mode audit rows — the requested "Over 300 people"
      *  line was refused (prod truth at the time: 12 questions ever), and
@@ -69,6 +64,18 @@ export interface PageCopy {
      *  never contain a digit of its own. Both pinned in
      *  hero-live-counter.test.tsx. */
     tally: string;
+  };
+  /** The hero mini chat (owner redesign 2026-08-21) — a GET form handing
+   *  off to /chat. State-only onboarding: the greeting may never ask for a
+   *  name (the retention line says "avoid names"; hero-minichat tests pin
+   *  this). The example items' questions are its starter chips. */
+  miniChat: {
+    greeting: string;
+    stateLabel: string;
+    federal: string;
+    placeholder: string;
+    send: string;
+    startersLabel: string;
   };
   eyebrow: string;
   h2: string;
@@ -235,10 +242,15 @@ const en: PageCopy = {
         verdict: "✓ CERTAIN: every rule cited comes from regulation text pulled for this question.",
       },
     ],
-    dotLabel: "Example {n}",
     tally: "{n} questions answered here so far.",
-    note: "Real Demeter answers, shortened for space.",
-    cta: "Ask your own",
+  },
+  miniChat: {
+    greeting: "Hi, I'm Demeter. I answer SNAP questions in plain language, with the actual rule cited. Which state are you in?",
+    stateLabel: "Your state",
+    federal: "All states (federal rules)",
+    placeholder: "Ask anything about SNAP",
+    send: "Send",
+    startersLabel: "Or start with one of these",
   },
   eyebrow: "Supplemental Nutrition Assistance Program",
   h2: "SNAP is monthly money for groceries, paid onto a card.",
@@ -507,10 +519,15 @@ const es: PageCopy = {
         verdict: "✓ SEGURO: cada regla citada proviene del texto regulatorio recuperado para esta pregunta.",
       },
     ],
-    dotLabel: "Ejemplo {n}",
     tally: "{n} preguntas respondidas aquí hasta ahora.",
-    note: "Respuestas reales de Demeter, acortadas por espacio.",
-    cta: "Haz tu propia pregunta",
+  },
+  miniChat: {
+    greeting: "Hola, soy Demeter. Respondo preguntas sobre SNAP en lenguaje claro, citando la regla real. ¿En qué estado estás?",
+    stateLabel: "Tu estado",
+    federal: "Todos los estados (reglas federales)",
+    placeholder: "Pregunta lo que quieras sobre SNAP",
+    send: "Enviar",
+    startersLabel: "O empieza con una de estas",
   },
   eyebrow: "Programa de Asistencia Nutricional Suplementaria",
   h2: "SNAP es dinero mensual para comida, depositado en una tarjeta.",
@@ -764,10 +781,15 @@ const vi: PageCopy = {
         verdict: "✓ CHẮC CHẮN: mọi quy định được trích dẫn đều lấy từ văn bản quy định được truy xuất cho câu hỏi này.",
       },
     ],
-    dotLabel: "Ví dụ {n}",
     tally: "Đã trả lời {n} câu hỏi tại đây.",
-    note: "Câu trả lời thật của Demeter, rút gọn cho vừa trang.",
-    cta: "Đặt câu hỏi của bạn",
+  },
+  miniChat: {
+    greeting: "Chào bạn, tôi là Demeter. Tôi trả lời các câu hỏi về SNAP bằng ngôn ngữ dễ hiểu, kèm trích dẫn quy định thật. Bạn ở tiểu bang nào?",
+    stateLabel: "Tiểu bang của bạn",
+    federal: "Tất cả tiểu bang (quy định liên bang)",
+    placeholder: "Hỏi bất cứ điều gì về SNAP",
+    send: "Gửi",
+    startersLabel: "Hoặc bắt đầu với một câu hỏi sau",
   },
   eyebrow: "Chương trình Hỗ trợ Dinh dưỡng Bổ sung",
   h2: "SNAP là tiền mua thực phẩm hằng tháng, nạp vào một tấm thẻ.",
@@ -1025,10 +1047,15 @@ const zh: PageCopy = {
         verdict: "✓ 确定：引用的每条规定都来自为这个问题检索到的法规原文。",
       },
     ],
-    dotLabel: "示例 {n}",
     tally: "到目前为止，这里已回答 {n} 个问题。",
-    note: "Demeter 的真实回答，因篇幅有所缩短。",
-    cta: "提出你自己的问题",
+  },
+  miniChat: {
+    greeting: "你好，我是 Demeter。我用平实的语言回答 SNAP 问题，并附上真实的规定条文。您在哪个州？",
+    stateLabel: "您的州",
+    federal: "所有州（联邦规定）",
+    placeholder: "关于 SNAP，随便问",
+    send: "发送",
+    startersLabel: "或从这些问题开始",
   },
   eyebrow: "补充营养援助计划",
   h2: "SNAP 是每月发放到卡上的食品补助。",

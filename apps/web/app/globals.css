@@ -5606,55 +5606,6 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--demeter-muted); margin: 0 0 0.7rem;
 }
-.dmex__q {
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.88rem; line-height: 1.5; color: var(--demeter-ink);
-  background: var(--demeter-tint); border: 1px solid var(--demeter-rule);
-  border-radius: var(--demeter-radius-inner); padding: 0.55rem 0.75rem; margin: 0 0 0.75rem;
-}
-.dmex__a {
-  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 0.95rem; line-height: 1.62; color: var(--demeter-body);
-  margin: 0 0 0.8rem; text-wrap: pretty;
-}
-.dmex__verdict {
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.75rem; line-height: 1.5; color: var(--demeter-terracotta-deep);
-  margin: 0 0 0.8rem;
-}
-/* The rotation stage: every exchange occupies the SAME grid cell, so the
-   card takes the height of its tallest member once and never reflows the
-   page while cycling. Opacity-only crossfade (compositor-safe); killed
-   entirely under reduced motion, where the dots remain the way through. */
-.dmex__stack { display: grid; }
-.dmex__item {
-  grid-area: 1 / 1; opacity: 0; transition: opacity 0.45s ease;
-  pointer-events: none;
-}
-.dmex__item--active { opacity: 1; pointer-events: auto; }
-.dmex__stage--static .dmex__item { transition: none; }
-@media (prefers-reduced-motion: reduce) {
-  .dmex__item { transition: none; }
-}
-.dmex__dots { display: flex; gap: 0.25rem; margin: 0 0 0.5rem; }
-.dmex__dot {
-  width: 8px; height: 8px; border-radius: var(--demeter-radius-pill);
-  border: 1px solid var(--demeter-rule-strong);
-  /* `background:` shorthand, deliberately — the contrast guard bans
-     terracotta after any bare "color:" and the shorthand is this
-     stylesheet's convention for fills. content-box keeps the fill inside
-     the padding, which is the invisible half of the 20px hit area. */
-  background: transparent content-box;
-  cursor: pointer; box-sizing: content-box; padding: 6px;
-}
-.dmex__dot[aria-pressed="true"] { background: var(--demeter-terracotta) content-box; border-color: var(--demeter-terracotta); }
-.dmex__dot:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
-.dmex__note {
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.78rem; color: var(--demeter-muted); margin: 0;
-  border-top: 1px solid var(--demeter-rule); padding-top: 0.65rem;
-}
-.dmex__cta { color: var(--demeter-terracotta-deep); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
 /* The dormant tally: quieter than the note above it — it is a fact, not a
    pitch, and it earns its place by being measured (lib/live-counts.ts). */
 .dmex__tally {
@@ -5662,6 +5613,77 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   font-size: 0.72rem; color: var(--demeter-muted); margin: 0.45rem 0 0;
   font-variant-numeric: tabular-nums;
 }
+
+/* ── The hero mini chat (owner redesign 2026-08-21) ──────────────────────
+   Replaced the cycling example card. Type rule holds: the greeting is
+   Demeter speaking (serif); everything that labels or operates is sans. */
+.dmc { display: flex; flex-direction: column; gap: 0.7rem; }
+.dmc__greeting {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.55; color: var(--demeter-body); margin: 0; text-wrap: pretty;
+}
+.dmc__statelabel {
+  display: flex; flex-direction: column; gap: 0.3rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--demeter-muted);
+}
+.dmc__state {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.9rem; color: var(--demeter-ink); background: var(--demeter-tint);
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
+  padding: 0.5rem 0.65rem; min-height: 44px;
+}
+.dmc__row { display: flex; gap: 0.5rem; }
+.dmc__input {
+  flex: 1; min-width: 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.95rem; color: var(--demeter-ink); background: var(--demeter-tint);
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
+  padding: 0.6rem 0.75rem; min-height: 44px;
+}
+.dmc__state:focus-visible, .dmc__input:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.dmc__send {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  background: var(--demeter-terracotta); color: #fff; font-weight: 700; font-size: 0.9rem;
+  border: 0; border-radius: var(--demeter-radius-input); padding: 0 1.1rem; min-height: 44px; cursor: pointer;
+}
+.dmc__send:hover { background: var(--demeter-terracotta-deep); }
+.dmc__send:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.dmc__starterslabel {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--demeter-muted);
+  margin: 0.3rem 0 0;
+}
+.dmc__starters { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.dmc__starter {
+  width: 100%; text-align: left; cursor: pointer;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; line-height: 1.4; color: var(--demeter-ink);
+  background: var(--demeter-tint); border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-input); padding: 0.55rem 0.7rem; min-height: 44px;
+}
+.dmc__starter:hover { border-color: var(--demeter-terracotta); }
+.dmc__starter:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+
+/* ── The deep band (What SNAP is) ───────────────────────────────────
+   The one moment of weight on a quiet page: the program definition in light
+   type on Demeter's own deep ink. NOT pine — the parent brand's green stays
+   on the parent's surfaces; borrowing it here would cross the brand line
+   kept deliberate since the Demeter pivot. */
+.dmband {
+  background: var(--demeter-ink); border-radius: var(--demeter-radius-card);
+  padding: clamp(1.4rem, 3.5vw, 2.5rem);
+}
+.dmband .dmx__h2 { color: #FFFFFF; }
+.dmband .dmx__body { color: rgba(255, 255, 255, 0.82); }
+.dmband .dmx__defs { gap: 1rem; }
+.dmband .dmx__def {
+  background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--demeter-radius-inner); padding: 1rem 1.1rem;
+}
+/* The terracotta dt fails contrast on ink; labels go quiet-light instead. */
+.dmband .dmx__def dt { color: rgba(255, 255, 255, 0.65); }
+.dmband .dmx__def dd { color: rgba(255, 255, 255, 0.9); }
 .dmo__eyebrow {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
