@@ -137,21 +137,40 @@ describe("a real example answer rides beside the hero (finding 5)", () => {
     expect(ex!.querySelector("a[href*='/chat']")).toBeTruthy();
   });
 
-  it("every language carries the earned verdict line", () => {
+  it("every language cycles through three real exchanges, each cited, each with its earned verdict", () => {
+    // The card became a rotation (2026-08-21 request): household, timing,
+    // student — all twelve exchanges regenerated through the live pipeline
+    // and every one graded certainty=certain, so every one carries the
+    // verdict. The standing rule is per-item: an exchange that does not
+    // grade CERTAIN ships without a verdict line or not at all.
     for (const lang of ["en", "es", "vi", "zh"] as const) {
       const ex = PAGE_COPY[lang].example;
-      expect(ex.verdict?.trim(), lang).toBeTruthy();
-      expect(ex.verdict, lang).toContain("✓");
+      expect(ex.items.length, lang).toBe(3);
+      for (const [i, item] of ex.items.entries()) {
+        expect(item.q.trim(), `${lang}[${i}].q`).toBeTruthy();
+        expect(item.a, `${lang}[${i}] cites`).toMatch(/7 CFR 273\.\d/);
+        expect(item.verdict, `${lang}[${i}] verdict`).toContain("✓");
+        // The no-invented-dollars rule covers every exchange.
+        expect(item.a + item.q, `${lang}[${i}] no dollars`).not.toMatch(/\$\s?\d/);
+      }
     }
+  });
+
+  it("the rotator renders all exchanges in the DOM with manual dot controls", () => {
+    const { container } = render(<SnapOrientation />);
+    expect(container.querySelectorAll(".dmex__item").length).toBe(3);
+    expect(container.querySelectorAll(".dmex__dot").length).toBe(3);
+    // Server HTML carries every exchange for crawlers; inactive ones hidden.
+    expect(container.querySelectorAll('.dmex__item[aria-hidden="true"]').length).toBe(2);
   });
 
   it("every language carries the full example, and none of it invents a dollar figure", () => {
     for (const lang of ["en", "es", "vi", "zh"] as const) {
       const ex = PAGE_COPY[lang].example;
       expect(ex, lang).toBeTruthy();
-      for (const [k, v] of Object.entries(ex)) {
-        expect(String(v).trim(), `${lang}.example.${k}`).not.toBe("");
-        expect(String(v), `${lang}.example.${k}`).not.toMatch(/\$\s?\d/);
+      for (const v of [ex.label, ex.note, ex.cta]) {
+        expect(String(v).trim(), lang).not.toBe("");
+        expect(String(v), lang).not.toMatch(/\$\s?\d/);
       }
     }
   });
