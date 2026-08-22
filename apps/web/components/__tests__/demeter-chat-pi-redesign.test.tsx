@@ -44,31 +44,76 @@ function mountChat() {
   );
 }
 
-describe("the sidebar drawer", () => {
-  it("toggles from the chat's top-left, closes on Escape, and is inert when closed", () => {
+describe("the sidebar — the tracking panel, open by default", () => {
+  // OWNER REFINEMENT (same day): the sidebar IS the tracking panel — state
+  // scope, the outlined application, the keep/verify tools — branded with
+  // the mark, and OPEN on arrival at desktop widths. Someone should see
+  // what the product is keeping for them, not discover it behind an icon.
+  it("starts open, branded, with the tracking panel inside", () => {
     const { container } = mountChat();
-    const toggle = container.querySelector("button.demeter__sidebartoggle")!;
-    expect(toggle).toBeTruthy();
-    expect(toggle.getAttribute("aria-expanded")).toBe("false");
     const drawer = container.querySelector("#demeter-sidebar")!;
-    expect(drawer.getAttribute("aria-hidden")).toBe("true");
-
-    fireEvent.click(toggle);
-    expect(toggle.getAttribute("aria-expanded")).toBe("true");
     expect(drawer.getAttribute("aria-hidden")).toBe("false");
+    // The brand rides in the sidebar head, shielded from translation.
+    const word = drawer.querySelector(".demeter__sbword")!;
+    expect(word.textContent).toBe("Demeter");
+    expect(word.getAttribute("translate")).toBe("no");
+    // The tracking panel moved in whole: state picker + worksheet.
+    expect(drawer.querySelector(".demeter__side")).toBeTruthy();
+    expect(drawer.textContent).toContain(T.en.worksheet.modeAsk);
+  });
 
+  it("closes from its own head toggle, and the chrome toggle reopens it", () => {
+    const { container } = mountChat();
+    const drawer = container.querySelector("#demeter-sidebar")!;
+    // While open, exactly ONE toggle — the sidebar's own.
+    expect(container.querySelectorAll("button.demeter__sidebartoggle").length).toBe(1);
+    fireEvent.click(drawer.querySelector("button.demeter__sidebartoggle")!);
+    expect(drawer.getAttribute("aria-hidden")).toBe("true");
+    // Closed: the chrome-row toggle appears, and reopens.
+    const chrome = container.querySelector(".demeter__head button.demeter__sidebartoggle")!;
+    expect(chrome).toBeTruthy();
+    expect(chrome.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(chrome);
+    expect(drawer.getAttribute("aria-hidden")).toBe("false");
+  });
+
+  it("Escape closes it only where it is an overlay (narrow screens)", () => {
+    const { container } = mountChat();
+    const drawer = container.querySelector("#demeter-sidebar")!;
+    // Desktop (jsdom default 1024): Escape must NOT vanish a standing column.
     fireEvent.keyDown(window, { key: "Escape" });
-    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(drawer.getAttribute("aria-hidden")).toBe("false");
+    // Narrow: it is an overlay, and Escape is the reflex.
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 800 });
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(drawer.getAttribute("aria-hidden")).toBe("true");
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 1024 });
   });
 
   it("carries the saved-conversations link and, signed out, the sign-in invitation", () => {
     const { container } = mountChat();
-    fireEvent.click(container.querySelector("button.demeter__sidebartoggle")!);
     const drawer = container.querySelector("#demeter-sidebar")!;
     expect(drawer.querySelector("a[href*='/screen/saved']")).toBeTruthy();
     const signin = drawer.querySelector("a[href*='/sign-in']");
     expect(signin).toBeTruthy();
     expect(signin!.getAttribute("href")).toContain("next=");
+  });
+
+  it("holds the language picker — the top bar control moved in here", () => {
+    // Owner refinement: languages live in the sidebar; the chrome row keeps
+    // only sign-in. One language control, not two.
+    const { container } = mountChat();
+    const drawer = container.querySelector("#demeter-sidebar")!;
+    expect(drawer.querySelector("select.demeter__lang-select")).toBeTruthy();
+    expect(container.querySelector(".demeter__head select")).toBeNull();
+  });
+
+  it("the sidebar brand links back to the main page", () => {
+    const { container } = mountChat();
+    const brand = container.querySelector("#demeter-sidebar a.demeter__sbbrand")!;
+    expect(brand).toBeTruthy();
+    expect(brand.getAttribute("href")).toBe("/screen/ask");
+    expect(brand.textContent).toContain("Demeter");
   });
 });
 

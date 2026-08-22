@@ -216,7 +216,9 @@ describe("DemeterChat heading level", () => {
   it("renders its title as a non-heading, leaving the page h1 to the orientation bar", () => {
     render(<DemeterChat states={STATES} />);
     expect(screen.queryByRole("heading", { level: 1 })).toBeNull();
-    expect(screen.getByText("Demeter")).toBeTruthy();
+    // getAllByText: the Pi sidebar's wordmark also says "Demeter" now — the
+    // assertion is that NONE of them is a heading, not that only one exists.
+    expect(screen.getAllByText("Demeter").length).toBeGreaterThanOrEqual(1);
   });
 });
 
