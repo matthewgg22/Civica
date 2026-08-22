@@ -107,6 +107,9 @@
     <div class="tier"><div class="name">Pilot Grant</div><div class="amt">$[[ask_fmt]]</div><div class="desc">A full quarter across the assessment area, with the complete measurement program and quarterly report.</div></div>
     <div class="tier"><div class="name">Program Grant</div><div class="amt">$30,000–$50,000</div><div class="desc">Two or more quarters; adds funnel-measurement depth and a year-end summary for exam files.</div></div>
   </div>
+  <div class="body-block" style="margin-top:14px; font-size:9.5pt; color:var(--muted);">
+    <strong style="color:var(--ink);">Where each dollar goes, every bank, every quarter:</strong> 63¢ outreach media in your assessment area · 15¢ measurement &amp; reporting (your quarterly report and exam-file memo) · 12¢ creative, ad operations &amp; Spanish-language localization · 10¢ administration. The same split for every participating bank — only the geography changes.
+  </div>
   <div class="cta">
     <div class="ask">The ask: a 30-minute conversation.</div>
     <div class="who">[[contact_name]], [[contact_title]] · [[contact_email]][[contact_phone_line]]</div>
@@ -124,13 +127,18 @@
       <caption>Illustrative one-quarter pilot at $[[ask_fmt]], [[aa_label]]. Conservative and mid-range scenarios; all figures projected from the assumption set on page 4.</caption>
       <thead><tr><th>Quarterly outcome</th><th>Conservative</th><th>Mid-range</th></tr></thead>
       <tbody>
+        <tr><td colspan="3" style="background:var(--tint); font-size:8pt; letter-spacing:.08em; text-transform:uppercase; text-align:left;">Delivery &amp; service — observed in-product</td></tr>
         <tr><td>Ad clicks delivered in assessment area</td><td>[[low_clicks]]</td><td>[[mid_clicks]]</td></tr>
         <tr><td>Eligibility-check sessions</td><td>[[low_sessions]]</td><td>[[mid_sessions]]</td></tr>
         <tr><td>Eligibility checks completed</td><td>[[low_checks]]</td><td>[[mid_checks]]</td></tr>
+        <tr><td colspan="3" style="background:var(--tint); font-size:8pt; letter-spacing:.08em; text-transform:uppercase; text-align:left;">Action — observed in-product</td></tr>
         <tr><td>Applications started</td><td>[[low_started]]</td><td>[[mid_started]]</td></tr>
-        <tr><td><strong>Applications submitted</strong></td><td><strong>[[low_submitted]]</strong></td><td><strong>[[mid_submitted]]</strong></td></tr>
+        <tr><td><strong>Applications submitted</strong> (primary metric)</td><td><strong>[[low_submitted]]</strong></td><td><strong>[[mid_submitted]]</strong></td></tr>
+        <tr><td colspan="3" style="background:var(--tint); font-size:8pt; letter-spacing:.08em; text-transform:uppercase; text-align:left;">Outcomes — via consented follow-up panel, response rate disclosed</td></tr>
         <tr><td>Est. approved households</td><td>[[low_approved]]</td><td>[[mid_approved]]</td></tr>
         <tr><td><strong>Est. annual benefits unlocked</strong></td><td><strong>[[low_benefit]]</strong></td><td><strong>[[mid_benefit]]</strong></td></tr>
+        <tr><td colspan="3" style="background:var(--tint); font-size:8pt; letter-spacing:.08em; text-transform:uppercase; text-align:left;">Efficiency</td></tr>
+        <tr><td>Cost per submitted application</td><td>[[low_cps]]</td><td>[[mid_cps]]</td></tr>
       </tbody>
     </table>
     <div class="repnote">A funded report replaces every projection above with measured values, reports <em>submitted</em> applications as the primary outcome, and states the measured mid-funnel rates alongside these assumptions. Where measured performance lands at the conservative end, the report says so plainly.</div>
@@ -144,10 +152,11 @@
   <h2 class="pagehead">How measurement works</h2>
   <div class="body-block">This pilot's stated learning goal is measuring the step no published benchmark covers: how many residents who start an eligibility check go on to submit an application. The measurement plan, in the order data flows:</div>
   <ul class="measure">
-    <li><strong>Delivery:</strong> ad-platform reporting of impressions and clicks by geography, reconciled monthly against invoices — the dollar-traceability chain starts at your grant and ends at a submitted application.</li>
-    <li><strong>Service:</strong> the eligibility assistant records sessions, checks completed, clarification questions answered, and applications started, with the user's self-reported ZIP code mapped to county.</li>
-    <li><strong>Outcomes:</strong> applications submitted (primary metric), with approval estimates clearly separated from measured counts.</li>
-    <li><strong>Known limits, stated up front:</strong> ZIP codes straddle county lines; some users will click from outside the assessment area; session-to-application rates are the pilot's measurement target, not a promise. The first report quantifies each of these rather than hiding them.</li>
+    <li><strong>Layer 1 — Observed (system of record):</strong> ad delivery by geography reconciled monthly against invoices; sessions, eligibility checks completed, likely-eligible rate, clarification questions answered, applications started and submitted with assistance — every number in this layer is a recorded system event, and this layer alone carries the CRA documentation (eligibility screening evidences "eligible to receive," the standard the guidance uses).</li>
+    <li><strong>Layer 2 — Consented follow-up panel:</strong> users may opt into a 30/60-day check-in ("Did you apply? Were you approved?"). Reported exactly as measured: opt-in rate, response rate, and outcomes among respondents — never silently extrapolated to the full population. Where a range is projected from panel results, the conservative bound is respondents-only.</li>
+    <li><strong>Layer 3 — Aggregate corroboration:</strong> the state's published monthly county caseload figures appear alongside our numbers as directional context (not attribution). At multi-county scale, geographic holdout testing becomes available for causal measurement — the phase-two design.</li>
+    <li><strong>Privacy posture:</strong> minimum collection, immediate aggregation, follow-up data retained only for the panel window. We report counts, never people.</li>
+    <li><strong>Known limits, stated up front:</strong> ZIP codes straddle county lines; some users click from outside the assessment area; session-to-application rates are the pilot's measurement target, not a promise. The first report quantifies each of these rather than hiding them.</li>
   </ul>
   <div class="disclose"><strong>Why we report this way.</strong> Payment is never tied to enrollment counts, ads are factual rather than persuasive, and projections are labeled until they are measurements. A report your examiner can trust is worth more to both of us than a bigger number.</div>
   <div class="pagefoot">Assumption set version [[assumptions_version]] — conservative/mid-range scenario parameters available on request as a machine-readable file with source citations.</div>
