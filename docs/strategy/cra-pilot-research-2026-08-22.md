@@ -130,3 +130,24 @@ Penalties for soliciting unregistered: up to $5K/act administrative (501(c)(3) f
 **Updated national filings picture:** MA (mandatory, certificate gates MA solicitation, ~2–6 wks) · CA (CT-1 before CA sends) · FL (FDACS approval gates FL sends, ~2–4 wks) · future states each need their own check before outreach (charitable-registration requirements are state-by-state; NY/TX/AZ next if those pitches activate — NY CHAR410 is known-onerous).
 
 Sources: §§496.404/405/406/417/419 F.S. (statute text) · fdacs.gov solicitation-of-contributions page · FDACS-10100 + FDACS-10110 forms (forms.fdacs.gov) · Rivero Gordimer on the $50K contributions amendment · Harbor Compliance (processing-time inference).
+
+---
+
+## T2-second-pass — Audit-requirement norms + CRA procedural rules (COMPLETE, 2026-08-22)
+
+**Finding 1 — the "audit trigger" is org-budget-keyed, not grant-size-keyed.** Survey of published bank giving programs (BofA Charitable Foundation, BofA Private Bank, US Bank Foundation, Truist Foundation, Wells Fargo, MBA Charitable Foundation): none publishes a grant-size audit threshold. The only published dollar line is **BofA's: org operating budget ≥ K → attach most recent audit**; several programs list no financial documents at all, and first-year budget-in-lieu-of-990 is an accepted pattern (BofA: "audited financial statements *or alternative*"). Universal packet: determination letter/EIN + board list + org budget + program budget. Industry generalization (unsourced-survey caveat): –100K grants commonly satisfied by 990/reviewed statements.
+
+**Finding 2 — statutory audit thresholds (verified, current):** MA review >K / audit >M (raised Nov 2024, M.G.L. c.12 §8F) · CA audit ≥M (Gov. Code §12586(e)) · FL review K–M / audit ≥M contributions (§496.407; 990 acceptable below) · NY review K–M / audit >M (Exec. Law §172-b). Civica Torrey has NO statutory audit obligation at current size. CPA costs: review ~–15K (bottom of range for tiny orgs), first audit ~–25K, compilation –7K; ~90-day lead. **Standing plan: budget ~K for a voluntary CPA review at FY-end if revenue approaches K or a funder asks — credibility purchase, not compliance.**
+
+**Finding 3 — CRA procedural gold (2016 Interagency Q&A, 81 FR 48506, all verified):**
+- **SNAP is a verbatim-listed LMI proxy** (§__.12(g)(2)—1: government assistance programs with income qualifications equivalent/stricter than LMI, expressly naming USDA's Supplemental Nutrition Assistance programs). The qualification argument is a citation, not a case.
+- Grants incl. in-kind = qualified investments (§__.12(t)—5); primary-purpose via majority-of-dollars-or-beneficiaries test (§__.12(h)—8); banks "should be prepared to demonstrate the activities' qualifications" — the documentation burden our packet removes.
+- Geographic nexus: AA **or broader statewide/regional area including it** (§__.12(h)—6/—7) — county-level client geography is exactly what the bank maps onto its AA.
+- **Binding multi-year pledges count in full at commitment** (GAAP-booked; §__.23(e)—2) and outstanding prior-period investments keep counting (§__.12(t)—8) → offer 2-year binding pledges pre-exam.
+- ISB banks (M–1.4B): CD test where innovativeness is NOT a factor (§__.21(a)—2) — sell volume + clean paper. Large banks: investment test (25% of rating). No double-counting grant + service (§__.24(e)—1); volunteer time is a separate CD service.
+- Event-sponsorship catering/venue portions get disallowed — our program-delivery-only structure sidesteps it.
+- **The industry-standard artifact is a one-page qualification memo per grant** (findCRA sells exactly this) — our quarterly report + memo IS the productized version.
+
+Consequences applied: officer-call guide written (cra-officer-call-guide.md) with the audit-trigger question + CPA-review budget note; the "effort-reduction" pitch is now grounded in the exam-procedure text itself (examiner step 2: "review… to verify that they qualify").
+
+Sources: 81 FR 48506 (govinfo PDF) · Interagency ISB exam procedures (Fed CA 14-2 att. 3) · FRBSF large-institution exam overview · bank program pages/PDFs (BofA CyberGrants app, usbank.com 2026 guidelines, truistfoundation.org, wellsfargo.com, massbankers.org) · state statutes (M.G.L. c.12 §8F; Cal. Gov. §12586; Fla. §496.407; NY Exec. §172-b) · CPA cost sources (WhippleWood, Springly, JMCO).
