@@ -86,6 +86,61 @@
       "ask_usd": 30000,
       "verified": false,
       "verify_note": "From PE p.4 (agent-read 2026-08-22): four whole counties (LA CSA). NOT a designated wholesale bank \u2014 Large Institution procedures; one full-service branch + LPOs. FDIC Q4 2026 exam."
+    },
+    "helm_bank": {
+      "cert": "32718",
+      "name": "Helm Bank USA",
+      "state": "FL",
+      "aa_counties": [
+        "Miami-Dade",
+        "Broward",
+        "Palm Beach",
+        "Orange",
+        "Osceola",
+        "Seminole"
+      ],
+      "aa_note": " (Miami AA: Miami-Dade/Broward/Palm Beach; Orlando AA created February 2025 \u2014 not yet examined, and will be evaluated for the first time at the next examination)",
+      "pe_date": "2025-06-16",
+      "pe_url": "https://crapes.fdic.gov/publish/2025/32718_250616.PDF",
+      "regulator": "FDIC",
+      "ask_usd": 30000,
+      "verified": false,
+      "verify_note": "AAs verbatim from PE p.3 (agent-read 8/22). NTI rating; Q4 2026 re-exam; Credicorp acquisition pending Fed approval \u2014 quadruple signal. Orlando AA unexamined = clean-slate opportunity framing."
+    },
+    "banco_do_brasil_americas": {
+      "cert": "26725",
+      "name": "Banco do Brasil Americas",
+      "state": "FL",
+      "aa_counties": [
+        "Miami-Dade",
+        "Broward",
+        "Orange",
+        "Osceola"
+      ],
+      "aa_note": " (Miami AA: Miami-Dade/Broward; Orlando AA: Orange/Osceola \u2014 both full-scope in the 5/2025 evaluation)",
+      "pe_date": "2025-05-12",
+      "pe_url": "https://crapes.fdic.gov/publish/2025/26725_250512.PDF",
+      "regulator": "FDIC",
+      "ask_usd": 30000,
+      "verified": false,
+      "verify_note": "AAs verbatim from PE p.4 (agent-read 8/22). THIRD consecutive NTI; Q3 2026 accelerated re-exam. No Palm Beach."
+    },
+    "ocean_bank": {
+      "cert": "24156",
+      "name": "Ocean Bank",
+      "state": "FL",
+      "aa_counties": [
+        "Miami-Dade",
+        "Broward",
+        "Orange"
+      ],
+      "aa_note": " (Miami-Dade and Broward AAs full-scope in the 6/2023 evaluation; Orange County AA added May 2023 and will be evaluated for the first time at the upcoming examination)",
+      "pe_date": "2023-06-06",
+      "pe_url": "https://crapes.fdic.gov/publish/2023/24156_230606.PDF",
+      "regulator": "FDIC",
+      "ask_usd": 30000,
+      "verified": false,
+      "verify_note": "AAs from PE p.4 (agent-read 8/22). Satisfactory rating; Q3 2026 exam scheduled \u2014 largest independent FL community bank."
     }
   }
 }

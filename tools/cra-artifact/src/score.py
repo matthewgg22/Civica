@@ -8,6 +8,7 @@ import csv
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
+# Default = CA (backward compatible); multi-state callers pass state_meta()["metrics"].
 COUNTY_METRICS = REPO_ROOT / "data-ops/analysis/track1-food-desert/artifacts/county_metrics.csv"
 
 ANNUAL_BENEFIT_PER_HOUSEHOLD = None  # set from funnel assumptions at call time

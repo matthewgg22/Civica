@@ -11,7 +11,7 @@ import pytest
 TOOL_ROOT = Path(__file__).resolve().parents[1]
 import sys
 sys.path.insert(0, str(TOOL_ROOT))
-from src import generate, mapsvg, report, score  # noqa: E402
+from src import generate, mapsvg, report, score, states  # noqa: E402
 
 TOL = 1e-9
 
@@ -156,7 +156,8 @@ def test_send_refuses_unverified_bank(monkeypatch):
 def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     banks, assumptions, org = generate.load_inputs()
     metrics = score.load_county_metrics()
-    values, need = generate.build_values(banks["bank_irvine"], assumptions, org, metrics)
+    values, need = generate.build_values(banks["bank_irvine"], assumptions, org, metrics,
+                                         states.state_meta("CA"))
     html = generate.render((TOOL_ROOT / "templates/artifact.html").read_text(), values)
     # PROJECTED system present
     assert html.count("PROJECTED") >= 2 and "Projected — not measured" in html
@@ -184,3 +185,38 @@ def test_pdf_smoke(tmp_path):
         capture_output=True, text=True).stdout.strip()
     if n_pages not in ("", "(null)"):
         assert n_pages == "5"
+
+
+# ---- multi-state wiring ------------------------------------------------------
+def test_unsupported_state_refused():
+    with pytest.raises(states.UnsupportedStateError):
+        states.state_meta("PA")  # FNS-divergence exclusion is deliberate
+
+def test_fl_metrics_load_and_state_average():
+    meta = states.state_meta("FL")
+    m = score.load_county_metrics(meta["metrics"])
+    assert "Miami-Dade" in m and len(m) == 67
+    avg = score.state_average(m)
+    assert 0.4 < avg < 0.9  # FL fact-base rate, sane range
+
+def test_fl_map_renders_from_national_geojson():
+    meta = states.state_meta("FL")
+    m = score.load_county_metrics(meta["metrics"])
+    svg = mapsvg.regional_map_svg(["Miami-Dade"], m, geojson_kind="national",
+                                  state_fips=meta["fips"])
+    counties = set(__import__("re").findall(r'data-county="([^"]+)"', svg))
+    assert "Miami-Dade" in counties and len(counties) >= 1 + mapsvg.N_NEIGHBORS
+
+def test_fl_methodology_language_not_ca():
+    banks, assumptions, org = generate.load_inputs()
+    fl = {k: v for k, v in banks.items() if v.get("state") == "FL"}
+    if not fl:
+        pytest.skip("no FL bank loaded yet")
+    key = next(iter(fl))
+    meta = states.state_meta("FL")
+    m = score.load_county_metrics(meta["metrics"])
+    values, _ = generate.build_values(banks[key], assumptions, org, m, meta)
+    html = generate.render((generate.TOOL_ROOT / "templates/artifact.html").read_text(), values)
+    assert "LightGBM" not in html          # CA model claim must not leak into FL
+    assert "gross-income test" in html     # fact-base language present
+    assert "You may qualify for SNAP" in html

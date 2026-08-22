@@ -21,7 +21,7 @@ from pathlib import Path
 
 TOOL_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOL_ROOT))
-from src import mapsvg, report, score  # noqa: E402
+from src import mapsvg, report, score, states  # noqa: E402
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
@@ -55,6 +55,8 @@ def fmt_int(x):
 
 
 def fmt_musd(x):
+    if x >= 1e9:
+        return f"${x/1e9:.2f}B"
     return f"${x/1e6:.1f}M" if x >= 1e6 else f"${x/1e3:,.0f}K"
 
 
@@ -71,7 +73,7 @@ def render(template: str, values: dict) -> str:
     return out
 
 
-def build_values(bank, assumptions, org, metrics):
+def build_values(bank, assumptions, org, metrics, meta):
     need = score.bank_need(bank["aa_counties"], metrics, assumptions)
     fun = report.funnel(bank["ask_usd"], assumptions)
     aa_label = (f"{bank['aa_counties'][0]} County" if len(bank["aa_counties"]) == 1
@@ -111,7 +113,13 @@ def build_values(bank, assumptions, org, metrics):
         "benefit_range": f"{fmt_musd(need['benefit_low_usd'])}–{fmt_musd(need['benefit_high_usd'])}",
         "ratio_line": ratio_line,
         "map_caption": map_caption,
-        "map_svg": mapsvg.regional_map_svg(bank["aa_counties"], metrics),
+        "map_svg": mapsvg.regional_map_svg(bank["aa_counties"], metrics,
+                                           geojson_kind=meta["geojson"],
+                                           state_fips=meta["fips"]),
+        "program_ref": meta["program_ref"],
+        "model_note": meta["model_note"],
+        "method_short": meta["method_short"],
+        "method_bullet": meta["method_bullet"],
         "eligible_fmt": fmt_int(need["eligible"]),
         "aa_enrolled_pct": f"{need['aa_enrolled_pct']:.0f}",
         "state_enrolled_pct": f"{need['state_enrolled_pct']:.0f}",
@@ -159,8 +167,9 @@ def main(argv=None):
     if args.bank not in banks:
         raise KeyError(f"unknown bank key {args.bank!r}; known: {sorted(banks)}")
     bank = banks[args.bank]
-    metrics = score.load_county_metrics()
-    values, need = build_values(bank, assumptions, org, metrics)
+    meta = states.state_meta(bank.get("state", "CA"))
+    metrics = score.load_county_metrics(meta["metrics"])
+    values, need = build_values(bank, assumptions, org, metrics, meta)
 
     template = (TOOL_ROOT / "templates/artifact.html").read_text()
     html = render(template, values)
