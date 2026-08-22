@@ -139,6 +139,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         v[f"{s}_submitted"] = fmt_int(f["apps_submitted"])
         v[f"{s}_approved"] = fmt_int(f["approved_households"])
         v[f"{s}_benefit"] = fmt_musd(f["annual_benefit_usd"]) + "/yr"
+        v[f"{s}_cps"] = f"${bank['ask_usd'] / f['apps_submitted']:,.0f}"
     return v, need
 
 
