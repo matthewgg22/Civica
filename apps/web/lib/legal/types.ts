@@ -74,16 +74,21 @@ export const RETENTION_DAYS = {
   flaggedRow: 30,
 } as const;
 
-/** Whether the job that actually enforces RETENTION_DAYS exists and runs.
+/** Whether the job that actually enforces RETENTION_DAYS exists AND RUNS.
  *
- *  IT DOES NOT, TODAY. lib/demeter-audit-sink.ts says retention is "enforced by
- *  the retention job, not here" — and there is no such job anywhere in the repo.
- *  Nothing has ever been deleted from mae_query_log; every question and answer
- *  written since the public chat launched is still there.
+ *  THE JOB NOW EXISTS (#926): lib/retention-purge.ts, invoked daily by the
+ *  Vercel cron declared in apps/web/vercel.json, importing the windows above
+ *  rather than restating them.
  *
- *  That makes the retention section of the Privacy Policy a statement of INTENT
- *  rather than of fact, which is exactly the kind of privacy claim a product
- *  serving this population must not publish. So the claims test refuses to let
- *  any document reach status "published" while this is false. Build the job,
- *  point it at RETENTION_DAYS, flip this to true, and the gate opens. */
+ *  IT IS STILL FALSE, and that is not an oversight. This constant means the
+ *  policy's retention promise is TRUE OF THE RUNNING SYSTEM — and the route
+ *  fails closed without CRON_SECRET, so until that is set in Vercel and a
+ *  first run is confirmed, nothing is being purged and the promise would
+ *  still be intent wearing the grammar of fact. Flipping this on the strength
+ *  of merged code rather than observed behaviour is precisely the failure the
+ *  guard was built to prevent.
+ *
+ *  To flip: set CRON_SECRET in Vercel → GET the route with ?dryRun=1 and read
+ *  the count (the first sweep covers every row since launch) → let the real
+ *  run happen → flip this to true. */
 export const RETENTION_JOB_LIVE = false;
