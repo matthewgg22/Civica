@@ -77,10 +77,33 @@ export async function middleware(request: NextRequest) {
   // itself — an infinite loop that bricks every enrolled login. It also skips
   // /api/* so in-app fetch() calls get a clean 401/redirect from the route
   // itself rather than an HTML page that breaks res.json().
+  //
+  // #512: fail-closed on an indeterminate AAL, not open. A Supabase blip or
+  // SDK-shape change previously left `aal` falsy, which fell through this
+  // block entirely — an ENROLLED user proceeded at aal1, silently
+  // downgrading the 2FA guarantee for a tool holding SNAP applicant PII.
+  // Retry once first so a single transient error doesn't send every staff
+  // member (enrolled or not) to the verify page; only fail closed if the
+  // check is still indeterminate after the retry.
   const mfaGateApplies = !path.startsWith("/auth/") && !path.startsWith("/api/");
   if (mfaGateApplies) {
-    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-    if (aal && aal.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
+    let { data: aal, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (aalError || !aal) {
+      ({ data: aal, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel());
+    }
+    if (aalError || !aal) {
+      // Still indeterminate after one retry — we can't confirm this session
+      // actually reached aal2 (or that it doesn't need to), so don't let it
+      // through unexamined. /auth/mfa/verify itself handles a visitor with
+      // no TOTP factor gracefully (shows a clear message instead of a
+      // silently-disabled form), so this is safe to send ANY staff member to,
+      // enrolled or not.
+      const url = request.nextUrl.clone();
+      url.pathname = "/auth/mfa/verify";
+      url.searchParams.set("error", "aal_check_failed");
+      return NextResponse.redirect(url);
+    }
+    if (aal.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
       const url = request.nextUrl.clone();
       url.pathname = "/auth/mfa/verify";
       return NextResponse.redirect(url);

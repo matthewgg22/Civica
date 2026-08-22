@@ -1,0 +1,209 @@
+{
+  "_provenance": {
+    "note": "New Mexico SNAP curated supplements. New Mexico has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like this roster's Connecticut, Utah, Iowa, and Arkansas prior batch-tier builds. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. New Mexico is part of a second batch tier built alongside Mississippi, Kansas, and Nebraska in parallel. Drafted from direct curl fetches (browser User-Agent) of HCA's current FFY2026 Income Eligibility Guidelines PDF, current NMAC 8.139 sections (srca.nm.gov), HCA consumer/press pages, and — for the drug-felony statute, which returned genuine access barriers on both law.justia.com (403) and nmonesource.com (404) — two independently-fetched, textually-convergent secondary/quasi-primary mirrors.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct curl fetch (browser UA) of hca.nm.gov's FFY2026 Income Eligibility Guidelines PDF (converted with pdftotext -layout) and NMAC 8.139.420/8.139.510/8.139.520 (srca.nm.gov), cross-referenced against their own dated revision stamps + direct WebFetch of HCA's SNAP overview, ABAWD/Keep-Your-Benefits, Sept. 2024 SNAP-expansion press release, Feb. 2026 state-funded-assistance press release, and FDPIR pages + a deliberate stale-vs-current comparison against a legacy hsd.state.nm.us-hosted PDF + WebSearch cross-checks against Public Health Law Center and FindLaw for the drug-felony statute + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "hca.nm.gov and srca.nm.gov returned clean HTTP 200 to every direct curl attempt with a browser User-Agent — no bot-detection wall of the kind this roster's Connecticut and Arkansas packs found. The genuine access complication this pack found was New Mexico's own statute host for the drug-felony opt-out provision: law.justia.com 403'd (the now-familiar pattern), and nmonesource.com — the state's own official Compilation Commission statute database, tried specifically as a state-run alternative — returned HTTP 404 on every URL pattern attempted. This pack resolved the gap via two independently-fetched, textually-identical mirrors (Public Health Law Center, FindLaw) rather than fabricating statutory text, and discloses the access route explicitly."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "yesnm",
+        "who runs",
+        "what agency",
+        "administers",
+        "hca",
+        "hsd",
+        "health care authority",
+        "human services department",
+        "income support division",
+        "isd",
+        "ebt card",
+        "food stamps"
+      ],
+      "citation": "HCA SNAP program overview page; NMAC 8.139.520.3 (amended 7/1/2024, reciting current statutory authority under the Health Care Authority)",
+      "heading": "New Mexico's SNAP administering agency was renamed from the Human Services Department (HSD) to the Health Care Authority (HCA) effective July 1, 2024 — and this pack found the rename is inconsistently reflected across the same regulation's own hosted PDFs",
+      "text": "New Mexico calls its program plainly \"SNAP\" — this pack found no distinctive local brand like CalFresh (CA) or Basic Food (WA), and no distinctive branded EBT card name either; HCA's own consumer materials use only \"SNAP\" and \"Electronic Benefits Card\" / \"EBT Card\" throughout. The agency itself, however, IS a genuinely recent structural change worth flagging precisely: pursuant to 2023 Senate Bill 16, the New Mexico Human Services Department (HSD) became the New Mexico Health Care Authority (HCA) effective July 1, 2024, consolidating HSD, the General Services Department's Employee Benefits Bureau, the Department of Health's Division of Health Improvement, and the Office of Superintendent of Insurance's Health Care Affordability Fund into one department. SNAP administration now sits within HCA's Income Support Division (ISD) — the operational unit name, ISD, predates and survives the HSD-to-HCA rename, still visible in the NMAC's own internal cross-references (\"...to facilitate access to policy throughout the department\" language dating to pre-2024 sections uses \"income support division policy manuals\"). This pack found a live, disclosed side effect of the rename: individual NMAC 8.139 sections carry INCONSISTENT issuing-agency vintages depending on hosting domain. Sections re-published on srca.nm.gov (the New Mexico State Records Center and Archives, the state's official regulation host) with a post-2024 amendment — 8.139.520 (amended 7/1/2024) and 8.139.420 (amended 7/16/2024, further amended 3/1/2025) — correctly read \"Issuing Agency: New Mexico Health Care Authority.\" But section PDFs still hosted at the legacy hsd.state.nm.us domain without a matching post-2024 amendment — this pack found 8.139.410 and 8.139.400 in this state — still read \"Issuing Agency: New Mexico Human Services Department,\" a department name that has not existed since July 1, 2024. Applicants apply through the YesNM self-service portal (yes.state.nm.us/yesnm), by phone or in person at a local HCA/ISD field office, or by mailing a printed application; the customer service center is 1-800-283-4465.",
+      "source_url": "https://www.hca.nm.gov/lookingforassistance/supplemental_nutrition_assistance_program__snap/"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "165 percent",
+        "165%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "ssi",
+        "tanf",
+        "nm works"
+      ],
+      "citation": "NMAC 8.139.420.8 (Categorical Eligibility, amended 3/1/2025) — broad-based CE threshold is gross income under 200% FPG; HCA Income Eligibility Guidelines for SNAP & Financial Assistance, FFY2026 (ISD 017, revision 9-30-2025) — 200% FPG column confirmed at $2,610/month for household size 1; HCA press release dated Sept. 23, 2024 confirming the 165%→200% FPG change and its Oct. 1, 2024 effective date",
+      "heading": "CORRECTION: New Mexico's broad-based categorical eligibility (BBCE) gross-income ceiling is 200% of the federal poverty guideline (FPG), NOT 165% — the 165% figure some secondary sources and one of HCA's own predecessor-agency PDFs still show is STALE, superseded effective October 1, 2024",
+      "text": "New Mexico's food stamp program regulation, NMAC 8.139.420.8, states plainly: \"A food stamp household is considered to be a broad-based CE household for the month of application and the entire certification period when the household's gross income is less than two hundred percent FPG and the household has received a non-cash TANF/MOE funded benefit or service.\" This pack found and resolved a genuine, precisely-dated discrepancy: multiple SNAP-calculator and secondary-source sites this pack checked confidently state New Mexico's BBCE ceiling is 165% FPG — and this pack found the LIKELY origin of that stale figure directly: an Income Eligibility Guidelines PDF still hosted live at hsd.state.nm.us (revision date 6-15-2023, i.e., under the pre-rename HSD) shows a \"165% FPG\" column labeled \"Gross Income for Categorical Eligibility.\" HCA's own September 23, 2024 press release dates the correction precisely: \"The gross income limit increased from 165% to 200% of the federal poverty line, allowing approximately 67,697 additional households to qualify... a family of four earning up to $5,200 monthly may now qualify (compared to the previous $4,290 threshold)\" — effective October 1, 2024. HCA's current FFY2026 Income Eligibility Guidelines PDF (ISD 017, revision 9-30-2025) confirms the 200% FPG column is now the live standard, at $2,610/month for a household of 1, rising to $5,360 for a household of 4, +$918 per additional member. Critically, per 8.139.420.8's own \"Eligibility factors for CE households\" subsection: broad-based CE households \"do not have to verify resources\" — but, distinct from households categorically eligible through direct receipt of financial assistance/SSI (who skip BOTH the gross and net income tests entirely), broad-based CE households in New Mexico ARE still required to meet BOTH the gross AND net income eligibility standards — the BBCE pass here is a RESOURCE-verification waiver, not an income-test waiver, a precise structural point worth not blurring. The 130% FPG ordinary gross test and 100% FPG net test remain the operative standards for non-categorically-eligible households.",
+      "source_url": "https://www.hca.nm.gov/wp-content/uploads/ISD-017-FPG-Cards-FY-2026-10.01.25-to-09.30.2026.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count"
+      ],
+      "citation": "HCA Income Eligibility Guidelines for SNAP & Financial Assistance, FFY2026 (ISD 017, revision 9-30-2025) — Asset Limit for HH with a member 60+ or disabled: $4,500; Asset Limit for all other HH: $3,000; NMAC 8.139.510 (Resources and Property, effective 7/16/2024), which defers to USDA's own COLA page for the current dollar figure rather than restating it in the regulation's own text",
+      "heading": "New Mexico DOES have a stated asset limit ($3,000 general / $4,500 elderly-disabled, current FFY2026 national figures) — but because nearly every household under 200% FPG is broad-based-CE-eligible and exempt from resource VERIFICATION, most applicants never encounter it in practice",
+      "text": "HCA's own current FFY2026 Income Eligibility Guidelines PDF states two explicit asset limits: $4,500 for a household with at least one member who is 60 or older or disabled, and $3,000 for all other households — matching the current national FFY2026 elevated figures this roster's Kentucky, Louisiana, Alabama, Missouri, Maryland, Colorado, Connecticut, and Arkansas packs have each independently confirmed. This pack found and rejects a secondary-source claim that \"New Mexico has no asset limit\" as an oversimplification worth precise correction: the dollar figures ARE published and operative, but NMAC 8.139.420.8 (see income-pathways) exempts both financial-assistance/SSI categorically-eligible households AND broad-based CE households from having to VERIFY resources at all — and because virtually every household with gross income under 200% FPG qualifies for broad-based CE, the practical effect for most New Mexico SNAP applicants is that the asset test is never actually applied, even though the underlying dollar figure exists and remains operative for the narrower set of households that are NOT categorically eligible (gross income at or above 200% FPG). This pack also found an older, unclearly-dated secondary source citing $2,250/$3,250 as New Mexico's asset limits — those figures predate the national FFY2026 COLA-driven increase to $3,000/$4,500 and are treated here as stale, not current. NMAC 8.139.510 itself does not restate a dollar figure in its own regulatory text at all; it explicitly defers to \"https://www.fns.usda.gov/snap/cost-living-adjustment-cola-information,\" confirming New Mexico tracks the federal standard directly rather than setting an independent state figure.",
+      "source_url": "https://www.hca.nm.gov/wp-content/uploads/ISD-017-FPG-Cards-FY-2026-10.01.25-to-09.30.2026.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "distribution",
+        "trafficking"
+      ],
+      "citation": "N.M. Stat. Ann. § 27-2B-11(C), via Public Health Law Center's SNAP Ban Opt-Out States Map and FindLaw's current-code mirror (both independently quoting identical statutory text); direct access to law.justia.com (403) and nmonesource.com (404) both failed, see PROVENANCE.md",
+      "heading": "FLAGSHIP CAUTION: New Mexico's drug-felony SNAP opt-out statute is worded narrowly around DISTRIBUTION convictions specifically — this pack did NOT find confirming statutory language extending the opt-out to simple possession or use convictions, despite secondary sources describing New Mexico as having \"fully opted out\"",
+      "text": "21 U.S.C. § 862a(a) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP and TANF unless a state opts out under § 862a(d)(1)(A) (full opt-out) or modifies the ban's duration under § 862a(d)(1)(B). This pack could not directly fetch New Mexico's own statute text (law.justia.com returned HTTP 403, the now-familiar pattern this roster has documented repeatedly; nmonesource.com, New Mexico's own official Compilation Commission statute host, returned HTTP 404 on every URL pattern this pack tried) — but found the SAME quoted statutory language independently, word-for-word, on two separate legal-resource mirrors: Public Health Law Center's SNAP Ban Opt-Out States Map and FindLaw's current-code republication. Both quote N.M. Stat. Ann. § 27-2B-11(C) as reading: \"Pursuant to the authorization provided to the states in the Personal Responsibility and Work Opportunity Reconciliation Act of 1996, 21 U.S.C. Section 862a(d)(1)(A), New Mexico elects to exempt all persons domiciled in the state from application of 21 U.S.C. Section 862a(d)(1)(A) concerning the restriction of eligibility for benefits on the basis of a conviction for DISTRIBUTION of a controlled substance.\" This pack flags precisely what this quoted text does and does not say: it invokes the FULL opt-out provision (d)(1)(A), which by its own federal text covers the whole of subsection (a) — both the TANF and SNAP bans — but New Mexico's own exemption clause narrows its own scope to convictions \"on the basis of... DISTRIBUTION of a controlled substance\" specifically, not the federal ban's full \"possession, use, or distribution\" scope. Public Health Law Center's own analysis (independently, not this pack's inference) makes the identical observation: \"New Mexico uses unique language in its statute which seems to carve out the exemption only for people with felony convictions related to distributing a controlled substance but could potentially leave the door open to exempt people with other felony drug convictions\" — i.e., even the tracking organization itself treats the possession/use scope as genuinely AMBIGUOUS, not resolved. This pack found one broader secondary characterization (Collateral Consequences Resource Center) describing New Mexico as having \"fully opted out of both SNAP and TANF bans\" without this distribution-specific caveat — this pack treats that framing as plausible but NOT confirmed against the statute's own narrower quoted language, and does not adopt it as settled. Also worth noting: Section 27-2B-11 sits within the New Mexico Works Act (Chapter 27, Article 2B — New Mexico's TANF chapter), not a SNAP-specific chapter, though its own text and secondary corroboration both treat it as governing SNAP eligibility as well via the federal opt-out provision's broader (a)-subsection scope.",
+      "source_url": "https://www.publichealthlawcenter.org/resources/snap-ban-opt-out-states-map/nm"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "limited utility allowance",
+        "telephone allowance",
+        "standard deduction",
+        "hcsua",
+        "lua",
+        "homeless",
+        "homeless shelter deduction",
+        "minimum allotment"
+      ],
+      "citation": "HCA Income Eligibility Guidelines for SNAP & Financial Assistance, FFY2026 (ISD 017, revision 9-30-2025) — Standard Deduction $209 (HH 1-3), $223 (4), $261 (5), $299 (6+); Excess Shelter Deduction Limit $744; Heating and Cooling SUA (HCSUA) $419; Limited Utility Allowance (LUA) $289; Telephone Standard $51; Homeless Shelter Standard $198.99; Minimum Allotment $24",
+      "heading": "New Mexico's current FFY2026 deduction figures were fetched directly with zero access barrier — a clean contrast to this roster's more frequent bot-detection pattern for equivalent dollar-figure pages",
+      "text": "New Mexico's Standard Deduction (effective 10/1/2025) is $209 for household sizes 1 through 3, $223 for size 4, $261 for size 5, and $299 for size 6 or more — matching the current national FFY2026 figures this roster's Kentucky, Louisiana, Alabama, South Carolina, and Connecticut packs independently confirmed. New Mexico's Heating and Cooling Standard Utility Allowance (HCSUA) is $419/month; the Limited Utility Allowance (LUA), for households billed for utilities but not heating/cooling, is $289/month; a household whose only utility expense is a telephone uses the standalone Telephone Standard, $51/month. This pack found a secondary source citing New Mexico's HCSUA as \"$408\" — that figure does not match HCA's own current FFY2026 PDF ($419) and is treated here as a stale prior-cycle figure, not current. New Mexico's Excess Shelter Deduction is capped at $744/month, matching the current national FFY2026 figure this roster's Kentucky, Louisiana, and Connecticut packs also confirmed (New Mexico's guidelines table does not show an elderly/disabled uncapped exception the way Connecticut's did — this pack did not find New Mexico-specific language distinguishing an elderly/disabled uncapped shelter deduction from the capped figure, and flags this as an open verification item in freshness.json rather than assuming federal default silently). New Mexico's Homeless Shelter Standard is $198.99/month, matching this roster's Connecticut and Louisiana packs' identically-sourced federal standard homeless shelter deduction figure (7 CFR § 273.9(d)(6)(iii)). The Minimum Allotment for FFY2026 is $24 (for 1- and 2-person households), $1 above the prior-cycle $23 this pack found in the stale 2022-2023 HSD guidelines PDF used to trace the 165%-vs-200% BBCE discrepancy.",
+      "source_url": "https://www.hca.nm.gov/wp-content/uploads/ISD-017-FPG-Cards-FY-2026-10.01.25-to-09.30.2026.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "time limit",
+        "luna county",
+        "pueblo",
+        "reservation",
+        "native american"
+      ],
+      "citation": "HCA — Keep Your Benefits, NM! page (direct WebFetch, current) — statewide work rules effective January 1, 2026, age 18-64, 80 hours/month, with active waived areas: Luna County, Laguna Pueblo, San Felipe Pueblo, Taos Pueblo, and Tesuque Pueblo",
+      "heading": "REFINEMENT: New Mexico's ABAWD waiver footprint narrowed sharply but did NOT fully disappear on January 1, 2026 — one county and four pueblos remain actively waived, a nuance a blanket \"statewide work requirements now apply everywhere\" reading would miss",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period absent 80 hours/month of a qualifying work activity or an exemption. This pack found New Mexico previously held one of the broadest ABAWD waiver footprints in the country — 29 counties and 18 reservations waived through December 31, 2025 — and confirmed via HCA's own current, directly-fetched Keep Your Benefits, NM! page that statewide SNAP work rules for adults took effect January 1, 2026, consistent with the nationwide post-OBBBA (One Big Beautiful Bill Act, July 2025) rollout timeline this roster has documented in other 2025-2026-built packs. But this pack found and flags a precise, worth-not-missing nuance: HCA's own current page states the new work rules do \"not apply in Luna County, Laguna Pueblo, San Felipe Pueblo, Taos Pueblo, or Tesuque Pueblo\" — meaning a genuine, narrower ABAWD waiver remains active in specific New Mexico jurisdictions even after the broad January 1, 2026 statewide rollout, not a full end to all New Mexico waivers. HCA's current age range is 18 through 64 (the current post-OBBBA federal standard, up from a prior 18-54 ceiling), and the required activity is 80 hours/month through work (paid or unpaid), volunteering/community service, job training, or workforce/education programs. Exemptions HCA lists include pregnancy, disability or SSI receipt, caring for a dependent under 14, working 30+ hours/week, being a full-time student, receiving unemployment benefits, participating in a treatment program, and — worth flagging given New Mexico's substantial tribal population — membership in a federally-recognized Native American tribe, listed by HCA as its own standalone exemption category alongside the geographic Pueblo waivers above. After three months of non-compliance without an exemption, HCA's page states plainly \"your SNAP may stop,\" but benefits can be regained by later meeting the requirement.",
+      "source_url": "https://www.hca.nm.gov/snapchanges/"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food"
+      ],
+      "citation": "USDA FNA's current SNAP Restaurant Meals Program state list (Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois [Cook/Franklin Counties], Michigan, Virginia — New Mexico absent, direct curl fetch, clean HTTP 200)",
+      "heading": "New Mexico does NOT operate a Restaurant Meals Program — this pack found no pending state legislation directing one, unlike this roster's Connecticut pack",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR § 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round. USDA FNA's own current RMP state list (fetched directly, clean HTTP 200) names Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia — New Mexico is ABSENT, and this pack found no pending New Mexico legislative bill directing HCA toward one (unlike this roster's Connecticut pack, which found a pending 2025 bill). This pack separately found and distinguishes a genuinely different, TEMPORARY New Mexico program: HCA has repeatedly issued short-term emergency hot-food waivers during disaster declarations (2024 wildfires, 2025 flooding) letting affected SNAP households temporarily buy hot, ready-to-eat deli-department foods at EBT-authorized retailers — these are disaster-specific, time-limited USDA emergency waivers, structurally distinct from a standing Restaurant Meals Program, apply only to deli departments at EBT-authorized retailers (not restaurants), and do not indicate New Mexico is building toward a permanent RMP. This pack's operative answer for a New Mexico applicant today, absent an active disaster declaration, is that a Restaurant Meals Program is not available.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "certification-and-state-supplement",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "interim report",
+        "state supplement",
+        "elderly",
+        "disabled"
+      ],
+      "citation": "HCA — Governor expands SNAP access, increases benefits for New Mexicans press release, Sept. 23, 2024; NMAC 8.139.120.8 (Recertification)",
+      "heading": "New Mexico extended certification periods for elderly/disabled no-earned-income households from 12 to 36 months AND separately increased a New Mexico-specific state supplement for that same population, both effective October 1, 2024",
+      "text": "New Mexico's default SNAP certification period is 12 months, with a 6-month Interim Report due at the midpoint; per NMAC 8.139.120.8, a household reapplying by the 15th day of its certification period's last month is considered to have reapplied timely and entitled to uninterrupted benefits. Effective October 1, 2024, HCA extended the certification period specifically for households where every adult member is 60 or older or disabled AND has no earned income from 12 months to 36 months — these households now receive only an annual notice to report expense changes and need take no action if circumstances are unchanged until the 36th month, per HCA's own Sept. 23, 2024 press release. Separately, and worth flagging as a genuinely New Mexico-specific structural feature distinct from ordinary federal SNAP: HCA's same press release describes a NEW MEXICO STATE SUPPLEMENT specifically for seniors and disabled individuals without earned income, increased from $32 to $100 per month effective the same date, described as benefiting over 26,451 households. This pack flags this state supplement as worth distinguishing clearly from the federal SNAP allotment in any explanation to an applicant — it is an additional, New Mexico-funded monthly amount on top of the federal SNAP benefit, not a federal SNAP parameter, and this pack did not find equivalent state-supplement programs documented in this roster's other built states to date.",
+      "source_url": "https://www.hca.nm.gov/2024/09/23/governor-expands-snap-access-increases-benefits-for-new-mexicans/"
+    },
+    {
+      "key": "tribal-lands-fdpir",
+      "kind": "supplement",
+      "terms": [
+        "reservation",
+        "tribal",
+        "navajo",
+        "pueblo",
+        "apache",
+        "fdpir",
+        "commodities",
+        "indian reservation",
+        "food distribution program"
+      ],
+      "citation": "HCA FDPIR page (direct WebFetch); federal FDPIR/SNAP household-level dual-participation exclusivity rule (7 CFR Part 253; USDA FNA FDPIR Applicant/Recipient and coordination guidance, WebSearch-corroborated, not New Mexico-specific)",
+      "heading": "New Mexico's substantial tribal-land population (Navajo Nation plus 19 Pueblos and 3 Apache tribes) makes the federal FDPIR-vs-SNAP household exclusivity rule a genuinely live, worth-flagging consideration here even though FDPIR itself is out of scope for this pack",
+      "text": "New Mexico is home to 23 federally-recognized tribal nations and pueblos, including the Navajo Nation (which spans New Mexico, Arizona, and Utah), 19 Pueblos, and 3 Apache tribes. The Food Distribution Program on Indian Reservations (FDPIR) is a SEPARATE federal program (not SNAP, not a New Mexico state program) providing USDA commodity foods to low-income households living on reservations or in designated areas near them; HCA's own FDPIR page confirms the program operates in New Mexico but this pack found HCA's page does not itself explain the interaction with SNAP. That interaction is set by federal rule, not New Mexico policy: a household may participate in EITHER FDPIR or SNAP in a given month, never both simultaneously — federal regulation requires SNAP and FDPIR agencies serving the same area to coordinate specifically to detect and prevent dual participation, and a household eligible for both must choose one program per month, though it may switch between them (benefits in one must end before certification in the other begins). This pack flags this precisely because New Mexico's ABAWD exemption list (see abawd-work-requirement) already carries a standalone Native American tribal-membership exemption category, and because several of the still-active ABAWD-waived jurisdictions (Laguna Pueblo, San Felipe Pueblo, Taos Pueblo, Tesuque Pueblo) are themselves tribal lands — a New Mexico applicant living on or near a reservation may need BOTH the FDPIR-vs-SNAP household choice AND the ABAWD tribal exemption explained together, not as two unrelated facts. This pack also found, but does not treat as current law, a federal legislative proposal (the Tribal Access to Nutrition Assistance Act, proposed by Sens. Murray and Cortez Masto) that would end the FDPIR/SNAP dual-participation exclusion — as of this pack's fetch date this is PROPOSED, not enacted, and the household-level exclusivity rule above remains the operative federal law.",
+      "source_url": "https://www.hca.nm.gov/lookingforassistance/usda_food_distribution_programs_on_indian_reservations/"
+    }
+  ]
+}

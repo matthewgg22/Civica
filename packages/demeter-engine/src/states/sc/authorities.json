@@ -1,0 +1,41 @@
+{
+  "_provenance": {
+    "note": "South Carolina citation authorities. South Carolina's operative SNAP policy lives entirely inside its own SCDSS SNAP Policy Manual (Volume 70, June 2026), cited by chapter.section, with lettered/numbered sub-parts, e.g. 'Section 4.1(D)', 'Section 12.5(2)', 'Section 8.15'. This pack invents the short prefix 'SC SNAP Manual' to disambiguate in running text, matching this roster's convention of an invented short prefix per state whose primary source has no natural standalone citation form of its own (MO's 'MO IM Manual', IN's 'IN PPM', VA's 'VA SNAP Manual Part'). Distinctively for South Carolina: this pack found NO separate state statute governing SNAP eligibility rules generally, and specifically confirmed (via two independent secondary aggregators) that South Carolina's drug-felony disqualification rests on the ABSENCE of state legislation, not an enacted S.C. Code section — so, unlike every other state in this roster so far, this pack does NOT define a second state-statute citation family. Any state-statute citation a future South Carolina finding needs should be independently verified before being added here.",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "scsnapmanual",
+      "regex": "\\bSC\\s+SNAP\\s+Manual,?\\s+§?\\s?(\\d{1,2}\\.\\d{1,3}(?:\\([A-Za-z0-9]+\\))?)\\b",
+      "flags": "gi",
+      "template": "SC SNAP Manual § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "South Carolina Department of Social Services SNAP Policy Manual (Volume 70, June 2026), cited by chapter.section and optional lettered/numbered sub-part, e.g. 4.1(D) (Categorically Eligible Households — Family Independence Information and Referral Services), 8.12 (Definition of ABAWD), 12.5(2) (Mandatory Utility Allowance)."
+    }
+  ],
+  "known": {
+    "scsnapmanual": [
+      { "value": "SC SNAP Manual § 2.3(7)", "note": "Ineligible Household Members — drug-related felony conviction (possession, use, or distribution of a controlled substance, committed after Aug. 22, 1996) permanently disqualifies the individual; sole exception is verified expungement or pardon. No state statute modifies this — South Carolina retains the unmodified federal 21 U.S.C. § 862a default" },
+      { "value": "SC SNAP Manual § 4.1", "note": "Categorically Eligible Households — (A)-(C) TANF/SSI recipients; (D) Family Independence Information and Referral Services, expanding categorical eligibility (resource-test waiver only, NOT an income-limit expansion) to households at or below 130% FPL" },
+      { "value": "SC SNAP Manual § 4.2", "note": "Households Prohibited from Being Considered Categorically Eligible — IPV disqualification, work-requirement noncompliance, drug-related felony (per § 2.3(7)), fleeing felon/probation-parole violator, certain convicted felons; EXCEPTION preserved for the 130% FPL Family Independence Information and Referral Services pathway" },
+      { "value": "SC SNAP Manual § 6.5", "note": "Expedited Service — plain federal criteria (gross income under $150 and liquid resources $100 or less; combined income/resources less than rent/mortgage plus utility standard; destitute migrant/seasonal farmworker households)" },
+      { "value": "SC SNAP Manual § 6.6", "note": "Processing Standards for Expedited Service — 7-calendar-day ceiling for EBT benefit availability" },
+      { "value": "SC SNAP Manual § 8.12", "note": "Definition of ABAWD — able-bodied adult, at least 18 but under 65 (current federal 18-64 range), without a dependent under 14 in the household" },
+      { "value": "SC SNAP Manual § 8.14", "note": "ABAWD Work Requirement — 20 hours/week or 80 hours/month of paid, in-kind, or qualifying training work (the \"ABAWD Participation Requirement\"/APR in South Carolina)" },
+      { "value": "SC SNAP Manual § 8.15", "note": "Exceptions to ABAWD Work Requirement — current OBBBA-updated list: under-18/65+, medically unfit, caregiver of a child UNDER 14, pregnant, Indian/Urban Indian/California Indian, or otherwise work-requirement-exempt; homelessness/veteran/aged-out-of-foster-care exemptions REMOVED, matching the current federal standard" },
+      { "value": "SC SNAP Manual § 8.16", "note": "Countable Months — 3 countable months within a 36-month period before an ABAWD becomes ineligible absent an exception or regained eligibility" },
+      { "value": "SC SNAP Manual § 10.2", "note": "Maximum Allowable Financial Resources — $3,000 standard / $4,500 household with a member 60+ or disabled, current FFY2026 figures; applies only to households NOT eligible via the 130% FPL Family Independence Information and Referral Services pathway" },
+      { "value": "SC SNAP Manual § 10.3", "note": "Definition of Resources — liquid and non-liquid resource valuation; (B)(vii) sets the vehicle-counting rule (one SC-registered/licensed vehicle per licensed driver excluded; additional vehicles counted at the higher of FMV over $4,650 or equity value)" },
+      { "value": "SC SNAP Manual § 10.7", "note": "Exclusions from Resources — (AA) Vehicles: full detailed exemption criteria (one licensed/registered vehicle per licensed driver with SC license and registration; income-producing, long-distance-work, disability-transport, and low-resale-value exemptions)" },
+      { "value": "SC SNAP Manual § 12.1", "note": "Income Deductions/General — lists all seven allowable deductions and their current FFY2026 dollar caps" },
+      { "value": "SC SNAP Manual § 12.2", "note": "Standard Deduction — $209 (household sizes 1-3), $223 (4), $261 (5), $299 (6+), current FFY2026 figures" },
+      { "value": "SC SNAP Manual § 12.4", "note": "Shelter Deduction — Excess Shelter Deduction (monthly shelter costs over 50% of income after other deductions), capped at $744 for households without an elderly/disabled member; Homeless Shelter Deduction up to $198.99" },
+      { "value": "SC SNAP Manual § 12.5", "note": "Utility Allowances — (2) Mandatory Utility Allowance (MUA) $388; (3) Basic Utility Allowance (BUA) $265; standalone Telephone Allowance $27; (4) actual utility costs for households not entitled to MUA/BUA" },
+      { "value": "SC SNAP Manual § 12.7", "note": "Child Support Deduction — legally obligated child support paid to/for a non-household member, an ORDINARY DEDUCTION applied at net-income Step (F), NOT an income exclusion applied before the gross income test" },
+      { "value": "SC SNAP Manual § 12.8", "note": "Medical Deduction — Excess Medical (EM) Deduction for verified expenses over $35/month for an elderly/disabled member; flat $175 Standard Medical (SM) Deduction for verified expenses between $35.01 and $210" },
+      { "value": "SC SNAP Manual § 13.6", "note": "Calculating Net Income and Benefit Levels — (1) the seven-step net-income calculation; (2) gross/net income eligibility standards table (130% FPL gross / 100% FPL net), current FFY2026 figures" },
+      { "value": "SC SNAP Manual § 13.8", "note": "Certification Periods — (1) 6-month standard, no less than 3 months for unstable-circumstance/ABAWD households, up to 24 months (12-month contact required) for all-elderly/disabled no-earned-income households" }
+    ]
+  }
+}

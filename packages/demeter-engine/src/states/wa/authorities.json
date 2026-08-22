@@ -1,0 +1,157 @@
+{
+  "_provenance": {
+    "note": "Washington citation authorities. WAC = Washington Administrative Code, the state-of-record policy text (app.leg.wa.gov). The known set enumerates every WAC section cited by the WA supplements plus the sections those rules cross-reference; chapter-level entries cover chapter citations. EA-Z Manual pages are cited by name in prose, not as numbered instruments, so they carry no extraction pattern.",
+    "extracted": "2026-08-04"
+  },
+  "patterns": [
+    {
+      "key": "wac",
+      "regex": "\\bWAC\\s+(\\d{3}-\\d{3}(?:-\\d{3,5})?)",
+      "flags": "gi",
+      "template": "WAC $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Washington Administrative Code, section (388-450-0195) or chapter (388-492) granularity"
+    }
+  ],
+  "known": {
+    "wac": [
+      {
+        "value": "WAC 388-400-0005",
+        "note": "TANF/SFA eligibility (CE cash path)"
+      },
+      {
+        "value": "WAC 388-400-0010",
+        "note": "tribal TANF (CE cash path)"
+      },
+      {
+        "value": "WAC 388-400-0040",
+        "note": "Basic Food program requirements"
+      },
+      {
+        "value": "WAC 388-400-0060",
+        "note": "ABD cash (CE cash path)"
+      },
+      {
+        "value": "WAC 388-414-0001",
+        "note": "categorical eligibility — the 200% BBCE rule"
+      },
+      {
+        "value": "WAC 388-416-0005",
+        "note": "certification periods incl. ESAP 36-month"
+      },
+      {
+        "value": "WAC 388-418-0005",
+        "note": "mandatory mid-period reports"
+      },
+      {
+        "value": "WAC 388-418-0011",
+        "note": "mid-certification review"
+      },
+      {
+        "value": "WAC 388-432-0005",
+        "note": "Diversion Cash Assistance (CE carry rule)"
+      },
+      {
+        "value": "WAC 388-444-0030",
+        "note": "ABAWD time limit (eff. 3/9/26, WSR 26-05-015)"
+      },
+      {
+        "value": "WAC 388-444-0035",
+        "note": "ABAWD exemptions — NOTE published text has duplicate subsection (3); quote text not subsections"
+      },
+      {
+        "value": "WAC 388-446-0015",
+        "note": "IPV disqualification (CE exclusion)"
+      },
+      {
+        "value": "WAC 388-450-0015",
+        "note": "excluded income (feeds the 200% CE test)"
+      },
+      {
+        "value": "WAC 388-450-0185",
+        "note": "income deductions — actual medical over $35, no SMD"
+      },
+      {
+        "value": "WAC 388-450-0190",
+        "note": "shelter deduction mechanics"
+      },
+      {
+        "value": "WAC 388-450-0195",
+        "note": "utility allowances $515/$406/$58 (eff. 2/7/26)"
+      },
+      {
+        "value": "WAC 388-450-0200",
+        "note": "medical expense mechanics"
+      },
+      {
+        "value": "WAC 388-470-0005",
+        "note": "resource limits; no limit when CE"
+      },
+      {
+        "value": "WAC 388-478-0060",
+        "note": "130%/100% income standards table (Oct-1 cycle)"
+      },
+      {
+        "value": "WAC 388-480-0001",
+        "note": "strikers (CE exclusion)"
+      },
+      {
+        "value": "WAC 388-483-0005",
+        "note": "lottery/gambling winnings (CE exclusion)"
+      },
+      {
+        "value": "WAC 388-488-0010",
+        "note": "resource transfer disqualification (CE exclusion)"
+      },
+      {
+        "value": "WAC 388-489-0015",
+        "note": "transitional food assistance certification"
+      },
+      {
+        "value": "WAC 388-492-0020",
+        "note": "WASHCAP applications (names Washington Connection)"
+      },
+      {
+        "value": "WAC 388-492-0090",
+        "note": "WASHCAP review cycle"
+      },
+      {
+        "value": "WAC 388-414",
+        "note": "chapter — categorical eligibility"
+      },
+      {
+        "value": "WAC 388-416",
+        "note": "chapter — certification periods"
+      },
+      {
+        "value": "WAC 388-418",
+        "note": "chapter — reporting"
+      },
+      {
+        "value": "WAC 388-444",
+        "note": "chapter — work requirements/ABAWD"
+      },
+      {
+        "value": "WAC 388-450",
+        "note": "chapter — income and deductions"
+      },
+      {
+        "value": "WAC 388-470",
+        "note": "chapter — resources"
+      },
+      {
+        "value": "WAC 388-478",
+        "note": "chapter — income standards"
+      },
+      {
+        "value": "WAC 388-492",
+        "note": "chapter — WASHCAP"
+      },
+      {
+        "value": "WAC 388-492-0040",
+        "note": "WASHCAP opt-out conditions (medical >$35, pre-2005 election, or ≥$40 more)"
+      }
+    ]
+  }
+}

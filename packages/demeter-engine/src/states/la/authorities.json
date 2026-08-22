@@ -1,0 +1,56 @@
+{
+  "_provenance": {
+    "note": "Louisiana citation authorities. Louisiana's operative SNAP policy lives in its Economic Stability/Economic Independence (ES/EI) Policy Manual, hosted per-document (not as one bundled PDF) on public.powerdms.com/LADCFS, and cited by DOCUMENT NUMBER with a self-identifying 'SNAP' suffix already built into the number itself — e.g. 'B-1040-SNAP' (Resources), 'E-280-SNAP' (Categorical Eligibility), 'J-300-SNAP' (Income Chart), 'C-661-SNAP' (Expedited Service). Unlike Alabama, Missouri, Indiana, Virginia, South Carolina, and this roster's other invented-prefix states, Louisiana's own document numbers already carry a natural, self-disambiguating citation form — no invented short prefix is needed. This pack still writes 'LA' before a citation in running prose purely for cross-state disambiguation (matching this roster's general convention), but the regex below matches the bare document-number form as Louisiana's manual itself uses it. Distinctively for Louisiana: this pack ALSO cites a real, separate Louisiana Revised Statute (La. R.S. 46:233.3) for the drug-felony opt-out finding — the statute Louisiana's own manual's disqualification list (E-220/E-222-SNAP) implicitly confirms by omission — so this pack defines a SECOND citation family, 'R.S. 46:', matching this roster's Alabama pack's two-family pattern (its own 'AL POE' plus 'Ala. Code §').",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "lasnap",
+      "regex": "\\b([A-Z])-(\\d{2,4}(?:-\\d{1,2})?)-SNAP\\b",
+      "flags": "gi",
+      "template": "$1-$2-SNAP",
+      "normalize": "upper",
+      "match": "exact",
+      "note": "Louisiana Economic Stability/Economic Independence (ES/EI) Policy Manual document number, self-identifying by its own 'SNAP' suffix, e.g. B-1040-SNAP (Types of Resources), E-280-SNAP (Categorically Eligible Households), E-221-1-SNAP (ABAWD/SSN/alien disqualification reasons), J-300-SNAP (Income Eligibility Chart), C-661-SNAP (Expedited Service eligibility criteria)."
+    },
+    {
+      "key": "lars",
+      "regex": "\\bR\\.?S\\.?\\s?46:(\\d{1,3}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "R.S. 46:$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Louisiana Revised Statutes, Title 46 (Public Welfare and Assistance), cited by section number. This pack cites exactly one: R.S. 46:233.3, the drug-felony SNAP/TANF opt-out statute."
+    }
+  ],
+  "known": {
+    "lasnap": [
+      { "value": "B-652-SNAP", "note": "Standard Deduction — $209 (household sizes 1-3), $223 (4), $261 (5), $299 (6+), current FFY2026 figures" },
+      { "value": "B-653-SNAP", "note": "Medical Deduction — for verified expenses exceeding $35/month incurred by an elderly (60+) or disabled household member" },
+      { "value": "B-653-1-SNAP", "note": "Allowable Medical Expenses — broad itemized list (dental/medical care, hospitalization, prescriptions, insurance premiums, Medicare/Medicaid cost-sharing, dentures/hearing aids, service animals, eyeglasses, medical travel/lodging, attendant care, accessibility equipment)" },
+      { "value": "B-653-2-SNAP", "note": "Disallowed Medical Expenses — special diets, medical marijuana, vendor payments, reimbursed portions, same-household-member services" },
+      { "value": "B-653-3-SNAP", "note": "Standard Medical Deduction (SMD) — flat $161/month for verified expenses of at least $35.01/month; a $196 standard medical expense threshold is used to derive the figure" },
+      { "value": "B-654-SNAP", "note": "Shelter Costs — allowable cost list; capped excess shelter deduction of $744/month (uncapped for households with an elderly or disabled member)" },
+      { "value": "B-654-1-SNAP", "note": "Standard Utility Allowance (SUA) — $465/month, for households with heating/cooling costs separate from rent/mortgage" },
+      { "value": "B-654-2-SNAP", "note": "Basic Utility Allowance (BUA) — $258/month, for households with utility costs excluding heating/cooling" },
+      { "value": "B-654-3-SNAP", "note": "Telephone Standard — $76/month, for households whose only out-of-pocket utility expense is a telephone" },
+      { "value": "B-654-6-SNAP", "note": "Homeless Shelter Deduction — flat $198.99/month, an alternative to the capped excess shelter deduction for households in which all members are homeless and have some out-of-pocket shelter expense" },
+      { "value": "B-656-SNAP", "note": "Child Support Payments — an ORDINARY deduction (7 CFR 273.9(d)(5)) for legally obligated child support paid to a non-household member, applied alongside the Standard/Earned Income/Medical/Shelter deductions, not an income exclusion" },
+      { "value": "B-1010-SNAP", "note": "Resources — Definitions; liquid resources are considered, non-liquid resources (buildings, land, mineral rights) are not" },
+      { "value": "B-1020-SNAP", "note": "Whose Resources Are Considered — household members, disqualified members, ineligible aliens, alien sponsors; client statement accepted as verification if cash-on-hand/liquid resources are $2,000 or less for non-BBCE households; BBCE households' resources are not counted at all" },
+      { "value": "B-1040-SNAP", "note": "Types of Resources — countable-resources list (cash, checking/savings, CDs, stocks/bonds, gift/prepaid cards) and numerous specific exemptions (ABLE accounts, EITC for 12 months, educational assistance, IRAs, Keogh plans, trust funds); vehicles appear on neither list. B-1040-17-SNAP's own worked example confirms the $3,000 standard resource limit" },
+      { "value": "C-660-SNAP", "note": "Expedited Service — general policy; qualifying households get postponed verification and faster benefits; households applying after the 15th get both initial and second month's benefits" },
+      { "value": "C-661-SNAP", "note": "Expedited Service Eligibility Criteria — plain federal gates: gross income under $150 and liquid resources $100 or less; combined income/resources less than rent/mortgage plus utility standard; destitute migrant/seasonal farmworker" },
+      { "value": "C-720-SNAP", "note": "Processing Redeterminations — Elderly Simplified Application Project (ESAP) households have the redetermination interview waived by default, with specific exceptions (closing/denial, questionable information, household request)" },
+      { "value": "E-220-SNAP", "note": "Disqualified Members and Households — umbrella section covering E-221 (SSN/alien/ABAWD/NAC disqualifications) and E-222 (IPV, work-registration non-compliance, fleeing felon, probation/parole violation, and a narrow post-Feb-2014 felony list)" },
+      { "value": "E-221-1-SNAP", "note": "Reasons for Disqualification — failure to provide/apply for an SSN, ineligible alien status, failure to attest citizenship, ABAWD work-requirement failure, failure to respond to a NAC Match" },
+      { "value": "E-222-SNAP", "note": "Members Disqualified for IPV, Work Registration Non-Compliance, Fleeing Felon/Probation-Parole Violation, and Certain Convicted Felons — the post-Feb-7-2014 felony list is limited to Adam Walsh Act-style crimes (aggravated sexual abuse, murder, sexual exploitation of children, sexual assault per VAWA); a drug-related felony conviction, by itself, does NOT appear on this list" },
+      { "value": "E-280-SNAP", "note": "Categorically Eligible Households — (E-281) Traditional Categorical Eligibility via FITAP/STEP/KCSP/SSI; (E-281-1) Broad-Based Categorical Eligibility (BBCE) via non-cash TANF/MOE services, flat 200% FPL gross income test replacing 130%, resources excluded entirely" },
+      { "value": "J-300-SNAP", "note": "Income Eligibility Chart — current FFY2026 figures, effective October 1, 2025 (130%/200%/100% FPL columns, 165% FPL elderly/disabled separate-household column, maximum SNAP allotment column)" },
+      { "value": "S-110-SNAP", "note": "Simplified Reporting Introduction — standard SNAP households are assigned 12-month certification periods, with a required Simplified Report at the midpoint (around month 6)" }
+    ],
+    "lars": [
+      { "value": "R.S. 46:233.3", "note": "Enacted by 2017 Regular Session House Bill 681, effective October 1, 2017 — exempts ALL individuals domiciled in Louisiana from the federal 21 U.S.C. 862a(a)(2) drug-felony SNAP/TANF disqualification. A FULL opt-out, not a modification; confirmed by omission in LA's own E-220/E-222-SNAP disqualification list" }
+    ]
+  }
+}

@@ -725,6 +725,30 @@ Helper: `pillarReductionAtFullEngagement()` returns the per-pillar pp breakdown 
 
 ---
 
+## TODO-45 — SMS/WhatsApp channel for Demeter
+
+**What:** Twilio SMS bridge to the Demeter engine (same retrieval/verification, SMS-formatted answers).
+**Why:** Meets the no-smartphone/no-data SNAP population where they are; mRelief proved the channel.
+**Trigger:** CBO partner demand during the Aug–Nov test run.
+**Effort:** M (CC ~2-3 days) **Priority:** P3
+**Context:** Deferred in the 2026-08-07 CEO review (docs/plans/demeter-pivot-2026-08.md, D3.5). Second surface doubles the safety/eval burden; per-message costs on an intentionally-unsustainable budget.
+
+## TODO-46 — CBO backend dashboard + application tracking (Demeter phase 2)
+
+**What:** Org/seat model, per-CBO dashboard tracking user applications, submission page.
+**Why:** The paid-tier product CBOs are actually buying into; the phase-2 emergence in the pivot plan.
+**Trigger:** ≥10 paying CBO Founding orgs OR first grant landed.
+**Effort:** L (CC ~1-2 wks) **Priority:** P2 (post-test)
+**Context:** Explicitly fenced out of the August launch (docs/plans/demeter-pivot-2026-08.md, NOT-in-scope). Founding-tier deliverable promises "first access" when this ships. Do NOT build the org model early.
+
+## TODO-47 — Per-user longitudinal study upgrade for Demeter
+
+**What:** Consented per-user tracking (repeat visits, application progression) upgrading the anonymous three-month study.
+**Why:** If the anonymous mix starves the study of longitudinal signal, prize applications lose the outcomes story.
+**Trigger:** Week-4 readout shows anonymous traffic dominating with no repeat-visit signal.
+**Effort:** M **Priority:** P3
+**Context:** CEO review 2026-08-07; pairs with outcome metrics already instrumented (apply-link CTR, did-you-apply follow-up).
+
 ## TODO-55 — CRA: full public named bank ranking (post-verdict)
 
 **What:** Upgrade the gated CA SNAP-Gap Bank Index to a fully public, named, ranked list once the 3-week CRA demand loop returns a verdict. Includes methodology page hardened for scrutiny and a press/advocacy angle.

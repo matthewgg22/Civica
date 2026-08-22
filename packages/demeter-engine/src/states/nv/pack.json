@@ -1,0 +1,33 @@
+{
+  "code": "NV",
+  "program": "Supplemental Nutrition Assistance Program (SNAP)",
+  "agency": "Nevada Division of Social Services (DSS) — renamed from the Division of Welfare and Supportive Services (DWSS); legacy \"dwss.nv.gov\" paths still appear throughout the agency's own site assets",
+  "admin_model": "state",
+  "admin_note": "State-administered: DSS runs SNAP directly through DSS district offices; there is no independent county eligibility agency layer. SNAP, TANF, and related programs share ONE combined manual — the Eligibility and Payments (E&P) Manual — organized into Part A (Determining Eligibility, chapters 100–2600), Part B (Case Management, chapters 100–1400), and Part C (Charts/dollar tables, chapters 100–300), amended by numbered Manual Transmittal Letters (MTLs, e.g. \"MTL 21/25\"). Because Parts A/B/C are shared with TANF, most sections print a two-column TANF/SNAP layout — this pack only draws from the SNAP column or SNAP-only sections.",
+  "system": "AMPS (worker-facing eligibility system, referenced in manual text); EBT is simply branded \"EBT card\", accessed at ebtedge.com",
+  "portal": {
+    "name": "Access Nevada",
+    "url": "https://accessnevada.nv.gov"
+  },
+  "update_channels": [
+    {
+      "name": "Eligibility and Payments (E&P) Manual — Parts A/B/C, amended by numbered Manual Transmittal Letters (MTLs)",
+      "url": "https://www.dss.nv.gov/access-nv/eligibility-payments-manual/"
+    },
+    {
+      "name": "FNS ABAWD waiver approval/denial letters (federal, per-state, per-request)",
+      "url": "https://www.fns.usda.gov/snap/work-requirements/abawds"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct fetch of ~10 E&P Manual chapter PDFs (Parts A, B, C) over plain curl and browser-header curl (dss.nv.gov/siteassets/... — no host blocking observed) → pdftotext extraction → cross-read against the Nevada Legislature's own codified NRS text (leg.state.nv.us, plain curl) and a live FNS ABAWD waiver-response letter and the FNS national Restaurant Meals Program page → draft → adversarial refute gate. No packages/snap-rules NV entry existed to cross-check against (confirmed absent — see PROVENANCE.md).",
+    "gates": "Cross-check: every pivotal dollar value and eligibility rule traced to its own E&P Manual chapter PDF (never a curated extract) before drafting; the drug-felony opt-out was independently corroborated against the raw NRS 422A.345 HTML (not just a legal-summary site) after a secondary source described conflicting (pre-2021) statutory language. Refute gate recorded in PROVENANCE.md.",
+    "sources": [
+      "E&P Manual chapters A-100 (Application Processing), A-500 (Resources), A-600 (Budgeting), A-700 (Income), B-400 (Specialized Households, incl. B-470/472/473 ABAWD), B-600 (Changes), B-900 (Program Violations/Sanctions), B-100 (Processing Time Limits), A-1800 (Case Disposition), C-200 (SNAP Charts/Tables) (dss.nv.gov)",
+      "NRS 422A.345 (drug-felony SNAP opt-out) and NRS 422A.339 (ABAWD state discretionary exemptions) — leg.state.nv.us",
+      "FNS ABAWD waiver response letter, Nevada, effective 02/01/2025–01/31/2026 (fns-prod.azureedge.us)",
+      "FNS national Restaurant Meals Program page, updated 08/07/2026 (fns.usda.gov) — confirms Nevada does not operate an RMP"
+    ]
+  }
+}

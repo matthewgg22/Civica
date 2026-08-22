@@ -1,0 +1,38 @@
+{
+  "code": "FL",
+  "program": "Supplemental Nutrition Assistance Program (SNAP) — Florida's manual still uses the older \"Food Stamps (FS)\" name internally",
+  "agency": "Florida Department of Children and Families (DCF)",
+  "admin_model": "state",
+  "admin_note": "State-administered: DCF runs SNAP directly; there are no independent county eligibility agencies. Policy lives in the ACCESS Florida Program Policy Manual (CFOP 165-22), organized by 4-digit chapter number where the middle two digits identify the program — any chapter ending in \"10\" (0210, 0610, 1610, 1810, 2410, 2610, 3210...) is the Food Stamps program section of that chapter. Chapters are amended in place (no numbered bulletin/release series analogous to Illinois' MR or Michigan's BPB was found in this pass — see PROVENANCE.md).",
+  "system": "MyACCESS (public application/case-management portal); FloridaCommerce/CareerSource administers SNAP Employment & Training referrals",
+  "portal": {
+    "name": "MyACCESS Florida",
+    "url": "https://www.myaccessflorida.com"
+  },
+  "update_channels": [
+    {
+      "name": "ACCESS Florida Program Policy Manual (ffic.myflfamilies.com)",
+      "url": "https://ffic.myflfamilies.com/manual/introduction.pdf"
+    },
+    {
+      "name": "Florida Administrative Code Rule 65A-1.603 (utility standards; Florida Department of State eRulemaking gateway)",
+      "url": "https://www.flrules.org/gateway/RuleNo.asp?title=&ID=65A-1.603"
+    },
+    {
+      "name": "SNAP Work Requirements / ABAWD page (myflfamilies.com)",
+      "url": "https://www.myflfamilies.com/services/public-assistance/abawd"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct fetch of the ACCESS Florida manual's Food-Stamps-relevant chapters (ffic.myflfamilies.com/manual/*.pdf, plain curl, stable numeric filenames — no leading zero on 3-digit chapter codes, a quirk this pass had to discover by trial) + Florida Administrative Code Rule 65A-1.603 (flrules.org, browser-header curl) + the DCF ABAWD FAQ page + USDA FNA's authoritative Restaurant Meals Program state list and ABAWD waiver-response file index, cross-checked against the already-verified #619 engine sourcing for FL's drug-felony and SUA figures.",
+    "gates": "Cross-check: every pivotal dollar value and eligibility rule traced to its own manual chapter, F.A.C. rule page, or federal authoritative list (not a curated extract) before drafting. Two production findings surfaced and filed (not fixed — packages/snap-rules stays parked): #708 (FL's abawd_waiver_avail may be stale, no waiver-response file on record for FY25/FY26) and a bonus WA finding (#707, WA's rmp_operated contradicted by the same federal RMP list checked for FL). Refute gate recorded in PROVENANCE.md.",
+    "sources": [
+      "ACCESS Florida Program Policy Manual chapters 200, 600, 800, 1430, 1610, 1810, 2000, 2200, 2400, 2600, 3200 (ffic.myflfamilies.com)",
+      "Fla. Admin. Code Ann. R. 65A-1.603, Food Assistance Program Income and Expenses, effective 2/5/2025 (flrules.org) — reused from the #619 engine pass for dollar figures, independently re-checked this pass for its active-rulemaking status",
+      "Fla. Stat. § 414.095(1) (drug-felony opt-out) — reused from the #619 engine pass",
+      "DCF SNAP Work Requirements / ABAWD FAQ (myflfamilies.com/services/public-assistance/abawd)",
+      "USDA FNA Restaurant Meals Program state list + ABAWD waiver-response file index (fna.usda.gov), fetched live 2026-08-11"
+    ]
+  }
+}

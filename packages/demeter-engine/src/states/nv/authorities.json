@@ -1,0 +1,112 @@
+{
+  "_provenance": {
+    "note": "Nevada citation authorities. DSS publishes ONE combined Eligibility and Payments (E&P) Manual shared across TANF/SNAP/other programs, split into three lettered Parts: Part A — Determining Eligibility (chapters 100–2600), Part B — Case Management (chapters 100–1400), and Part C — Charts/dollar tables (chapters 100–300). All three are cited in the manual's own cross-references and in this pack's prose as 'E&P MS A-NNN' / 'E&P MS B-NNN' / 'E&P MS C-NNN'; the regexes below match the bare 'A-NNN'/'B-NNN'/'C-NNN' form since that is what appears at the top of every page and what the manual's own internal cross-references use. Amendments issue as numbered Manual Transmittal Letters (MTLs, e.g. 'MTL 21/25') printed in every chapter's footer. NRS = Nevada Revised Statutes, the Legislature's own codified law (leg.state.nv.us), used here for the drug-felony opt-out (NRS 422A.345) and the ABAWD state-discretionary-exemption statute (NRS 422A.339), both outside the E&P Manual itself.",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "nvepa",
+      "regex": "\\bA-(\\d{2,4}(?:\\.\\d{1,2}){0,3})\\b",
+      "flags": "g",
+      "template": "A-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "E&P Manual Part A (Determining Eligibility) sections; subsection cites like A-660.4.4 verify at exact form"
+    },
+    {
+      "key": "nvepb",
+      "regex": "\\bB-(\\d{2,4}(?:\\.\\d{1,2}){0,3})\\b",
+      "flags": "g",
+      "template": "B-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "E&P Manual Part B (Case Management) sections"
+    },
+    {
+      "key": "nvepc",
+      "regex": "\\bC-(\\d{2,4}(?:\\.\\d{1,2}){0,3})\\b",
+      "flags": "g",
+      "template": "C-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "E&P Manual Part C (Charts/dollar tables) sections"
+    },
+    {
+      "key": "nvmtl",
+      "regex": "\\bMTL\\s*(\\d{1,2}\\/\\d{2})\\b",
+      "flags": "gi",
+      "template": "MTL $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Nevada Manual Transmittal Letters — the E&P Manual's amendment/versioning mechanism, printed in every chapter footer"
+    },
+    {
+      "key": "nvnrs",
+      "regex": "\\bNRS\\s+(422A\\.\\d{3})\\b",
+      "flags": "gi",
+      "template": "NRS $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Nevada Revised Statutes, Chapter 422A (Welfare and Supportive Services) — drug-felony opt-out and ABAWD discretionary-exemption statutes"
+    }
+  ],
+  "known": {
+    "nvepa": [
+      { "value": "A-140", "note": "expedited service overview" },
+      { "value": "A-141", "note": "expedited eligibility criteria — <$150 gross + ≤$100 liquid, or income+resources under rent/utility" },
+      { "value": "A-142", "note": "limit on expedited service — none, if prior verification satisfied or normal cert since" },
+      { "value": "A-146", "note": "expedited service period of assignment — 1 or 2 prorated/full months pending postponed verification" },
+      { "value": "A-180", "note": "categorically eligible households — base group + exclusions (IPV, fleeing felon, SLGW reapplication)" },
+      { "value": "A-180.1", "note": "receipt of TANF benefits — categorical eligibility conferral triggers" },
+      { "value": "A-180.2", "note": "expanded categorical eligibility — flat 200% FPL screen via the \"This Is Your Copy\" page" },
+      { "value": "A-180.2.1", "note": "determining SNAP household size for expanded categorical eligibility" },
+      { "value": "A-500", "note": "resources overview" },
+      { "value": "A-520", "note": "resource limits — $3,000/$4,500" },
+      { "value": "A-521", "note": "categorically eligible households — resource test and verification fully waived" },
+      { "value": "A-550", "note": "vehicles — one vehicle fully exempt regardless of value; cat-elig household vehicles fully exempt" },
+      { "value": "A-600", "note": "budgeting overview" },
+      { "value": "A-660.2", "note": "dependent care deduction — actual cost, employment-linked" },
+      { "value": "A-660.3", "note": "excess medical deduction — actual expense minus $35, elderly/disabled only, no flat standard" },
+      { "value": "A-660.3.1", "note": "allowable medical expenses list" },
+      { "value": "A-660.4", "note": "child support deductions — paid support is a DEDUCTION, not an income exclusion" },
+      { "value": "A-660.4.4", "note": "child support deduction treatment for disqualified/ineligible household members" },
+      { "value": "A-660.5.1.1", "note": "determining the appropriate utility allowance — SUA/LUA/IUA/TUA four-tier ladder" },
+      { "value": "A-700", "note": "income overview" },
+      { "value": "A-1800", "note": "case disposition overview" },
+      { "value": "A-1823.1", "note": "3-months-or-less certification — ABAWD-only households" },
+      { "value": "A-1823.2", "note": "6-month certification — Simplified Reporting default" },
+      { "value": "A-1823.3", "note": "12-month certification — all-elderly/disabled Status Change households" }
+    ],
+    "nvepb": [
+      { "value": "B-400", "note": "specialized households — elderly/disabled definitions" },
+      { "value": "B-423", "note": "certain violent/severe felony conviction disqualification list (referenced by B-941.9)" },
+      { "value": "B-470", "note": "ABAWD work requirement — ages 18-64, 3 months in a fixed 36-month period" },
+      { "value": "B-470.1", "note": "ABAWD exemption provisions — age, medical, child<14, pregnancy, waivered area, Indian Tribe" },
+      { "value": "B-470.1.2", "note": "state discretionary exemptions (8% cap, NRS 422A.339) — currently zero available post statewide-waiver end" },
+      { "value": "B-472", "note": "labor surplus and high unemployment rate waiver areas — current post-2/1/2026 waived-area list" },
+      { "value": "B-473", "note": "ABAWD time limits and tracking — fixed statewide 36-month calendar, regaining eligibility" },
+      { "value": "B-600", "note": "changes overview" },
+      { "value": "B-616.2", "note": "Simplified Reporting households — 130% FPL mandatory income report trigger" },
+      { "value": "B-616.3", "note": "ABAWD additional reporting requirement — work hours below 20/week" },
+      { "value": "B-620", "note": "the \"10*10*13 rule\" — 10 days to report, 10 days to act, 13-day adverse action notice" },
+      { "value": "B-900", "note": "program violations/sanctions overview" },
+      { "value": "B-941.1", "note": "fleeing felons — ineligible for duration of wanted/questioned status only" },
+      { "value": "B-941.2", "note": "parole or probation violators — ineligible for duration of violation only" },
+      { "value": "B-941.9", "note": "certain felony convictions (violent/severe, post 2/7/2014) — conditioned on sentence/parole/probation compliance" },
+      { "value": "B-950", "note": "Substantial Lottery and/or Gambling Winnings (SLGW) — resource-limit-based single-event threshold" }
+    ],
+    "nvepc": [
+      { "value": "C-200", "note": "SNAP Charts/Tables & Guides overview" },
+      { "value": "C-210.1", "note": "SNAP income test/allotment chart — 100%/130%/200%(CAT ELIG) by household size, standard deduction" },
+      { "value": "C-210.3", "note": "maximum shelter deduction $744, utility allowance SUA/LUA/IUA $446/$361/$77, telephone $52, homeless $198.99" }
+    ],
+    "nvmtl": [
+      { "value": "MTL 21/25", "note": "18 Nov 2025 — C-200 SNAP Charts (income standards, standard deduction, SUA/LUA/IUA, shelter cap, homeless deduction), FFY26 COLA cycle" },
+      { "value": "MTL 11/26", "note": "9 July 2026 — B-400 Specialized Households (ABAWD chapter B-470/472/473) revision" }
+    ],
+    "nvnrs": [
+      { "value": "NRS 422A.345", "note": "drug-felony SNAP opt-out — verified full opt-out since the 2021 (ch. 73, AB138) amendment removed the treatment-compliance condition" },
+      { "value": "NRS 422A.339", "note": "identifies the only circumstances for Nevada's ABAWD state discretionary exemptions (FRA 2023, 8% cap)" }
+    ]
+  }
+}

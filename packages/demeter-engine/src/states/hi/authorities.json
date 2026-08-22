@@ -1,0 +1,37 @@
+{
+  "_provenance": {
+    "note": "Hawaii citation authorities. Hawaii's operative SNAP policy manual is Title 17 of the Hawaii Administrative Rules (HAR), cited by a bare numbered-section convention such as '17-676-73' (Title 17, Chapter 676, section 73). This pack also cites a real Hawaii Revised Statute, Haw. Rev. Stat. § 346-53.3, for the drug-felony finding, so this pack defines a SECOND citation family, 'hrs346', matching this roster's Nebraska, Connecticut, Kentucky, Alabama, and Louisiana packs' multi-family pattern.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "har17",
+      "regex": "\\b(?:HAR\\s?)?17-(\\d{3}-\\d{1,3}(?:\\.\\d)?)\\b",
+      "flags": "gi",
+      "template": "HAR §17-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Hawaii Administrative Rules, Title 17 (Department of Human Services), cited by bare chapter-section number, e.g. 17-676-73 (Standard Utility Allowance), 17-663-82 (Intentional Program Violation / Felony Drug Conviction / Fleeing Felon), 17-663-82.1 (SSN Disqualification and ABAWD)."
+    },
+    {
+      "key": "hrs346",
+      "regex": "\\bHRS\\s?§?\\s?346-(\\d{2}\\.\\d[a-z]?)\\b",
+      "flags": "gi",
+      "template": "Haw. Rev. Stat. § 346-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Hawaii Revised Statutes, Chapter 346 (Department of Human Services), cited by section number. This pack cites exactly one: Haw. Rev. Stat. § 346-53.3, the drug-felony modified-ban statute."
+    }
+  ],
+  "known": {
+    "har17": [
+      { "value": "HAR §17-676-73", "note": "Standard Utility Allowance — establishes INDIVIDUAL per-utility-type standard allowances (sewer/trash, water, electricity/gas, mandatory telephone), each separately weighted by county SNAP caseload share and, for water/electricity/gas, by household size and (electricity/gas only) bedroom count. Optional, not mandatory — households may switch between actual costs and the standard allowances at each recertification and one additional time per 12-month certification period." },
+      { "value": "HAR §17-663-82", "note": "Intentional program violation, felony drug conviction, fleeing felon disqualification, and work requirement sanction — governs how the eligibility/benefit level of REMAINING household members is calculated when one member is disqualified for one of these reasons; the disqualified member's income/resources continue to count, but the disqualified member is excluded from household-size calculations." },
+      { "value": "HAR §17-663-82.1", "note": "SSN disqualification and ineligible able-bodied adults without dependents (ABAWD) — parallel proration rules for a household containing a member disqualified for refusing/failing to provide an SSN or for exceeding the ABAWD time limit under 17-684-39." },
+      { "value": "HAR §17-663-82.2", "note": "Ineligible aliens — parallel proration rules for a household containing an ineligible noncitizen member." }
+    ],
+    "hrs346": [
+      { "value": "Haw. Rev. Stat. § 346-53.3", "note": "SNAP/TANF eligibility for individuals with a felony conviction involving possession, use, or distribution of a controlled substance — CONDITIONAL modified ban: the federal ban (21 U.S.C. § 862a(a)(2) / Section 115(a) of P.L. 104-193) does not apply in Hawaii to persons complying with treatment, or who have not refused or failed to comply with treatment. This pack's exact-text confirmation rests on WebSearch/Justia-excerpt corroboration, not a directly-fetched primary document — both law.justia.com and capitol.hawaii.gov returned HTTP 403 to every direct-fetch attempt this pack made." }
+    ]
+  }
+}

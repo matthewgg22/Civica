@@ -1,0 +1,56 @@
+{
+  "_provenance": {
+    "note": "Tennessee dated facts. Because Tennessee has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — unlike a state with prior engine work in this roster, every entry below is either a routine COLA-cycle reminder, a genuine disclosed research gap, or a re-verification trigger flagging Tennessee's unusually severe, MULTI-DOCUMENT internal staleness pattern (a genuine departure from every prior state in this roster, where staleness was typically confined to a single footnote or table).",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "tn-bbce-very-recent-recheck",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's flagship finding — Tennessee's Expanded Categorical Eligibility (200% FPL gross / 100% FPL net) — was added by a rule amendment filed January 15, 2026 and effective April 15, 2026, less than four months old as of this pack's build date. Re-fetch TN Rule 1240-01-14-.15 directly from publications.tnsosfiles.com before this date to confirm no further amendment, legal challenge, or General Assembly repeal has occurred; a policy this new is more likely than an established one to see a near-term correction or legislative reversal."
+    },
+    {
+      "key": "tn-sua-dollar-figures-not-confirmed",
+      "kind": "expires",
+      "date": "2026-09-15",
+      "warning": "This pack could NOT confirm a current, non-stale dollar figure for Tennessee's Standard Utility Allowance, Basic Utility Allowance, Standard Telephone Allowance, Standard Deduction, Maximum Excess Shelter Deduction, or Homeless Shelter Allowance from any Tennessee-specific source. The only publicly fetchable table (codified rule 1240-01-04-.27) shows strong internal evidence of being stale by a decade or more. TDHS's own current policy series (24.12, 24.18) explicitly defers these dollar figures to an internal 'Family Assistance Standards Desk Guide' this pack could not locate published anywhere on tn.gov. USDA's national FY2026 SUA rollup page did not render fetchable per-state data in this pass either. Before quoting ANY Tennessee-specific dollar figure for these items, a future pass must locate either the current Desk Guide or a working USDA per-state SUA table — do not quote the stale codified-rule numbers as current."
+    },
+    {
+      "key": "tn-abawd-age-range-two-documents-stale",
+      "kind": "expires",
+      "date": "2026-11-30",
+      "warning": "Both TN Rule 1240-01-03-.43 (last amended 2004) and TDHS Policy 24.11 (last reviewed 11/30/2023, next review scheduled 11/30/2026) still state the pre-2023 ABAWD age range of 18-49, materially behind the current post-OBBBA federal range of 18-64. TDHS's own separate public ABAWD webpage correctly implies the current 18-64 range. Before quoting a specific ABAWD age boundary for Tennessee, verify against TDHS's public ABAWD information page or current federal law (7 CFR 273.24) directly, NOT against either of Tennessee's own two internally-stale documents. Policy 24.11's next scheduled review is 11/30/2026 — check whether that review corrected the age range after that date."
+    },
+    {
+      "key": "tn-abawd-waiver-status-recheck",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's finding that Tennessee currently holds ZERO active ABAWD waivers anywhere in the state rests on TDHS's own ABAWD information page (which names no waiver) AND USDA's official ABAWD Time Limit Waivers FY2025-2029 index (fetched directly 2026-08-11, page updated July 22, 2026, Tennessee absent from the list of states with any submitted request). USDA updates that index quarterly. Before restating 'Tennessee has no ABAWD waiver' after this date, re-fetch USDA's index directly and re-check whether Tennessee has requested a new waiver for any county — unemployment conditions change."
+    },
+    {
+      "key": "tn-certification-period-rule-vs-policy-conflict",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "TN Rule 1240-01-07-.01 (codified, last amended September 1983) caps certification periods at one year in ALL circumstances — a rule that has NOT been updated to reflect TDHS Policy 24.02's current (effective 12/01/2022) 24-month certification option for all-elderly/disabled/no-earned-income households not on Families First. This pack treats Policy 24.02 as the operative, more current source for certification-period LENGTH questions, since it is far more recently dated than the 1983 rule text, but this is a genuine, disclosed internal conflict between two of Tennessee's own authoritative documents, not a resolved discrepancy. A future pass should check whether TN Rule 1240-01-07 has been superseded or repealed by a rule this pack did not locate."
+    },
+    {
+      "key": "tn-24-24-categorical-eligibility-policy-stale",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "TDHS SNAP Policy 24.24 (Categorically Eligible SNAP Recipients), last reviewed 11/30/2023 with a next-review date of 11/30/2026, describes ONLY Basic Categorical Eligibility (SSI/Families-First-only households) and does not yet mention TN Rule 1240-01-14-.15(2)'s April 2026 Expanded Categorical Eligibility (BBCE) amendment at all. Check whether Policy 24.24 has been updated to describe the BBCE pathway before treating it as the authoritative narrative source for Tennessee categorical eligibility; until then, TN Rule 1240-01-14-.15 itself (not Policy 24.24) is the more current authority for the BBCE pathway specifically."
+    },
+    {
+      "key": "tn-drug-felony-statute-text-not-independently-verified",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack's drug-felony-ban finding (Tenn. Code Ann. Sec. 71-5-308, a modified ban with a permanent Class A felony carve-out) rests on convergent secondary legal-research corroboration (Public Health Law Center, Network for Public Health Law), NOT on independently fetched primary statutory text — law.justia.com and casetext.com both returned HTTP 403 on every attempt in this pass (multiple User-Agents, both http and https). Before restating this finding's specific conditions (the treatment-compliance options, the exact court-obligation-compliance language) as definitively current, a future pass should locate and fetch the statute's primary text directly, e.g. through the Tennessee General Assembly's own codified-statute lookup or a Lexis/Westlaw-adjacent source this pack did not try."
+    },
+    {
+      "key": "tn-vehicle-treatment-not-independently-confirmed",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "TDHS Policy 24.12 lists boats, vacation homes, and mobile homes as examples of countable non-liquid resource equity, but this pack could NOT locate and fetch TDHS's separate 'Treatment of Vehicles' procedure document (referenced by Policy 24.12 but not published on the public DHS Publications page in this pass), so the specific rule for an ordinary passenger vehicle (one per household member excluded? fair-market-value threshold above that?) is NOT independently confirmed. Do not assume Tennessee counts every vehicle the way it counts boats, or assume it follows the plain federal one-vehicle-per-member exclusion, without locating this document first."
+    }
+  ]
+}

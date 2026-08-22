@@ -1,0 +1,65 @@
+{
+  "code": "LA",
+  "program": "SNAP — Louisiana has no distinctive local nickname; the EBT card itself is called the \"Louisiana Purchase Card\" (see PROVENANCE.md)",
+  "agency": "Louisiana Department of Health (LDH), Office of Economic Stability",
+  "admin_model": "state",
+  "admin_note": "Louisiana is a STATE-ADMINISTERED SNAP program, but the administering AGENCY itself changed on October 1, 2025: under \"Project One Door\" legislation (2025 Regular Session Acts 477 and 478), SNAP moved from the Department of Children and Family Services (DCFS) to the Louisiana Department of Health (LDH), which now runs it through its Office of Economic Stability so nutrition assistance sits alongside Medicaid. DCFS's own website (dcfs.louisiana.gov) still hosts a large amount of legacy SNAP content and still ranks first in an ordinary search for \"Louisiana SNAP\" — a genuine access-artifact risk this pack discloses explicitly (see PROVENANCE.md Finding 1). The underlying policy MANUAL is still hosted on DCFS's PowerDMS instance (public.powerdms.com/LADCFS) and its own internal chapter header is ALSO mid-rename, independently, from \"Economic Stability (ES)\" to \"Economic Independence (EI)\" (see PROVENANCE.md Finding 2) — two overlapping, incompletely-finished renames at once. Confirm current operative practice with the applicant's own local DCFS/LDH office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL.",
+  "system": "LDH's Office of Economic Stability processes SNAP; applicants apply online through the CAFÉ Self-Service Portal, in person, by mail, or by fax at a local DCFS/LDH office (the same ~64-parish office network DCFS built, now administered under LDH). LDH ALSO acquired Louisiana's TANF cash-assistance program — the Family Independence Temporary Assistance Program (FITAP) — plus KCSP, DDS, eHIP, and SUN Bucks in the same October 1, 2025 transfer (see PROVENANCE.md).",
+  "portal": {
+    "name": "CAFÉ Self-Service Portal",
+    "url": "https://cafe-cp.dcfs.la.gov/selfservice/"
+  },
+  "update_channels": [
+    {
+      "name": "Louisiana DCFS/LDH — Economic Stability/Economic Independence (ES/EI) SNAP Policy Manual, current per-document version (public.powerdms.com/LADCFS)",
+      "url": "https://public.powerdms.com/LADCFS/documents/398997"
+    },
+    {
+      "name": "Louisiana Department of Health — SNAP (current administering agency, as of Oct. 1, 2025)",
+      "url": "https://ldh.la.gov/supplemental-nutrition-assistance-program"
+    },
+    {
+      "name": "Louisiana Department of Health — SNAP Income Eligibility Chart (J-300-SNAP, current FFY2026 figures)",
+      "url": "https://public.powerdms.com/LADCFS/documents/399088"
+    },
+    {
+      "name": "Louisiana Department of Health — Able-Bodied Adult Without Dependents (ABAWD)",
+      "url": "https://ldh.la.gov/page/abawd"
+    },
+    {
+      "name": "ABAWDMap.us — Louisiana state entry",
+      "url": "https://abawdmap.us/state/louisiana"
+    },
+    {
+      "name": "USDA FNA — SNAP Restaurant Meals Program (states that operate one; Louisiana absent)",
+      "url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "name": "Louisiana Department of Health — Hot Foods disaster waiver status (Tropical Storm Arthur; time-sensitive, see freshness.json)",
+      "url": "https://ldh.la.gov/news/7685"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct curl fetch (browser User-Agent) of Louisiana's Economic Stability/Economic Independence (ES/EI) SNAP Policy Manual, hosted at public.powerdms.com/LADCFS as individual per-document PDFs (not a single bundled manual) and converted with pdftotext -layout: B-650-SNAP Deductions (22 pages: standard, medical/SMD, shelter, SUA/BUA/telephone, dependent care, child support), B-1010/B-1020/B-1040-SNAP (Resources), C-660-SNAP (Expedited Service), C-720-SNAP (Redeterminations), E-220/E-221/E-222-SNAP (Disqualified Members, including the drug-felony-relevant crime list), E-280-SNAP (Categorical/Broad-Based Categorical Eligibility), J-300-SNAP (current FFY2026 Income Eligibility Chart), and S-110-SNAP (Simplified Reporting). All PowerDMS fetches returned a clean HTTP 200 with no login wall. Separately fetched, directly: LDH's own Oct. 1, 2025 press release confirming SNAP's transfer from DCFS to LDH under \"Project One Door\"; LDH's current (Aug. 7, 2026-dated) Restaurant Meals Program state list; LDH's July 20, 2026 Tropical Storm Arthur hot-foods disaster-waiver announcement (through Aug. 13, 2026 — a date this pack's own fetch date, Aug. 12, 2026, falls one day before); a stale 2021 Hurricane Ida \"hot foods\" article still live on dcfs.louisiana.gov that this pack identifically distinguishes from the current 2026 waiver (see Finding 4); and DCFS's own Oct. 1, 2024 ABAWD-waiver-expiration announcement. WebSearch cross-checks located La. R.S. 46:233.3 (the drug-felony opt-out statute) — Justia returned HTTP 403 on direct fetch, resolved via convergent secondary corroboration (CLASP, Public Health Law Center, Louisiana Legislature bill-history search) cross-checked against DCFS/LDH's own E-220/E-222-SNAP disqualification list, which independently lists NO drug-felony disqualification at all.",
+    "gates": "Justia 403'd on direct fetch of the underlying La. R.S. 46:233.3 statute text — a now-familiar pattern in this roster — resolved via convergent secondary corroboration disclosed above and cross-checked against DCFS/LDH's own primary-source manual, whose E-220/E-222-SNAP disqualification list independently confirms no drug-felony disqualification exists in Louisiana's SNAP program at all. Separately, and more significantly: this pack's single largest access finding is NOT a 403 but a live, current, and largely undisclosed AGENCY TRANSFER — SNAP moved from DCFS to LDH on Oct. 1, 2025, yet DCFS's own website (dcfs.louisiana.gov) still hosts extensive SNAP content and ranks first for an ordinary \"Louisiana SNAP\" search, while the underlying manual continues to be hosted on a DCFS-branded PowerDMS instance (public.powerdms.com/LADCFS) whose own document headers are self-inconsistently mid-rename from \"Economic Stability\" to \"Economic Independence.\" This pack also found a genuine STALE-DUPLICATE-ARTICLE trap matching this roster's Alabama finding: a live 2021 Hurricane Ida \"hot foods\" waiver article on dcfs.louisiana.gov, easily confused with LDH's current, unrelated 2026 Tropical Storm Arthur hot-foods waiver — see Finding 4. This pack could not locate Louisiana's B-1030-SNAP document (the section its own B-1040-SNAP cites by name for \"required resource limits\") at a stable, independently-discoverable PowerDMS URL; the $3,000/$4,500 resource-limit figures this pack states are corroborated via B-1040-17-SNAP's own worked numerical example plus independent secondary confirmation, not via a direct read of B-1030-SNAP itself — a disclosed gap, not a fabricated citation.",
+    "sources": [
+      "LA ES/EI Manual, B-650-SNAP Deductions (public.powerdms.com/LADCFS/documents/398997) — direct curl fetch, clean HTTP 200, effective June 1, 2026, current FFY2026 figures",
+      "LA ES/EI Manual, B-1010/B-1020/B-1040-SNAP Resources (documents/398823, 398825, 398828) — direct curl fetch, clean HTTP 200",
+      "LA ES/EI Manual, C-660-SNAP Expedited Service (documents/399579) — direct curl fetch, clean HTTP 200, effective July 1, 2024",
+      "LA ES/EI Manual, C-720-SNAP Processing Redeterminations (documents/399183) — direct curl fetch, clean HTTP 200, effective May 15, 2026",
+      "LA ES/EI Manual, E-220/E-221/E-222-SNAP Disqualified Members and Households (documents/398389) — direct curl fetch, clean HTTP 200, effective August 1, 2024",
+      "LA ES/EI Manual, E-280-SNAP Categorically Eligible Households (documents/398402) — direct curl fetch, clean HTTP 200, effective October 1, 2025",
+      "LA ES/EI Manual, J-300-SNAP Income Eligibility Chart (documents/399088) — direct curl fetch, clean HTTP 200, effective October 1, 2025, current FFY2026 figures",
+      "Louisiana Department of Health, \"Louisiana Department of Health acquires Supplemental Nutrition Assistance Program from DCFS\" (ldh.la.gov/news/snap-to-ldh) — direct curl fetch, clean HTTP 200, dated October 1, 2025",
+      "Louisiana Department of Health, Tropical Storm Arthur hot-foods waiver announcement (ldh.la.gov/news/7685) — direct curl fetch, clean HTTP 200, dated July 20, 2026, effective through August 13, 2026",
+      "Louisiana DCFS, \"Hot Foods Waiver Extended Through October 28\" — direct curl fetch, clean HTTP 200, but dated September 28, 2021 (Hurricane Ida) — a stale duplicate this pack explicitly did NOT rely on for current facts",
+      "Louisiana DCFS, \"Changes to SNAP Work Requirements Effective October 1\" — direct curl fetch, clean HTTP 200, dated September 30, 2024",
+      "USDA FNA, SNAP Restaurant Meals Program state list — direct curl fetch, clean HTTP 200, page updated August 7, 2026 — Louisiana absent",
+      "ABAWDMap.us, Louisiana state entry — direct curl fetch, clean HTTP 200, \"No waiver — rule applies,\" last reviewed June 16, 2026",
+      "La. R.S. 46:233.3 (2017 Regular Session, Act from HB 681, effective October 1, 2017) — Justia HTTP 403 on direct fetch; resolved via convergent secondary corroboration (CLASP \"No More Double Punishments,\" Public Health Law Center opt-out map, Louisiana Legislature bill-history search) cross-checked against LA ES/EI Manual E-220/E-222-SNAP's own disqualification list",
+      "connectebt.com, Louisiana client EBT brochure (\"Your Louisiana Purchase Card\") — cross-check for the EBT-card-name finding (Finding 5)",
+      "Various SEO/AI-aggregator sites naming Louisiana's EBT card the \"Bayou Card\" — the widely-repeated but UNCORROBORATED secondary claim Finding 5 corrects; no Louisiana government primary source uses this name"
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "_provenance": {
+    "note": "Kentucky citation authorities. Kentucky's operative SNAP policy lives in the Division of Family Support Operation Manual, Volume 2 (Supplemental Nutrition Assistance Program) and its companion Volume IIA (SNAP Work Requirements), both cited by 'MS' (Material Section) number — e.g. 'MS 5000' (Resource Maximums), 'MS 3160' (Categorical Eligibility), 'MS 5490' (Standard Utility Allowance). Kentucky's own manual does not append a program suffix to its MS numbers the way Louisiana's 'B-1040-SNAP' does, so this pack writes 'KY MS' before a citation in running prose purely for cross-state disambiguation (matching this roster's general convention), while the regex below matches the bare 'MS ####' form Kentucky's own manual uses natively. This pack ALSO cites a real, separate Kentucky Revised Statute (KRS 205.2005) for the drug-felony opt-out finding, so this pack defines a SECOND citation family, 'KRS 205.', matching this roster's Alabama and Louisiana packs' two-family pattern.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "kyms",
+      "regex": "\\bMS\\s?(\\d{3,4}(?:\\*|\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "MS $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Kentucky Division of Family Support Operation Manual, Volume 2 (SNAP) or Volume IIA (SNAP Work Requirements), Material Section number, e.g. MS 5000 (Resource Maximums), MS 3160 (Categorical Eligibility), MS 5200 (Income Eligibility Scale), MS 2100 (ABAWD Work Requirements)."
+    },
+    {
+      "key": "kykrs",
+      "regex": "\\bKRS\\s?205\\.(\\d{3,4})\\b",
+      "flags": "gi",
+      "template": "KRS 205.$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Kentucky Revised Statutes, Chapter 205 (Public Assistance and Medical Assistance), cited by section number. This pack cites exactly one: KRS 205.2005, the drug-felony SNAP/TANF opt-out statute."
+    }
+  ],
+  "known": {
+    "kyms": [
+      { "value": "MS 2000", "note": "ABAWD Overview — 18-64 age range, under-14 caregiver exemption, 3 countable months in a 36-month period absent compliance" },
+      { "value": "MS 2100", "note": "ABAWD Work Requirements — 80 hours/month (paid, self-employed, in-kind, or volunteer work), 20 hours/week WIOA/TAA participation, or E&T program participation; waived-county exemption" },
+      { "value": "MS 2105", "note": "ABAWD Exemptions — 17-and-under/65-and-older, medically unfit, household member under 14, pregnant, living in a waived county" },
+      { "value": "MS 2350", "note": "Criminals — fleeing felons and probation/parole violators; disqualification lasts until the condition stops" },
+      { "value": "MS 2380", "note": "Child Support Disqualification Overview — $500+ in child support arrearages disqualifies the obligated individual until compliant, identified via automated KASES matching" },
+      { "value": "MS 2385", "note": "Child Support Disqualification Exemptions — specific criteria verified by Family Support or DCSS staff" },
+      { "value": "MS 3160", "note": "Categorical Eligibility — CE (KTAP/Kinship/WIN/FAST/SSI recipients, no income or resource test) and ECE (TANF-info-sheet recipients; 130% FPL for non-elderly/disabled, 200% FPL for all-elderly/disabled, resource test waived for both tracks)" },
+      { "value": "MS 3175", "note": "Verification at Application — CE households have resources, SSN, residency, and sponsored-alien status treated as met; ECE households meet all factors except SSN and remain subject to the 200% FPL/net income standards" },
+      { "value": "MS 3200", "note": "Simplified Assistance for the Elderly (SAFE) Overview — SSI-recipient one/two-person households age 60+, 36-month certification, no interview" },
+      { "value": "MS 3210", "note": "SAFE Eligibility criteria" },
+      { "value": "MS 3220", "note": "SAFE Allotments — flat amount based on shelter cost and household size only" },
+      { "value": "MS 3300", "note": "Elderly Simplified Application Project (ESAP) Overview — broader elderly/disabled no-earned-income households, 36-month certification, no interview, periodic reporting waived" },
+      { "value": "MS 3455", "note": "Transitional SNAP (TSNAP) — Ineligible Households, current disqualification-category list (no drug-felony category present)" },
+      { "value": "MS 5000", "note": "Resource Maximums — $3,000 standard / $4,500 households with a disabled member or a member 60+, applicable only to non-CE/non-ECE households" },
+      { "value": "MS 5040", "note": "Resources - Excluded — dated 2010, retains a stale 'drug-related felony disqualification' reference not scrubbed after KRS 205.2005's 2021 opt-out" },
+      { "value": "MS 5050", "note": "Countable Resources for non-CE/non-ECE households — cash, checking/savings, CDs, stocks, bonds, cryptocurrency, crowdfunding balances, lump-sum lottery/gambling winnings; vehicles absent from the list entirely" },
+      { "value": "MS 5060", "note": "Resources Which May or May Not Be Counted — jointly held accounts, battered-individual-shelter resources, etc." },
+      { "value": "MS 5200", "note": "Income Eligibility Scale — current FFY2026 figures effective October 1, 2025 (130%/165%/200% FPL gross columns, net income column by household size)" },
+      { "value": "MS 5400", "note": "Deductions - General — Standard Deduction ($209/$223/$261/$299), Standard Medical Deduction ($137), capped excess shelter deduction ($744), Homeless Shelter Deduction ($199 in lieu of ordinary shelter deduction)" },
+      { "value": "MS 5410", "note": "Members Eligible for Medical Deduction — elderly (60+) or disabled member; special presumptive/emergency SSI payment provisions" },
+      { "value": "MS 5490", "note": "Standard Utility Allowance (SUA) — $388/month flat for all household sizes, for households with heating/cooling costs" },
+      { "value": "MS 5498", "note": "Basic Utility Allowance (BUA) — $331/month; standalone Telephone Standard $64/month" },
+      { "value": "MS 5500", "note": "Treatment of Utility Expenses — SUA/BUA-eligible households must use the standard, not actual expenses" },
+      { "value": "MS 5510", "note": "Child Support Deduction — ordinary deduction (7 CFR 273.9(d)(5)) for legally obligated child support paid to a non-household member, capped at the legally obligated amount" },
+      { "value": "MS 5520", "note": "Special Considerations for Specific Households — current disqualified-member deduction handling (IPV, fleeing felons, work-requirement noncompliance); no drug-felony category present" },
+      { "value": "MS 6400", "note": "Overview of Application Time Standards — 30 calendar days ordinary processing; 5-calendar-day expedited-service ceiling (faster than the federal 7-day floor)" },
+      { "value": "MS 6430", "note": "Expedited Services Criteria — plain federal gates: gross income under $150 and liquid resources $100 or less; combined income/resources less than shelter costs; destitute migrant/seasonal farmworker" },
+      { "value": "MS 6450", "note": "Special Issuance Timeframes for Expedited Services — 5-calendar-day standard, including DAA-treatment-center and battered-persons-shelter residents" },
+      { "value": "MS 6600", "note": "Assigning Certification Periods — three-tier structure: 4 months (non-exempt ABAWD households), 12 months (default), 36 months (all-60+-RSDI/SSI-no-earned-income households)" },
+      { "value": "MS 6705", "note": "Simplified Reporting Households — all Kentucky SNAP households are Simplified Reporting by default; mid-period reporting triggers at the household's own FPL ceiling (130% or 200%), ABAWD hours drop, or substantial lottery/gambling winnings" },
+      { "value": "MS 7070", "note": "Household Failure to Cooperate — dated 2021, retains a 'Drug felons' category label among household members who must cooperate; not itself an active eligibility disqualification" }
+    ],
+    "kykrs": [
+      { "value": "KRS 205.2005", "note": "Opt-out of 21 U.S.C. sec. 862a(a) — effective June 29, 2021 (2021 Ky. Acts ch. 182, sec. 4) — exempts ALL individuals residing in Kentucky from the federal drug-felony SNAP/TANF disqualification. A FULL opt-out, confirmed by direct primary-source read (no access barrier) and independently by omission in KY's own current disqualification lists" }
+    ]
+  }
+}

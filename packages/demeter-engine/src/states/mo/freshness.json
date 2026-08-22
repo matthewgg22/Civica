@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "Missouri dated facts. Because Missouri has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a genuine disclosed research gap, or a re-verification trigger. Missouri's own manual proved GENUINELY MIXED on currency — unlike Indiana's uniformly current manual or Tennessee's uniformly stale one, several figures (income limits, Standard Deduction, Excess Shelter cap, Homeless Deduction) are confirmed current for FFY2026 while others (the four Standard Utility Allowance figures, the ABAWD age range) are confirmed stale — a genuinely partial staleness pattern this pack discloses topic-by-topic rather than characterizing the whole pack as either current or stale.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "mo-sua-figures-not-confirmed-ffy2026",
+      "kind": "expires",
+      "date": "2026-09-01",
+      "warning": "This pack's Standard Utility Allowance figures (SUA $495, NHCS $363, LUA $158, telephone $79 — MO IM Manual 1115.035.25.15) are dated to IM-50 (September 23, 2024, i.e. FFY2025). Despite a targeted search, this pack could NOT locate a confirmed FFY2026 (effective 10/01/2025) update to these four specific figures, even though Missouri's other FFY2026 figures (income limits, Standard Deduction, Excess Shelter cap, Homeless Deduction) ARE independently confirmed current via the DSS SNAP Program Changes Flyer (10/2025). Because FFY2026 began October 1, 2025 and this pack was authored August 2026, these figures may ALREADY be out of date rather than merely approaching expiry. Before quoting the $495/$363/$158/$79 figures as current, re-fetch MO IM Manual 1115.035.25.15 directly (dssmanuals.mo.gov/food-stamps/1115-000-00/1115-035-00/1115-035-25/1115-035-25-15/) and check for a memo more recent than IM-50."
+    },
+    {
+      "key": "mo-abawd-manual-text-stale-pre-obbba",
+      "kind": "expires",
+      "date": "2026-09-01",
+      "warning": "This pack's ABAWD manual source (MO IM Manual 1105.035.00, last updated IM-71, August 31, 2023) states the PRE-OBBBA 18-54 ABAWD age range, not the current federal 18-64 range effective per OBBBA (July 4, 2025 enactment, November 1, 2025 FNS implementation date). Missouri's own HR1-implementation page (mydss.mo.gov/hr1-implementation) confirms the state's FAMIS/MEDES eligibility SYSTEMS have already been updated for ABAWD OBBBA changes, but this specific public manual TEXT had not been updated as of this pack's fetch date (2026-08-11). A chatbot answering an ABAWD age-range question for Missouri should state the CURRENT federal 18-64 range (consistent with Missouri's own confirmed system behavior) rather than quoting the manual's own stale 18-54 text verbatim. Re-fetch MO IM Manual 1105.035.00 directly to check whether the manual text has since been updated to match."
+    },
+    {
+      "key": "mo-abawd-waiver-status-recheck",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "This pack's finding that Missouri currently holds ZERO active ABAWD waivers anywhere in the state rests on THREE convergent sources, none of which is an affirmative Missouri manual statement (unlike Indiana's manual, which explicitly states 'there are currently no such designations'; Missouri's manual is silent on waiver status): USDA's Time Limit Waivers FY2025-2029 index (no Missouri entry), the independent abawdmap.us aggregator ('No waiver — rule applies' for Missouri), and Missouri's own current statewide unemployment rate (3.7%, well under the 10% federal waiver threshold), all checked 2026-08-11. USDA updates its waiver index quarterly and unemployment conditions change. Before restating 'Missouri has no ABAWD waiver' after this date, re-check USDA's index and current Missouri unemployment data directly."
+    },
+    {
+      "key": "mo-resource-limit-secondary-source-only",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's resource-limit figures ($3,000 standard / $4,500 elderly-or-disabled — MO IM Manual 1110.005.00) could NOT be independently confirmed from Missouri's own primary manual text: this specific subsection returned a password-protected wall on every direct-fetch attempt (2026-08-11), even though the sibling Vehicles subsection in the same chapter (1110.020.10) rendered cleanly with no such wall — a page-specific, not site-wide, access barrier. The figures instead rest on convergent secondary corroboration (the Missouri Budget Project's 2025 SNAP overview) cross-checked against the current federal FFY2026 standard. Before restating these figures as Missouri's own confirmed primary-source position, re-attempt a direct fetch of MO IM Manual 1110.005.00 — the password gate may be a temporary artifact of Missouri's ongoing Combined IM Policy Manual migration (per IM-23, April 2025) rather than a permanent restriction."
+    },
+    {
+      "key": "mo-bbce-legislative-session-recheck",
+      "kind": "expires",
+      "date": "2027-05-01",
+      "warning": "This pack's flagship finding — Missouri has NOT adopted Broad-Based Categorical Eligibility, directly correcting several secondary-source SNAP calculator sites that claim a 200% FPL BBCE test — is confirmed by Missouri's own current income-limit table (MO IM Manual 1115.099.00, cross-checked against the DSS SNAP Program Changes Flyer dated 10/2025) and Missouri's own narrow Categorical Eligibility definition (1135.035.00). The Missouri General Assembly convenes annually; BBCE adoption is a state administrative or legislative choice that could change in a future session (as this roster's Tennessee pack documents happened there in January 2026). Re-fetch MO IM Manual 1115.099.00 and 1135.035.00 directly before a future legislative session's changes might take effect, rather than assuming this pack's no-BBCE finding is permanent."
+    },
+    {
+      "key": "mo-cert-period-elderly-trigger-secondary-source",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack's claim that elderly (60+) or disabled households receive a 24-month certification period while other households receive 12 months rests on a secondary source (a Missouri State Public Defender applicant guide, last revised November 2023), not on Missouri's own primary manual text for that specific trigger — MO IM Manual 1135.020.20, as fetched, confirms only the general 'up to 12 months or 24 months' range without spelling out which households get which length in the specific text this pack retrieved. Before restating the elderly/disabled-specific 24-month trigger with full confidence, locate and fetch the specific Missouri manual subsection (likely a sibling of 1135.020.20) that states this criterion directly."
+    },
+    {
+      "key": "mo-combined-im-manual-migration-in-progress",
+      "kind": "expires",
+      "date": "2027-01-01",
+      "warning": "Missouri's own IM-23 memo (April 22, 2025) announced 'Introducing the Combined Income Maintenance (IM) Policy Manual,' folding the previously separate SNAP, Temporary Assistance, MAGI, and MHABD manuals into one combined structure. This pack fetched all SNAP content from the legacy 'food-stamps' URL path (dssmanuals.mo.gov/food-stamps/), which was still live and serving current content as of 2026-08-11, but this reorganization may eventually change section numbering, URL structure, or the 'MO IM Manual' short-citation convention this pack invented. Before citing MO IM Manual section numbers in future work, confirm the legacy food-stamps URL path and section numbers are still current, or locate the combined manual's equivalent structure if the migration has completed."
+    }
+  ]
+}

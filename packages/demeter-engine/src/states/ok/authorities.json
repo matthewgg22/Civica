@@ -1,0 +1,48 @@
+{
+  "_provenance": {
+    "note": "Oklahoma citation authorities. Oklahoma's operative SNAP policy lives in Oklahoma Administrative Code (OAC) Title 340, Chapter 50 (Supplemental Nutrition Assistance Program), cited by section number, e.g. '340:50-11-111' (Categorically eligible household), '340:50-7-31' (Deductions), '340:50-5-100' (ABAWD). This pack writes 'OAC' before the section number in running text purely for cross-state disambiguation (matching this roster's general convention), while the regex below matches the bare '340:50-X-Y' form Oklahoma's own regulation uses natively. This pack ALSO cites Oklahoma Statutes Title 56 (Poor Persons) — a real, separate statute chapter, most consequentially 56 O.S. § 241.3 (Oklahoma's statutory bar on requesting an ABAWD waiver) — so this pack defines a SECOND citation family, '56 O.S. §', matching this roster's Kentucky, Alabama, and Louisiana packs' two-family pattern. This pack does NOT define a family for the 1997 session-law citation (1997 Okla. Sess. Laws ch. 414, §§ 28, 31) that two secondary sources cite for the drug-felony opt-out, since this pack could not independently verify those sections persist as currently-citable, standalone Title 56 law (see PROVENANCE.md Finding 3) — it is referenced in prose only, never as a machine-matched authority.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "okoac",
+      "regex": "\\b(?:OAC\\s+)?340:50-(\\d{1,2}-\\d{1,4}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "OAC 340:50-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Oklahoma Administrative Code, Title 340 (Department of Human Services), Chapter 50 (Supplemental Nutrition Assistance Program), section number, e.g. 340:50-11-111 (Categorically eligible household), 340:50-7-31 (Deductions), 340:50-5-100 (ABAWD Work Requirements), 340:50-9-6 (Certification renewals)."
+    },
+    {
+      "key": "okstat",
+      "regex": "\\b56\\s?O\\.?S\\.?\\s?§?\\s?(2\\d{2}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "56 O.S. § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Oklahoma Statutes, Title 56 (Poor Persons), cited by section number. This pack cites § 241, § 241.1, and — most consequentially — § 241.3 (Limitation of benefits), whose subsection (C) statutorily bars OKDHS from requesting an ABAWD waiver."
+    }
+  ],
+  "known": {
+    "okoac": [
+      { "value": "OAC 340:50-3-1", "note": "The application process — ordinary processing standard of no later than 30 calendar days" },
+      { "value": "OAC 340:50-5-1", "note": "Household composition special cases — includes the elderly/disabled-member 165% FPL separate-household provision (Table III, Appendix C-3)" },
+      { "value": "OAC 340:50-5-100", "note": "ABAWD (able-bodied adults without dependents) — 80 hours/month work requirement, 3-of-36-month time limit, age-exemption table last amended Aug. 15, 2024 (reflects the pre-OBBBA 2023 Fiscal Responsibility Act figures, topping out at exempt-at-55; now stale relative to OBBBA's 18-64 standard)" },
+      { "value": "OAC 340:50-5-106", "note": "Oklahoma Supplemental Nutrition Assistance Program Works (OK SNAP WORKS) — Oklahoma's branded SNAP Employment and Training program" },
+      { "value": "OAC 340:50-7-1", "note": "Resources considered" },
+      { "value": "OAC 340:50-7-31", "note": "Deductions — standard, earned income (20%), medical (actual expense minus $35, no flat shortcut), shelter (capped at Appendix C-3's figure absent an elderly/disabled member, uncapped with one), dependent care (no maximum), child support (ordinary deduction)" },
+      { "value": "OAC 340:50-9-1", "note": "Determining the food benefit allotment — governs benefit calculation for categorically eligible households whose income exceeds the ordinary standard; cross-referenced by Appendix C-3's income tables" },
+      { "value": "OAC 340:50-9-5", "note": "Changes after application and during the certification period — includes the minimum-allotment ($24) provision for 1-2 person categorically eligible households mid-certification" },
+      { "value": "OAC 340:50-9-6", "note": "Procedures relating to food benefit certification renewals — establishes Oklahoma's flat 12-month standard certification period" },
+      { "value": "OAC 340:50-11-1", "note": "Expedited service eligibility criteria — plain federal gates (gross income under $150 and liquid resources $100 or less; combined income/resources less than shelter costs; destitute migrant/seasonal farmworker) and the 7-calendar-day processing ceiling" },
+      { "value": "OAC 340:50-11-5", "note": "Expedited service verification postponement — eligibility factors other than identity may be postponed when they cannot be verified within the 7-day expedited window" },
+      { "value": "OAC 340:50-11-111", "note": "Categorically eligible household — TANF/SSI/2-1-1 Oklahoma pathways; removes both gross AND net income tests entirely with no stated percentage-of-FPL ceiling; subsection (f) lists what disqualifies categorical-eligibility status (lottery/gambling winnings, IPV, fleeing felon, work-registration noncompliance)" }
+    ],
+    "okstat": [
+      { "value": "56 O.S. § 241", "note": "Participation in food stamp program — mandatory OKDHS duty to participate in the federal food stamp program" },
+      { "value": "56 O.S. § 241.1", "note": "Electronic benefit identification program — implementation authority for Oklahoma's EBT system" },
+      { "value": "56 O.S. § 241.3", "note": "Limitation of benefits — Amount and receipt of allotments. Subsection (A) states a stale pre-2023 ABAWD age band ('eighteen (18) years of age to fifty (50) years of age'), never amended since originally enacted 1997. Subsection (C), added by Laws 2013, c. 178, § 1, eff. Sept. 1, 2013, statutorily BARS OKDHS from ever requesting an ABAWD area waiver — this pack's flagship structural finding" },
+      { "value": "56 O.S. § 241.4", "note": "Restrictions on debit and electronic benefit cards — bars EBT/TANF-funded card use at liquor stores, casinos, adult-entertainment establishments, and tobacco retailers" }
+    ]
+  }
+}

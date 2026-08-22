@@ -1,0 +1,59 @@
+{
+  "code": "KY",
+  "program": "SNAP — Kentucky has no distinctive local program nickname; benefits are issued through the \"kynect benefits\" self-service portal (see PROVENANCE.md)",
+  "agency": "Kentucky Cabinet for Health and Family Services (CHFS), Department for Community Based Services (DCBS), Division of Family Support (DFS), Nutrition Assistance Branch (NAB)",
+  "admin_model": "state",
+  "admin_note": "Kentucky is a STATE-ADMINISTERED SNAP program (no county option-in like CA/NY/MN/WI/VA), run through a four-layer hierarchy — CHFS (Cabinet) → DCBS (Department) → DFS (Division) → NAB (Branch) — with delivery through roughly 120 county-level Family Support offices, one per county. GENUINE STRUCTURAL CORRECTION this pack found: Kentucky's SNAP policy manual is DIVISION OF FAMILY SUPPORT OPERATION MANUAL VOLUME 2 (\"Volume II\"), not \"Volume III\" as commonly assumed — this pack independently verified Volume III is actually the Kentucky Transitional Assistance Program (KTAP) manual, Kentucky's TANF cash-assistance program, an entirely different program with its own eligibility rules (see PROVENANCE.md Finding 1). ABAWD/work-requirement policy lives in a separate companion volume, Volume IIA (\"SNAP Work Requirements\"). This pack also found the state's own current SNAP consumer page (chfs.ky.gov) still states resource limits ($2,250/$3,500) that are stale by roughly one federal COLA cycle relative to the current policy manual's figures ($3,000/$4,500, matching FFY2026) — see PROVENANCE.md Finding 2 — and that Kentucky's application portal was rebranded from \"benefind\" to \"kynect benefits\" without CHFS's own SNAP page updating its displayed link text. Confirm current operative practice with the applicant's own local DCBS Family Support office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA.",
+  "system": "DCBS's Division of Family Support processes SNAP; applicants apply online through the kynect benefits self-service portal (hosted at benefind.ky.gov), by calling the statewide DCBS Family Support toll-free line to start an application, in person at any local Family Support office, or by mailing in a printed application (which still requires a follow-up interview). The head of household or an authorized representative must complete an interview before the application can be processed, except for households in the state's two simplified elderly tracks — SAFE (Simplified Assistance for the Elderly, for one/two-person SSI-recipient households age 60+) and ESAP (Elderly Simplified Application Project, for broader no-earned-income elderly/disabled households) — both of which waive the interview and use 36-month certification periods.",
+  "portal": {
+    "name": "kynect benefits (benefind.ky.gov)",
+    "url": "https://benefind.ky.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "Kentucky CHFS/DCBS — Division of Family Support Operation Manual, Volume 2 (Supplemental Nutrition Assistance Program), current per-section revisions through R. 8/1/26",
+      "url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf"
+    },
+    {
+      "name": "Kentucky CHFS/DCBS — Division of Family Support Operation Manual, Volume IIA (SNAP Work Requirements / ABAWD), individual sections current through R. 10/25/25",
+      "url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLIIA.pdf"
+    },
+    {
+      "name": "Kentucky CHFS — Supplemental Nutrition Assistance Program (SNAP) consumer page, current ABAWD county-waiver status",
+      "url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/nab/Pages/snap.aspx"
+    },
+    {
+      "name": "Kentucky Legislature — KRS 205.2005, Opt-out of 21 U.S.C. sec. 862a(a) (drug-felony SNAP/TANF ban), effective June 29, 2021",
+      "url": "https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=51439"
+    },
+    {
+      "name": "USDA FNA — SNAP Restaurant Meals Program state list (Kentucky absent)",
+      "url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "name": "USDA FNA — Kentucky Disaster Nutrition Assistance (current/past SNAP disaster waivers)",
+      "url": "https://www.fns.usda.gov/disaster/kentucky"
+    },
+    {
+      "name": "ABAWDMap.us — Kentucky state entry (third-party aggregator; this pack found it does not reflect Kentucky's current 5-county waiver — see PROVENANCE.md Finding 4)",
+      "url": "https://abawdmap.us/state/kentucky"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct curl fetch (browser User-Agent) of Kentucky's Division of Family Support Operation Manual Volume 2 (chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf, 197 pages, current through R. 8/1/26/OMTL-704) and Volume IIA (OMVOLIIA.pdf, SNAP Work Requirements/ABAWD, individual sections current through R. 10/25/25/OMTL-683), converted with pdftotext -layout. Also directly fetched and cross-checked: Kentucky's own consumer-facing SNAP page (chfs.ky.gov/agencies/dcbs/dfs/nab/Pages/snap.aspx, current ABAWD county-waiver dates and figures); Kentucky's benefind.ky.gov/kynect benefits application portal landing page; a 2016-dated historical ABAWD press release (chfs.ky.gov/News/Documents, explicitly NOT relied on for current facts — stale, pre-dates the current federal ABAWD regime by nine years); Kentucky's own Volume III (OMVOLIII.pdf) and Volume IIIA (OMVOLIIIA.pdf), fetched specifically to INDEPENDENTLY VERIFY they are NOT the SNAP manual (they are KTAP/TANF and the Kentucky Works Program, respectively — see PROVENANCE.md Finding 1); USDA FNA's current Restaurant Meals Program state list (Kentucky absent) and Kentucky Disaster Nutrition Assistance page (no active SNAP hot-foods disaster waiver as of this pack's fetch date); and ABAWDMap.us's Kentucky entry. Separately, and distinctively for this pack: KRS 205.2005 (Kentucky's drug-felony SNAP opt-out statute) was fetched DIRECTLY and successfully from Kentucky's own legislature.ky.gov statute database — no 403, unlike this roster's now-familiar Justia-blocked pattern for other states' equivalent statutes.",
+    "gates": "No HTTP access barrier was encountered on any Kentucky government host — chfs.ky.gov, apps.legislature.ky.gov, and benefind.ky.gov all returned clean HTTP 200 to direct curl with a browser User-Agent on every fetch attempt, including a direct, successful read of KRS 205.2005's own statute text (a genuine positive departure from this roster's repeated Justia-403 pattern for equivalent drug-felony opt-out statutes in other states). This pack's most significant finding is instead a STRUCTURAL MISCONCEPTION this pack disproved through direct primary-source verification: Kentucky's SNAP manual is Volume 2, not \"Volume III\" as commonly assumed going in — Volume III is Kentucky's KTAP (TANF) manual, a different program entirely, independently confirmed by fetching and reading both documents' own title pages and tables of contents. This pack also found Kentucky's own consumer-facing SNAP page states resource limits one federal COLA cycle out of date relative to its own current policy manual (see Finding 2), two internal manual artifacts (MS 5040, dated 2010, and MS 7070, dated 2021) that still reference a \"drug-related felony disqualification\"/\"drug felons\" category the state's own CURRENT (2025-2026-dated) disqualification lists no longer carry — consistent with, not contradicting, KRS 205.2005's 2021 full opt-out (see Finding 3) — and a live discrepancy between Kentucky's own current SNAP page (which names a narrow, 5-county ABAWD waiver effective December 1, 2025) and the third-party ABAWDMap.us aggregator (dated June 16, 2026, stating no waiver applies anywhere in the state) — see Finding 4.",
+    "sources": [
+      "KY DCBS Division of Family Support Operation Manual, Volume 2 (Supplemental Nutrition Assistance Program), chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf — direct curl fetch, clean HTTP 200, cover TOC dated R. 8/1/26/OMTL-704, individual sections dated as recently as 7/15/26",
+      "KY DCBS Division of Family Support Operation Manual, Volume IIA (SNAP Work Requirements/ABAWD), chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLIIA.pdf — direct curl fetch, clean HTTP 200, individual sections current through R. 10/25/25/OMTL-683",
+      "KY DCBS Division of Family Support Operation Manual, Volume 3 (KTAP) and Volume IIIA (Kentucky Works Program) — direct curl fetch, clean HTTP 200, fetched specifically to independently confirm these are NOT the SNAP manual",
+      "Kentucky CHFS, Supplemental Nutrition Assistance Program (SNAP) consumer page — direct curl fetch, clean HTTP 200, current ABAWD county-waiver dates (Nov. 1, 2025 statewide; Dec. 1, 2025 five-county exemption)",
+      "KRS 205.2005, Opt-out of 21 U.S.C. sec. 862a(a) — direct curl fetch of apps.legislature.ky.gov, clean HTTP 200, full statute text read directly, effective June 29, 2021 (2021 Ky. Acts ch. 182, sec. 4)",
+      "benefind.ky.gov / kynect benefits application portal — direct curl fetch, clean HTTP 200",
+      "USDA FNA, SNAP Restaurant Meals Program state list — direct curl fetch, clean HTTP 200, page updated August 7, 2026 — Kentucky absent",
+      "USDA FNA, Kentucky Disaster Nutrition Assistance — direct curl fetch, clean HTTP 200, \"There are no active disaster response efforts\" as of this pack's fetch date; most recent past SNAP-related waivers (Jan. and June 2026 storms) were 10-day-reporting waivers only, not hot-foods waivers, both since expired",
+      "ABAWDMap.us, Kentucky state entry — direct curl fetch, clean HTTP 200, \"No waiver — rule applies,\" last verified June 16, 2026 — a finding this pack discloses as apparently NOT reflecting Kentucky's own current 5-county waiver",
+      "Kentucky CHFS, \"ABAWD Changes in Eight Counties\" press release — direct curl fetch, clean HTTP 200, but dated April 22, 2016 — historical context only, explicitly NOT relied on for any current fact"
+    ]
+  }
+}

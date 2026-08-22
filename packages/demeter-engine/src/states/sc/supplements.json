@@ -1,0 +1,273 @@
+{
+  "_provenance": {
+    "note": "South Carolina SNAP curated supplements. South Carolina has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuinely blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, Tennessee's, Indiana's, Missouri's, Maryland's, and Colorado's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from a direct curl fetch (browser User-Agent) of South Carolina's own current SNAP Policy Manual (Volume 70, June 2026), SCDSS's own current SNAP/FAQ web pages, and USDA FNA's South Carolina SNAP Food Restriction Waiver and Restaurant Meals Program pages.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "direct curl fetch (browser UA) of dss.sc.gov's own hosted PDF of SC SNAP Policy Manual Volume 70 (June 2026), converted with pdftotext -layout (all cited sections cross-referenced against the manual's own table of contents and running section headers) + direct curl fetch of dss.sc.gov/assistance-programs/snap/ and its FAQ page (both clean HTTP 200) + direct curl fetch of fna.usda.gov's South Carolina Food Restriction Waiver page and Restaurant Meals Program list + direct curl fetch of abawdmap.us + WebSearch cross-checks against two independent secondary aggregators (Prison Policy Initiative, Network for Public Health Law) for the drug-felony finding + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "No access barrier was encountered anywhere in this pack's research. dss.sc.gov and fna.usda.gov both returned clean HTTP 200 responses to direct curl with a browser User-Agent on every fetch attempt — a genuine contrast with several prior states in this roster (Colorado's cdhs.colorado.gov 403s, Missouri's password-walled resource section)."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "dss benefits portal",
+        "benefits portal",
+        "who runs",
+        "what agency",
+        "administers",
+        "scdss",
+        "county dss office",
+        "family independence",
+        "tanf",
+        "ebt card",
+        "food stamps"
+      ],
+      "citation": "SC SNAP Manual, Chapter 1 (General Information) — South Carolina uses the plain name \"SNAP\"; SCDSS is a single STATE agency with a county office in every county, staffed by state employees; applicants apply through the DSS Benefits Portal, in person, by mail, or by fax; \"Family Independence\"/TANF is a SEPARATE cash-assistance program, not another name for SNAP",
+      "heading": "South Carolina has no distinctive local SNAP nickname, and is STATE-administered through SCDSS's own county offices — not an independently-governed-county system like Virginia's or Colorado's",
+      "text": "South Carolina Department of Social Services (SCDSS), Division of Economic Services, uses the plain federal name \"SNAP\" with no distinctive local brand name, unlike CalFresh (CA) or Basic Food (WA). South Carolina is a STATE-ADMINISTERED program: SCDSS is a single statewide agency, and \"the Department has offices in each county\" staffed by SCDSS's own eligibility caseworkers (state employees), \"guided by a state office which provides centralized management, support, and accountability functions\" (SCDSS's own Agency Overview) — matching this roster's Georgia/Indiana/Tennessee/Missouri/Maryland state-agency-with-local-offices archetype, not Virginia/North Carolina/Colorado's independently-governed-county archetype. A frequently confused point: SCDSS's TANF cash-assistance program is sometimes referred to internally as \"Family Independence\" (the source of the name \"Family Independence Information and Referral Services\" — see the income-pathways finding) — it is a SEPARATE program from SNAP, though TANF receipt is one qualifying benefit that confers categorical eligibility for SNAP. Applicants apply online through the DSS Benefits Portal (benefitsportal.dss.sc.gov), in person, by mail, or by fax at a county DSS office. Qualified applicants begin receiving benefits within 30 days of application, or within 7 days for expedited service.",
+      "source_url": "https://dss.sc.gov/assistance-programs/snap/"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "family independence information",
+        "ssi",
+        "tanf"
+      ],
+      "citation": "SC SNAP Manual § 4.1(D) — Family Independence Information and Referral Services expands categorical eligibility (resource-test waiver only) to households at or below 130% of the Federal Poverty Level; § 13.6(2)(B) — the ordinary gross income test remains 130% FPL for all households",
+      "heading": "FLAGSHIP FINDING, CORRECTING a widely-repeated secondary-source assumption: South Carolina's Broad-Based Categorical Eligibility caps out at 130% FPL, NOT the 200% FPL ceiling common to most other BBCE states in this roster",
+      "text": "Secondary sources describing BBCE states in general terms (and some describing South Carolina specifically) commonly assume a 200% FPL income ceiling — the figure this roster's Colorado, Maryland, and other packs independently confirmed for THEIR states. South Carolina's own SNAP Manual states something narrower and more specific: § 4.1(D) reads, \"Categorical eligibility is expanded to include all households in which any member receives, or is authorized to receive, benefits from Family Independence Information and Referral Services. Family Independence Information and Referral Services are provided to households whose income falls at or below 130% of the Federal Poverty Level (FPL).\" Because South Carolina's ordinary SNAP gross income test (§ 13.6(2)(B)) is ALSO 130% FPL — the plain federal floor — South Carolina's BBCE analog does NOT expand who is income-eligible for SNAP at all; nearly every household within the ordinary gross income limit already qualifies for this pathway. What it DOES do is waive the resource/asset test entirely for those households (§ 4.1(D): \"will have the household's resources excluded when determining eligibility\") and waive the SEPARATE net income test that would otherwise apply. In practical terms: South Carolina's BBCE mechanism is a resource-test waiver bundled into ordinary income-eligible SNAP applications, not an income-limit expansion — a materially different, narrower BBCE implementation than the 200% FPL pattern this roster has documented in most other BBCE states. This finding is a genuine correction to any assumption that South Carolina's income ceiling for SNAP tracks the more common 200% FPL figure.",
+      "source_url": "https://dss.sc.gov/media/25ug5rk1/snap-manual-volume-70-final-version.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "boat",
+        "camper",
+        "recreational vehicle",
+        "retirement account",
+        "401k",
+        "ira"
+      ],
+      "citation": "SC SNAP Manual § 10.2 — resource limit $3,000 (standard) / $4,500 (household with a member 60+ or disabled), current FFY2026 figures, applicable only to households NOT eligible under the Family Independence Information and Referral Services 130% FPL pathway; § 10.3(B)(vii) and § 10.7(AA) — ONE licensed, SC-registered vehicle PER LICENSED DRIVER in the household is fully excluded; additional vehicles are counted at the higher of fair market value over $4,650 or equity value",
+      "heading": "STRUCTURAL DEPARTURE: South Carolina exempts one vehicle PER LICENSED DRIVER (not one per household), conditioned on South Carolina vehicle registration — a genuinely different vehicle rule than this roster's all-vehicles-exempt (CO/MO/MD) or one-vehicle-per-household patterns",
+      "text": "South Carolina's resource limit (§ 10.2) is $3,000 for most households, $4,500 for households with a member who is 60 or older or disabled — current FFY2026 figures. This limit applies only to households evaluated under Standard Eligibility; households qualifying through the 130% FPL Family Independence Information and Referral Services pathway have their resources excluded entirely (see the income-pathways finding). South Carolina's vehicle rule is a genuine structural departure from this roster's more common patterns: § 10.3(B)(vii)/§ 10.7(AA) excludes \"one licensed, registered vehicle per licensed driver in the household\" — meaning a two-driver household can exclude TWO vehicles, not just one — but ONLY if \"both the license and registration are issued in South Carolina.\" Beyond that per-driver exclusion, additional vehicles are also excluded if used for income-producing purposes (a taxi, delivery vehicle, fishing boat), necessary for long-distance work travel, used as the household's home, necessary to transport a physically disabled household member, or if their sale would net $1,500 or less. Any OTHER licensed vehicle a household owns is counted at the HIGHER of (a) fair market value in excess of $4,650, or (b) full equity value — a materially different (and potentially harsher, for a household with an unexempt second vehicle) test than the blanket all-vehicles-exempt rule this roster documented for Missouri, Maryland, and Colorado, or Indiana's hybrid ordinary-vehicle-exempt/boats-and-campers-counted rule. This pack found no comparable SC-specific rule elsewhere in this roster and flags it as a genuinely distinctive finding.",
+      "source_url": "https://dss.sc.gov/media/25ug5rk1/snap-manual-volume-70-final-version.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis",
+        "expungement",
+        "pardon"
+      ],
+      "citation": "SC SNAP Manual § 2.3(7) — ANY drug-related felony conviction (possession, use, or distribution of a controlled substance, committed after August 22, 1996) PERMANENTLY disqualifies that individual from SNAP, with no state statute modifying or opting out of the federal default ban; the only listed exception is a verified expungement or pardon",
+      "heading": "FLAGSHIP FINDING, CONFIRMING the minority secondary-source claim with strong corroboration: South Carolina is one of only two U.S. jurisdictions (with Guam) that retains the FULL, UNMODIFIED lifetime federal drug-felony SNAP ban — and does so through legislative SILENCE, not a state statute",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP, UNLESS a state enacts its own legislation opting out or modifying that ban under § 862a(d)(1) — and the overwhelming majority of states have done so. This pack's direct read of South Carolina's own SNAP Manual found the state has NOT: § 2.3(7) restates the plain federal rule verbatim as SCDSS policy — \"[i]ndividuals who are ineligible because of a drug-related felony conviction. A drug-related felony conviction is a conviction of any offense which is classified as a felony and which has as an element of the possession, use or distribution of a controlled substance\" — limited only to conduct occurring after August 22, 1996, with the SOLE listed exception being \"clients who provide verification of an expungement or a pardon of a felony drug conviction.\" No separate South Carolina statute implementing, narrowing, or opting out of this rule could be located in this pack's research, and TWO independent secondary aggregators (Prison Policy Initiative, Feb. 2026; Network for Public Health Law's 50-state survey) both corroborate this directly: the Network for Public Health Law survey lists South Carolina's ban type as \"Explicit disqualification [None – kept full federal ban]\" — meaning South Carolina's continued full ban rests on the ABSENCE of any state legislative action, not an affirmative state law. This makes South Carolina's drug-felony rule the OPPOSITE extreme from several other states already built in this roster (e.g., this roster's Minnesota pack's finding of a full opt-out): South Carolina's rule is a genuinely simple, unmodified, permanent, any-drug-felony ban with no rehabilitation, treatment-completion, or time-limited pathway back — only expungement or a pardon of the underlying conviction restores eligibility. This is a genuine confirmation, stated with confidence because it is verifiably the minority nationwide position, not a correction of an inaccurate secondary claim.",
+      "source_url": "https://dss.sc.gov/media/25ug5rk1/snap-manual-volume-70-final-version.pdf"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "mandatory utility allowance",
+        "basic utility allowance",
+        "telephone allowance",
+        "homeless shelter deduction",
+        "standard deduction",
+        "mua",
+        "bua"
+      ],
+      "citation": "SC SNAP Manual § 12.1-12.2 — Standard Deduction $209 (household sizes 1-3), $223 (4), $261 (5), $299 (6+); § 12.4 — $744 maximum excess shelter deduction, $198.99 homeless shelter deduction; § 12.5(2)-(3) — Mandatory Utility Allowance (MUA) $388, Basic Utility Allowance (BUA) $265, standalone Telephone Allowance $27 — ALL current FFY2026 figures, dated to the June 2026 manual revision",
+      "heading": "CURRENT, not stale: South Carolina's own manual dollar figures match the national FFY2026 cycle exactly, a contrast worth stating plainly given this roster's repeated findings of stale state-specific deduction figures elsewhere (Colorado, Missouri)",
+      "text": "South Carolina's SNAP Manual, Volume 70 (dated June 2026, roughly two months before this pack's fetch date), states the Standard Deduction (§ 12.2) as $209 for household sizes 1-3, $223 for 4, $261 for 5, $299 for 6 or more — matching the current national FFY2026 figures this roster's Missouri and Maryland packs independently confirmed. The maximum Excess Shelter Deduction (§ 12.4) is $744, also matching the current national FFY2026 cap; households where all members are homeless may instead claim a flat Homeless Shelter Deduction up to $198.99 if they incur any shelter expense. South Carolina assigns each household one of three utility allowances at initial certification: the Mandatory Utility Allowance (MUA, § 12.5(2)) of $388/month for households billed separately for heating or cooling costs (or receiving qualifying LIHEAP energy assistance); the Basic Utility Allowance (BUA, § 12.5(3)) of $265/month for households billed for at least two non-heating/cooling utilities (fuel, water, sewerage, non-heating electricity, garbage, well/septic, or telephone); or a standalone Telephone Allowance of $27/month for households with no other qualifying utility expense. Households not entitled to the MUA or BUA may instead claim actual verified utility costs. Unlike this roster's Colorado pack (whose entire SUA table was found one full federal fiscal year stale) or Missouri pack (whose SUA figures were dated to a September 2024 memo, also FFY2025), South Carolina's figures carry no comparable staleness — this pack found no internal date inconsistency anywhere in the manual's dollar figures.",
+      "source_url": "https://dss.sc.gov/media/25ug5rk1/snap-manual-volume-70-final-version.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction",
+        "sm deduction"
+      ],
+      "citation": "SC SNAP Manual § 12.8 — Excess Medical (EM) Deduction for verified out-of-pocket medical expenses exceeding $35/month incurred by a household member 60+ or disabled; households with verified expenses between $35.01 and $210 may instead claim a flat Standard Medical (SM) Deduction of $175",
+      "heading": "South Carolina DOES have a flat Standard Medical Deduction shortcut ($175) — matching this roster's Missouri/Colorado finding rather than Maryland's actual-expense-only rule",
+      "text": "§ 12.8 (Medical Deduction) allows a deduction for the portion of out-of-pocket medical expenses exceeding $35 per month incurred by a household member who is elderly (60+) or disabled; other household members' medical costs are not deductible. A household with verified medical expenses greater than $35 but not exceeding $210 per month may instead claim a flat $175 Standard Medical (SM) Deduction without itemizing further ($210 minus the $35 floor equals the $175 deduction). A household with verified expenses above $210 may claim the Excess Medical (EM) Deduction based on actual, itemized expenses instead. This places South Carolina in the same flat-shortcut camp as this roster's Missouri pack (SMED $135 for $35.01-$170) and Colorado pack (SMED $165 for $35.01-$200) rather than Maryland's or Indiana's actual-expense-only mechanism — though South Carolina's own $175 figure and $210 ceiling are distinct from either.",
+      "source_url": "https://dss.sc.gov/media/25ug5rk1/snap-manual-volume-70-final-version.pdf"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "alimony",
+        "arrearage"
+      ],
+      "citation": "SC SNAP Manual § 12.7 — legally obligated child support paid to or for a non-household member is an ORDINARY POST-GROSS-INCOME DEDUCTION, applied at Step (F) of the net-income calculation in § 13.6(1), not an income exclusion applied before the gross income test",
+      "heading": "South Carolina treats legally obligated child support as an ORDINARY DEDUCTION — matching this roster's Maryland/Indiana/Tennessee mechanism, NOT the income-exclusion-before-the-gross-test mechanism this roster's Virginia/New Jersey/Illinois/Missouri/Colorado packs document",
+      "text": "§ 12.7 (Child Support Deduction) allows a deduction for legally obligated child support paid by a household member to or for an individual living outside the household, including vendor payments made to a third party on the payer's behalf and amounts paid toward court-ordered arrearages. Alimony payments and court costs are explicitly NOT included. Critically, § 13.6(1)'s net-income calculation places the child support deduction at Step (F) — AFTER the household's total gross income has already been established at Step (A) — placing South Carolina in the ORDINARY-DEDUCTION camp (7 CFR 273.9(d)(5)) alongside this roster's Maryland, Indiana, and Tennessee packs, in direct contrast to the INCOME-EXCLUSION mechanism (7 CFR 273.9(c)) this roster's Virginia, New Jersey, Illinois, Missouri, and Colorado packs document. This distinction matters concretely: because South Carolina's mechanism applies AFTER, not before, the gross income test, a household whose child support payments would otherwise bring it under South Carolina's 130% FPL gross income ceiling does NOT get that benefit — child support here can lower the NET income used for the net income test and benefit calculation, but cannot determine gross-income SNAP eligibility itself the way it can in an income-exclusion state.",
+      "source_url": "https://dss.sc.gov/media/25ug5rk1/snap-manual-volume-70-final-version.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "columbia",
+        "charleston",
+        "rural county",
+        "native american",
+        "tribal",
+        "time limit"
+      ],
+      "citation": "SC SNAP Manual § 8.12 — ABAWD defined as an able-bodied adult, at least 18 but under 65 (current federal 18-64 range), without a dependent under 14 in the household; § 8.15 — current OBBBA-updated exceptions (under-14 caregiver exception, no homelessness/veteran/foster-care exemption); South Carolina holds ZERO ABAWD waivers anywhere in the state per ABAWDMap.us",
+      "heading": "CURRENT, not stale: South Carolina's own manual text already reflects the full 2025 OBBBA ABAWD changes with no internal contradiction found — a contrast worth stating given this roster's Colorado pack found the opposite",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period unless meeting a work-activity requirement (20 hours/week or 80 hours/month of paid, in-kind, or qualifying training work) or an exemption. South Carolina's own SNAP Manual, § 8.12, defines an ABAWD as \"[a]t least 18 years of age but under 65\" — the current federal 18-64 range set by the 2025 One Big Beautiful Bill Act (OBBBA), not the pre-OBBBA 18-54 range this roster's Colorado pack found still recited in Colorado's own stale regulation text. South Carolina's § 8.15 exceptions list is also fully current: the caregiver exception now applies only to a parent/household member caring for a child UNDER 14 (not under 18, the pre-OBBBA standard), and the exceptions no longer include blanket homelessness, veteran status, or having aged out of foster care by 24 — all three were removed at the federal level by OBBBA and South Carolina's manual text already reflects their absence, alongside the OBBBA-added Indian/Urban Indian/California Indian exemption. SCDSS's own current SNAP web page independently corroborates this, stating plainly that \"[c]urrently approximately 3% of SNAP clients are designated as ABAWD and subject to work requirements\" and that this population \"will increase significantly\" under the OBBBA changes. South Carolina holds ZERO ABAWD waivers anywhere in the state — urban Columbia/Charleston-area counties and rural counties alike — per the independent ABAWDMap.us aggregator (\"No waiver — rule applies\").",
+      "source_url": "https://dss.sc.gov/assistance-programs/snap/"
+    },
+    {
+      "key": "food-restriction-waiver",
+      "kind": "supplement",
+      "terms": [
+        "soda",
+        "soft drink",
+        "candy",
+        "energy drink",
+        "sugary drink",
+        "sweetened beverage",
+        "healthy choice waiver",
+        "snap restriction",
+        "food restriction",
+        "what can i buy",
+        "buy soda",
+        "buy candy",
+        "make america healthy again",
+        "maha"
+      ],
+      "citation": "USDA FNA, South Carolina SNAP Food Restriction Waiver approval letter (Secretary Rollins, Dec. 10, 2025; modified Aug. 3, 2026) — approved a 2-year demonstration project excluding candy, energy drinks, soft drinks, and sweetened beverages from SNAP-eligible purchases in South Carolina, EFFECTIVE AUGUST 31, 2026 — NOT YET IN EFFECT as of this pack's fetch date (2026-08-11)",
+      "heading": "FLAGSHIP, TIME-SENSITIVE FINDING: South Carolina's approved candy/soda/energy-drink SNAP restriction is real and imminent, but has NOT taken effect yet — a Charleston or Columbia SNAP recipient buying soda with EBT today can still do so",
+      "text": "USDA's Food and Nutrition Administration (formerly FNS) approved South Carolina's request, submitted Sept. 23, 2025, to operate a novel demonstration project amending SNAP's statutory definition of \"food\" to exclude candy, energy drinks, soft drinks, and sweetened beverages from SNAP-eligible purchases in South Carolina. Secretary of Agriculture Brooke Rollins signed the approval letter on Dec. 10, 2025, addressed to Governor Henry McMaster and SCDSS Director Tony Catone; the approval is for a 2-year demonstration project, EFFECTIVE AUGUST 31, 2026, and was subsequently modified on Aug. 3, 2026 to adjust the definition of \"restricted soft drink.\" South Carolina was one of six states (with Hawai'i, Missouri, North Dakota, Virginia, and Tennessee) whose \"Make America Healthy Again\"-branded SNAP food-restriction waivers were approved together. AS OF THIS PACK'S FETCH DATE (2026-08-11) — twenty days before the Aug. 31, 2026 effective date — this restriction has NOT yet taken effect: South Carolina's own current SNAP Manual and SCDSS web materials continue to describe the ordinary federal \"Eligible Foods\" definition (any food or food product intended for human consumption, excluding only alcohol, tobacco, and hot/immediately-consumable prepared foods) with no candy/soda/energy-drink carve-out reflected yet. A South Carolina SNAP applicant or recipient asking TODAY whether they can buy soda, candy, or an energy drink with EBT should be told YES — but should also be told this is changing on Aug. 31, 2026, and to expect the restriction to apply after that date. This is the mirror image of this roster's Colorado finding (an approved restriction that was later discontinued and never took effect): South Carolina's restriction is real, approved, and imminent, not abandoned — a genuinely different outcome from the same nationwide 2025-2026 \"Healthy Choice\"/MAHA SNAP-waiver push.",
+      "source_url": "https://www.fna.usda.gov/snap/waivers/foodrestriction/southcarolina"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food"
+      ],
+      "citation": "SC SNAP Manual, Glossary — \"Eligible Foods\" excludes hot foods and hot food products prepared for immediate consumption, with no general Restaurant Meals Program exception; the only restaurant-adjacent option is the federal \"Homeless Meal Provider\" concessional-price mechanism, limited to homeless SNAP households — South Carolina is absent from USDA's own current Restaurant Meals Program state list",
+      "heading": "South Carolina does NOT operate a Restaurant Meals Program for elderly or disabled SNAP recipients — only a narrower federal-baseline homeless-meal option",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) allowing elderly (60+), disabled, and homeless SNAP recipients (and their spouses) to buy prepared, hot meals from authorized restaurants with their EBT card. This pack independently confirmed South Carolina does not operate one: USDA FNA's own current \"States that Operate a Restaurant Meals Program\" list (page updated Aug. 7, 2026, cross-checked against this roster's Missouri and Indiana packs' own independent fetches of the same list) names Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia — South Carolina is absent. South Carolina's own SNAP Manual Glossary defines \"Eligible Foods\" to exclude \"hot foods and hot food products prepared for immediate consumption,\" with no RMP-style exception listed. The ONE restaurant-adjacent mechanism South Carolina's manual does describe is narrower and federal-baseline: a \"Homeless Meal Provider\" may be \"a restaurant which contracts with an appropriate State agency to offer meals at concessional (low or reduced) prices to homeless persons\" — but this option is limited specifically to homeless SNAP households, not the broader elderly/disabled population an RMP typically covers, and this pack found no evidence such a contract currently exists with any specific South Carolina restaurant. A South Carolina SNAP recipient asking whether they can use EBT to buy a hot restaurant meal should be told NO, with the narrow homeless-meal-provider exception noted only if applicable.",
+      "source_url": "https://dss.sc.gov/media/25ug5rk1/snap-manual-volume-70-final-version.pdf"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day"
+      ],
+      "citation": "SC SNAP Manual § 6.5(1) — plain federal expedited-service criteria (gross income under $150 and liquid resources of $100 or less, OR combined income/resources less than rent/mortgage plus utility standard, OR destitute migrant/seasonal farmworker) and § 6.6 — the standard 7-calendar-day ceiling",
+      "heading": "South Carolina uses the standard federal expedited-service gates and 7-day ceiling, with no South Carolina-specific modification found",
+      "text": "§ 6.5(1) (Entitlement to Expedited Service) sets expedited eligibility to the standard federal criteria: households with less than $150 in monthly gross income and liquid resources of $100 or less; households whose combined gross income and liquid resources are less than their monthly rent/mortgage plus applicable utility costs (using the MUA or BUA if entitled, or actual expenses otherwise); or destitute migrant/seasonal farmworker households with liquid resources of $100 or less. Per § 6.6, eligible households must have their EBT benefits posted and available no later than the seventh calendar day following the date of application. This pack found no South Carolina-specific modification to these gates — South Carolina's child support treatment is an ordinary deduction, not an income exclusion (see the child-support-deduction finding), and § 6.5 makes no cross-reference modifying the expedited-income test specifically.",
+      "source_url": "https://dss.sc.gov/media/25ug5rk1/snap-manual-volume-70-final-version.pdf"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew"
+      ],
+      "citation": "SC SNAP Manual § 13.8(1) — 6-month standard certification period for most households (no less than 3 months for unstable-circumstance or ABAWD households); 24-month certification (with a mandatory 12-month contact) for households in which all adult members are elderly or disabled with no earned income",
+      "heading": "South Carolina's certification-period structure sticks to the plain federal 6-month/24-month baseline — matching this roster's Colorado pack's finding, a simpler structure than Maryland's 12-month-with-6-month-touchpoint mechanism",
+      "text": "§ 13.8(1) assigns a standard 6-month certification period to most households, with unstable-circumstance households (e.g., zero net income) or households with an ABAWD member generally assigned no less than 3 months. Households in which ALL adult members are elderly or disabled with no earned income may be certified for up to 24 months, with a mandatory Agency contact at least once every 12 months. Households likely to become ineligible soon may be assigned a 1- or 2-month certification period. This is the same plain federal two-tier 6-month/24-month structure this roster's Colorado pack documented, not Maryland's distinctive 12-month-certification-with-a-6-month-Maryland-Benefit-Review mechanism.",
+      "source_url": "https://dss.sc.gov/media/25ug5rk1/snap-manual-volume-70-final-version.pdf"
+    }
+  ]
+}

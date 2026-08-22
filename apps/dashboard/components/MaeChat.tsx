@@ -10,17 +10,31 @@
 // route enforces the same gate server-side regardless of what the client does.
 
 import Link from "next/link";
+import { RECOMPOSE_MARKER } from "@civica/demeter-engine/packs";
+import { MAE_DISCLAIMER as ENGINE_DISCLAIMER } from "@civica/demeter-engine/system-prompt";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { createClient } from "../lib/supabase";
 import { isStaff } from "../lib/roleRouting";
 
-// Persistent UI disclaimer — shown in the panel regardless of any single
-// answer's content. Mirrors lib/mae/system-prompt.ts MAE_DISCLAIMER (kept inline
-// here so the server-only system prompt never ships to the browser bundle).
-const MAE_DISCLAIMER =
-  "Mae can be wrong. General SNAP policy guidance, not an eligibility determination — verify against current CalFresh/CDSS rules and the county system of record. Don't paste the applicant's PII (name, case number, etc.) — keep questions hypothetical.";
+// #645: was a second, hand-maintained copy of the engine's own
+// MAE_DISCLAIMER (and had drifted to the pre-Demeter-rebrand "Mae can be
+// wrong..." wording). Now imports the canonical string from
+// system-prompt.ts's own dedicated client-safe subpath — that file has
+// zero imports of its own (pure string constants), so re-exporting it
+// this way can't drag in retrieval.ts / @anthropic-ai/sdk / the corpus.
+//
+// This dashboard panel's copy has genuinely diverged in CONTENT, not just
+// branding, from the engine's own disclaimer: it appends a PII/keep-it-
+// hypothetical reminder the engine string doesn't carry (that reminder
+// duplicates what STAFF_SYSTEM_PROMPT's own "do not request... PII"
+// instruction already tells the model, per that prompt's own comment —
+// this is the UI-side persistent reminder, not a repeat of the model's
+// system prompt). Kept as its own sentence rather than dropped.
+const PII_REMINDER =
+  "Don't paste the applicant's PII (name, case number, etc.) — keep questions hypothetical.";
+const MAE_DISCLAIMER = `${ENGINE_DISCLAIMER} ${PII_REMINDER}`;
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -48,7 +62,7 @@ function MaeFeedback({ question, answer }: { question: string; answer: string })
   };
 
   if (stage === "sent") {
-    return <p className="mt-1 text-[11px] text-muted">Thanks — feedback recorded.</p>;
+    return <p className="mt-1 text-[11px] text-graphite">Thanks — feedback recorded.</p>;
   }
   if (stage === "reason") {
     return (
@@ -73,13 +87,13 @@ function MaeFeedback({ question, answer }: { question: string; answer: string })
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="What was wrong? (optional)"
-          className="w-full rounded-[2px] border border-hairline bg-surface px-1.5 py-1 text-[11px] text-ink outline-none placeholder:text-muted focus:border-pine"
+          className="w-full rounded-[2px] border border-hairline bg-surface px-1.5 py-1 text-[11px] text-ink outline-none placeholder:text-graphite focus:border-pine"
         />
       </div>
     );
   }
   return (
-    <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
+    <div className="mt-1 flex items-center gap-1.5 text-[11px] text-graphite">
       <span>Was this helpful?</span>
       <button
         type="button"
@@ -237,6 +251,9 @@ export default function MaeChat() {
         let scheduled = false;
         const raf =
           typeof requestAnimationFrame === "function" ? requestAnimationFrame : (fn: () => void) => setTimeout(fn, 32);
+        // Recompose protocol (engine T-A): everything before this marker was an
+        // unverified draft the engine aborted — REPLACE it, don't append. The
+        // verified recomposition (or the quotes-only degrade) follows the marker.
         const flush = () => {
           scheduled = false;
           if (!buf) return;
@@ -245,7 +262,17 @@ export default function MaeChat() {
           setMessages((m) => {
             const copy = m.slice();
             const last = copy[copy.length - 1];
-            if (last && last.role === "assistant") copy[copy.length - 1] = { ...last, content: last.content + add };
+            if (last && last.role === "assistant") {
+              const combined = last.content + add;
+              const markerAt = combined.lastIndexOf(RECOMPOSE_MARKER);
+              copy[copy.length - 1] = {
+                ...last,
+                content:
+                  markerAt >= 0
+                    ? combined.slice(markerAt + RECOMPOSE_MARKER.length).replace(/^\s+/, "")
+                    : combined,
+              };
+            }
             return copy;
           });
         };
@@ -305,7 +332,7 @@ export default function MaeChat() {
             </span>
             <div className="flex-1 leading-tight">
               <p className="text-sm font-semibold text-ink">Ask Mae</p>
-              <p className="text-[11px] text-muted">Calibrated to California · CalFresh rules</p>
+              <p className="text-[11px] text-graphite">Calibrated to California · CalFresh rules</p>
               {caseLabel && (
                 <span className="mt-0.5 inline-flex items-center gap-1 rounded-[2px] bg-pine-surface px-1.5 py-0.5 text-[10px] font-medium text-ink">
                   Calibrated to {caseLabel}
@@ -345,7 +372,7 @@ export default function MaeChat() {
                     <li>• &ldquo;Why is this expedited / overdue?&rdquo;</li>
                     <li>• &ldquo;What should I tell the client about the interview?&rdquo;</li>
                   </ul>
-                  <p className="text-[11px] text-muted">
+                  <p className="text-[11px] text-graphite">
                     I&rsquo;m working from the case&rsquo;s engine read + verification gaps — no personal identifiers.
                   </p>
                 </div>
@@ -409,7 +436,7 @@ export default function MaeChat() {
           </div>
 
           {/* Disclaimer */}
-          <p className="border-t border-hairline bg-surface px-3 py-1.5 text-[10px] leading-tight text-muted">
+          <p className="border-t border-hairline bg-surface px-3 py-1.5 text-[10px] leading-tight text-graphite">
             {MAE_DISCLAIMER}
           </p>
 
@@ -438,7 +465,7 @@ export default function MaeChat() {
               <p className="font-medium text-ink">You&rsquo;re previewing a navigator tool.</p>
               {input.trim() && (
                 <div className="rounded-[3px] border border-hairline bg-surface px-3 py-2 text-ink">
-                  <p className="mb-1 text-[11px] uppercase tracking-wider text-muted">The question for this case</p>
+                  <p className="mb-1 text-[11px] uppercase tracking-wider text-graphite">The question for this case</p>
                   <p className="text-sm">{input}</p>
                 </div>
               )}

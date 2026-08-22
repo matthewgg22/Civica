@@ -1,0 +1,241 @@
+{
+  "_provenance": {
+    "note": "Indiana SNAP curated supplements. Indiana has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuinely blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, and Tennessee's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from a direct curl fetch (browser User-Agent) of eight current FSSA Division of Family Resources Program Policy Manual chapter PDFs (every fetch a clean HTTP 200 — no barrier for Indiana's own program manual, unlike its statute-text hosts), cross-checked against USDA's official Restaurant Meals Program and ABAWD waiver pages, and (for the drug-felony provision only, after iga.in.gov proved to be an unexecutable client-side SPA and both law.justia.com and casetext.com failed outright) convergent secondary legal-research corroboration.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "direct curl fetch (browser UA) + pdftotext -layout of FSSA DFR Program Policy Manual chapters 1000, 1400, 2000, 2200, 2400, 2600, 3000, 3200, 3400 and the full integrated ICES_Program_Policy_Manual.pdf from in.gov/fssa/dfr/files + direct fetch of USDA's States that Operate a Restaurant Meals Program page and FY2025-2029 ABAWD waiver index (Indiana absent from both) + WebFetch of Indiana's own FAQ page, the Public Health Law Center's Indiana entry, and abawdmap.us + direct curl fetch of the Network for Public Health Law's 50-state survey PDF (Indiana row independently parsed) + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "broad-based categorical eligibility",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "tanf",
+        "temporary assistance"
+      ],
+      "citation": "IN PPM 3010.05.00 — Income Standards, 130% FPL gross income / 100% FPL net income, effective 10/01/2025; IN PPM 2414.10.05 — Categorical Eligibility limited to SSI/TANF-only households",
+      "heading": "Indiana is one of a genuine minority of states that has NOT adopted Broad-Based Categorical Eligibility — its own Income Standards manual section states the plain federal 130%/100% FPL limits directly, confirming (not contradicting) a widely-repeated secondary-source claim",
+      "text": "THIS PACK'S FLAGSHIP FINDING: Indiana's own Program Policy Manual, Section 3010.05.00 (Income Standards), states plainly: \"The maximum gross income amounts are based on 130% of the Federal Poverty Guidelines, and the maximum net income amounts are based on 100% of the Federal Poverty Guidelines\" — the plain federal SNAP income test, with NO Broad-Based Categorical Eligibility (BBCE) overlay raising the gross-income ceiling to a higher percentage (commonly 200% FPL) the way roughly 40 other states, including most of this roster's already-built states, have adopted. This pack independently confirmed the absence of BBCE two ways: first, Indiana's own Categorical Eligibility section, IN PPM 2414.10.05, defines categorical eligibility ONLY as \"[a]ny AG in which all AG members are certified as eligible for SSI, TANF or a combination of both\" — the narrow \"Basic\" categorical-eligibility pathway this roster's other states document, with no expanded/broad-based pathway described anywhere in Chapter 2400 or Chapter 3000; second, the Income Standards chart itself is denominated in the plain 130%/100% federal percentages, not a higher BBCE figure. This is a genuine, verified CONFIRMATION of a claim several SNAP-benefit calculator/explainer sites already make about Indiana — worth stating with confidence precisely because it is the less common finding in this roster (most states built so far either already had BBCE or, like Tennessee, adopted it only recently) and because a chatbot answering an Indiana applicant's income question must NOT reach for the higher 200% FPL figure that applies in most neighboring states (Illinois and Michigan both use 200% FPL).",
+      "source_url": "https://www.in.gov/fssa/dfr/files/3000.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "boat",
+        "camper",
+        "trailer",
+        "recreational vehicle"
+      ],
+      "citation": "IN PPM 3005.05.00 — $3,000 standard / $4,500 elderly-or-disabled resource limit, effective 10/01/2024; IN PPM 2615.60.10 (ordinary vehicles used for transportation exempt regardless of value) and IN PPM 2615.60.25 (recreational vehicles/boats counted at equity value)",
+      "heading": "Indiana's resource test reaches only non-categorically-eligible households — and its vehicle rule is a genuine HYBRID of this roster's two prior patterns: a blanket exclusion for ordinary transportation vehicles, but boats and campers are separately counted",
+      "text": "IN PPM 3005.05.00 sets Indiana's SNAP resource limit at $3,000 for AGs without an elderly (60+) or disabled member, and $4,500 for AGs that include one, both effective 10/01/2024 — the current federally uniform standard this roster's other states already document. Categorically eligible AGs (SSI/TANF-only households, per the income-pathways supplement above) are exempt from the resource test entirely. WORTH FLAGGING AS A GENUINE STRUCTURAL NUANCE: Indiana's vehicle treatment (IN PPM 2615.60.10, Exempt Vehicles) states \"[a]ll vehicles are basically considered as exempt if used for or intended to be used for household transportation... Vehicles used for household transportation are exempt, regardless of value, licensing status, or condition\" — a BLANKET exclusion for ordinary passenger vehicles, matching the pattern this roster's Virginia and North Carolina packs document (every ordinary vehicle excluded, no dollar-value qualifier). However, Indiana's own manual draws a distinct line for recreational property: IN PPM 2615.60.25 (Recreational Vehicles and Equipment) states plainly, \"Recreational vehicles such as campers, trailers, and boats must be counted according to their current equity value\" UNLESS the recreational vehicle serves as the AG's actual home. This is a genuine HYBRID of the two patterns this roster has documented separately so far: Virginia's/North Carolina's blanket vehicle exclusion (which this pack's own reading found no comparable boat/camper carve-out in) and Tennessee's countable-boats-and-recreational-property finding. A household's ordinary car, truck, van, or motorcycle used for transportation is exempt in Indiana regardless of value — but a household's boat or camper, if not used as the household's actual home and not primarily used for daily household transportation, is counted at its current equity value. Non-exempt licensed vehicles not used for transportation (a rarer case) are separately evaluated: their fair market value must exceed $4,650 before any amount counts, using the greater of fair-market-value-over-threshold or equity value.",
+      "source_url": "https://www.in.gov/fssa/dfr/files/2600.pdf"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard",
+        "phone standard",
+        "homeless shelter deduction",
+        "standard deduction"
+      ],
+      "citation": "IN PPM 3020.00.00 — a FOUR-tier flat-dollar (non-size-scaled) Standard Utility Allowance structure, current dollar figures published and confirmed, effective 10/01/2025",
+      "heading": "Indiana publishes CURRENT, dated dollar figures for its full four-tier utility-allowance structure — a genuine plus compared to Tennessee's pack in this roster, which could not confirm any current Tennessee-specific dollar figure at all",
+      "text": "IN PPM 3020.00.00 codifies FOUR flat-dollar (i.e. NOT size-scaled — the same amount regardless of household size, unlike North Carolina's or Tennessee's size-scaled main SUA tier) utility-allowance tiers: SUA 1 (heating/cooling, for AGs with a primary heating or cooling expense or that receive/expect to receive LIHEAP) at $486; SUA 2 (non-heating/cooling, for AGs with at least two of: non-heating electricity/fuel, water, sewer, trash collection, or telephone) at $283; SUA 3 (single utility, for AGs with a utility expense other than heating/cooling or telephone) at $62; and SUA 4 (telephone-only) at $36 — all figures effective 10/01/2025 and independently confirmed against the manual's own prior-period column ($473/$276/$60/$35 from 5/1/2024 through 9/30/2025), showing a clean COLA-style step up between the two periods rather than an isolated, unverifiable figure. The manual separately confirms both SUA 1 and SUA 2 automatically include the standard telephone amount regardless of whether the AG has a current telephone expense. Indiana's Standard Deduction (IN PPM 3025.10.00) is $209 for AGs of 1-3 members, $223 for 4, $261 for 5, and $299 for 6 or more, effective 10/01/2025 — matching this roster's Virginia pack's own independently-confirmed current FFY2026 figures exactly, a useful cross-check that Indiana's manual is current and not stale. The Excess Shelter Expense Deduction cap (IN PPM 3025.15.00) is $744 for AGs without an elderly or disabled member, effective 10/01/2025, and the Homeless Shelter Deduction (IN PPM 3025.15.05) is $198.99, effective 10/1/2025.",
+      "source_url": "https://www.in.gov/fssa/dfr/files/3000.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "special diet"
+      ],
+      "citation": "IN PPM 3440.45.05 — plain federal $35/month threshold for elderly (60+) or disabled household members; actual-expense itemization, no Indiana-specific flat Medical Standard Deduction found",
+      "heading": "Indiana uses the plain federal actual-expense medical deduction — no state-specific flat Medical Standard Deduction shortcut was found in Indiana's own manual",
+      "text": "IN PPM 3440.45.05 (Medical Expenses in the SNAP Budget) allows a deduction for the medical expenses of a household member who is elderly (60+) or disabled: \"[t]he total amount of the medical expense that exceeds $35 and is not reimbursable by a third party is allowed in the SNAP budget\" — the plain federal actual-expense mechanism (7 CFR 273.9(d)(3)) applied per qualifying member. This pack's research did not locate a Tennessee-style or Virginia-style state-option flat Medical Standard Deduction alternative anywhere in Indiana's Chapter 3400 — Indiana appears to use ONLY the itemize-and-verify method, though this pack did not exhaustively search every chapter for a flat-deduction option and flags this as a lower-confidence absence rather than an exhaustively confirmed one. IN PPM 3440.45.00 (Allowable Medical Expenses for SNAP) separately lists specific allowable items this pack confirmed directly, including a notable extra: \"[a] medical deduction can be claimed for the cost of vitamins which are prescribed by a licensed practitioner\" — a specificity not every state's manual spells out — as well as special telephone equipment for the handicapped counted as a medical expense.",
+      "source_url": "https://www.in.gov/fssa/dfr/files/3400.pdf"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "alimony",
+        "arrearage"
+      ],
+      "citation": "IN PPM 3440.05.05 — Child Support Deduction, an ORDINARY DEDUCTION (not an income exclusion), matching the majority pattern in this roster",
+      "heading": "Indiana treats legally obligated child support as an ordinary post-income DEDUCTION — the majority pattern in this roster (matching Tennessee), and the OPPOSITE of Virginia's, New Jersey's, and Illinois's income-exclusion mechanism",
+      "text": "IN PPM 3440.05.05 (Child Support Deduction) states: \"Child support payments paid by a SNAP AG to a non-AG member are considered as an allowable deduction if the payments have been ordered by the court.\" This is the ORDINARY DEDUCTION mechanism (7 CFR 273.9(d)(5), subtracted after gross income is calculated) — matching this roster's North Carolina, Ohio, Georgia, Michigan, Minnesota, Oregon, Pennsylvania, Wisconsin, and Tennessee packs, and standing in direct CONTRAST to the INCOME-EXCLUSION mechanism (7 CFR 273.9(c), applied before gross income is even calculated) this roster's Virginia, New Jersey, and Illinois packs document for their own states. The deduction covers court-ordered payments made directly to the household's own non-AG-member payee, IV-D agency payments, and in-kind vendor payments (e.g. court-ordered rent paid directly to a landlord). Arrearage payments may be included if anticipated to continue. If the paying individual is an ineligible/disqualified AG member, the deduction is divided proportionally across all AG members (including the ineligible member), with only the eligible members' shares actually deducted in the SNAP budget.",
+      "source_url": "https://www.in.gov/fssa/dfr/files/3400.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "indianapolis",
+        "impact program",
+        "native american",
+        "tribal"
+      ],
+      "citation": "IN PPM 2438.17.05 — the CURRENT federal 18-64 ABAWD age range (as of 7/4/2025), including the OBBBA-added tribal-member exemption; Indiana currently holds ZERO active ABAWD waivers anywhere in the state",
+      "heading": "Indiana's ABAWD provisions are genuinely CURRENT — a notable contrast with Tennessee's pack in this roster, where two separate Tennessee documents were both stale by 15+ years",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a fixed 36-month period unless meeting a work-activity requirement, qualifying for an exemption, or living in a waived area (7 CFR 273.24). Indiana's own Program Policy Manual, IN PPM 2438.17.05 (ABAWD Status Determination), states directly: \"An individual between the ages of 18-64 (as of 7/4/2025) is not subject to time limited benefits if\" one of a listed set of exemptions applies — the CURRENT post-OBBBA federal age range, dated to match the July 4, 2025 effective date of the One Big Beautiful Bill Act's ABAWD provisions. This is a genuine, notable contrast with this roster's Tennessee pack, where BOTH the codified rule and the current numbered policy document independently repeated a stale 18-49 range; Indiana's manual, by contrast, is current. Indiana's exemption list itself also reflects the OBBBA update precisely: it names exemption from work registration for a reason other than age 60+, medical unfitness, care of a child under age 14 (the OBBBA-narrowed age, down from under-18 previously), pregnancy (any trimester), and — a specific post-OBBBA addition this pack confirmed directly — three separate tribal-status exemptions drawn from the Indian Health Care Improvement Act (IHCIA): \"An Indian,\" \"An Urban Indian,\" and \"A California Indian,\" each as defined in specific IHCIA paragraphs. SEPARATELY, THIS PACK INDEPENDENTLY CONFIRMS Indiana currently holds ZERO active ABAWD waivers anywhere in the state: Indiana's own manual states plainly, regarding waivered labor surplus areas, \"[t]here are currently no such designations,\" and this pack independently cross-checked that against USDA's official ABAWD Time Limit Waivers FY2025-2029 index and the independent abawdmap.us aggregator (fetched directly 2026-08-11), both of which corroborate zero active Indiana waivers. Every Indiana county is currently subject to the standard 3-in-36-month time limit with no waiver exception.",
+      "source_url": "https://www.in.gov/fssa/dfr/files/2400.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug test",
+        "drug testing",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "community corrections",
+        "reentry court",
+        "controlled substance"
+      ],
+      "citation": "Ind. Code Ann. § 12-14-30-3 — a MODIFIED BAN: Indiana opted out of the federal lifetime drug-felony SNAP ban effective January 1, 2020, conditioned on probation/parole/community-corrections/reentry-court compliance or completion",
+      "heading": "Indiana opted out of the federal lifetime drug-felony ban effective 2020 — a genuine, disclosed access-barrier finding resting on convergent secondary corroboration, since Indiana's own statute-lookup site is an unexecutable JavaScript application",
+      "text": "Indiana is a MODIFIED BAN state under Ind. Code Ann. § 12-14-30-3. THIS PACK DISCLOSES A GENUINE ACCESS LIMITATION: Indiana's own official statute-lookup site, iga.in.gov, returned HTTP 200 but delivered only a bare client-side React application shell (\"<div id=\\\"root\\\"></div>\" plus a bundled JavaScript file) — no server-rendered statutory text this pack's curl-based tooling could read. The two third-party statute mirrors this pack additionally tried both failed outright: law.justia.com returned HTTP 403 and casetext.com returned HTTP 410 (Gone), on every attempt (multiple User-Agents, both http and https) — the same class of genuine, tried-and-failed barrier this roster's Tennessee pack disclosed for its own drug-felony statute. This finding instead rests on THREE convergent sources fetched directly in this pass: Indiana's own FSSA FAQ page (faqs.in.gov), which states \"[i]ndividuals who are compliant with post-conviction supervision (such as probation or parole) or who are no longer subject to supervision and are not in violation of supervision may be eligible for SNAP if all other eligibility factors are met,\" with the underlying legislative change dated to January 1, 2020; the Public Health Law Center's SNAP Ban Opt-Out States Map (Indiana entry), which independently states Indiana permits SNAP for individuals who \"have successfully completed probation, parole, community corrections, a reentry court program, or any other postconviction monitoring program ordered by a court\" OR are \"currently... successfully complying with\" those same conditions, and that eligibility is lost if the individual \"violate[s] any terms\"; and the Network for Public Health Law's compiled 50-state SNAP felony-ban survey PDF, whose Indiana row (independently parsed from the fetched PDF's own table) codes Indiana as: full ban = N, opted out via legislation = N, modified ban = Y, distinguishes distribution/possession = N, disqualifies after multiple convictions = N, requires drug testing = N, requires drug treatment = N, imposes a post-conviction ineligibility period = N, requires parole/probation compliance = Y — meaning Indiana's modified ban, unlike Tennessee's, imposes NO drug-testing or drug-treatment condition at all; compliance with (or completion of) court-ordered post-conviction supervision is the ONLY condition. All three sources converge on the same citation and the same substantive condition; none of the three is Indiana's own primary statutory text, a limitation disclosed plainly rather than smoothed over.",
+      "source_url": "https://www.publichealthlawcenter.org/resources/snap-ban-opt-out-states-map/in"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food"
+      ],
+      "citation": "No Indiana Restaurant Meals Program exists — Indiana is absent from USDA's own current national RMP participant list",
+      "heading": "Indiana has no Restaurant Meals Program — matching Tennessee's own finding in this roster",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) allowing elderly (60+), disabled, and homeless SNAP recipients (and their spouses) to buy prepared, hot meals from authorized restaurants with their EBT card. Indiana does not operate one. This pack independently fetched USDA's own official \"States that Operate a Restaurant Meals Program\" list directly (fns.usda.gov/snap/retailer/restaurant-meals-program): Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia — the same nine-jurisdiction list this roster's Tennessee pack independently confirmed. Indiana is absent. This pack found no evidence of a pending Indiana RMP bill in the Indiana General Assembly. A SNAP household's Hoosier Works EBT card can be used only at authorized retailers for food intended to be prepared and eaten at home; hot, ready-to-eat food purchases remain restricted under the ordinary federal rule.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day"
+      ],
+      "citation": "IN PPM 1830.25.00 (screening: $150 gross income / $100 liquid resources) and IN PPM 2020.05.05 (plain federal 7-calendar-day ceiling) — standard federal expedited-service rules with no Indiana-specific internal buffer found",
+      "heading": "Indiana uses the standard federal expedited-service gates and 7-day ceiling — unlike Tennessee's and North Carolina's packs in this roster, no Indiana-specific internal processing buffer tighter than 7 days was found",
+      "text": "IN PPM 1830.25.00 (Screening for SNAP Expedited Services) sets expedited-service eligibility to the standard federal criteria: households with less than $150 monthly gross income AND liquid resources not exceeding $100 in the month of application; migrant/seasonal farmworker households classified as \"destitute\" with liquid resources not exceeding $100; or households whose combined monthly gross income and liquid resources are less than their monthly rent/mortgage and utility costs (including the applicable SUA). IN PPM 2020.05.05 (Time Standards for Expedited Service) states DFR \"will make SNAP benefits available to AGs entitled to expedited service no later than the close of business on the seventh calendar day following the date of application\" — the plain federal 7 CFR 273.2(i)(3)(i) ceiling, with the day after application counted as day one. If the seventh day falls on a holiday or weekend, benefits must issue on the prior business day. UNLIKE this roster's Tennessee and North Carolina packs, both of which document a state-specific internal processing target tighter than the federal 7-day ceiling, this pack's research of Indiana's Chapter 2000 (Application Processing) did not find a comparable Indiana-specific internal buffer — a disclosed absence, not a claim that no such internal target exists anywhere in Indiana's operational procedures.",
+      "source_url": "https://www.in.gov/fssa/dfr/files/2000.pdf"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "interim report",
+        "elderly simplified application"
+      ],
+      "citation": "IN PPM 2205.05.00 — 12 months is Indiana's STANDARD certification period; IN PPM 2205.05.05 — Elderly Simplified Application Project (ESAP) gives ALL-elderly(60+)/disabled AGs a 36-MONTH certification period, longer than any other state this roster has documented",
+      "heading": "Indiana's DEFAULT certification period is 12 months, but its Elderly Simplified Application Project (ESAP) offers a 36-month certification — the LONGEST elderly/disabled certification period this roster has documented for any state",
+      "text": "THIS PACK'S SECOND STRUCTURAL FINDING: IN PPM 2205.05.00 (Establishing the Redetermination Month) states \"[a]ll Non-elderly/disabled SNAP assistance groups and elderly/disabled AGs with earnings and/or self-employment must have a redetermination interview every twelve (12) months\" — a standard 12-month certification period, matching this roster's Virginia and New Jersey packs' own 12-month default (and notably longer than Tennessee's unusually short 6-month default). IN PPM 2205.05.05 (Elderly Simplified Application Project) then states: \"SNAP assistance groups containing all elderly (Individuals aged 60+) and/or disabled members are given a 36-month certification period\" — a materially LONGER elderly/disabled certification period than any other state this roster has documented (Virginia and Tennessee both cap their elderly/disabled option at 24 months). This pack reads Indiana's ESAP gate as requiring ALL AG members to be elderly and/or disabled, but — unlike Tennessee's comparable 24-month provision, which additionally requires NO earned income and NOT receiving TANF-equivalent cash assistance — this pack did not find an earned-income or cash-assistance exclusion stated in IN PPM 2205.05.05 itself; IN PPM 2212.00.00 (Interim Reporting) separately clarifies that ESAP households (\"all elderly and/or disabled members with no earned and/or self-employment income\") are NOT required to complete a SNAP Interim Report at all during their 36-month certification, while non-ESAP households (including elderly/disabled AGs WITH earned income, on the standard 12-month certification) must complete an Interim Report at the 6th month. If a client turns 60 during an ordinary 12-month certification period, the household still must submit its scheduled Interim Report at 6 months; only at the NEXT certification, once already 60+ at that redetermination, would the household newly qualify for ESAP's 36-month period and no-Interim-Report treatment.",
+      "source_url": "https://www.in.gov/fssa/dfr/files/2200.pdf"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "fssa benefits portal",
+        "who runs",
+        "what agency",
+        "administers",
+        "fssa",
+        "dfr",
+        "local office",
+        "ebt card",
+        "hoosier works",
+        "ices"
+      ],
+      "citation": "FSSA/DFR program materials — Indiana calls the program plain \"SNAP\" (its EBT card is separately branded \"Hoosier Works\"); applicants apply through the FSSA Benefits Portal or a DFR local office; Indiana is STATE-administered, not county-administered",
+      "heading": "Indiana applies through the FSSA Benefits Portal or a DFR local office; Indiana's local offices are the STATE agency's own field offices, not independently governed county welfare departments",
+      "text": "Indiana does not give the SNAP program itself a state-specific brand name — FSSA/DFR materials and Indiana's Program Policy Manual use the plain federal name \"SNAP\" throughout. Indiana's EBT card, however, IS separately branded: it is called the \"Hoosier Works\" card (light blue, gold and dark blue lettering), used for both SNAP food benefits and TANF cash benefits, and usable nationwide at any retailer displaying the Quest® symbol or an EBT/SNAP acceptance sign. Applications run through the FSSA Benefits Portal (fssabenefits.in.gov/bp/) or in person, by mail, or by fax at a DFR local office; individuals without computer/internet access are directed to a local DFR office. CRITICALLY, and matching the administrative archetype this roster's Georgia and Tennessee packs document (state agency operating through county field offices) rather than the county-administered archetype this roster's Virginia and North Carolina packs document: FSSA is Indiana's state agency, and the Division of Family Resources — one of FSSA's seven major service divisions — has statewide responsibility for SNAP, TANF, and Medicaid, operating through its own local offices in every county rather than independently governed county welfare departments. Indiana's eligibility caseworkers use the state's ICES (Indiana Client Eligibility System) case-management system. DFR also operates the IMPACT program (Indiana Manpower Placement and Comprehensive Training), Indiana's SNAP Employment & Training program, which an ABAWD individual may access to help meet the ABAWD work requirement.",
+      "source_url": "https://secure.in.gov/fssa/dfr/snap-food-assistance/"
+    }
+  ]
+}

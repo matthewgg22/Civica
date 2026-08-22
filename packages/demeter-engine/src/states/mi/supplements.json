@@ -1,0 +1,238 @@
+{
+  "_provenance": {
+    "note": "Michigan FAP curated supplements — Wave 2 (docs/plans/mae-state-corpus-framework.md). Drafted from verbatim source text: the Bridges Eligibility Manual (BEM) and Bridges Administrative Manual (BAM) at dhhs.michigan.gov/OLMWEB (stable per-document PDF URLs, plain curl, text-layer PDFs — no headless/browser-header fetch needed anywhere in this pack), the Reference Tables Manual (RFT) for dated dollar tables, the Bridges Policy Glossary (BPG), and MCL 400.10b at legislature.mi.gov. Every dollar value traces to RFT 255/250/260 (RFB 2025-006, eff. 10/1/2025), never to rule text.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "cross-read against the FNS BBCE chart (June 2026) and adversarial refute pass before PR; see PROVENANCE.md."
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "dvps",
+        "domestic violence prevention",
+        "130 percent",
+        "130%",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "micap",
+        "ssi"
+      ],
+      "citation": "BEM 213; RFT 250; BPG Glossary 'Categorical Eligibility'; BEM 618",
+      "heading": "Michigan gives nearly every FAP group a 200% income screen through a Domestic Violence Prevention Services authorization — not a means-tested service",
+      "text": "Michigan's BBCE conferral mechanism is unusual: it runs through 'enhanced authorization for Domestic Violence Prevention Services (DVPS)' — 'FAP groups are eligible for enhanced authorization for Domestic Violence Prevention Services. Eligibility for these services allows FAP groups to have an income limit of at or below 200 percent of the poverty limit' (BPG Glossary, 'Categorical Eligibility'). This is not restricted to domestic-violence survivors — it is the state's universal broad-based categorical-eligibility trigger, structurally the same move as Georgia's TCOS pamphlet. 'Categorically eligible groups automatically meet the asset and income limits for the Food Assistance Program (FAP)' (BEM 213) — both tests are skipped entirely, not just raised. Categorical eligibility is determined at application, reported change, and redetermination, and applies to GROUPS not individuals. Not categorically eligible, and therefore tested at the federal default: (1) Senior/Disabled/Disabled Veteran (SDV) groups whose gross income is ABOVE 200% FPL — they may still qualify if net income is under 100% FPL and they pass the asset test; (2) any group containing a member disqualified for Intentional Program Violation, Fleeing Felon status, or (when the disqualified person is head of household) an employment-related-activity failure; (3) the first reapplication after a $4,500+ lottery/gambling closure (see asset-rule). Categorically eligible income-verification is light-touch: gross and net income limits, Social Security numbers, sponsored-alien status, and residency are NOT verified for cat-el purposes (though they may still need verification for another program) — only group composition, that no member purchases/prepares food outside the group, and that no member carries an IPV/fleeing-felon/employment-related disqualification. Benefit floor for categorically eligible groups: 1-2 person groups whose gross and/or net-100% income exceeds the federal limit, but whose gross is at or below 200% FPL, are automatically eligible for the MINIMUM benefit; 3+ person cat-el groups in the same position may receive as little as $1 per RFT 260 (Food Assistance Issuance Table) — but Bridges will not open a $0 case, so a 3+ person cat-el group computing to $0 net benefit is denied or closed rather than issued nothing. FFY 2026 monthly values (RFT 250, eff. 10/1/2025) for a household of 1: 130% gross = $1,696; 100% net = $1,305; 165% (elderly/disabled separate-group test, see BEM 212) = $2,152; 200% (DVPS cat-el) = $2,610; simplified-reporting limit = $1,696. Household of 4: $3,483 / $2,680 / $4,421 / $5,360 / $3,483. Each additional member: +$596 / +$459 / +$757 / +$918 / +$596. SEPARATE PATH — MiCAP: the Michigan Combined Application Project is an FNS-approved demonstration that issues FAP to SSI recipients (age 18+, no other income, SSA 'independent living' code A, purchase/prepare food separately) through a centralized unit via a simplified DHS-513 application, bypassing the standard application entirely (BEM 618).",
+      "source_url": "https://dhhs.michigan.gov/OLMWEB/EX/BP/Public/BEM/213.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "lottery",
+        "gambling",
+        "winnings"
+      ],
+      "citation": "BEM 400; BEM 213; BEM 403",
+      "heading": "Michigan tests assets only for non-categorically-eligible groups — $3,000, or $4,500 with a senior/disabled/disabled-veteran member — and vehicles are NEVER counted for FAP",
+      "text": "Categorically eligible groups (the large majority — see income-pathways) skip the asset test entirely; it applies only to the SDV-over-200%-FPL minority. 'FAP Asset Limits — Non-Categorically Eligible Groups: $3,000 or less for non-SDV groups. $4,500 or less for SDV groups' (BEM 400). Vehicles: 'FAP — Vehicles are excluded as an asset' (BEM 400, VEHICLES) — a blanket exclusion, distinct from the SSI-related Medicaid rule in the same manual that counts vehicle equity value; a Michigan FAP household's car(s) never count regardless of value or number. Lottery/gambling winnings are a hard trigger regardless of a group's cat-el status: 'All FAP groups, no matter if they have an asset test, must report when they receive substantial lottery or gambling winnings by the 10th of the following month' — substantial is currently $4,500 for a single payment (BEM 403). MDHHS closes the case with timely notice on learning of a $4,500+ win. The group stays ineligible until it separately meets both the asset AND net-income tests, and — critically — 'the next time the group reapplies, they will not be considered categorically eligible... under regular FAP rules,' applying ONLY to the first reapplication after the loss (BEM 403; mirrored in BEM 213's 'Exception' language). That first reapplication needs countable assets under $4,500 (SDV) or $3,000 (all other groups) AND net income under the RFT 250 net limit.",
+      "source_url": "https://dhhs.michigan.gov/OLMWEB/EX/BP/Public/BEM/400.pdf"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "heat and utility",
+        "h/u standard",
+        "shelter deduction",
+        "shelter cap",
+        "shelter cost",
+        "excess shelter",
+        "heat",
+        "electric",
+        "water",
+        "sewer",
+        "telephone",
+        "cooking fuel",
+        "trash",
+        "liheap",
+        "home heating credit",
+        "homeless shelter deduction"
+      ],
+      "citation": "RFT 255; BEM 554; BEM 556",
+      "heading": "Michigan's mandatory Heat & Utility standard is a flat $682, and a group can qualify for it even with heat included in rent",
+      "text": "Utility standards are published ONLY in the annual Reference Tables Manual (RFT 255, RFB 2025-006, eff. 10/1/2025) — the rule text in BEM 554 that governs eligibility for each standard carries no dollar figures at all. Current values: shelter maximum $744; Heat and Utility (H/U) standard $682; Non-heat electric $181; Water and/or sewer $119; Telephone $31; Cooking fuel $33; Trash/garbage removal $30; Homeless shelter deduction $199. Standard deduction (by group size): 1-3 members $209; 4 members $223; 5 members $261; 6+ members $299. Mandatory H/U standard mechanics (BEM 554): ANY group qualifies if it has a heating/cooling expense (including cooling) separate from rent/mortgage/condo fees, OR is billed separately by its landlord for excess heat or excess cooling even when heat/electric is otherwise included in rent. A THIRD path applies to Senior/Disabled/Disabled Veteran (SDV) groups ONLY: 'SNAP SDV groups whose heat is included in their rent may still qualify for the h/u standard' via receipt of a Home Heating Credit (HHC) or a LIHEAP payment (which Michigan folds in State Emergency Relief energy payments and Michigan Energy Assistance Program payments) greater than $20 in the application/certification month or the preceding 12 months — this bypass is NOT available to non-SDV groups with heat fully included in rent and no separate or excess-billed expense. Groups on the H/U standard receive NO other individual utility standards, and the H/U standard — like every individual standard — is 'never prorated, even if the expense is shared' (BEM 554), unlike most other shared expenses which ARE prorated. Groups not eligible for H/U but paying separately for non-heat electric, water/sewer, or telephone get the applicable individual standard(s) instead, each also non-prorated, and can stack more than one (e.g., non-heat electric + telephone). The budget worksheet order (BEM 556, lines 24-31) checks H/U eligibility first via a direct heat/cooling expense, then the SDV-only LIHEAP path, then the SDV-only HHC path, then falls through to non-heat electric / excess-cooling / water-sewer / telephone / cooking-fuel individual standards only if none of the H/U paths apply, and applies the 20% earned-income deduction ('Enter 80 percent of the amount on line 3') before the RFT 255 standard deduction and the shelter/utility lines. The Homeless Shelter Deduction ($199) is elective for groups where ALL members are homeless AND have a shelter expense — 'The SNAP group has the choice between using their actual shelter expense(s) or the homeless shelter deduction' (BEM 554); a fully-homeless group with zero shelter expenses gets neither.",
+      "source_url": "https://dhhs.michigan.gov/OLMWEB/EX/RF/Public/RFT/255.pdf"
+    },
+    {
+      "key": "medical-and-support-deductions",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical bills",
+        "medical bill",
+        "standard medical deduction",
+        "smd",
+        "child support",
+        "child support deduction",
+        "dependent care",
+        "child care",
+        "earned income deduction"
+      ],
+      "citation": "BEM 554; BEM 556; BEM 255",
+      "heading": "The $165 Standard Medical Deduction unlocks at $35 in verified bills — and Michigan no longer requires child-support cooperation for FAP",
+      "text": "The Standard Medical Deduction (SMD) is available only to groups with a Senior/Disabled/Disabled Veteran (SDV) member: 'An SDV group that has a verified one-time or ongoing medical expense(s) of more than $35 for an SDV individual(s) will receive the SMD. The SMD is $165' (BEM 554). If actual verified medical expenses exceed $165 + $35 = $200, the group can instead verify and claim actual costs minus the $35 floor (worked example in BEM 554: $235 in verified expenses nets a $200 deduction, not the flat $165). Below the $35 floor, no deduction applies; a group with, say, $50 in verified expenses still gets the flat $165 SMD (BEM 554 Example 3), since $165 beats $50-$35=$15. One-time medical expenses for groups without a 24-month benefit period may be applied to a single month or averaged over the remaining benefit period, at the client's choice; 24-month groups get a three-way choice (one month / remainder-of-first-12-months / remainder-of-24-months) for expenses billed in the first 12 months (BEM 554). Dependent-care costs are allowed at actual out-of-pocket amounts, uncapped (BEM 556 line 19). Child support: as of 10/1/2024, 'cooperation with [the Office of Child Support] is no longer a requirement for FAP' (BEM 255) — but court-ordered child support and arrearages paid to non-group members remain an allowable DEDUCTION (not an income exclusion) computed on its own line of the benefit worksheet (BEM 556 line 20; BEM 554). The 20% earned-income deduction is applied to gross earned income before the standard deduction (BEM 556: 'Enter 80 percent of the amount on line 3').",
+      "source_url": "https://dhhs.michigan.gov/OLMWEB/EX/BP/Public/BEM/554.pdf"
+    },
+    {
+      "key": "abawd-tlfa",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able-bodied adult",
+        "work requirement",
+        "time limit",
+        "tlfa",
+        "time limited food assistance",
+        "36 month",
+        "three month",
+        "work registration",
+        "waived area",
+        "waived county"
+      ],
+      "citation": "BEM 620",
+      "heading": "Michigan calls ABAWD 'TLFA' — a fixed Jan 2025–Dec 2027 clock, statewide except 15 waived counties and 6 waived cities",
+      "text": "Michigan brands ABAWD as Time Limited Food Assistance (TLFA): 'must meet specific work requirements... [f]ailure to do so limits the individual's FAP eligibility to three months within a 36-month period' (BEM 620). The 36-month window is a fixed, standardized period, not a rolling one: 'Current Period: January 1, 2025, through December 31, 2027. Next Period: January 1, 2028, through December 31, 2030.' TLFA applies to individuals aged 18 through 64 without a dependent under age 14 (the definition runs 'the first calendar month after an individual's 18th birthday through the calendar month prior to their 65th birthday') — this pack does not encode the current federal statutory ABAWD age band, only Michigan's manual text as written; verify against the OBBBA age ceiling before quoting an age boundary. Waived areas, effective December 1, 2025: 15 counties (Alcona, Alger, Arenac, Cheboygan, Iosco, Iron, Luce, Mackinac, Montmorency, Oceana, Ogemaw, Oscoda, Presque Isle, Roscommon, Schoolcraft) and 6 cities (Bay City, Detroit, Eastpointe, Flint, Jackson, Saginaw) — everywhere else in Michigan is subject to TLFA. Deferrals (screened at application, redetermination, member add, or when an individual becomes subject to TLFA): a group containing a member under 14; pregnancy (any stage); medically certified or 'obviously' mentally/physically unfit for 20+ hrs/week work (including domestic-violence victims and those struggling with drug/alcohol addiction, per specialist determination); Indian/Urban Indian/California Indian status; Office of Refugee Resettlement program participants (half-time+); and everyone deferred from GENERAL work registration EXCEPT that the general work-registration deferral does NOT carry over to TLFA for ages 60-64 specifically — those ages remain TLFA-subject even though they're exempt from ordinary work registration. A TLFA individual who exhausts the initial 3 countable months can regain eligibility by meeting the work requirement, then (if they later fail it again) receives a one-time 3-month extension per 36-month period before reverting to strict month-to-month compliance; failing after the extension triggers benefit recoupment for the non-compliant months (BEM 620).",
+      "source_url": "https://dhhs.michigan.gov/OLMWEB/EX/BP/Public/BEM/620.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "felony",
+        "felon",
+        "fleeing felon",
+        "drug felony",
+        "drug conviction",
+        "probation",
+        "parole",
+        "criminal record",
+        "convicted",
+        "intentional program violation",
+        "ipv",
+        "fraud"
+      ],
+      "citation": "BEM 203; MCL 400.10b",
+      "heading": "Michigan disqualifies for fleeing-felon and probation/parole-violator status — the manual's exhaustive list has NO standalone drug-felony ban",
+      "text": "Michigan is a VERIFIED FULL OPT-OUT from the federal 21 U.S.C. §862a(1) drug-felony SNAP ban — confirmed, not inferred. Michigan's prior rule disqualified anyone with two or more felony convictions for possession, use, or distribution of a controlled substance; that rule was repealed by 2020 PA 392 (Senate Bill 1006, signed Jan. 2021), which amended MCL 400.10b to add: 'This subsection does not apply to an individual applying for food assistance if he or she has an outstanding felony warrant for a violation of part 74 of the public health code, 1978 PA 368, MCL 333.7401 to 333.7461' — i.e. a drug-related felony warrant is explicitly carved OUT of Michigan's felony-warrant assistance bar (MCL 400.10b's own History line confirms: 'Am. 2020, Act 392, Imd. Eff. Jan. 4, 2021'). BEM 203, 'Criminal Justice Disqualifications,' reflects the post-repeal state: its FAP disqualification list has no drug-felony-conviction category at all — only duplicate receipt of assistance via fraudulent multi-identity claims (10-year disqualification); probation/parole violation (disqualified 'as long as the violation occurs' — requires MDHHS verification via law enforcement/courts/MDOC, active absconding, AND that enforcement is 'actively seeking' the individual, defined as a felony-warrant-enforcement or arrest notice submitted within 20 days); fleeing-felon status (an individual 'intentionally fleeing to evade prosecution, custody, or confinement for a felony,' confirmed only by MDHHS's Office of Inspector General against a presented felony warrant); and Intentional Program Violation. At the STATUTORY level, Michigan otherwise bars both cash and food assistance to 'an individual... subject to arrest under an outstanding warrant arising from a felony charge... in this or any other jurisdiction' where 'law enforcement is actively seeking the individual' (MCL 400.10b(1)) and for absconding from corrections supervision under similar active-pursuit conditions (MCL 400.10b(2)) — but neither bar reaches a past drug-felony CONVICTION on its own, and the controlled-substance carve-out means even an active drug-related felony WARRANT does not block FAP. A Michigan applicant's drug-felony history — however extensive — does not disqualify them from FAP.",
+      "source_url": "https://dhhs.michigan.gov/OLMWEB/EX/BP/Public/BEM/203.pdf"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "emergency",
+        "emergency food stamps",
+        "expedited service",
+        "7 day",
+        "seven day",
+        "same day",
+        "urgent"
+      ],
+      "citation": "BAM 117",
+      "heading": "Michigan's expedited-service test compares income + liquid assets against rent PLUS the utility standard, not against rent alone",
+      "text": "'Applicant groups are entitled to expedited service if one of the following applies: They have less than $150 in monthly gross income and $100 or less in liquid assets. [They] are destitute migrant or seasonal farmworkers and have $100 or less in liquid assets. The group's combined gross income and liquid assets are less than its monthly rent and/or mortgage payment PLUS the Heat and Utility Standard, Non-Heat Electric, Water and/or Sewer, Telephone, Cooking Fuel or Trash Removal Standards' (BAM 117) — that third test folds in the RFT 255 utility standard the group would be entitled to, not just the shelter cost. Expedited applicants must still file the MDHHS-1171 application, complete an interview, and provide minimum required verification, but 'access to their benefits no later than the seventh calendar day' (BAM 115/117) vs. the 30-calendar-day standard of promptness for regular FAP applications.",
+      "source_url": "https://dhhs.michigan.gov/OLMWEB/EX/BP/Public/BAM/117.pdf"
+    },
+    {
+      "key": "reporting-and-certification",
+      "kind": "supplement",
+      "terms": [
+        "reporting requirement",
+        "simplified reporting",
+        "irt",
+        "income reporting threshold",
+        "certification period",
+        "cert period",
+        "recertification",
+        "redetermination",
+        "renewal",
+        "interview",
+        "24 month",
+        "12 month"
+      ],
+      "citation": "BAM 200; BAM 210; BAM 115",
+      "heading": "Most Michigan FAP groups are simplified reporters who report almost nothing between redeterminations — except 24-month SDV groups, who report even less",
+      "text": "Simplified Reporting (SR) groups report only three triggers (BAM 200): gross income exceeding the group's SR income limit (RFT 250, column E — numerically identical to the 130% gross-income column A at every group size, NOT the 200% categorical column D); a single lottery/gambling win ≥$4,500; or a mandatory TLFA participant dropping under 20 hrs/week. Reports are due by the 10th of the month following the change. NOT SR-eligible (standard change reporting instead): migrant/seasonal farmworker groups, MiCAP groups, groups with a 24-month benefit period, and groups with a mandatory TLFA participant already working under 20 hrs/week. Redetermination/renewal is required at least every 12 months for all programs (BAM 210), but FAP benefit periods vary: standard 12-month; a 3-month period for 'unstable circumstances' cases; a 24-month period — with only a mid-certification contact required at month 12 — for groups where every member is senior/disabled AND the group's only income source is SSI and/or RSDI (BAM 115/210); and a 36-month period specifically for MiCAP groups (BAM 210). Interviews are required at redetermination but may be conducted by telephone by default; in-person is required only on client request or specific hardship/questionable-identity triggers, and Michigan does not require an in-person interview as a blanket condition of eligibility (BAM 210).",
+      "source_url": "https://dhhs.michigan.gov/OLMWEB/EX/BP/Public/BAM/200.pdf"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals",
+        "rmp",
+        "restaurant program",
+        "restaurant",
+        "hot food",
+        "hot meal",
+        "prepared food",
+        "buy food at a restaurant"
+      ],
+      "citation": "BAM 119",
+      "heading": "Michigan's Restaurant Meals Program is statewide — no county restriction — but only for elderly, disabled, or homeless members",
+      "text": "'FAP recipients may use their benefits to purchase prepared food in certain authorized restaurants. All group members must be either: Elderly (60 years of age or over). Disabled (receives disability or blindness payments or receives disability retirement benefits from a governmental agency because of a disability considered permanent). Homeless. A spouse of a FAP recipient who is eligible for the program' (BAM 119). Every group member must qualify — a mixed group with one ineligible member does not get RMP access. Unlike Illinois's Cook-and-Franklin-county-only program, Michigan's RMP is not county-limited; eligibility is set by household composition, and any restaurant meeting the state's authorization criteria (sit-down seating unless barred by a public-health order, full disability accessibility, current food license, signed low-cost-meal agreement with MDHHS, USDA retailer authorization, point-of-sale device) statewide may participate. Benefits cannot be used at restaurants in border or other states.",
+      "source_url": "https://dhhs.michigan.gov/OLMWEB/EX/BP/Public/BAM/119.pdf"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "what is snap called",
+        "snap called",
+        "food assistance program",
+        "fap",
+        "mi bridges",
+        "bridges",
+        "apply for food assistance",
+        "snap online",
+        "apply for snap",
+        "apply online",
+        "where do i apply",
+        "how do i apply",
+        "mdhhs",
+        "bridge card"
+      ],
+      "citation": "MDHHS FAP (Food Assistance Program) — Bridges Eligibility/Administrative Manuals; MI Bridges portal",
+      "heading": "Michigan program identity — MDHHS runs FAP, MI Bridges is the front door, the Bridge Card holds the benefit",
+      "text": "Michigan calls SNAP the Food Assistance Program (FAP), administered directly by the Michigan Department of Health and Human Services (MDHHS) — there is no county eligibility layer distinct from MDHHS's own local offices. The application is the MDHHS-1171, Assistance Application (plus the MDHHS-1171-FAP supplement); a MI Bridges online application 'is considered the same as the MDHHS-1171' (BAM 110). MI Bridges (newmibridges.michigan.gov) is the applicant/recipient portal — apply, check status, renew, report changes, upload verification. 'Bridges' is also the name of MDHHS's internal eligibility system and lends its name to the two policy manuals: the Bridges Eligibility Manual (BEM, substantive eligibility rules) and the Bridges Administrative Manual (BAM, process rules), both amended by numbered Bridges Policy Bulletins (BPB). Dollar tables live separately in the Reference Tables Manual (RFT), amended by Reference Table Bulletins (RFB). Benefits load onto a Bridge Card (Michigan's EBT card); replacement and issuance rules are in BAM 401E and BAM 502. Applications can be filed online via MI Bridges, by mail, by phone, fax, or in person at a local MDHHS office.",
+      "source_url": "https://newmibridges.michigan.gov"
+    }
+  ],
+  "supersessions": {
+    "273.24": "MICHIGAN: Time Limited Food Assistance (TLFA) runs a fixed statewide 36-month window — current period Jan 1, 2025–Dec 31, 2027, next period begins Jan 1, 2028 (BEM 620). Effective Dec 1, 2025, all Michigan counties/cities are TLFA-subject EXCEPT 15 waived counties (Alcona, Alger, Arenac, Cheboygan, Iosco, Iron, Luce, Mackinac, Montmorency, Oceana, Ogemaw, Oscoda, Presque Isle, Roscommon, Schoolcraft) and 6 waived cities (Bay City, Detroit, Eastpointe, Flint, Jackson, Saginaw) — re-verify this list before naming a specific county, per the pack's freshness entry. Michigan's general work-registration deferral for ages 60-64 does NOT carry over to TLFA — those ages remain subject to the FAP time limit even though exempt from ordinary work registration (BEM 620)."
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "South Dakota dated facts. Because South Dakota has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a fact this pack found time-sensitive or single-sourced.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "sd-sdcl-28-12-3-secondary-source-only",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's criminal-justice-disqualifications supplement cites South Dakota Codified Law 28-12-3 (the state's statutory drug-felony SNAP-ban opt-out) with text quoted from a secondary legal-research source (Collateral Consequences Resource Center), NOT independently fetched from South Dakota's own Legislature site (sdlegislature.gov, whose statute pages returned no plain-text content this pack's fetch method could parse) or from Justia (which served an unresolvable Cloudflare JS-challenge wall). This pack's confidence rests on (a) the secondary source's direct quote of the statute's operative text and (b) independent corroboration that the DSS SNAP manual's roughly 17,000 lines contain NO drug-felony disqualification provision anywhere — consistent with a full opt-out, but not a substitute for the primary statutory text. Re-verify directly against sdlegislature.gov before restating SDCL 28-12-3's exact wording with full confidence in a high-stakes context."
+    },
+    {
+      "key": "sd-toc-vs-body-sua-figures-conflict",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "South Dakota DSS's own SNAP manual contains an internal inconsistency this pack caught and disclosed rather than silently resolved: the Table of Contents (page 9 of the PDF) lists Standard Utility Allowance $850 / Limited Utility Allowance $238 / One Utility Allowance $98 / Phone Utility Allowance $54, while the manual's body text (stated identically in two separate sections, 10400 and 10411) gives $950 / $265 / $109 / $60. This pack treated the twice-repeated body-text figures as authoritative, since a single, unrevised summary page is a more plausible explanation than a body-text figure being wrong in two independent locations, but this pack could not confirm which figure DSS's live eaPortal benefit-calculation system actually applies. Re-verify directly against a fresh manual fetch or a DSS-published SUA table before treating either figure as beyond dispute, and specifically check whether the Table of Contents has since been corrected to match the body text."
+    },
+    {
+      "key": "sd-non-bbce-status-cross-checked-not-exhaustive",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's finding that South Dakota does not run Broad-Based Categorical Eligibility (BBCE) rests on (a) a direct, close reading of DSS's own manual §7700, which defines categorical eligibility narrowly (TANF/Tribal TANF/SSI/CCS recipients only, no income-ceiling expansion), and (b) WebSearch corroboration naming South Dakota among a small group of non-BBCE states (the exact list of other states in that group varies by source between six and seven names — this pack did not independently verify every other named state's status, only South Dakota's own). Re-check dss.sd.gov's current manual directly before restating this as settled beyond this window, since a state legislative session could add a BBCE option without this pack's knowledge."
+    },
+    {
+      "key": "sd-abawd-waiver-status-cross-checked",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's conclusion that South Dakota currently has NO active area-wide ABAWD waiver rests on USDA FNS/FNA's own ABAWD Time Limit Waivers FY 2025-2029 index, which lists South Dakota's most recent posted entry as FY2025 (dated 08/12/2024) with no FY2026 entry — in contrast to Minnesota, Montana, and North Dakota, which do show FY2026 entries on the same page. This pack did not find a single DSS page stating South Dakota's current waiver status in as many words. Re-check https://www.fna.usda.gov/snap/abawd/waivers/2025-2029 directly before restating this with full confidence beyond this window."
+    },
+    {
+      "key": "sd-restaurant-meals-sb149-history-secondary-only",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack's restaurant-meals-program supplement states that South Dakota Senate Bill 149 (2022), which would have established a Restaurant Meals Program, failed in the state Senate 12-23 and was never enacted — this specific legislative-history claim is corroborated by WebSearch results only (not independently fetched from the South Dakota Legislature's own bill-tracking site). This pack found no RMP provision anywhere in the current (July 2026) DSS manual, which corroborates the bill's non-enactment, but did not independently confirm no SUBSEQUENT RMP bill has since passed in a later legislative session. Re-verify directly against mylrc.sdlegislature.gov before restating this with full confidence, especially after any future South Dakota legislative session."
+    },
+    {
+      "key": "sd-fdpir-reservation-specific-administration-not-found",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's fdpir-tribal-interaction supplement discloses a genuine negative research result rather than assuming either way, per this build's explicit instruction: DSS's manual addresses FDPIR/SNAP mutual exclusivity in general terms (§§3902, 5026, 6385-6387) but this pack found NO manual text describing outreach, application support, or administrative coordination specific to any of South Dakota's individual reservations (Pine Ridge, Rosebud, Standing Rock, Cheyenne River, Crow Creek, Lower Brule, Yankton, Flandreau). This pack did not attempt to independently research each reservation's own FDPIR office or Tribal TANF administration separately, which is out of scope for a SNAP-manual-focused corpus build. Re-verify if a reservation-specific administrative question arises."
+    },
+    {
+      "key": "sd-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, SUA $950/LUA $265/OUA $109/PUA $60 per body text, Excess Shelter cap $744, Homeless Shelter deduction $199.89/$200, Medical Deduction shortcut $165, resource limits $4,500/$3,000) are drawn from South Dakota DSS's SNAP Policy and Procedure Manual, which states on its own cover page 'Updated July 2026' and states the Standard Deduction is effective as of 10/1/2025 — matching the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check dss.sd.gov's manual PDF after that date before restating any South Dakota-specific dollar figure with full confidence."
+    }
+  ]
+}

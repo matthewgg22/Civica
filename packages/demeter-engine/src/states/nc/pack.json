@@ -1,0 +1,48 @@
+{
+  "code": "NC",
+  "program": "Food and Nutrition Services (FNS) — North Carolina's own name for SNAP throughout its policy manual and public materials; NOTE the acronym collision with the FEDERAL agency also called \"FNS\" (USDA Food and Nutrition Service) — North Carolina's \"FNS\" always means the state's SNAP program in this pack unless explicitly marked USDA/federal",
+  "agency": "North Carolina Department of Health and Human Services (NCDHHS), Division of Social Services / Division of Child and Family Well-Being, administered locally by the 100 County Departments of Social Services (DSS)",
+  "admin_model": "county",
+  "admin_note": "North Carolina runs a state-supervised, COUNTY-administered system: NCDHHS writes the FNS Certification Manual policy and issues FNS Change Notices, but each of North Carolina's 100 counties has its own Department of Social Services (DSS) — a county government agency, not a state field office — that determines eligibility and processes applications through NC FAST. Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own county DSS, the same caution this roster already carries for CA/NY/MN/WI/OH.",
+  "system": "NC FAST (North Carolina Families Accessing Services through Technology — the state's integrated eligibility system caseworkers use); applicants apply through the ePASS self-service portal",
+  "portal": {
+    "name": "ePASS",
+    "url": "https://epass.nc.gov"
+  },
+  "update_channels": [
+    {
+      "name": "NCDHHS Food and Nutrition Services Certification Manual — the authoritative eligibility policy source, published section-by-section (FNS 100-915) at policies.ncdhhs.gov",
+      "url": "https://policies.ncdhhs.gov/divisional-n-z/social-services/food-and-nutrition-services/fns-policies-manuals/"
+    },
+    {
+      "name": "NCDHHS FNS Change Notices — the dated policy-revision and annual FFY dollar-figure source (e.g. FNS-CN-01-2025 Attachment 1, the October 1, 2025 FNS 360 dollar-table mass change)",
+      "url": "https://policies.ncdhhs.gov/divisional-n-z/social-services/food-and-nutrition-services/fns-change-notices/"
+    },
+    {
+      "name": "NCDHHS — Food and Nutrition Services (Food Stamps) program page",
+      "url": "https://www.ncdhhs.gov/divisions/child-and-family-well-being/food-and-nutrition-services-food-stamps"
+    },
+    {
+      "name": "USDA FNS ABAWD Waivers FY 2025-2029 (state response documents)",
+      "url": "https://www.fns.usda.gov/snap/waivers/timelimit/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct curl fetch (with a standard browser User-Agent header — WebFetch's own fetch returned HTTP 403 on this host on every attempt, while a plain curl with a browser UA returned clean 200s on the same URLs; see PROVENANCE.md) of the individual FNS Certification Manual section PDFs at policies.ncdhhs.gov, extracted with pdftotext, covering categorical eligibility (FNS 220), resources (FNS 390), deductions and the FFY26 dollar tables (FNS 340, FNS 360), ABAWD work requirements (FNS 260), controlled substance felon disqualification (FNS 270), expedited service (FNS 425), and certification periods (FNS 500). Cross-checked against North Carolina General Statute § 108A-51.1 (the ABAWD waiver-request prohibition, fetched directly from ncleg.gov, including the original 2015 session law text) and against USDA's own current Restaurant Meals Program state list and ABAWD waiver-status reporting.",
+    "gates": "Every dollar figure traced to FNS Change Notice 01-2025's FNS 360 attachment (effective October 1, 2025 through September 30, 2026). Every categorical-eligibility, ABAWD-waiver, and drug-felony claim traced to a specific, dated FNS Certification Manual section or North Carolina General Statute fetched directly from its primary host. Adversarial refute pass recorded in PROVENANCE.md, including an explicit check of whether NC's own Restaurant Meals Program claim (made by several third-party SNAP-benefit explainer sites) survives contact with USDA's official RMP state list and NCDHHS's own Hurricane Helene hot-foods-waiver press release.",
+    "sources": [
+      "NCDHHS FNS 220, Categorical Eligibility — Change #02-2024, effective October 1, 2024",
+      "NCDHHS FNS 390, Resources — Change #02-2024, effective October 1, 2024",
+      "NCDHHS FNS 340, Deductions — Change #02-2026, effective August 4, 2026",
+      "NCDHHS FNS 360, Determining Benefit Levels — Change #01-2025, effective October 1, 2025",
+      "NCDHHS FNS 260, Able-Bodied Adults without Dependents (ABAWD) — Change #02-2025, effective December 1, 2025",
+      "NCDHHS FNS 270, Controlled Substance Felons — Change #18-2021, effective September 20, 2021",
+      "NCDHHS FNS 425, Expedited Service Processing — Change #01-2024, effective March 1, 2024",
+      "NCDHHS FNS 500, SR Category & Reporting Requirements — Change #02-2024, effective October 1, 2024",
+      "North Carolina General Statute § 108A-51.1, Prohibition on certain waivers (enacted S.L. 2015-294, § 16(a)) — effective October 1, 2015, fetched directly from ncleg.gov",
+      "USDA FNS Restaurant Meals Program state list, fetched 2026-08-11",
+      "NCDHHS press release, \"North Carolinians Enrolled in Food and Nutrition Services Can Use Benefits to Buy Hot Food Following Hurricane Helene,\" October 4, 2024"
+    ]
+  }
+}

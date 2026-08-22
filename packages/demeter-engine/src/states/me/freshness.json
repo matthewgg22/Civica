@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "Maine dated facts. Because Maine has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed time-sensitive or actively-shifting fact this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "me-abawd-no-fy2026-waiver-verify-current",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Maine's FY2025 ABAWD geographic waiver (213 areas, approved 9/17/2024, retroactive to 10/1/2024) expired 9/30/2025. This pack found NO FY2026 renewal entry on USDA FNA's own ABAWD Waivers FY2025-2029 state-response tracker as of 2026-08-12 — but that tracker updates only quarterly and could lag a very recent approval. Before telling a Maine applicant whether any area of the state is currently ABAWD-waived, re-check https://www.fna.usda.gov/snap/abawd/waivers/2025-2029 and Maine DHHS's own SNAP rulemaking page directly."
+    },
+    {
+      "key": "me-bbce-live-page-shows-stale-cy2025-figures",
+      "kind": "expires",
+      "date": "2026-09-01",
+      "warning": "Maine's own live SNAP consumer page (maine.gov/dhhs/ofi/programs-services/food-supplement), as fetched 2026-08-12, displays the calendar-year-2025 200%-FPL BBCE income figures ($2,609/household of one, $5,359/household of four) rather than the calendar-year-2026 figures ($2,660/one, $5,500/four) that took effect 1/13/2026 per SNAP Rule #244 — over six months before this pack's fetch date. This is a live-page freshness gap on Maine DHHS's OWN site, not a pack error. Before citing an exact BBCE dollar figure, re-check both the live consumer page and the current 10-144 C.M.R. Ch. 301 § 999-3 Chart 4 directly and prefer whichever is more recently dated."
+    },
+    {
+      "key": "me-standard-deduction-hh4-discrepancy-unresolved",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Maine's own current SNAP Rules Appendix (10-144 C.M.R. Ch. 301, § 999-3, Chart 7) lists $233/month as the FFY2026 Standard Deduction for a household of 4, but this pack's independent cross-check of the national FFY2026 SNAP Standard Deduction figure (identical across every state per USDA FNS) found $223, not $233. This $10 discrepancy could not be resolved from this pack's sources — it may be a transcription error in Maine's own posted rule table, or this pack's national-figure cross-check could itself be wrong. Re-verify directly against Maine's currently-adopted (not just proposed) Rule #244 text and USDA FNS's own FFY2026 Standard Deduction table before stating either figure as certain for a household of exactly 4."
+    },
+    {
+      "key": "me-sua-federal-approval-pending-at-fetch-time",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "SNAP Rule #244's own Fact Sheet (filed 2026-02-04, comment deadline 3/9/2026) states federal approval of Maine's proposed Standard Utility Allowance (SUA) figures was, as of that filing, still PENDING FNS final approval — the rule proposes incorporating the FFY2026 SUA figures ($1,096 FSUA / $598 NHUA / $114 PhUA) retroactive to 10/1/2025. This pack could not directly confirm final adoption/FNS approval status as of its 2026-08-12 fetch date. Re-check Maine DHHS's rulemaking page for Rule #244 directly for adoption status before treating the SUA figures as unconditionally final."
+    },
+    {
+      "key": "me-cert-period-sourcing-gap",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack did not locate a directly-fetched, dated 10-144 C.M.R. Ch. 301 certification-period section confirming Maine's standard certification-period lengths by household category with the same confidence as this pack's other findings. Before restating Maine's certification-period structure (simplified/periodic reporting cadence, elderly/disabled certification length) with full confidence, locate and fetch the current 10-144 C.M.R. Ch. 301 certification-period section directly."
+    },
+    {
+      "key": "me-vehicle-exclusion-unsourced",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's asset-rule supplement does not state a Maine-specific vehicle-exclusion figure or vehicle-valuation methodology — none of this pack's sources confirmed one with the same direct-sourcing confidence as its other resource-limit findings. Most Maine households face no resource limit at all under BBCE, making this a lower-stakes gap than in a non-BBCE state, but re-verify against 10-144 C.M.R. Ch. 301's resource-counting sections directly before stating a specific vehicle rule as fact."
+    },
+    {
+      "key": "me-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$261/$299 [household size 4 disputed, see me-standard-deduction-hh4-discrepancy-unresolved], FSUA $1,096, NHUA $598, PhUA $114, Maximum Shelter Deduction $744, Homeless Shelter Deduction $198.99, resource limits $4,500/$3,000/No Limit, and the 100%/130%/165% FPL income tables) are drawn from Maine DHHS's own SNAP Rule #244 Rule Pages, effective October 1, 2025, matching the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The 200% FPL BBCE table updates on a separate calendar-year cycle (current: CY2026, effective 1/13/2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check maine.gov/dhhs's rulemaking pages for updated figures after that date before restating any Maine-specific dollar figure with full confidence."
+    }
+  ]
+}

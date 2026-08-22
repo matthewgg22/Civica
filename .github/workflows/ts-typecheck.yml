@@ -108,6 +108,7 @@ jobs:
             --filter=@civica/benefitscal-cbo \
             --filter=@civica/cfr-273 \
             --filter=@civica/db \
+            --filter=@civica/demeter-engine \
             --filter=@civica/fixtures \
             --filter=@civica/recert-engine \
             --filter=@civica/snap-calculator \
@@ -118,3 +119,14 @@ jobs:
             --filter=@civica/snap-rules \
             --filter=@civica/state-connectors \
             --filter=@civica/ui
+
+      # Lint, for the leaf packages that have a config. Only demeter-engine
+      # today (#721) — it is the answer pipeline, and until now nothing had
+      # ever run a static check over it beyond tsc. Added after it was already
+      # clean; a lint job that starts red teaches people to ignore a red check.
+      #
+      # Not a turbo task: an explicit filter means a package appears here only
+      # once someone has actually triaged it, rather than a new package
+      # silently joining or silently not joining the gate.
+      - name: Lint leaf packages that have a config
+        run: pnpm --filter @civica/demeter-engine run lint

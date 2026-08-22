@@ -1,0 +1,214 @@
+{
+  "_provenance": {
+    "note": "Connecticut SNAP curated supplements. Connecticut has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, Tennessee's, Indiana's, Missouri's, Maryland's, Colorado's, South Carolina's, Alabama's, Louisiana's, and Kentucky's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Connecticut is also the first state in this roster's new BATCH TIER (built alongside Utah, Iowa, and Arkansas in parallel) rather than the prior one-at-a-time individual tier. Drafted from direct curl fetches (browser User-Agent) of Connecticut DSS's Uniform Policy Manual (UPM) Word-document sections, Connecticut's ABAWD work-rules pages, Connecticut General Statutes § 17b-112d (fetched directly, no access barrier), and — for CT's current FFY2026 dollar-figure standards, which live on a separately-maintained page that returned an active bot-detection block to direct curl — the Internet Archive Wayback Machine.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct curl fetch (browser UA) of portal.ct.gov/dss UPM Word-document sections (converted with macOS textutil), portal.ct.gov ABAWD pages, and cga.ct.gov's full statute text, cross-referenced against their own section headers and revision/effective dates + Internet Archive Wayback Machine snapshots of portaldir.ct.gov's current-standards Tables page (2026-03-07, post-dating the cited 10/1/2025 effective date) and RCE/ECE/Categorical-Eligibility explainer pages (2025-06-14) + direct curl fetch of USDA FNA's current Restaurant Meals Program state list + WebSearch cross-checks + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "portal.ct.gov and cga.ct.gov returned clean HTTP 200 to every direct curl attempt with a browser User-Agent, including a direct, successful read of the drug-felony-adjacent statute (CGS § 17b-112d) itself — no Justia-403 pattern here. The genuine access complication this pack found was portaldir.ct.gov, a separate legacy CT DSS subdomain hosting both the numbered-index view of the SNAP policy manual AND (more consequentially) a separately-maintained 'Tables' page carrying the manual's actual current dollar figures — every direct curl attempt against this subdomain returned a live Radware/TSPD bot-detection challenge page, not the real content, regardless of User-Agent. This pack resolved the block via the Internet Archive Wayback Machine rather than fabricating figures, and discloses the access route in every citation drawn from that source."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "connect",
+        "mydss",
+        "who runs",
+        "what agency",
+        "administers",
+        "dss",
+        "department of social services",
+        "ebt card",
+        "food stamps",
+        "edg",
+        "uniform policy manual",
+        "upm"
+      ],
+      "citation": "CT DSS Uniform Policy Manual, UPM5, P-5520.35 (uses \"FS\" as a legacy program tag alongside \"SNAP\"); ConneCT / MyDSS portal pages",
+      "heading": "Connecticut's SNAP manual is a single, MULTI-PROGRAM Uniform Policy Manual (UPM) organized by TOPIC, not a dedicated SNAP volume — a genuine structural departure from most of this roster",
+      "text": "Connecticut calls its program plainly \"SNAP\" — there is no distinctive local brand like CalFresh (CA) or Basic Food (WA), and this pack found no evidence Connecticut's EBT card carries any special name either; Connecticut DSS's and Connecticut Foodshare's own consumer materials use only the generic term \"EBT card\" throughout. The more consequential structural finding: unlike Kentucky's single-program Volume 2, Louisiana's B-1040-SNAP chapter, or most of this roster's dedicated SNAP manuals, Connecticut's operative policy source — the Uniform Policy Manual (UPM) — is organized into EIGHT topical chapters shared across FOUR separate public-assistance programs at once: UPM1 (Rights and Responsibilities/Eligibility Process), UPM2 (Assistance Unit Composition/Categorical Eligibility), UPM3 (Technical/Procedural Eligibility), UPM4 (Treatment of Assets/Standards of Assistance), UPM5 (Treatment of Income/Income Eligibility), UPM6 (Calculation of Benefits/Benefit Issuance), UPM7 (Benefit Error Recovery), UPM8 (Special Programs — SAGA/Jobs First), and UPM9 (Special Benefits). Every numbered section (e.g., \"5520.35\") carries a \"Program:\" tag listing which of AFDC/TFA (cash assistance), AABD (aid to the aged, blind, disabled), MA (Medicaid), and FS (Food Stamps — the manual's own legacy internal code for SNAP, still visible in program tags dating back to the 1980s) the section applies to. Reading a Connecticut SNAP policy citation therefore always requires checking the \"Program\" tag on that specific section, not just the section number, to confirm it actually governs SNAP and not just CT's other public-assistance programs sharing the same numbered chapter. Applicants apply through the ConneCT self-service portal (connect.ct.gov) or the newer, mobile-optimized MyDSS portal (shared login with ConneCT). Connecticut's SNAP procedures use \"EDG\" (Eligibility Determination Group) as the household-unit term in current (post-2011) sections, distinct from \"assistance unit,\" the term this manual's older (1980s-2000s) sections and most of this roster's other states use.",
+      "source_url": "https://portal.ct.gov/dss/lists/uniform-policy-manual"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "expanded categorical eligibility",
+        "ece",
+        "rce",
+        "200 percent",
+        "200%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "ssi",
+        "tfa",
+        "tanf",
+        "aabd",
+        "saga"
+      ],
+      "citation": "CT DSS Categorical Eligibility / RCE / ECE explainer pages (Internet Archive Wayback snapshot, 2025-06-14, 7 CFR § 273.2(j)); CT DSS SNAP Policy Manual Tables (Internet Archive Wayback snapshot, 2026-03-07, effective 10/1/2025); CT DSS Uniform Policy Manual, UPM5, P-5520.35 (Income Eligibility — the UPM section these Tables figures govern; its own in-text worked example still shows 2011 figures, so the Tables are the current source) — ECE is a FLAT 200% FPL gross-income ceiling for every ECE household, but ECE does NOT waive the net (100% FPL) income test, only the asset limit and the ordinary 130% gross test",
+      "heading": "STRUCTURAL FEATURE worth flagging: Connecticut's ECE raises the gross-income ceiling to a flat 200% FPL for every ECE household (no dual-track by elderly/disabled status, unlike Kentucky) — but ECE households still have to pass the net income test",
+      "text": "Connecticut recognizes TWO separate categorical-eligibility tracks, both grounded in the same federal authority (7 CFR § 273.2(j)) this roster's other packs cite, but named and shaped distinctly. Regular Categorical Eligibility (RCE) applies when every EDG member is authorized to receive AABD, SAGA (Connecticut's state-funded general-assistance program), SSI, or TFA (Temporary Family Assistance, Connecticut's TANF cash program) — RCE EDGs are exempt from the asset limit (including the transferred-assets policy, except for AABD/SAGA EDGs), the 130% gross income limit, AND the net income limit entirely. Expanded Categorical Eligibility (ECE) applies when an EDG is not RCE but its gross income is below 200% of the FPL, because every member is automatically authorized to receive TFA-funded referral services (notified via the \"Help for People in Need Brochure\" at application and renewal) — structurally the same TANF-funded-referral mechanism Kentucky's ECE uses, but Connecticut's version raises the gross ceiling to a FLAT 200% FPL for every ECE household regardless of elderly/disabled composition, unlike Kentucky's dual-track (130% for non-elderly/disabled, 200% only for all-elderly/disabled). Distinctively, and worth flagging precisely: ECE EDGs are exempt from the asset limit and the 130% gross income limit, but Connecticut's own RCE/ECE explainer pages list only those two tests as excluded for ECE — the net (100% FPL) income limit is NOT on that list, meaning an ECE-eligible Connecticut household can still be net-income-ineligible even though its gross income and assets are never tested. RCE, by contrast, explicitly waives the net income limit too — a Connecticut household with an SSI/TFA/AABD/SAGA member gets a more complete pass than a household relying on ECE alone. Current FFY2026 dollar figures (effective 10/1/2025): for EDG size 1, the 200% FPL (ECE) gross ceiling is $2,609/month, the 165% FPL ceiling (a distinct column for \"Elderly & Disabled Seeking Separate EDG Status\") is $2,152, the ordinary 130% FPL gross ceiling (for non-categorically-eligible EDGs) is $1,696, and the net 100% FPL limit is $1,305; for EDG size 4, the figures are $5,359 / $4,421 / $3,483 / $2,680. Each additional member adds $917 / $757 / $596 / $459 respectively. A secondary-source claim this pack found repeated across several SNAP-calculator sites — that Connecticut's BBCE ceiling is \"185% FPL\" — does NOT match Connecticut DSS's own current Tables page, which shows 200% FPL as the ECE gross ceiling; this pack treats the 185% figure as a likely confusion with the adjacent, genuinely distinct 165% column and does not repeat it as fact.",
+      "source_url": "https://web.archive.org/web/20260307213335/https://portaldir.ct.gov/dss/snap/Tables.html"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "truck"
+      ],
+      "citation": "CT DSS Uniform Policy Manual, UPM 4005.05 (Asset Limits — General Principles, cross-referencing Section 2500 Categorical Eligibility); CT DSS SNAP Policy Manual Tables (Internet Archive Wayback snapshot, 2026-03-07, effective 10/1/2025) — $4,500 asset limit applies ONLY to elderly/disabled EDGs with gross income over 200% FPL (i.e., EDGs that fail ECE); every other EDG category is marked \"N/A\" — no asset test at all",
+      "heading": "Connecticut's asset test is narrower than most of this roster's states: it applies ONLY to elderly/disabled EDGs whose gross income exceeds the 200% FPL ECE ceiling — every other household, at any income level up to 200% FPL, has no asset test",
+      "text": "Because virtually every Connecticut SNAP household below 200% FPL qualifies for ECE (or RCE, which is even broader), and ECE/RCE both waive the asset test entirely (7 CFR § 273.2(j)(2)(v) and (4)(iii)), Connecticut's own current Tables page lists an asset limit for exactly two narrow categories — \"Elderly/Disabled EDG with Gross Income Over 200%\" and \"EDGs with Gross Income Over 200% and the only Elderly/Disabled Member is Disqualified or Ineligible\" — both set at $4,500, matching the current national FFY2026 elevated figure this roster's Kentucky, Louisiana, Alabama, Missouri, Maryland, and Colorado packs have each independently confirmed. Every other EDG category is marked \"N/A\" on Connecticut's own table — this pack reads that as Connecticut's own disclosure that there is effectively no asset test for the overwhelming majority of Connecticut SNAP households, not merely a gap in the published table (elderly/disabled households under the 200% FPL ceiling remain ECE-eligible and keep the asset waiver too; only elderly/disabled households OVER 200% FPL — which, unlike ordinary households, are not automatically ECE-ineligible on income alone because federal law exempts elderly/disabled households from the ordinary 130% gross test — reach this $4,500 figure at all). This pack could not find a published Connecticut-specific standard asset limit for a hypothetical non-elderly, non-disabled, non-categorically-eligible household (the federal default, $3,000 for FFY2026, would apply by inference, but Connecticut's own materials do not state it explicitly because that combination is rare in practice — ECE's 200% FPL ceiling covers nearly every such household already). Connecticut's manual (UPM4, General Principles) states that vehicle valuation historically used NADA \"blue book\" trade-in values (P-4005.05, a 1987-dated procedures section) but this pack found no current, SNAP-specific vehicle-exclusion figure to cite with confidence — since almost every Connecticut SNAP household never reaches an asset test at all under RCE/ECE, this is a narrow edge case rather than a live gap for most applicants.",
+      "source_url": "https://web.archive.org/web/20260307213335/https://portaldir.ct.gov/dss/snap/Tables.html"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis"
+      ],
+      "citation": "Connecticut General Statutes § 17b-112d (effective July 1, 1997, June 18 Sp. Sess. P.A. 97-2, S. 123, 165; amended P.A. 09-9) — a MODIFIED opt-out, not a full opt-out: eligible if the sentence is completed, OR the person is satisfactorily serving probation, OR is in the process of completing or has completed mandatory substance-abuse treatment/testing",
+      "heading": "CORRECTION/REFINEMENT: Connecticut's drug-felony SNAP policy is a MODIFIED opt-out with three distinct eligibility paths — not the simple \"full opt-out\" or \"requires treatment completion\" framings this pack found repeated in different secondary sources",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state opts out or modifies the ban under § 862a(d)(1). This pack fetched and read CGS § 17b-112d directly from Connecticut's own cga.ct.gov statute database (no access barrier) and found Connecticut chose the MODIFY option, not the FULL OPT-OUT option Kentucky's KRS 205.2005 uses. The statute's own text sets out three independent paths to eligibility for a person convicted of a qualifying controlled-substance felony on or after August 22, 1996: (1) the person has completed a court-imposed sentence; OR (2) the person is satisfactorily serving a sentence of probation; OR (3) the person is in the process of completing, or has completed, a court-mandated sentence of substance-abuse treatment-program participation or substance-abuse testing-program participation. This pack found two DIFFERENT, each incomplete, framings circulating in secondary sources: one set of sources describes Connecticut as having \"opted out\" of the federal ban in its 1997 welfare reform law (true, but incomplete — it was a MODIFICATION, not an unconditional opt-out like Kentucky's), while another set describes Connecticut as one of \"15 states that require individuals to complete a drug treatment program to regain SNAP eligibility\" (also incomplete — treatment-program completion is only ONE of three independent statutory paths; a person who has simply completed their sentence, or who is satisfactorily on probation, is ALSO eligible without any treatment-program involvement at all). This pack's reading, grounded directly in the statute's own text, is that Connecticut's policy is genuinely conditional but NOT narrowly treatment-gated — most people with a qualifying conviction who have finished their sentence, or who are complying with probation, face no SNAP restriction under this provision at all. Separately, and consistent with this: Connecticut DSS's own RCE and ECE eligibility rules (see income-pathways) list \"a member is disqualified for a drug-related felony for not complying with the terms of their sentence or probation\" as a condition that removes a household from RCE/ECE eligibility (though the household may still qualify under ordinary, non-categorical SNAP rules) — directly consistent with the statute's own \"satisfactorily serving probation\" and \"completed a sentence\" language.",
+      "source_url": "https://www.cga.ct.gov/current/pub/chap_319s.htm"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "limited utility allowance",
+        "telephone allowance",
+        "standard deduction",
+        "sua",
+        "lua",
+        "tua",
+        "homeless",
+        "homeless shelter deduction"
+      ],
+      "citation": "CT DSS SNAP Policy Manual Tables (Internet Archive Wayback snapshot, 2026-03-07, effective 10/1/2025) — Standard Deduction $209 (EDG sizes 1-3), $223 (4), $261 (5), $299 (6+); Standard Utility Allowance (SUA) $976 flat for ALL EDG sizes; Limited Utility Allowance (LUA) $430; Telephone Allowance (TUA) $36; Excess Shelter Deduction: no maximum for elderly/disabled EDGs, $744 capped for all other EDGs; Homeless Shelter Deduction $198.99",
+      "heading": "STRUCTURAL FEATURE worth flagging: Connecticut's flat Standard Utility Allowance is $976/month — more than double most of this roster's other states, plausibly reflecting Connecticut's cold-climate heating costs",
+      "text": "Connecticut's Standard Deduction (effective 10/1/2025) is $209 for EDG sizes 1 through 3, $223 for size 4, $261 for size 5, and $299 for size 6 or more — matching the current national FFY2026 figures this roster's Kentucky, Louisiana, Alabama, and South Carolina packs independently confirmed. Connecticut's Standard Utility Allowance is $976/month, flat regardless of household size, for any EDG incurring a heating or cooling cost — a genuinely distinctive figure this pack flags explicitly: it is more than double Kentucky's $388 flat SUA and well above the roughly $400-500 range this roster has generally documented for other states. This pack did not find an explicit DSS explanation for the size of this figure, but notes it is directionally consistent with Connecticut's cold-climate heating-cost profile as a New England state; this pack treats the $976 figure as directly sourced (not extrapolated) from DSS's own current Tables page and flags it as worth an independent state-by-state comparison rather than assuming it is a transcription error. EDGs billed for utilities but not heating/cooling instead use the Limited Utility Allowance, $430/month; an EDG whose ONLY utility expense is a telephone gets the standalone Telephone Allowance (TUA), $36/month. Connecticut's excess shelter deduction has NO maximum cap for EDGs with an elderly or disabled member (uncapped, using full shelter costs exceeding 50% of income after other deductions), but is capped at $744/month for all other EDGs — matching the current national FFY2026 figure this roster's Kentucky and Louisiana packs also confirmed. Connecticut's Homeless Shelter Deduction is $198.99/month — a figure that matches, to the penny, this roster's Louisiana pack's own homeless-deduction figure, consistent with both states drawing on the same federally-published standard homeless shelter deduction (7 CFR § 273.9(d)(6)(iii)) rather than a state-specific calculation.",
+      "source_url": "https://web.archive.org/web/20260307213335/https://portaldir.ct.gov/dss/snap/Tables.html"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction"
+      ],
+      "citation": "CT DSS Medical Expenses / Monthly Expense Deductions pages (WebSearch-corroborated) — actual-expense-only mechanism: deduction equals verified allowable medical expenses minus $35/month, for a household member who is elderly or disabled; NO flat standard-deduction shortcut found",
+      "heading": "Connecticut uses an ACTUAL-EXPENSE-ONLY medical deduction (expenses minus $35) — no flat Standard Medical Deduction shortcut, placing it with Maryland's and Indiana's mechanism rather than Kentucky's, Louisiana's, Alabama's, or South Carolina's flat-shortcut camp",
+      "text": "Connecticut allows a deduction for verified out-of-pocket medical expenses exceeding $35/month, incurred by an EDG member who is elderly (60 or older) or disabled — the deduction equals the verified allowable expense amount minus $35, with no ceiling on how large the deduction can be (unlike a flat Standard Medical Deduction shortcut). This pack found no Connecticut-specific flat dollar figure functioning as an SMD-style shortcut the way this roster's Kentucky ($137), Louisiana ($161), South Carolina ($175), Missouri ($135), Colorado ($165), and Alabama ($185) packs each document — Connecticut instead requires the actual verified expense amount in every case, placing it in the same actual-expense-only camp this roster's Maryland and Indiana packs describe. Allowable medical expenses include attendant, homemaker, home health aide, and housekeeper services necessary due to age, infirmity, or illness — with the caveat that attendant-care costs can be claimed as EITHER a dependent-care expense OR a medical expense, but not both. Medical expenses (including any reimbursement amount) must be verified before the deduction is allowed. This pack notes the $35 threshold itself is a fixed national SNAP program parameter (7 CFR § 273.9(d)(3)) common to every state's manual, not a Connecticut-specific figure — the distinctive fact here is the ABSENCE of a Connecticut-specific flat shortcut above that threshold, not the threshold itself.",
+      "source_url": "https://portaldir.ct.gov/dss/SNAP/MedicalExpenses.html"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "time limit",
+        "hartford",
+        "new haven",
+        "bridgeport"
+      ],
+      "citation": "CT DSS SNAP Work Rules Pre-screener and ABAWD Work Rules pages (direct curl fetch, clean HTTP 200) — \"Starting December 1, 2025, all towns in Connecticut will now follow special SNAP work rules for adults\"; age range 18-64, 80 hours/month OR $217.50/week earnings alternative, under-14 caregiver exemption",
+      "heading": "FLAGSHIP FINDING, TIME-SENSITIVE: Connecticut currently has NO ABAWD waiver anywhere in the state — directly contradicting a \"statewide ABAWD waiver\" claim this pack found repeated across multiple secondary sources",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month (3-year) period absent 80 hours/month of a qualifying work activity or an exemption. This pack found a genuine, consequential correction to make here: several secondary sources and AI-generated SNAP-calculator summaries this pack checked confidently state Connecticut \"has a statewide ABAWD waiver\" and that \"work requirements are not being enforced anywhere in Connecticut.\" Connecticut DSS's own current, directly-fetched SNAP Work Rules Pre-screener page states the opposite in its own first line of visible text: \"Starting December 1, 2025, all towns in Connecticut will now follow special SNAP work rules for adults.\" This pack reads this as confirming Connecticut's PRIOR statewide ABAWD waiver (which the secondary sources appear to be describing, now stale) ended, and full statewide ABAWD work requirements took effect December 1, 2025, consistent with the nationwide post-OBBBA (One Big Beautiful Bill Act, July 2025) rollout timeline this roster has documented in other 2025-2026-built packs. Connecticut's own ABAWD Work Rules page confirms the current federal age range, 18 through 64 (an ABAWD the month after turning 18, not an ABAWD the month of turning 65), and the under-14 caregiver exemption (narrowed from under-18 under OBBBA). To remain eligible outside an exemption, an ABAWD must, each month: work at least 80 hours OR earn at least $217.50/week (a distinctive DOLLAR-EARNINGS alternative to the hours test this pack did not find called out this explicitly in prior states' packs in this roster); be in a job training or work program (such as SNAP E&T) for at least 80 hours; volunteer at least 80 hours; or combine work, training, and/or volunteering to 80 hours. Exemptions include being under 18 or 65+; living with a child under 14; a physical or mental health issue preventing work; pregnancy; already meeting TFA work rules; caring for a child under 6 or an incapacitated person; being in a drug/alcohol treatment program; having applied for or receiving unemployment benefits; attending school/training at least half-time (subject to other student rules); and being a member or descendant of a federally-recognized, state-recognized, or terminated Native American tribe. DSS distributed a one-time $300 grocery card (via Community Action Agencies, starting August 4, 2026) to individuals who lost SNAP benefits specifically because of these work-rule changes — direct, disclosed evidence from DSS's own current page that the December 2025 rule change had real, ongoing benefit-loss consequences for some Connecticut households, not merely a paper policy change.",
+      "source_url": "https://portal.ct.gov/dss/snap/able-bodied-adults-without-dependents-or-abawds/abawd-work-rules"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food"
+      ],
+      "citation": "USDA FNA's current SNAP Restaurant Meals Program state list (Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois [Cook/Franklin Counties], Michigan, Virginia — Connecticut absent, direct curl fetch, clean HTTP 200); 2025 Connecticut SB 1475 (pending/status-unconfirmed legislation directing DSS to apply to USDA by Dec. 1, 2025)",
+      "heading": "Connecticut does NOT currently operate a Restaurant Meals Program — but 2025 state legislation (SB 1475) directed DSS to apply for one, a live, worth-rechecking gap between what this pack could confirm and what may already be in motion",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR § 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round. USDA FNA's own current RMP state list (fetched directly, clean HTTP 200) names Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia — Connecticut is ABSENT. This pack also found 2025 Connecticut Senate Bill 1475, which as introduced would require the DSS Commissioner to develop an RMP targeting seniors, disabled individuals, homeless people, and their spouses, and to submit a formal application to USDA by December 1, 2025. This pack could NOT confirm through direct primary-source verification (Connecticut General Assembly's own bill-status system did not return a clear enacted/Public-Act status to this pack's fetch, and WebSearch results describe only the bill as introduced) whether SB 1475 was enacted, whether DSS submitted the required USDA application by the December 1, 2025 deadline it specifies, or what the application's current status is. Given USDA's own list — updated as recently as August 7, 2026 per its own page metadata — still does not include Connecticut, this pack's operative answer for a Connecticut applicant today is that Connecticut does NOT currently operate an RMP, while flagging explicitly that this is exactly the kind of legislative-to-operational gap that can close on short notice; see freshness.json for the re-verification window.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "periodic report",
+        "prf",
+        "esap"
+      ],
+      "citation": "WebSearch-corroborated (this pack could not locate the specific current UPM6 certification-period section directly): most Connecticut SNAP EDGs recertify every 12 months, with a mandatory Periodic Report Form (PRF) at the 6-month midpoint; ESAP (all-elderly/disabled, no-earned-income) EDGs are exempt from the PRF",
+      "heading": "Connecticut's default certification period is 12 months with a 6-month Periodic Report Form — this pack flags its own sourcing gap on this specific fact",
+      "text": "This pack found consistent secondary-source and DSS-fair-hearing-decision-document corroboration that most Connecticut SNAP EDGs are certified for 12 months, with a mandatory Periodic Report Form (PRF) due at the certification period's 6-month midpoint, arriving roughly 45 days before its due date. EDGs where all adult members are elderly (60+) or disabled, with no earned income (Connecticut's ESAP — Elderly/Disabled Simplified Application Project — households, structurally similar to Kentucky's ESAP track) are exempt from the mid-period PRF requirement. This pack explicitly DISCLOSES a sourcing gap here rather than overclaiming precision: unlike this pack's other findings, this one is not grounded in a directly-fetched, dated UPM6 (Calculation of Benefits/Benefit Issuance) section — this pack's attempts to locate the specific current certification-period section did not converge on a citable UPM section number before this pack's fetch window closed. Treat the 12-month/6-month-PRF figures as reasonably well-corroborated but NOT verified against Connecticut's own numbered policy manual the way this pack's other findings are, and re-verify against a current UPM6 section before treating this as a hard fact in a high-stakes context.",
+      "source_url": "https://portal.ct.gov/dss/-/media/departments-and-agencies/dss/fair-hearings/snap-eligibility/snap-eligibility-2023/snap_2023_210541.pdf"
+    }
+  ]
+}

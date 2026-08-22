@@ -1,0 +1,43 @@
+{
+  "code": "OR",
+  "program": "Supplemental Nutrition Assistance Program (SNAP)",
+  "agency": "Oregon Department of Human Services (ODHS), Self-Sufficiency Programs",
+  "admin_model": "state",
+  "admin_note": "State-administered: ODHS runs SNAP directly through the ONE (Oregon eligibility) system; there is no independent county eligibility agency layer. Policy lives in OAR (Oregon Administrative Rules) Chapter 461, cited here as 'OAR 461-DDD-DDDD'. ODHS republishes rules as unofficial HTML/PDF at oregon.public.law and ch461rules.odhs.oregon.gov, alongside the official Secretary of State Administrative Rules database — this pack cites both a rule number and the ch461rules.odhs.oregon.gov PDF where fetched directly, since oregon.public.law's rendering was found stale relative to the live PDF for at least one dollar-figure rule during this pack's build (see PROVENANCE.md).",
+  "system": "ONE (Oregon eligibility system) — a single application covers SNAP, OHP, ERDC, and TANF",
+  "portal": {
+    "name": "ONE Online",
+    "url": "https://one.oregon.gov"
+  },
+  "update_channels": [
+    {
+      "name": "OAR Chapter 461 (ch461rules.odhs.oregon.gov — ODHS's own current-rule host)",
+      "url": "https://ch461rules.odhs.oregon.gov"
+    },
+    {
+      "name": "Oregon Secretary of State Administrative Rules (official record)",
+      "url": "https://secure.sos.state.or.us/oard/displayDivisionRules.action?selectedDivision=2286"
+    },
+    {
+      "name": "ODHS SNAP Food Benefits page",
+      "url": "https://www.oregon.gov/odhs/food/pages/snap.aspx"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct fetch of OAR Chapter 461 rule PDFs from ch461rules.odhs.oregon.gov (plain curl, stable numeric filenames) via pdftotext extraction of the raw PDF bytes — NOT via an AI web-fetch summary, after that method produced THREE separate wrong dollar figures for the same rule (SNAP resource limits) across three different fetch attempts, each confusing OR's SNAP figures with an adjacent OSIP/OSIPM program figure on the same page, or serving a stale cached rendering. Every dollar figure and citation in this pack was re-verified against pdftotext output of the actual rule PDF before being used, not accepted from a search-engine summary or an AI paraphrase. ORS statute cross-checked via oregon.public.law. USDA FNA's own SNAP Restaurant Meals Program page and ODHS's own RMP status page cross-checked for RMP absence.",
+    "gates": "Cross-check: every pivotal dollar value traced to pdftotext output of the actual OAR PDF (not a secondary-site paraphrase) before drafting. One live discrepancy discovered and disclosed rather than resolved by guessing: OAR 461-140-0265 (Oregon's SNAP child-support income-EXCLUSION rule) is marked EXPIRED in its own PDF ('NOT PERMED BEFORE 180TH TEMP DAY') even though the current OAR 461-160-0430 (eff. 10-01-25) still cross-references it — see the dependent-care-child-support supplement and PROVENANCE.md. A second genuinely nuanced finding: OAR 461-160-0420, which carries OR's Standard Utility Allowance dollar figures, is itself a TEMPORARY rule effective 3-19-26 through 9-14-26 (SSP 21-2026) — Oregon's own temp-rule-lapse mechanics (demonstrated by the expired child-support rule) mean this citation, not necessarily the dollar figures themselves, needs reverification after 9/14/26. `packages/snap-rules` stays parked per project convention — no OR StatePolicy entry exists yet (a pre-existing authoring gap, not a finding from this pack).",
+    "sources": [
+      "OAR 461-135-0505, Categorical Eligibility for SNAP (ch461rules.odhs.oregon.gov/rules/461-135-0505.pdf), effective 4-08-25",
+      "OAR 461-160-0015, Resource Limits (ch461rules.odhs.oregon.gov/rules/461-160-0015.pdf), effective 10-01-24",
+      "OAR 461-160-0420, Shelter Cost; SNAP (ch461rules.odhs.oregon.gov/rules/461-160-0420.pdf + full rule-history PDF), TEMPORARY effective 3-19-26 through 9-14-26",
+      "OAR 461-160-0430, Income Deductions; SNAP (ch461rules.odhs.oregon.gov/rules/461-160-0430.pdf), effective 10-01-25",
+      "OAR 461-140-0265, Court Ordered Child Support Exclusion; SNAP (ch461rules.odhs.oregon.gov/rules/461-140-0265.pdf) — EXPIRED",
+      "OAR 461-135-0520, Time Limit and Special Requirements for ABAWD; SNAP (ch461rules.odhs.oregon.gov/rules/461-135-0520.pdf), effective 4-01-26",
+      "OAR 461-135-0575, SNAP Expedited Services (oregon.public.law/rules/oar_461-135-0575)",
+      "OAR 461-115-0450, Periodic Redeterminations; SNAP (WebSearch-corroborated secondary summary — not independently pdftotext-verified this pass, see PROVENANCE.md Finding 4)",
+      "ORS 411.119, drug-conviction assistance prohibition/exception (oregon.public.law/statutes/ors_411.119)",
+      "ODHS SNAP Restaurant Meals Program status page (oregon.gov/odhs/agency/pages/ssp-rmp.aspx), fetched 2026-08-11"
+    ]
+  }
+}

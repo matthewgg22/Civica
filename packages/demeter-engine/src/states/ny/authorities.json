@@ -1,0 +1,189 @@
+{
+  "_provenance": {
+    "note": "New York citation authorities. OTDA directives: ADM (Administrative Directive), INF (Informational Letter), LCM (Local Commissioners Memorandum), GIS (General Information System messages — file IDs like 25DC059; older text style 'GIS 21 TA/DC079' normalizes to the same ID). Regulations: 18 NYCRR Part 387 (SNAP) + §385.3 (work rules) — the state-designated NYCRR reader (govt.westlaw.com) is a JS app and self-labeled 'Unofficial'; section text was verified via the LII mirror (flagged) and the Source Book's reproductions. Forms (LDSS-4826, LDSS-4310, LDSS-5166, LDSS-3938, LDSS-4753) are referenced in prose, not extracted as citations.",
+    "extracted": "2026-08-07"
+  },
+  "patterns": [
+    {
+      "key": "adm",
+      "regex": "\\b(\\d{2})-ADM-(\\d{1,2})\\b",
+      "flags": "gi",
+      "template": "$1-ADM-$2",
+      "normalize": "upper",
+      "match": "exact",
+      "note": "OTDA Administrative Directives, e.g. 16-ADM-06; suffixed IDs like 25-ADM-03-P verify at the base 25-ADM-03"
+    },
+    {
+      "key": "inf",
+      "regex": "\\b(\\d{2})-INF-(\\d{1,2})\\b",
+      "flags": "gi",
+      "template": "$1-INF-$2",
+      "normalize": "upper",
+      "match": "exact",
+      "note": "OTDA Informational Letters"
+    },
+    {
+      "key": "lcm",
+      "regex": "\\b(\\d{2})-LCM-(\\d{1,2})\\b",
+      "flags": "gi",
+      "template": "$1-LCM-$2",
+      "normalize": "upper",
+      "match": "exact",
+      "note": "OTDA Local Commissioners Memoranda"
+    },
+    {
+      "key": "gis",
+      "regex": "\\bGIS\\s+(\\d{2})\\s*(?:TA/)?DC\\s*(\\d{3})\\b",
+      "flags": "gi",
+      "template": "GIS $1DC$2",
+      "normalize": "upper",
+      "match": "exact",
+      "note": "GIS messages; both 'GIS 25DC059' and the older 'GIS 21 TA/DC079' style normalize to 'GIS 21DC079'"
+    },
+    {
+      "key": "nycrr",
+      "regex": "\\b18\\s+NYCRR\\s+§?\\s*(\\d{3}\\.\\d{1,2})",
+      "flags": "gi",
+      "template": "18 NYCRR §$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Title 18 NYCRR; subdivision cites like 387.14(a)(5) verify at the section base 387.14"
+    }
+  ],
+  "known": {
+    "adm": [
+      {
+        "value": "07-ADM-09",
+        "note": "BBCE established eff. 1/1/2008 — 130% general pathway + aged/disabled 200%; resource test eliminated"
+      },
+      {
+        "value": "09-ADM-06",
+        "note": "dependent-care pathway raised 130% → 200% (3/25/2009)"
+      },
+      {
+        "value": "16-ADM-06",
+        "note": "earned-income pathway raised 130% → 150% (eff. 7/1/2016). NOT 12-ADM-06 — that is a Flexible Fund directive"
+      },
+      {
+        "value": "25-ADM-03",
+        "note": "ABAWD ADM — fixed statewide clock; -P revision (10/2025) carries post-OBBBA ages 18–64 and removed exemptions"
+      },
+      {
+        "value": "26-ADM-02",
+        "note": "post-OBBBA follow-up — employability code 79; 'obviously unfit' interpreted broadly"
+      },
+      {
+        "value": "24-ADM-09",
+        "note": "NYSCAP replaced NYSNIP (conversion complete 11/30/2024); auto-enrollment, 18-month interim contact LDSS-4836"
+      },
+      {
+        "value": "20-ADM-14",
+        "note": "ESAP application form LDSS-5166 (two-page simplified)"
+      },
+      {
+        "value": "09-ADM-22",
+        "note": "TBA — fixed five-month transitional SNAP after TA case closing"
+      }
+    ],
+    "inf": [
+      {
+        "value": "26-INF-03",
+        "note": "newest ABAWD guidance (7/29/2026) — statewide reimplementation mechanics, monthly verification by the 10th"
+      },
+      {
+        "value": "25-INF-08",
+        "note": "client-facing ABAWD publications (form numbers)"
+      },
+      {
+        "value": "25-INF-05",
+        "note": "ABAWD verification document templates"
+      },
+      {
+        "value": "12-INF-06",
+        "note": "verification of utility expenses (cited by GIS 25DC061)"
+      }
+    ],
+    "lcm": [
+      {
+        "value": "25-LCM-14",
+        "note": "H.R.1 form revisions, incl. NYC variants"
+      }
+    ],
+    "gis": [
+      {
+        "value": "GIS 25DC059",
+        "note": "FFY 2026 SNAP standards (eff. 10/1/2025) — the five-tier income table, SUAs, deductions, $24 minimum"
+      },
+      {
+        "value": "GIS 25DC061",
+        "note": "OBBBA heat-and-eat implementation — HEAP confers HCSUA only for aged/disabled households (retroactive 7/4/2025)"
+      },
+      {
+        "value": "GIS 25DC055",
+        "note": "OBBBA preliminary guidance hold (8/7/2025)"
+      },
+      {
+        "value": "GIS 25DC056",
+        "note": "Source Book July 2025 revision announcement"
+      },
+      {
+        "value": "GIS 25DC081",
+        "note": "waiver litigation reinstatement through 2/28/2026 (all counties EXCEPT Saratoga); tracking pushed to March 2026 for non-Saratoga districts"
+      },
+      {
+        "value": "GIS 25DC089",
+        "note": "November 2025 not a countable month (federal shutdown FNS memo; operative scope Saratoga, the only district then tracking)"
+      },
+      {
+        "value": "GIS 26DC012",
+        "note": "CURRENT waiver status — only Tuscarora + Poospatuck reservations waived 3/1/2026–2/28/2027"
+      },
+      {
+        "value": "GIS 24DC028",
+        "note": "interview waiver permanently expired 10/31/2024"
+      },
+      {
+        "value": "GIS 23DC049",
+        "note": "unwinding waivers window"
+      },
+      {
+        "value": "GIS 21DC079",
+        "note": "ESAP launch (2021); 36-month cert systems edit"
+      },
+      {
+        "value": "GIS 25DC005",
+        "note": "pre-OBBBA FRA age phase-in (historical)"
+      }
+    ],
+    "nycrr": [
+      {
+        "value": "18 NYCRR §387.8",
+        "note": "expedited processing — criteria + seven-calendar-day standard"
+      },
+      {
+        "value": "18 NYCRR §387.9",
+        "note": "resource limits — REGULATION TEXT STALE ($2,000/$3,000); GIS controls ($3,000/$4,500 FFY26)"
+      },
+      {
+        "value": "18 NYCRR §387.10",
+        "note": "base income standards — pre-BBCE baseline; directives control the tiers"
+      },
+      {
+        "value": "18 NYCRR §387.12",
+        "note": "income deductions (cited via Source Book §12; NYCRR portal unscrapable)"
+      },
+      {
+        "value": "18 NYCRR §387.14",
+        "note": "categorical eligibility — codifies the pathway tiers (amended eff. 9/6/2017)"
+      },
+      {
+        "value": "18 NYCRR §387.17",
+        "note": "certification periods + six-month reporting + 130% trigger"
+      },
+      {
+        "value": "18 NYCRR §385.3",
+        "note": "work-requirement exemptions (referenced by 25-ADM-03)"
+      }
+    ]
+  }
+}

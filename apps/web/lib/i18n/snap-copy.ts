@@ -40,6 +40,30 @@ export const snapStrings = {
     signin_error_invalid_code: "That code didn't match. Try again or send a new one.",
     signin_error_generic: "Something went wrong. Please try again.",
 
+    // Sign-in, arriving from the Demeter chat's Save button. The default copy
+    // above is about saving an APPLICATION, which is the wrong promise to make
+    // to someone who is keeping a conversation — and overstates what they are
+    // signing up for on a surface whose whole point is that it asks for nothing.
+    signin_title_conversation: "Save your conversation",
+    signin_google_disclosure_conversation:
+      "We only use your Google account to sign you in and save your conversation.",
+    signin_subtitle_conversation:
+      "Sign in and this conversation will be here when you come back. The chat itself is always free — an account is only for saving.",
+
+    // Email magic link (PR #690's route; this is its UI).
+    signin_or: "or",
+    signin_email_label: "Email address",
+    signin_email_placeholder: "you@example.com",
+    signin_email_cta: "Email me a sign-in link",
+    signin_email_sending: "Sending…",
+    signin_email_sent_title: "Check your email",
+    signin_email_sent_body:
+      "We sent a sign-in link to {email}. Open it on this device to finish — it expires shortly.",
+    signin_email_retry: "Use a different address",
+    signin_error_invalid_email: "Please enter a valid email address.",
+    signin_email_disclosure:
+      "We use your email only to sign you in. No password to remember, and no marketing.",
+
     // Wizard frame
     wizard_step_of: "Section {current} of {total}",
     wizard_completed: "% Completed",
@@ -110,6 +134,9 @@ export const snapStrings = {
     field_anyone_60_plus: "Is anyone in the household age 60 or older?",
     field_anyone_disability: "Does anyone in the household have a disability?",
     field_anyone_pregnant: "Is anyone in the household pregnant?",
+    // #652: same question + copy iOS already asks (SNAPHouseholdQuestionStrings
+    // .migrantFarmworkerTitle), reused verbatim for cross-platform consistency.
+    field_migrant_farmworker: "Is anyone in your household a migrant or seasonal farmworker?",
     field_anyone_unhoused: "Is anyone unhoused or without a fixed mailing address?",
     field_safe_mailing: "Preferred safe mailing contact option",
     safe_mailing_shelter: "Shelter",
@@ -266,6 +293,25 @@ export const snapStrings = {
     signin_error_invalid_code: "Ese código no coincide. Intenta de nuevo o envía uno nuevo.",
     signin_error_generic: "Algo salió mal. Por favor intenta de nuevo.",
 
+    signin_title_conversation: "Guarda tu conversación",
+    signin_google_disclosure_conversation:
+      "Solo usamos tu cuenta de Google para iniciar sesión y guardar tu conversación.",
+    signin_subtitle_conversation:
+      "Inicia sesión y esta conversación estará aquí cuando regreses. El chat siempre es gratis — la cuenta es solo para guardar.",
+
+    signin_or: "o",
+    signin_email_label: "Correo electrónico",
+    signin_email_placeholder: "tu@ejemplo.com",
+    signin_email_cta: "Envíame un enlace para iniciar sesión",
+    signin_email_sending: "Enviando…",
+    signin_email_sent_title: "Revisa tu correo",
+    signin_email_sent_body:
+      "Enviamos un enlace de inicio de sesión a {email}. Ábrelo en este dispositivo para terminar — vence pronto.",
+    signin_email_retry: "Usar otro correo",
+    signin_error_invalid_email: "Por favor ingresa un correo electrónico válido.",
+    signin_email_disclosure:
+      "Usamos tu correo solo para iniciar sesión. Sin contraseña que recordar y sin publicidad.",
+
     wizard_step_of: "Sección {current} de {total}",
     wizard_completed: "% Completado",
     wizard_review_cta: "Revisa tu solicitud",
@@ -329,6 +375,7 @@ export const snapStrings = {
     field_anyone_60_plus: "¿Hay alguien en el hogar de 60 años o más?",
     field_anyone_disability: "¿Tiene alguien en el hogar una discapacidad?",
     field_anyone_pregnant: "¿Hay alguien en el hogar embarazada?",
+    field_migrant_farmworker: "¿Alguien en tu hogar es trabajador agrícola migrante o de temporada?",
     field_anyone_unhoused: "¿Hay alguien sin vivienda o sin dirección postal fija?",
     field_safe_mailing: "Opción preferida de contacto seguro",
     safe_mailing_shelter: "Refugio",
@@ -516,7 +563,8 @@ export const welcomeStrings = {
     home_faq_q4: "Do I have to pay it back?",
     home_faq_a4: "No. SNAP isn't a loan. You've already paid into it through your taxes — this is help you've earned, not a debt.",
     home_faq_q5: "Will it affect my immigration status?",
-    home_faq_a5: "For most families, no. SNAP isn't counted as a \"public charge,\" and applying for your eligible children doesn't put you at risk. These rules can be specific, so if you're unsure, we'll point you to free, confidential help before you file.",
+    home_faq_a5:
+      "This is changing, so we won't give you a flat answer. Federal public charge rules haven't counted SNAP since 2022 — but DHS has rescinded that rule effective 18 September 2026, and after that date officers can weigh benefits case by case. If anyone in your household is not a US citizen, talk to a free immigration legal aid before you apply — not to us, and not to a caseworker.",
 
     // ─── App island ───
     home_app_cta: "Get the app →",
@@ -580,7 +628,8 @@ export const welcomeStrings = {
     home_faq_q4: "¿Tengo que devolverlo?",
     home_faq_a4: "No. SNAP no es un préstamo. Ya has aportado a través de tus impuestos — es ayuda que te has ganado, no una deuda.",
     home_faq_q5: "¿Afecta mi estatus migratorio?",
-    home_faq_a5: "Para la mayoría de las familias, no. SNAP no se cuenta como \"carga pública\", y solicitar para tus hijos elegibles no te pone en riesgo. Estas reglas pueden ser específicas, así que si tienes dudas, te conectamos con ayuda gratuita y confidencial antes de presentar la solicitud.",
+    home_faq_a5:
+      "Esto está cambiando, así que no te daremos una respuesta rotunda. Desde 2022 las reglas federales de carga pública no cuentan SNAP, pero el DHS derogó esa norma con efecto el 18 de septiembre de 2026, y a partir de esa fecha los oficiales pueden considerar los beneficios caso por caso. Si alguien en tu hogar no es ciudadano estadounidense, consulta con ayuda legal migratoria gratuita antes de solicitar — no con nosotros, ni con un trabajador del condado.",
 
     // ─── App island ───
     home_app_cta: "Obtén la app →",
@@ -638,7 +687,8 @@ export const welcomeStrings = {
     home_faq_q4: "我需要偿还吗?",
     home_faq_a4: "不需要。SNAP 不是贷款。你已经通过纳税为它做出了贡献——这是你应得的帮助,不是债务。",
     home_faq_q5: "它会影响我的移民身份吗?",
-    home_faq_a5: "对大多数家庭来说,不会。SNAP 不算作“公共负担”,为符合资格的孩子申请也不会让你面临风险。这些规定可能很具体,如果你不确定,我们会在你提交前为你介绍免费、保密的帮助。",
+    home_faq_a5:
+      "这一条正在变化，所以我们不会给出肯定的答案。自 2022 年起，联邦“公共负担”规则不将 SNAP 计入——但国土安全部已废除该规则，自 2026 年 9 月 18 日起生效；此后官员可逐案考量福利领取情况。如果您家中有人不是美国公民，请在申请前咨询免费的移民法律援助——不要问我们，也不要问个案工作人员。",
 
     home_app_cta: "获取应用 →",
 
@@ -694,7 +744,8 @@ export const welcomeStrings = {
     home_faq_q4: "Tôi có phải trả lại không?",
     home_faq_a4: "Không. SNAP không phải khoản vay. Bạn đã đóng góp qua tiền thuế của mình — đây là sự trợ giúp bạn xứng đáng nhận, không phải món nợ.",
     home_faq_q5: "Nó có ảnh hưởng đến tình trạng di trú của tôi không?",
-    home_faq_a5: "Với hầu hết các gia đình, không. SNAP không bị tính là “gánh nặng xã hội” (public charge), và nộp đơn cho con đủ điều kiện không khiến bạn gặp rủi ro. Các quy định này có thể rất cụ thể, nên nếu bạn không chắc, chúng tôi sẽ giới thiệu bạn đến sự trợ giúp miễn phí, bảo mật trước khi bạn nộp.",
+    home_faq_a5:
+      "Điều này đang thay đổi, nên chúng tôi sẽ không trả lời dứt khoát. Từ năm 2022, quy định liên bang về “gánh nặng xã hội” không tính SNAP — nhưng Bộ Nội an đã bãi bỏ quy định đó, có hiệu lực từ ngày 18 tháng 9 năm 2026, và sau ngày đó viên chức có thể xét từng trường hợp. Nếu trong nhà bạn có người không phải công dân Hoa Kỳ, hãy hỏi trợ giúp pháp lý di trú miễn phí trước khi nộp đơn — không phải hỏi chúng tôi, cũng không phải hỏi nhân viên xét hồ sơ.",
 
     home_app_cta: "Tải ứng dụng →",
 
@@ -750,7 +801,8 @@ export const welcomeStrings = {
     home_faq_q4: "Kailangan ko ba itong bayaran?",
     home_faq_a4: "Hindi. Ang SNAP ay hindi utang. Nakapag-ambag ka na rito sa pamamagitan ng iyong buwis — tulong ito na nararapat sa iyo, hindi utang.",
     home_faq_q5: "Maaapektuhan ba nito ang aking katayuan sa imigrasyon?",
-    home_faq_a5: "Para sa karamihan ng pamilya, hindi. Ang SNAP ay hindi itinuturing na “public charge,” at ang pag-apply para sa iyong kwalipikadong mga anak ay hindi naglalagay sa iyo sa panganib. Ang mga patakarang ito ay maaaring tiyak, kaya kung hindi ka sigurado, ituturo namin sa iyo ang libre at kumpidensyal na tulong bago ka mag-file.",
+    home_faq_a5:
+      "Nagbabago ito, kaya hindi kami magbibigay ng tiyak na sagot. Mula 2022, hindi ibinibilang ng pederal na public charge rules ang SNAP — ngunit binawi ito ng DHS, epektibo sa ika-18 ng Setyembre 2026, at pagkatapos ng petsang iyon maaaring timbangin ng mga opisyal ang mga benepisyo kada kaso. Kung may hindi mamamayan ng US sa inyong sambahayan, kumonsulta muna sa libreng immigration legal aid bago mag-apply — hindi sa amin, at hindi sa caseworker.",
 
     home_app_cta: "Kunin ang app →",
 

@@ -9,6 +9,7 @@ vi.mock("../../lib/supabase", () => ({
 }));
 
 import MaeChat from "../MaeChat";
+import { MAE_DISCLAIMER as ENGINE_DISCLAIMER } from "@civica/demeter-engine/system-prompt";
 
 /** A streaming Response stub: yields `chunks` then done. */
 function streamingResponse(chunks: string[]) {
@@ -65,7 +66,15 @@ describe("MaeChat", () => {
       data: { user: { app_metadata: { role: "navigator" } } },
     });
     render(<MaeChat />);
-    await screen.findByRole("button", { name: /ask mae/i });
+    const launcher = await screen.findByRole("button", { name: /ask mae/i });
+    // The launcher's decorative avatar badge is "M" for Mae — the dashboard's
+    // staff assistant, deliberately a different name from the public
+    // "Demeter AI" product (2026-08-09). Briefly said "D" during the
+    // Mae->Demeter rebrand (#649/#665) before that overlap was caught and
+    // reverted for this surface. Assert the avatar span's OWN content,
+    // isolated from the button's full label text.
+    const avatar = launcher.querySelector("span[aria-hidden]");
+    expect(avatar?.textContent?.trim()).toBe("M");
   });
 
   it("opens the panel, streams an answer, and shows the disclaimer", async () => {
@@ -82,6 +91,14 @@ describe("MaeChat", () => {
 
     // Disclaimer is always visible in the open panel.
     expect(screen.getByText(/not an eligibility determination/i)).toBeInTheDocument();
+
+    // The open panel's own header repeats the "M" avatar (a distinct DOM
+    // node from the launcher's) — checked here for the panel header
+    // specifically, same gap #665 caught the first time (then "D") in the
+    // Mae->Demeter direction.
+    const dialog = screen.getByRole("dialog", { name: /ask mae/i });
+    const headerAvatar = dialog.querySelector("span[aria-hidden]");
+    expect(headerAvatar?.textContent?.trim()).toBe("M");
 
     const textarea = screen.getByPlaceholderText(/ask a snap policy question/i);
     fireEvent.change(textarea, { target: { value: "What is a shelter deduction?" } });
@@ -101,6 +118,29 @@ describe("MaeChat", () => {
     });
     // A plain (non-case) query is logged as a generalist surface, with the clean question.
     expect(sentBody.meta).toEqual({ mode: "general", state: null, ref: null, question: "What is a shelter deduction?" });
+  });
+
+  it("#645: disclaimer is the engine's own MAE_DISCLAIMER (not a re-hardcoded copy), plus the PII reminder", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { app_metadata: { role: "navigator" } } },
+    });
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(streamingResponse([]) as unknown as Response);
+
+    render(<MaeChat />);
+    const launcher = await screen.findByRole("button", { name: /ask mae/i });
+    fireEvent.click(launcher);
+
+    // The panel's disclaimer text starts with the exact string imported from
+    // @civica/demeter-engine/system-prompt -- not a second, hand-maintained
+    // copy that can drift (this is what #645 originally fixed). The engine's
+    // own MAE_DISCLAIMER says "Mae can be wrong..." (2026-08-09: reverted
+    // from "Demeter can be wrong..." — this constant's only consumer is the
+    // dashboard's staff chat, which is named Mae, distinct from the public
+    // Demeter AI product).
+    const disclaimer = await screen.findByText((_, node) => node?.textContent === `${ENGINE_DISCLAIMER} Don't paste the applicant's PII (name, case number, etc.) — keep questions hypothetical.`);
+    expect(disclaimer).toBeInTheDocument();
+    expect(disclaimer.textContent).toContain("Mae can be wrong");
+    expect(disclaimer.textContent).not.toContain("Demeter can be wrong");
   });
 
   it("injects case context into the payload (not the visible transcript) when opened from a case", async () => {

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import AppNav from "../../components/AppNav";
@@ -103,9 +104,9 @@ export default function WhyCivicaPage() {
                     </svg>
                   </span>
                 </div>
-                <h3 className="why-feature-card__title">Mae, your AI guide</h3>
+                <h3 className="why-feature-card__title">Demeter, your AI guide</h3>
                 <p className="why-feature-card__text">
-                  Ask Mae any eligibility question — income limits, deductions, what documents
+                  Ask Demeter any eligibility question — income limits, deductions, what documents
                   to bring — in plain language, before you ever touch the form. No jargon,
                   no guessing.
                 </p>
@@ -216,9 +217,9 @@ export default function WhyCivicaPage() {
             <h2 className="section__title">Ready to find out what you qualify for?</h2>
             <p className="section__body">Takes about 10 minutes. Free, confidential, no account required.</p>
             <div className="cta-row" style={{ marginTop: "var(--civica-space-xl)" }}>
-              <a href="/apply" className="btn btn--primary">
+              <Link href="/apply" className="btn btn--primary">
                 Check my eligibility
-              </a>
+              </Link>
               <a href="/welcome" className="btn btn--secondary">
                 Back to home
               </a>

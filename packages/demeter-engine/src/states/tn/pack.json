@@ -1,0 +1,53 @@
+{
+  "code": "TN",
+  "program": "SNAP — Tennessee uses the plain federal program name throughout TDHS materials and its own codified rules; TDHS's own SNAP Policy 24.24 glossary does not define \"FNS\" at all, but its Authority lines cite \"7 C.F.R.\" directly, consistent with the FEDERAL-agency convention this roster's Virginia and New Jersey packs document and the OPPOSITE of North Carolina's pack, where \"FNS\" means the state's own manual/program",
+  "agency": "Tennessee Department of Human Services (TDHS)",
+  "admin_model": "state",
+  "admin_note": "Tennessee is STATE-administered: TDHS writes the codified Rules of the Tennessee Department of Human Services (Tenn. Comp. R. & Regs. ch. 1240-01, filed with the Secretary of State) and a parallel series of numbered TDHS SNAP Policy documents (24.01-24.31+), and TDHS's own county offices — described in Policy 24.03 as making SNAP determinations — are the state agency's field arm, not independently governed county welfare departments the way Virginia's LDSS or North Carolina's county DSS are. Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own TDHS county office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA.",
+  "system": "Tennessee's eligibility caseworkers use the state's ACCENT case-management system; applicants apply through the One DHS Customer Portal or in person/by mail/fax at a TDHS county office",
+  "portal": {
+    "name": "One DHS Customer Portal",
+    "url": "https://onedhs.tn.gov"
+  },
+  "update_channels": [
+    {
+      "name": "Rules of the Tennessee Department of Human Services, Chapter 1240-01 (Family Assistance Division) — the codified administrative rules filed with the TN Secretary of State, current through the April 2026 (Revised) republication",
+      "url": "https://publications.tnsosfiles.com/rules/1240/1240-01/1240-01.htm"
+    },
+    {
+      "name": "TDHS SNAP Policy documents (numbered 24.01 through 24.31+) — TDHS's own current operational policy series, published on the DHS Publications page",
+      "url": "https://www.tn.gov/humanservices/information-and-resources/dhs-publications.html"
+    },
+    {
+      "name": "TDHS SNAP program page and SNAP ABAWD Information page",
+      "url": "https://www.tn.gov/humanservices/for-families/supplemental-nutrition-assistance-program-snap.html"
+    },
+    {
+      "name": "USDA FNA ABAWD Time Limit Waivers FY 2025-2029 (state request/response index)",
+      "url": "https://www.fns.usda.gov/snap/waivers/timelimit/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct curl fetch (browser User-Agent) of the codified Tennessee Rules 1240-01 series (Categorically Eligible Households - SNAP Only, rule 1240-01-14-.15, amended January 15 2026, effective April 15 2026, from publications.tnsosfiles.com — the Secretary of State's own rule-publication host) and of the current TDHS SNAP Policy series (24.02 Application Processing, 24.03 Timeliness Standards, 24.11 Work Requirements, 24.12 Resources, 24.13 Lottery or Gambling Winnings, 24.14 Income, 24.18 Deductions from Income, 24.24 Categorically Eligible SNAP Recipients) from tn.gov/content/dam. law.justia.com and casetext.com — the hosts this pack tried for Tenn. Code Ann. Sec. 71-5-308's full statutory text — returned HTTP 403 on every attempt (multiple User-Agents, http and https) and are treated as a genuine, disclosed access barrier, not a tooling artifact abandoned prematurely; the drug-felony finding instead rests on convergent corroboration from the Public Health Law Center's SNAP Ban Opt-Out States map and the Network for Public Health Law's compiled 50-state SNAP felony-ban survey (both fetched directly), cross-checked against TDHS's own Rule 1240-01-14-.15(3)(a)3's citation to a 'drug-related felony' exception under 7 C.F.R. Sec. 273.11. Also fetched and cross-checked: TDHS's original 2017 SNAP Policy Manual PDF (found severely stale, see PROVENANCE.md), the 1980s/2004-vintage codified rules 1240-01-03 (non-financial eligibility/ABAWD) and 1240-01-07 (periods of eligibility), USDA's FY2025-2029 ABAWD waiver-response index (Tennessee absent), and news/legislative corroboration of the April 2026 BBCE rule change.",
+    "gates": "The federally uniform dollar figures this pack cites (Standard Deduction, Maximum Excess Shelter Deduction, Homeless Shelter Allowance, resource limits) are NOT independently re-stated in TDHS's own current policy series — Policy 24.12 (Resources) and Policy 24.18 (Deductions) both explicitly defer exact dollar amounts to an internal 'Family Assistance Standards Desk Guide' this pack could not locate published anywhere on tn.gov, so this pack applies the same current FFY2026 federal table figures every other state in this roster has already verified, on the strength of TDHS's own 'uniform national resource standards' / 'appropriate standard deduction' language rather than a Tennessee-specific dollar restatement. Tennessee's Standard Utility Allowance is DIFFERENT: it is state-specific (not federally uniform), and the only publicly available TN-specific SUA dollar table this pack could find — the codified rule 1240-01-04-.27, Tables IV-A/IV-B/V-A/V-B/VI/VII — carries internal signs of being at least a decade stale (its own Standard Deduction figures of $142/$153/$179/$205 and Maximum Coupon Allotment of $200 for a 1-person household do not match ANY recent FFY table), and USDA's national FY2026 SUA rollup page did not render fetchable per-state data in this pass either (the same disclosed limitation VA's pack recorded). This pack therefore states Tennessee's SUA STRUCTURE (three tiers: a size-scaled Standard Utility Allowance, a flat Basic Utility Allowance, and a flat Standard Telephone Allowance) as a confirmed finding, but explicitly declines to assert a current TN-specific SUA dollar figure — a genuine, disclosed gap, not a fabricated number. Adversarial refute pass recorded in PROVENANCE.md.",
+    "sources": [
+      "Tenn. Comp. R. & Regs. ch. 1240-01-14-.15, Categorically Eligible Households - SNAP Only (amended January 15, 2026; effective April 15, 2026)",
+      "Tenn. Comp. R. & Regs. ch. 1240-01-03-.43, Food Stamp Program Work Requirements (Special Requirements for Non-Exempt Able-Bodied Adults Without Dependents) — last amended May 2004",
+      "Tenn. Comp. R. & Regs. ch. 1240-01-04-.27, Financial Eligibility Requirements — Tables III-VII (dollar figures disclosed as stale)",
+      "Tenn. Comp. R. & Regs. ch. 1240-01-07-.01, Periods of Eligibility — last amended September 1983",
+      "TDHS SNAP Policy 24.02, Application Processing (effective 12/01/2022, last reviewed 11/30/2023)",
+      "TDHS SNAP Policy 24.03, Timeliness Standards (effective 02/01/2022, last reviewed 11/30/2023)",
+      "TDHS SNAP Policy 24.11, Work Requirements (effective 03/01/2023, last reviewed 11/30/2023)",
+      "TDHS SNAP Policy 24.12, Resources (effective 03/01/2021, last reviewed 11/30/2023)",
+      "TDHS SNAP Policy 24.13, Lottery or Gambling Winnings (effective 03/01/2021, last reviewed 11/30/2023)",
+      "TDHS SNAP Policy 24.14, Income (effective 09/17/2018 series, last reviewed 11/30/2023)",
+      "TDHS SNAP Policy 24.18, Deductions from Income (effective 09/17/2018, last reviewed 11/30/2023)",
+      "TDHS SNAP Policy 24.24, Categorically Eligible SNAP Recipients (effective 06/15/2021, last reviewed 11/30/2023 — predates the April 2026 BBCE rule amendment)",
+      "USDA FNA, Time Limit Waivers FY 2025-2029 index, fetched directly 2026-08-11 (page updated July 22, 2026) — Tennessee absent from the list of states with any submitted waiver request",
+      "USDA FNA, States that Operate a Restaurant Meals Program, fetched directly 2026-08-11 (page updated August 7, 2026) — Tennessee absent from the nine-state list",
+      "Public Health Law Center, SNAP Ban Opt-Out States Map — Tennessee entry, fetched directly 2026-08-11",
+      "Network for Public Health Law, 50-State Survey: SNAP Drug Felony Bans (compiled survey PDF), fetched directly 2026-08-11 — Tennessee entry"
+    ]
+  }
+}

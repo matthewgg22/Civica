@@ -1,0 +1,56 @@
+{
+  "_provenance": {
+    "note": "Colorado dated facts. Because Colorado has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a genuine disclosed research gap, or (distinctively for this pack) a genuine, BROAD internal contradiction between Colorado's own formally-promulgated regulation text and Colorado's own faster-moving website content — a pattern this pack traces to Colorado having no separate narrative policy manual (see the manual-structure supplement).",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "co-ccr-dollar-figures-one-ffy-stale",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "EVERY dollar figure this pack found in 10 CCR 2506-1 — the maximum/minimum monthly SNAP allotment table (4.207.3(D)), the Standard Deduction (4.407.1), the Excess Shelter Deduction cap (4.407.3), the Homeless Shelter Deduction (4.407.3), and all four Standard Utility Allowances: HCUA/BUA/OUA/Telephone (4.407.31) — is explicitly labeled 'Effective October 1, 2024,' the FFY2025 COLA cycle, not the current FFY2026 cycle (effective October 1, 2025). This pack cross-validated the CURRENT national FFY2026 Standard Deduction ($209/$209/$209/$223/$261/$299) and Excess Shelter cap ($744) via USDA's own FY26 COLA memo and this roster's independently-confirmed Missouri and Maryland figures, and used those as the best available substitute — but could NOT locate a Colorado-specific FFY2026 update to the four utility-allowance figures or the Homeless Shelter Deduction, which are state-specific (not nationally uniform) and therefore cannot simply be cross-validated the same way. Before restating ANY Colorado SNAP deduction or allotment dollar figure with full confidence, re-fetch 10 CCR 2506-1 Sections 4.207.3, 4.407.1, 4.407.3, and 4.407.31 directly and check whether the 'Effective' date has been updated. Note that the FFY2027 COLA cycle begins imminently (October 1, 2026) — re-verification will be needed again shortly regardless."
+    },
+    {
+      "key": "co-abawd-regulation-vs-website-contradiction",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "10 CCR 2506-1-4.311 (ABAWD Work Requirements), despite a header reading '[Effective 1/4/2025],' still defines an ABAWD as aged 18 through 54 and still lists three exemptions that H.R. 1 (2025)/OBBBA REMOVED at the federal level: a blanket homelessness exemption, veteran status, and having aged out of foster care by age 24. This directly contradicts CDHS's own dedicated, current ABAWD FAQ page (cdhs.colorado.gov/snap/abawd) and its own February 2026 training desk aid, both of which state the current federal 18-64 age range and the current (non-homeless/non-veteran/non-foster-care) exemption set. This pack treated the FAQ page and desk aid as authoritative because they are more specific, more recently dated, and more directly OBBBA-responsive — but this is a genuine, disclosed, unresolved contradiction within Colorado's own primary-source ecosystem, not a settled fact. Before restating Colorado's ABAWD age range or exemption list with full confidence, re-fetch 10 CCR 2506-1-4.311 directly and check whether the formal rulemaking has caught up."
+    },
+    {
+      "key": "co-snap-page-triple-abawd-inconsistency",
+      "kind": "expires",
+      "date": "2026-10-15",
+      "warning": "CDHS's own main SNAP page (cdhs.colorado.gov/snap), fetched directly on this pack's fetch date, states the ABAWD age range as 'between 18 and 56' in one paragraph ('Who is eligible?') and 'Between the ages of 18 and 64' in another, further down the SAME page ('What is an ABAWD?') — and additionally carries a leftover stale notice from 2023 ('Notice: Work requirements for individuals receiving SNAP who are aged 50 to 54 have changed... effective Oct. 1, 2023') referencing the pre-OBBBA Fiscal Responsibility Act change, itself now superseded by the 2025 OBBBA change. This pack treated the page's own dedicated 'What is an ABAWD?' FAQ answer (18-64) as authoritative, matching the separate cdhs.colorado.gov/snap/abawd page. Before citing this main SNAP page for ABAWD age range specifically, re-check whether CDHS has cleaned up this page's internal inconsistency, or default to the dedicated ABAWD FAQ page instead."
+    },
+    {
+      "key": "co-healthy-choice-waiver-alert-banner-mismatch",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "CDHS's dedicated SNAP Healthy Choice Waiver status page states plainly that CDHS 'is discontinuing its efforts to implement the SNAP Healthy Choice Waiver, as federal policy currently prohibits states from piloting programs that restrict SNAP food and beverage purchases' — a full discontinuation. CDHS's own main SNAP page, fetched the same day, instead carries an alert banner stating only that CDHS 'has delayed the final vote on the Healthy Choice Waiver' — a softer, more provisional framing that does not mention discontinuation or the federal-policy bar. This pack treated the dedicated waiver page as authoritative (more specific, explains a concrete reason) and corroborated it against independent news coverage (KKTV, April 2026) confirming the restriction would not take effect. Before restating Colorado's soda/candy SNAP-purchase policy, re-check both CDHS pages for consistency, since federal SNAP-restriction-waiver policy at the national level was itself actively moving during this pack's research window."
+    },
+    {
+      "key": "co-restaurant-meals-program-application-status-unknown",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "SB25-169 required CDHS to submit a Restaurant Meals Program application to USDA's Food and Nutrition Service by January 1, 2026. As of this pack's fetch date (2026-08-11), that deadline has passed, but this pack could not locate a public CDHS status update confirming whether the application was submitted on time, is under USDA review, has been approved, or has been denied. This pack's default answer — Colorado does NOT currently have an operating Restaurant Meals Program — rests on CDHS's own current SNAP page's food-purchase-restrictions list, which as of the fetch date still excludes hot/on-premises-consumption foods with no RMP exception. Before restating Colorado's RMP status, re-check CDHS's SNAP page and any dedicated RMP page CDHS may have since published for an implementation-plan announcement."
+    },
+    {
+      "key": "co-drug-felony-statute-regulation-interaction-undetermined",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack found two related Colorado primary sources addressing the same narrow trigger (a drug-related felony conviction tied to misusing SNAP/food-stamp benefits to purchase controlled substances) with DIFFERENT stated consequences: C.R.S. § 26-2-305(1)(c) describes an outright disqualification period (2 years first offense, permanent second offense), while 10 CCR 2506-1-4.206(C) describes a narrower categorical-eligibility consequence (loss of BCE/ECE, requiring the household to qualify under the stricter Standard Eligibility test instead). This pack did not find explicit text reconciling how these two provisions interact for the same triggering conduct — whether the regulation's categorical-eligibility consequence applies during the statute's disqualification period, after it, or as an alternative framing of the same rule. Before answering a Colorado applicant's specific question about this scenario with full confidence, re-fetch both C.R.S. § 26-2-305 and 10 CCR 2506-1-4.206 directly and, if possible, locate CDHS policy guidance interpreting the interaction."
+    },
+    {
+      "key": "co-smed-effective-date-recheck",
+      "kind": "expires",
+      "date": "2027-01-01",
+      "warning": "Colorado's flat Standard Medical Expense Deduction (SMED) of $165 is set by 10 CCR 2506-1-4.407.61, which states it has been in effect 'Beginning October 1, 2016' — a flat policy figure, not COLA-indexed, and therefore less likely to be affected by the FFY2025-vs-FFY2026 staleness this pack found elsewhere in Colorado's regulation. This pack found independent secondary-source corroboration that $165 remains current for FFY2026, but did not locate a Colorado primary source explicitly re-confirming the figure post-2016. Before restating this figure with full confidence, re-fetch 10 CCR 2506-1-4.407.61 directly."
+    },
+    {
+      "key": "co-general-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's cross-validated FFY2026 substitute dollar figures (Standard Deduction, Excess Shelter cap) are effective October 1, 2025 through September 30, 2026. The next federal fiscal year (FFY2027) COLA cycle begins October 1, 2026 — under seven weeks from this pack's fetch date. Given this pack's own finding that Colorado's regulation text lags a full COLA cycle behind even in ordinary circumstances, re-verify ALL Colorado SNAP dollar figures against Colorado's own then-current primary sources after that date, and expect the lag to persist or worsen rather than resolve on its own."
+    }
+  ]
+}

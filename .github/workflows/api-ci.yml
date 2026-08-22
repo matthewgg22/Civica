@@ -133,7 +133,7 @@ jobs:
         continue-on-error: true
 
   package-tests:
-    name: Tests (snap-enums + snap-handoff + snap-qc-engine)
+    name: Tests (snap-enums + snap-handoff + snap-qc-engine + demeter-engine)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -154,7 +154,7 @@ jobs:
         # snap-qc-engine's golden fixtures are CI-blocking: any drift in
         # defensibility scoring fails the build until somebody intentionally
         # runs `pnpm --filter @civica/snap-qc-engine regenerate:goldens`.
-        run: pnpm --filter @civica/snap-enums --filter @civica/snap-handoff --filter @civica/snap-qc-engine --filter @civica/snap-rules run test
+        run: pnpm --filter @civica/snap-enums --filter @civica/snap-handoff --filter @civica/snap-qc-engine --filter @civica/snap-rules --filter @civica/demeter-engine run test
 
   deploy:
     name: Deploy to Fly.io

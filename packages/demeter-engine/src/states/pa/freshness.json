@@ -1,0 +1,38 @@
+{
+  "_provenance": {
+    "note": "Pennsylvania dated facts. Dollar values ride the annual FFY dollar-table cycle in PAH 560 Appendix A (currently effective 10/1/2025), which this pass confirmed matches the federal FFY26 COLA figures for the Standard Deduction and Excess Shelter cap. Two entries below record genuine gaps this pack found rather than routine COLA-cycle warnings: an internal disagreement between two Handbook sections over the same dollar figure, and an unresolved multi-year anomaly in one dollar figure that could not be corroborated against a second source.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "pa-ffy26-dollar-values-recheck",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Pennsylvania's FFY26 dollar figures (Standard Deduction $209/$223/$261/$299, Excess Shelter cap $744, Heating SUA $857, Non-heating SUA $488, Limited Utility Allowance $128, Homeless SUA tier $199, Excess Medical >$35) are all sourced from PAH 560 Appendix A, effective 10/1/2025 — due for the October 2026 COLA update. Find the successor dollar table (PAH 560 Appendix A's next dated entry) before quoting any Pennsylvania dollar amount after this date."
+    },
+    {
+      "key": "pa-homeless-deduction-internal-conflict-recheck",
+      "kind": "expires",
+      "date": "2026-10-15",
+      "warning": "PAH 560.7's own narrative text (\"the standard homeless shelter deduction of $190\") is dated \"Updated September 30, 2024\" and still shows the FFY25 figure, while PAH 560 Appendix A's dollar table (dated \"Updated September 9, 2025\") shows the FFY26 figure for the same deduction as $199 — the two sections of the SAME Handbook currently disagree. Re-check whether PAH 560.7's narrative text has been refreshed to match Appendix A before this date; until it is, prefer the $199 Appendix A figure but disclose the disagreement rather than silently picking one."
+    },
+    {
+      "key": "pa-phone-standard-anomaly-recheck",
+      "kind": "expires",
+      "date": "2026-09-15",
+      "warning": "Pennsylvania's FFY26 \"Phone\" standard deduction figure in PAH 560 Appendix A is $107 — an unexplained jump from the FFY25 figure of $34, itself part of a decade-plus trend of $33-$34 values. This pack could NOT independently corroborate $107 against a second primary source in this pass. Re-verify this specific figure directly against a live PAH 560 Appendix A fetch (or a DHS Bulletin/Operations Memo, if one exists announcing the change) before quoting it to a household with confidence — treat it as what PA's own current table states, not as independently confirmed."
+    },
+    {
+      "key": "pa-abawd-waiver-status-recheck",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "As of this pack's build date, Pennsylvania's own SNAP Handbook (PAH 536 Appendix A, updated 9/3/2025) states definitively that FNS has NOT approved a Pennsylvania geographic ABAWD waiver and all counties are subject to the time limit as of September 1, 2025 — a confirmed statewide-unwaived status, not merely unconfirmed. Waiver status can change on FNS's review cycle; re-check PAH 536 Appendix A or USDA FNS's current ABAWD waiver page before this date, and do not assume the September 2025 unwaived status is still current without re-checking."
+    },
+    {
+      "key": "pa-rmp-zero-restaurants-recheck",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "Pennsylvania's own SNAP Handbook (PAH 511.2, revised 9/17/2025) states \"At this time there are no authorized restaurants in the state that accept SNAP\" — Pennsylvania's homeless-only restaurant-meal provision is legally live but has zero current participants. Re-check PAH 511.2 before this date and before telling a homeless Pennsylvania SNAP recipient that a specific restaurant currently accepts SNAP — the count could change without a corresponding Handbook update being fetched again."
+    }
+  ]
+}

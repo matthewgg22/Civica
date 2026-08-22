@@ -1,0 +1,90 @@
+{
+  "_provenance": {
+    "document": "SNAP – Fiscal Year 2026 Cost-of-Living Adjustments (memorandum to All State Agencies)",
+    "signed": "2025-08-14 (Ronald Ward, Acting Associate Administrator, SNAP, USDA Food and Nutrition Service)",
+    "effective_from": "2025-10-01",
+    "effective_to": "2026-09-30",
+    "source_url": "https://www.usda.gov/sites/default/files/guidance-documents/fns.snap-cola-fy26memo.pdf",
+    "retrieved_via": "https://web.archive.org/web/20260413163948/https://www.usda.gov/sites/default/files/guidance-documents/fns.snap-cola-fy26memo.pdf",
+    "retrieved_on": "2026-08-21",
+    "cross_validated": "48-state gross/net figures and standard deduction match USDA FNA's own eligibility page (fna.usda.gov/snap/recipient/eligibility, fetched same day); HH-4 and HH-5 allotments match figures independently reconstructed in the #898 P0-1 audit; CT 130%/size-1 and size-4 figures match the CT state pack's independently sourced tables.",
+    "rule": "NEVER edit these figures by hand or from memory. They rotate every October 1 (COLA). Refetch the next fiscal year's memo (#803 tracks the FY27 refresh) and replace this file whole."
+  },
+  "topics": [
+    {
+      "terms": [
+        "income limit",
+        "income limits",
+        "income eligibility",
+        "income cutoff",
+        "income cut-off",
+        "gross income limit",
+        "net income limit",
+        "income standard",
+        "income standards",
+        "make too much",
+        "earn too much",
+        "earning too much",
+        "over income",
+        "over-income",
+        "too much to qualify",
+        "income to qualify",
+        "qualify with my income",
+        "130 percent",
+        "165 percent",
+        "poverty level",
+        "poverty line"
+      ],
+      "citation": "USDA SNAP FY 2026 COLA Memo — Income Eligibility Standards (Oct. 1, 2025 – Sept. 30, 2026)",
+      "heading": "SNAP income eligibility standards, FY 2026 — gross (130% FPL), net (100% FPL), and separate-elderly-disabled (165% FPL) monthly limits by household size",
+      "text": "SNAP income eligibility standards effective October 1, 2025 through September 30, 2026, from USDA's FY 2026 Cost-of-Living Adjustments memorandum. GROSS monthly income limits (130 percent of poverty), 48 states, D.C., Guam, and the U.S. Virgin Islands: household of 1 $1,696; 2 $2,292; 3 $2,888; 4 $3,483; 5 $4,079; 6 $4,675; 7 $5,271; 8 $5,867; each additional member +$596. Alaska gross (130%): 1 $2,118; 2 $2,864; 3 $3,609; 4 $4,354; 5 $5,100; 6 $5,845; 7 $6,590; 8 $7,336; each additional +$746. Hawaii gross (130%): 1 $1,949; 2 $2,635; 3 $3,321; 4 $4,007; 5 $4,692; 6 $5,378; 7 $6,064; 8 $6,750; each additional +$686. NET monthly income limits (100 percent of poverty), 48 states, D.C., Guam, Virgin Islands: 1 $1,305; 2 $1,763; 3 $2,221; 4 $2,680; 5 $3,138; 6 $3,596; 7 $4,055; 8 $4,513; each additional +$459. Alaska net: 1 $1,630; 2 $2,203; 3 $2,776; 4 $3,350; 5 $3,923; 6 $4,496; 7 $5,070; 8 $5,643; each additional +$574. Hawaii net: 1 $1,500; 2 $2,027; 3 $2,555; 4 $3,082; 5 $3,610; 6 $4,137; 7 $4,665; 8 $5,192; each additional +$528. Gross limits for households where elderly/disabled members are a separate household (165 percent of poverty), 48 states, D.C., Guam, Virgin Islands: 1 $2,152; 2 $2,909; 3 $3,665; 4 $4,421; 5 $5,177; 6 $5,934; 7 $6,690; 8 $7,446; each additional +$757; Alaska: 1 $2,689; 2 $3,635; 3 $4,581; 4 $5,527; 5 $6,473; 6 $7,419; 7 $8,365; 8 $9,311; +$946; Hawaii: 1 $2,474; 2 $3,344; 3 $4,215; 4 $5,085; 5 $5,956; 6 $6,826; 7 $7,696; 8 $8,567; +$871. These are the dollar tables that 7 CFR 273.9(a)'s percentages point at. States using broad-based categorical eligibility (BBCE) may apply a higher gross limit (up to 200 percent of poverty) and their own asset rules; the state's own published figures govern there.",
+      "source_url": "https://web.archive.org/web/20260413163948/https://www.usda.gov/sites/default/files/guidance-documents/fns.snap-cola-fy26memo.pdf",
+      "money_gated_terms": [
+        "do i qualify",
+        "do we qualify",
+        "can i qualify",
+        "am i eligible",
+        "are we eligible"
+      ]
+    },
+    {
+      "terms": [
+        "maximum allotment",
+        "max allotment",
+        "maximum benefit",
+        "maximum snap",
+        "how much will i get",
+        "how much do i get",
+        "how much snap",
+        "how much in snap",
+        "what will i receive",
+        "most i can get",
+        "biggest benefit",
+        "minimum benefit",
+        "smallest benefit",
+        "thrifty food plan"
+      ],
+      "citation": "USDA SNAP FY 2026 COLA Memo — Maximum and Minimum Monthly Allotments (Oct. 1, 2025 – Sept. 30, 2026)",
+      "heading": "SNAP maximum and minimum monthly allotments, FY 2026, by household size and area",
+      "text": "SNAP maximum monthly allotments effective October 1, 2025 through September 30, 2026, from USDA's FY 2026 Cost-of-Living Adjustments memorandum. 48 states and D.C.: household of 1 $298; 2 $546; 3 $785; 4 $994; 5 $1,183; 6 $1,421; 7 $1,571; 8 $1,789; each additional person +$218. Guam: 1 $439; 2 $806; 3 $1,157; 4 $1,465; 5 $1,743; 6 $2,095; 7 $2,315; 8 $2,637; +$322. U.S. Virgin Islands: 1 $383; 2 $703; 3 $1,009; 4 $1,278; 5 $1,521; 6 $1,827; 7 $2,019; 8 $2,300; +$281. Alaska (Urban): 1 $385; 2 $707; 3 $1,015; 4 $1,285; 5 $1,529; 6 $1,838; 7 $2,031; 8 $2,314; +$282. Alaska (Rural 1): 1 $491; 2 $901; 3 $1,295; 4 $1,639; 5 $1,950; 6 $2,344; 7 $2,590; 8 $2,950; +$360. Alaska (Rural 2): 1 $598; 2 $1,097; 3 $1,576; 4 $1,995; 5 $2,374; 6 $2,853; 7 $3,152; 8 $3,591; +$438. Hawaii: 1 $506; 2 $929; 3 $1,334; 4 $1,689; 5 $2,010; 6 $2,415; 7 $2,668; 8 $3,040; +$371. MINIMUM monthly allotment for eligible households of 1–2 people: $24 in the 48 states and D.C.; $35 Guam; $31 U.S. Virgin Islands; $31 Alaska Urban; $39 Alaska Rural 1; $48 Alaska Rural 2; $41 Hawaii. The actual benefit is the maximum allotment for the household size minus 30 percent of the household's net income (7 CFR 273.10(e)); the maximum is what a household with no net income receives.",
+      "source_url": "https://web.archive.org/web/20260413163948/https://www.usda.gov/sites/default/files/guidance-documents/fns.snap-cola-fy26memo.pdf"
+    },
+    {
+      "terms": [
+        "standard deduction",
+        "standard deductions",
+        "shelter cap",
+        "shelter deduction cap",
+        "excess shelter deduction",
+        "maximum shelter deduction",
+        "homeless shelter deduction",
+        "deduction amounts",
+        "deduction amount"
+      ],
+      "citation": "USDA SNAP FY 2026 COLA Memo — Deductions (Oct. 1, 2025 – Sept. 30, 2026)",
+      "heading": "SNAP standard deductions, excess-shelter caps, and homeless shelter deduction, FY 2026, by area",
+      "text": "SNAP deduction amounts effective October 1, 2025 through September 30, 2026, from USDA's FY 2026 Cost-of-Living Adjustments memorandum. STANDARD DEDUCTION by household size — 48 states and D.C.: sizes 1–2 $209; 3 $209; 4 $223; 5 $261; 6+ $299. Alaska: sizes 1–4 $358; 5 $358; 6+ $374. Hawaii: sizes 1–4 $295; 5 $300; 6+ $344. Guam: sizes 1–3 $420; 4 $445; 5 $522; 6+ $598. U.S. Virgin Islands: sizes 1–2 $184; 3 $185; 4 $223; 5 $261; 6+ $299. MAXIMUM EXCESS SHELTER DEDUCTION (the shelter cap, which does not apply to households with an elderly or disabled member): $744 in the 48 states and D.C.; $1,189 Alaska; $1,003 Hawaii; $873 Guam; $586 U.S. Virgin Islands. MAXIMUM HOMELESS SHELTER DEDUCTION: $198.99 in every area. The earned income deduction remains 20 percent of earned income, and the excess shelter deduction covers shelter costs above half of income after other deductions (7 CFR 273.9(d)).",
+      "source_url": "https://web.archive.org/web/20260413163948/https://www.usda.gov/sites/default/files/guidance-documents/fns.snap-cola-fy26memo.pdf"
+    }
+  ]
+}

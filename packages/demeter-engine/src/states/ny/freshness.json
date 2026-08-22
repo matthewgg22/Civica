@@ -1,0 +1,26 @@
+{
+  "_provenance": {
+    "note": "New York dated facts. Dollar values ride the federal October COLA via the annual standards GIS (currently GIS 25DC059). The ABAWD fixed window and the reservation waivers are hard cliffs. OTDA is moving fast post-OBBBA (waiver litigation, non-citizen rules) — pin every dollar/status to its GIS/ADM.",
+    "extracted": "2026-08-07"
+  },
+  "entries": [
+    {
+      "key": "ny-ffy26-dollar-values",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "New York FFY 2026 dollar values (income tiers 200%/150%/130%, SUAs $1,062/$988/$877 etc., deductions, $24 minimum — GIS 25DC059, eff. 10/1/2025) are due for the October 2026 COLA — find the successor standards GIS before quoting any NY dollar amount."
+    },
+    {
+      "key": "ny-abawd-window-reset",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "New York's fixed statewide ABAWD 36-month window (Oct 1, 2023 – Sep 30, 2026) expires — a NEW window begins October 1, 2026 and every ABAWD's countable months reset (25-ADM-03). Do not describe the old window after that date."
+    },
+    {
+      "key": "ny-reservation-waivers",
+      "kind": "expires",
+      "date": "2027-02-28",
+      "warning": "The only NY ABAWD waivers (Tuscarora Nation Reservation and Poospatuck Reservation, GIS 26DC012) run through February 28, 2027 — re-verify waiver status against the newest GIS before advising anyone in those areas."
+    }
+  ]
+}

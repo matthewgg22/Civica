@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "Kentucky dated facts. Because Kentucky has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed access/staleness trap this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "ky-abawd-5-county-waiver-verify-current",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "Kentucky's own consumer SNAP page (chfs.ky.gov) states a narrow ABAWD waiver took effect December 1, 2025 for five counties — Elliott, Lewis, Magoffin, Martin, and Wolfe — immediately after all 120 counties became subject to work requirements on November 1, 2025. This pack independently found a THIRD-PARTY aggregator, ABAWDMap.us (dated 'last verified June 16, 2026'), states 'No waiver — rule applies' statewide and does NOT reflect this 5-county exemption — a disclosed, unresolved conflict this pack treats CHFS's own more specific and more recently stated primary source as authoritative for. County-level ABAWD waivers are among the most volatile SNAP policy facts that exist and can lapse, expand, or be replaced on short notice, especially tied to unemployment-rate redeterminations. Before telling a Kentucky applicant their county is or is not currently ABAWD-waived, re-check chfs.ky.gov's current SNAP page directly."
+    },
+    {
+      "key": "ky-hot-foods-no-active-waiver-recheck",
+      "kind": "expires",
+      "date": "2026-09-01",
+      "warning": "As of this pack's fetch date (August 12, 2026), USDA FNA's Kentucky Disaster Nutrition Assistance page states there are no active disaster response efforts in Kentucky, and specifically no active SNAP hot-foods purchase waiver — the two most recent Kentucky SNAP disaster waivers (January and June 2026 storms) were narrower 10-day-reporting waivers for food lost to power outages, both since expired. Kentucky's disaster/storm exposure means this status can change quickly. Before telling a Kentucky applicant they can buy hot/prepared foods with EBT outside a standing Restaurant Meals Program (which Kentucky does not operate), check fns.usda.gov/disaster/kentucky for the current status."
+    },
+    {
+      "key": "ky-consumer-page-resource-limit-stale",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Kentucky's own consumer-facing SNAP page (chfs.ky.gov/agencies/dcbs/dfs/nab/Pages/snap.aspx) currently states SNAP resource limits of $2,250 (standard) and $3,500 (household with a member 60+) — figures that do NOT match the current policy manual's own figures ($3,000 standard / $4,500, per MS 5000, revised October 1, 2024, and internally consistent with the current FFY2026 income-eligibility table). This pack treats the policy manual as authoritative and discloses the consumer page's apparent staleness explicitly, rather than silently preferring one source. Before restating Kentucky's resource limits with full confidence, re-check whether chfs.ky.gov's consumer page has since been corrected to match the manual — if it has, that removes this discrepancy; if it has not, the consumer page itself remains a live source of public confusion worth flagging to the reader."
+    },
+    {
+      "key": "ky-manual-stale-drug-felony-artifacts",
+      "kind": "expires",
+      "date": "2027-02-01",
+      "warning": "Kentucky's current Division of Family Support Operation Manual, Volume 2, retains two internal artifacts referencing drug-felony language that predate or narrowly precede KRS 205.2005's June 29, 2021 full opt-out and were not scrubbed afterward: MS 5040 ('Resources - Excluded,' revised August 1, 2010) mentions a 'drug-related felony disqualification,' and MS 7070 ('Household Failure to Cooperate,' revised April 1, 2021) lists 'Drug felons' among household-member cooperation categories. Kentucky's OWN current (2025-2026-dated) disqualification lists (MS 3455, MS 5520) do not carry a drug-felony disqualification category at all, consistent with the statute. This pack disclosed rather than concealed the internal inconsistency; before restating Kentucky's drug-felony SNAP policy with full confidence, re-check whether these stale MS sections have since been revised to remove the outdated language."
+    },
+    {
+      "key": "ky-volume-numbering-verify-unchanged",
+      "kind": "expires",
+      "date": "2027-08-01",
+      "warning": "This pack independently verified that Kentucky's SNAP policy manual is Division of Family Support Operation Manual VOLUME 2 (not 'Volume III,' which is Kentucky's KTAP/TANF manual) and that ABAWD/work-requirement policy lives in the companion Volume IIA. This is a structural fact about how Kentucky organizes its own manual series, not itself a COLA-cycle figure, but manual reorganizations do happen (see this roster's Louisiana pack, whose manual chapter naming was independently mid-rename at the same time this pack was authored). Before citing a Kentucky SNAP manual volume number, re-confirm the current volume structure at chfs.ky.gov/agencies/dcbs/dfs/Documents/."
+    },
+    {
+      "key": "ky-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, SUA $388, BUA $331, Telephone Standard $64, capped excess shelter $744, Standard Medical Deduction $137, Homeless Shelter Deduction $199, resource limits $3,000/$4,500, and the MS 5200 income-eligibility table) are drawn from Kentucky's own manual (MS 5400/5490/5498/5200, effective October 1, 2025; MS 5000, effective October 1, 2024) and match the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf for updated MS 5200/5400/5490/5498 sections after that date before restating any Kentucky-specific dollar figure with full confidence."
+    }
+  ]
+}

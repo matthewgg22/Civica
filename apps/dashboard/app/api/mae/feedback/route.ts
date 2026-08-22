@@ -9,7 +9,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { createServerClientFromCookies, createServiceClient } from "../../../../lib/supabase";
 import { isStaff } from "../../../../lib/roleRouting";
-import { redactPii } from "../../../../lib/mae/pii";
+import { redactPii } from "@civica/demeter-engine";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

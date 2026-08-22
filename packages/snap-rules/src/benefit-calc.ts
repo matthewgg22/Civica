@@ -9,7 +9,10 @@
 //
 // Math summary (the entire benefit calc, per 7 CFR 273.10):
 //   EID        = 0.20 * earned                                  [273.9(d)(2)]
-//   SD         = standardDeductionFor(size, asOf)               [273.9(d)(1)]
+//   SD         = standardDeductionFor(size, asOf, state) — AK/HI/GU each
+//                have their own higher table, VI's own is lower at sizes
+//                1-3 (#866), 48-contiguous for every other state
+//                                                              [273.9(d)(1)]
 //   medical    = max(0, medical_unreimbursed - $35) if E/D      [273.9(d)(3)]
 //   other_ded  = dependent_care + medical + child_support_paid  [273.9(d)(4),(5)]
 //   adj_income = max(0, gross - EID - SD - other_ded)
@@ -19,9 +22,13 @@
 //     shelter_amt = rent + state_sua + internet                  [273.9(d)(6)]
 //     excess_shelter = max(0, shelter_amt - 0.5 * adj_income)
 //     if not E/D: excess_shelter = min(excess_shelter, shelter_cap)
+//       — shelter_cap = shelterCapFor(asOf, state): AK/HI/GU higher, VI
+//         lower than the federal $744 default (#866)
 //   net        = max(0, adj_income - excess_shelter)
-//   max_allot  = maxAllotmentFor(size, asOf)
-//   benefit    = round(max_allot - 0.30 * net)            [273.10(e)(2)(ii)(A)]
+//   max_allot  = maxAllotmentFor(size, asOf, state, county_fips) — AK
+//                zone-specific (#814), 48-contiguous for every other state
+//   benefit    = max_allot - ceil(0.30 * net)              [273.10(e)(2)(ii)(A)]
+//                (30% figure rounds UP to the next dollar, not half-up; #876)
 //   if size ≤ 2 and 0 < benefit < min_benefit:
 //     benefit = min_benefit                                [273.10(e)(2)(ii)(C)]
 //
@@ -54,6 +61,7 @@ import {
   medicalFloorFor,
 } from "./constants/federal-tables";
 import { statePolicyFor } from "./constants/states";
+import { akUtilityRegionFor } from "./constants/ak-utility-regions";
 
 export interface BenefitCalcDetail {
   gross_monthly_income: number;
@@ -81,7 +89,7 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
   const incAgg = aggregateIncomeForCalc(facts, asOf);
   const size = eligibleHouseholdSize(facts, asOf);
   const isED = hasElderlyOrDisabled(facts);
-  const policy = statePolicyFor(state);
+  const policy = statePolicyFor(state, asOf);
 
   const gross = new Decimal(incAgg.gross_total);
   const earned = new Decimal(incAgg.earned_total);
@@ -90,8 +98,11 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
   const eidRate = earnedIncomeDeductionRateFor(asOf);
   const eid = earned.mul(eidRate).roundDollar();
 
-  // Standard deduction by HH size.
-  const sd = standardDeductionFor(size, asOf);
+  // Standard deduction by HH size. #866: AK/HI/GU each have their own,
+  // higher, statewide table (understating benefits pre-fix); VI's own
+  // table is lower at sizes 1-3 (overstating benefits pre-fix). No-op for
+  // every other state.
+  const sd = standardDeductionFor(size, asOf, state);
 
   // Dependent care (no floor, no cap in modern rules).
   const depCare = dec(facts.deductions.dependent_care ?? 0);
@@ -128,8 +139,17 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
         throw new Error(`SUA not authored for state ${state} — composer should not call computeBenefit here`);
       }
       suaVal = ZERO;
+    } else if (facts.shelter.sua_tier === "none") {
+      suaVal = ZERO;
     } else {
-      suaVal = policy.sua_by_tier[facts.shelter.sua_tier];
+      // Alaska real-region precision (#631): when the household's actual
+      // county is known AND maps to an authored region, that region's rate
+      // is the real answer — states.ts's AK.sua_by_tier (the Central/
+      // Anchorage region) is a state-level FALLBACK for when county_fips is
+      // absent, not the answer itself, the same relationship #614 already
+      // established for CA's ABAWD county waivers.
+      const akRegion = state === "AK" ? akUtilityRegionFor(facts.county_fips) : undefined;
+      suaVal = akRegion ? akRegion[facts.shelter.sua_tier] : policy.sua_by_tier[facts.shelter.sua_tier];
     }
     stateSuaVal = suaVal.toNumber();
     // OBBBA §10104: internet excluded from shelter deduction effective 2025-10-01
@@ -151,7 +171,10 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
     } else if (isED) {
       excessShelter = rawExcess;
     } else {
-      const cap = shelterCapFor(asOf);
+      // #866: AK/HI/GU have their own, higher shelter cap (understating
+      // benefits pre-fix); VI's own cap is lower (overstating benefits
+      // pre-fix). No-op for every other state.
+      const cap = shelterCapFor(asOf, state);
       if (rawExcess.gt(cap)) {
         excessShelter = cap;
         shelterCapped = true;
@@ -165,9 +188,18 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
   let net = adjIncome.sub(excessShelter);
   if (net.lt(ZERO)) net = ZERO;
 
-  // Benefit calc.
-  const thirtyPctNet = net.mul(0.30).roundDollar();
-  const maxAllot = maxAllotmentFor(size, asOf);
+  // Benefit calc. 7 CFR 273.10(e)(2)(ii)(A) requires rounding the 30%
+  // figure UP to the nearest higher dollar (or, equivalently, rounding the
+  // final allotment DOWN — see #876 for the equivalence proof). Round-half-up
+  // (roundDollar) only coincidentally matches for fractional cents ≥ .50;
+  // for .01-.49 it rounds down, silently overstating the benefit by $1.
+  const thirtyPctNet = net.mul(0.30).ceilDollar();
+  // #814: AK's real max allotment is zone-specific (Urban/Rural I/Rural
+  // II), meaningfully higher than the 48-contiguous table. #858: VI's real
+  // max allotment is also elevated (a single flat table, no zones).
+  // Passing `state`/`facts.county_fips` here is a no-op for every other
+  // state — maxAllotmentFor only branches on state === "AK" or "VI".
+  const maxAllot = maxAllotmentFor(size, asOf, state, facts.county_fips);
   let benefit = maxAllot.sub(thirtyPctNet);
   if (benefit.lt(ZERO)) benefit = ZERO;
   // Federal min-benefit floor for HH1-2 eligible households.
@@ -176,7 +208,11 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
   // for BBCE-conferred high-net cases (its gross test denies first).
   // BBCE-conferred HHs can land at benefit=0 by math and still be
   // eligible; the floor still applies.
-  const minBenefit = minimumBenefitFor(asOf);
+  // #814: AK's own minimum-benefit floor is also zone-specific and higher
+  // than the $24 FY26 federal default. #858: VI's own minimum-benefit
+  // floor is elevated too (single flat figure, no zones) — same
+  // no-op-for-other-states shape.
+  const minBenefit = minimumBenefitFor(asOf, state, facts.county_fips);
   if (size <= 2 && benefit.gte(ZERO) && benefit.lt(minBenefit)) {
     benefit = minBenefit;
   }

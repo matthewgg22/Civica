@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { optionsFor, SUMMARY_QUESTIONS } from "../../lib/cbo/field-options";
 import {
   PIPELINE_STEPS,
   PHASES,
@@ -149,31 +150,8 @@ function StepList({ completedSteps }: { completedSteps: number }) {
 // instead of free text. Money / number / name / date fields are omitted and fall
 // through to a text input. The current value is always included in the list so an
 // off-list value (e.g. a flagged "Provided — does not match SSA records") renders.
-const FIELD_OPTIONS: Record<string, string[]> = {
-  State: ["California"],
-  "Preferred language": ["English", "Spanish", "Chinese", "Vietnamese", "Tagalog", "Korean", "Other"],
-  "Contact phone on file": ["Yes", "No"],
-  "Children under 14?": ["Yes", "No"],
-  "Anyone 60+ or disabled?": ["Yes", "No"],
-  "Everyone applying is a citizen or eligible noncitizen?": ["Yes", "No"],
-  "Employment status": ["Employed", "Self-employed", "Not employed"],
-  "Income type": ["Wages / salary", "Self-employment", "Fixed income", "No income"],
-  "Pay frequency": ["Weekly", "Every two weeks", "Twice monthly", "Monthly"],
-  "Out-of-pocket medical (60+/disabled)": ["Not applicable", "$0.00"],
-  "Countable assets (cash + bank)": ["Under $2,750.00", "$2,750.00 or more"],
-  "Photo ID": ["On hand", "Provided", "Requested", "Not yet uploaded"],
-  "Proof of income": ["On hand", "Provided", "Requested", "Not provided"],
-  "Proof of residence": ["On hand", "Provided", "Requested", "Not provided"],
-  "Social Security Number": ["Provided", "Not provided"],
-  "Expedited-service screen": ["Completed", "Not started"],
-  "Signed under penalty of perjury": ["Yes", "No"],
-};
-
-function optionsFor(question: string, current: string): string[] | null {
-  const opts = FIELD_OPTIONS[question];
-  if (!opts) return null;
-  return opts.includes(current) ? opts : [current, ...opts];
-}
+// FIELD_OPTIONS + optionsFor moved to lib/cbo/field-options.ts so the
+// full-application page editor can share the exact same option sets.
 
 // Which application response fields each document corroborates. Drives the
 // per-document "verifies …" disclosure + the green "supported" cue in the
@@ -265,15 +243,29 @@ function needToSection(text: string): string {
   if (/citizen|immigration|age|household|child|member/.test(t)) return "Your household";
   return "About you";
 }
+// Custom event the responses list listens for, so a "jump to section" reveals
+// the full (collapsed-by-default) responses before scrolling to the target.
+const REVEAL_RESPONSES_EVENT = "cbo:reveal-responses";
+
 function scrollToCaseSection(caseId: string, section: string): void {
   if (typeof document === "undefined") return;
+  // The responses default to a collapsed summary, so the target card may not be
+  // mounted yet. Ask its AnswerList to expand, then scroll once it has rendered.
+  window.dispatchEvent(new CustomEvent(REVEAL_RESPONSES_EVENT, { detail: { caseId } }));
+  const highlight = (el: HTMLElement) => {
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.style.outline = "2px solid var(--color-pine)";
+    el.style.outlineOffset = "2px";
+    el.style.transition = "outline-color 250ms";
+    window.setTimeout(() => { el.style.outline = "2px solid transparent"; }, 1400);
+  };
   const el = document.getElementById(sectionDomId(caseId, section));
-  if (!el) return;
-  el.scrollIntoView({ behavior: "smooth", block: "center" });
-  el.style.outline = "2px solid var(--color-pine)";
-  el.style.outlineOffset = "2px";
-  el.style.transition = "outline-color 250ms";
-  window.setTimeout(() => { el.style.outline = "2px solid transparent"; }, 1400);
+  if (el) { highlight(el); return; }
+  // Not in the DOM yet — wait a tick for the reveal to commit, then retry.
+  window.setTimeout(() => {
+    const revealed = document.getElementById(sectionDomId(caseId, section));
+    if (revealed) highlight(revealed);
+  }, 80);
 }
 
 // ── Case actions (ephemeral demo) ─────────────────────────────────────────────
@@ -476,112 +468,6 @@ function caseContextSummary(app: CaseRecord): { caseContext: string; caseLabel: 
   return { caseContext: L.join("\n"), caseLabel: `${app.caseId} · ${app.name}` };
 }
 
-// Open ONE case as a clean, print-friendly page in a new tab — the full
-// application + engine summary + verification + activity, formatted as a
-// document with a "Print / Save as PDF" button (no auto-print). Client-side
-// window.write so it works on the synthetic preview with no real packet route.
-function openFullApplication(app: CaseRecord): void {
-  const w = window.open("", "_blank", "width=820,height=1000");
-  if (!w) {
-    alert("Couldn't open the application — allow pop-ups for this site, then try again.");
-    return;
-  }
-  const esc = (s: unknown) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-  // Group answers by section (consecutive), like the in-app table.
-  const sections: { section: string; items: SurveyAnswer[] }[] = [];
-  for (const a of app.answers) {
-    const last = sections[sections.length - 1];
-    if (last && last.section === a.section) last.items.push(a);
-    else sections.push({ section: a.section, items: [a] });
-  }
-  const responsesHtml = sections
-    .map(
-      (g) => `<h2>${esc(g.section)}</h2><table class="kv"><tbody>${g.items
-        .map(
-          (a) =>
-            `<tr><th>${esc(a.question)}</th><td class="${a.flagged ? "flag" : ""}">${esc(a.answer)}${a.flagged ? " &#9873;" : ""}</td></tr>`,
-        )
-        .join("")}</tbody></table>`,
-    )
-    .join("");
-
-  const gatesHtml = EVALUATION_GATES.map(
-    (gt, i) => `<li><span class="n">${i + 1}</span> ${esc(gt.label)} <span class="cite">${esc(gt.citation)}</span></li>`,
-  ).join("");
-
-  const nextSteps = app.recommendations.length
-    ? app.recommendations.slice(0, 5).map((r) => `<li>${esc(r.action)}</li>`).join("")
-    : app.verificationNeeds.slice(0, 6).map((v) => `<li>Confirm ${esc(v.charAt(0).toLowerCase() + v.slice(1))}</li>`).join("");
-
-  const checksHtml = buildVerification(app)
-    .map((c) => `<li>${c.ok ? "&#10003;" : "&#9888;"} <b>${esc(c.label)}</b> — ${esc(c.note)}${c.ok ? "" : " (needs check)"}</li>`)
-    .join("");
-
-  const activityHtml = app.activity
-    .map(
-      (e, i) =>
-        `<tr><td>${i + 1}</td><td class="ts">${esc(e.ts)}</td><td>${esc(e.actor)}</td><td>${esc(e.action)}</td></tr>`,
-    )
-    .join("");
-
-  const benefit = app.estimatedBenefitUsd != null ? `approx. ~${formatUsd(app.estimatedBenefitUsd)}/mo` : "no estimate";
-  const mathLine = app.deduction ? `<p class="math">${esc(deductionOneLine(app.deduction))}</p>` : "";
-
-  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(app.caseId)} — ${esc(app.name)}</title>
-<style>
-  * { box-sizing: border-box; }
-  body { font: 13px -apple-system, system-ui, sans-serif; color: #15181C; margin: 40px; max-width: 720px; }
-  h1 { font-size: 18px; margin: 0 0 2px; }
-  .meta { font-size: 12px; color: #565E68; margin: 0 0 6px; }
-  .pill { display:inline-block; font:600 10px sans-serif; text-transform:uppercase; letter-spacing:.06em; color:#B5511E; border:1px solid #B5511E; border-radius:2px; padding:1px 6px; }
-  h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #565E68; margin: 20px 0 6px; border-bottom: 1px solid rgba(15,23,42,.14); padding-bottom: 4px; }
-  table.kv { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
-  table.kv th { text-align: left; font-weight: 400; color: #3C424B; width: 42%; padding: 4px 8px; vertical-align: top; border-bottom: 1px solid rgba(15,23,42,.08); }
-  table.kv td { padding: 4px 8px; font-weight: 500; vertical-align: top; border-bottom: 1px solid rgba(15,23,42,.08); }
-  td.flag { color: #9C3A24; font-weight: 600; }
-  .est { font-size: 16px; font-weight: 700; }
-  .math { font-size: 12px; color: #3C424B; margin: 4px 0 0; }
-  ol.gates { list-style: none; padding: 0; margin: 4px 0; font-size: 12px; }
-  ol.gates li { padding: 2px 0; } ol.gates .n { color: #565E68; display:inline-block; width: 16px; } ol.gates .cite { color: #565E68; font-size: 11px; }
-  ul.plain { margin: 4px 0; padding-left: 18px; font-size: 12px; } ul.plain li { padding: 1px 0; }
-  ul.checks { list-style: none; padding: 0; margin: 4px 0; font-size: 12px; } ul.checks li { padding: 2px 0; }
-  table.log { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 4px; }
-  table.log td { padding: 4px 8px; border-bottom: 1px solid rgba(15,23,42,.10); vertical-align: top; } table.log td.ts { white-space: nowrap; color: #565E68; }
-  .disc { font-size: 11px; color: #565E68; margin-top: 22px; line-height: 1.5; border-top: 1px solid rgba(15,23,42,.14); padding-top: 10px; }
-  .bar { display: flex; justify-content: flex-end; margin: 0 0 18px; }
-  .bar button { font: 600 12px -apple-system, system-ui, sans-serif; color: #fff; background: #2D5A45; border: 0; border-radius: 3px; padding: 7px 14px; cursor: pointer; }
-  @media print { body { margin: 0; } .bar { display: none; } @page { margin: 16mm; } }
-</style></head><body>
-  <div class="bar"><button onclick="window.print()">Print / Save as PDF</button></div>
-  <h1>${esc(app.name)} — ${esc(app.caseId)}</h1>
-  <p class="meta">${esc(app.county)} County, CA · ${esc(app.stage)} · assigned to ${esc(app.assignedTo)}${app.expedited ? ' · <span class="pill">Expedited</span>' : ""}</p>
-  <p class="meta">Generated ${esc(new Date().toISOString().slice(0, 10))} · Civica CBO preview</p>
-
-  <h2>Application responses</h2>
-  ${responsesHtml}
-
-  <h2>Civica engine — benefit estimate</h2>
-  <p class="est">${esc(benefit)}</p>
-  ${mathLine}
-
-  <h2>Eligibility gates (provisional · pending ${app.verificationNeeds.length} item(s))</h2>
-  <ol class="gates">${gatesHtml}</ol>
-
-  <h2>Recommended next steps</h2>
-  <ul class="plain">${nextSteps || "<li>No outstanding actions.</li>"}</ul>
-
-  <h2>Automated verification</h2>
-  <ul class="checks">${checksHtml}</ul>
-
-  <h2>Activity log (${app.activity.length})</h2>
-  <table class="log"><tbody>${activityHtml}</tbody></table>
-
-  <p class="disc">Estimate + recommendations are live engine output on these answers; eligibility is provisional until the verification items are confirmed — an estimate, not a determination. Verify against current CalFresh / CDSS rules and the county system of record.</p>
-<\/body><\/html>`);
-  w.document.close();
-}
-
 // Assemble the deficiency-notice payload from a case (the same gaps the
 // on-screen verification cross-check shows), stamping today + the ~10-day cure.
 function deficiencyDocFor(app: CaseRecord) {
@@ -636,6 +522,16 @@ function AnswerList({
   onSave?: (changes: { question: string; from: string; to: string }[]) => void;
 }) {
   const [editing, setEditing] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+  // A "jump to section" elsewhere in the case fires REVEAL_RESPONSES_EVENT for
+  // this caseId — reveal the full responses so the target section is mounted.
+  useEffect(() => {
+    const onReveal = (e: Event) => {
+      if ((e as CustomEvent<{ caseId: string }>).detail?.caseId === caseId) setShowAll(true);
+    };
+    window.addEventListener(REVEAL_RESPONSES_EVENT, onReveal);
+    return () => window.removeEventListener(REVEAL_RESPONSES_EVENT, onReveal);
+  }, [caseId]);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [viewDoc, setViewDoc] = useState<string | null>(null);
   const [openDocs, setOpenDocs] = useState<Set<string>>(new Set());
@@ -680,6 +576,12 @@ function AnswerList({
     else sections.push({ section: a.section, items: [a] });
   }
 
+  // Default (collapsed) view shows only the triage-relevant fields; "Show all" or
+  // edit mode reveals the full per-section grid.
+  const byQuestion = new Map(answers.map((a) => [a.question, a]));
+  const summary = SUMMARY_QUESTIONS.map((q) => byQuestion.get(q)).filter((a): a is SurveyAnswer => Boolean(a));
+  const full = editing || showAll;
+
   return (
     <div>
       <div className="flex items-baseline justify-between gap-3 mb-3">
@@ -703,7 +605,15 @@ function AnswerList({
           </div>
         ) : (
           <div className="flex items-center gap-3 shrink-0">
-            <span className="text-[11px] tabular-nums text-graphite">{answers.length} answers</span>
+            <button
+              type="button"
+              onClick={() => setShowAll((v) => !v)}
+              aria-expanded={showAll}
+              className="inline-flex items-center gap-1 text-[11px] font-medium text-pine hover:underline"
+            >
+              {showAll ? "Show key fields" : `Show all ${answers.length} responses`}
+              <span aria-hidden="true" className="text-graphite">{showAll ? "▴" : "▾"}</span>
+            </button>
             <button
               type="button"
               onClick={startEdit}
@@ -718,16 +628,45 @@ function AnswerList({
         )}
       </div>
 
-      {/* Each section is a ruled mini-table: a tinted label column + a value
-          column, horizontal rule per row + vertical rule between columns — a
-          spreadsheet grid so the eye tracks rows/columns without floating.
-          Laid out two-up to keep label adjacent to its value. */}
-      <div className="grid md:grid-cols-2 gap-3 items-start">
+      {/* Collapsed default — only the triage-relevant fields, one tidy table. */}
+      {!full && (
+        <div className="border border-hairline rounded-[2px] overflow-hidden bg-surface">
+          <table className="w-full border-collapse text-[12px]">
+            <tbody>
+              {summary.map((a) => (
+                <tr key={a.question} className="border-b border-hairline last:border-b-0">
+                  <th
+                    scope="row"
+                    className="w-[42%] align-top text-left font-normal text-graphite leading-snug px-3 py-1.5 border-r border-hairline"
+                  >
+                    {a.question}
+                  </th>
+                  <td className="align-top px-3 py-1.5">
+                    <span className={`font-medium leading-snug break-words ${a.flagged ? "text-brick" : "text-ink"}`}>
+                      {current(a)}
+                      {a.flagged && <span className="ml-1 text-[11px]" aria-label="flagged">⚑</span>}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="px-3 py-1.5 text-[11px] text-graphite border-t border-hairline">
+            Showing {summary.length} key fields of {answers.length}. Use “Show all” above or open the full application for the rest.
+          </p>
+        </div>
+      )}
+
+      {/* Full per-section grid. Masonry columns (not a row grid) so a short card
+          like Residence or Resources doesn't leave a tall gap beside a long one.
+          Each section is a ruled mini-table: label column + value column. */}
+      {full && (
+      <div className="gap-3 md:columns-2">
         {sections.map((group) => (
           <div
             key={group.section}
             id={sectionDomId(caseId, group.section)}
-            className="border border-hairline rounded-[2px] overflow-hidden bg-surface"
+            className="mb-3 break-inside-avoid border border-hairline rounded-[2px] overflow-hidden bg-surface"
             style={{ outline: "2px solid transparent", outlineOffset: 2 }}
           >
             <div className="px-3 py-2 border-b border-hairline">
@@ -844,6 +783,7 @@ function AnswerList({
           </div>
         ))}
       </div>
+      )}
 
       {viewDoc && (
         <div
@@ -1480,15 +1420,13 @@ function CaseRow({
               >
                 Activity log ({app.activity.length})
               </button>
-              <button
-                type="button"
-                onClick={() => openFullApplication(app)}
+              <Link
+                href={`/cbo-preview/application/${app.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-[12px] font-semibold text-pine hover:underline"
               >
                 Open full application →
-              </button>
-              <Link href={`/cbo-preview/application/${app.id}`} className="text-[12px] font-semibold text-graphite hover:text-ink hover:underline">
-                Printable draft →
               </Link>
             </div>
           </div>

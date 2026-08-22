@@ -61,6 +61,24 @@ class FederalSNAPRules:
     def rules_version(self) -> str:
         return f"federal-{self.effective_date.isoformat()}"
 
+    @property
+    def state_code(self) -> str | None:
+        """Which state's ELECTED policy options this rules engine instance
+        represents — None for the bare federal baseline. State subclasses
+        (CaliforniaSNAPRules, MassachusettsSNAPRules) override this.
+
+        #643: state-option lookups (standard_medical_deduction, etc.) must
+        key off THIS — the rules engine's own identity — not
+        `household.state`, which is a data fact about the household being
+        evaluated and says nothing about which rules engine is doing the
+        evaluating. A household can carry state="MA" while still being
+        run through the bare federal engine (e.g. for a federal-baseline
+        comparison); that shouldn't pull in MA's elected $155 standard
+        medical deduction, which only applies when MassachusettsSNAPRules
+        itself is the one determining eligibility.
+        """
+        return None
+
     def determine_eligibility(self, household: Household) -> EligibilityResult:
         # Pre-transforms — each identity when its fields are unset, so ordinary
         # determinations are byte-identical: §20 minor-student earnings exclusion;
@@ -207,7 +225,10 @@ class FederalSNAPRules:
             table.monthly_for_household_size(household.household_size)
             * params_for(self.effective_date).gross_income_ratio
         )
-        actual = _round_dollar(household.income.gross_monthly_total)
+        # #556: forward-looking gross — a household whose wages just ended
+        # is tested against $0 income for THIS gate, not their now-stale
+        # former salary. Matches _is_expedited_eligible's effective_gross.
+        actual = _round_dollar(household.income.forward_gross_monthly_total)
         return TestOutcome(
             test_name="gross_income_130pct_fpl",
             passes=actual <= threshold,
@@ -251,8 +272,12 @@ class FederalSNAPRules:
     # -------------------------------------------------------------------
 
     def _compute_net_income(self, household: Household) -> BenefitCalculationDetail:
-        gross = household.income.gross_monthly_total
-        earned = household.income.earned_monthly_total
+        # #556: forward-looking totals — a recently laid-off worker's
+        # benefit is computed on their CURRENT ($0) wages, not their
+        # former salary. is_ongoing defaults True, so households that
+        # don't set the flag compute identically to before this fix.
+        gross = household.income.forward_gross_monthly_total
+        earned = household.income.forward_earned_monthly_total
 
         p = params_for(self.effective_date)
         earned_deduction = _round_dollar(earned * p.earned_income_deduction_rate)
@@ -271,7 +296,11 @@ class FederalSNAPRules:
                 # Standard medical deduction (state option): take the flat standard, or the
                 # itemized excess-over-$35 when that is higher. Federal/no-standard states
                 # keep the itemized excess only — so those determinations are unchanged.
-                standard = state_params_for(household.state).standard_medical_deduction
+                # #643: keyed on self.state_code (which RULES ENGINE is running),
+                # not household.state (a fact about the household) — a household
+                # can carry state="MA" while still being evaluated by the bare
+                # federal engine, which must not pull in MA's elected standard.
+                standard = state_params_for(self.state_code).standard_medical_deduction
                 medical = max(standard, itemized) if standard is not None else itemized
 
         # Excess shelter: shelter costs above 50% of (gross - earned_deduction
@@ -442,6 +471,10 @@ class FederalSNAPRules:
                 can_be_postponed_for_expedited=False,
             ),
         ]
+        # Deliberately NOT forward_earned_monthly_total (#556): even a
+        # terminated earned source still needs its most-recent paystub
+        # verified/documented (proof the income existed before it ended),
+        # so this stays on the raw (unfiltered) total on purpose.
         if household.income.earned_monthly_total > 0:
             verifications.append(
                 RequiredVerification(
@@ -490,6 +523,11 @@ class FederalSNAPRules:
             factors.append("household_contains_elderly_or_disabled_member")
         if benefit.excess_shelter_deduction > 0:
             factors.append("excess_shelter_deduction_applied")
-        if household.income.earned_monthly_total > 0:
+        # #556: read the deduction the calc ACTUALLY applied, not the raw
+        # (possibly-terminated, no-longer-contributing) earned total —
+        # otherwise a household whose only earned source ended would still
+        # get "earned_income_deduction_applied" listed despite the $0
+        # forward-looking deduction _compute_net_income now uses above.
+        if benefit.earned_income_deduction > 0:
             factors.append("earned_income_deduction_applied")
         return factors

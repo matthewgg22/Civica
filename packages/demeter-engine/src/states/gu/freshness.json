@@ -1,0 +1,62 @@
+{
+  "_provenance": {
+    "note": "Guam dated facts. Because Guam has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a fact this pack found time-sensitive, unconfirmed against a primary Guam-authored source, or dependent on a USDA data point (the State Options Report) whose data reference period genuinely lags DPHSS's own live guidance.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "gu-abawd-waiver-vs-active-enforcement-conflict",
+      "kind": "expires",
+      "date": "2026-09-01",
+      "warning": "USDA's SNAP State Options Report, 17th Edition (data reference period October 2024) shows Guam holding a 'Statewide ABAWD time limit waiver' as of that reference period. Guam DPHSS's own later, live 'SNAP FAQ_001' press release (dated January 23, 2026) describes ACTIVE ABAWD work-requirement enforcement beginning January 1, 2026 with a real benefit-termination consequence for non-compliance after a 3-month grace period. This pack treats the later, DPHSS-authored FAQ as authoritative for CURRENT status and reads the State Options Report's waiver entry as likely superseded by the OBBBA-driven January 2026 rollout, but could not locate a Guam-specific document stating in so many words that the prior area waiver was formally ended. Re-verify directly with DPHSS's Bureau of Economic Security before treating either data point as settled, especially since USDA has not yet published an 18th-edition State Options Report with a more current data-reference period as of this pack's research."
+    },
+    {
+      "key": "gu-bbce-percentage-unresolved",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "USDA's own SNAP State Options Report confirms Guam has adopted Broad-Based Categorical Eligibility (BBCE) as a policy option, but this pack could NOT independently locate Guam's own specific BBCE gross-income percentage or the specific TANF/MOE-funded noncash benefit that confers it. Two secondary sources this pack found disagree with each other (one states 165% FPL, the other 200% FPL), neither independently verified against a Guam-specific primary text this pack could locate. Do not cite a specific Guam BBCE income percentage without locating and independently verifying a Guam-authored primary source first."
+    },
+    {
+      "key": "gu-drug-felony-modification-terms-unresolved",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "USDA's own SNAP State Options Report (17th Edition) lists Guam's Drug Felony Disqualification policy selection as 'Modified disqualification,' but this pack could not locate Guam's own enabling statute or Guam Code Annotated section defining the SPECIFIC terms of that modification (e.g., whether it is conditioned on sentence compliance, time-limited rather than permanent, etc.). A specific bill this pack attempted to fetch (Bill No. 20-37) returned a 404. Other web sources made mutually contradictory, unreliable claims about Guam's drug-felony policy that this pack does not rely on. Confirm the exact modification terms directly with DPHSS's Bureau of Economic Security before citing specifics beyond 'modified, not a full lifetime ban' in a high-stakes context."
+    },
+    {
+      "key": "gu-soda-candy-waiver-status-unconfirmed",
+      "kind": "expires",
+      "date": "2026-09-01",
+      "warning": "Secondary reporting (Marianas Business Journal) describes a Guam SNAP soda/candy purchase-restriction waiver as under review by the Office of the Governor, quoting DPHSS Director Theresa C. Arriola discussing it directly. This pack could NOT independently confirm from a DPHSS-authored primary document that Guam formally submitted this request to USDA-FNS or that USDA approved it, and a WebSearch cross-check of USDA-approved food-restriction-waiver jurisdictions as of this pack's research date did not include Guam among the approved list. Re-check USDA FNS's own current food-restriction-waiver list (fns.usda.gov or fna.usda.gov, snap/waivers/foodrestriction) directly before stating Guam has or has not received approval."
+    },
+    {
+      "key": "gu-restaurant-meals-program-bill-pending",
+      "kind": "not-yet-effective",
+      "date": "2026-08-12",
+      "warning": "Bill No. 78-38 (COR), the 'Meals for At-Risk Households Act of 2025' (proposed Guam Restaurant Meals Program), remains in SESSION status in the Guam Legislature with no Public Law number as of this pack's fetch. Re-check https://guamlegislature.gov/bills-page1/ directly for Bill 78-38's current status before restating this as settled, since the bill remains actively pending rather than dead."
+    },
+    {
+      "key": "gu-utility-sua-dollar-figure-not-located",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "USDA's SNAP State Options Report confirms Guam uses 'Mandatory SUAs' (a flat Standard Utility Allowance rather than itemized actual utility costs), and this pack independently confirmed Guam's own elevated Standard Deduction and Maximum Excess Shelter Deduction dollar figures directly from USDA's FY2026 COLA memo. But this pack could NOT independently locate Guam's own specific Heating/Cooling Standard Utility Allowance (HCSUA) dollar figure itself in any source it located. Do not cite a specific Guam SUA/HCSUA dollar amount without locating a source for it first."
+    },
+    {
+      "key": "gu-cost-share-secondary-source-only",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's figures on the OBBBA administrative-cost-share shift (50/50 to 75% territory/25% federal beginning FY2027, ~$5 million additional annual cost to the Government of Guam) come from secondary reporting (Marianas Business Journal, quoting DPHSS Director Theresa C. Arriola) and were not independently cross-checked against the underlying federal regulatory text (a Federal Register proposed/final rule on SNAP federal-state administrative cost-sharing). Verify against the Federal Register directly before citing the exact percentages or dollar figure with full confidence in a high-stakes context."
+    },
+    {
+      "key": "gu-ffy2026-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed income-eligibility, maximum-allotment, standard-deduction, and shelter-deduction dollar figures are drawn from USDA's FY2026 COLA memorandum, explicitly effective October 1, 2025 through September 30, 2026 (the FFY2026 cycle). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. USDA typically issues its next annual COLA memo in August; check for an FY2027 memo after that date before restating any Guam-specific income, allotment, or deduction figure with full confidence."
+    },
+    {
+      "key": "gu-state-options-report-edition-lag",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "This pack's certification-period, reporting-requirement, utility-treatment, and drug-felony-modification findings all rest on USDA's SNAP State Options Report, 17th Edition (published August 2025, data reference period October 2024) — the most current edition available at this pack's research date. An 18th edition with a more current data-reference period may supersede specific policy-option selections this pack cites; check https://www.fns.usda.gov/snap/waivers/state-options-report for a newer edition before treating any State-Options-Report-sourced figure as current beyond this window."
+    }
+  ]
+}

@@ -36,7 +36,7 @@ import {
 import { assetTest } from "./gates/asset-test";
 import { computeBenefit } from "./benefit-calc";
 import { Decimal } from "./decimal";
-import { statePolicyFor, UnknownStateError } from "./constants/states";
+import { statePolicyFor, UnknownStateError, NoStatePolicyForDateError } from "./constants/states";
 
 export type Verdict = "APPROVE" | "DENY";
 
@@ -79,11 +79,22 @@ export function composeVerdict(facts: Facts, state: string, asOf: Date): Verdict
   // ── State policy ─────────────────────────────────────────────────────
   let policy;
   try {
-    policy = statePolicyFor(state);
+    policy = statePolicyFor(state, asOf);
   } catch (err) {
     if (err instanceof UnknownStateError) {
       return {
         not_implemented_surfaces: ["state-policy-not-loaded"],
+        reason: err.message,
+      };
+    }
+    // Issue #806: same graceful SKIP as UnknownStateError above — a date
+    // this engine has no snapshot for is "I can't grade this," not a bug
+    // to throw on. Should not occur today (every state's placeholder range
+    // is 2020-2099) but will become reachable once a state gains a second,
+    // narrower-dated entry.
+    if (err instanceof NoStatePolicyForDateError) {
+      return {
+        not_implemented_surfaces: ["state-policy-not-loaded-for-date"],
         reason: err.message,
       };
     }
@@ -117,7 +128,8 @@ export function composeVerdict(facts: Facts, state: string, asOf: Date): Verdict
 
   // ── HH-level disqualifications (lottery / IPV / fleeing felon / drug) ─
   // Per 7 CFR 272.17, 273.16, 273.11(m,n). State-option drug-felony ban
-  // is honored via policy.drug_felony_ban.
+  // is honored via policy.drug_felony_ban (a 3-state classification since
+  // #805: "none" | "modified" | "full" | "unconfirmed" — only "full" gates).
   const disq = evaluateDisqualifications(facts, state, asOf);
   trace.disqualifications = disq;
   if (!disq.passes) {
@@ -145,7 +157,7 @@ export function composeVerdict(facts: Facts, state: string, asOf: Date): Verdict
   }
 
   // ── ABAWD work requirement (7 CFR 273.24, as amended by OBBBA §10102) ─
-  const abawd = evaluateAbawd(facts, asOf);
+  const abawd = evaluateAbawd(facts, asOf, state);
   trace.abawd = abawd;
   if (!abawd.passes) {
     return { verdict: "DENY", benefit: null, reason: abawd.reason, trace };
@@ -182,10 +194,23 @@ export function composeVerdict(facts: Facts, state: string, asOf: Date): Verdict
   const detail = computeBenefit(facts, state, asOf);
   trace.benefit_calc = detail;
 
-  // Net income test — skipped for cat-elig path AND BBCE-conferred HHs.
-  // Federal floor applies only to non-cat-elig, non-BBCE households.
-  if (!cat.skip_gross_test && !bbceConferred) {
-    const net = netIncomeTest(facts, new Decimal(detail.net_monthly_income), asOf);
+  // Net income test — skipped for cat-elig path AND (most) BBCE-conferred
+  // HHs. Federal floor applies to non-cat-elig, non-BBCE households.
+  //
+  // #830: a real minority of BBCE/ECE states (TN/CT/KY confirmed) do NOT
+  // waive the net test just because the household cleared the raised gross
+  // screen — their own manuals keep a net-income ceiling on top of it
+  // (e.g. KY MS 3175.B distinguishes plain CE, where "gross and net income
+  // limits do not apply," from ECE, which "must be under the net income
+  // eligibility standard"). `policy.bbce_net_ceiling_pct` (null/undefined
+  // for every other state) is how that minority opts back into the net
+  // test even when BBCE-conferred.
+  const enforceNetDespiteBbce = bbceConferred && policy.bbce_net_ceiling_pct != null;
+  if (!cat.skip_gross_test && (!bbceConferred || enforceNetDespiteBbce)) {
+    const netRatio = enforceNetDespiteBbce
+      ? new Decimal(policy.bbce_net_ceiling_pct!).div(100)
+      : undefined;
+    const net = netIncomeTest(facts, new Decimal(detail.net_monthly_income), asOf, state, netRatio);
     trace.net_income_test = net;
     if (!net.passes) {
       return { verdict: "DENY", benefit: null, reason: net.reason, trace };

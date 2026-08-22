@@ -1,0 +1,57 @@
+{
+  "code": "NJ",
+  "program": "NJ SNAP — New Jersey's own name for the Supplemental Nutrition Assistance Program throughout N.J.A.C. 10:87 and its public materials; NOTE that inside New Jersey's own manual the acronym \"FNS\" is used the OPPOSITE way from North Carolina's pack in this roster — New Jersey's manual defines \"FNS\" as the federal USDA Food and Nutrition Service, never as New Jersey's own program name",
+  "agency": "New Jersey Department of Human Services (DHS), Division of Family Development (DFD)",
+  "admin_model": "county",
+  "admin_note": "New Jersey runs a state-supervised, COUNTY-administered system: DFD writes the N.J.A.C. 10:87 NJ SNAP Manual and issues policy through it, but eligibility determination and case processing happen at County Social Service Agencies (CSSA — the manual's current defined term; older codified section text still uses the legacy term \"County Welfare Agency\"/CWA for the same entity) using the state's FAMIS (Family Assistance Management Information System) eligibility system. Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own CSSA, the same caution this roster already carries for CA/NY/MN/WI/OH/NC.",
+  "system": "FAMIS (Family Assistance Management Information System — the state's eligibility system caseworkers use); applicants apply through the MyNJHelps self-service portal",
+  "portal": {
+    "name": "MyNJHelps",
+    "url": "https://www.mynjhelps.gov"
+  },
+  "update_channels": [
+    {
+      "name": "N.J.A.C. Title 10, Chapter 87 — New Jersey Supplemental Nutrition Assistance Program (NJ SNAP) Manual, the authoritative eligibility policy source",
+      "url": "https://www.nj.gov/humanservices/notices/documents/rules-and-regulations/NJAC%2010_87%20NEW%20JERSEY%20SUPPLEMENTAL%20NUTRITION%20ASSISTANCE%20PROGRAM%20NJ%20SNAP%20MANUAL.PDF"
+    },
+    {
+      "name": "NJ DHS Division of Family Development — Federal Changes to SNAP (OBBBA/H.R. 1 implementation timeline, ABAWD waiver status by county)",
+      "url": "https://www.nj.gov/humanservices/dfd/news/federal-changes/"
+    },
+    {
+      "name": "NJ SNAP (Food Assistance) program page",
+      "url": "https://www.nj.gov/humanservices/njsnap/"
+    },
+    {
+      "name": "USDA FNS ABAWD Waivers FY 2025-2029 (state approval/denial letters)",
+      "url": "https://www.fns.usda.gov/snap/waivers/timelimit/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct curl fetch (with a standard browser User-Agent header) of the current N.J.A.C. 10:87 NJ SNAP Manual PDF at nj.gov (the originally-indexed nj.gov/humanservices/providers/rulefees/regs/ path returned a genuine 404 on both WebFetch and curl — a moved/broken link, not a bot-blocking artifact — the working current URL lives under nj.gov/humanservices/notices/documents/rules-and-regulations/), extracted with pdftotext, covering categorical eligibility (10:87-2.32, 2.36), resources (10:87-4.1, 4.3, 4.8, 4.11), expedited service (10:87-2.28, 2.29), the drug-felony disqualification repeal history (10:87-3.18), and abbreviations/definitions (10:87-1.1A). Individual sections not present in that particular 200-page PDF extract (deductions detail, ABAWD, certification periods) were independently confirmed via Cornell LII's section-by-section N.J.A.C. mirror. Cross-checked against New Jersey Statutes Annotated 44:10-48(d)(1) (the drug-felony opt-out statute, corroborated via the Collateral Consequences Resource Center's national 50-state survey, which quotes the statute directly), USDA's official ABAWD waiver-approval letter for New Jersey FY2026 (fetched directly, dated February 10, 2026), USDA's official Restaurant Meals Program state list (fetched directly, page updated August 7, 2026), and the New Jersey Legislature's own bill-tracking pages for the repeatedly-introduced-but-never-enacted NJ Restaurant Meals Program bill.",
+    "gates": "Every dollar figure that is federally uniform (standard deduction, maximum excess shelter deduction, homeless shelter deduction, maximum asset limits) traced directly to USDA's official FY2026 Maximum Allotments and Deductions table, fetched directly. New Jersey's own state-specific 185% FPL BBCE income chart traced to DFD's own public eligibility page. The Standard Utility Allowance dollar figure rests on secondary corroboration only (a cross-agency NJ Medicaid Communication referencing DFD's SNAP figures) after the primary DFD/Medicaid memo PDF could not be located at any URL tried — disclosed explicitly in PROVENANCE.md and freshness.json rather than treated as fully verified. Adversarial refute pass recorded in PROVENANCE.md, including an explicit check of whether New Jersey's own Restaurant Meals Program claim (repeated by several third-party SNAP-benefit explainer sites) survives contact with USDA's official RMP state list and the New Jersey Legislature's own bill-status records.",
+    "sources": [
+      "N.J.A.C. 10:87-2.32, Categorically eligible WFNJ/TANF/SSI households",
+      "N.J.A.C. 10:87-2.36, Expanded categorical eligibility",
+      "N.J.A.C. 10:87-4.1, Resource applicability",
+      "N.J.A.C. 10:87-4.3, Resources defined",
+      "N.J.A.C. 10:87-4.8, Identification of resource exclusions",
+      "N.J.A.C. 10:87-4.11, Maximum allowable resources",
+      "N.J.A.C. 10:87-5.9, Identification of income exclusions",
+      "N.J.A.C. 10:87-5.10, income deductions (medical, shelter, earned income)",
+      "N.J.A.C. 10:87-6.20, Certification periods",
+      "N.J.A.C. 10:87-7.7, Treatment of income and resources of non-household members",
+      "N.J.A.C. 10:87-9.5, Simplified reporting and change reporting",
+      "N.J.A.C. 10:87-10.20, Mandatory work activity for able-bodied adults without dependents (ABAWDs)",
+      "N.J.A.C. 10:87-12.1, Income deduction standards",
+      "N.J.A.C. 10:87-3.18 History note, confirming repeal of the drug-felony disqualification by R.2012 d.031, effective February 6, 2012",
+      "N.J.S.A. 44:10-48(d)(1), drug-felony SNAP opt-out statute, corroborated via the Collateral Consequences Resource Center's national survey",
+      "USDA FNS, New Jersey ABAWD Time Limit Waiver Response, FY2026 (nj-abawd-response-fy2026.pdf), dated February 10, 2026, fetched directly",
+      "USDA FNS Restaurant Meals Program state list, fetched directly 2026-08-11 (page updated August 7, 2026)",
+      "USDA FNS SNAP Fiscal Year 2026 Maximum Allotments and Deductions table, fetched directly",
+      "NJ DHS DFD, \"Federal Changes to SNAP,\" fetched directly 2026-08-11",
+      "New Jersey Legislature bill records for A2892 (2020-2021, Introduced-Dead), S3983 (2026, pending in committee)"
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "_provenance": {
+    "note": "Vermont citation authorities. Vermont's operative SNAP regulatory text is cited under the Code of Vermont Rules (CVR) convention '13-170-005' (Agency 13, Sub-Agency 170, Chapter 005), commonly abbreviated with an internal 270-280 sub-section range. This pack defines a SECOND citation family, 'vtsa', matching Vermont Statutes Annotated citations (e.g. '33 V.S.A. § 1203a'), since this pack's flagship drug-felony finding rests specifically on a statutory citation, not a CVR section number, and this pack expects both forms to appear in generated answers.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "vtcvr",
+      "regex": "\\b(?:CVR\\s?)?(13[\\s-]?170[\\s-]?005)\\b",
+      "flags": "gi",
+      "template": "CVR $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Code of Vermont Rules, Agency 13 (Agency of Human Services), Sub-Agency 170 (Department for Children and Families), Chapter 005 (FOOD STAMPS/3SQUARESVT, 270 TO 280). This pack found the Cornell LII mirror of this citation to be a stale, generic pre-2010s 7 CFR 273 base-rule reprint with no Vermont-specific current figures — see freshness.json before citing a specific dollar amount to this section."
+    },
+    {
+      "key": "vtsa",
+      "regex": "\\b(\\d{1,2}\\s?V\\.?S\\.?A\\.?\\s?§?\\s?\\d{3,4}[a-z]?)\\b",
+      "flags": "gi",
+      "template": "$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Vermont Statutes Annotated, cited with title and section number, e.g. 33 V.S.A. § 1203a (Application of 21 U.S.C. § 862a — the drug-felony SNAP-ban opt-out, added 2009)."
+    }
+  ],
+  "known": {
+    "vtcvr": [
+      { "value": "CVR 13-170-005", "note": "Food Stamps (3SquaresVT) (270 to 280) — Vermont's adoption-by-reference of the generic 7 CFR 273 federal base rule; Cornell LII mirror confirmed stale (references 'Food Stamp Act of 1977,' internal effective-date markers no later than 11/1/1998, base $3,000 resource limit with no Vermont-specific COLA update, no trace of the 185% FPL BBCE gate or EITC categorical-eligibility mechanism)" }
+    ],
+    "vtsa": [
+      { "value": "33 V.S.A. § 1203a", "note": "Application of 21 U.S.C. § 862a — full, unconditional exemption of Vermont-domiciled individuals from the federal drug-felony SNAP disqualification, added 2009 No. 1 (Sp. Sess.), § E.323.2" }
+    ]
+  }
+}

@@ -19,7 +19,7 @@ export interface AssetTestResult {
 }
 
 export function assetTest(facts: Facts, state: string, asOf: Date): AssetTestResult {
-  const policy = statePolicyFor(state);
+  const policy = statePolicyFor(state, asOf);
   if (policy.asset_waiver) {
     return { passes: true, waived: true, reason: "state asset waiver" };
   }

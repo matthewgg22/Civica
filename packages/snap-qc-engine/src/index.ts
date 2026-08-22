@@ -24,8 +24,62 @@ export {
   evaluateBenefitImpact,
 } from "./flows/benefit-impact-projection/index";
 export { combineScores, rollupFactors } from "./scoring/defensibility";
+// Interview wedge — the applicant-side prep (#587) and the agency-side notice
+// checker (#586). Two halves of the same problem: prep cannot fix a failure the
+// applicant did not cause, so the notice checker handles those.
+export {
+  buildInterviewTimeline,
+  readinessChecklist,
+  buildDocumentChecklist,
+  documentsToGather,
+  documentsNotRequired,
+  INTERVIEW_PROBE_DOMAINS,
+} from "./interview/interview-prep";
+export type {
+  InterviewFacts,
+  TimelineMilestone,
+  MilestoneStatus,
+  ReadinessItem,
+  ReadinessInput,
+  ProbeDomain,
+  StagedDocument,
+  DocRequirement,
+  HouseholdProfile,
+} from "./interview/interview-prep";
+export { reviewNotice, recoveryWindow } from "./notices/notice-validity";
+export type {
+  NoticeKind,
+  NoticeFacts,
+  CaseFacts,
+  NoticeDefect,
+  NoticeReview,
+  DefectCode,
+  DefectSeverity,
+  RecoveryWindow,
+} from "./notices/notice-validity";
 export { wilsonInterval } from "./scoring/wilson";
 export type { WilsonInterval } from "./scoring/wilson";
+export {
+  buildCohortReadout,
+  interviewCompletionRate,
+  attributionSplit,
+  onboardingDepthScore,
+  cohortSkew,
+  COHORT_EVENT_TYPES,
+  MISS_ATTRIBUTIONS,
+  LA_MISSED_INTERVIEW_BASELINE,
+  LA_CASELOAD_REFERENCE,
+} from "./scoring/cohort-readout";
+export type {
+  CohortReadout,
+  CohortCounts,
+  CohortEventType,
+  MissAttribution,
+  AttributionSplit,
+  InterviewCompletionRate,
+  OnboardingDepth,
+  CohortSkew,
+} from "./scoring/cohort-readout";
 export { scoreErrorRisk, ERROR_WEIGHT, perPacketGapContribution } from "./scoring/error-risk";
 export type { ErrorRiskResult, ErrorRiskTier } from "./scoring/error-risk";
 

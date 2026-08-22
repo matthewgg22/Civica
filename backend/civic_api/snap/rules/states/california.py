@@ -77,13 +77,18 @@ class CaliforniaSNAPRules(FederalSNAPRules):
     def rules_version(self) -> str:
         return f"federal-{self.effective_date.isoformat()}/CA-{self.effective_date.isoformat()}"
 
+    @property
+    def state_code(self) -> str | None:
+        return "CA"
+
     def _gross_income_test(self, household: Household) -> TestOutcome:
         table = poverty_guideline_for(self.effective_date)
         threshold = _round_dollar(
             table.monthly_for_household_size(household.household_size)
             * CA_BBCE_GROSS_INCOME_RATIO
         )
-        actual = _round_dollar(household.income.gross_monthly_total)
+        # #556: forward-looking gross, same fix as the federal gate.
+        actual = _round_dollar(household.income.forward_gross_monthly_total)
         return TestOutcome(
             test_name="gross_income_200pct_fpl_ca_mce",
             passes=actual <= threshold,

@@ -1,0 +1,42 @@
+{
+  "_provenance": {
+    "note": "North Dakota citation authorities. North Dakota's operative SNAP policy manual (current SNAP/ host, Release 26.5) cites sections by a plain three-digit numbered convention such as '505' (Categorical and Broad Based Categorical Eligibility) or '601' (Resources Overview), grouped into ten chapters (100 Application through 1200 EBT) plus an Appendix. This pack ALSO defines a second citation family, 'ndcc', for North Dakota Century Code statutory citations (e.g. § 50-06-05.1, the drug-felony opt-out statute, and Chapter 50-01.1, the Human Service Zones enabling statute), since both citation forms appear in this pack's sourced material and this pack expects both forms to appear in generated answers. This pack does NOT define a citation pattern for the legacy '430-05-xx-xx' numbered manual host, since that host is explicitly flagged as stale and not relied on for current content — see freshness.json.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "ndsnap",
+      "regex": "\\bSNAP\\s?§?\\s?(\\d{3}(?:-\\d{2})?)\\b",
+      "flags": "gi",
+      "template": "SNAP $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "North Dakota HHS's current SNAP Policy Manual (nd.gov/dhs/policymanuals/SNAP/), cited with the state's own plain numbered-section convention, e.g. SNAP 505 (Categorical and Broad Based Categorical Eligibility), SNAP 601 (Resources Overview), SNAP 604 (Vehicles), SNAP 401/402/403 (ABAWD Overview/Countable Months-Exemptions/Geographic Waiver). This pack requires the disambiguating 'SNAP' prefix in the regex to avoid false-positive matches against ordinary three-digit dollar figures elsewhere in generated answer text."
+    },
+    {
+      "key": "ndcc",
+      "regex": "\\bN\\.?D\\.?\\s?Cent(?:ury)?\\.?\\s?Code\\s?§?\\s?(\\d{2}-\\d{2}(?:\\.\\d)?(?:-\\d{2}(?:\\.\\d)?)?)\\b",
+      "flags": "gi",
+      "template": "N.D. Cent. Code § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "North Dakota Century Code, cited for the two statutory (not policy-manual) authorities this pack relies on: § 50-06-05.1 (drug-felony SNAP-ban opt-out) and Chapter 50-01.1 (Human Service Zones enabling statute)."
+    }
+  ],
+  "known": {
+    "ndsnap": [
+      { "value": "SNAP 401", "note": "ABAWD Overview — age range 18 through 64 (post-11/1/2025 OBBBA update)" },
+      { "value": "SNAP 402", "note": "ABAWD Countable Months – Exemptions — child-under-14 threshold, Indians/Urban Indians/California Indians (IHS-eligible) exemption, homeless/veteran/former-foster-care exemption removal per OBBBA" },
+      { "value": "SNAP 403", "note": "ABAWD Geographic Waiver — Rolette County/Turtle Mountain Reservation waiver ended 10/31/2025, no FY2026 renewal" },
+      { "value": "SNAP 505", "note": "Categorical and Broad Based Categorical Eligibility (BBCE) — 200% GIL BBCE (TANF I&R)/Expanded Categorically Eligible (ECE) track, no resource test, asset-test exceptions; References: 273.12, 273.13, 273.14" },
+      { "value": "SNAP 601", "note": "Resources Overview — current resource limits $4,500 (elderly/disabled) / $3,000 (all other); References: 7 CFR 273.8, 7 CFR 273.10(b), 7 CFR 273.12(a)(3)" },
+      { "value": "SNAP 604", "note": "Vehicles — $4,650 fair-market-value exclusion per licensed vehicle, reservation vehicle-licensing accommodation rule" },
+      { "value": "SNAP 803", "note": "Shelter Deductions — Standard Utility Allowance, Limited Utility Allowance, Minimum Utility Standard, Telephone Standard, Maximum Shelter Deduction, Homeless Shelter Deduction, LIHEAP-trigger restriction to elderly/disabled households (per Release 25.8)" },
+      { "value": "SNAP 801", "note": "Standard, Earned, Dependent Care, Child Support and Representative Payee deductions — Standard Deduction Table" }
+    ],
+    "ndcc": [
+      { "value": "N.D. Cent. Code § 50-06-05.1", "note": "Full opt-out of the federal drug-felony SNAP ban, effective 2017 per secondary-source corroboration (Public Health Law Center); operative text quoted directly in the criminal-justice-disqualifications supplement" },
+      { "value": "N.D. Cent. Code Chapter 50-01.1", "note": "Human Service Zones — enabling statute for the 19-zone SNAP delivery structure created by SB 2124, effective 1/1/2020" }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "code": "SC",
+  "program": "SNAP — no distinctive local nickname; SCDSS uses the plain federal name (see PROVENANCE.md)",
+  "agency": "South Carolina Department of Social Services (SCDSS), Division of Economic Services",
+  "admin_model": "state",
+  "admin_note": "South Carolina is a STATE-ADMINISTERED SNAP program: SCDSS is a single statewide agency with an office in every county, staffed by SCDSS's own eligibility caseworkers (state employees) and \"guided by a state office which provides centralized management, support, and accountability functions\" (SCDSS's own Agency Overview). This matches this roster's Georgia/Indiana/Tennessee/Missouri/Maryland state-agency-with-local-offices archetype, NOT the independently-governed-county archetype documented for Virginia/North Carolina/Colorado. Confirm current operative practice (local processing times, office hours, specific outreach materials) with the applicant's own county DSS office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO.",
+  "system": "SCDSS's eligibility caseworkers process SNAP through the DSS Benefits Portal (benefitsportal.dss.sc.gov), where applicants can apply online, check status, and report changes; applications may also be submitted in person, by mail, or by fax at a county DSS office. SCDSS separately administers TANF (also called \"Family Independence\") — a SEPARATE cash-assistance program, not another name for SNAP, though TANF receipt confers Basic Categorical Eligibility for SNAP.",
+  "portal": {
+    "name": "DSS Benefits Portal",
+    "url": "https://benefitsportal.dss.sc.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "South Carolina Department of Social Services — SNAP Policy Manual (Volume 70, June 2026)",
+      "url": "https://dss.sc.gov/media/25ug5rk1/snap-manual-volume-70-final-version.pdf"
+    },
+    {
+      "name": "South Carolina Department of Social Services — Supplemental Nutrition Assistance Program (SNAP)",
+      "url": "https://dss.sc.gov/assistance-programs/snap/"
+    },
+    {
+      "name": "South Carolina Department of Social Services — SNAP FAQ",
+      "url": "https://dss.sc.gov/assistance-programs/snap/faq/"
+    },
+    {
+      "name": "USDA FNA — South Carolina SNAP Food Restriction Waiver (candy/energy drinks/soft drinks, approved, effective Aug. 31, 2026)",
+      "url": "https://www.fna.usda.gov/snap/waivers/foodrestriction/southcarolina"
+    },
+    {
+      "name": "USDA FNA — SNAP Restaurant Meals Program (states that operate one; South Carolina is absent)",
+      "url": "https://www.fna.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "name": "ABAWDMap.us — South Carolina state entry",
+      "url": "https://abawdmap.us/"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct curl fetch (browser User-Agent) of South Carolina's own current, formally published SNAP Policy Manual (Volume 70, June 2026, ~23,000-line PDF converted with pdftotext -layout) from dss.sc.gov's own media host, a clean HTTP 200 with no access barrier: Chapter 2 (Household Concept, §2.3 Ineligible Household Members — drug-related felony), Chapter 4 (Categorically Eligible Households, §4.1 — TANF/SSI and the Family Independence Information and Referral Services 130% FPL expanded pathway), Chapter 6 (§6.5-6.6 Expedited Service), Chapter 8 (§8.12-8.16 ABAWD), Chapter 10/Appendix 2 (§10.2-10.7 Resource Eligibility, including the vehicle-counting rule), Chapter 12 (§12.2-12.8 Income Deductions), Chapter 13 (§13.6, 13.8 Income Eligibility Standards and Certification Periods), and the Glossary (Eligible Foods, Homeless Meal Provider). Also fetched directly: SCDSS's current SNAP page and SNAP FAQ page (dss.sc.gov), the DSS mini-SNAP eligibility table, USDA FNA's South Carolina SNAP Food Restriction Waiver page (fna.usda.gov, containing the Secretary's Dec. 10, 2025 approval letter and Aug. 3, 2026 modification notice), USDA FNA's SNAP Restaurant Meals Program state list, and ABAWDMap.us's South Carolina entry. WebSearch cross-checks corroborated the drug-felony finding against two independent secondary aggregators (Prison Policy Initiative, February 2026; Network for Public Health Law's 50-state survey) that both independently confirm South Carolina retained the unmodified federal default with NO state statute.",
+    "gates": "Unlike several states in this roster (Colorado's stale CCR, Missouri's password-walled resource section), South Carolina's own primary source presented NO access barrier and NO material staleness: Volume 70 is dated June 2026, roughly two months before this pack's fetch date, and its dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, Excess Shelter cap $744, resource limits $3,000/$4,500, and the full gross/net income-eligibility table) match the current national FFY2026 cycle exactly, and its ABAWD provisions already reflect the 2025 OBBBA changes (18-64 age range, under-14 dependent-child exception, removed homelessness/veteran/foster-care exemptions, added Indian/Urban Indian/California Indian exemption) with no internal contradiction found anywhere in the text. The one genuinely live, time-sensitive fact this pack found: USDA approved a South Carolina SNAP Food Restriction Waiver (excluding candy, energy drinks, soft drinks, and sweetened beverages from SNAP-eligible purchases) on Dec. 10, 2025, modified Aug. 3, 2026, but NOT YET EFFECTIVE as of this pack's fetch date — it takes effect Aug. 31, 2026, twenty days after this pack's fetch date. See freshness.json.",
+    "sources": [
+      "SC SNAP Policy Manual, Volume 70 (June 2026), Chapter 2 §2.3(7) — direct curl fetch, dss.sc.gov, clean HTTP 200",
+      "SC SNAP Policy Manual, Volume 70 (June 2026), Chapter 4 §4.1-4.8 — direct curl fetch, dss.sc.gov, clean HTTP 200",
+      "SC SNAP Policy Manual, Volume 70 (June 2026), Chapter 6 §6.5-6.6 — direct curl fetch, dss.sc.gov, clean HTTP 200",
+      "SC SNAP Policy Manual, Volume 70 (June 2026), Chapter 8 §8.12-8.16 — direct curl fetch, dss.sc.gov, clean HTTP 200; current FFY2026/OBBBA text",
+      "SC SNAP Policy Manual, Volume 70 (June 2026), Chapter 10/Appendix 2 §10.2-10.7 — direct curl fetch, dss.sc.gov, clean HTTP 200",
+      "SC SNAP Policy Manual, Volume 70 (June 2026), Chapter 12 §12.1-12.8 — direct curl fetch, dss.sc.gov, clean HTTP 200; current FFY2026 dollar figures",
+      "SC SNAP Policy Manual, Volume 70 (June 2026), Chapter 13 §13.6, 13.8 — direct curl fetch, dss.sc.gov, clean HTTP 200",
+      "SCDSS, Supplemental Nutrition Assistance Program (SNAP) page (dss.sc.gov/assistance-programs/snap/) — direct curl fetch, 2026-08-11, current, states OBBBA impact directly",
+      "SCDSS, SNAP FAQ page (dss.sc.gov/assistance-programs/snap/faq/) — direct curl fetch, 2026-08-11",
+      "USDA FNA, South Carolina SNAP Food Restriction Waiver page (fna.usda.gov/snap/waivers/foodrestriction/southcarolina) — direct curl fetch, 2026-08-11; approval letter dated Dec. 10, 2025, modification dated Aug. 3, 2026, effective Aug. 31, 2026 (not yet effective as of fetch date)",
+      "USDA FNA, SNAP Restaurant Meals Program state list (fna.usda.gov/snap/retailer/restaurant-meals-program) — cross-checked via this roster's Missouri pack's independent fetch (page updated Aug. 7, 2026); South Carolina absent",
+      "ABAWDMap.us, South Carolina state entry — direct curl fetch, 2026-08-11 — \"No waiver — rule applies\"",
+      "Prison Policy Initiative, \"Hunger as punishment: How states restrict SNAP benefits for people on probation\" (Feb. 2026) — secondary corroboration only, for the drug-felony finding",
+      "Network for Public Health Law, 50-State Survey of SNAP Felony Drug Bans (updated) — secondary corroboration only, for the drug-felony finding"
+    ]
+  }
+}

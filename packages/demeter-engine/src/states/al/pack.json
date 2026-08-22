@@ -1,0 +1,57 @@
+{
+  "code": "AL",
+  "program": "SNAP — no distinctive local nickname; DHR calls it \"Food Assistance\" (see PROVENANCE.md)",
+  "agency": "Alabama Department of Human Resources (DHR), Food Assistance Division",
+  "admin_model": "state",
+  "admin_note": "Alabama is a STATE-ADMINISTERED SNAP program: DHR is a single statewide agency, and its ~67 county DHR offices are DHR's own local arms (state employees operating under statewide DHR policy), not independently-governed county welfare boards. This matches this roster's Georgia/Indiana/Tennessee/Missouri/Maryland/South Carolina state-agency-with-local-offices archetype, NOT the independently-governed-county archetype documented for Virginia/North Carolina/Colorado. DHR's own SNAP Points of Eligibility (POE) manual consistently instructs \"the county department shall...\" as an execution of statewide policy, not local discretion. Confirm current operative practice (local processing times, specific outreach materials) with the applicant's own county DHR office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC.",
+  "system": "DHR's Food Assistance Division processes SNAP through county DHR offices; applicants can apply online via the MyDHR portal, in person, by mail, or by fax at a county DHR office. DHR separately operates \"Family Assistance\" (Alabama's TANF cash-assistance program, its own division and its own name) — a SEPARATE program from \"Food Assistance\" (SNAP), though the two names are easily confused (see PROVENANCE.md).",
+  "portal": {
+    "name": "MyDHR",
+    "url": "https://mydhr.alabama.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "Alabama DHR — SNAP Points of Eligibility (POE) Manual, current per-chapter version (apps.dhr.alabama.gov)",
+      "url": "https://apps.dhr.alabama.gov/POE/POEhome"
+    },
+    {
+      "name": "Alabama DHR — Food Assistance",
+      "url": "https://dhr.alabama.gov/food-assistance/"
+    },
+    {
+      "name": "Alabama DHR — Form DHR-FAP-1942, Summarized Eligibility Requirements (Rev. 10/25, current FFY2026 dollar figures)",
+      "url": "https://dhr.alabama.gov/wp-content/uploads/2025/10/Form-1942-Summarized-Eligibility-Requirements-Rev.-10-25.pdf"
+    },
+    {
+      "name": "Alabama DHR — Food Assistance Division Frequently Asked Questions",
+      "url": "https://dhr.alabama.gov/food-assistance/food-assistance-division-frequently-asked-questions/"
+    },
+    {
+      "name": "ABAWDMap.us — Alabama state entry",
+      "url": "https://abawdmap.us/"
+    },
+    {
+      "name": "USDA FNA — SNAP Restaurant Meals Program (states that operate one; Alabama absent)",
+      "url": "https://www.fna.usda.gov/snap/retailer/restaurant-meals-program"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct curl fetch (browser User-Agent) of Alabama DHR's CURRENT, per-chapter SNAP Points of Eligibility (POE) Manual, hosted at apps.dhr.alabama.gov/POE/ — Chapter 1 (Household Concept, § 101(f) drug-felony provision), Chapter 2 (Application Processing, § 208 Expedited Service, § 210 Categorical/Expanded Categorical Eligibility), Chapter 7 (Work Requirements, § 710 ABAWD), Chapter 8 (Resource Eligibility, § 800-802), Chapter 9 (Income and Deductions, § 903), and cross-referenced against Chapter 10's § 1005 (Certification Periods) and Chapter 11's § 1107 (Homeless Food Assistance Households). Separately fetched dhr.alabama.gov's own bundled 2022-vintage \"Appendix I\" POE manual PDF — found MATERIALLY STALE against the current per-chapter version on dollar figures and the ABAWD age range (see Finding 3, freshness.json) — and Form DHR-FAP-1942 (Rev. 10/25, the CURRENT summarized-eligibility handout, current FFY2026 dollar figures), all clean HTTP 200 with no access barrier. Also fetched directly: dhr.alabama.gov's Food Assistance landing page, and ABAWDMap.us's Alabama entry. WebSearch cross-checks located Ala. Code § 38-1-8 (enacted by Act 2015-185, § 12) for the drug-felony statute — direct fetches of Justia and FindLaw's mirrors of this statute both returned HTTP 403 (a now-familiar pattern in this roster), resolved via convergent secondary corroboration (AL Reporter's Feb. 2026 \"The End of Alabama's Lifetime SNAP and TANF Bans,\" Alabama Today's contemporaneous coverage, and the statute's operative text as independently reproduced in a WebSearch AI Overview) cross-checked against DHR's own POE Manual § 101(f), which independently states the same substantive rule in its own words.",
+    "gates": "Justia and FindLaw both 403'd on direct curl for the underlying Ala. Code § 38-1-8 text — resolved via convergent secondary corroboration disclosed above and cross-checked against DHR's own primary-source POE Manual text, which independently states the same substantive rule. Separately, and more significantly: this pack found TWO different DHR-hosted PDFs of the same POE manual chapters, live on two different DHR-controlled hosts, with MATERIALLY DIFFERENT content — dhr.alabama.gov's bundled 2022-vintage \"Appendix I\" PDF (part of an FY22 D-SNAP plan bundle) still carries FFY2022 dollar figures ($2,250/$3,500 resource limits, a $1,396/$1,074 household-of-one income table) and the PRE-OBBBA ABAWD age range (18-49, under-18 caregiver exception, no Indian/Urban Indian/California Indian exemption) — while apps.dhr.alabama.gov's per-chapter POE manual and DHR's own Form 1942 (Rev. 10/25) both carry CURRENT FFY2026 figures ($3,000/$4,500 resource limits, $1,696/$1,305 household-of-one income table) and the full 2025 OBBBA-updated ABAWD text (18-64, under-14 caregiver exception, Indian/Urban Indian/California Indian exemption). Both PDFs are still live, both surface readily in a search, and nothing on dhr.alabama.gov's own page visibly flags the Appendix I bundle as superseded. This pack treats apps.dhr.alabama.gov's per-chapter manual and Form 1942 (Rev. 10/25) as authoritative wherever the two diverge, and discloses the stale duplicate explicitly rather than silently preferring one. Separately, this pack could NOT locate Alabama's Standard Utility Allowance (SUA/BUA/telephone standard) dollar figures or its Excess Shelter Deduction dollar cap in any Alabama-DHR-hosted primary source — DHR's own manual repeatedly defers these to an internal \"Basis of Issuance Chart\" not published at any URL this pack could locate; see freshness.json for this disclosed gap.",
+    "sources": [
+      "AL POE Manual (current, apps.dhr.alabama.gov), Chapter 1 § 101(f) — direct curl fetch, clean HTTP 200",
+      "AL POE Manual (current, apps.dhr.alabama.gov), Chapter 2 §§ 208, 210 — direct curl fetch, clean HTTP 200",
+      "AL POE Manual (current, apps.dhr.alabama.gov), Chapter 7 § 710 — direct curl fetch, clean HTTP 200; current FFY2026/OBBBA text",
+      "AL POE Manual (current, apps.dhr.alabama.gov), Chapter 8 §§ 800-802 — direct curl fetch, clean HTTP 200; current FFY2026 resource limits and blanket vehicle exclusion",
+      "AL POE Manual (current, apps.dhr.alabama.gov), Chapter 9 § 903 — direct curl fetch, clean HTTP 200",
+      "AL POE Manual (2022-vintage \"Appendix I\" bundle, dhr.alabama.gov) — direct curl fetch, clean HTTP 200 but MATERIALLY STALE dollar figures and ABAWD age range; cross-checked against the current per-chapter version, NOT relied on for current facts",
+      "DHR Form DHR-FAP-1942, Summarized Eligibility Requirements (Rev. 10/25) — direct curl fetch, dhr.alabama.gov, clean HTTP 200, current FFY2026 figures",
+      "Alabama DHR, Food Assistance landing page (dhr.alabama.gov/food-assistance/) — direct curl fetch, 2026-08-12, current",
+      "ABAWDMap.us, Alabama state entry — direct curl fetch, 2026-08-12 — \"No waiver — rule applies\"",
+      "Ala. Code § 38-1-8 (enacted by Act 2015-185, § 12) — Justia and FindLaw both HTTP 403 on direct fetch; resolved via convergent secondary corroboration (AL Reporter, Alabama Today) cross-checked against DHR POE Manual § 101(f)'s independently-stated substantive rule",
+      "AL Reporter, \"The End of Alabama's Lifetime SNAP and TANF Bans\" (Feb. 2016) — secondary corroboration only, for the drug-felony statute finding",
+      "Equal Justice Initiative, \"Alabama in Minority of States That Ban Food Stamps for People Convicted of Drug Offenses\" — the widely-repeated secondary framing this pack's Finding 1 corrects/nuances"
+    ]
+  }
+}

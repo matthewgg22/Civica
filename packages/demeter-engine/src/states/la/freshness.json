@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "Louisiana dated facts. Because Louisiana has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed access/staleness trap this pack found. Re-verified 2026-08-15: the Tropical Storm Arthur hot-foods waiver reached its stated end date (2026-08-13) with no confirmable extension; its entry now states the lapsed position and fails safe.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "la-hot-foods-waiver-tropical-storm-arthur-lapsed",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "LAPSED, as far as we can confirm. LDH announced (July 20, 2026) a temporary, STATEWIDE waiver letting ALL Louisiana SNAP participants — not only elderly/disabled/homeless — buy hot or prepared foods (not restaurant meals) at authorized SNAP retailers after Tropical Storm Arthur, stated as effective THROUGH AUGUST 13, 2026 (ldh.la.gov/news/7685). Re-checked 2026-08-15: no extension of the Arthur waiver was found. Louisiana has a documented history of extending post-disaster hot-foods waivers, so an extension is possible and would not necessarily be easy to find — but an unconfirmed extension is not a basis for telling anyone their benefits will cover a hot meal. FAIL SAFE: do NOT tell a Louisiana applicant they can currently buy hot or prepared foods with SNAP. Louisiana does not operate a standing Restaurant Meals Program (see the restaurant-meals-program supplement), so outside an active waiver hot foods are not eligible. Point people at ldh.la.gov's current news for live status."
+    },
+    {
+      "key": "la-dcfs-stale-hot-foods-article-2021-hurricane-ida",
+      "kind": "expires",
+      "date": "2027-08-01",
+      "warning": "dcfs.louisiana.gov hosts a still-live article titled \"'Hot Foods' Waiver Extended Through October 28\" that reads, at a glance, like it could describe the CURRENT 2026 Tropical Storm Arthur waiver — but it is dated September 28, 2021, and describes an unrelated, long-expired Hurricane Ida hot-foods waiver (also through an \"October 28,\" but of 2021, not any later year). Nothing on the article itself makes the year obvious without checking the byline date. This pack explicitly did NOT rely on this article for any current fact. Before citing any Louisiana hot-foods/disaster-SNAP waiver found via search, confirm the article's actual publication year, not just its headline."
+    },
+    {
+      "key": "la-dcfs-to-ldh-agency-transfer-confirm-current",
+      "kind": "expires",
+      "date": "2027-02-01",
+      "warning": "SNAP moved from the Department of Children and Family Services (DCFS) to the Louisiana Department of Health (LDH) on October 1, 2025, under \"Project One Door\" legislation (2025 Regular Session Acts 477 and 478). This pack found DCFS's own website (dcfs.louisiana.gov) STILL hosts extensive SNAP content and still ranks first in an ordinary \"Louisiana SNAP\" web search, more than 10 months after the transfer, with no prominent flag on DCFS's own pages noting the agency change. The underlying policy manual is also still hosted on a DCFS-branded PowerDMS instance (public.powerdms.com/LADCFS). \"Project One Door\" is an explicitly multi-phase consolidation (SNAP/FITAP/KCSP/DDS/eHIP/SUN Bucks to LDH in Oct. 2025; other programs to the renamed Louisiana Works agency under separate 2025 legislation, HB 624). Before stating Louisiana's SNAP administering agency with full confidence, re-check whether a further consolidation phase has since moved it again, and whether dcfs.louisiana.gov has been updated or retired for SNAP content."
+    },
+    {
+      "key": "la-manual-chapter-rename-es-to-ei-in-progress",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "Louisiana's own SNAP policy manual documents are internally inconsistent about their own chapter name: documents effective before roughly May 2026 consistently header themselves \"Chapter No./Name: 4 – Economic Stability (ES)\"; documents effective May 2026 or later (e.g. C-720-SNAP, effective May 15, 2026; B-650-SNAP, effective June 1, 2026) instead header themselves \"Chapter No./Name: 4 – Economic Independence (EI)\" — and at least one of those newer documents (B-650-SNAP) carries BOTH names in the SAME header simultaneously (\"Division/Section: Economic Stability\" directly above \"Chapter No./Name: 4 – Economic Independence (EI)\"), an unresolved internal inconsistency this pack found directly in the primary source, not inferred. This pack could not find an external press release or legislative document explicitly announcing an \"Economic Stability\" to \"Economic Independence\" rename; the timing loosely tracks LDH Secretary Bruce Greenstein's own October 1, 2025 quote about \"helping move individuals from dependence to independence,\" but this pack does NOT claim that connection as confirmed. Before citing a Louisiana SNAP manual chapter name, check the specific document's own effective date and header, and treat both names as potentially current."
+    },
+    {
+      "key": "la-b1030-resource-limit-section-not-independently-located",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "Louisiana's own B-1040-SNAP document cites \"B-1030-SNAP\" by name for \"required resource limits,\" but this pack could not locate that specific document at a stable, independently-discoverable public.powerdms.com/LADCFS URL. The $3,000 (standard) / $4,500 (elderly-or-disabled) resource-limit figures this pack states are corroborated via B-1040-17-SNAP's own worked numerical example (\"Ms. Smith is below the household's $3000 resource limit...\") plus independent secondary confirmation (a DCFS/LDH page search snippet and cross-state consistency with the current national FFY2026 figure this roster's Alabama pack also confirmed) — not a direct read of B-1030-SNAP's full text. Before stating Louisiana's resource limits with full confidence, locate and directly read B-1030-SNAP itself."
+    },
+    {
+      "key": "la-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, SUA $465, BUA $258, Telephone Standard $76, capped excess shelter $744, Standard Medical Deduction $161, Homeless Shelter Deduction $198.99, and the J-300-SNAP income-eligibility/max-allotment tables) are drawn from Louisiana's own manual (B-650-SNAP effective June 1, 2026; J-300-SNAP effective October 1, 2025) and match the current FFY2026 cycle (effective Oct. 1, 2025 - Sept. 30, 2026). The FFY2027 COLA cycle begins Oct. 1, 2026 — under two months from this pack's fetch date. Check public.powerdms.com/LADCFS for updated B-650-SNAP and J-300-SNAP documents after that date before restating any Louisiana-specific dollar figure with full confidence."
+    },
+    {
+      "key": "la-drug-felony-statute-403-blocked-source",
+      "kind": "expires",
+      "date": "2027-02-01",
+      "warning": "This pack's citation to La. R.S. 46:233.3 (2017 Regular Session HB 681, effective October 1, 2017) is corroborated via secondary sources (CLASP's \"No More Double Punishments,\" the Public Health Law Center's opt-out map) cross-checked against Louisiana's own current E-220/E-222-SNAP disqualification list (which independently lists no drug-felony disqualification), because Justia returned HTTP 403 on direct fetch of the statute's own text. This pack did NOT read the Louisiana Legislature's own codified-statute text directly. Before restating this finding with full confidence, attempt a direct fetch of legis.la.gov's own statute database for R.S. 46:233.3 and re-confirm its text is unchanged."
+    }
+  ]
+}

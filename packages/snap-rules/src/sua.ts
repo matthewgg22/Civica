@@ -1,10 +1,26 @@
 // SUA (Standard Utility Allowance) tier constants and derivation logic.
-// CA FFY2026 values from CDSS ACIN I-07-26.
-
+// CA FFY2026 values from CDSS ACIN I-46-25 (the annual COLA notice, issued
+// 2026-08-16 — see the citation fix below).
+//
+// CORRECTED (#882, live-verified 2026-08-16): TELEPHONE was $44,
+// citing "ACIN I-07-26" — a document that does not exist for this purpose
+// (the real ACIN I-07-26, dated 2026-03-02, announces a CDSS website
+// search widget and has nothing to do with SNAP/CalFresh). The real FFY2026
+// Telephone Utility Allowance is $20, published in ACIN I-46-25
+// (2025-09-03) alongside FULL/$663 and LIMITED/$170 — the same COLA notice
+// packages/snap-rules/src/constants/states.ts already cites for CA's BBCE
+// threshold. Independently confirmed live against LA County DPSS ePolicy
+// 63-504.39 and the LSNC regulation summary "CalFresh Cost of Living
+// Adjustment for Fiscal Year 2026" (both cite ACIN I-46-25, both give
+// SUA/LUA/TUA = 663/170/20). $20 also already matched states.ts's CA
+// StatePolicy.sua_by_tier.phone and the independently-authored oracle
+// (data-ops/sample/civica-test-profiles/v0.6.json meta.params.sua_by_state
+// .CA.phone) — this file's export was the only place $44 appeared, and the
+// only place ACIN I-07-26 was cited. FULL/LIMITED were already correct.
 export const CA_SUA_FFY2026 = {
   FULL: 663,
   LIMITED: 170,
-  TELEPHONE: 44,
+  TELEPHONE: 20,
   NONE: 0,
 } as const;
 

@@ -81,6 +81,12 @@ export type HouseholdAnswers = {
   anyonePregnant: Ternary | null;
   anyoneUnhousedOrNoFixedMailingAddress: Ternary | null;
   preferredSafeMailingContactOption: SafeMailingContactOption | null;
+  // #652: feeds the dashboard's expedited-review Path 3 test (7 CFR
+  // 273.2(i)(1)(ii), destitute migrant/seasonal farmworker) — see
+  // apps/dashboard/app/packets/[packetId]/expedited-gate.ts. Matches the
+  // question iOS already asks (SNAPHouseholdQuestionFlow.swift), not yet
+  // wired to this web wizard before now.
+  isMigrantOrSeasonalFarmworker: Ternary | null;
 };
 
 export type ContactAnswers = {
@@ -148,6 +154,7 @@ export function emptyDraft(): SNAPApplicationDraft {
       anyonePregnant: null,
       anyoneUnhousedOrNoFixedMailingAddress: null,
       preferredSafeMailingContactOption: null,
+      isMigrantOrSeasonalFarmworker: null,
     },
     contact: { preferredContactMethod: null, contactEmail: "", contactPhone: "" },
     income: { employmentStatus: null, monthlyIncomeEstimate: "", incomeChangesMonthToMonth: null },
@@ -194,6 +201,7 @@ export const draftSchema = z.object({
     anyonePregnant: z.enum(TERNARY).nullable().default(null),
     anyoneUnhousedOrNoFixedMailingAddress: z.enum(TERNARY).nullable().default(null),
     preferredSafeMailingContactOption: z.enum(SAFE_MAILING_CONTACT).nullable().default(null),
+    isMigrantOrSeasonalFarmworker: z.enum(TERNARY).nullable().default(null),
   }).default(() => emptyDraft().household),
   contact: z.object({
     preferredContactMethod: z.enum(PREFERRED_CONTACT).nullable().default(null),

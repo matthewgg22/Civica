@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "Rhode Island dated facts. Because Rhode Island has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a fact this pack found time-sensitive or single-sourced.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "ri-regs-pdf-redlined-dollar-figures",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "dhs.ri.gov's own hosted copy of the full 218-RICR-20-00-1 regulation PDF (dhs.ri.gov/media/7796/download) is dated August 2024 and contains REDLINED, struck-through-old/inserted-new dollar figures from an FFY2023-to-FFY2024 rulemaking amendment (e.g. resource limits render as a garbled literal string combining the old $4,250/$2,750 figures with the new $4,500/$3,000 figures; the standard deduction table shows FFY2023-24 figures, not current FFY2026 figures). This pack explicitly did NOT rely on any dollar figure from this PDF and instead cross-verified every current dollar figure against DHS's separately-fetched, correctly-dated FFY2026 SNAP Annual Cost of Living Adjustment PDF (effective October 1, 2025) and DHS's live Eligibility & How to Apply page. This pack DID rely on this PDF's structural/procedural (non-dollar) text — categorical eligibility mechanics, resource-test exemptions, vehicle-exclusion rules, deduction methodology, certification-period rules — none of which showed comparable redlining. Before restating any dollar figure from a fresh fetch of this specific PDF, re-verify it is not still showing a stale redlined figure."
+    },
+    {
+      "key": "ri-vehicle-fmv-threshold-unconfirmed",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "A secondary source (WorkWORLD) claims vehicles beyond Rhode Island's 2-vehicle exclusion cap are counted as a resource only above a $4,650 fair-market-value threshold. This pack could NOT locate this specific figure anywhere in Rhode Island's own primary regulation text (218-RICR-20-00-1 § 1.5.5) during its research and flags it as UNCONFIRMED — this pack's income-and-resources supplement states the 2-vehicle cap itself (which IS primary-source confirmed) but does not assert the $4,650 figure. Re-verify directly against § 1.5.5 or a DHS caseworker manual before treating this specific dollar threshold as settled."
+    },
+    {
+      "key": "ri-restaurant-meals-nine-subway-locations-not-enumerated",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's restaurant-meals-program supplement states Rhode Island's RMP currently spans nine participating Subway restaurants, per DHS's own Online Purchasing & Restaurant Meals Program page — this pack did not independently enumerate or verify the specific nine locations, and that count could change without this pack's knowledge. Re-verify the current count and specific locations directly against DHS's page before restating this figure with full confidence in a high-stakes context (e.g. an applicant asking which specific restaurant to visit)."
+    },
+    {
+      "key": "ri-abawd-march-1-2026-rollout-time-sensitive",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's abawd-work-requirement supplement states Rhode Island delayed its OBBBA ABAWD rollout to March 1, 2026 for newly-affected ABAWDs, per DHS's own ABAWDs FAQ updated January 7, 2026. As of this pack's verification date (8/12/2026), March 1, 2026 is already in the past — the rollout has happened. Re-verify against DHS's current ABAWDs page before restating this March 1, 2026 date as a still-relevant future milestone; a household asking about ABAWD status today should be told their actual current countable-month count, which this pack cannot determine without their specific case history, exactly as DHS's own FAQ itself repeatedly cautions."
+    },
+    {
+      "key": "ri-abawd-waiver-status-cross-checked-not-fetched-live",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's conclusion that Rhode Island currently has NO active area-wide ABAWD waiver rests on USDA FNS/FNA's ABAWD Time Limit Waivers FY 2025-2029 index showing no FY2026 Rhode Island entry (most recent entry FY2025, dated 03/12/2025) — this pack did not find a single DHS page stating Rhode Island's current waiver status in as many words. Re-check https://www.fna.usda.gov/snap/abawd/waivers/2025-2029 directly before restating this with full confidence beyond this window."
+    },
+    {
+      "key": "ri-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, Standard Utility Allowance $844, Standard Telephone Allowance $26, Maximum/Excess Shelter Deduction $744, Homeless Shelter Deduction $198.99, Standard Medical Deduction $183, minimum benefit $24, resource limits $3,000/$4,500, and the income-eligibility table by household size at 185%/200% FPG) are drawn from Rhode Island DHS's SNAP Annual Cost of Living Adjustment PDF effective October 1, 2025, matching the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check dhs.ri.gov's SNAP Updates page or a fresh SNAP Annual Cost of Living Adjustment PDF after that date before restating any Rhode Island-specific dollar figure with full confidence."
+    },
+    {
+      "key": "ri-ribridges-breach-resolved-historical-context",
+      "kind": "expires",
+      "date": "2027-01-01",
+      "warning": "This pack's program-identity supplement mentions the December 2024 RIBridges ransomware data breach and subsequent 2025 phased relaunch/settlement as resolved historical context, not a current operative barrier — every direct fetch this pack performed of dhs.ri.gov and the underlying RIBridges-linked pages returned clean, normal responses throughout this pack's research window (8/12/2026). If a future user report or fresh fetch shows portal instability, treat that as a NEW issue, not a recurrence of the 2024 breach, and re-verify current portal status directly rather than assuming this pack's 'resolved' characterization still holds indefinitely."
+    }
+  ]
+}

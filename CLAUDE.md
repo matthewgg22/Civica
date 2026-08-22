@@ -31,6 +31,18 @@ Test work is tracked in retros by commit-prefix grep. Tag accordingly:
 
 Retro/health metric: `git log --since=… --pretty=%s | grep -cE '^test(\(|:)'` — should be non-zero any week with test work.
 
+## Design systems
+
+Three, governing different surfaces. Read the right one before any visual or UI change.
+
+- `apps/web/DEMETER-DESIGN.md` — the **Demeter public web product** (`/screen/ask`, `/questions`, `/guides/*`, `/verify`, `/sign-in`). The live consumer surface.
+- `DESIGN.md` (repo root) — the **iOS app** (SwiftUI, Civica target).
+- `apps/dashboard/DESIGN.md` — the navigator/CBO dashboard. **PARKED** — ask before touching.
+
+They are allowed to differ: iOS carries the Civica brand, Demeter is its own product with its own name and palette. Do not "harmonize" them without asking.
+
+Do not deviate from the governing file without explicit approval. In QA and review, flag code that contradicts it.
+
 ## Skill routing
 
 When the user's request matches an available skill, invoke it via the Skill tool. When in doubt, invoke the skill.

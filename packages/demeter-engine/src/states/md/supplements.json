@@ -1,0 +1,286 @@
+{
+  "_provenance": {
+    "note": "Maryland SNAP curated supplements. Maryland has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuinely blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, Tennessee's, Indiana's, and Missouri's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from direct curl fetches (browser User-Agent, PDFs via pdftotext, .docx via macOS textutil) of thirteen current Maryland DHS SNAP-manual sections, two current FIA Action Transmittals (AT 26-09 for ABAWD/H.R.1, AT 26-05 for the FFY2026 mass COLA update), the current DHS Income Guidelines, and five sections of the Maryland Code Human Services Article fetched directly via mgaleg.maryland.gov with no access barrier.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "direct curl fetch (browser UA) of dhs.maryland.gov SNAP Manual Sections 100, 106, 115, 200, 201, 211, 212, 213, 214, 401, 406, 408, 600 (PDF via pdftotext -layout, .docx via textutil) + direct curl fetch of FIA AT 26-09, AT 26-05, and the October 2025 Income Guidelines (PDF via pdftotext -layout) + direct curl fetch of Md. Code, Human Services §§ 5-501, 5-502, 5-503, 5-505, 5-506 via mgaleg.maryland.gov (no access barrier) + WebFetch of the manual index, ABAWD program page, and Restaurant Meals Program page + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "broad-based categorical eligibility",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "tanf",
+        "temporary cash assistance",
+        "family planning brochure"
+      ],
+      "citation": "MD SNAP Manual Section 115 — Broad-Based Categorical Eligibility (BBCE) confers eligibility to all households with income below 200 percent of the federal poverty guidelines via a TANF-funded brochure, current FFY2026 figures per the October 2025 Income Guidelines",
+      "heading": "CONFIRMED, with unusual specificity: Maryland has adopted Broad-Based Categorical Eligibility at 200% FPL, exactly matching the widely-repeated secondary-source claim — Maryland's own manual instructs caseworkers that they should almost never see a non-categorically-eligible SNAP household",
+      "text": "Unlike this roster's Indiana and Missouri packs, which each found and corrected a WRONG secondary-source BBCE claim, this pack independently checked the same kind of claim against Maryland's own primary source and found it accurate: Maryland's own manual (MD SNAP Manual Section 115.2(F)) confers Broad-Based Categorical Eligibility (BBCE) to \"all households with income below 200 percent of the federal poverty guidelines,\" via a TANF-funded brochure titled \"Family Planning: A Guide for You\" that satisfies the federal BBCE mechanism (there is no requirement to actually hand the brochure to every applicant — only to make it available on request). Maryland's own 200% FPL table (Section 115.2(d)) matches the current FFY2026 figures independently confirmed via the October 2025 Income Guidelines and FIA Action Transmittal AT 26-05: $2,610 for one person, $3,526 for two, $4,442 for three, $5,360 for four, rising by $918 per additional member. Maryland's manual states this with unusual bluntness in three separate places (Sections 200.1, 200.2, and 200.4): \"Remember, because of expanded categorical eligibility, you should not have any non-categorically eligible SNAP households\" — an operational instruction to caseworkers that resource and gross/net income tests are, in practice, almost never actually applied. A household is NOT categorically eligible only when its income exceeds 200% FPL for its size (Section 115.3(O) examples 1 and 4) — at that point it is denied outright for exceeding the gross income test, with no fallback to the plain federal 130%/100% FPL test.",
+      "source_url": "https://dhs.maryland.gov/documents/FIA/Manuals/Supplemental%20Nutrition%20Assistance%20Program%20(SNAP)/115%20Categorical%20Eligibility/115-Categorical-Eligibility-SEPT-2025-1.pdf"
+    },
+    {
+      "key": "categorical-eligibility-minimum-benefit",
+      "kind": "supplement",
+      "terms": [
+        "minimum benefit",
+        "minimum allotment",
+        "$24",
+        "small household",
+        "one person household",
+        "two person household"
+      ],
+      "citation": "MD SNAP Manual Section 115.3(N) and Section 600 — categorically eligible one- and two-person households are entitled to a minimum monthly allotment of $24, current FFY2026 figure, cross-confirmed in both sections",
+      "heading": "Maryland's minimum SNAP benefit for categorically eligible one- and two-person households is $24/month — one of the few dollar figures this pack found stated CONSISTENTLY across two separate manual sections",
+      "text": "One- and two-person households that are categorically eligible under Maryland's BBCE are entitled to at least a $24 per month allotment (plus a state supplement for participants over 62 — see the separate minimum-state-supplement finding in this pack), except in an initial (prorated) month, per MD SNAP Manual Section 115.3(N). Section 600 independently confirms the same $24 figure: \"all eligible one- and two-person households must be issued the minimum allotment of $24.\" This is one of the few dollar figures in Maryland's manual this pack found stated identically in two separate sections rather than showing the internal drift documented elsewhere in this pack (see the asset-rule and shelter-utility-deductions findings). Categorically eligible households of three or more members are still denied SNAP benefits outright if their income exceeds the applicable BBCE ceiling for their household size (Section 115.3(N), (O) example 1).",
+      "source_url": "https://dhs.maryland.gov/documents/FIA/Manuals/Supplemental%20Nutrition%20Assistance%20Program%20(SNAP)/115%20Categorical%20Eligibility/115-Categorical-Eligibility-SEPT-2025-1.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "boat",
+        "camper",
+        "trailer",
+        "recreational vehicle",
+        "airplane"
+      ],
+      "citation": "MD SNAP Manual Section 201 — all vehicles are excluded resources (car, boat, recreational vehicle, or airplane), no equity-value counting; Section 200 states a non-categorically-eligible resource limit of $2,250/$3,250 (elderly/disabled) that CONTRADICTS Section 600's current $3,000/$4,500 figures — see freshness.json",
+      "heading": "GENUINE, DISCLOSED INTERNAL CONTRADICTION: Maryland's own manual states two DIFFERENT resource limits in two different sections of the SAME currently-published manual — a structural pattern this roster has not previously documented",
+      "text": "Maryland's own manual, MD SNAP Manual Section 201 (Treatment of Licensed Vehicles), states plainly: \"All vehicles are excluded resources when determining Supplemental Nutrition Assistance Program (SNAP) eligibility. The type of vehicle does not matter (automobile, boat, recreational vehicle, or airplane, etc.).\" This matches this roster's Missouri finding (a blanket, no-equity-value-counting exclusion of every vehicle type) rather than Indiana's hybrid rule (ordinary vehicles exempt, boats/campers counted). HOWEVER, on the resource limit itself for the rare non-categorically-eligible household (income over 200% FPL — see the income-pathways finding, which explains why this test almost never actually applies), this pack found a genuine, disclosed CONTRADICTION between two sections of Maryland's own currently-published manual: Section 200 (Resources), carrying a \"REVIEWED JUNE 2026\" footer, states $2,250 standard / $3,250 elderly-or-disabled — but Section 600 (Standards for Income and Deductions), \"REVISED AUGUST 2025\" and explicitly headed \"SNAP Asset Guidelines Effective October 1, 2025,\" states $3,000 standard / $4,500 elderly-or-disabled, matching the current federal FFY2026 standard this roster's Missouri, Indiana, and Virginia packs already independently confirmed, and independently cross-validated by FIA Action Transmittal AT 26-05 (issued October 3, 2025). This is NOT the same failure mode as this roster's Missouri SUA-staleness finding (one figure quietly out of date relative to a secondary source) — it is two sections of Maryland's OWN current manual stating two different numbers for the same fact, with the more recently and explicitly COLA-revised section (600) being the one that matches the confirmed current federal standard. This pack treats Section 600's $3,000/$4,500 as authoritative and flags Section 200's $2,250/$3,250 as stale text that has not been reconciled despite a June 2026 \"review.\"",
+      "source_url": "https://dhs.maryland.gov/documents/FIA/Manuals/Supplemental%20Nutrition%20Assistance%20Program%20(SNAP)/200%20Resources/200-Resources-JUNE-2026.pdf"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard",
+        "phone standard",
+        "homeless shelter deduction",
+        "homeless shelter allowance",
+        "standard deduction",
+        "heat and eat",
+        "h-eat"
+      ],
+      "citation": "MD SNAP Manual Section 600 — SUA $572/LUA $350/Telephone $40, Standard Deduction $209/$209/$209/$223/$261/$299, Excess Shelter cap $744, Homeless Shelter Allowance $198.99, all current FFY2026 figures effective 10/1/2025, cross-confirmed by FIA AT 26-05; Section 212.10 states a CONTRADICTORY $148 Homeless Shelter Allowance figure dated to a 2020 transmittal — see freshness.json",
+      "heading": "A SECOND genuine internal contradiction: Maryland's Homeless Shelter Allowance is stated as $148 in one manual section (unrevised since a 2020 transmittal it names) and $198.99 in another (current FFY2026, triple-cross-validated)",
+      "text": "Maryland's Standard Deduction ($209 for household sizes 1-3, $223 for 4, $261 for 5, $299 for 6+), Excess Shelter Expense Deduction cap ($744, uncapped for households with an aged or disabled member), Standard Utility Allowance ($572), Limited Utility Allowance ($350), and Telephone Allowance ($40) are all CONFIRMED CURRENT for FFY2026 (effective October 1, 2025) via MD SNAP Manual Section 600, independently cross-validated by FIA Action Transmittal AT 26-05 (issued October 3, 2025) — these figures agree across both sources with no discrepancy. BUT the Homeless Shelter Allowance shows the SAME kind of internal contradiction documented in this pack's asset-rule finding: Section 212.10 (Excess Shelter Deduction / Homeless Shelter Allowance), unrevised since \"20-02 AT Homeless Shelter Deduction Increase\" — a transmittal it names and cites directly, dated to 2020 — states the allowance is $148. Section 600 states $198.99, and AT 26-05 independently confirms: \"The maximum homeless shelter deduction increased to $198.99\" effective October 1, 2025. This pack treats $198.99 as authoritative. Separately, Maryland's manual documents a genuinely state-specific mechanism this roster has not previously encountered: the Heat and Eat (H-EAT) program (MD SNAP Manual Section 212.9, codified at Md. Code, Human Services § 5-506), which pays qualifying households not currently receiving energy assistance or the SUA a one-time annual $21 payment (deposited as cash to the household's EBT account) specifically to trigger automatic SUA eligibility for 12 consecutive issuance months — a deliberate, statutorily-authorized mechanism to expand SUA access beyond households that would otherwise qualify only through actual verified utility bills or existing energy-assistance receipt.",
+      "source_url": "https://dhs.maryland.gov/documents/FIA/Manuals/Supplemental%20Nutrition%20Assistance%20Program%20(SNAP)/600%20Standards/600-Standards-for-Income-and-Deductions-SEPT-2025.docx.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction"
+      ],
+      "citation": "MD SNAP Manual Section 212.8 — Excess Medical Expense Deduction: the portion of allowable medical expenses that exceeds $35/month for aged (60+) or disabled household members, actual-expense mechanism only, no flat standard-deduction shortcut",
+      "heading": "Maryland has NO flat Standard Medical Deduction shortcut — the plain federal actual-expense-over-$35 mechanism only, matching this roster's Indiana finding rather than Missouri's state-specific flat deduction",
+      "text": "MD SNAP Manual Section 212.8 (Excess Medical Expense Deduction) allows a deduction only for the portion of allowable medical expenses that exceeds $35 per household per month, incurred by aged (60 or older) or disabled household members, using the actual verified expense amount minus $35 — the plain federal mechanism, with no flat mid-range Standard Medical Deduction shortcut of the kind this roster's Missouri pack documents (Missouri grants a flat $135 deduction for verified expenses between $35.01 and $170 without requiring exact itemization within that range). This pack found no equivalent shortcut anywhere in Maryland's Section 212 or 213. Allowable medical expenses include medical/dental/psychotherapy/rehabilitation care by a state-licensed practitioner, hospitalization, prescription drugs, eyeglasses, over-the-counter medication approved by a licensed health professional, health/hospitalization/long-term-care insurance premiums, Medicare premiums, dentures, hearing aids, service-animal costs (training, food, veterinary care), transportation/lodging for medical treatment, and the cost of an attendant/homemaker/health aide due to age, infirmity, or illness. Verification is required at application and recertification if the source or amount changes by more than $25.",
+      "source_url": "https://dhs.maryland.gov/documents/FIA/Manuals/Supplemental%20Nutrition%20Assistance%20Program%20(SNAP)/212%20Deductions/212-Deductions-REV.JULY.2023.MW.docx"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "child support exclusion",
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "alimony",
+        "arrearage"
+      ],
+      "citation": "MD SNAP Manual Section 212.11 and 213.5 — Child Support Deduction, an ORDINARY post-gross deduction from countable income, capped at the paying member's countable income; alimony is NOT deductible",
+      "heading": "Maryland treats legally obligated child support as an ORDINARY DEDUCTION from countable income — matching this roster's Indiana/Tennessee mechanism, NOT the income-exclusion-before-the-gross-test mechanism this roster's Virginia/New Jersey/Illinois/Missouri packs document",
+      "text": "MD SNAP Manual Section 212.11, titled \"Child Support Deduction\" (not \"exclusion\"), allows a deduction for legally obligated child support payments a household member actually pays to or for a non-household member, including anticipated payments over the certification period, third-party vendor payments made under a support order, court-ordered health-insurance payments, and allowable arrearages (only if payments are anticipated to continue). Alimony payments and amounts paid over the legally obligated amount are explicitly NOT deductible. Section 213.5 confirms this is calculated and applied as an ordinary post-gross DEDUCTION — \"deducted from countable income,\" capped at the paying individual's own countable income — with no cross-reference anywhere in Maryland's Excluded Income section (211) or its gross/net income eligibility sections treating child support as an exclusion applied before the gross income test itself. This places Maryland in the ORDINARY-DEDUCTION camp (7 CFR 273.9(d)(5)) alongside this roster's Indiana and Tennessee packs, in direct contrast to the INCOME-EXCLUSION mechanism (7 CFR 273.9(c)) this roster's Virginia, New Jersey, Illinois, and Missouri packs document. Verification (court order, separation agreement, divorce decree, or Child Support Enforcement/IV-D records) is required; if unverified within 30 days, eligibility is determined without the deduction, and lost benefits are not restored for verification provided after the 30th day.",
+      "source_url": "https://dhs.maryland.gov/documents/FIA/Manuals/Supplemental%20Nutrition%20Assistance%20Program%20(SNAP)/212%20Deductions/212-Deductions-REV.JULY.2023.MW.docx"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "baltimore",
+        "eastern shore",
+        "rural county",
+        "native american",
+        "tribal",
+        "time limit"
+      ],
+      "citation": "MD SNAP Manual Section 106 and FIA Action Transmittal AT 26-09 — current federal 18-64 ABAWD age range, effective November 1, 2025; Maryland holds ZERO ABAWD waivers ANYWHERE in the state, urban or rural, per Maryland's own explicit Q&A",
+      "heading": "Maryland's ABAWD policy is the CLEANEST, most current primary source this pack found anywhere in its research — zero access barrier, dated within the last month of this pack's own fetch date, and an explicit, unambiguous zero-waiver statement covering both Maryland's dense DC/Baltimore suburbs AND its rural Eastern Shore counties",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period (Maryland's current period runs July 1, 2023 through June 30, 2026) unless meeting a work-activity requirement (80 hours/month or 20 hours/week of paid work, SNAP E&T, WIOA/Trade Adjustment Assistance participation, or nonprofit volunteering) or an exemption/exception. Maryland's own FIA Action Transmittal AT 26-09 (issued October 16, 2025, effective November 1, 2025) implements H.R. 1 (2025)/OBBBA and states the CURRENT federal age range plainly: \"New Age Range: ABAWD work rules now cover 18–64\" (raised from the pre-OBBBA 18-54 range). H.R. 1 also REMOVED three exceptions that previously applied statewide — homelessness, veteran status, and having aged out of foster care by 24 — and NARROWED the caregiver exception from a child under 18 to a child under 14. NEW exceptions were added for individuals recognized as Indian, Urban Indian, or California Indian under the Indian Health Care Improvement Act. Maryland's own AT 26-09 asks and answers the waiver question directly, with no ambiguity and no reliance on a secondary aggregator: \"Q7. Does Maryland DHS still have an ABAWD waiver? A7. No. Maryland can no longer broadly waive the ABAWD time limit.\" This is a genuinely CLEAN, unambiguous, dated, currently-in-force primary-source confirmation covering the ENTIRE state uniformly — Maryland's own document makes no county-level distinction between its dense Baltimore/DC-suburb jurisdictions and its rural Eastern Shore counties, applying the same zero-waiver, statewide rule to both. Discretionary Exemptions (a separate FNS allotment some ABAWDs can draw on) are currently NOT being applied in Maryland \"due to uncertainty of the number available for the 2026 Federal Fiscal Year\" per AT 26-09's own text.",
+      "source_url": "https://dhs.maryland.gov/documents/FIA/Action%20Transmittals-AT%20-%20Information%20Memo-IM/AT-IM2026/26-09%20AT%20H.R.%201%202025%20Modifications%20to%20SNAP%20Work%20Requirements%20for%20ABAWD%20combined%20new.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug test",
+        "drug testing",
+        "urinalysis",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "volume dealer",
+        "drug kingpin",
+        "marijuana",
+        "cannabis"
+      ],
+      "citation": "MD SNAP Manual Section 100.62(H) — volume-dealer/drug-kingpin convictions listed among disqualified individuals with no stated time limit; MD SNAP Manual Section 100.7(J) — broader manufacture/distribution/possession-with-intent-to-distribute felonies committed after July 1, 2000 carry a 1-year disqualification PLUS 2 years of mandatory substance-abuse testing and treatment; simple possession is untouched by either provision",
+      "heading": "FLAGSHIP FINDING: Maryland's drug-felony rule is a genuine THREE-TIER structure this roster has not previously documented — and it directly CONTRADICTS a specific, widely-repeated secondary-source claim that Maryland \"eliminated drug testing requirements\" for drug-felony SNAP applicants",
+      "text": "Several secondary sources this pack checked during research assert that Maryland disqualifies applicants from SNAP for only two narrow drug felonies (volume dealer, drug kingpin), that all other drug-related felony convictions leave an applicant fully eligible, and that Maryland separately \"eliminated drug testing requirements\" for SNAP/TANF applicants with a felony drug conviction. This pack checked these claims against Maryland's own manual and found a more precise, genuinely THREE-TIER structure that only PARTLY matches the secondary claims. TIER 1 (MD SNAP Manual Section 100.62(H)): SNAP recipients convicted of a volume-dealer drug offense (manufacturing, distributing, dispensing, or possessing a controlled substance in a \"volume dealer\" quantity) or a drug-kingpin offense are listed among Maryland's \"Disqualified Individuals\" with NO stated time limit in that section — the plain reading is closer to Maryland simply not having opted out of the federal lifetime ban for this narrow category. TIER 2 (MD SNAP Manual Section 100.7(J), a genuinely BROADER category): an individual receiving SNAP who is convicted, after July 1, 2000, of a drug-related felony involving MANUFACTURE, DISTRIBUTION, OR POSSESSION WITH INTENT TO DISTRIBUTE a controlled substance — a category that sweeps in more than just the narrow volume-dealer/kingpin tier — is (a) ineligible for SNAP for ONE YEAR from the date of conviction, AND (b) \"subject to testing and treatment for substance abuse for a period of two years\" starting from release/completion of probation or parole, whichever is later. THIS DIRECTLY CONTRADICTS the secondary-source claim that Maryland eliminated drug testing: Maryland's own manual affirmatively requires substance-abuse testing and treatment as a condition tied to this modified-ban category. TIER 3 (implicit): simple possession or use, without an intent-to-distribute element, appears in NEITHER Section 100.62(H) nor 100.7(J) — this pack found no Maryland provision disqualifying a SNAP applicant for simple possession alone. Note Maryland's own text uses two different anchor dates for what may be the same or overlapping conduct (Section 100.62(H) references a \"volume dealer amount after October 1, 2017\"; Section 100.7(I)/(J) reference convictions \"after July 1, 2000\") — this pack disclosed this apparent internal date inconsistency in freshness.json rather than silently reconciling it. There is explicitly NO conciliation procedure for SNAP applicants or recipients who are convicted drug felons under this section. All resources and income of a disqualified individual remain countable as available to the rest of the SNAP household (Section 100.7(J), consistent with Section 200.33).",
+      "source_url": "https://dhs.maryland.gov/documents/FIA/Manuals/Supplemental%20Nutrition%20Assistance%20Program%20(SNAP)/100%20Household%20Composition/100-Household-Composition-MAY-2026.docx.pdf"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food"
+      ],
+      "citation": "Md. Code, Human Services § 5-505 (Restaurant Meals Program) and MD SNAP Manual/COMAR 07.03.17.61 — Maryland HAS a Restaurant Meals Program, established directly by state statute (not merely adopted administratively), currently rolling out county-by-county rather than fully statewide",
+      "heading": "Maryland IS on USDA's national Restaurant Meals Program list — and, distinctively among this roster's RMP findings so far, Maryland's RMP is established directly by STATE STATUTE rather than only by administrative adoption of the federal option",
+      "text": "The Restaurant Meals Program (RMP) is a state option under 7 CFR 274.7(g) allowing elderly (60+), disabled, and homeless SNAP recipients (and, in some cases, their spouse) to buy prepared, hot meals from authorized restaurants with their EBT card. Maryland operates one, and unlike every prior RMP finding in this roster (where the program exists purely through administrative adoption of the federal option), Maryland's RMP is directly codified by state statute: Md. Code, Human Services § 5-505, fetched directly from mgaleg.maryland.gov with no access barrier, establishes the program by name, states its purpose (\"to expand food access to individuals who... do not have a place to store and cook food... may not be able to prepare food; or... do not have access to a grocery store\"), and defines eligibility as a household that is homeless, or includes only individuals 60+ or government-designated disabled (and that individual's spouse). Maryland's own DHS Restaurant Meals Program page confirms eligibility is reviewed at each benefit recertification and that participating restaurants may not charge tax on RMP purchases. Distinctively, Maryland's own page discloses the program is NOT yet fully statewide: it is \"piloting in select counties including Baltimore City, Baltimore County, Anne Arundel, Charles, Frederick, Harford, Montgomery, Prince George's, Calvert, St. Mary's, and Allegany counties, among others,\" with the department \"actively recruiting additional restaurants to expand program access statewide\" — meaning an applicant's actual ability to use RMP depends on whether an authorized restaurant currently operates in their specific county, not merely on their own eligibility category.",
+      "source_url": "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=ghu&section=5-505&enactments=false"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day"
+      ],
+      "citation": "MD SNAP Manual Section 401.2 — plain federal expedited-service criteria (gross income under $150 and liquid resources of $100 or less, OR combined income/resources less than rent/mortgage plus utilities, OR destitute migrant/seasonal farmworker) and the standard 7-calendar-day ceiling",
+      "heading": "Maryland uses the standard federal expedited-service gates and 7-day ceiling, with no Maryland-specific modification to the income test found",
+      "text": "MD SNAP Manual Section 401.2 (Expedited Service Criteria) sets expedited eligibility to the standard federal criteria: households with less than $150 gross monthly income AND $100 or less in liquid resources; households whose combined gross income and liquid resources are less than the household's monthly rent or mortgage plus utilities (including entitlement to the SUA or LUA); or destitute migrant/seasonal farmworker households with liquid resources of $100 or less. Unlike this roster's Missouri pack, which documents a Child Support Exclusion that reduces the gross-income figure used specifically for the expedited-service test, this pack found no equivalent Maryland-specific modification — Maryland's child support treatment is an ordinary post-gross deduction (see the child-support-deduction finding), not an exclusion, and Section 401 makes no cross-reference to it. Eligible households must receive the opportunity to participate on or before the seventh calendar day from application. Households applying after the 15th of the month and found expedited-eligible get SNAP for the initial and second months without additional verification requirements (benefits for the third month are held until postponed verification is received), matching 7 CFR 273.2(g)/(i)(3)(i).",
+      "source_url": "https://dhs.maryland.gov/documents/FIA/Manuals/Supplemental%20Nutrition%20Assistance%20Program%20(SNAP)/401%20Screening%20for%20Expedited%20Service/401-Expedited-Service-rev-JULY%202023.docx"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "midpoint report",
+        "mid-certification",
+        "maryland benefit review",
+        "mbr"
+      ],
+      "citation": "MD SNAP Manual Section 410 — 12-month standard certification with a mandatory 6-month Maryland Benefit Review (MBR) touchpoint (no interview required); 24 months for all-elderly/disabled households with no earned income; 36 months for MSNAP/ESAP; 4-month minimum for migrant/seasonal farmworkers",
+      "heading": "Maryland's standard certification is 12 months, but includes a distinctive mandatory 6-month simplified 'Maryland Benefit Review' touchpoint — a genuinely Maryland-specific implementation of the simplified-reporting requirement this roster has not previously documented by this name",
+      "text": "MD SNAP Manual Section 410 states the general rule cleanly (\"certification periods are limited to 6 months because of simplified reporting\") but then documents a distinctive Maryland-specific workaround: because the Eligibility and Enrollment (E&E) system assigns a full 12-month certification period rather than a 6-month one, FIA implemented a mandatory Maryland Benefit Review (MBR) form at the 6-month midpoint of that 12-month period — a simplified check-in that does NOT require a new interview. All SNAP households except those receiving Transitional SNAP benefits are in simplified reporting and subject to this 12-month-cert-with-6-month-MBR-touchpoint pattern. Households in which ALL adult members are elderly (60+) or disabled AND the household has NO earned income may be certified for up to 24 months, with a required contact at least every 12 months (not necessarily a full MBR). Households participating in the Maryland Senior Nutrition Assistance Program (MSNAP) or the Elderly Simplified Application Project (ESAP) — Maryland's own simplified-application tracks for elderly/disabled households — are certified for 36 months, the longest period this pack found anywhere in Maryland's manual and matching the top end this roster's Indiana pack documents for its own Elderly Simplified Application Project option. Migrant and seasonal farmworker households must be assigned a certification period of at least 4 months. A household that applies for recertification by the 15th day of the last month of its certification period is entitled to either a notice of eligibility or a notice of denial by the end of the current period, preserving continuity.",
+      "source_url": "https://dhs.maryland.gov/documents/FIA/Manuals/Supplemental%20Nutrition%20Assistance%20Program%20(SNAP)/410%20Certification%20Periods/410-Certification-Periods-rev-JULY.%202023.mw.docx"
+    },
+    {
+      "key": "minimum-state-supplement",
+      "kind": "supplement",
+      "terms": [
+        "minimum benefit",
+        "state supplement",
+        "elderly supplement",
+        "$50",
+        "62 or older",
+        "60 or older"
+      ],
+      "citation": "Md. Code, Human Services § 5-501(d) — households including a member 60 or older whose federally funded SNAP benefit would be less than $50/month get a Maryland state supplement bringing the total to $50/month",
+      "heading": "A genuinely Maryland-specific state-funded top-up: a $50/month floor for households with an elderly member, distinct from the federal $24 categorical-eligibility minimum benefit",
+      "text": "Md. Code, Human Services § 5-501(d), fetched directly from mgaleg.maryland.gov, establishes a state-funded supplement distinct from the federal minimum benefit: \"If a household includes an individual who is at least 60 years old and receives a federally funded benefit in an amount less than $50 per month under the Supplemental Nutrition Assistance Program, the State shall provide a supplement to increase the total benefit to $50 per month.\" This is a genuinely state-funded addition on top of the federal SNAP allotment — Maryland's own manual (Section 115.3(N)) cross-references it when describing the $24 categorical-eligibility minimum benefit for one- and two-person households (\"plus the state supplement for participants over 62, except in an initial month\"), though the manual's own cross-reference states the age threshold as \"62\" while the statute itself states \"60\" — a minor, disclosed internal age-threshold discrepancy this pack did not attempt to resolve definitively (see freshness.json). A chatbot answering a Maryland applicant's benefit-amount question involving a household member 60 or older should mention this state-specific floor rather than relying solely on the federal $24 categorical minimum.",
+      "source_url": "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=ghu&section=5-501&enactments=false"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "marylandbenefits",
+        "mymdthink",
+        "who runs",
+        "what agency",
+        "administers",
+        "fia",
+        "family investment administration",
+        "local office",
+        "ldss",
+        "ebt card",
+        "food stamps"
+      ],
+      "citation": "FIA/DHS program materials — Maryland uses the plain federal name \"SNAP\" in current public materials and its current manual folder path, though the governing Human Services Article subtitle is still headed \"Food Stamps\"; applicants apply through MarylandBenefits.gov or a Local Department of Social Services (LDSS); Maryland is STATE-supervised through 24 LDSS offices",
+      "heading": "Maryland applies through MarylandBenefits.gov or any of 24 Local Departments of Social Services (one per county plus Baltimore City); Maryland's own governing statute subtitle still carries \"Food Stamps\"-era naming even though the lead section within it and current DHS materials use \"SNAP\"",
+      "text": "Maryland's Family Investment Administration (FIA), a division of the Department of Human Services (DHS), consistently uses the plain federal name \"SNAP\" in current public-facing materials and in its current manual folder path (dhs.maryland.gov/documents/FIA/Manuals/Supplemental Nutrition Assistance Program (SNAP)/) — genuinely more current naming than this roster's Missouri pack, whose own manual still lives under a legacy \"food-stamps\" URL path. However, Maryland's OWN governing statute has not fully caught up: the Human Services Article, Title 5, Subtitle 5 — the subtitle housing every SNAP-related Maryland statute this pack fetched, including §§ 5-501 through 5-506 — is itself still headed \"Food Stamps,\" even though § 5-501, the lead section within that subtitle, is titled \"Supplemental Nutrition Assistance Program.\" Worked examples inside the manual's own income-and-deduction calculation sections (e.g. Section 213.5) still use the abbreviation \"FS\" (\"John Smith receives FS for himself...\"). Applications run through the MarylandBenefits.gov online portal, or in person, by mail, or by fax at a Local Department of Social Services (LDSS); Maryland maintains an LDSS office in each of its 23 counties plus Baltimore City (24 total). Maryland's caseworkers use the Eligibility and Enrollment (E&E) system, part of the broader myMDTHINK platform (one older manual passage also references the prior \"myDHR\" portal name, a minor residual naming artifact). Each LDSS executive director reports to the DHS Secretary, matching this roster's Georgia/Indiana/Tennessee/Missouri state-supervised administrative archetype rather than Virginia's/North Carolina's independently governed county-welfare-department archetype, though each county also maintains a local Social Services Board with an advisory (not governing) role in applying state policy locally.",
+      "source_url": "https://dhs.maryland.gov/supplemental-nutrition-assistance-program/"
+    }
+  ]
+}

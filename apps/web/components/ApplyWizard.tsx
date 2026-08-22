@@ -5,7 +5,7 @@
 // function per section). Mirrors the iOS SNAPApplicationViewModel +
 // SNAPDraftStep pattern from Civica/Features/SNAP/SNAPApplicationViewModel.swift.
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDraft } from "../lib/snap/draft-store";
 import type { Locale } from "../app/i18n";
@@ -356,6 +356,9 @@ function HouseholdFields({ draft, setDraft, t }: SectionProps) {
       <TernaryField label={t("field_anyone_pregnant")}
         value={h.anyonePregnant}
         onChange={(v) => update({ anyonePregnant: v })} t={t} />
+      <TernaryField label={t("field_migrant_farmworker")}
+        value={h.isMigrantOrSeasonalFarmworker}
+        onChange={(v) => update({ isMigrantOrSeasonalFarmworker: v })} t={t} />
       <TernaryField label={t("field_anyone_unhoused")}
         value={h.anyoneUnhousedOrNoFixedMailingAddress}
         onChange={(v) => update({ anyoneUnhousedOrNoFixedMailingAddress: v })} t={t} />

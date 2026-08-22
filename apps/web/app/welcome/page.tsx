@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import AppNav from "../../components/AppNav";
 import { LanguagePicker } from "../../components/LanguagePicker";
@@ -94,8 +95,8 @@ export default function WelcomePage() {
               <span className="trust-chip" role="listitem">✓ USDA-verified</span>
             </div>
             <div className="home-hero__ctas">
-              <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
-              <a href="/sign-in" className="btn btn--ghost">{t.home_hero_secondary}</a>
+              <Link href="/apply" className="btn btn--primary">{t.welcome_cta}</Link>
+              <Link href="/sign-in" className="btn btn--ghost">{t.home_hero_secondary}</Link>
             </div>
             <BenefitEstimator />
           </div>
@@ -189,7 +190,7 @@ export default function WelcomePage() {
           <div className="faq-mae-cta">
             <p className="faq-mae-cta__heading">Any other questions?</p>
             <p className="faq-mae-cta__body">
-              Ask Mae — Civica&rsquo;s AI guide trained on federal SNAP regulations, real application experiences, and caseworker review.
+              Ask Demeter — Civica&rsquo;s AI guide trained on federal SNAP regulations, real application experiences, and caseworker review.
             </p>
             <button
               type="button"
@@ -201,10 +202,10 @@ export default function WelcomePage() {
                 <path d="M5 5.5c0-1.1.9-2 2-2s2 .9 2 2c0 .9-.6 1.6-1.5 1.9V8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 <circle cx="7" cy="10.5" r=".75" fill="currentColor"/>
               </svg>
-              Ask Mae
+              Ask Demeter
             </button>
             <p className="faq-mae-cta__disclaimer">
-              Mae&rsquo;s answers are based on federal SNAP citations (7 CFR 273), real application experiences, and caseworker review — but may occasionally be incorrect. Always confirm eligibility with your county office. We flag uncertainty and cite sources where possible.
+              Demeter&rsquo;s answers are based on federal SNAP citations (7 CFR 273), real application experiences, and caseworker review — but may occasionally be incorrect. Always confirm eligibility with your county office. We flag uncertainty and cite sources where possible.
             </p>
           </div>
         </div>
@@ -214,7 +215,7 @@ export default function WelcomePage() {
       <section className="home-section home-section--alt">
         <div className="home-section__inner home-closing">
           <p className="home-closing__label">Ready to check your eligibility?</p>
-          <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
+          <Link href="/apply" className="btn btn--primary">{t.welcome_cta}</Link>
           <p className="home-closing__sub">Takes about 10 minutes · No income minimum · 5 languages</p>
         </div>
       </section>

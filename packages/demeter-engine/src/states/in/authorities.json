@@ -1,0 +1,53 @@
+{
+  "_provenance": {
+    "note": "Indiana citation authorities. Indiana maintains a SINGLE citation family — the FSSA Division of Family Resources' own integrated SNAP/TANF Program Policy Manual, published chapter-by-chapter (1000-4800) as dated PDFs, cited by chapter.section.subsection (e.g. '2438.17.05', '3010.05.00'). This pack invents the short prefix 'IN PPM' (Indiana Program Policy Manual) to disambiguate in running text — Indiana's own documents do not use this exact short prefix, matching this roster's convention of an invented short prefix per state (VA's 'VA SNAP Manual Part', NC's 'FNS', TN's 'TN Rule'/'TDHS Policy'). Statute citations use 'Ind. Code Ann. §', matching the citation convention this pack's own secondary-source corroboration (Network for Public Health Law's 50-state survey) uses for Indiana.",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "inppm",
+      "regex": "\\bIN\\s+PPM\\s+(\\d{4}(?:\\.\\d{2}){2,3})\\b",
+      "flags": "gi",
+      "template": "IN PPM $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "FSSA Division of Family Resources SNAP/TANF Program Policy Manual, cited by chapter.section(.subsection), e.g. 2438.17.05 (ABAWD Status Determination), 3010.05.00 (Income Standards)."
+    },
+    {
+      "key": "incode",
+      "regex": "\\bInd\\.?\\s?Code\\s?Ann\\.?\\s+§?\\s*(12-\\d{1,2}-\\d{1,2}-\\d{1,2})\\b",
+      "flags": "gi",
+      "template": "Ind. Code Ann. § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Indiana Code Annotated, Title 12 (Human Services), sections governing SNAP, e.g. 12-14-30-3 (drug-related felony eligibility modification)."
+    }
+  ],
+  "known": {
+    "inppm": [
+      { "value": "IN PPM 2414.10.05", "note": "Categorical Eligibility — Basic CE only (households where all AG members are certified SSI and/or TANF); no Broad-Based Categorical Eligibility pathway described anywhere in the manual" },
+      { "value": "IN PPM 3010.05.00", "note": "Income Standards — plain federal 130% FPL gross / 100% FPL net income limits, effective 10/01/2025, with the full AG-size chart; independently confirms the absence of BBCE" },
+      { "value": "IN PPM 3005.05.00", "note": "Resource Limits — $3,000 standard / $4,500 elderly-or-disabled AG, effective 10/01/2024" },
+      { "value": "IN PPM 2615.60.10", "note": "Exempt Vehicles — ordinary vehicles used for household transportation are exempt regardless of value, licensing status, or condition" },
+      { "value": "IN PPM 2615.60.25", "note": "Recreational Vehicles and Equipment — campers, trailers, and boats counted at current equity value unless the vehicle serves as the AG's home" },
+      { "value": "IN PPM 3020.00.00", "note": "Utility Standards — four flat-dollar SUA tiers (heating/cooling $486, non-heating/cooling $283, single utility $62, telephone $36), effective 10/01/2025" },
+      { "value": "IN PPM 3025.10.00", "note": "Standard Deduction — $209 (1-3 members) / $223 (4) / $261 (5) / $299 (6+), effective 10/01/2025" },
+      { "value": "IN PPM 3025.15.00", "note": "Excess Shelter Expense Deduction — $744 cap for AGs without an elderly or disabled member, effective 10/01/2025" },
+      { "value": "IN PPM 3025.15.05", "note": "Homeless Shelter Deduction — $198.99, effective 10/1/2025" },
+      { "value": "IN PPM 3440.45.00", "note": "Allowable Medical Expenses for SNAP — itemized list, including prescribed vitamins and special telephone equipment for the handicapped" },
+      { "value": "IN PPM 3440.45.05", "note": "Medical Expenses in the SNAP Budget — plain federal $35/month threshold, actual-expense itemization only" },
+      { "value": "IN PPM 3440.05.05", "note": "Child Support Deduction — ordinary deduction mechanism (not an income exclusion), for legally obligated court-ordered support paid to a non-AG member" },
+      { "value": "IN PPM 2438.17.00", "note": "Able Bodied Adults Without Dependents — 3-in-36-month time limit and qualifying work/E&T activities" },
+      { "value": "IN PPM 2438.17.05", "note": "ABAWD Status Determination — current 18-64 age range 'as of 7/4/2025' (post-OBBBA), tribal/IHCIA exemptions, and confirmation of zero active Indiana ABAWD waivers ('there are currently no such designations')" },
+      { "value": "IN PPM 2205.05.00", "note": "Establishing the Redetermination Month — standard 12-month certification period for non-elderly/disabled AGs and elderly/disabled AGs with earned income" },
+      { "value": "IN PPM 2205.05.05", "note": "Elderly Simplified Application Project (ESAP) — 36-month certification period for AGs where all members are elderly (60+) and/or disabled" },
+      { "value": "IN PPM 2212.00.00", "note": "Interim Reporting — 6-month Interim Report required for non-ESAP households with earned income; ESAP households exempt from Interim Reporting entirely" },
+      { "value": "IN PPM 1830.25.00", "note": "Screening for SNAP Expedited Services — $150 gross income / $100 liquid resources gate, plus the destitute-migrant and rent-exceeds-income-and-resources tests" },
+      { "value": "IN PPM 2020.05.05", "note": "Time Standards for Expedited Service — plain federal 7-calendar-day benefit-issuance ceiling" },
+      { "value": "IN PPM 1400.00.00", "note": "Family and Social Services Administration — confirms FSSA is the state agency and DFR is one of its seven major service divisions, statewide-responsible for SNAP" }
+    ],
+    "incode": [
+      { "value": "Ind. Code Ann. § 12-14-30-3", "note": "Modified drug-felony SNAP ban — Indiana opted out of the federal lifetime ban effective January 1, 2020; eligibility conditioned on completion of, or current compliance with, probation/parole/community-corrections/reentry-court supervision. Primary statutory text was NOT independently fetched: iga.in.gov is a client-side JavaScript SPA this pack's tooling could not execute, and law.justia.com (HTTP 403) and casetext.com (HTTP 410) both failed outright. This citation and its content rest on convergent secondary corroboration (Indiana's own FSSA FAQ page, the Public Health Law Center, and the Network for Public Health Law's compiled 50-state survey), disclosed as a genuine access barrier in PROVENANCE.md." }
+    ]
+  }
+}

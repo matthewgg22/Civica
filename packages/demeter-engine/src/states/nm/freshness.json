@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "New Mexico dated facts. Because New Mexico has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed staleness/access trap this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "nm-abawd-waiver-areas-verify-current",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "HCA's own Keep Your Benefits, NM! page (fetched directly) states that statewide ABAWD work rules took effect January 1, 2026, but that Luna County, Laguna Pueblo, San Felipe Pueblo, Taos Pueblo, and Tesuque Pueblo remain waived. This narrower waiver footprint is genuinely more volatile than a simple statewide yes/no — county- and reservation-level ABAWD waiver status is tied to unemployment-rate redeterminations and can change with each USDA quarterly cycle. Before telling a New Mexico applicant whether ABAWD work rules currently apply in their specific county or pueblo, re-check hca.nm.gov/snapchanges/ directly, and cross-check against USDA FNA's own current ABAWD waivers list (fns.usda.gov/snap/abawd/waivers)."
+    },
+    {
+      "key": "nm-stale-hsd-pdfs-recheck",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack found NMAC 8.139.400 and 8.139.410 still hosted at hsd.state.nm.us with an issuing-agency line reading \"New Mexico Human Services Department\" — the department's pre-July-2024 name — with no post-2024 amendment stamp, even though sections re-published on srca.nm.gov (8.139.420, 8.139.520) correctly show the current \"Health Care Authority\" name and post-2024 amendment dates. This pack cannot confirm whether the 400/410 sections' SUBSTANTIVE content (not just the issuing-agency line) is current or itself stale relative to a possible unpublished 2024-2026 amendment. Before treating 8.139.400 or 8.139.410's substantive text as current, check srca.nm.gov directly for a newer version of the same part number."
+    },
+    {
+      "key": "nm-drug-felony-scope-unresolved",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack could not fetch N.M. Stat. Ann. § 27-2B-11(C)'s full text directly (law.justia.com 403'd; nmonesource.com, New Mexico's own official statute host, 404'd on every URL pattern tried) and relied on two independently-fetched, textually-convergent secondary/quasi-primary mirrors. Both quote statutory language scoped narrowly to convictions for \"distribution\" of a controlled substance, and Public Health Law Center's own tracking notes this scope as genuinely ambiguous regarding simple possession/use convictions. Before telling a New Mexico applicant with a possession-only (not distribution) drug felony conviction that they are exempt from the federal SNAP ban, attempt a direct fetch of nmonesource.com or the New Mexico Legislature's own bill-history system for § 27-2B-11's authoritative current text, or confirm directly with HCA/ISD."
+    },
+    {
+      "key": "nm-excess-shelter-elderly-disabled-cap-unconfirmed",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's Excess Shelter Deduction figure ($744 cap, FFY2026) is drawn directly from HCA's current Income Eligibility Guidelines table, which does not show a separate uncapped figure for elderly/disabled households the way this roster's Connecticut pack found. This pack did NOT find explicit New Mexico-specific language confirming whether New Mexico applies the federal-default uncapped exception for elderly/disabled households (7 CFR § 273.9(d)(6)(ii)) or applies the $744 cap universally. Before stating New Mexico's elderly/disabled shelter-deduction cap status with full confidence, locate and fetch NMAC 8.139.520's shelter-deduction subsection directly."
+    },
+    {
+      "key": "nm-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (200% FPG BBCE ceiling and its per-household-size dollar amounts, asset limits $3,000/$4,500, Standard Deduction $209/$209/$209/$223/$261/$299, HCSUA $419, LUA $289, Telephone Standard $51, Excess Shelter cap $744, Homeless Shelter Standard $198.99, Minimum Allotment $24) are drawn from HCA's own current Income Eligibility Guidelines PDF (ISD 017), effective October 1, 2025, matching the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check hca.nm.gov for the ISD 017 FY2027 update after that date before restating any New Mexico-specific dollar figure with full confidence."
+    },
+    {
+      "key": "nm-tanaa-dual-enrollment-bill-status",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "The federal Tribal Access to Nutrition Assistance Act (proposed by Sens. Murray and Cortez Masto), which would end the federal FDPIR/SNAP household-level dual-participation exclusion, was PROPOSED but not confirmed enacted as of this pack's fetch date. If enacted, this would materially change the FDPIR-vs-SNAP guidance for New Mexico's substantial tribal-land population (see tribal-lands-fdpir supplement). Re-check the bill's status via congress.gov before restating the current exclusivity rule as permanent."
+    }
+  ]
+}

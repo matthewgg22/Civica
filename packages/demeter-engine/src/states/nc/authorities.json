@@ -1,0 +1,41 @@
+{
+  "_provenance": {
+    "note": "North Carolina citation authorities. North Carolina uses TWO distinct authority families: FNS Certification Manual sections (e.g. 'FNS 220', 'FNS 340.19', 'FNS 500.02') and North Carolina General Statute sections (e.g. 'NCGS 108A-51.1'). This pack prefixes manual sections 'FNS <section>' (matching North Carolina's own citation convention verbatim — the manual sections are already prefixed 'FNS' in NCDHHS's own text) and statutes 'NCGS <section>' to disambiguate, matching the roster's convention of a short prefix per state's citation family (Ohio's OAC/ORC, Wisconsin's FSH, Illinois' PM/WAG, Michigan's BEM/BAM, Pennsylvania's PAH).",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "fnssection",
+      "regex": "\\bFNS\\s+(\\d{3}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "FNS $1",
+      "normalize": "none",
+      "match": "second-word-base",
+      "note": "North Carolina FNS Certification Manual sections, e.g. FNS 220 (Categorical Eligibility), FNS 340.19 (Child Support Deduction), FNS 500.02 (Certification Periods). A cited subsection (FNS 340.19, FNS 220.03) is checked against its section-level base (FNS 340, FNS 220) — the manual's own subsections are not separately enumerated in `known`, matching this roster's MPP 63-300.5(j)-style hierarchical citations. NOTE: this pattern only matches North Carolina's own manual-section citation shape ('FNS' + a 3-digit section number with an optional 2-digit subsection) — it does NOT match plain federal USDA program mentions or unrelated 'FNS' usage in prose."
+    },
+    {
+      "key": "ncgs",
+      "regex": "\\bNCGS\\s+§?\\s*(\\d{3}[A-Z]?-\\d{1,3}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "NCGS $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "North Carolina General Statute sections, e.g. 108A-51.1 (ABAWD waiver-request prohibition)"
+    }
+  ],
+  "known": {
+    "fnssection": [
+      { "value": "FNS 220", "note": "categorical eligibility — narrow WFFA/SSI pathway (no income test) AND the flat 200% FPL Expanded Categorical Eligibility pathway, conferred via a TANF-services notice printed on every state-approved application; waives gross income, net income, AND resource tests for both" },
+      { "value": "FNS 260", "note": "able-bodied adults without dependents (ABAWD) — 3-in-36-month time limit, work-requirement exemptions (revised Dec 1, 2025 for OBBBA/H.R. 1), screening requirements" },
+      { "value": "FNS 270", "note": "controlled substance felons — MODIFIED drug-felony ban: permanent disqualification by default since Aug 23, 1996, narrow reinstatement only for NC Class H/I felony convictions after a 6-month wait plus AMHA treatment-compliance determination" },
+      { "value": "FNS 340", "note": "deductions — standard deduction, dependent care, shelter/utility (SUA/BUA/TUA), excess medical (>$35, Specified Persons only), child support (ordinary deduction, vendor payments and arrearages count, alimony excluded)" },
+      { "value": "FNS 360", "note": "determining benefit levels — the FFY26 dollar tables (SUA/BUA/TUA scaled by household size, standard deduction, income limits at 100%/130%/200%/165%, maximum allotments), effective October 1, 2025" },
+      { "value": "FNS 390", "note": "resources — $3,000/$4,500 standard resource limits (waived for categorically eligible households); ALL motor vehicles including boats are excluded resources" },
+      { "value": "FNS 425", "note": "expedited service processing — federal-standard eligibility gates, North Carolina's own internal 4-calendar-day disposition target to guarantee EBT availability within the federal 7-day ceiling" },
+      { "value": "FNS 500", "note": "SR category and reporting requirements — certification periods (12-month zero-earned-income Specified-Person tier, 6-month default for all other households) and simplified-reporting change triggers" }
+    ],
+    "ncgs": [
+      { "value": "NCGS 108A-51.1", "note": "Prohibition on certain waivers — bars NCDHHS from seeking an ABAWD geographic time-limit waiver, with a narrow carve-out for post-disaster D-SNAP; enacted by S.L. 2015-294 § 16(a), effective October 1, 2015, still in force as of this pack's build date" }
+    ]
+  }
+}

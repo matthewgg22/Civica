@@ -1,0 +1,215 @@
+name: Demeter web CI
+
+# The public Demeter surface (apps/web) + engine integration:
+#   unit        — apps/web vitest (routes, usage gate, chat renderer)
+#   db-specs    — every *.pg.test.ts against REAL Postgres: creates the Supabase
+#                 roles and auth.uid()/auth.jwt() shims, applies the demeter
+#                 migrations verbatim (so their SQL is validated on every PR),
+#                 then runs the specs whose subject is the DATABASE rather than
+#                 the code — RPC atomicity under concurrency, ON CONFLICT
+#                 arbiter inference, and RLS isolation between two users
+#   e2e-smoke   — production build + Playwright against next start, NO
+#                 ANTHROPIC_API_KEY: asserts the honest degraded states
+#                 (chat renders + send yields a response state; growth pages
+#                 render their headings)
+
+on:
+  pull_request:
+    branches:
+      - main
+      - codex/rebuild-feb18
+    paths:
+      - 'apps/web/**'
+      - 'packages/demeter-engine/**'
+      - 'supabase/migrations/*demeter*'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - 'package.json'
+      - '.github/workflows/demeter-web-ci.yml'
+  workflow_dispatch:
+
+jobs:
+  unit:
+    name: apps/web unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run web unit tests
+        run: pnpm --filter civica-web run test
+
+  lint:
+    name: apps/web lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Added only after the app was already clean (#695). apps/web declared a
+      # lint script and depended on eslint for a long time with no flat config,
+      # so `pnpm lint` exited 2 before reading a file and nothing here ever ran
+      # it — `next build` does not lint in Next 16 either.
+      #
+      # --max-warnings=0 lives in the package script, not here: pnpm --filter
+      # does not forward `--` args, and more importantly `pnpm lint` should mean
+      # the same thing on a laptop as it does in CI. The app is at zero warnings
+      # today, and a job that tolerates a growing pile of them is a job people
+      # stop reading.
+      - name: Lint
+        run: pnpm --filter civica-web run lint
+
+  db-specs:
+    name: Database-backed specs vs real Postgres
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: demeter_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/demeter_test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Apply demeter migrations to a Supabase-shaped database
+        # Vanilla postgres lacks the Supabase schema/roles/functions the
+        # migrations GRANT and write policies against — create them first, then
+        # apply the migration files VERBATIM so any SQL error in them fails
+        # this job.
+        #
+        # auth.uid() and auth.jwt() are stubbed with Supabase's own definitions
+        # (reading the request.jwt.* GUCs), which is what lets the RLS specs
+        # SET ROLE authenticated and prove the policies actually isolate one
+        # user from another. Without them, CREATE POLICY fails at parse time.
+        run: |
+          psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE SCHEMA IF NOT EXISTS snap_enrollment;
+          CREATE SCHEMA IF NOT EXISTS auth;
+          DO $$ BEGIN
+            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'anon') THEN CREATE ROLE anon NOLOGIN; END IF;
+            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'authenticated') THEN CREATE ROLE authenticated NOLOGIN; END IF;
+            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'service_role') THEN CREATE ROLE service_role NOLOGIN; END IF;
+          END $$;
+          -- Mirrors prod, checked 2026-08-11: authenticated HAS usage on this
+          -- schema and anon does NOT. The anon half is load-bearing for the
+          -- saved-conversations spec, which asserts anon cannot reach the table.
+          GRANT USAGE ON SCHEMA snap_enrollment TO authenticated, service_role;
+          GRANT USAGE ON SCHEMA auth TO anon, authenticated, service_role;
+          CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$
+            SELECT coalesce(
+              nullif(current_setting('request.jwt.claim.sub', true), ''),
+              (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')
+            )::uuid
+          $$;
+          CREATE OR REPLACE FUNCTION auth.jwt() RETURNS jsonb LANGUAGE sql STABLE AS $$
+            SELECT coalesce(
+              nullif(current_setting('request.jwt.claim', true), ''),
+              nullif(current_setting('request.jwt.claims', true), '')
+            )::jsonb
+          $$;
+          SQL
+          # Dependency order, not filename order: the feedback specs need the
+          # base table before the columns before the index swap.
+          for f in \
+            20260610_demeter_usage_counters.sql \
+            20260611_demeter_supporters.sql \
+            20260607_mae_feedback.sql \
+            20260614_demeter_public_feedback.sql \
+            20260616_feedback_upsert_index.sql \
+            20260617_demeter_conversations.sql \
+            20260821_demeter_conversations_worksheet.sql
+          do
+            psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f "supabase/migrations/$f"
+          done
+
+      - name: Run the database-backed specs
+        # Every *.pg.test.ts, not one hardcoded file. The feedback regression
+        # spec added with the 42P10 fix was invisible to CI for exactly that
+        # reason: the unit job skips it (no TEST_DATABASE_URL) and this job
+        # never named it, so the test written because a unit test COULDN'T
+        # catch that bug was not running anywhere.
+        run: pnpm --filter civica-web run test:pg
+
+  e2e-smoke:
+    name: Playwright smoke (build + start, no API key)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        working-directory: apps/web
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Build (production, webpack + model tracing)
+        run: pnpm turbo run build --filter=civica-web
+
+      - name: Run smoke suite
+        working-directory: apps/web
+        run: pnpm run test:e2e
+        env:
+          CI: true
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demeter-playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 7

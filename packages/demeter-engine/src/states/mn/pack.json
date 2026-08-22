@@ -1,0 +1,43 @@
+{
+  "code": "MN",
+  "program": "Supplemental Nutrition Assistance Program (SNAP) — formerly called \"Food Support\" or \"Food Stamps\" in Minnesota's own manual glossary",
+  "agency": "Minnesota Department of Children, Youth, and Families (DCYF) — but the Combined Manual itself is still hosted on the LEGACY Department of Human Services (DHS) domain",
+  "admin_model": "county",
+  "admin_note": "County-administered by 87 county agencies plus 11 Tribal Nations — a different structure from Wisconsin's multi-county-consortium model (each Minnesota county runs its own office; there is no consortium layer). A genuine agency-name migration is in progress: Minnesota moved food/family-program functions from DHS to a newly created Department of Children, Youth, and Families (DCYF), but the authoritative eligibility policy — the Combined Manual — is STILL hosted on the legacy dhs.state.mn.us domain and content-management system as of this pack's build date, and several individual manual sections carry issue-date stamps ranging from 2014 to 2025, confirming real, uneven staleness across the manual (see PROVENANCE.md).",
+  "system": "MAXIS (the county eligibility system); applicants apply through MNbenefits.mn.gov",
+  "portal": {
+    "name": "MNbenefits",
+    "url": "https://mnbenefits.mn.gov"
+  },
+  "update_channels": [
+    {
+      "name": "Combined Manual (CM) — the authoritative eligibility policy source, on the legacy dhs.state.mn.us content-management system",
+      "url": "https://www.dhs.state.mn.us/main/idcplg/Enrollment_home_page.doc?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=id_016956"
+    },
+    {
+      "name": "Minnesota DCYF — SNAP program page",
+      "url": "https://dcyf.mn.gov/snap"
+    },
+    {
+      "name": "USDA FNA ABAWD Waivers FY 2025-2029 (state response documents)",
+      "url": "https://www.fna.usda.gov/snap/waivers/timelimit/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct fetch and pdftotext extraction of the Combined Manual's own Table of Contents/section-body PDF (dhs.state.mn.us, a legacy Oracle WebCenter Content host — the exact 'rot risk' the framework doc flagged going in) — the PDF turned out to contain full section body text, not just a table of contents, and every section body used in this pack was read directly from that extraction, not from a secondary summary. Several individual dollar-figure and status sections could NOT be independently re-verified against a live current-FY source in this pass: the dhs.state.mn.us drug-felons/ABAWD-adjacent page hit an active bot-detection wall (Radware/perfdrive challenge) on direct fetch, and USDA's own FY26 SUA values PDF and ABAWD waiver page both returned access-denied/bot-block responses to this pass's fetch attempts. Those gaps are disclosed, not silently guessed past — see PROVENANCE.md.",
+    "gates": "Cross-check: every claim traced to a specific Combined Manual section body (with its own issue-date stamp, visible directly in the extracted text) rather than a secondary paraphrase. One major finding: a widely-repeated secondary-source claim that Minnesota bans SNAP recipients with 2 failed drug tests for life is FLATLY CONTRADICTED by the Combined Manual's own current text (0011.27.03, issue date 11/2024) — Minnesota ended its drug-felony disqualification for SNAP as of 8/1/2023, made post-conviction drug testing OPTIONAL for agencies, and explicitly states a positive test or refusal to test may NOT be used to deny or terminate benefits. This is disclosed in the criminal-justice-disqualifications supplement and PROVENANCE.md as a corrected secondary-source error, not merely a finding. A second live, unconfirmed freshness risk: Minnesota's most recently reported statewide ABAWD waiver has a stated expiration of June 30, 2026 (per two independent secondary sources, not independently confirmed via a primary DHS/USDA source in this pass due to access barriers) — a date already past as of this pack's build date. `packages/snap-rules` stays parked — no MN StatePolicy entry exists yet (a pre-existing authoring gap, not a finding from this pack).",
+    "sources": [
+      "Minnesota Combined Manual §0013.06, SNAP Categorical Eligibility/Ineligibility (dhs.state.mn.us, pdftotext of the manual PDF)",
+      "Minnesota Combined Manual §0015.81, Assets - SNAP (dhs.state.mn.us)",
+      "Minnesota Combined Manual §0018.15, Shelter Deductions (dhs.state.mn.us) — dollar figures issue-dated 10/2024, may lag the FFY26 COLA cycle, see PROVENANCE.md",
+      "Minnesota Combined Manual §0018.12, Medical Deductions (dhs.state.mn.us) — section body issue-dated 12/2014",
+      "Minnesota Combined Manual §0018.33, Child and Spousal Support Deductions (dhs.state.mn.us) — issue-dated 05/2023",
+      "Minnesota Combined Manual §0011.27.03, Drug Felons (dhs.state.mn.us) — issue-dated 11/2024, corrects a false secondary-source lifetime-ban claim",
+      "Minnesota Combined Manual §0004.04, Expedited SNAP (dhs.state.mn.us) — issue-dated 05/2025",
+      "Minnesota Combined Manual §0009.03, Length of Recertification Periods (dhs.state.mn.us) — issue-dated 04/2025",
+      "Minnesota DCYF SNAP program page (dcyf.mn.gov/snap), fetched 2026-08-11",
+      "USDA FNA Restaurant Meals Program state list, fetched via direct curl for the WI pack earlier the same session (2026-08-11) and reused here — Minnesota is not on it, matching WI/OR's absence"
+    ]
+  }
+}

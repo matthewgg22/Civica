@@ -1,0 +1,96 @@
+{
+  "_provenance": {
+    "note": "Illinois citation authorities. IDHS publishes a PAIRED manual: the Policy Manual (PM) states the rule narratively, the Workers' Action Guide (WAG) at the SAME section number carries the operational detail and dollar tables — cited here as 'PM NN-NN-NN' / 'WAG NN-NN-NN'. Amendments issue as numbered Manual Releases ('MR #25.33') with public bulletin pages at dhs.state.il.us, and interim guidance issues as unnumbered Policy Memoranda before the next Manual Release folds it into PM/WAG text. Every PM/WAG page's own TOC listing carries a revision date + MR number — the best per-section freshness signal fetched live in this pass (some sections, e.g. PM 13-01-04, are visibly stale — see PROVENANCE.md).",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "ilpm",
+      "regex": "\\bPM\\s+(\\d{2}-\\d{2}-\\d{2}(?:-[a-z])?)\\b",
+      "flags": "gi",
+      "template": "PM $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "IDHS Policy Manual sections; subsection cites like PM 13-01-08-b verify at exact form"
+    },
+    {
+      "key": "ilwag",
+      "regex": "\\bWAG\\s+(\\d{2}-\\d{2}-\\d{2}(?:-[a-z])?)\\b",
+      "flags": "gi",
+      "template": "WAG $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "IDHS Workers' Action Guide sections — same numbering as PM, paired 1:1; carries dollar tables PM text often omits"
+    },
+    {
+      "key": "ilmr",
+      "regex": "\\bMR\\s*#?\\s*(\\d{2}\\.\\d{1,2})\\b",
+      "flags": "gi",
+      "template": "MR #$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "IDHS Manual Releases — bulletin pages at dhs.state.il.us/page.aspx?item=N"
+    },
+    {
+      "key": "ilcs",
+      "regex": "\\b305\\s+ILCS\\s+5/1-10(\\([a-z]\\))?\\b",
+      "flags": "gi",
+      "template": "305 ILCS 5/1-10$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Illinois Public Aid Code — the drug-felony SNAP opt-out statute, already primary-sourced in the #619 engine pass. Subsection tag is optional; captured as group 1 (lowercase, e.g. '(c)') so the template renders correctly with or without it."
+    }
+  ],
+  "known": {
+    "ilcs": [
+      { "value": "305 ILCS 5/1-10(c)", "note": "Illinois Public Aid Code, subsection (c) — the drug-felony SNAP opt-out, already primary-sourced against ilga.gov in the #619 engine pass" }
+    ],
+    "ilpm": [
+      { "value": "PM 02-08-00", "note": "expedited SNAP application overview" },
+      { "value": "PM 02-08-01", "note": "who can get expedited service — <$150 gross + ≤$100 liquid, or destitute migrant, or rent+utilities exceed income+assets" },
+      { "value": "PM 02-08-02", "note": "expedited processing — Mercury/Illinois Link benefits issue same day as certification" },
+      { "value": "PM 03-15-00", "note": "SNAP Work Provisions and Sanctions — the broader work-registration ladder, distinct from the ABAWD-specific Work Requirement" },
+      { "value": "PM 03-16-00", "note": "SNAP Work Requirement — fixed 3-year clock 1/1/2024–12/31/2026, post-OBBBA exemptions" },
+      { "value": "PM 03-23-00", "note": "Convicted Persons and Persons Fleeing the Law — no drug-felony-conviction category (verified full opt-out is a separate statute, 305 ILCS 5/1-10(c))" },
+      { "value": "PM 05-06-00", "note": "SNAP units with elderly or disabled ('Qualifying') members — the 200% screen trigger" },
+      { "value": "PM 05-06-01", "note": "Qualifying Member definition — 60+ or disabled" },
+      { "value": "PM 05-06-02", "note": "Qualifying Member benefits — 200% gross screen, net-only test, LIHEAP-linked utility standard" },
+      { "value": "PM 05-07-00", "note": "categorically eligible SNAP households — the Guide to Services (DHS 4474) TANF-info-brochure pathway" },
+      { "value": "PM 05-07-01", "note": "benefits of categorical eligibility — no gross/net/asset test" },
+      { "value": "PM 05-07-02", "note": "households NOT categorically eligible — IPV, work sanction, over-200% qualifying-member, post-lottery reapplication" },
+      { "value": "PM 07-04-01", "note": "SNAP asset limits — $3,000/$4,500, waived for cat-el" },
+      { "value": "PM 07-04-17", "note": "licensed vehicles — excluded (mirrors federal default)" },
+      { "value": "PM 07-04-21", "note": "substantial lottery/gambling winnings — $4,500 single-game threshold, immediate ineligibility" },
+      { "value": "PM 13-01-01", "note": "SNAP monthly income standards overview — gross vs net, when each applies" },
+      { "value": "PM 13-01-01-a", "note": "gross monthly income — child-support exclusion applied BEFORE the gross-standard comparison" },
+      { "value": "PM 13-01-01-b", "note": "net monthly income" },
+      { "value": "PM 13-01-04", "note": "standard deduction — STALE PAGE (last revised 06/13/11, MR 11.13); see MR #25.33 and PROVENANCE.md for the discrepancy this creates" },
+      { "value": "PM 13-01-05", "note": "Standard Medical Deduction — $185 general / $485 Group Home-CILA, $35 floor, Qualifying Member only" },
+      { "value": "PM 13-01-06", "note": "dependent care deduction — actual cost, client statement, no verification required" },
+      { "value": "PM 13-01-07", "note": "child support income EXCLUSION — subtracted from gross for the income-standard comparison, NOT allowed again as a net-calc deduction" },
+      { "value": "PM 13-01-08", "note": "excess shelter deduction overview" },
+      { "value": "PM 13-01-08-b", "note": "the utility allowance — 4-tier ladder (A/C-Heating, Limited, Single, Telephone), post-OBBBA LIHEAP-eligibility narrowing for non-Qualifying-Member households eff. 9/26/2025" },
+      { "value": "PM 17-05-00", "note": "SNAP approval period overview" },
+      { "value": "PM 17-05-02", "note": "assigning a SNAP approval period — 6-month default, 24-month EDSRP (elderly/disabled)" },
+      { "value": "PM 19-07-00", "note": "Simplified Reporting status SNAP" },
+      { "value": "PM 21-06-00", "note": "SNAP Employment & Training (E&T) — voluntary program, not a regaining requirement itself but hosts Community Workfare/job search components that can meet the Work Requirement" }
+    ],
+    "ilwag": [
+      { "value": "WAG 03-16-01", "note": "screening for Work Requirement exemptions — child ≤13, IHCIA Indian, pregnancy, chronic homelessness, unfitness" },
+      { "value": "WAG 03-16-02", "note": "meeting the Work Requirement — 80 hrs/month (20 hrs/week), qualifying work programs, Community Workfare formula" },
+      { "value": "WAG 03-16-04", "note": "eligibility limits — 3 countable months in the fixed 3-year period, out-of-state countable months transfer" },
+      { "value": "WAG 03-16-05", "note": "regaining eligibility — 80 hrs within 30 days, or become exempt; no limit on regaining count; one 3-consecutive-month grant per period" },
+      { "value": "WAG 03-23-05", "note": "fugitive felons and probation/parole violators — worker procedure (TA/TAR codes); IES defaults to 'No' if unverified by day 30" },
+      { "value": "WAG 07-04-01", "note": "asset limits worker guide — links to sub-items" },
+      { "value": "WAG 13-01-01-a", "note": "the actual gross income standard table — 165% (nonqualifying) / 200% (qualifying-member) columns" },
+      { "value": "WAG 13-01-04", "note": "standard deduction worker table — STALE, see PM 13-01-04 note" },
+      { "value": "WAG 13-01-05", "note": "Standard Medical Deduction worker guide — Group Home/CILA computation detail" },
+      { "value": "WAG 13-01-08-b", "note": "utility allowance worker guide — the 4-step decision ladder + dollar figures, MR #25.33" },
+      { "value": "WAG 17-05-02", "note": "SNAP approval period chart — 6-month default / 24-month EDSRP / 12-month AABD-cash-medical" }
+    ],
+    "ilmr": [
+      { "value": "MR #25.33", "note": "October 2025 SNAP COLA adjustments + AC/Heating Standard LIHEAP-eligibility change (09/26/2025) — utility standards, income standards, standard deduction (see PROVENANCE.md discrepancy note), shelter cap, homeless deduction, asset limits, min/max benefits" },
+      { "value": "MR #26.03", "note": "SNAP Work Requirement policy updates + Time-Limited Benefits implementation (referenced by the 10/16/2025 end-of-waiver Policy Memo)" }
+    ]
+  }
+}

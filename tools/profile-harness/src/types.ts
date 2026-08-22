@@ -22,26 +22,10 @@ export interface SuiteMeta {
   basis?: string;
   count: number;
   default_state: string;
-  states: Record<string, StateLibEntry>;
   params: SuiteParams;
   tolerances: SuiteTolerances;
   how_to_use?: string;
   caveats?: string[];
-}
-
-export interface StateLibEntry {
-  label: string;
-  bbce: boolean;
-  bbce_threshold?: number;
-  bbce_fpl_basis?: "federal_fiscal_year" | "calendar_year" | null;
-  asset_waiver: boolean;
-  sua: string;
-  admin: string;
-  allotment_tier: string;
-  drug_felony_ban: boolean;
-  abawd_waiver_avail: boolean;
-  sua_by_tier?: Record<string, number> | null;
-  max_allotment_table?: Record<string, number>;
 }
 
 export interface SuiteParams {
@@ -101,6 +85,17 @@ export interface VariantBlock {
 export interface Variant {
   facts_patch: Record<string, unknown>;
   verdict: VerdictString;
+  /**
+   * Per-state override for `verdict`. Variant profiles originally carried ONE
+   * verdict for every state, which silently assumes the income screen is the
+   * same everywhere — it is not. BBCE runs 130% (GA), 165% (TX, IL), 200%
+   * (most) and dual-pathway (NY), so a household can legitimately be approved
+   * in one state and denied in another on identical facts.
+   *
+   * Falls back to `verdict` when a state isn't listed, so existing profiles
+   * are unaffected. See #609.
+   */
+  verdict_by_state?: Record<string, VerdictString>;
   benefit?: number | null;
   note?: string;
 }

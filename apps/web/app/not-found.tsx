@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import * as Sentry from "@sentry/nextjs";
 import { strings, STORAGE_KEY, type Locale } from "./i18n";
@@ -44,9 +45,9 @@ export default function NotFound() {
             <a href="/welcome" className="error-card__primary-cta error-card__primary-cta--link">
               {copy.notFoundHomeCta}
             </a>
-            <a href="/#lead-capture" className="error-card__secondary-cta">
-              {copy.notFoundQualifyCta} →
-            </a>
+            <Link href="/#lead-capture" className="error-card__secondary-cta">
+ →
+            </Link>
           </div>
         </div>
       </div>

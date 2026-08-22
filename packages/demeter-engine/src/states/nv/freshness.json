@@ -1,0 +1,32 @@
+{
+  "_provenance": {
+    "note": "Nevada dated facts. Dollar values ride the federal October COLA via the C-210 chart (MTL 21/25, eff. 10/1/2025 issuances). ABAWD waiver status is the most volatile fact in this pack — Nevada's statewide waiver already expired once during this pack's build window (01/31/2026) and the narrower waived-area list that replaced it (eff. 02/01/2026) is itself subject to change at any FNS response.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "nv-ffy26-dollar-values",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Nevada FFY 2026 dollar values (C-210.1/C-210.3, MTL 21/25, eff. 10/1/2025 issuances: income standards, standard deduction $209/$223/$261/$299, SUA $446/LUA $361/IUA $77/TUA $52, shelter cap $744, homeless deduction $198.99, resource limits $3,000/$4,500, max allotments) are due for the October 2026 COLA — find the successor Manual Transmittal Letter (MTL) to C-200 before quoting any Nevada dollar amount."
+    },
+    {
+      "key": "nv-abawd-statewide-waiver-ended",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "As of this pack's build (2026-08-11), Nevada's statewide ABAWD waiver (FNS-approved 02/01/2025–01/31/2026) has ALREADY EXPIRED and was not renewed statewide — the E&P Manual's own text states 'Nevada's statewide ABAWD waiver was terminated FY2026.' Do not describe Nevada as having a statewide ABAWD waiver. Only the narrower Labor Surplus/High Unemployment areas listed in E&P MS B-472 (effective 02/01/2026: specific tribal/reservation areas + Mineral County) remain waived, and even that narrower list is itself subject to change. Re-verify against a current E&P Manual B-472 fetch or the FNS ABAWD waiver status page before stating which areas are waived, and treat this entry's date as a re-verification checkpoint, not a claim the current picture is fixed until then."
+    },
+    {
+      "key": "nv-abawd-fixed-period-dates-unconfirmed",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "Nevada's E&P Manual (E&P MS B-473) confirms it tracks ABAWD time limits on ONE fixed statewide 36-month calendar, not individual rolling clocks, but this pack could not find the calendar's exact start/end dates in any source fetched (checked B-470/472/473 and the ABAWD partner toolkit). Do not state specific Nevada ABAWD 36-month period dates (e.g. a \"1/1/24–12/31/26\"-style range) without re-verifying directly against a current DSS source — left null per the corpus's own invariant rather than guessed."
+    },
+    {
+      "key": "nv-abawd-discretionary-exemptions-unavailable",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "As of this pack's build, Nevada's E&P Manual states it currently has ZERO ABAWD state discretionary exemptions (the Fiscal Responsibility Act of 2023's up-to-8% provision, NRS 422A.339) available for use, tied to the state having just come off its statewide waiver. FNS is expected to issue availability by memo — re-verify before stating whether discretionary exemptions are available."
+    }
+  ]
+}

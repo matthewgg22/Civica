@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "Maryland dated facts. Because Maryland has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a genuine disclosed research gap, or (distinctively for this pack) a genuine INTERNAL CONTRADICTION between two sections of Maryland's own currently-published manual, a pattern this roster has not previously documented as cleanly as it appears here.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "md-resource-limit-internal-contradiction",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack found a genuine, disclosed CONTRADICTION within Maryland's own currently-published manual: Section 200 (Resources), carrying a 'REVIEWED JUNE 2026' footer, states a non-categorically-eligible resource limit of $2,250 standard / $3,250 elderly-or-disabled. Section 600 (Standards for Income and Deductions), 'REVISED AUGUST 2025' and headed 'Effective October 1, 2025,' states $3,000 / $4,500 — matching the current federal FFY2026 standard and independently cross-validated by FIA Action Transmittal AT 26-05 (issued October 3, 2025). This pack treats Section 600's figures as authoritative. Before restating Maryland's resource limit, re-fetch both MD SNAP Manual Section 200 and Section 600 directly and check whether Section 200 has since been reconciled to match. Note this resource test almost never actually binds in practice because Maryland's BBCE covers nearly all applicants under 200% FPL (see the income-pathways supplement) — but the contradiction itself should not be repeated as settled fact for the rare non-categorically-eligible household."
+    },
+    {
+      "key": "md-homeless-shelter-allowance-internal-contradiction",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "A second, structurally identical internal contradiction: MD SNAP Manual Section 212.10 (Homeless Shelter Allowance), unrevised since a transmittal it names directly ('20-02 AT Homeless Shelter Deduction Increase,' dated 2020), states the allowance is $148. Section 600 states $198.99, independently cross-validated by FIA Action Transmittal AT 26-05 (issued October 3, 2025: 'The maximum homeless shelter deduction increased to $198.99'). This pack treats $198.99 as authoritative. Before restating this figure, re-fetch Section 212 directly and check whether it has since been revised to match Section 600."
+    },
+    {
+      "key": "md-drug-felony-date-inconsistency",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "This pack's drug-felony finding (see criminal-justice-disqualifications) rests on two adjacent Maryland manual subsections that appear to describe overlapping conduct (volume-dealer/drug-kingpin convictions) using two DIFFERENT anchor dates: Section 100.62(H) references 'a volume dealer amount after October 1, 2017,' while Section 100.7(I) and (J) reference convictions 'after July 1, 2000.' This pack disclosed this apparent internal inconsistency rather than silently reconciling it — it may reflect two genuinely distinct legislative changes (e.g. a 2000 opt-out effective date for the broader manufacture/distribution/possession-with-intent category vs. a 2017 definitional update to the 'volume dealer amount' threshold specifically), or it may be an unreconciled drafting artifact. Before stating Maryland's drug-felony rule with full confidence, re-fetch Section 100 directly and, if possible, locate the specific Maryland session-law history (2018 General Assembly session, per secondary sources) that established the current volume-dealer/kingpin carve-out, to confirm which date governs which population."
+    },
+    {
+      "key": "md-elderly-supplement-age-threshold-discrepancy",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack found a minor, disclosed age-threshold discrepancy: Md. Code, Human Services § 5-501(d) states the $50/month state supplement applies to households including an individual 'at least 60 years old,' but MD SNAP Manual Section 115.3(N), when cross-referencing this same supplement in the context of the $24 categorical-eligibility minimum benefit, describes it as 'the state supplement for participants over 62.' This pack did not attempt to resolve which age threshold governs and disclosed both readings rather than picking one. Before stating a specific age threshold for this supplement with full confidence, re-fetch Section 115 and § 5-501 directly and check for an intervening definition or amendment."
+    },
+    {
+      "key": "md-restaurant-meals-program-county-rollout",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "This pack's Restaurant Meals Program finding notes Maryland's RMP is in an active, expanding county-by-county pilot rather than fully statewide as of this pack's fetch date (2026-08-11) — Maryland's own DHS page names Baltimore City, Baltimore County, Anne Arundel, Charles, Frederick, Harford, Montgomery, Prince George's, Calvert, St. Mary's, and Allegany counties 'among others' and states the department is 'actively recruiting additional restaurants to expand program access statewide.' County coverage is a moving target. Before telling an applicant RMP is or is not available in their specific county, re-check Maryland's own current county-by-county restaurant list at dhs.maryland.gov/restaurant-meals-program/ rather than relying on this pack's snapshot list."
+    },
+    {
+      "key": "md-abawd-waiver-status-recheck",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "This pack's finding that Maryland currently holds ZERO active ABAWD waivers rests on Maryland's own explicit, dated primary source (FIA Action Transmittal AT 26-09, issued October 16, 2025: 'Q7. Does Maryland DHS still have an ABAWD waiver? A7. No.') — the cleanest and most current confirmation this pack found for any topic. USDA's own waiver index and Maryland's economic conditions can change; before restating 'Maryland has no ABAWD waiver' well past this date, re-check for a newer Maryland FIA transmittal or USDA's Time Limit Waivers FY 2025-2029 index directly."
+    },
+    {
+      "key": "md-general-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "All of this pack's confirmed-current dollar figures (income limits, Standard Deduction, Excess Shelter cap, SUA/LUA/telephone, minimum benefit) are effective October 1, 2025 through September 30, 2026 (FFY2026) per Maryland's own October 2025 Income Guidelines and FIA Action Transmittal AT 26-05. The next federal fiscal year (FFY2027) COLA cycle begins October 1, 2026. Re-verify all dollar figures against Maryland's own then-current Income Guidelines and SNAP Manual Section 600 after that date."
+    }
+  ]
+}

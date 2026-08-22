@@ -240,7 +240,7 @@ export function evaluateChecklist(input: EvaluateInput): EvaluateOutput {
 
 export type { ExemptionType, WorkRequirementInput, WorkRequirementResult, FeatureFlags } from './work-requirements/types';
 export { evaluateWorkRequirement } from './work-requirements/evaluate';
-export { CA_WAIVER_COUNTY_FIPS, MA_WAIVER_COUNTY_FIPS } from './work-requirements/waiver-counties';
+export { CA_WAIVER_COUNTY_FIPS, MA_WAIVER_COUNTY_FIPS, waiverCountiesFor } from './work-requirements/waiver-counties';
 
 // ---------------------------------------------------------------------------
 // SUA tier constants and derivation — CA FFY2026
@@ -296,6 +296,11 @@ export {
 // ---------------------------------------------------------------------------
 
 export { composeVerdict } from "./verdict";
+// Exported for the screening classifier (packages/demeter-engine/src/screening/):
+// it needs to distinguish a pure-cash categorical APPROVE from an ordinary one,
+// which composeVerdict's own result doesn't surface.
+export { evaluateCategorical } from "./gates/categorical";
+export type { CategoricalResult, CategoricalPath } from "./gates/categorical";
 export type { Verdict, VerdictResult } from "./verdict";
 export { computeBenefit } from "./benefit-calc";
 export type { BenefitCalcDetail } from "./benefit-calc";
@@ -303,6 +308,20 @@ export type { BenefitCalcDetail } from "./benefit-calc";
 // uses the same name + members so consumers don't notice the difference.
 export type { Facts, Member, IncomeLine, Shelter, Deductions } from "./facts";
 export { aggregateIncome, hasElderlyOrDisabled } from "./facts";
+// Expedited-service screening (7 CFR 273.2(i), all three paths) — #557.
+// Exported because the dashboard gate must call this instead of re-deriving a
+// partial heuristic of its own.
+export {
+  screenExpedited,
+  effectiveGrossMonthly,
+  expeditedShelterCost,
+} from "./gates/expedited";
+export type {
+  ExpeditedResult,
+  ExpeditedStatus,
+  ExpeditedPath,
+  ExpeditedOptions,
+} from "./gates/expedited";
 export { validateFacts } from "./facts-schema";
 export { getEngineParams } from "./constants/index";
 

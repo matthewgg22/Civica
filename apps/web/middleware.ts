@@ -11,7 +11,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_PREFIXES = ["/apply", "/documents", "/status"];
+// /screen/saved is listed in full and NOT as "/screen": the public Demeter chat
+// lives at /screen/ask and must never sit behind a login. The saved list is the
+// only signed-in page on that whole surface.
+const PROTECTED_PREFIXES = ["/apply", "/documents", "/status", "/screen/saved"];
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -80,5 +83,15 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/apply/:path*", "/apply", "/documents/:path*", "/status/:path*"],
+  // Exact paths for the saved list — the matcher is the outer gate, so a
+  // "/screen/:path*" here would run the session check on every request to the
+  // free chat even though PROTECTED_PREFIXES would then wave it through.
+  matcher: [
+    "/apply/:path*",
+    "/apply",
+    "/documents/:path*",
+    "/status/:path*",
+    "/screen/saved",
+    "/screen/saved/:path*",
+  ],
 };

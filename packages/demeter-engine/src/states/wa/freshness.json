@@ -1,0 +1,26 @@
+{
+  "_provenance": {
+    "note": "Washington dated facts. The ABAWD clock end is a hard cliff (the EA-Z page states the next period begins 1/1/2027). The SUA/deduction WAC text was codified 2/7/2026 (WSR 26-02-071) — FY27 values expected around the October 2026 COLA, so warn once the federal FY26 window closes.",
+    "extracted": "2026-08-04"
+  },
+  "entries": [
+    {
+      "key": "wa-abawd-clock-window",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "Washington's 36-month ABAWD period (1/1/2024–12/31/2026) has ended — the next period began 1/1/2027 and countable months reset. Re-verify the current clock window (WAC 388-444; DSHS EA-Z ABAWD page) before answering any Washington time-limit question."
+    },
+    {
+      "key": "wa-sua-values",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Washington's utility-allowance and deduction dollar values were codified effective 2/7/2026 (WSR 26-02-071) for FY26 — FY27 values are expected around the October 2026 COLA. Re-verify WAC 388-450-0195 and 388-450-0185 before quoting any Washington dollar amount."
+    },
+    {
+      "key": "wa-abawd-no-waiver",
+      "kind": "expires",
+      "date": "2027-02-01",
+      "warning": "The 'no areas in Washington are waived' ABAWD status was stated as of 2/1/2026 — waiver status is volatile; re-verify against the current FNS waiver file and the DSHS ABAWD page."
+    }
+  ]
+}
