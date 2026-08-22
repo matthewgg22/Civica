@@ -320,8 +320,21 @@ jobs:
         # fails this job instead of failing a person on a clean laptop.
         run: |
           set -euo pipefail
+          # Migrations needing a Postgres extension the stock image does not
+          # ship. NOT a way to excuse a broken migration — the only entries
+          # allowed here are ones that fail on `CREATE EXTENSION`, and each
+          # names which one. 20260529 schedules the snap retention purge
+          # through pg_cron (live in prod as snap-purge-retention-daily).
+          SKIP_NEEDS_EXTENSION="20260529_snap_enrollment_13_retention_purge.sql"
+          skipped=0
           for f in supabase/migrations/*.sql; do
+            base=$(basename "$f")
+            if grep -qF "$base" <<< "$SKIP_NEEDS_EXTENSION"; then
+              echo "── $f  (SKIPPED: requires an extension this image lacks)"
+              skipped=$((skipped + 1))
+              continue
+            fi
             echo "── $f"
             psql "$REPLAY_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$f"
           done
-          echo "The chain replays onto an empty database."
+          echo "The chain replays onto an empty database ($skipped skipped for extensions)." 
