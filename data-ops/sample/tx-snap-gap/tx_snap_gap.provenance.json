@@ -1,0 +1,8 @@
+{
+  "source": "US Census Bureau, 2023 ACS 1-Year PUMS, Texas household file (csv_htx.zip, psam_h48.csv), pulled 2026-08-22",
+  "builder": "tools/tx-snap-gap/build.py (TODO-61, first state)",
+  "methodology_family": "MA fact-base (tools/ma-snap-gap) + CA-style fractional tract-count PUMA->county allocation (data-ops/reference/2020_tract_to_puma.txt)",
+  "verification": "Independent no-pandas recomputation of one PUMA matched eligible_hh and non_enroll_rate exactly (2026-08-22)",
+  "known_biases": "Gross-income-only proxy (no TX asset/vehicle test) overstates eligible; ACS under-reports SNAP receipt, overstating non-enrollment. Read as upper-range. TX has NO BBCE - 130% is the operative boundary.",
+  "consistency": "FNS FY2022 full-rules TX estimate: 3.85M eligible persons, ~1.0M unenrolled at 74% participation. This gross-income fact base: 4.63M eligible persons, 2.70M in non-receipt households - higher as expected per known biases."
+}
