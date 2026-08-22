@@ -220,3 +220,74 @@ def test_fl_methodology_language_not_ca():
     assert "LightGBM" not in html          # CA model claim must not leak into FL
     assert "gross-income test" in html     # fact-base language present
     assert "You may qualify for SNAP" in html
+
+
+# ---- qualification memo -----------------------------------------------------
+from src import memo  # noqa: E402
+
+
+class _Args:
+    def __init__(self, **kw):
+        self.amount = kw.get("amount", 0.0); self.date = kw.get("date", "")
+        self.term = kw.get("term", ""); self.specimen = kw.get("specimen", False)
+
+
+def test_counties_phrase_grammar():
+    assert memo._counties_phrase(["Orange"]) == "Orange County"
+    assert memo._counties_phrase(["Marin", "Napa"]) == "Marin and Napa Counties"
+    assert memo._counties_phrase(["A", "B", "C"]) == "A, B, and C Counties"
+
+
+def test_memo_carries_every_evidence_element():
+    banks, _a, org = generate.load_inputs()
+    v = memo.build_memo_values(banks["bank_irvine"], org,
+                               _Args(amount=15000, date="2026-10-01"))
+    html = generate.render((TOOL_ROOT / "templates/memo.html").read_text(), v)
+    # (a) CD category + primary purpose
+    assert "12 CFR __.12(g)(2)" in html and "__.12(h)—8" in html
+    # (b) LMI proof: the SNAP proxy quoted from the Q&A
+    assert "__.12(g)(2)—1" in html and "Supplemental Nutrition Assistance programs" in html
+    # (c) geographic nexus
+    assert "__.12(h)—6" in html and "Orange County" in html
+    # (d) amount / date / recipient identity
+    assert "$15,000" in html and "2026-10-01" in html and "501(c)(3)" in html
+    # (e) attestations
+    assert "entirely to program delivery" in html
+    assert "no other institution" in html
+    assert "not</strong> tied to applications" in html
+
+
+def test_memo_never_asserts_qualification():
+    """Posture rule: supply evidence, never claim the grant qualifies."""
+    banks, _a, org = generate.load_inputs()
+    v = memo.build_memo_values(banks["helm_bank"], org, _Args(specimen=True))
+    html = generate.render((TOOL_ROOT / "templates/memo.html").read_text(), v)
+    assert "determination rests with the institution" in html
+    assert "not a representation about outcomes" in html
+    for claim in ("qualifies for CRA credit", "will receive credit",
+                  "earns CRA credit", "guaranteed"):
+        assert claim not in html
+
+
+def test_specimen_is_watermarked_and_unpriced():
+    banks, _a, org = generate.load_inputs()
+    v = memo.build_memo_values(banks["ocean_bank"], org, _Args(specimen=True))
+    html = generate.render((TOOL_ROOT / "templates/memo.html").read_text(), v)
+    assert "SPECIMEN" in html and "[grant amount]" in html
+
+
+def test_dense_mode_engages_for_long_assessment_areas():
+    banks, _a, org = generate.load_inputs()
+    short = memo.build_memo_values(banks["bank_irvine"], org, _Args(specimen=True))
+    long_ = memo.build_memo_values(banks["bank_of_marin"], org, _Args(specimen=True))
+    assert short["density"] == "" and long_["density"] == " dense"
+
+
+@pytest.mark.skipif(not Path(generate.CHROME).exists(), reason="Chrome not installed")
+def test_every_loaded_bank_memo_is_exactly_one_page():
+    """The memo is the bank's exam evidence — it must fit one page, and the
+    generator must fail loudly rather than clip content."""
+    banks, _a, _o = generate.load_inputs()
+    for key in banks:
+        rc = memo.main(["--bank", key, "--specimen"])  # raises MemoOverflowError if >1
+        assert rc == 0

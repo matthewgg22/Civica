@@ -1,0 +1,90 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>CRA qualification memo — [[bank_name]]</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#1a1f1c; --accent:#1d4d3b; --muted:#5c6660; --hair:#d8ddda; --tint:#eef3f0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  @page { size: Letter; margin: 0; }
+  body { font-family:'IBM Plex Sans',sans-serif; color:var(--ink); background:#fff; }
+  .page { width:8.5in; height:11in; padding:.4in .7in .27in; display:flex; flex-direction:column; position:relative; }
+  .letterhead { display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid var(--accent); padding-bottom:7px; }
+  .letterhead .org { font-size:9.5pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent); white-space:nowrap; }
+  .letterhead .doc { font-size:8pt; color:var(--muted); white-space:nowrap; padding-left:12px; }
+  h1 { font-family:'Source Serif 4',serif; font-size:15pt; font-weight:600; margin-top:11px; line-height:1.15; }
+  .subtitle { font-size:8.8pt; color:var(--muted); margin-top:3px; max-width:6.5in; line-height:1.35; }
+  .specimen { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+  .specimen span { font-weight:600; font-size:56pt; letter-spacing:.18em; color:var(--accent); opacity:.07; transform:rotate(-24deg); }
+  table.fields { width:100%; border-collapse:collapse; margin-top:9px; }
+  table.fields th { width:1.85in; text-align:left; vertical-align:top; font-size:8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); font-weight:600; padding:4px 10px 4px 0; border-bottom:1px solid var(--hair); }
+  table.fields td { font-size:9.2pt; line-height:1.34; padding:4px 0; border-bottom:1px solid var(--hair); vertical-align:top; }
+  h2 { font-family:'Source Serif 4',serif; font-size:10.5pt; font-weight:600; margin-top:6px; }
+  p.body { font-size:9.2pt; line-height:1.36; margin-top:3px; }
+  .quote { border-left:3px solid var(--accent); background:var(--tint); padding:6px 10px; font-size:8.6pt; line-height:1.36; margin-top:5px; }
+  .attest { margin-top:9px; border:1px solid var(--hair); padding:8px 11px; }
+  .attest h3 { font-size:8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
+  .attest ul { margin:6px 0 0 16px; }
+  .attest li { font-size:8.8pt; line-height:1.36; margin:1px 0; }
+  .sig { margin-top:11px; display:flex; gap:.4in; align-items:flex-end; }
+  .sig .line { flex:1; border-top:1px solid var(--ink); padding-top:4px; font-size:8.5pt; }
+  .foot { border-top:1px solid var(--hair); margin-top:auto; padding-top:6px; font-size:7.4pt; line-height:1.42; color:var(--muted); }
+  /* Applied by the generator when the assessment area makes the memo long.
+     One page is a hard requirement — src/memo.py fails the build if the
+     rendered PDF is not exactly one page, so this never truncates silently. */
+  .dense p.body { line-height:1.28; }
+  .dense .subtitle { line-height:1.28; }
+  .dense .quote { line-height:1.28; padding:5px 10px; }
+  .dense table.fields td, .dense table.fields th { padding:3px 10px 3px 0; }
+  .dense table.fields td { line-height:1.28; }
+  .dense h2 { margin-top:5px; }
+  .dense .attest li { line-height:1.28; }
+  .dense .attest { padding:7px 11px; margin-top:8px; }
+  .dense .sig { margin-top:9px; }
+</style></head><body>
+<div class="page[[density]]">
+  [[specimen_mark]]
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">CRA qualification memorandum · [[memo_date]]</div></div>
+
+  <h1>Community development qualification memorandum</h1>
+  <div class="subtitle">For the community reinvestment file of <strong>[[bank_name]]</strong>. Supplies the documentation needed to evaluate this grant for community development consideration; the qualification determination rests with the institution and its examiners.</div>
+
+  <table class="fields">
+    <tr><th>Recipient</th><td><strong>[[org_name]]</strong>, a 501(c)(3) nonprofit organization · EIN [[ein]] · IRS determination [[determination]] · [[org_address]]</td></tr>
+    <tr><th>Grant</th><td><strong>[[amount]]</strong> received [[grant_date]][[grant_term]]</td></tr>
+    <tr><th>Program funded</th><td>[[program_name]] — [[program_description]]</td></tr>
+    <tr><th>CD category</th><td><strong>Community services targeted to low- and moderate-income individuals</strong> (12 CFR __.12(g)(2))</td></tr>
+    <tr><th>Geography served</th><td>[[counties_line]]</td></tr>
+    <tr><th>Institution's AA</th><td>As delineated in [[bank_name]]'s [[pe_date]] CRA Performance Evaluation ([[regulator]])</td></tr>
+  </table>
+
+  <h2>Primary purpose</h2>
+  <p class="body">The funded activity is SNAP outreach and application assistance directed to residents who screen as income-eligible. A majority of both the dollars and the beneficiaries are identifiable to the community development purpose above, satisfying the primary-purpose standard of the Interagency Questions and Answers Regarding Community Reinvestment (§__.12(h)—8). Funds support program delivery only.</p>
+
+  <h2>Evidence of low- and moderate-income benefit</h2>
+  <p class="body">Participants receive, or screen as eligible to receive, SNAP — expressly listed in the Interagency Q&amp;A as an accepted method of establishing LMI benefit (§__.12(g)(2)—1):</p>
+  <div class="quote">"…recipients of government assistance programs that have income qualifications equivalent to, or stricter than, the definitions of low- and moderate-income as defined by the CRA Regulations. Examples include … U.S. Department of Agriculture's … Supplemental Nutrition Assistance programs."</div>
+  <p class="body">SNAP's gross-income limit (130% of the federal poverty guideline) is stricter than the CRA definition of moderate income in the geographies served; eligibility is established at the point of service by the screening instrument, so reported service figures are counts, not estimates.</p>
+
+  <h2>Geographic nexus</h2>
+  <p class="body">[[nexus_paragraph]]</p>
+
+  <h2>Responsiveness to identified community need</h2>
+  <p class="body">[[responsiveness_paragraph]]</p>
+
+  <div class="attest">
+    <h3>Attestations by the recipient organization</h3>
+    <ul>
+      <li>Funds were applied <strong>entirely to program delivery</strong> — no portion funded an event, meal, ticket, table, or advertising benefit.</li>
+      <li>No goods or services were returned to the institution in exchange, and compensation is <strong>not</strong> tied to applications or enrollments produced.</li>
+      <li>Program materials present factual eligibility information and do not direct participants toward any institution's products.</li>
+      <li>This activity is reported to no other institution as that institution's own.</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <div class="line">[[contact_name]], [[contact_title]] · [[contact_email]][[contact_phone_line]]</div>
+    <div class="line" style="max-width:1.8in;">Date</div>
+  </div>
+
+  <div class="foot">On request: IRS determination letter, budgets, board and officer list, state charitable-solicitation registration, and the quarterly service report covering this grant. Need figures are [[model_note]]; biases and vintages are documented in the program materials. Retain with the grant record.</div>
+</div>
+</body></html>
