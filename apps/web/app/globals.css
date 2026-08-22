@@ -8248,15 +8248,32 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 }
 
 /* Quieter than either button, and last: a standing promise about how answers
-   are checked, not something to do right now. */
-.dmchat .demeter__sidetools .demeter__how {
+   are checked, not something to do right now.
+   
+   RETARGETED 2026-08-22. This was scoped to `.demeter__sidetools .demeter__how`
+   and the links moved into the worksheet card's foot (`.dmw__footlinks`) the
+   same day — so the rule stopped matching the element it protects and the
+   link fell back to the base 0.8rem, which is why it read a size larger than
+   the "your state agency" link it belongs beside. The finding-7 test kept
+   passing because it greps this stylesheet rather than the rendered link; it
+   now asserts the element's real ancestry too.
+   
+   Matched to `.demeter__link` — the "your state agency" link under the
+   composer — because they are the same KIND of thing: a quiet pointer to
+   where an answer can be checked. Same size, same colour, same underline. */
+.dmchat .demeter__sidetools .demeter__how,
+.dmw__footlinks .demeter__how {
   /* Visually quiet, but the HIT AREA stays 44px: the old zeroed height and
      padding here silently shrank the target to 21px (measured) while the
      base rule still declared 44 (vercel-guidelines finding 7). The negative
      block margin gives the padding back to the layout, so the rail reads
-     exactly as before. */
+     exactly as before.
+     
+     44, not the WCAG 2.2 AA minimum of 24: DEMETER-DESIGN.md commits to 44
+     on every control, and this audience reaches for it on phones. Exceeding
+     the floor is the point. */
   min-height: 44px; padding: 0.7rem 0; margin-block: -0.7rem;
-  font-size: 0.78rem; align-self: flex-start;
+  font-size: 0.72rem; align-self: flex-start; width: fit-content;
 }
 
 @media (max-width: 900px) {
