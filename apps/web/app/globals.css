@@ -8814,3 +8814,35 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   top: auto;
   bottom: calc(100% + 0.35rem);
 }
+
+/* The rail's identity: wordmark with its line beneath (owner, 2026-08-22).
+   Appended at the END of this file deliberately — at equal specificity the
+   last rule wins, and this stylesheet is far too long for position-in-file
+   to be a safe way to layer anything. */
+.demeter__sbident { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.demeter__sbtag {
+  margin: 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--demeter-muted);
+  text-wrap: pretty;
+}
+/* The head is a row again now that the left side is a column of its own. */
+.demeter__sbhead { align-items: flex-start; }
+.demeter__sbhead .demeter__sidebartoggle { margin-top: 0.15rem; }
+
+/* The mode switch wears the page's terracotta, not the deep one (owner,
+   2026-08-22). --demeter-terracotta-deep is the wordmark/hover/error tone;
+   every other filled control on this surface — Sign in, the saved-conversation
+   invitation — is --demeter-terracotta, and the switch was the odd one out.
+   White on #C0553B measures 4.56:1, which clears 4.5:1 for this label's
+   0.78rem semibold. */
+.dmw__mode::before { background: var(--demeter-terracotta); }
+
+/* The rail's bottom row is PINNED to the bottom and centred (owner,
+   2026-08-22). The rail is a flex column, so margin-top:auto pushes this
+   past the tracking panel to the floor rather than leaving it to follow
+   whatever the panel's height happens to be — which moved between the two
+   worksheet modes, so the controls shifted when the mode changed. */
+.demeter__railfoot { margin-top: auto; justify-content: center; }

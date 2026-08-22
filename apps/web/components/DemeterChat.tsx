@@ -2147,15 +2147,23 @@ export function DemeterChat({
                 head order. The brand is the way home: tapping the mark or
                 the name leaves the tool for the main page, same as the nav
                 brand above — two doors, one destination. */}
-            <a
-              className="demeter__sbbrand"
-              href={lang === "en" ? "/screen/ask" : `/${lang}/screen/ask`}
-            >
-              <DemeterMark size={34} />
-              <span className="demeter__sbword" translate="no">
-                Demeter
-              </span>
-            </a>
+            {/* Brand and its line stack together (owner, 2026-08-22). The
+                tagline was defined in all four languages and rendered nowhere
+                — it used to sit under the wordmark in the site nav, which
+                /chat no longer has, so removing the nav orphaned the string
+                and left the rail's head reading as a bare label. */}
+            <div className="demeter__sbident">
+              <a
+                className="demeter__sbbrand"
+                href={lang === "en" ? "/screen/ask" : `/${lang}/screen/ask`}
+              >
+                <DemeterMark size={34} />
+                <span className="demeter__sbword" translate="no">
+                  Demeter
+                </span>
+              </a>
+              <p className="demeter__sbtag">{t.tagline}</p>
+            </div>
             <button
               type="button"
               className="demeter__sidebartoggle"
