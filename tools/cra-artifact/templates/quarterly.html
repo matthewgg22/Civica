@@ -14,10 +14,10 @@
   h1 { font-family:'Source Serif 4',serif; font-size:23pt; font-weight:600; margin-top:16px; line-height:1.12; }
   h2 { font-family:'Source Serif 4',serif; font-size:15pt; font-weight:600; margin-top:20px; }
   h3 { font-size:8pt; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:14px; }
-  p.body { font-size:9.6pt; line-height:1.5; margin-top:6px; max-width:6.6in; }
+  p.body { font-size:9.5pt; line-height:1.5; margin-top:6px; max-width:6.6in; }
   .specimen { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:5; }
   .specimen span { font-weight:600; font-size:62pt; letter-spacing:.2em; color:var(--accent); opacity:.06; transform:rotate(-24deg); }
-  .banner { background:var(--tint); border-left:3px solid var(--accent); padding:8px 12px; font-size:9pt; line-height:1.45; margin-top:12px; }
+  .banner { background:var(--tint); border-left:3px solid var(--accent); padding:8px 12px; font-size:9.5pt; line-height:1.45; margin-top:12px; }
   .big { font-family:'Source Serif 4',serif; font-size:60pt; line-height:1; letter-spacing:-.01em; margin-top:14px; }
   .biglabel { font-family:'Source Serif 4',serif; font-size:15pt; line-height:1.3; margin-top:4px; max-width:5.6in; }
   .kpis { display:flex; gap:.3in; margin-top:22px; }
@@ -27,21 +27,23 @@
   table { width:100%; border-collapse:collapse; margin-top:8px; font-variant-numeric:tabular-nums; }
   th { background:var(--tint); border-bottom:2px solid var(--accent); font-size:8.5pt; text-align:right; padding:6px 9px; }
   th:first-child { text-align:left; }
-  td { border-bottom:1px solid var(--hair); font-size:9.4pt; text-align:right; padding:6px 9px; }
+  td { border-bottom:1px solid var(--hair); font-size:9.5pt; text-align:right; padding:6px 9px; }
   td:first-child { text-align:left; }
-  .note { font-size:8.6pt; color:var(--muted); line-height:1.45; margin-top:8px; }
+  .note { font-size:8.5pt; color:var(--muted); line-height:1.45; margin-top:8px; }
   .callout { border:1.5px solid var(--accent); padding:12px 14px; margin-top:14px; }
   .callout.anchor { margin-top:auto; }
+  table.crit td:nth-child(2), table.crit th:nth-child(2) { text-align:left; }
+  table.crit td:nth-child(3), table.crit th:nth-child(3) { text-align:right; white-space:nowrap; }
   .callout .h { font-family:'Source Serif 4',serif; font-size:12pt; font-weight:600; }
-  .callout p { font-size:9.4pt; line-height:1.48; margin-top:5px; }
-  ul.tight li { font-size:9.4pt; line-height:1.48; margin:5px 0 5px 16px; }
-  .foot { border-top:1px solid var(--hair); margin-top:auto; padding-top:8px; font-size:7.8pt; line-height:1.45; color:var(--muted); }
+  .callout p { font-size:9.5pt; line-height:1.48; margin-top:5px; }
+  ul.tight li { font-size:9.5pt; line-height:1.48; margin:5px 0 5px 16px; }
+  .foot { border-top:1px solid var(--hair); margin-top:auto; padding-top:8px; font-size:8pt; line-height:1.45; color:var(--muted); }
 </style></head><body>
 
 <!-- P1 — headline -->
 <div class="page">
   [[sample_mark]]
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 1 of 6</div></div>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 1 of 7</div></div>
   [[sample_banner]]
   <div class="big">[[submitted]]</div>
   <div class="biglabel">SNAP applications submitted with assistance by residents of your assessment area this quarter.</div>
@@ -62,7 +64,7 @@
 <!-- P2 — delivery & service -->
 <div class="page">
   [[sample_mark]]
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 2 of 6</div></div>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 2 of 7</div></div>
   <h2>Delivery and service</h2>
   <h3>Observed in-product — every row is a recorded system event</h3>
   <table>
@@ -92,7 +94,7 @@
 <!-- P3 — outcomes -->
 <div class="page">
   [[sample_mark]]
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 3 of 6</div></div>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 3 of 7</div></div>
   <h2>Outcomes</h2>
   <h3>Consented follow-up panel — respondent-based, not extrapolated</h3>
   <p class="body">We cannot observe a state agency's determination. Participants may opt into a 30/60-day check-in; results below describe respondents only, with opt-in and response rates stated so you can weigh them.</p>
@@ -126,7 +128,7 @@
 <!-- P4 — dollar traceability -->
 <div class="page">
   [[sample_mark]]
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 4 of 6</div></div>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 4 of 7</div></div>
   <h2>Where the money went</h2>
   <table>
     <thead><tr><th>Use</th><th>Share</th><th>This grant</th></tr></thead>
@@ -148,13 +150,13 @@
   </table>
   <h3>Community need addressed</h3>
   <p class="body">An estimated [[unserved]] residents of [[counties_line]] are income-eligible for [[program_ref]] but not enrolled. Examiners are directed to consider information an institution provides about community development needs when establishing performance context, and responsiveness to identified needs is a criterion under each applicable test. This figure is offered as input to your needs narrative — a documented community need, not a representation about examination outcomes.</p>
-  <div class="foot">Need estimate: [[model_note]]. Known biases and vintages: page 6.</div>
+  <div class="foot">Need estimate: [[model_note]]. Known biases and vintages: page 7.</div>
 </div>
 
 <!-- P5 — research-implied outcomes (NOT measured) -->
 <div class="page">
   [[sample_mark]]
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 5 of 6</div></div>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 5 of 7</div></div>
   <h2>Research-implied financial outcomes</h2>
   <div class="banner"><strong>This section is not a measurement.</strong> We do not observe credit
   outcomes and hold no credit-bureau linkage. It applies published effect sizes from independent
@@ -192,31 +194,66 @@
   <div class="foot">No figure on this page is a Civica Torrey measurement. Full citation and caveats above.</div>
 </div>
 
-<!-- P6 — methodology & what we learned -->
+<!-- P6 — performance in examination terms -->
 <div class="page">
   [[sample_mark]]
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 6 of 6</div></div>
-  <h2>What we measured, and what missed</h2>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 6 of 7</div></div>
+  <h2>Performance in examination terms</h2>
+  <p class="body">A grant whose primary purpose is community development is a qualified investment, and community
+  services targeted to low- and moderate-income individuals are community development activity. The table below maps
+  what this quarter produced onto the criteria your examiner applies, with the page carrying the evidence. It
+  describes what the activity provided; it is not a representation about how any examiner will weigh it.</p>
+  <table class="crit">
+    <thead><tr><th>Examination criterion</th><th>What this quarter provides</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>Dollar amount of qualified investments</td><td>[[amount]], fully traced from grant to activity with no per-enrollment compensation</td><td>Page 4</td></tr>
+      <tr><td>Responsiveness to identified community development needs</td><td>[[unserved]] income-eligible residents of your assessment area are not receiving benefits they qualify for; [[submitted]] applications were submitted with assistance against that need</td><td>Pages 2, 4</td></tr>
+      <tr><td>Extent of community development services provided</td><td>[[checks]] eligibility determinations completed and [[started]] applications begun, each a recorded system event rather than a survey estimate</td><td>Page 2</td></tr>
+      <tr><td>Degree to which the activity serves LMI individuals</td><td>Eligibility for this program is itself an income test, so every household served is income-qualified by construction &mdash; not inferred from geography</td><td>Pages 2, 7</td></tr>
+      <tr><td>Innovativeness or complexity</td><td>County-level measurement of a funnel step with no published benchmark, reported against pre-registered projections including where they missed</td><td>This page</td></tr>
+      <tr><td>Degree to which the activity is not routinely provided by private investors</td><td>Benefits-access outreach has no commercial market; it is grant-funded or it does not happen</td><td>&mdash;</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Innovativeness is a criterion under the investment and service tests but is not required of every institution; for intermediate small banks it is not a separate factor. Retained here because the measurement design is the part of this work that is genuinely uncommon, not to claim credit under a test that may not apply to you.</p>
   <div class="callout">
-    <div class="h">The pilot's stated learning goal, now measured</div>
-    <p>No published benchmark covers the step from starting an eligibility check to submitting an application. Measuring it was this pilot's stated purpose. Result: <strong>session to completed check ran [[s2c_measured]]</strong> against the [[s2c_proposed]] range presented at proposal, and <strong>completed check to application started ran [[c2s_measured]]</strong> against [[c2s_proposed]]. Both landed at the conservative end. Applications submitted therefore came in at [[submitted]] against a [[proj_low_sub]]–[[proj_mid_sub]] projection.</p>
+    <div class="h">Where we fell short, and why the shortfall is in your file</div>
+    <p>No published benchmark covers the step from starting an eligibility check to submitting an application. Measuring
+    it was this pilot's stated purpose. <strong>Session to completed check ran [[s2c_measured]]</strong> against the
+    [[s2c_proposed]] range presented at proposal, and <strong>completed check to application started ran
+    [[c2s_measured]]</strong> against [[c2s_proposed]]. Both landed at the conservative end, so applications submitted
+    came in at [[submitted]] against a [[proj_low_sub]]&ndash;[[proj_mid_sub]] projection. Responsiveness is assessed on
+    what an activity actually delivered, so the number that missed belongs in the record beside the number that did not.</p>
   </div>
   <h3>What we are changing next quarter</h3>
   <ul class="tight">
-    <li>Shorten the check itself — completion, not traffic, is the binding constraint.</li>
+    <li>Shorten the check itself &mdash; completion, not traffic, is the binding constraint.</li>
     <li>Shift budget toward the counties with the strongest completed-check rates rather than the cheapest clicks.</li>
     <li>Add a Spanish-language variant of the highest-drop-off step and report the language split separately next quarter.</li>
   </ul>
-  <h3>Methodology and known limits</h3>
+  <div class="foot">Criteria as stated in the interagency CRA regulations and the Interagency Questions and Answers. Citations available on request; your examiner's framework governs.</div>
+</div>
+
+<!-- P7 — methodology, limits, accompanying documents -->
+<div class="page">
+  [[sample_mark]]
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Quarterly report · [[bank_name]] · [[period]] · Page 7 of 7</div></div>
+  <h2>Methodology and known limits</h2>
   <ul class="tight">
     <li>Delivery figures reconcile to platform invoices monthly. Service figures are recorded system events, not survey estimates.</li>
     <li>Approval figures are estimates built from a consented panel; opt-in and response rates are stated on page 3 and never grossed up.</li>
-    <li>Need estimates are [[model_note]]. Known biases: the gross-income screen ignores asset tests and ACS respondents under-report benefit receipt — both push the eligible-unenrolled estimate <em>upward</em>. Read as an upper-range estimate of unmet need.</li>
+    <li>Need estimates are [[model_note]]. Known biases: the gross-income screen ignores asset tests and ACS respondents under-report benefit receipt &mdash; both push the eligible-unenrolled estimate <em>upward</em>. Read as an upper-range estimate of unmet need.</li>
+    <li>Page 5 applies published research effects to households we served. It is not a measurement, we hold no credit-bureau linkage, and every figure there is an upper bound.</li>
     <li>ZIP codes straddle county lines; ambiguous locations are excluded from county totals rather than assigned.</li>
     <li>Compensation under this grant is not tied to applications or enrollments produced, and program materials never direct participants toward any institution's products.</li>
   </ul>
   <h3>Accompanying documents</h3>
   <p class="body">Signed community development qualification memorandum (one page, for your file) · assumption set with source citations, machine-readable on request · IRS determination letter, budgets, board and officer list, and state charitable-solicitation registration on request.</p>
+  <div class="callout anchor">
+    <div class="h">What to do with this document</div>
+    <p>Place it in your community development file with the qualification memorandum. Between them they state the
+    activity, its primary purpose, the assessment-area nexus, the dollars, and the delivered result &mdash; the record an
+    examiner asks for, assembled by the grantee rather than reconstructed by your staff at exam time.</p>
+  </div>
   <div class="foot">Questions, or a walkthrough with your examiner: [[contact_name]], [[contact_title]] · [[contact_email]][[contact_phone_line]] · [[org_name]]</div>
 </div>
 </body></html>

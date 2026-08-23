@@ -333,14 +333,15 @@ def test_quarterly_measured_rates_sit_below_proposal_mid():
 
 
 @pytest.mark.skipif(not Path(generate.CHROME).exists(), reason="Chrome not installed")
-def test_quarterly_renders_six_pages():
-    """Six since the research-implied tier got its own page -- it overflowed
-    page 4 when squeezed in beside dollar traceability, and a clipped page is
-    a silently wrong document."""
+def test_quarterly_renders_seven_pages():
+    """Seven: page 5 is the research-implied tier, page 6 maps performance onto
+    examination criteria, page 7 carries methodology. Pages grew rather than
+    tightened because .page is overflow:hidden -- a too-long page loses content
+    silently instead of failing."""
     rc = quarterly.main(["--bank", "ocean_bank", "--amount", "25000", "--sample"])
     assert rc == 0
     pdf = TOOL_ROOT / "out/quarterly-ocean_bank-sample.pdf"
-    assert memo.page_count(pdf) == 6
+    assert memo.page_count(pdf) == 7
 
 
 def test_research_implied_tier_is_never_presented_as_measured():
@@ -350,7 +351,7 @@ def test_research_implied_tier_is_never_presented_as_measured():
     it becomes a claim that we measured credit outcomes, which we cannot."""
     tpl = (TOOL_ROOT / "templates/quarterly.html").read_text()
     i = tpl.index("Research-implied financial outcomes")
-    j = tpl.index("Page 6 of 6")          # section runs to the end of its page
+    j = tpl.index("Page 6 of 7")          # section runs to the end of its page
     section = " ".join(tpl[i:j].split()).lower()   # normalise HTML wrapping
     assert "not a measurement" in section
     assert "upper bound" in section
@@ -458,3 +459,32 @@ def test_no_aggregated_credit_savings_claim():
             for bad in ("per household across", "total savings", "aggregate"):
                 assert bad not in window, (
                     f"{tpl} aggregates the per-borrower savings figure")
+
+
+def test_examination_criteria_page_never_predicts_an_outcome():
+    """The criterion mapping describes what the activity provided. Claiming it
+    earns a rating -- or that any examiner will weigh it a given way -- is the
+    one thing that would make the document a liability in the file it goes in."""
+    tpl = (TOOL_ROOT / "templates/quarterly.html").read_text()
+    i = tpl.index("Performance in examination terms")
+    j = tpl.index("Page 7 of 7")
+    section = " ".join(tpl[i:j].split()).lower()
+    banned = ["will qualify", "guarantees", "ensures a", "will be rated",
+              "counts toward your rating", "satisfies the test"]
+    for phrase in banned:
+        assert phrase not in section, f"criterion page predicts an outcome: {phrase}"
+    # the disclaimer itself must survive edits
+    assert "not a representation about how any examiner will weigh it" in section
+    # innovativeness must stay hedged -- it is not a factor for every institution
+    assert "not required of every institution" in section
+
+
+def test_shortfall_stays_on_the_criteria_page():
+    """Reporting the miss beside the criteria is the integrity claim the whole
+    deliverable rests on. It must not drift off into an appendix."""
+    tpl = (TOOL_ROOT / "templates/quarterly.html").read_text()
+    i = tpl.index("Performance in examination terms")
+    j = tpl.index("Page 7 of 7")
+    section = tpl[i:j]
+    assert "[[s2c_measured]]" in section and "[[proj_low_sub]]" in section
+    assert "fell short" in section.lower()
