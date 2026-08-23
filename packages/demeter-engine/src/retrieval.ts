@@ -124,6 +124,11 @@ interface ExternalTopic {
   terms: string[];
   curated?: RegChunk;
   suppressSections?: string[]; // corpus sections to drop when this topic fires
+  /** Corpus sections to BOOST when this topic fires — the mirror of
+   *  suppressSections, routed through the same +6 hint the domain hint map
+   *  uses. For rules the person's SITUATION triggers but their words never
+   *  name, so lexical and semantic scoring both miss them (#957). */
+  hintSections?: string[];
   /** Fire only when the query carries a money-ish figure. For terms too broad
    *  to gate a topic alone ("do I qualify") but exactly right when a dollar
    *  amount rides along ("$74k a year — do we qualify?"), where the dollar
@@ -174,6 +179,32 @@ const FEDERAL_EXTERNAL_TOPICS: ExternalTopic[] = [
     // 40-50% deduction is a state option, so don't route to change-reporting.
     terms: ["self-employment", "self employment", "self-employed", "self employed", "gig", "uber", "lyft", "doordash", "independent contractor"],
     suppressSections: ["273.12"],
+  },
+  {
+    // THE SITUATION THAT TRIGGERS A RULE THE PERSON NEVER NAMES (#957).
+    //
+    // Measured, 2026-08-22. "I was laid off, I have no income, no savings, and
+    // I just became homeless. It's just me. Do I qualify for SNAP?" retrieved
+    // 273.8 (resources) three times, 273.2(m) and 273.4 — "no savings" pulls
+    // hard toward the asset test — and NOTHING about the ABAWD time limit. The
+    // same corpus returns 273.24(a)(b)(d) immediately for "does the ABAWD time
+    // limit apply to me if I have no job". Retrieval was never the problem for
+    // people who already know the words; it was the problem for everyone else.
+    //
+    // That gap shipped: a homeless, laid-off, no-income adult in Vermont was
+    // told they "clear every test easily", with the rule that stops their
+    // benefits after three months never mentioned, because the model was
+    // never handed it.
+    //
+    // A HINT, NOT A SUPPRESSION. "lost my job" legitimately routes to 273.12
+    // (reporting changes) too, and both can be right in one answer — this adds
+    // the time limit to what is available, and takes nothing away.
+    terms: [
+      "laid off", "lay off", "lost my job", "lost my work", "out of work",
+      "not working", "no job", "unemployed", "between jobs", "can't find work",
+      "cannot find work", "looking for work", "hours were cut", "no longer working",
+    ],
+    hintSections: ["273.24"],
   },
   {
     // Confidentiality / "will ICE find out": the answer is the disclosure rule
@@ -480,6 +511,7 @@ export async function retrieve(rawQuery: string, opts: RetrieveOptions = {}): Pr
     if (topic.terms.some((t) => queryHasTerm(words, normalized, t))) {
       if (topic.curated) curated.push(topic.curated);
       for (const s of topic.suppressSections ?? []) suppressed.add(s);
+      for (const s of topic.hintSections ?? []) hintedCites.push(s);
     }
   }
 

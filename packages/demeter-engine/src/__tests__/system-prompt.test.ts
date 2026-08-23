@@ -91,6 +91,31 @@ describe.each([
 });
 
 describe("staff system prompt — persona-specific", () => {
+
+  it("obliges the ABAWD time limit for a household shape that is inside it (#957)", () => {
+    // THE FAILURE: a homeless, laid-off, no-income adult in Vermont was told
+    // "you clear every test easily" with the time limit never mentioned. Two
+    // rules above this one — "answer the question asked, then stop" and "do
+    // not enumerate a category" — both push toward leaving it out, so the
+    // obligation has to be stated explicitly or it loses to them.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/A TIME LIMIT IS PART OF THE ANSWER/);
+    // The shape that triggers it, and the trap that made this case worse.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/18[–-]64/);
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/child under 14/);
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/homeless[^.]*does NOT exempt/i);
+    // And it must stay bounded to one sentence plus a question, or it becomes
+    // the category-enumeration failure it is carved out of.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/ONE sentence/);
+  });
+
+  it("forbids sweeping eligibility clearances (#957)", () => {
+    // "you clear every test easily" / "nothing here suggests you'd get less"
+    // read as a determination from a tool whose whole promise is that it is
+    // not making one — and the reader cannot see which tests went unchecked.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/NEVER TELL SOMEONE THEY CLEAR EVERY TEST/);
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/Say what you checked and what it showed/);
+  });
+
   it("requires facts to be said back as they are heard", () => {
     // Facts are recorded silently and then govern every number after them. A
     // household of one heard as two changes every threshold, and the reader

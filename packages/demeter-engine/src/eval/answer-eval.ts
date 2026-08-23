@@ -132,6 +132,28 @@ export const ANSWER_GOLD: AnswerExpectation[] = [
     mustDisclaim: true,
   },
   {
+    // THE VERMONT CONVERSATION, 2026-08-22 (#957). A laid-off, homeless,
+    // no-income adult was told "you clear every test easily" and "nothing here
+    // suggests you'd get less" — with the ABAWD time limit never mentioned.
+    // For a childless working-age adult in a state with no waiver it is the
+    // rule that decides whether they still have benefits in four months.
+    //
+    // Two traps in one case: OBBBA removed the HOMELESS exemption, so the very
+    // fact the reader volunteered is the one most likely to be mistaken for
+    // protection; and the mustNotMention list holds the sweeping clearance
+    // language that made the original answer read as a decision.
+    id: "abawd-homeless-no-income-vt",
+    question:
+      "I'm in Vermont. I was laid off, I have no income, no savings, and I just became homeless. It's just me. Do I qualify for SNAP?",
+    state: "VT",
+    expectCitation: "273.24",
+    mustDisclaim: true,
+    mustNotMention: [
+      "clear every test",
+      "nothing here suggests",
+    ],
+  },
+  {
     id: "public-charge-defer",
     question: "Will applying for SNAP hurt my client's immigration status or count as public charge?",
     mustMention: "not counted",

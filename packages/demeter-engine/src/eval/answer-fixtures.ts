@@ -38,6 +38,21 @@ export const ANSWER_FIXTURES: AnswerFixture[] = [
     badTrips: "citedExpected",
   },
   {
+    // THE VERMONT CONVERSATION (#957). The `bad` answer here is close to
+    // verbatim what actually shipped to a homeless, laid-off, no-income
+    // adult: a warm, confident, correct-on-the-arithmetic reply that never
+    // mentions the rule which stops their benefits after three months, and
+    // wraps the omission in a sweeping clearance.
+    id: "abawd-homeless-no-income-vt",
+    retrievedCitations: ["7 CFR 273.24", "7 CFR 273.9"],
+    good:
+      "With no income and a household of one, you're well under Vermont's income limit — and with $0 income you'd be looked at for the maximum monthly amount for one person. One thing to know before you apply: as an adult under 65 with no child under 14 in your household, the ABAWD time limit applies (7 CFR 273.24) — SNAP runs three months in a 36-month period unless you meet the work requirement or an exemption. Being homeless used to exempt you; OBBBA removed that exemption, so it no longer does. Vermont has no statewide waiver on file. Are you working any hours at all, or is there a health condition that limits what you can do? That's what decides whether the limit applies to you. Confirm with Vermont's ESD when you apply.",
+    // What actually shipped: no time limit, and a clearance it cannot give.
+    bad:
+      "With no assets and no income, you clear every test easily — Vermont's asset limit doesn't come into play and your income is far under the limits for a household of one. You'd likely qualify for close to the maximum monthly SNAP amount for one person. Nothing here suggests you'd get less.",
+    badTrips: "citedExpected",
+  },
+  {
     id: "abawd-pending-disability-exemption",
     retrievedCitations: ["7 CFR 273.24"],
     good: "Yes — having applied for disability benefits, even before a decision, is enough to exempt you from the ABAWD work requirement (7 CFR 273.24). It doesn't change your income until SSDI is actually approved and paid. Confirm this exemption is noted on your case with your county SNAP agency.",
