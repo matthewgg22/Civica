@@ -91,6 +91,18 @@ describe.each([
 });
 
 describe("staff system prompt — persona-specific", () => {
+  it("requires facts to be said back as they are heard", () => {
+    // Facts are recorded silently and then govern every number after them. A
+    // household of one heard as two changes every threshold, and the reader
+    // cannot tell — what they see is a confident answer built on it.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/SAY BACK WHAT YOU HEARD/);
+    // Bounded on purpose: a confirmation SCREEN would be its own failure.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/six words/);
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/not a confirmation screen/i);
+    // And only on first capture — re-stating it every turn is noise.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/FIRST take the fact/);
+  });
+
   it("identifies as Mae, never Demeter (2026-08-09: distinct from the public product)", () => {
     expect(STAFF_SYSTEM_PROMPT).toContain("Mae");
     // Guards against a stray "Demeter" surviving a find/replace pass.
