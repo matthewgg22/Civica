@@ -221,6 +221,22 @@ export const T = {
       subtitle: "Builds as you talk",
       result: "Where this lands",
       estimate: "Estimated monthly benefit:",
+      // THE FIGURE'S OWN INPUTS, beside it. A number with no visible cause is
+      // a number nobody can correct: if the household size was misheard the
+      // estimate is wrong and nothing on screen says why.
+      basedOn: "Based on",
+      // "Still needed" was a list. These turn the item into the QUESTION it
+      // stands for, so the panel moves the conversation forward instead of
+      // reporting on it. Keyed by completeness.ts's own English labels;
+      // anything unmapped stays plain text rather than guessing a question.
+      askPrefix: "Ask about",
+      askFor: {
+        "Household size": "Who else buys and cooks food with you?",
+        "Rent or shelter cost": "How much do you pay for rent or housing each month?",
+        "Countable assets, if any": "Do you have any savings or money in the bank?",
+        "Whether the household receives SSI or TANF": "Does anyone in your household get SSI or TANF?",
+        "Citizenship or qualified status": "What is your citizenship or immigration status?",
+      } as Record<string, string>,
       calc: "How that was worked out",
       // WHAT IT HEARD, not just what it lacks. The panel listed "still
       // needed" and the final number but never showed the facts it was
@@ -433,6 +449,15 @@ export const T = {
       subtitle: "Se arma mientras conversas",
       result: "Dónde queda esto",
       estimate: "Beneficio mensual estimado:",
+      basedOn: "Según",
+      askPrefix: "Preguntar sobre",
+      askFor: {
+        "Household size": "¿Quién más compra y cocina la comida contigo?",
+        "Rent or shelter cost": "¿Cuánto pagas de alquiler o vivienda al mes?",
+        "Countable assets, if any": "¿Tienes ahorros o dinero en el banco?",
+        "Whether the household receives SSI or TANF": "¿Alguien en tu hogar recibe SSI o TANF?",
+        "Citizenship or qualified status": "¿Cuál es tu estatus migratorio o de ciudadanía?",
+      } as Record<string, string>,
       calc: "Cómo se calculó",
       captured: "Por lo que me has dicho",
       capturedNote: "\u00bfAlgo mal? Dímelo en el chat y lo corrijo.",
@@ -615,6 +640,15 @@ export const T = {
       subtitle: "Được xây dựng khi bạn trò chuyện",
       result: "Kết quả tạm tính",
       estimate: "Trợ cấp hàng tháng ước tính:",
+      basedOn: "Dựa trên",
+      askPrefix: "Hỏi về",
+      askFor: {
+        "Household size": "Còn ai mua và nấu ăn chung với bạn không?",
+        "Rent or shelter cost": "Mỗi tháng bạn trả bao nhiêu tiền thuê nhà hoặc chỗ ở?",
+        "Countable assets, if any": "Bạn có tiền tiết kiệm hay tiền trong ngân hàng không?",
+        "Whether the household receives SSI or TANF": "Trong nhà có ai nhận SSI hoặc TANF không?",
+        "Citizenship or qualified status": "Tình trạng quốc tịch hoặc di trú của bạn là gì?",
+      } as Record<string, string>,
       calc: "Cách tính ra con số đó",
       captured: "Theo những gì bạn đã nói",
       capturedNote: "Có gì chưa đúng? Cứ nhắn trong khung chat, tôi sẽ sửa.",
@@ -791,6 +825,15 @@ export const T = {
       subtitle: "随着对话逐步生成",
       result: "初步结果",
       estimate: "每月估计补助：",
+      basedOn: "依据",
+      askPrefix: "询问",
+      askFor: {
+        "Household size": "还有谁和您一起买菜做饭？",
+        "Rent or shelter cost": "您每月的房租或住房费用是多少？",
+        "Countable assets, if any": "您有存款或银行里的钱吗？",
+        "Whether the household receives SSI or TANF": "家里有人领取 SSI 或 TANF 吗？",
+        "Citizenship or qualified status": "您的公民身份或移民身份是什么？",
+      } as Record<string, string>,
       calc: "计算方式",
       captured: "根据您告诉我的",
       capturedNote: "有不对的地方？在对话里说一声，我来更正。",
