@@ -96,6 +96,9 @@ export interface DemeterWorksheetCopy {
   capturedHomelessYes: string;
   capturedAssets: string;
   capturedExpedited: string;
+  basedOn: string;
+  askPrefix: string;
+  askFor: Record<string, string>;
 }
 
 /** The facts the extractor has HEARD, as label/value pairs for display.
@@ -173,6 +176,7 @@ export function DemeterWorksheet({
   onPickState,
   mode,
   onModeChange,
+  onAskFor,
   footLinks,
 }: {
   classification: ScreeningClassification | null;
@@ -191,6 +195,9 @@ export function DemeterWorksheet({
   onPickState?: () => void;
   mode: WorksheetMode;
   onModeChange: (m: WorksheetMode) => void;
+  /** Put a question in the composer for the reader to send. PREFILL, never
+   *  auto-send: the panel suggests, the person still writes. */
+  onAskFor?: (prompt: string) => void;
   /** Standing links (state portal, how-we-verify) — facts about where the
    *  answers come from, rendered at the card's foot with the retention
    *  line, their natural family (owner rec, 2026-08-22). */
@@ -289,9 +296,25 @@ export function DemeterWorksheet({
           <p className="dmw__result-value">{outcomeCopy.label}</p>
           <p className="dmw__result-summary">{classification!.summary}</p>
           {calc && classification!.outcome !== "not_enough_information" && (
-            <p className="dmw__result-benefit">
-              {copy.estimate} <strong>{money(calc.monthly_benefit)}</strong>
-            </p>
+            <>
+              <p className="dmw__result-benefit">
+                {copy.estimate} <strong>{money(calc.monthly_benefit)}</strong>
+              </p>
+              {/* THE FIGURE'S OWN INPUTS, on the same card as the figure. A
+                  number with no visible cause is a number nobody can correct:
+                  if the household size was misheard, the estimate is wrong and
+                  nothing on screen said why. The list above already holds these
+                  facts — repeating the load-bearing ones HERE is what ties the
+                  two together at a glance. */}
+              {captured.length > 0 && (
+                <p className="dmw__result-basis">
+                  {copy.basedOn}{" "}
+                  {captured
+                    .map(([label, value]) => (value ? `${label.toLowerCase()}: ${value}` : label.toLowerCase()))
+                    .join(" · ")}
+                </p>
+              )}
+            </>
           )}
         </section>
       )}
@@ -339,10 +362,34 @@ export function DemeterWorksheet({
               {classification.completeness.stillNeeded.length}
             </span>
           </p>
+          {/* A LIST THAT ASKS. These were bullets: the reader had to work out
+              which mattered, then go and type it themselves. Where we know the
+              question an item stands for, it becomes that question, one tap
+              into the composer. PREFILL, NOT SEND — the panel suggests and the
+              person still writes, because a message they did not type appearing
+              in their own conversation is a different product. Items with no
+              mapping (Zod's fallbacks) stay plain text rather than inventing a
+              question for a field path. */}
           <ul>
-            {classification.completeness.stillNeeded.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
+            {classification.completeness.stillNeeded.map((item) => {
+              const prompt = copy.askFor[item];
+              return (
+                <li key={item}>
+                  {prompt && onAskFor ? (
+                    <button
+                      type="button"
+                      className="dmw__askbtn"
+                      onClick={() => onAskFor(prompt)}
+                      aria-label={`${copy.askPrefix}: ${prompt}`}
+                    >
+                      {item}
+                    </button>
+                  ) : (
+                    item
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </section>
       )}

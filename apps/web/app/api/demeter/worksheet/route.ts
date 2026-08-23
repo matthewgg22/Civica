@@ -88,6 +88,14 @@ export async function POST(req: NextRequest) {
       state,
       apiKey,
       signal: req.signal,
+      // ONLY THE CLIENT KNOWS (#966). It windows the conversation it posts;
+      // the server sees a list and cannot tell a short conversation from a
+      // truncated one. This decides whether an empty household/income array
+      // means "they told me they have none" or "not mentioned in what I read",
+      // and getting it wrong silently wipes a known household. The route
+      // re-slices to 20 above, so a payload already at the cap cannot claim
+      // completeness however it was labelled.
+      windowComplete: b.windowComplete === true && rawMessages.length <= 20,
     });
     after(async () => {
       await settleSpend(

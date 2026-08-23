@@ -8911,3 +8911,21 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.72rem; line-height: 1.45; color: var(--demeter-muted);
 }
+
+/* The estimate's own inputs, on the estimate's card. */
+.dmw__result-basis {
+  margin: 0.35rem 0 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; line-height: 1.45; color: var(--demeter-muted);
+}
+/* A still-needed item that asks its own question. Reads as the text it
+   replaced until you hover it — the list is still a list, not a row of
+   buttons competing with the estimate above. */
+.dmw__askbtn {
+  padding: 0; border: 0; background: none; cursor: pointer; text-align: left;
+  font: inherit; color: inherit;
+  text-decoration: underline; text-decoration-style: dotted;
+  text-underline-offset: 3px; text-decoration-color: var(--demeter-rule);
+}
+.dmw__askbtn:hover { color: var(--demeter-terracotta-deep); text-decoration-color: currentColor; }
+.dmw__askbtn:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 2px; }
