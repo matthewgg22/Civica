@@ -1028,8 +1028,24 @@ export function DemeterChat({
     // state's parameters, so keeping it on screen under a new state's heading
     // would be showing someone a number that no longer applies. The FACTS
     // survive (household size and income don't change with the scope); only
-    // the computed outcome is dropped, and the next turn recomputes it.
+    // the computed outcome is dropped.
     setClassification(null);
+    // ...AND IT RECOMPUTES NOW, not on the next message. "The next turn
+    // recomputes it" left the panel on its empty template after a state
+    // change, which reads as the estimate having been thrown away rather than
+    // rescoped — the same failure as switching INTO estimate mode and seeing
+    // nothing happen. The facts needed are already here; only the state
+    // changed. Estimate mode only: ask mode extracts nothing, and a state
+    // change is not consent to start.
+    if (next && worksheetMode === "estimate") {
+      const turns = messages.filter(
+        (x): x is { role: "user" | "assistant"; content: string } =>
+          x.role !== "divider" && Boolean(x.content),
+      );
+      let window = turns.slice(-20);
+      if (window[0]?.role !== "user") window = window.slice(1);
+      if (window.length) void refreshWorksheetFor(window, next);
+    }
     // The DIVIDER is only meaningful once something has been said — it warns
     // that earlier answers may not apply. The PORTAL message is not: picking a
     // state before asking anything is the commonest way in, and that is exactly
@@ -1235,14 +1251,26 @@ export function DemeterChat({
   /** Update the right rail. Never throws into the caller and never surfaces an
    *  error in the chat: a quiet rail is an acceptable degradation, a chat that
    *  reports "something went wrong" because a side panel failed is not. */
-  const refreshWorksheet = useCallback(
-    async (apiMessages: Array<{ role: "user" | "assistant"; content: string }>) => {
-      if (!state) return;
+  /** Recompute against an EXPLICIT state.
+   *
+   *  changeState calls this, and at that moment the `state` STATE still holds
+   *  the old code — setState has not applied yet — so a version closing over
+   *  it would rescope the estimate to the state the reader just left. */
+  const refreshWorksheetFor = useCallback(
+    async (
+      apiMessages: Array<{ role: "user" | "assistant"; content: string }>,
+      forState: string | null,
+    ) => {
+      if (!forState) return;
       try {
         const res = await fetch("/api/demeter/worksheet", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: apiMessages, facts: factsRef.current, state }),
+          body: JSON.stringify({
+            messages: apiMessages,
+            facts: factsRef.current,
+            state: forState,
+          }),
         });
         if (!res.ok) return;
         const data = (await res.json()) as {
@@ -1257,7 +1285,13 @@ export function DemeterChat({
         /* soft by design */
       }
     },
-    [state, rememberFacts],
+    [rememberFacts],
+  );
+
+  const refreshWorksheet = useCallback(
+    (apiMessages: Array<{ role: "user" | "assistant"; content: string }>) =>
+      refreshWorksheetFor(apiMessages, state),
+    [state, refreshWorksheetFor],
   );
 
   const send = useCallback(async () => {
