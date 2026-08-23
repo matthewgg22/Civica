@@ -131,23 +131,69 @@ documented gap — the same PE-mining discipline that corrected the bank asks.
 
 ---
 
-## 3. Other state CRA regimes — ASSERTED, NOT VERIFIED
+## 3. Other state CRA regimes — NOW VERIFIED (CFPB survey + NYDFS)
 
-⚠️ **Everything in this section is my own prior claim carried forward without primary-source
-verification. Treat as a research to-do list, not as findings.** The WP 34434 episode is the standing
-reminder: state it as unverified or verify it.
+Verified 2026-08-22 against the CFPB's [State Community Reinvestment Acts](https://files.consumerfinance.gov/f/documents/cfpb_state_community_reinvestment_acts_2023-11.pdf)
+(Nov 2023), Figure 2 "Institutional Coverage". **Eight jurisdictions have a state CRA. Four of them
+reach mortgage companies.**
 
-- **Illinois** — the 2021 Illinois CRA reportedly covers state-chartered banks, **credit unions, and
-  mortgage licensees**, administered by IDFPR. If accurate this is the broadest state regime in the
-  country and the only other one covering credit unions. **Verify first** — implementation timing and
-  rulemaking status are unknown to me.
-- **New York, Connecticut, Rhode Island, West Virginia** — state CRA regimes of varying scope,
-  believed to cover banks rather than credit unions. Unverified.
+| Jurisdiction | Banks | Credit unions | **Mortgage companies** | Additional |
+|---|---|---|---|---|
+| **District of Columbia** | Yes | Yes | **Yes** | Non-depositories and other regulated entities |
+| **Illinois** | Yes | Yes | **Yes** | Others as designated by regulator |
+| **Massachusetts** | Yes | Yes | **Yes** | Wholesale and limited purpose |
+| **New York** | Yes | Yes | **Yes** | Wholesale and limited purpose banking |
+| Connecticut | Yes | Yes | No | None |
+| Rhode Island | Yes | Yes | No | None |
+| Washington | Yes | No | No | None |
+| West Virginia | Yes | No | No | None |
 
-New York is worth checking despite the CHAR410 registration burden, given the borough need figures
-(Kings 205K, Queens 190K, Bronx 110K) and that NY is already wired in the generator.
+California, Maryland and Pennsylvania are reported to be considering similar laws.
 
----
+**Three corrections to earlier claims made in this project:**
+
+1. I previously wrote that NY/CT/RI/WV cover "banks rather than credit unions." **Wrong** —
+   Connecticut, Rhode Island and New York all cover credit unions.
+2. **I missed the District of Columbia entirely**, and it has the broadest scope of any
+   jurisdiction: banks, credit unions, mortgage companies, *and* non-depositories.
+3. **I never mentioned Washington State**, which has a bank-only CRA.
+
+**A useful inversion:** Connecticut and Rhode Island apply CRA only to credit unions **with a
+geographic field of membership**. That is precisely the condition Massachusetts does *not* impose —
+and it means CT/RI credit unions are a *better* product fit than MA ones, because a geographic field
+of membership implies a geographic assessment area, which is what our deliverable needs. Ratings
+distributions there are unchecked.
+
+### 🔴 New York nonbank mortgage lenders — a brand-new obligation, six weeks old
+
+**This is the most time-sensitive opportunity found in this project.**
+
+- NY Banking Law **§ 28-bb**, created by S.5246-A/A.6247-A, signed 11/1/2021, effective 11/1/2022,
+  after a DFS redlining investigation in the Buffalo metro found nonbank lenders "failing to serve
+  their whole communities."
+- **NYDFS finalized the implementing regulation on January 7, 2026. It took effect July 7, 2026.**
+- **Covers:** DFS-licensed non-depository mortgage bankers originating **200 or more HMDA-reportable
+  New York loans** in the prior calendar year.
+- **Ratings:** Outstanding · Satisfactory · Needs Improvement · Substantial Noncompliance.
+- **Evaluation method:** HMDA data on loan distribution **plus "participation in community
+  development-related services."**
+
+**Why this is the strongest position available to us anywhere:**
+
+1. **The obligation is weeks old and no lender has been examined under it.** Every covered lender is
+   building a compliance program from scratch right now, and none has an incumbent community partner.
+   That is a clean-slate pitch with a deadline attached — the strongest configuration in this channel.
+2. **Community development services participation is named in the evaluation methodology.** Our
+   activity is not something the lender has to argue into the framework; the regulation already
+   points at it.
+3. **New York is already wired in the generator**, and the need is the largest in our data:
+   Kings 205K, Queens 190K, Bronx 110K — **505K eligible-unenrolled across the three boroughs.**
+4. Covered lenders are large, marketing-fluent originators who understand paid acquisition natively.
+
+**Catches:** the CFPB survey is Nov 2023 vintage, so verify current status before citing it on
+anything else; New York's charitable-solicitation registration (CHAR410) is known-onerous and gates
+solicitation there; and we have not yet identified which specific lenders cross the 200-origination
+threshold — that list is the first piece of work.
 
 ## 4. Credit unions outside a state CRA — philanthropic, not compliance
 
@@ -195,4 +241,9 @@ pressure signal. Nevada is one `build_state.py` run from a fact base.
    schedule, a statewide assessment area that sidesteps three of our hardest problems, and the
    credit-score thesis landing as a pipeline argument rather than a charitable one.
 3. **Digital banks/ILCs promoted** from an appendix line to a ranked band.
-4. **Illinois and the other state regimes** moved onto an explicit verify-before-citing list.
+4. **State regimes verified**: eight jurisdictions have a state CRA; **DC, Illinois, Massachusetts
+   and New York reach mortgage companies**. Three of my own earlier claims were wrong and are
+   corrected in §3.
+5. **New York nonbank mortgage lenders identified as the most time-sensitive opportunity in the
+   project** — obligation effective 7/7/2026, nobody examined yet, community development services
+   named in the evaluation method, NY already wired, 505K unenrolled across three boroughs.
