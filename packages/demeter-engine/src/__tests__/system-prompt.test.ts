@@ -91,18 +91,7 @@ describe.each([
 });
 
 describe("staff system prompt — persona-specific", () => {
-<<<<<<< HEAD
-  it("requires facts to be said back as they are heard", () => {
-    // Facts are recorded silently and then govern every number after them. A
-    // household of one heard as two changes every threshold, and the reader
-    // cannot tell — what they see is a confident answer built on it.
-    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/SAY BACK WHAT YOU HEARD/);
-    // Bounded on purpose: a confirmation SCREEN would be its own failure.
-    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/six words/);
-    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/not a confirmation screen/i);
-    // And only on first capture — re-stating it every turn is noise.
-    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/FIRST take the fact/);
-=======
+
   it("obliges the ABAWD time limit for a household shape that is inside it (#957)", () => {
     // THE FAILURE: a homeless, laid-off, no-income adult in Vermont was told
     // "you clear every test easily" with the time limit never mentioned. Two
@@ -125,7 +114,18 @@ describe("staff system prompt — persona-specific", () => {
     // not making one — and the reader cannot see which tests went unchecked.
     expect(PUBLIC_SYSTEM_PROMPT).toMatch(/NEVER TELL SOMEONE THEY CLEAR EVERY TEST/);
     expect(PUBLIC_SYSTEM_PROMPT).toMatch(/Say what you checked and what it showed/);
->>>>>>> 49b22cdf (test(qa): the Vermont conversation, as a gold case and a retrieval guard (#957))
+  });
+
+  it("requires facts to be said back as they are heard", () => {
+    // Facts are recorded silently and then govern every number after them. A
+    // household of one heard as two changes every threshold, and the reader
+    // cannot tell — what they see is a confident answer built on it.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/SAY BACK WHAT YOU HEARD/);
+    // Bounded on purpose: a confirmation SCREEN would be its own failure.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/six words/);
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/not a confirmation screen/i);
+    // And only on first capture — re-stating it every turn is noise.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/FIRST take the fact/);
   });
 
   it("identifies as Mae, never Demeter (2026-08-09: distinct from the public product)", () => {
