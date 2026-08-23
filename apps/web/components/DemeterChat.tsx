@@ -1044,7 +1044,7 @@ export function DemeterChat({
       );
       let window = turns.slice(-20);
       if (window[0]?.role !== "user") window = window.slice(1);
-      if (window.length) void refreshWorksheetFor(window, next);
+      if (window.length) void refreshWorksheetFor(window, next, window.length === turns.length);
     }
     // The DIVIDER is only meaningful once something has been said — it warns
     // that earlier answers may not apply. The PORTAL message is not: picking a
@@ -1260,6 +1260,10 @@ export function DemeterChat({
     async (
       apiMessages: Array<{ role: "user" | "assistant"; content: string }>,
       forState: string | null,
+      /** True when apiMessages IS the whole conversation, not a tail window.
+       *  Callers compute it by comparing what they held against what they
+       *  sent — see #966. Guessing here would defeat the point. */
+      windowComplete = false,
     ) => {
       if (!forState) return;
       try {
@@ -1270,6 +1274,7 @@ export function DemeterChat({
             messages: apiMessages,
             facts: factsRef.current,
             state: forState,
+            windowComplete,
           }),
         });
         if (!res.ok) return;
@@ -1289,8 +1294,8 @@ export function DemeterChat({
   );
 
   const refreshWorksheet = useCallback(
-    (apiMessages: Array<{ role: "user" | "assistant"; content: string }>) =>
-      refreshWorksheetFor(apiMessages, state),
+    (apiMessages: Array<{ role: "user" | "assistant"; content: string }>, complete = false) =>
+      refreshWorksheetFor(apiMessages, state, complete),
     [state, refreshWorksheetFor],
   );
 
@@ -1357,7 +1362,12 @@ export function DemeterChat({
     // THE GATE. In "ask" mode this call never happens, so no facts are
     // extracted, nothing lands in factsRef, and the paid extraction round trip
     // is not made either.
-    if (state && worksheetMode === "estimate") void refreshWorksheet(apiMessages);
+    // windowComplete: did the tail-window drop anything? chatTurns + the new
+    // question is everything there is; apiMessages is that, sliced to 20 and
+    // possibly one more off the front to stay user-first (#833).
+    if (state && worksheetMode === "estimate") {
+      void refreshWorksheet(apiMessages, apiMessages.length === chatTurns.length + 1);
+    }
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -2259,6 +2269,17 @@ export function DemeterChat({
           }
           onPickState={() => setOpenPicker((n) => n + 1)}
           facts={factsView}
+          onAskFor={(prompt) => {
+            // Into the composer, focused, NOT sent. The person stays the
+            // author of every message in their own conversation.
+            setInput(prompt);
+            requestAnimationFrame(() => {
+              const el = inputRef.current;
+              if (!el) return;
+              el.focus();
+              el.setSelectionRange(prompt.length, prompt.length);
+            });
+          }}
           mode={worksheetMode}
           onModeChange={(m) => {
             setWorksheetMode(m);
@@ -2284,7 +2305,7 @@ export function DemeterChat({
               );
               let window = turns.slice(-20);
               if (window[0]?.role !== "user") window = window.slice(1);
-              if (window.length) void refreshWorksheet(window);
+              if (window.length) void refreshWorksheet(window, window.length === turns.length);
             }
             // Turning it OFF throws away what was gathered. Leaving the last
             // estimate on screen under "Just asking" would contradict the
