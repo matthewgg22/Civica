@@ -12,6 +12,38 @@ Rewritten 2026-08-22 after reading all seven published Performance Evaluations f
 
 Three sentences. The first is theirs, not ours. That's what makes it land.
 
+## The sentence that settles qualification
+
+If an officer doubts that SNAP recipients count as low- and moderate-income, read them this. It is
+**Interagency Q&A § __.12(g)(2)—1**, reproduced in the FDIC's own Consumer Compliance Examination Manual —
+the manual their examiners use:
+
+> "The community service is provided to recipients of government assistance programs that have income
+> qualifications equivalent to, or stricter than, the definitions of low- and moderate-income as defined by
+> the CRA Regulations. Examples include U.S. Department of Housing and Urban Development's section 8, 202,
+> 515, and 811 programs or U.S. Department of Agriculture's section 514, 516, and **Supplemental Nutrition
+> Assistance programs**."
+
+**The agencies named the program.** Not a general category the bank has to argue SNAP into — the program
+itself, as an example, in writing, interagency. That means the officer does not have to make a judgment call
+about SNAP's income test versus area median income, and it means no household-level income documentation is
+required. Say it as: *"You don't have to take my word that these households are LMI. The agencies put the
+program on the list."*
+
+**Use the right vehicle word.** Your grant is a **qualified investment** — § __.12(t) covers a "grant." A
+**community development service** is something the bank itself provides related to financial services, like
+staff volunteering at an enrollment event. Both can be true, and the volunteer ask is worth making: it costs
+them nothing and earns a second kind of credit. Secondary write-ups on the web routinely call SNAP enrollment
+help "a community development service" — right category, wrong vehicle for a check. An officer will notice
+which one you use.
+
+**What you cannot say:** no agency pre-certifies a third party's activity. The determination is the bank's,
+documented by the bank, reviewed at examination. Offering to make that documentation easy is the pitch;
+promising an outcome is disqualifying. Full chain of authority, the five conditions, and the FDIC Community
+Affairs contacts: [cra-qualification-verification-2026-08-22.md](cra-qualification-verification-2026-08-22.md).
+
+---
+
 ## What the PEs changed about our pitch
 
 1. **Frame as community services + financial capability — never "food security."** Across seven PEs and a dozen community contacts, **no examiner and no contact ever named food security, SNAP, or benefits access as a need.** They named affordable housing, LMI mortgage products, **financial literacy/capability**, and small-business technical assistance. That is also exactly where the grant dollars flow (Community Services took 18 of 19 of Helm's grants, 48 of 60 at Banco do Brasil, 84% of Ocean's grant dollars, $1.3M of Bank of Marin's). Speak their category.
