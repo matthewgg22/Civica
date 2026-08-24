@@ -572,3 +572,56 @@ def test_the_per_aa_rule_can_raise_an_ask_not_only_lower_it():
     h = banks["hanmi_bank"]
     assert h["ask_usd"] > h["ask_usd_prior"]
     assert "281,080" in h["pe_giving"]
+
+
+# ---- pro rata attribution for pooled county programs -------------------------
+class _PA:
+    period, sample, html_only = "Q1 2027", True, False
+    def __init__(self, amount, total=None, funders=None):
+        self.amount, self.pool_total, self.pool_funders = amount, total, funders
+
+
+def test_pooled_figures_are_exactly_the_funders_share():
+    """Two banks in one county must never be handed the same household. Every
+    claimed figure is cut to the contribution share."""
+    banks, assumptions, org = generate.load_inputs()
+    solo = quarterly.build(banks["ocean_bank"], org, assumptions, _PA(15000))
+    third = quarterly.build(banks["ocean_bank"], org, assumptions, _PA(5000, 15000, 3))
+    s = float(solo["submitted"].replace(",", ""))
+    t = float(third["submitted"].replace(",", ""))
+    assert abs(t - s / 3) < 1.5, f"pooled {t} is not one third of {s}"
+
+
+def test_no_double_scaling_regression():
+    """The share was briefly applied twice -- once by computing the funnel on
+    the bank's own dollars and again by multiplying by the share -- which
+    understated a 33% funder by 3x. A pool of one must equal a solo grant."""
+    banks, assumptions, org = generate.load_inputs()
+    solo = quarterly.build(banks["ocean_bank"], org, assumptions, _PA(15000))
+    whole = quarterly.build(banks["ocean_bank"], org, assumptions, _PA(15000, 15000, 1))
+    assert solo["submitted"] == whole["submitted"]
+    assert solo["approved"] == whole["approved"]
+
+
+def test_pool_disclosure_is_present_when_pooled_and_absent_when_solo():
+    banks, assumptions, org = generate.load_inputs()
+    assert quarterly.build(banks["ocean_bank"], org, assumptions, _PA(25000))["pool_block"] == ""
+    blk = quarterly.build(banks["ocean_bank"], org, assumptions, _PA(5000, 15000, 3))["pool_block"]
+    assert "pooled county program" in blk and "33%" in blk
+
+
+def test_pool_disclosure_cites_the_rule_and_states_its_limit():
+    """Citing 345.22(d) as if it governed grants would be an overstatement --
+    it addresses community development LOANS under the lending test. The
+    report must carry that limit, not just the citation."""
+    banks, assumptions, org = generate.load_inputs()
+    blk = quarterly.build(banks["ocean_bank"], org, assumptions, _PA(5000, 15000, 3))["pool_block"]
+    assert "345.22(d)" in blk
+    assert "percentage share" in blk
+    assert "loans" in blk.lower() and "qualified investment rather than a loan" in blk
+
+
+def test_pool_share_must_be_stateable():
+    banks, assumptions, org = generate.load_inputs()
+    with pytest.raises(quarterly.PoolShareError):
+        quarterly.build(banks["ocean_bank"], org, assumptions, _PA(20000, 15000, 2))
