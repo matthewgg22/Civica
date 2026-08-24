@@ -89,6 +89,26 @@
       "name": "Bank of Marin",
       "aa_counties": [
         "Marin",
+        "Sonoma",
+        "Napa",
+        "San Francisco"
+      ],
+      "aa_note": " (Alameda County, a partial-county assessment area in the bank's PE, is excluded from all figures \u2014 county-level data would overstate a tract-defined area)",
+      "pe_date": "2023-11-06",
+      "pe_url": "https://crapes.fdic.gov/publish/2023/32779_231106.PDF",
+      "regulator": "FDIC",
+      "ask_usd": 10000,
+      "verified": true,
+      "verify_note": "AA CORRECTED and verified 2026-08-22 from the Nov 2023 PE. Bank of Marin has THREE assessment areas. The San Francisco AA table lists CRA-delineated counties: Marin (San Rafael MD), Sonoma (Santa Rosa-Petaluma MSA), 'Alameda (partial)' (Oakland-Berkeley-Livermore MD), Napa (Napa MSA) and San Francisco (San Francisco-San Mateo-Redwood City MSA). The Sacramento AA 'consists of Sacramento and Placer counties'. The Amador AA is limited-scope and rated Below on Lending, Investment and Service. Our record merged all three. Targeting the San Francisco AA, their primary at 20 of 20 branches in the table. ALAMEDA IS DELIBERATELY EXCLUDED: the PE marks it '(partial)', and counting a whole county would overstate need.",
+      "pe_giving": "387 grants and donations totaling $1.3M within the AA (avg $3,359)",
+      "pe_need_quote": "CD opportunities exist in the AA with \u2026 business technical assistance, and financial literacy education",
+      "pe_mined": "per-assessment-area, 2026-08-22",
+      "ask_usd_prior": 10000,
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "aa_counties_prior": [
+        "Marin",
         "Napa",
         "San Francisco",
         "Sonoma",
@@ -96,20 +116,7 @@
         "Placer",
         "Amador"
       ],
-      "aa_note": " (Alameda County, a partial-county assessment area in the bank's PE, is excluded from all figures \u2014 county-level data would overstate a tract-defined area)",
-      "pe_date": "2023-11-06",
-      "pe_url": "https://crapes.fdic.gov/publish/2023/32779_231106.PDF",
-      "regulator": "FDIC",
-      "ask_usd": 10000,
-      "verified": false,
-      "verify_note": "AA structure is table-based in the PE (Amador AA plus others) and has NOT been read per-AA; our seven-county list may merge separately-evaluated AAs. Flagged by the 2026-08-22 adversarial pass.",
-      "pe_giving": "387 grants and donations totaling $1.3M within the AA (avg $3,359)",
-      "pe_need_quote": "CD opportunities exist in the AA with \u2026 business technical assistance, and financial literacy education",
-      "pe_mined": "per-assessment-area, 2026-08-22",
-      "ask_usd_prior": 10000,
-      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
-      "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
+      "aa_structure": "three AAs: San Francisco (full-scope, targeted) / Sacramento (full-scope: Sacramento + Placer) / Amador (limited-scope, rated Below on all three tests)"
     },
     "american_business_bank": {
       "cert": "34788",
@@ -124,15 +131,16 @@
       "pe_url": "https://crapes.fdic.gov/publish/2024/34788_240129.PDF",
       "regulator": "FDIC",
       "ask_usd": 25000,
-      "verified": false,
-      "verify_note": "No named sub-AA headers found, so likely a single AA \u2014 but that is an inference from absence, not a read. Confirm before send. Flagged by the 2026-08-22 adversarial pass.",
+      "verified": true,
+      "verify_note": "Assessment area verified 2026-08-22 from the PE, verbatim: 'ABB designated a single CSA-level AA consisting of four whole counties: Los Angeles, Orange, San Bernardino, and Riverside all in California. The AA has not changed since the prior evaluation, complies with the technical requirements of CRA, and does not arbitrarily exclude LMI neighborhoods.' A single delineated assessment area, so our four-county record is exactly correct \u2014 this replaces an earlier inference-from-absent-headers with an actual read of the delineation.",
       "pe_giving": "258 grants and donations totaling $1.6M (avg $6,202)",
       "pe_need_quote": "the need for affordable housing as well as community service needs",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 50000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "aa_structure": "single CSA-level AA"
     },
     "helm_bank": {
       "cert": "32718",
