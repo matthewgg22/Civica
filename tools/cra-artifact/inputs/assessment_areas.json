@@ -24,25 +24,29 @@
       "name": "Hanmi Bank",
       "aa_counties": [
         "Los Angeles",
-        "Orange",
-        "San Diego",
-        "San Francisco",
-        "Santa Clara"
+        "Orange"
       ],
       "aa_note": " (California assessment areas only; Hanmi's TX/IL/NJ-NY/VA assessment areas are outside this document's scope)",
       "pe_date": "2023-06-05",
       "pe_url": "https://crapes.fdic.gov/publish/2023/24170_230606.PDF",
       "regulator": "FDIC",
       "ask_usd": 25000,
-      "verified": false,
-      "verify_note": "CA counties from PE p.12 (agent-read 2026-08-22): LA+Orange full-scope + SD/SF/Santa Clara limited-scope, all whole counties. Multi-state bank; document covers CA only. Prior PE (2021) was Needs to Improve. FDIC Q3 2026 exam window.",
+      "verified": true,
+      "verify_note": "AA CORRECTED and verified 2026-08-22 from the June 5 2023 PE: 'The Los Angeles assessment area is located in Southern California and consists of Los Angeles and Orange Counties. These two counties are contiguous and comprise the entirety of the Los Angeles-Long Beach-Anaheim MSA. There were no changes to the assessment area since the previous evaluation.' Hanmi delineates NINE assessment areas (four in California, two in Texas, one each in Illinois, Virginia and the NY-Newark-Jersey City MMSA) which are evaluated separately. Our prior record merged four California AAs into one; San Diego, San Francisco and Santa Clara are DIFFERENT assessment areas and are not targeted here. The $281,080 giving figure is the Los Angeles AA specifically.",
       "pe_giving": "PER-AA: Los Angeles 14 donations $281,080 (avg $20,077); Dallas 5 donations $20,500 (avg $4,100); Houston 4 donations $13,000 (avg $3,250)",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 15000,
       "ask_note": "LA is their richest AA \u2014 prior $15,000 ask sat BELOW their average LA donation",
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "aa_counties_prior": [
+        "Los Angeles",
+        "Orange",
+        "San Diego",
+        "San Francisco",
+        "Santa Clara"
+      ]
     },
     "five_star_bank": {
       "cert": "35361",
@@ -220,8 +224,8 @@
       "pe_url": "https://www.occ.gov/static/cra/craeval/Apr24/14695.pdf",
       "regulator": "OCC",
       "ask_usd": 75000,
-      "verified": false,
-      "verify_note": "AA read verbatim: 'CNB delineated three AAs within the Los Angeles CSA ... the entire Los Angeles-Long Beach-Anaheim, CA, Oxnard-Thousand Oaks-Ventura, CA, and Riverside-San Bernardino-Ontario, CA MSAs.' Those three MSAs map to these five counties. Confirm the mapping before --send.",
+      "verified": true,
+      "verify_note": "Verified 2026-08-22 from the Apr 2024 OCC PE (charter 14695): 'CNB delineated three AAs within the Los Angeles CSA that were combined for analysis and presentation purposes. These included the entire Los Angeles-Long Beach-Anaheim, CA, Oxnard-Thousand Oaks-Ventura, CA, and Riverside-San Bernardino-Ontario, CA MSAs.' Those MSAs comprise Los Angeles + Orange, Ventura, and Riverside + San Bernardino respectively (OMB delineations). NOTE: these are three assessment areas that the examiner combines for analysis and reports at CSA level; ratings and giving are reported for the LA CSA as a whole, so targeting the CSA is consistent with how it is evaluated.",
       "pe_giving": "$13.2M in qualifying grants and donations to ~359 organizations (avg $36,769); one AA $142,000 to 14 organizations",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
@@ -243,8 +247,8 @@
       "pe_url": "https://crapes.fdic.gov/publish/2025/58401_250121.PDF",
       "regulator": "FDIC",
       "ask_usd": 5000,
-      "verified": false,
-      "verify_note": "AA read verbatim: 'MB delineated one AA wholly consisting of Los Angeles and Orange Counties.'",
+      "verified": true,
+      "verify_note": "Verified 2026-08-22 from the May 2025 FDIC PE (cert 58401): 'MB delineated one AA wholly consisting of Los Angeles and Orange Counties. Together these two counties comprise the Los Angeles-Long Beach-Anaheim, CA MSA.' Single assessment area, unambiguous.",
       "pe_giving": "11 CD donations totaling $46,300 (avg $4,209); $796,300 in qualified investments and donations overall",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
