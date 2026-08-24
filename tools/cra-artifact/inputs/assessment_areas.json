@@ -57,23 +57,32 @@
         "Sacramento",
         "Yolo",
         "Yuba",
-        "Sutter",
-        "Butte",
-        "Shasta"
+        "Sutter"
       ],
       "pe_date": "2024-07-22",
       "pe_url": "https://crapes.fdic.gov/publish/2024/35361_240722.PDF",
       "regulator": "FDIC",
       "ask_usd": 25000,
-      "verified": false,
-      "verify_note": "From PE p.4 (agent-read 2026-08-22): Sacramento AA (El Dorado, Placer, Sacramento, Yolo, Yuba, Sutter) + Chico AA (Butte) + Redding AA (Shasta, limited-scope). FDIC Q4 2026 exam.",
+      "verified": true,
+      "verify_note": "AA CORRECTED 2026-08-22. PE: 'FSB has delineated three AAs that include the Sacramento AA, Chico AA, and Redding AA.' Sacramento AA = El Dorado, Placer, Sacramento, Yolo (Sacramento-Roseville-Folsom MSA) + Yuba and Sutter (Yuba City MSA). Chico AA = Butte alone. Redding AA = Shasta alone. Our record merged all three; Butte and Shasta are SEPARATE assessment areas and are not targeted here.",
       "pe_giving": "195 donations totaling $1.3M (avg $6,667)",
       "pe_need_quote": "poverty and homelessness, unemployment, and a lack of knowledge for financial resources \u2026 more can be done to meet economic needs",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 30000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "aa_counties_prior": [
+        "El Dorado",
+        "Placer",
+        "Sacramento",
+        "Yolo",
+        "Yuba",
+        "Sutter",
+        "Butte",
+        "Shasta"
+      ],
+      "aa_structure": "three AAs: Sacramento (targeted) / Chico (Butte) / Redding (Shasta)"
     },
     "bank_of_marin": {
       "cert": "32779",
@@ -93,7 +102,7 @@
       "regulator": "FDIC",
       "ask_usd": 10000,
       "verified": false,
-      "verify_note": "From PE p.4 (agent-read 2026-08-22). CERT is 32779 (NOT 21956 = Montecito Bank & Trust). Alameda is PARTIAL (10-mile-radius tracts), deliberately EXCLUDED (conservative). Formal annual grant program. FDIC Q3 2026 exam.",
+      "verify_note": "AA structure is table-based in the PE (Amador AA plus others) and has NOT been read per-AA; our seven-county list may merge separately-evaluated AAs. Flagged by the 2026-08-22 adversarial pass.",
       "pe_giving": "387 grants and donations totaling $1.3M within the AA (avg $3,359)",
       "pe_need_quote": "CD opportunities exist in the AA with \u2026 business technical assistance, and financial literacy education",
       "pe_mined": "per-assessment-area, 2026-08-22",
@@ -116,7 +125,7 @@
       "regulator": "FDIC",
       "ask_usd": 25000,
       "verified": false,
-      "verify_note": "From PE p.4 (agent-read 2026-08-22): four whole counties (LA CSA). NOT a designated wholesale bank \u2014 Large Institution procedures; one full-service branch + LPOs. FDIC Q4 2026 exam.",
+      "verify_note": "No named sub-AA headers found, so likely a single AA \u2014 but that is an inference from absence, not a read. Confirm before send. Flagged by the 2026-08-22 adversarial pass.",
       "pe_giving": "258 grants and donations totaling $1.6M (avg $6,202)",
       "pe_need_quote": "the need for affordable housing as well as community service needs",
       "pe_mined": "per-assessment-area, 2026-08-22",
@@ -132,18 +141,15 @@
       "aa_counties": [
         "Miami-Dade",
         "Broward",
-        "Palm Beach",
-        "Orange",
-        "Osceola",
-        "Seminole"
+        "Palm Beach"
       ],
       "aa_note": " (Miami AA: Miami-Dade/Broward/Palm Beach; Orlando AA created February 2025 \u2014 not yet examined, and will be evaluated for the first time at the next examination)",
       "pe_date": "2025-06-16",
       "pe_url": "https://crapes.fdic.gov/publish/2025/32718_250616.PDF",
       "regulator": "FDIC",
       "ask_usd": 5000,
-      "verified": false,
-      "verify_note": "AAs verbatim from PE p.3 (agent-read 8/22). NTI rating; Q4 2026 re-exam; Credicorp acquisition pending Fed approval \u2014 quadruple signal. Orlando AA unexamined = clean-slate opportunity framing.",
+      "verified": true,
+      "verify_note": "AA CORRECTED 2026-08-22. PE: 'Helm Bank USA operates with two delineated assessment areas in Florida... In 2023, management expanded the Miami assessment area to include Miami-Dade, Broward, and Palm Beach Counties... The Orlando assessment area includes Orange, Osceola, and Seminole Counties... Due to the recent addition of the Orlando branch, examiners did not consider performance in the Orlando assessment area.' Our record merged both. Targeting the Miami AA; the Orlando AA was NOT EVALUATED at this examination.",
       "pe_giving": "19 donations totaling $25,161 (avg $1,324) \u2014 entire program over the review period",
       "pe_need_quote": "a significant need for \u2026 financial literacy education to low- and moderate-income individuals",
       "pe_mined": "per-assessment-area, 2026-08-22",
@@ -153,7 +159,16 @@
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
       "component_ratings": "Lending NTI / Community Development Test SATISFACTORY",
       "documented_gap": "overall NTI is driven by the LENDING test; the CD Test is already Satisfactory",
-      "cluster_role": "THIRD \u2014 a grant does not fix their rating; pitch participation, never remediation"
+      "cluster_role": "THIRD \u2014 a grant does not fix their rating; pitch participation, never remediation",
+      "aa_counties_prior": [
+        "Miami-Dade",
+        "Broward",
+        "Palm Beach",
+        "Orange",
+        "Osceola",
+        "Seminole"
+      ],
+      "aa_structure": "two AAs: Miami = Miami-Dade + Broward + Palm Beach (targeted) / Orlando = Orange + Osceola + Seminole, NOT evaluated"
     },
     "banco_do_brasil_americas": {
       "cert": "26725",
@@ -161,17 +176,15 @@
       "state": "FL",
       "aa_counties": [
         "Miami-Dade",
-        "Broward",
-        "Orange",
-        "Osceola"
+        "Broward"
       ],
       "aa_note": " (Miami AA: Miami-Dade/Broward; Orlando AA: Orange/Osceola \u2014 both full-scope in the 5/2025 evaluation)",
       "pe_date": "2025-05-12",
       "pe_url": "https://crapes.fdic.gov/publish/2025/26725_250512.PDF",
       "regulator": "FDIC",
       "ask_usd": 10000,
-      "verified": false,
-      "verify_note": "AAs verbatim from PE p.4 (agent-read 8/22). THIRD consecutive NTI; Q3 2026 accelerated re-exam. No Palm Beach.",
+      "verified": true,
+      "verify_note": "AA CORRECTED 2026-08-22. PE: 'The assessment area consists of Miami-Dade and Broward counties, which are part of the Miami-[Fort Lauderdale-West Palm Beach MSA]' and separately 'The assessment area consists of Orange and Osceola counties, which are part of the Orlando-[Kissimmee-Sanford MSA]'. Two separately-evaluated AAs; our record merged them. Targeting the Miami AA.",
       "pe_giving": "60 donations/grants totaling $246,765 (avg $4,113); per-AA 11 donations $36,000, 5 donations $94,970 spanning both AAs",
       "pe_need_quote": "a significant need for \u2026 financial literacy education to low- and moderate-income individuals",
       "pe_mined": "per-assessment-area, 2026-08-22",
@@ -181,24 +194,29 @@
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
       "component_ratings": "Lending NTI / Investment High Satisfactory / Service LOW SATISFACTORY",
       "documented_gap": "Service Test Low Satisfactory; 3rd consecutive overall NTI",
-      "cluster_role": "SECOND \u2014 lead with the Service Test, not the Lending Test we cannot affect"
+      "cluster_role": "SECOND \u2014 lead with the Service Test, not the Lending Test we cannot affect",
+      "aa_counties_prior": [
+        "Miami-Dade",
+        "Broward",
+        "Orange",
+        "Osceola"
+      ],
+      "aa_structure": "two AAs: Miami = Miami-Dade + Broward (targeted) / Orlando = Orange + Osceola"
     },
     "ocean_bank": {
       "cert": "24156",
       "name": "Ocean Bank",
       "state": "FL",
       "aa_counties": [
-        "Miami-Dade",
-        "Broward",
-        "Orange"
+        "Miami-Dade"
       ],
       "aa_note": " (Miami-Dade and Broward AAs full-scope in the 6/2023 evaluation; Orange County AA added May 2023 and will be evaluated for the first time at the upcoming examination)",
       "pe_date": "2023-06-06",
       "pe_url": "https://crapes.fdic.gov/publish/2023/24156_230606.PDF",
       "regulator": "FDIC",
       "ask_usd": 25000,
-      "verified": false,
-      "verify_note": "AAs from PE p.4 (agent-read 8/22). Satisfactory rating; Q3 2026 exam scheduled \u2014 largest independent FL community bank.",
+      "verified": true,
+      "verify_note": "AA CORRECTED 2026-08-22. PE table 'Description of Assessment Areas': Miami MD AA = Miami-Dade (519 tracts, 20 branches); Fort Lauderdale MD AA = Broward (362 tracts, 2 branches). 'The evaluation includes separate discussions for each of the two assessment areas.' ORANGE COUNTY WAS IN OUR RECORD AND IS NOT IN EITHER ASSESSMENT AREA - removed. Targeting the Miami MD AA, their primary by branches 10:1.",
       "pe_giving": "$492,000 in grants and donations within $20.9M total qualified investments",
       "pe_need_quote": "the high percentage of low- and moderate-income families, at 39.6 percent, and the poverty rate indicate needs for financial literacy",
       "pe_mined": "per-assessment-area, 2026-08-22",
@@ -208,7 +226,13 @@
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
       "component_ratings": "Lending High Satisfactory / Investment LOW SATISFACTORY / Service LOW SATISFACTORY",
       "documented_gap": "Investment Test: 'adequate level of qualified community development investments and grants, although rarely in a leadership position'; Service Test also Low Satisfactory",
-      "cluster_role": "ANCHOR \u2014 ask first; the only cluster bank weak in BOTH tests our activity feeds"
+      "cluster_role": "ANCHOR \u2014 ask first; the only cluster bank weak in BOTH tests our activity feeds",
+      "aa_counties_prior": [
+        "Miami-Dade",
+        "Broward",
+        "Orange"
+      ],
+      "aa_structure": "two AAs: Miami MD = Miami-Dade (targeted) / Fort Lauderdale MD = Broward"
     },
     "city_national": {
       "cert": 17281,
