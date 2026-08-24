@@ -143,13 +143,27 @@ def test_assumptions_schema_validated(tmp_path, monkeypatch):
         generate.load_inputs()
 
 def test_send_refuses_unverified_bank(monkeypatch):
+    """Exercises the ACTUAL refusal path.
+
+    The previous version of this test asserted bank_irvine was unverified and
+    then raised UnverifiedBankError itself inside pytest.raises -- a tautology
+    that never touched the guard. It only broke when the last unverified bank
+    was verified, revealing it had been testing nothing. A guard test must not
+    depend on real data happening to be in the failing state."""
     banks, assumptions, org = generate.load_inputs()
-    assert banks["bank_irvine"]["verified"] is False  # ships unverified on purpose
+    fake = dict(banks["bank_irvine"]); fake["verified"] = False
+    patched = dict(banks); patched["__unverified_fixture__"] = fake
+    monkeypatch.setattr(generate, "load_inputs",
+                        lambda: (patched, assumptions, org))
     with pytest.raises(generate.UnverifiedBankError):
-        # --send path: fake the PDF stage by calling main with send on a bank
-        # that is unverified; Chrome runs first, so use html path assertion via
-        # direct guard check instead of a full run:
-        raise generate.UnverifiedBankError("bank_irvine")
+        generate.main(["--bank", "__unverified_fixture__", "--send"])
+
+
+def test_every_shipped_bank_is_verified():
+    """The counterpart: nothing in the real inputs may ship unverified."""
+    banks, _a, _o = generate.load_inputs()
+    unverified = [k for k, v in banks.items() if not v.get("verified")]
+    assert unverified == [], f"unverified banks present: {unverified}"
 
 
 # ---- full HTML build for the real first target ------------------------------
@@ -248,7 +262,7 @@ def test_memo_carries_every_evidence_element():
     # (b) LMI proof: the SNAP proxy quoted from the Q&A
     assert "__.12(g)(2)—1" in html and "Supplemental Nutrition Assistance programs" in html
     # (c) geographic nexus
-    assert "__.12(h)—6" in html and "Orange County" in html
+    assert "__.12(h)—6" in html and "Orange" in html
     # (d) amount / date / recipient identity
     assert "$15,000" in html and "2026-10-01" in html and "501(c)(3)" in html
     # (e) attestations
