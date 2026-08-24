@@ -102,16 +102,54 @@ def pool_context(args):
     share = args.amount / total
     if not (0 < share <= 1):
         raise PoolShareError(f"share out of range: {share}")
-    return {"share": share, "total": total,
-            "cofunders": max(0, (getattr(args, "pool_funders", None) or 0) - 1)}
+    members = [m.strip() for m in (getattr(args, "pool_members", None) or "").split(",") if m.strip()]
+    return {"share": share, "total": total, "members": members,
+            "cofunders": max(0, (getattr(args, "pool_funders", None) or len(members) or 0) - 1)}
 
 
-def _pool_block(pool, budget):
+def _all_banks():
+    banks, _, _ = generate.load_inputs()
+    return banks
+
+
+def cofunder_phrase(pool, this_bank_key, banks):
+    """Name co-funders ONLY where that institution consented in writing.
+
+    A bank's community development grants are not in its public CRA file
+    (12 CFR s.__.43 lists what is; individual grants are not among it), so
+    participation here is not public information. Naming a participant to its
+    direct competitor in the same county would publish what the regulatory
+    system deliberately does not -- and because share percentages are printed,
+    naming also lets any reader derive the others' contribution amounts.
+
+    Default is therefore a count. Consent converts that into an opt-in benefit
+    for institutions that want peers to see them in a county program.
+    """
+    others = [m for m in pool.get("members", []) if m != this_bank_key]
+    if not others:
+        n = pool["cofunders"]
+        return f' co-funded with {n} other institution' + ("s" if n != 1 else "") if n else ""
+    named = [banks[m]["name"] for m in others
+             if m in banks and banks[m].get("cofunder_naming_consent") is True]
+    anon = len(others) - len(named)
+    if named and not anon:
+        return " co-funded with " + _join(named)
+    if named and anon:
+        return (" co-funded with " + _join(named)
+                + f" and {anon} further institution" + ("s" if anon != 1 else "")
+                + " that have not consented to be named")
+    return (f" co-funded with {anon} other institution" + ("s" if anon != 1 else "")
+            + ", none of which have consented to be named")
+
+
+def _join(xs):
+    return xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " and " + xs[-1]
+
+
+def _pool_block(pool, budget, co_txt=""):
     """The disclosure that makes a pooled report defensible. Empty when solo."""
     if not pool:
         return ""
-    co = pool["cofunders"]
-    co_txt = (f' co-funded with {co} other institution' + ("s" if co != 1 else "")) if co else ""
     return (
         '<div class="banner"><strong>This is a pooled county program, and every figure in this '
         f'report is your share of it.</strong> Your ${budget:,.0f} is <strong>{pool["share"]:.0%}</strong> '
@@ -125,7 +163,12 @@ def _pool_block(pool, budget):
         'share.&rdquo; That paragraph addresses community development <em>loans</em> under the lending '
         'test; a grant is a qualified investment rather than a loan, so we adopt its '
         'anti-double-counting principle and percentage-share cap rather than asserting it governs '
-        'grants.</div>')
+        'grants. <strong>Verification without disclosure:</strong> participating institutions are '
+        'named here only where they have consented in writing, because a bank&rsquo;s community '
+        'development grants are not part of its public CRA file and we will not publish a '
+        'participant&rsquo;s giving to its competitors. If your examiner wants the allocation '
+        'confirmed, we will state the program total, your contribution and the resulting share '
+        'directly to them on request, and provide the allocation method in writing.</div>')
 
 
 def build(bank, org, assumptions, args):
@@ -222,7 +265,9 @@ def build(bank, org, assumptions, args):
         "approval_pct": f"{m['approval_rate']*100:.0f}%",
         "annual_benefit": f"${annual_benefit/1e6:.2f}M" if annual_benefit >= 1e6 else f"${fmt(annual_benefit)}",
         "cost_per_submitted": f"${budget/submitted:.0f}",
-        "pool_block": _pool_block(pool, budget),
+        "pool_block": _pool_block(pool, budget,
+                                  cofunder_phrase(pool, getattr(args, "bank", ""), _all_banks())
+                                  if pool else ""),
         # Research-implied tier -- NOT measured. See WP34434 above.
         "ri_debt_each": f"${WP34434['debt_yr3_usd']:,}",
         "ri_delinq_each": f"{WP34434['delinquency_pp']*100:.1f} pts",
@@ -250,6 +295,8 @@ def main(argv=None):
                     help="total of the pooled county program; enables pro rata attribution")
     ap.add_argument("--pool-funders", type=int, default=None,
                     help="number of funding institutions in the pool")
+    ap.add_argument("--pool-members", default=None,
+                    help="comma-separated bank keys in the pool; names print only with consent")
     args = ap.parse_args(argv)
 
     banks, assumptions, org = generate.load_inputs()

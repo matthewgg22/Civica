@@ -15,7 +15,9 @@
       "pe_giving": "no community development donations disclosed in the evaluation",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 10000,
-      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide"
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
     },
     "hanmi_bank": {
       "cert": "24170",
@@ -38,7 +40,9 @@
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 15000,
       "ask_note": "LA is their richest AA \u2014 prior $15,000 ask sat BELOW their average LA donation",
-      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide"
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
     },
     "five_star_bank": {
       "cert": "35361",
@@ -63,7 +67,9 @@
       "pe_need_quote": "poverty and homelessness, unemployment, and a lack of knowledge for financial resources \u2026 more can be done to meet economic needs",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 30000,
-      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide"
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
     },
     "bank_of_marin": {
       "cert": "32779",
@@ -88,7 +94,9 @@
       "pe_need_quote": "CD opportunities exist in the AA with \u2026 business technical assistance, and financial literacy education",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 10000,
-      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide"
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
     },
     "american_business_bank": {
       "cert": "34788",
@@ -109,7 +117,9 @@
       "pe_need_quote": "the need for affordable housing as well as community service needs",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 50000,
-      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide"
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
     },
     "helm_bank": {
       "cert": "32718",
@@ -134,7 +144,9 @@
       "pe_need_quote": "a significant need for \u2026 financial literacy education to low- and moderate-income individuals",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 7500,
-      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide"
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
     },
     "banco_do_brasil_americas": {
       "cert": "26725",
@@ -157,7 +169,9 @@
       "pe_need_quote": "a significant need for \u2026 financial literacy education to low- and moderate-income individuals",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 15000,
-      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide"
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
     },
     "ocean_bank": {
       "cert": "24156",
@@ -179,7 +193,9 @@
       "pe_need_quote": "the high percentage of low- and moderate-income families, at 39.6 percent, and the poverty rate indicate needs for financial literacy",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 25000,
-      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide"
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
     }
   }
 }
