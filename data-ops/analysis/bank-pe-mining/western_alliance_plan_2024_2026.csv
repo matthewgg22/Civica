@@ -11,5 +11,5 @@ Fallon,NV,Churchill,full-service,30000,5000-15000,37500,7500-17500,,"smallest AA
 Chicago,IL,"Cook, DuPage, Grundy, McHenry, Will",limited-service,,,,,3,"NO standalone donation goal — LSB Goal 1 is combined CD loans/investments/donations at 1.0% (sat) / 1.5% (outstanding) of prior-year deposits, dominated by lending. Weak ask."
 New York,NY,"New York, Kings, Queens, Bronx, Richmond, Westchester, Putnam, Rockland",limited-service,,,,,5,"Kings County is a ranked target but the LSB goal is deposit-percentage combined — weak ask"
 Denver,CO,"Adams, Arapahoe, Broomfield, Clear Creek, Denver, Douglas, Elbert, Gilpin, Jefferson, Park",limited-service,,,,,,
-Atlanta,GA,29-county Atlanta MSA,proposed,,,,,,"PROPOSED as of 2023-09-29 contingent on the branch opening — UNVERIFIED whether it did"
-Houston,TX,"Austin, Brazoria, Chambers, Fort Bend, Galveston, Harris, Liberty, Montgomery, San Jacinto, Waller",proposed,,,,,2,"Harris County is a ranked target but the AA was PROPOSED contingent on a branch opening — UNVERIFIED"
+Atlanta,GA,29-county Atlanta MSA,never-opened,,,,,,"DID NOT OPEN. FDIC structure data pulled 2026-08-24 (RUNDATE 08/24/2026) shows 38 offices — NV 15, CA 11, AZ 9, CO 1, IL 1, NY 1 — and no Georgia office. The proposed AA never took effect."
+Houston,TX,"Austin, Brazoria, Chambers, Fort Bend, Galveston, Harris, Liberty, Montgomery, San Jacinto, Waller",never-opened,,,,,2,"DID NOT OPEN. FDIC structure data pulled 2026-08-24 shows no Texas office. Harris County is NOT in a Western Alliance assessment area — remove it from the coverage claim."

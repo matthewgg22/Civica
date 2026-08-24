@@ -332,7 +332,7 @@
       "plan_url": "https://www.federalreserve.gov/consumerscommunities/files/western-alliance-bank-strategic-plan.pdf",
       "plan_period": "2024-01-01 to 2026-12-31",
       "plan_note": "Donations are GOAL THREE in the 2024-2026 plan (they were Goal Four in the 2021-2023 plan the PE evaluated) — cite the right number. Contact of record for the plan: Craig Robinson, Head of Community Relations, 1 East Washington Street, Suite 1400, Phoenix AZ 85004, (408) 689-8417.",
-      "other_aa_counties": "Greater Los Angeles (Los Angeles, Orange, Ventura, Riverside, San Bernardino), San Diego, San Francisco Bay Area (11 counties), Las Vegas (Clark), Tucson (Pima), Reno-Carson City, Flagstaff, Fallon; limited-service Chicago (Cook +4), New York (Kings +7), Denver; proposed Atlanta and Houston (Harris +9). Full goal table: data-ops/analysis/bank-pe-mining/western_alliance_plan_2024_2026.csv"
+      "other_aa_counties": "Greater Los Angeles (Los Angeles, Orange, Ventura, Riverside, San Bernardino), San Diego, San Francisco Bay Area (11 counties), Las Vegas (Clark), Tucson (Pima), Reno-Carson City, Flagstaff, Fallon; limited-service Chicago (Cook +4), New York (Kings +7), Denver. The plan's PROPOSED Atlanta and Houston AAs NEVER TOOK EFFECT — FDIC structure data pulled 2026-08-24 shows 38 offices in NV/CA/AZ/CO/IL/NY only, with no Texas or Georgia office, so Harris County is NOT in a Western Alliance assessment area. Full goal table: data-ops/analysis/bank-pe-mining/western_alliance_plan_2024_2026.csv"
     }
   }
 }

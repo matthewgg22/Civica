@@ -127,12 +127,12 @@ justified arithmetically.
 ### The finding that is bigger than Maricopa
 
 Western Alliance delineates **nine full-service assessment areas plus three limited-service
-areas**, and between them they cover **six of the seven counties on our ranked target list**:
+areas**, and between them they cover **five of the seven counties on our ranked target list**:
 
 | County | National gap rank | Western Alliance AA | Usable? |
 |---|---|---|---|
 | Los Angeles | 1 | Greater Los Angeles (full-service) | **yes** — $125–190K/yr donation goal |
-| Harris | 2 | Houston (**proposed**) | unverified — contingent on a branch opening |
+| Harris | 2 | — | **no** — the Houston AA never took effect (below) |
 | Cook | 3 | Chicago (limited-service) | weak — no standalone donation goal |
 | Maricopa | 4 | Phoenix (full-service) | **yes** — the anchor |
 | Kings | 5 | New York (limited-service) | weak — no standalone donation goal |
@@ -142,13 +142,24 @@ One relationship reaches Maricopa, Los Angeles and Clark on full-service terms. 
 different shape of channel than one-bank-per-county, and it argues for pitching Western
 Alliance as a **multi-AA funder** rather than as the Maricopa bank.
 
-**Three honest limits.** Greater Los Angeles carries a *smaller* donation goal than Phoenix
+### Houston and Atlanta never opened — verified
+
+The plan lists Atlanta and Houston as assessment areas **proposed** contingent on
+limited-service branches opening, unconfirmed as of Sept 29 2023. They did not open.
+
+FDIC structure data pulled **2026-08-24** (`api.fdic.gov/banks/locations`, `RUNDATE
+08/24/2026`) returns **38 offices: NV 15, CA 11, AZ 9, CO 1, IL 1, NY 1**. There is no Texas
+office and no Georgia office; the newest office anywhere is San Francisco, opened Jan 2026.
+
+**Harris County — the 2nd largest SNAP enrollment gap in the country — is NOT in a Western
+Alliance assessment area.** Any claim otherwise is wrong. Harris still needs its own funder.
+
+**Two further limits.** Greater Los Angeles carries a *smaller* donation goal than Phoenix
 ($472,875 vs $1,733,875 over three years) despite being the larger need — Phoenix is the
-headquarters. The limited-service areas (Chicago, New York, Denver) have **no standalone
+headquarters. And the limited-service areas (Chicago, New York, Denver) have **no standalone
 donation goal at all**: LSB Goal 1 is combined CD loans/investments/donations at 1.0%
 (satisfactory) or 1.5% (outstanding) of prior-year deposits, a figure lending dominates, so
-a grant barely moves it. And Atlanta and Houston were **proposed** contingent on branches
-opening, unconfirmed as of Sept 29 2023 and **not verified since**.
+a grant barely moves it.
 
 ### A dated opportunity
 
@@ -166,7 +177,7 @@ Phoenix AZ 85004, (408) 689-8417.
 
 ## Open
 
-- **Verify whether the Houston and Atlanta branches opened.** If Houston did, Harris County —
-  the 2nd largest gap in the country — is inside a Western Alliance assessment area.
+- ~~Verify whether the Houston and Atlanta branches opened.~~ **Closed 2026-08-24: they did
+  not.** Harris County remains uncovered and needs its own funder.
 - **Watch for the 2027–2029 plan notice** (expected ~Sept–Oct 2026) and comment.
 - AZ charitable solicitation registration is a send gate and has not been researched.
