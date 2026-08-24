@@ -388,7 +388,7 @@ def test_credit_claims_are_never_first_person_and_always_sourced():
     claim it as our own effect, and never without the citation."""
     first_person = ["we improve credit", "we raise credit", "our program improves credit",
                     "our program raises credit", "civica improves credit"]
-    for tpl in ("artifact.html", "memo.html", "quarterly.html"):
+    for tpl in ("artifact.html", "memo.html", "quarterly.html", "lender.html"):
         text = (TOOL_ROOT / "templates" / tpl).read_text().lower()
         for phrase in first_person:
             assert phrase not in text, f"{tpl} claims a first-person credit effect: {phrase}"
@@ -416,7 +416,7 @@ def test_wp34434_numbers_always_carry_the_preliminary_version_stamp():
     Drop the stamp and the citation posture collapses."""
     repo = TOOL_ROOT.parent.parent
     targets = [TOOL_ROOT / "templates" / t
-               for t in ("artifact.html", "memo.html", "quarterly.html")]
+               for t in ("artifact.html", "memo.html", "quarterly.html", "lender.html")]
     targets.append(repo / "docs/strategy/cra-officer-call-guide.md")
     for f in targets:
         if not f.exists():
@@ -452,7 +452,7 @@ def test_no_aggregated_credit_savings_claim():
     arithmetic. Multiplying it by our projected enrollments would manufacture
     exactly the invented aggregate this channel has refused since day one."""
     import re
-    for tpl in ("artifact.html", "memo.html", "quarterly.html"):
+    for tpl in ("artifact.html", "memo.html", "quarterly.html", "lender.html"):
         text = (TOOL_ROOT / "templates" / tpl).read_text().lower()
         for m in re.finditer(r"\$100", text):
             window = text[m.start():m.start() + 200]
@@ -488,3 +488,65 @@ def test_shortfall_stays_on_the_criteria_page():
     section = tpl[i:j]
     assert "[[s2c_measured]]" in section and "[[proj_low_sub]]" in section
     assert "fell short" in section.lower()
+
+
+# ---- lender artifact (state CRA, not federal) --------------------------------
+from src import lender  # noqa: E402
+
+
+def test_lender_refuses_a_state_with_no_fact_base():
+    """A covered state we cannot source a need figure for must fail loudly,
+    never silently drop out of the table or print a guessed number."""
+    _, _, org = generate.load_inputs()
+    fake = {"name": "Test Lender", "originations": {"MA": 100, "ZZ": 500}}
+    with pytest.raises(lender.UnsupportedLenderStateError):
+        lender.build_values(fake, org)
+
+
+def test_lender_send_refuses_until_coverage_is_verified():
+    """HMDA proves volume, not coverage. Only the state licensee register
+    proves a lender is subject to the statute we are citing at them."""
+    with pytest.raises(lender.UnverifiedLenderError):
+        lender.main(["--lender", "total_mortgage", "--send"])
+
+
+def test_multi_state_ask_scales_but_stays_inside_disclosed_giving():
+    """Multi-state programs price higher because the value spans separate
+    obligations -- but the single-state base stays anchored to what these
+    lenders actually give (MA PEs: $1,600-$18,250 for a whole review period)."""
+    one = lender.ask_for(6000, 1)
+    three = lender.ask_for(6000, 3)
+    assert three == int(one * 2.5)
+    assert lender.ask_for(100, 1) == 2500      # no giving history -> small
+    assert one <= 15000                        # single-state never exceeds the ladder
+
+
+def test_lender_artifact_states_the_no_lead_generation_line():
+    """The bright line is load-bearing for qualification, not just ethics: an
+    activity that generates the funder's customers has no community
+    development primary purpose. It must survive template edits."""
+    t = " ".join((TOOL_ROOT / "templates/lender.html").read_text().split()).lower()
+    assert "no lead generation" in t
+    assert "will not route participants to you" in t
+    assert "not an activity whose primary purpose is community development" in t
+    assert "compliance or community budget" in t
+
+
+def test_lender_artifact_never_promises_an_examination_outcome():
+    t = " ".join((TOOL_ROOT / "templates/lender.html").read_text().split()).lower()
+    assert "no agency pre-certifies" in t
+    for bad in ("will qualify", "guarantees", "will be rated", "ensures a"):
+        assert bad not in t
+
+
+def test_lender_artifact_renders_three_pages_unclipped():
+    """.page is overflow:hidden, so a too-long page loses content silently
+    while still reporting the right page count -- check the final element."""
+    rc = lender.main(["--lender", "guaranteed_rate"])
+    assert rc == 0
+    pdf = TOOL_ROOT / "out/lender-guaranteed_rate.pdf"
+    assert memo.page_count(pdf) == 3
+    import subprocess
+    tail = subprocess.run(["pdftotext", "-layout", "-f", "3", "-l", "3", str(pdf), "-"],
+                          capture_output=True, text=True).stdout
+    assert "Prepared" in tail and "Guaranteed Rate" in tail

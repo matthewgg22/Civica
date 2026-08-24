@@ -1,0 +1,47 @@
+{
+  "guaranteed_rate": {
+    "name": "Guaranteed Rate, Inc.",
+    "hq": "Chicago, IL",
+    "originations": {"IL": 9021, "MA": 4444, "NY": 1044},
+    "ma_exam": {"date": "July 20, 2021", "overall": "Satisfactory", "service_test": "Satisfactory",
+                "note": "the oldest examination of any high-volume lender on the Division's list"},
+    "coverage_verified": false,
+    "verify_note": "Confirm MA DOB mortgage lender licence, NY DFS mortgage banker licence, and IL 205 ILCS 635 licence."
+  },
+  "fairway": {
+    "name": "Fairway Independent Mortgage Corporation",
+    "hq": "Madison, WI",
+    "originations": {"IL": 3963, "MA": 2100, "NY": 814},
+    "ma_exam": {"date": "September 3, 2019", "overall": "Satisfactory", "service_test": "Satisfactory",
+                "note": "examination scheduled for Q3 2026"},
+    "coverage_verified": false,
+    "verify_note": "Confirm licences in all three states before sending."
+  },
+  "loandepot": {
+    "name": "loanDepot.com, LLC",
+    "hq": "Irvine, CA",
+    "originations": {"IL": 3521, "NY": 1626, "MA": 1206},
+    "ma_exam": {"date": "March 21, 2022", "overall": "Satisfactory", "service_test": "Needs to Improve",
+                "note": "the Division strongly encouraged expansion of community development activity"},
+    "coverage_verified": false,
+    "verify_note": "Confirm licences in all three states before sending."
+  },
+  "newrez": {
+    "name": "NewRez LLC",
+    "hq": "Fort Washington, PA",
+    "originations": {"NY": 1907, "IL": 1712, "MA": 951},
+    "ma_exam": {"date": "March 26, 2019", "overall": "Satisfactory", "service_test": "Needs to Improve",
+                "note": "community development activity described as limited"},
+    "coverage_verified": false,
+    "verify_note": "Confirm licences in all three states before sending."
+  },
+  "total_mortgage": {
+    "name": "Total Mortgage Services, LLC",
+    "hq": "Milford, CT",
+    "originations": {"MA": 1327},
+    "ma_exam": {"date": "January 13, 2014", "overall": "Satisfactory",
+                "note": "the evaluation records no qualified community development investment"},
+    "coverage_verified": false,
+    "verify_note": "Confirm MA DOB mortgage lender licence."
+  }
+}

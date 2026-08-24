@@ -1,0 +1,139 @@
+<meta charset="utf-8">
+<title>[[lender_name]] — [[program_name]]</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#1a1f1c; --accent:#1d4d3b; --muted:#5c6660; --hair:#d8ddda; --tint:#eef3f0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  @page { size:letter; margin:0; }
+  body { font-family:'IBM Plex Sans',sans-serif; color:var(--ink); background:#fff; }
+  .page { width:8.5in; height:11in; padding:.6in .7in .38in; display:flex; flex-direction:column; page-break-after:always; position:relative; overflow:hidden; }
+  .page:last-child { page-break-after:auto; }
+  .letterhead { display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid var(--accent); padding-bottom:7px; }
+  .letterhead .org { font-size:9.5pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent); white-space:nowrap; }
+  .letterhead .doc { font-size:8pt; color:var(--muted); white-space:nowrap; padding-left:12px; }
+  h2 { font-family:'Source Serif 4',serif; font-size:17pt; font-weight:600; margin-top:16px; }
+  h3 { font-size:8pt; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:15px; }
+  p.body { font-size:9.5pt; line-height:1.55; margin-top:7px; max-width:6.7in; }
+  .big { font-family:'Source Serif 4',serif; font-size:54pt; line-height:1; letter-spacing:-.01em; margin-top:12px; }
+  .head-sentence { font-family:'Source Serif 4',serif; font-size:15pt; line-height:1.34; margin-top:6px; max-width:6.2in; }
+  .subline { font-size:9.5pt; line-height:1.5; margin-top:9px; max-width:6.5in; }
+  .exam { background:var(--tint); border-left:3px solid var(--accent); padding:8px 12px; font-size:9pt; line-height:1.5; margin-top:13px; }
+  .exam .lbl { display:block; font-size:8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:2px; }
+  table { width:100%; border-collapse:collapse; margin-top:12px; }
+  th { background:var(--tint); border-bottom:2px solid var(--accent); font-size:8.5pt; text-align:right; padding:6px 9px; }
+  th:first-child, td:first-child { text-align:left; }
+  td { border-bottom:1px solid var(--hair); font-size:9.5pt; text-align:right; padding:6px 9px; }
+  td.auth { text-align:left; font-size:8pt; color:var(--muted); line-height:1.35; }
+  th.auth { text-align:left; }
+  .research { border-top:1.5px solid var(--accent); margin-top:14px; padding-top:9px; }
+  .rlabel { font-size:8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent); font-weight:600; }
+  .rstats { display:flex; gap:.3in; margin-top:8px; }
+  .rstats > div { flex:1; }
+  .rstats b { display:block; font-family:'Source Serif 4',serif; font-size:17pt; font-weight:600; line-height:1; }
+  .rstats span { display:block; font-size:8.2pt; line-height:1.35; color:#3c3c3c; margin-top:3px; }
+  .callout { border:1.5px solid var(--accent); padding:12px 14px; margin-top:14px; }
+  .callout .h { font-family:'Source Serif 4',serif; font-size:12pt; font-weight:600; }
+  .callout p { font-size:9.4pt; line-height:1.5; margin-top:5px; }
+  ul.tight li { font-size:9.4pt; line-height:1.5; margin:5px 0 5px 16px; }
+  .note { font-size:8.5pt; color:var(--muted); line-height:1.45; margin-top:8px; }
+  .foot { border-top:1px solid var(--hair); margin-top:auto; padding-top:8px; font-size:8pt; line-height:1.45; color:var(--muted); }
+  .ask { font-family:'Source Serif 4',serif; font-size:26pt; font-weight:600; }
+</style>
+
+<!-- PAGE 1 — the obligation and their position -->
+<div class="page">
+  <div class="letterhead"><div class="org">[[org_name]] &middot; [[program_name]]</div><div class="doc">Prepared for [[lender_name]] &middot; [[prepared_date]] &middot; Page 1 of 3</div></div>
+  <div class="big">[[headline_unenrolled]]</div>
+  <div class="head-sentence">households in <em>[[scope]]</em> are income-eligible for SNAP and not receiving it.</div>
+  <div class="subline">Out of [[eligible_total]] eligible households. Your state community investment obligation is assessed <strong>statewide</strong>, not by branch geography &mdash; so unlike a bank, every one of these households is inside your assessment area.</div>
+  [[ma_exam_line]]
+  <h3>Your position, by covered state</h3>
+  <table>
+    <thead><tr><th>State</th><th>Your originations (2024)</th><th>Eligible, not enrolled</th><th class="auth">Governing authority</th></tr></thead>
+    <tbody>[[state_rows]]</tbody>
+  </table>
+  <p class="note">Originations are 2024 HMDA data, actions taken = originated, filtered to your institution. Household need is estimated from the 2023 American Community Survey 1-Year PUMS: households passing the SNAP gross-income test (130% of the federal poverty guideline by household size) that do not report receipt, survey-weighted. Known biases in the gross-income proxy and ACS under-reporting of benefit receipt may overstate the eligible-unenrolled count &mdash; read it as an upper-range estimate of unmet need. Coverage under each statute depends on your licensee status, which you can confirm faster than we can.</p>
+  <div class="research">
+    <div class="rlabel">Why a mortgage lender in particular</div>
+    <div class="rstats">
+      <div><b>&minus;$2,436</b><span>credit-card debt by year three &mdash; a 51% reduction</span></div>
+      <div><b>&minus;10.1 pts</b><span>less likely to carry a delinquent account, off a 41% baseline</span></div>
+      <div><b>+17 pts</b><span>credit score, from a 634 average &mdash; the subprime range</span></div>
+    </div>
+    <p class="note">Households screened out of SNAP by administrative barriers carry more debt and more delinquencies and have lower credit scores than those who get through; households that clear the paperwork move the other way. Treatment-on-the-treated effects among ~65,000 Los Angeles applicants, from administrative records linked to credit reports. Homonoff, Lee &amp; Meckel, NBER Working Paper 34434 (preliminary draft, November 2025; estimates subject to revision). Credit-score effects are the least precisely estimated of the three; the debt and delinquency effects are stronger. This is research on SNAP access generally, not a measurement of [[org_name]]&rsquo;s program, and not a representation about any individual applicant.</p>
+  </div>
+  <div class="foot">[[org_name]], a 501(c)(3) organization. Sources: [[sources]].</div>
+</div>
+
+<!-- PAGE 2 — the program and the ask -->
+<div class="page">
+  <div class="letterhead"><div class="org">[[org_name]] &middot; [[program_name]]</div><div class="doc">[[lender_name]] &middot; Page 2 of 3</div></div>
+  <h2>A credit-building pipeline that runs through a grocery benefit</h2>
+  <p class="body">For a bank, helping people enroll in SNAP is community benefit. For a mortgage lender it is
+  something more specific: a household sitting at a 634 average credit score is sitting below the line that
+  decides whether they qualify at all. The research above says the binding constraint for many of them is
+  paperwork &mdash; and paperwork is the part we fix.</p>
+  <p class="body">We run factual, geo-targeted outreach to income-eligible households across [[scope]], walk them
+  through an eligibility check, and help them complete and submit the application. The household applies; the
+  state agency decides. We take no position on anything else in their financial life.</p>
+  <h3>What you receive</h3>
+  <ul class="tight">
+    <li>A <strong>quarterly report</strong> written for your examination file: delivery reconciled to platform invoices, eligibility checks and applications as recorded system events, outcomes from a consented follow-up panel with opt-in and response rates stated, and a page mapping the quarter onto the criteria your examiner applies.</li>
+    <li>A <strong>signed one-page qualification memorandum</strong> stating the activity, its primary purpose, the statutory basis in each covered state, and the dollars &mdash; the record assembled by the grantee rather than reconstructed by your compliance staff at exam time.</li>
+    <li>The shortfalls too. When a funnel step misses its projection, the report says so and says what changes next quarter.</li>
+  </ul>
+  <h3>The ask</h3>
+  <div class="ask">[[ask]]</div>
+  <p class="body">for a twelve-month program covering [[scope_line]].</p>
+  <p class="note">Where each dollar goes: 60&cent; outreach in your covered states &middot; 15&cent; measurement &amp; reporting (your quarterly report and exam-file memo) &middot; 10&cent; creative, ad operations &amp; Spanish-language localization &middot; 15&cent; indirect costs, the federal de minimis rate at 2 CFR 200.414(f). The same split at every participating institution &mdash; only the geography changes.</p>
+  <div class="callout">
+    <div class="h">Two things we will not do, stated before you ask</div>
+    <p><strong>No lead generation.</strong> We will not route participants to you, share their information with
+    you, or mention any lender in consumer materials. This is not modesty &mdash; an activity that generates the
+    funder&rsquo;s customers is not an activity whose primary purpose is community development, and the
+    qualification argument would collapse. It follows that this comes from a compliance or community budget
+    rather than a marketing budget, because we cannot deliver what marketing money buys.</p>
+    <p><strong>No compensation tied to enrollments.</strong> Nobody on this program is paid per application or
+    per approval, and the grant is not priced per enrollment.</p>
+  </div>
+  <div class="foot">Questions, or a walkthrough with your examiner: [[contact_name]], [[contact_title]] &middot; [[contact_email]] &middot; [[org_name]].</div>
+</div>
+
+<!-- PAGE 3 — qualification basis and disclosures -->
+<div class="page">
+  <div class="letterhead"><div class="org">[[org_name]] &middot; [[program_name]]</div><div class="doc">[[lender_name]] &middot; Page 3 of 3</div></div>
+  <h2>Why this qualifies</h2>
+  <p class="body">Community services targeted to low- and moderate-income individuals are community development
+  activity under every state community investment regulation that applies to you, and helping an income-qualified
+  household obtain a benefit it is entitled to is such a service. Two things make the argument unusually short here.</p>
+  <h3>Eligibility for this program is itself an income test</h3>
+  <p class="body">Every household served is income-qualified <em>by construction</em>, not inferred from the census
+  tract they live in. That is a stronger evidentiary position than most community development activity can offer,
+  and it means no household-level income documentation is required of you.</p>
+  <h3>A Massachusetts examiner has already credited this activity</h3>
+  <p class="body">In a published Division of Banks performance evaluation, the qualified investments of another
+  mortgage lender were credited by reference to an organization whose programs the examiner described as including
+  <strong>&ldquo;assistance in applying for SNAP (food stamp) benefits.&rdquo;</strong> The activity is already in
+  the Commonwealth&rsquo;s examination record as creditable community development. We are not asking you to accept
+  a novel reading.</p>
+  <p class="note">Federally, the Interagency Questions and Answers name the Supplemental Nutrition Assistance
+  program among the government assistance programs whose income qualifications are equivalent to or stricter than
+  the CRA definitions of low- and moderate-income &mdash; the agencies&rsquo; own list, used by their examiners.
+  State regulations adopt the same community development category. Full citations available on request.</p>
+  <h3>What we do not claim</h3>
+  <ul class="tight">
+    <li><strong>No agency pre-certifies a third party&rsquo;s activity.</strong> The determination is yours,
+    documented by you, reviewed at examination. Our job is to make that documentation easy and well-evidenced.
+    Anyone promising you an outcome is selling something.</li>
+    <li>Nothing here is a representation about how any examiner will weigh this activity, or about your rating.</li>
+    <li>Where a state applies an <em>optional</em> investment test, we say so rather than implying a requirement.</li>
+  </ul>
+  <h3>Methodology and known limits</h3>
+  <ul class="tight">
+    <li>Need estimates use the 130% gross-income screen, which ignores asset tests, and ACS respondents under-report benefit receipt. Both push the estimate <em>upward</em>. Read as an upper-range estimate of unmet need.</li>
+    <li>Origination counts are 2024 HMDA (the most recent full filing year); each statute tests the prior calendar year, so your covered status should be confirmed against current data.</li>
+    <li>The credit research is preliminary and under journal review; we cite direction and the authors&rsquo; own figures, never our own estimates, and never a claim about an individual applicant.</li>
+    <li>Assumption set with source citations, IRS determination letter, budget, board and officer list, and state charitable-solicitation registration all available on request.</li>
+  </ul>
+  <div class="foot">[[org_name]] &middot; [[contact_email]] &middot; Prepared [[prepared_date]] for [[lender_name]].</div>
+</div>
