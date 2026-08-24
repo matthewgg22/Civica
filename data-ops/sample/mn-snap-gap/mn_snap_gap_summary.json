@@ -1,0 +1,11 @@
+{
+  "state": "MN",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 268916.0,
+  "eligible_persons_weighted_130fpl": 551425.0,
+  "eligible_no_snap_households_130fpl": 174719.0,
+  "eligible_no_snap_persons_130fpl": 324197.0,
+  "weighted_non_enrollment_rate_130fpl": 0.64971589641375,
+  "n_counties": 87,
+  "n_pumas": 48
+}

@@ -1,0 +1,11 @@
+{
+  "state": "GA",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 687867.0,
+  "eligible_persons_weighted_130fpl": 1618076.0,
+  "eligible_no_snap_households_130fpl": 427914.0,
+  "eligible_no_snap_persons_130fpl": 899867.0,
+  "weighted_non_enrollment_rate_130fpl": 0.622088281600949,
+  "n_counties": 159,
+  "n_pumas": 77
+}

@@ -1,0 +1,11 @@
+{
+  "state": "VA",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 439354.0,
+  "eligible_persons_weighted_130fpl": 973076.0,
+  "eligible_no_snap_households_130fpl": 280421.0,
+  "eligible_no_snap_persons_130fpl": 557945.0,
+  "weighted_non_enrollment_rate_130fpl": 0.6382575326502091,
+  "n_counties": 133,
+  "n_pumas": 60
+}

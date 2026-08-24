@@ -1,0 +1,11 @@
+{
+  "state": "NC",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 705857.0,
+  "eligible_persons_weighted_130fpl": 1573074.0,
+  "eligible_no_snap_households_130fpl": 420541.0,
+  "eligible_no_snap_persons_130fpl": 820345.0,
+  "weighted_non_enrollment_rate_130fpl": 0.5957878153790357,
+  "n_counties": 100,
+  "n_pumas": 76
+}
