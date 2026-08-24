@@ -146,7 +146,10 @@
       "ask_usd_prior": 7500,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "component_ratings": "Lending NTI / Community Development Test SATISFACTORY",
+      "documented_gap": "overall NTI is driven by the LENDING test; the CD Test is already Satisfactory",
+      "cluster_role": "THIRD \u2014 a grant does not fix their rating; pitch participation, never remediation"
     },
     "banco_do_brasil_americas": {
       "cert": "26725",
@@ -171,7 +174,10 @@
       "ask_usd_prior": 15000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "component_ratings": "Lending NTI / Investment High Satisfactory / Service LOW SATISFACTORY",
+      "documented_gap": "Service Test Low Satisfactory; 3rd consecutive overall NTI",
+      "cluster_role": "SECOND \u2014 lead with the Service Test, not the Lending Test we cannot affect"
     },
     "ocean_bank": {
       "cert": "24156",
@@ -195,7 +201,10 @@
       "ask_usd_prior": 25000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "component_ratings": "Lending High Satisfactory / Investment LOW SATISFACTORY / Service LOW SATISFACTORY",
+      "documented_gap": "Investment Test: 'adequate level of qualified community development investments and grants, although rarely in a leadership position'; Service Test also Low Satisfactory",
+      "cluster_role": "ANCHOR \u2014 ask first; the only cluster bank weak in BOTH tests our activity feeds"
     }
   }
 }
