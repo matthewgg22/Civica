@@ -168,7 +168,7 @@ def main(argv=None):
     if args.bank not in banks:
         raise KeyError(f"unknown bank key {args.bank!r}; known: {sorted(banks)}")
     bank = banks[args.bank]
-    meta = states.state_meta(bank.get("state", "CA"))
+    meta = states.state_meta(bank["state"])  # no default: a missing state must fail, not silently score against CA
     metrics = score.load_county_metrics(meta["metrics"])
     values, need = build_values(bank, assumptions, org, metrics, meta)
 

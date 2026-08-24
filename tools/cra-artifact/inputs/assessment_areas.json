@@ -3,6 +3,7 @@
     "bank_irvine": {
       "cert": "59296",
       "name": "Bank Irvine",
+      "state": "CA",
       "aa_counties": [
         "Los Angeles",
         "Orange"
@@ -18,7 +19,7 @@
       "ask_usd_prior": 10000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "aa_counties_prior": [
         "Orange"
       ],
@@ -27,6 +28,7 @@
     "hanmi_bank": {
       "cert": "24170",
       "name": "Hanmi Bank",
+      "state": "CA",
       "aa_counties": [
         "Los Angeles",
         "Orange"
@@ -41,10 +43,10 @@
       "pe_giving": "PER-AA: Los Angeles 14 donations $281,080 (avg $20,077); Dallas 5 donations $20,500 (avg $4,100); Houston 4 donations $13,000 (avg $3,250)",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 15000,
-      "ask_note": "LA is their richest AA \u2014 prior $15,000 ask sat BELOW their average LA donation",
+      "ask_note": "LA is their richest AA — prior $15,000 ask sat BELOW their average LA donation",
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "aa_counties_prior": [
         "Los Angeles",
         "Orange",
@@ -56,6 +58,7 @@
     "five_star_bank": {
       "cert": "35361",
       "name": "Five Star Bank",
+      "state": "CA",
       "aa_counties": [
         "El Dorado",
         "Placer",
@@ -71,12 +74,12 @@
       "verified": true,
       "verify_note": "AA CORRECTED 2026-08-22. PE: 'FSB has delineated three AAs that include the Sacramento AA, Chico AA, and Redding AA.' Sacramento AA = El Dorado, Placer, Sacramento, Yolo (Sacramento-Roseville-Folsom MSA) + Yuba and Sutter (Yuba City MSA). Chico AA = Butte alone. Redding AA = Shasta alone. Our record merged all three; Butte and Shasta are SEPARATE assessment areas and are not targeted here.",
       "pe_giving": "195 donations totaling $1.3M (avg $6,667)",
-      "pe_need_quote": "poverty and homelessness, unemployment, and a lack of knowledge for financial resources \u2026 more can be done to meet economic needs",
+      "pe_need_quote": "poverty and homelessness, unemployment, and a lack of knowledge for financial resources … more can be done to meet economic needs",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 30000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "aa_counties_prior": [
         "El Dorado",
         "Placer",
@@ -92,13 +95,14 @@
     "bank_of_marin": {
       "cert": "32779",
       "name": "Bank of Marin",
+      "state": "CA",
       "aa_counties": [
         "Marin",
         "Sonoma",
         "Napa",
         "San Francisco"
       ],
-      "aa_note": " (Alameda County, a partial-county assessment area in the bank's PE, is excluded from all figures \u2014 county-level data would overstate a tract-defined area)",
+      "aa_note": " (Alameda County, a partial-county assessment area in the bank's PE, is excluded from all figures — county-level data would overstate a tract-defined area)",
       "pe_date": "2023-11-06",
       "pe_url": "https://crapes.fdic.gov/publish/2023/32779_231106.PDF",
       "regulator": "FDIC",
@@ -106,12 +110,12 @@
       "verified": true,
       "verify_note": "AA CORRECTED and verified 2026-08-22 from the Nov 2023 PE. Bank of Marin has THREE assessment areas. The San Francisco AA table lists CRA-delineated counties: Marin (San Rafael MD), Sonoma (Santa Rosa-Petaluma MSA), 'Alameda (partial)' (Oakland-Berkeley-Livermore MD), Napa (Napa MSA) and San Francisco (San Francisco-San Mateo-Redwood City MSA). The Sacramento AA 'consists of Sacramento and Placer counties'. The Amador AA is limited-scope and rated Below on Lending, Investment and Service. Our record merged all three. Targeting the San Francisco AA, their primary at 20 of 20 branches in the table. ALAMEDA IS DELIBERATELY EXCLUDED: the PE marks it '(partial)', and counting a whole county would overstate need.",
       "pe_giving": "387 grants and donations totaling $1.3M within the AA (avg $3,359)",
-      "pe_need_quote": "CD opportunities exist in the AA with \u2026 business technical assistance, and financial literacy education",
+      "pe_need_quote": "CD opportunities exist in the AA with … business technical assistance, and financial literacy education",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 10000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "aa_counties_prior": [
         "Marin",
         "Napa",
@@ -126,6 +130,7 @@
     "american_business_bank": {
       "cert": "34788",
       "name": "American Business Bank",
+      "state": "CA",
       "aa_counties": [
         "Los Angeles",
         "Orange",
@@ -137,14 +142,14 @@
       "regulator": "FDIC",
       "ask_usd": 25000,
       "verified": true,
-      "verify_note": "Assessment area verified 2026-08-22 from the PE, verbatim: 'ABB designated a single CSA-level AA consisting of four whole counties: Los Angeles, Orange, San Bernardino, and Riverside all in California. The AA has not changed since the prior evaluation, complies with the technical requirements of CRA, and does not arbitrarily exclude LMI neighborhoods.' A single delineated assessment area, so our four-county record is exactly correct \u2014 this replaces an earlier inference-from-absent-headers with an actual read of the delineation.",
+      "verify_note": "Assessment area verified 2026-08-22 from the PE, verbatim: 'ABB designated a single CSA-level AA consisting of four whole counties: Los Angeles, Orange, San Bernardino, and Riverside all in California. The AA has not changed since the prior evaluation, complies with the technical requirements of CRA, and does not arbitrarily exclude LMI neighborhoods.' A single delineated assessment area, so our four-county record is exactly correct — this replaces an earlier inference-from-absent-headers with an actual read of the delineation.",
       "pe_giving": "258 grants and donations totaling $1.6M (avg $6,202)",
       "pe_need_quote": "the need for affordable housing as well as community service needs",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 50000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "aa_structure": "single CSA-level AA"
     },
     "helm_bank": {
@@ -156,23 +161,23 @@
         "Broward",
         "Palm Beach"
       ],
-      "aa_note": " (Miami AA: Miami-Dade/Broward/Palm Beach; Orlando AA created February 2025 \u2014 not yet examined, and will be evaluated for the first time at the next examination)",
+      "aa_note": " (Miami AA: Miami-Dade/Broward/Palm Beach; Orlando AA created February 2025 — not yet examined, and will be evaluated for the first time at the next examination)",
       "pe_date": "2025-06-16",
       "pe_url": "https://crapes.fdic.gov/publish/2025/32718_250616.PDF",
       "regulator": "FDIC",
       "ask_usd": 5000,
       "verified": true,
       "verify_note": "AA CORRECTED 2026-08-22. PE: 'Helm Bank USA operates with two delineated assessment areas in Florida... In 2023, management expanded the Miami assessment area to include Miami-Dade, Broward, and Palm Beach Counties... The Orlando assessment area includes Orange, Osceola, and Seminole Counties... Due to the recent addition of the Orlando branch, examiners did not consider performance in the Orlando assessment area.' Our record merged both. Targeting the Miami AA; the Orlando AA was NOT EVALUATED at this examination.",
-      "pe_giving": "19 donations totaling $25,161 (avg $1,324) \u2014 entire program over the review period",
-      "pe_need_quote": "a significant need for \u2026 financial literacy education to low- and moderate-income individuals",
+      "pe_giving": "19 donations totaling $25,161 (avg $1,324) — entire program over the review period",
+      "pe_need_quote": "a significant need for … financial literacy education to low- and moderate-income individuals",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 7500,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "component_ratings": "Lending NTI / Community Development Test SATISFACTORY",
       "documented_gap": "overall NTI is driven by the LENDING test; the CD Test is already Satisfactory",
-      "cluster_role": "THIRD \u2014 a grant does not fix their rating; pitch participation, never remediation",
+      "cluster_role": "THIRD — a grant does not fix their rating; pitch participation, never remediation",
       "aa_counties_prior": [
         "Miami-Dade",
         "Broward",
@@ -191,7 +196,7 @@
         "Miami-Dade",
         "Broward"
       ],
-      "aa_note": " (Miami AA: Miami-Dade/Broward; Orlando AA: Orange/Osceola \u2014 both full-scope in the 5/2025 evaluation)",
+      "aa_note": " (Miami AA: Miami-Dade/Broward; Orlando AA: Orange/Osceola — both full-scope in the 5/2025 evaluation)",
       "pe_date": "2025-05-12",
       "pe_url": "https://crapes.fdic.gov/publish/2025/26725_250512.PDF",
       "regulator": "FDIC",
@@ -199,15 +204,15 @@
       "verified": true,
       "verify_note": "AA CORRECTED 2026-08-22. PE: 'The assessment area consists of Miami-Dade and Broward counties, which are part of the Miami-[Fort Lauderdale-West Palm Beach MSA]' and separately 'The assessment area consists of Orange and Osceola counties, which are part of the Orlando-[Kissimmee-Sanford MSA]'. Two separately-evaluated AAs; our record merged them. Targeting the Miami AA.",
       "pe_giving": "60 donations/grants totaling $246,765 (avg $4,113); per-AA 11 donations $36,000, 5 donations $94,970 spanning both AAs",
-      "pe_need_quote": "a significant need for \u2026 financial literacy education to low- and moderate-income individuals",
+      "pe_need_quote": "a significant need for … financial literacy education to low- and moderate-income individuals",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 15000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "component_ratings": "Lending NTI / Investment High Satisfactory / Service LOW SATISFACTORY",
       "documented_gap": "Service Test Low Satisfactory; 3rd consecutive overall NTI",
-      "cluster_role": "SECOND \u2014 lead with the Service Test, not the Lending Test we cannot affect",
+      "cluster_role": "SECOND — lead with the Service Test, not the Lending Test we cannot affect",
       "aa_counties_prior": [
         "Miami-Dade",
         "Broward",
@@ -236,10 +241,10 @@
       "ask_usd_prior": 25000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "component_ratings": "Lending High Satisfactory / Investment LOW SATISFACTORY / Service LOW SATISFACTORY",
       "documented_gap": "Investment Test: 'adequate level of qualified community development investments and grants, although rarely in a leadership position'; Service Test also Low Satisfactory",
-      "cluster_role": "ANCHOR \u2014 ask first; the only cluster bank weak in BOTH tests our activity feeds",
+      "cluster_role": "ANCHOR — ask first; the only cluster bank weak in BOTH tests our activity feeds",
       "aa_counties_prior": [
         "Miami-Dade",
         "Broward",
@@ -250,6 +255,7 @@
     "city_national": {
       "cert": 17281,
       "name": "City National Bank",
+      "state": "CA",
       "aa_counties": [
         "Los Angeles",
         "Orange",
@@ -276,6 +282,7 @@
     "mega_bank": {
       "cert": 58401,
       "name": "Mega Bank",
+      "state": "CA",
       "aa_counties": [
         "Los Angeles",
         "Orange"
@@ -294,6 +301,34 @@
       "cluster_role": "LA cluster, third ask. Participation framing only - a grant does not fix their rating.",
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name."
+    },
+    "western_alliance": {
+      "cert": "57512",
+      "rssd": "3138146",
+      "name": "Western Alliance Bank",
+      "state": "AZ",
+      "aa_counties": [
+        "Maricopa",
+        "Pinal"
+      ],
+      "aa_structure": "multi-region national footprint evaluated under a Fed-approved CRA Strategic Plan; the Phoenix assessment area is one of several regional-division AAs and is the one targeted",
+      "pe_date": "2025-05-27",
+      "pe_url": "https://www.federalreserve.gov/apps/CRAPubWeb/CRA/DownloadPDF/3138146_20250527",
+      "regulator": "FED",
+      "exam_method": "Strategic Plan",
+      "ask_usd": 25000,
+      "ask_usd_prior": 25000,
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide: $1,775,328 of CD donations in the Phoenix AA over the 2021-2023 plan period (~$592K/yr). A $25,000 grant is ~4% of one year's Phoenix CD donations — the first bank in the roster where the ask is not budget-constrained.",
+      "verified": true,
+      "verify_note": "Verified 2026-08-22 from the May 27, 2025 Federal Reserve public evaluation (published Aug 10, 2026 — the most recent PE in the roster). The PE states: 'The Phoenix assessment area consists of Maricopa and Pinal counties in their entirety.' Located via the Fed CRA search (BankRatingResult), NOT via CRAPES — Western Alliance is Fed-supervised and does not appear in the FDIC system at all. Evaluated under a STRATEGIC PLAN, so there are no Lending/Investment/Service component ratings; performance is measured against five negotiated, published dollar-and-count goals. Goal Four is 'Dollar amount of donations made to qualified community development organizations' — a literal dollar target a grant to us counts toward.",
+      "pe_giving": "$1.8 million in qualified donations in the Phoenix assessment area over the 2021-2023 plan period (Exhibit 13: $606,127 / $702,789 / $466,412; aggregate $1,775,328)",
+      "pe_need_quote": "donations … helped to meet various community and credit needs in the assessment area, including … other community services to low- and moderate-income individuals and families",
+      "pe_mined": "per-assessment-area, 2026-08-22",
+      "component_ratings": null,
+      "documented_gap": "Not a component-rating gap — a TREND gap inside a met goal. Phoenix CD donations fell from $702,789 (2022) to $466,412 (2023), a 34% decline, and 2023 was the only plan year that landed BELOW the outstanding interim goal of $498,112. The aggregate still cleared outstanding, so the PE reads as praise; the final-year run-rate is the honest opening. Separately, Goal One (small business lending by dollar) was not met at the satisfactory threshold in Phoenix.",
+      "cluster_role": "Maricopa anchor — the only large-institution CRA funder whose assessment area actually contains Maricopa County. Maricopa is the 4th largest SNAP enrollment gap in the country.",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
     }
   }
 }

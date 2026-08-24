@@ -56,7 +56,7 @@ def _counties_phrase(counties: list[str]) -> str:
 
 
 def build_memo_values(bank, org, args) -> dict:
-    meta = states.state_meta(bank.get("state", "CA"))
+    meta = states.state_meta(bank["state"])  # no default: a missing state must fail, not silently score against CA
     metrics = score.load_county_metrics(meta["metrics"])
     need = score.bank_need(bank["aa_counties"], metrics, {
         "household_size_eligible": {"low_dollar": 2.5, "high_dollar": 1.6},
