@@ -119,3 +119,39 @@ crosswalk supports.
 
 **A Connecticut bank assessment area delineated after 2022 will reference planning regions and will
 not map onto these rows.** Read the PE before using CT figures with any institution.
+
+
+## 2026-08-22 rerun — 51 jurisdictions, and only PE-verified coverage
+
+`county_bank_targets_2026.csv` is rebuilt against the complete 3,143-county ranking, and now includes
+**only banks whose assessment area was read from their Performance Evaluation.** The previous version
+mixed PE-verified AAs with HQ-inferred ones; the adversarial pass showed HQ inference is unsafe —
+Ocean Bank's record carried a county that appears in neither of its assessment areas.
+
+**18 of 3,143 counties have PE-verified bank coverage.** That is 0.6%, and it is the honest state of
+the pipeline: the need data is national, the bank coverage is ten institutions in two states.
+
+| County | Natl # | Unenrolled | Pool |
+|---|---|---|---|
+| **Los Angeles CA** | **1** | 796,577 | **$135,000** |
+| Orange CA | 8 | 193,939 | $135,000 |
+| Riverside CA | 11 | 183,784 | $100,000 |
+| San Bernardino CA | 12 | 176,091 | $100,000 |
+| Ventura CA | 81 | 51,221 | $75,000 |
+| **Miami-Dade FL** | **10** | 189,669 | **$40,000** |
+| Sacramento CA | 25 | 107,264 | $25,000 |
+| Broward FL | 14 | 168,737 | $15,000 |
+
+⚠️ **`pool_potential` is per-county and does not sum.** A bank covering both Los Angeles and Orange
+contributes its full ask to each row, because either county could host the programme — but it can
+only be asked once. **Distinct asks across all ten banks total $210,000.**
+
+### What this says about where to work next
+
+Of the top 20 counties nationally, **only five have any verified bank coverage** — LA (#1), Orange
+(#8), Miami-Dade (#10), Riverside (#11), San Bernardino (#12). Fifteen of the largest gaps in the
+country have no identified funder at all, including Harris TX (#2), Cook IL (#3), Maricopa AZ (#4),
+Dallas TX (#5), Kings NY (#6), Clark NV (#15) and Wayne MI (#16).
+
+The constraint is no longer need data. It is **bank identification** — the FDIC CRAPES and OCC paths
+now exist and are proven, so extending coverage is bounded work per county rather than research.
