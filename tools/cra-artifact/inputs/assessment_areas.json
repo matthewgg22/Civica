@@ -205,6 +205,54 @@
       "component_ratings": "Lending High Satisfactory / Investment LOW SATISFACTORY / Service LOW SATISFACTORY",
       "documented_gap": "Investment Test: 'adequate level of qualified community development investments and grants, although rarely in a leadership position'; Service Test also Low Satisfactory",
       "cluster_role": "ANCHOR \u2014 ask first; the only cluster bank weak in BOTH tests our activity feeds"
+    },
+    "city_national": {
+      "cert": 17281,
+      "name": "City National Bank",
+      "aa_counties": [
+        "Los Angeles",
+        "Orange",
+        "Ventura",
+        "Riverside",
+        "San Bernardino"
+      ],
+      "pe_date": "2024-04-01",
+      "pe_url": "https://www.occ.gov/static/cra/craeval/Apr24/14695.pdf",
+      "regulator": "OCC",
+      "ask_usd": 75000,
+      "verified": false,
+      "verify_note": "AA read verbatim: 'CNB delineated three AAs within the Los Angeles CSA ... the entire Los Angeles-Long Beach-Anaheim, CA, Oxnard-Thousand Oaks-Ventura, CA, and Riverside-San Bernardino-Ontario, CA MSAs.' Those three MSAs map to these five counties. Confirm the mapping before --send.",
+      "pe_giving": "$13.2M in qualifying grants and donations to ~359 organizations (avg $36,769); one AA $142,000 to 14 organizations",
+      "pe_mined": "per-assessment-area, 2026-08-22",
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
+      "component_ratings": "Lending High Satisfactory / Investment OUTSTANDING / Service LOW SATISFACTORY",
+      "documented_gap": "Service Test Low Satisfactory. The overall Needs to Improve follows a Discriminatory or Other Illegal Credit Practices review - a FAIR-LENDING downgrade, not a community development deficiency.",
+      "cluster_role": "LA cluster, largest ask. Pitch the Service Test and the $31M consent order geography. NEVER imply a grant repairs the rating - Investment is already Outstanding.",
+      "charter": "14695",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name."
+    },
+    "mega_bank": {
+      "cert": 58401,
+      "name": "Mega Bank",
+      "aa_counties": [
+        "Los Angeles",
+        "Orange"
+      ],
+      "pe_date": "2025-05-01",
+      "pe_url": "https://crapes.fdic.gov/publish/2025/58401_250121.PDF",
+      "regulator": "FDIC",
+      "ask_usd": 5000,
+      "verified": false,
+      "verify_note": "AA read verbatim: 'MB delineated one AA wholly consisting of Los Angeles and Orange Counties.'",
+      "pe_giving": "11 CD donations totaling $46,300 (avg $4,209); $796,300 in qualified investments and donations overall",
+      "pe_mined": "per-assessment-area, 2026-08-22",
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
+      "component_ratings": "Lending NTI / Community Development Test SATISFACTORY",
+      "documented_gap": "current NTI 5/2025, driven by the LENDING test; the CD Test is already Satisfactory",
+      "cluster_role": "LA cluster, third ask. Participation framing only - a grant does not fix their rating.",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name."
     }
   }
 }
