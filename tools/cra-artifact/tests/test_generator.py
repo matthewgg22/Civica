@@ -625,3 +625,61 @@ def test_pool_share_must_be_stateable():
     banks, assumptions, org = generate.load_inputs()
     with pytest.raises(quarterly.PoolShareError):
         quarterly.build(banks["ocean_bank"], org, assumptions, _PA(20000, 15000, 2))
+
+
+def test_cofunders_are_never_named_without_written_consent():
+    """A bank's CD grants are not in its public CRA file, so participation is
+    not public information. Naming a participant to its competitor would
+    publish what the regulatory system does not -- and since shares are
+    printed, naming also lets a reader derive the others' contributions."""
+    banks, _, _ = generate.load_inputs()
+    for name, b in banks.items():
+        assert b.get("cofunder_naming_consent") is not True, (
+            f"{name}: consent is set to True — it must only be set after the "
+            f"institution consents in writing")
+    pool = {"share": .33, "total": 15000, "members":
+            ["ocean_bank", "helm_bank", "banco_do_brasil_americas"], "cofunders": 2}
+    phrase = quarterly.cofunder_phrase(pool, "ocean_bank", banks)
+    for b in banks.values():
+        assert b["name"] not in phrase
+    assert "consented to be named" in phrase
+
+
+def test_consent_names_only_the_consenting_and_counts_the_rest():
+    banks, _, _ = generate.load_inputs()
+    banks = {k: dict(v) for k, v in banks.items()}
+    banks["helm_bank"]["cofunder_naming_consent"] = True
+    pool = {"share": .33, "total": 15000, "members":
+            ["ocean_bank", "helm_bank", "banco_do_brasil_americas"], "cofunders": 2}
+    phrase = quarterly.cofunder_phrase(pool, "ocean_bank", banks)
+    assert "Helm Bank USA" in phrase
+    assert banks["banco_do_brasil_americas"]["name"] not in phrase
+    assert "1 further institution" in phrase
+
+
+def test_the_receiving_bank_is_never_its_own_cofunder():
+    banks, _, _ = generate.load_inputs()
+    banks = {k: dict(v) for k, v in banks.items()}
+    for k in banks:
+        banks[k]["cofunder_naming_consent"] = True
+    pool = {"share": .5, "total": 10000, "members": ["ocean_bank", "helm_bank"], "cofunders": 1}
+    assert banks["ocean_bank"]["name"] not in quarterly.cofunder_phrase(pool, "ocean_bank", banks)
+
+
+def test_consent_must_be_exactly_true_not_merely_truthy():
+    """'pending', 'verbal', 1 must not be read as consent."""
+    banks, _, _ = generate.load_inputs()
+    banks = {k: dict(v) for k, v in banks.items()}
+    for bad in ("pending", "verbal", 1, "yes"):
+        banks["helm_bank"]["cofunder_naming_consent"] = bad
+        pool = {"share": .5, "total": 10000, "members": ["ocean_bank", "helm_bank"], "cofunders": 1}
+        assert "Helm" not in quarterly.cofunder_phrase(pool, "ocean_bank", banks), bad
+
+
+def test_pooled_report_offers_examiner_verification():
+    """The examiner's need is confidence in the share, not names. Meet it
+    directly so confidentiality never costs auditability."""
+    banks, assumptions, org = generate.load_inputs()
+    blk = quarterly.build(banks["ocean_bank"], org, assumptions, _PA(5000, 15000, 3))["pool_block"]
+    assert "Verification without disclosure" in blk
+    assert "directly to them on request" in blk
