@@ -1,0 +1,15 @@
+assessment_area,state,counties,branch_type,donations_goal_satisfactory_3yr,donations_interim_annual_satisfactory,donations_goal_outstanding_3yr,donations_interim_annual_outstanding,national_gap_rank,note
+Phoenix,AZ,Maricopa + Pinal,full-service,1733875,465000-695000,2167344,580000-865000,4,"2023 actual $466412 — $1412 above the satisfactory floor; $113588/yr short of the outstanding floor"
+Greater Los Angeles,CA,Los Angeles + Orange + Ventura + Riverside + San Bernardino,full-service,472875,125000-190000,591094,155000-235000,1,"LA is the largest SNAP enrollment gap in the country; goal is small relative to Phoenix"
+San Diego,CA,San Diego,full-service,866938,230000-345000,1083672,290000-430000,,"second largest AZ/CA donation goal after Phoenix"
+San Francisco Bay Area,CA,"Napa, Alameda, Contra Costa, Marin, San Francisco, San Mateo, Santa Clara, San Benito, Santa Cruz, San Joaquin, Solano",full-service,945750,250000-375000,1182188,315000-470000,,"11 counties; Meta 15-mile radius problem applies to any SF-inclusive targeting"
+Las Vegas,NV,Clark,full-service,945750,250000-380000,1182188,315000-470000,,"Clark County — one of the seven ranked target counties"
+Tucson,AZ,Pima,full-service,315250,85000-125000,394063,105000-155000,,
+Reno - Carson City,NV,"Carson City, Storey, Washoe",full-service,442875,105000-180000,553594,155000-235000,,
+Flagstaff,AZ,Coconino,full-service,157625,40000-65000,197031,50000-80000,,
+Fallon,NV,Churchill,full-service,30000,5000-15000,37500,7500-17500,,"smallest AA in the plan"
+Chicago,IL,"Cook, DuPage, Grundy, McHenry, Will",limited-service,,,,,3,"NO standalone donation goal — LSB Goal 1 is combined CD loans/investments/donations at 1.0% (sat) / 1.5% (outstanding) of prior-year deposits, dominated by lending. Weak ask."
+New York,NY,"New York, Kings, Queens, Bronx, Richmond, Westchester, Putnam, Rockland",limited-service,,,,,5,"Kings County is a ranked target but the LSB goal is deposit-percentage combined — weak ask"
+Denver,CO,"Adams, Arapahoe, Broomfield, Clear Creek, Denver, Douglas, Elbert, Gilpin, Jefferson, Park",limited-service,,,,,,
+Atlanta,GA,29-county Atlanta MSA,proposed,,,,,,"PROPOSED as of 2023-09-29 contingent on the branch opening — UNVERIFIED whether it did"
+Houston,TX,"Austin, Brazoria, Chambers, Fort Bend, Galveston, Harris, Liberty, Montgomery, San Jacinto, Waller",proposed,,,,,2,"Harris County is a ranked target but the AA was PROPOSED contingent on a branch opening — UNVERIFIED"

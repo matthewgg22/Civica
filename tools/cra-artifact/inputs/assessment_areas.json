@@ -318,17 +318,21 @@
       "exam_method": "Strategic Plan",
       "ask_usd": 25000,
       "ask_usd_prior": 25000,
-      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide: $1,775,328 of CD donations in the Phoenix AA over the 2021-2023 plan period (~$592K/yr). A $25,000 grant is ~4% of one year's Phoenix CD donations — the first bank in the roster where the ask is not budget-constrained.",
+      "ask_basis": "anchored on the TARGET assessment area, and on the bank's OWN published goal for that assessment area rather than on inferred capacity. The 2024-2026 CRA Strategic Plan (Fed-hosted) sets a Phoenix assessment area donations goal of $465K-$695K/yr for satisfactory and $580K-$865K/yr for outstanding. Their 2023 actual in that assessment area was $466,412 — $1,412 above the satisfactory FLOOR and $113,588/yr short of the outstanding floor. A $25,000 grant closes 22% of that shortfall.",
       "verified": true,
       "verify_note": "Verified 2026-08-22 from the May 27, 2025 Federal Reserve public evaluation (published Aug 10, 2026 — the most recent PE in the roster). The PE states: 'The Phoenix assessment area consists of Maricopa and Pinal counties in their entirety.' Located via the Fed CRA search (BankRatingResult), NOT via CRAPES — Western Alliance is Fed-supervised and does not appear in the FDIC system at all. Evaluated under a STRATEGIC PLAN, so there are no Lending/Investment/Service component ratings; performance is measured against five negotiated, published dollar-and-count goals. Goal Four is 'Dollar amount of donations made to qualified community development organizations' — a literal dollar target a grant to us counts toward.",
       "pe_giving": "$1.8 million in qualified donations in the Phoenix assessment area over the 2021-2023 plan period (Exhibit 13: $606,127 / $702,789 / $466,412; aggregate $1,775,328)",
       "pe_need_quote": "donations … helped to meet various community and credit needs in the assessment area, including … other community services to low- and moderate-income individuals and families",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "component_ratings": null,
-      "documented_gap": "Not a component-rating gap — a TREND gap inside a met goal. Phoenix CD donations fell from $702,789 (2022) to $466,412 (2023), a 34% decline, and 2023 was the only plan year that landed BELOW the outstanding interim goal of $498,112. The aggregate still cleared outstanding, so the PE reads as praise; the final-year run-rate is the honest opening. Separately, Goal One (small business lending by dollar) was not met at the satisfactory threshold in Phoenix.",
+      "documented_gap": "Sharpened against the successor plan. Phoenix CD donations fell 34% from $702,789 (2022) to $466,412 (2023). Under the 2024-2026 plan that run-rate sits $1,412 above the satisfactory interim floor of $465,000 and $113,588 below the outstanding interim floor of $580,000. The bank must add roughly $114K/yr in Phoenix donations to reach outstanding, and the goal escalates 5% in each of years two and three. Separately, Goal One (small business lending by dollar) was not met at the satisfactory threshold in Phoenix in the prior plan.",
       "cluster_role": "Maricopa anchor — the only large-institution CRA funder whose assessment area actually contains Maricopa County. Maricopa is the 4th largest SNAP enrollment gap in the country.",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "plan_url": "https://www.federalreserve.gov/consumerscommunities/files/western-alliance-bank-strategic-plan.pdf",
+      "plan_period": "2024-01-01 to 2026-12-31",
+      "plan_note": "Donations are GOAL THREE in the 2024-2026 plan (they were Goal Four in the 2021-2023 plan the PE evaluated) — cite the right number. Contact of record for the plan: Craig Robinson, Head of Community Relations, 1 East Washington Street, Suite 1400, Phoenix AZ 85004, (408) 689-8417.",
+      "other_aa_counties": "Greater Los Angeles (Los Angeles, Orange, Ventura, Riverside, San Bernardino), San Diego, San Francisco Bay Area (11 counties), Las Vegas (Clark), Tucson (Pima), Reno-Carson City, Flagstaff, Fallon; limited-service Chicago (Cook +4), New York (Kings +7), Denver; proposed Atlanta and Houston (Harris +9). Full goal table: data-ops/analysis/bank-pe-mining/western_alliance_plan_2024_2026.csv"
     }
   }
 }

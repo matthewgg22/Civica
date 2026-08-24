@@ -96,9 +96,77 @@ redo the work:
    defunct state member banks (Arizona Bank 1999, Gold Canyon 2008, M&I Thunderbird 1999).
    Search by name or RSSD when you know the institution.
 
+## The 2024–2026 plan — found
+
+**Source:** the Federal Reserve hosts it directly —
+`federalreserve.gov/consumerscommunities/files/western-alliance-bank-strategic-plan.pdf`
+(covers Jan 1 2024 – Dec 31 2026). Full goal table extracted to
+`data-ops/analysis/bank-pe-mining/western_alliance_plan_2024_2026.csv`.
+
+**Donations were renumbered Goal Three** in this plan (they were Goal Four in the
+2021–2023 plan the PE evaluated). Cite the right one.
+
+### The Phoenix number
+
+| Phoenix AA (Maricopa + Pinal) | 3-year goal | Interim annual |
+|---|---|---|
+| Satisfactory | $1,733,875 | **$465,000 – $695,000** |
+| Outstanding | $2,167,344 | **$580,000 – $865,000** |
+
+Set their 2023 actual of **$466,412** against that:
+
+- **$1,412 above the satisfactory floor.** Not comfortably satisfactory — *barely*.
+- **$113,588/yr short** of the bottom of the outstanding band.
+- The goal **escalates 5% in each of years two and three**, so standing still loses ground.
+
+**A $25,000 grant closes 22% of the gap between where they are and outstanding.** That is a
+far sharper ask than "4% of annual giving," and it is the bank's own published number rather
+than our inference. The $25,000 ask is unchanged — what changed is that it can now be
+justified arithmetically.
+
+### The finding that is bigger than Maricopa
+
+Western Alliance delineates **nine full-service assessment areas plus three limited-service
+areas**, and between them they cover **six of the seven counties on our ranked target list**:
+
+| County | National gap rank | Western Alliance AA | Usable? |
+|---|---|---|---|
+| Los Angeles | 1 | Greater Los Angeles (full-service) | **yes** — $125–190K/yr donation goal |
+| Harris | 2 | Houston (**proposed**) | unverified — contingent on a branch opening |
+| Cook | 3 | Chicago (limited-service) | weak — no standalone donation goal |
+| Maricopa | 4 | Phoenix (full-service) | **yes** — the anchor |
+| Kings | 5 | New York (limited-service) | weak — no standalone donation goal |
+| Clark | — | Las Vegas (full-service) | **yes** — $250–380K/yr donation goal |
+
+One relationship reaches Maricopa, Los Angeles and Clark on full-service terms. That is a
+different shape of channel than one-bank-per-county, and it argues for pitching Western
+Alliance as a **multi-AA funder** rather than as the Maricopa bank.
+
+**Three honest limits.** Greater Los Angeles carries a *smaller* donation goal than Phoenix
+($472,875 vs $1,733,875 over three years) despite being the larger need — Phoenix is the
+headquarters. The limited-service areas (Chicago, New York, Denver) have **no standalone
+donation goal at all**: LSB Goal 1 is combined CD loans/investments/donations at 1.0%
+(satisfactory) or 1.5% (outstanding) of prior-year deposits, a figure lending dominates, so
+a grant barely moves it. And Atlanta and Houston were **proposed** contingent on branches
+opening, unconfirmed as of Sept 29 2023 and **not verified since**.
+
+### A dated opportunity
+
+CRA regulations require a strategic-plan bank to publish notice and **solicit written public
+comment for at least 30 days** before submitting a plan. For the current plan, comments were
+due **October 30, 2023** — that window is closed.
+
+The plan expires **December 31, 2026**. The successor 2027–2029 plan must therefore go
+through its own public-comment period, and on the last cycle's timing that notice runs in
+**roughly September–October 2026 — i.e. now**. That is a real regulatory mechanism for
+putting SNAP enrollment on the record as an assessment-area community need *before* the
+bank's donation goals are set for three years. Watch for the notice; the contact of record
+is Craig Robinson, Head of Community Relations, 1 East Washington Street, Suite 1400,
+Phoenix AZ 85004, (408) 689-8417.
+
 ## Open
 
-- Western Alliance's next strategic plan (the 2024+ period) sets new annual Goal Four
-  targets and is **published for public comment**. Find it — it states the dollar figure the
-  bank must hit in Maricopa, which is the single most useful number in this pitch.
+- **Verify whether the Houston and Atlanta branches opened.** If Houston did, Harris County —
+  the 2nd largest gap in the country — is inside a Western Alliance assessment area.
+- **Watch for the 2027–2029 plan notice** (expected ~Sept–Oct 2026) and comment.
 - AZ charitable solicitation registration is a send gate and has not been researched.
