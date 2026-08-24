@@ -10,7 +10,7 @@ Usage:
   python3 build_state.py FL NY AZ ...  # multiple states
 
 Outputs per state to data-ops/sample/{xx}-snap-gap/ mirroring the TX layout.
-Contiguous-48 + DC only (AK/HI have different FPL tables — extend before use).
+All 50 states + DC. Alaska and Hawaii use their own 2023 HHS poverty tables.
 """
 from __future__ import annotations
 
@@ -29,6 +29,7 @@ CROSSWALK = REPO / "data-ops" / "reference" / "2020_tract_to_puma.txt"
 GAZETTEER = ROOT / "data" / "2023_Gaz_counties_national.txt"
 
 STATE_FIPS = {
+    "AK": "02", "HI": "15",
     "AL": "01", "AZ": "04", "AR": "05", "CA": "06", "CO": "08", "CT": "09",
     "DE": "10", "DC": "11", "FL": "12", "GA": "13", "ID": "16", "IL": "17",
     "IN": "18", "IA": "19", "KS": "20", "KY": "21", "LA": "22", "ME": "23",
@@ -40,15 +41,27 @@ STATE_FIPS = {
     "WY": "56",
 }
 
+# 2023 HHS Poverty Guidelines. Alaska and Hawaii have their own tables — using
+# the contiguous-48 figures for them would understate eligibility badly (an
+# Alaska one-person household is $18,210, not $14,580), so they are separate.
 FPL_2023_ANNUAL = {1: 14_580, 2: 19_720, 3: 24_860, 4: 30_000,
                    5: 35_140, 6: 40_280, 7: 45_420, 8: 50_560}
 FPL_EXTRA_PERSON = 5_140
+FPL_2023_AK = {1: 18_210, 2: 24_640, 3: 31_070, 4: 37_500,
+               5: 43_930, 6: 50_360, 7: 56_790, 8: 63_220}
+FPL_EXTRA_AK = 6_430
+FPL_2023_HI = {1: 16_770, 2: 22_680, 3: 28_590, 4: 34_500,
+               5: 40_410, 6: 46_320, 7: 52_230, 8: 58_140}
+FPL_EXTRA_HI = 5_910
+FPL_TABLES = {"AK": (FPL_2023_AK, FPL_EXTRA_AK),
+              "HI": (FPL_2023_HI, FPL_EXTRA_HI)}
 
 
-def fpl_for_size(n: int) -> float:
+def fpl_for_size(n: int, postal: str = "") -> float:
+    table, extra = FPL_TABLES.get(postal, (FPL_2023_ANNUAL, FPL_EXTRA_PERSON))
     if n <= 8:
-        return FPL_2023_ANNUAL[max(1, n)]
-    return FPL_2023_ANNUAL[8] + FPL_EXTRA_PERSON * (n - 8)
+        return table[max(1, n)]
+    return table[8] + extra * (n - 8)
 
 
 def county_names(state_fp: str) -> dict[str, str]:
@@ -81,7 +94,7 @@ def build_state(postal: str) -> dict:
                 dtype={"PUMA": str})
     df = df[(df["TYPEHUGQ"] == 1) & (df["WGTP"] > 0)].dropna(subset=["HINCP", "NP"])
     df["hinc_2023"] = df["HINCP"] * df["ADJINC"] / 1_000_000
-    df["fpl"] = df["NP"].astype(int).map(fpl_for_size)
+    df["fpl"] = df["NP"].astype(int).map(lambda n: fpl_for_size(n, postal))
     df["income_to_fpl"] = df["hinc_2023"] / df["fpl"]
 
     def agg(frame):

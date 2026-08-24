@@ -1,0 +1,31 @@
+County,eligible_pop,non_enroll_rate,eligible_hh,no_snap_hh,county_fips
+Aleutians East Borough,809.5,0.408047,244.1,130.0,02013
+Aleutians West Census Area,1618.9,0.408047,488.1,260.0,02016
+Anchorage Municipality,21721.0,0.459233,12150.0,6306.0,02020
+Bethel Census Area,2428.4,0.408047,732.2,390.0,02050
+Bristol Bay Borough,809.5,0.408047,244.1,130.0,02060
+Chugach Census Area,1125.8,0.800979,567.1,452.1,02063
+Copper River Census Area,562.9,0.800979,283.6,226.1,02066
+Denali Borough,562.9,0.800979,283.6,226.1,02068
+Dillingham Census Area,1618.9,0.408047,488.1,260.0,02070
+Fairbanks North Star Borough,12383.3,0.800979,6238.3,4973.6,02090
+Haines Borough,562.9,0.800979,283.6,226.1,02100
+Hoonah-Angoon Census Area,809.5,0.408047,244.1,130.0,02105
+Juneau City and Borough,3377.3,0.800979,1701.4,1356.4,02110
+Kenai Peninsula Borough,10402.0,0.70918,5426.8,3815.4,02122
+Ketchikan Gateway Borough,2814.4,0.800979,1417.8,1130.4,02130
+Kodiak Island Borough,4047.3,0.408047,1220.3,650.0,02150
+Kusilvak Census Area,809.5,0.408047,244.1,130.0,02158
+Lake and Peninsula Borough,809.5,0.408047,244.1,130.0,02164
+Matanuska-Susitna Borough,17832.0,0.70918,9303.2,6540.6,02170
+Nome Census Area,1618.9,0.408047,488.1,260.0,02180
+North Slope Borough,2428.4,0.408047,732.2,390.0,02185
+Northwest Arctic Borough,1618.9,0.408047,488.1,260.0,02188
+Petersburg Borough,809.5,0.408047,244.1,130.0,02195
+Prince of Wales-Hyder Census Area,3237.8,0.408047,976.2,520.0,02198
+Sitka City and Borough,1618.9,0.408047,488.1,260.0,02220
+Skagway Municipality,562.9,0.800979,283.6,226.1,02230
+Southeast Fairbanks Census Area,1125.8,0.800979,567.1,452.1,02240
+Wrangell City and Borough,809.5,0.408047,244.1,130.0,02275
+Yakutat City and Borough,809.5,0.408047,244.1,130.0,02282
+Yukon-Koyukuk Census Area,3237.8,0.408047,976.2,520.0,02290

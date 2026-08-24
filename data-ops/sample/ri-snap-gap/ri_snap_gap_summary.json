@@ -1,0 +1,11 @@
+{
+  "state": "RI",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 61591.0,
+  "eligible_persons_weighted_130fpl": 108490.0,
+  "eligible_no_snap_households_130fpl": 32361.0,
+  "eligible_no_snap_persons_130fpl": 52878.0,
+  "weighted_non_enrollment_rate_130fpl": 0.5254176746602588,
+  "n_counties": 5,
+  "n_pumas": 7
+}
