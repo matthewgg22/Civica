@@ -138,3 +138,16 @@ Inputs (already vendored under `tools/ma-snap-gap/data/`):
 - MA SNAP retailer footprint (catchment validation) — [`../usda-snap-retailers-ma/`](../usda-snap-retailers-ma/)
 - Pilot finding — [`../../../docs/findings/2026-06-01-ma-pilot-snap-gap.md`](../../../docs/findings/2026-06-01-ma-pilot-snap-gap.md)
 - Caseworker mode MA-first design — [`../../../docs/designs/cbo-caseworker-mode.md`](../../../docs/designs/cbo-caseworker-mode.md)
+
+## Two MA fact bases live here — do not confuse them
+
+- `ma_snap_gap_puma.csv` / `ma_snap_gap_summary.json` / `model_card.json` — the **Project Bread**
+  build (`tools/ma-snap-gap/build.py`), carrying the `project_bread_catchment` column. Cited by
+  `docs/findings/2026-06-01-ma-pilot-snap-gap.md`. **Left untouched.**
+- `ma_county_metrics.csv` plus the `*_statewide` files — the **generic** build
+  (`tools/snap-gap-states/build_state.py`, 2026-08-22), matching the schema every other state uses.
+  This is what the county ranking joins on; Massachusetts was previously invisible to it because no
+  county file existed.
+
+Both use 2023 ACS 1-Year PUMS and the 130% FPL gross-income screen. They agree on the statewide
+non-enrollment rate (0.466).

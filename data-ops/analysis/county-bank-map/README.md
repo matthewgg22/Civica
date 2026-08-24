@@ -53,3 +53,22 @@ never "tract-level".
 
 Use **persons** for prioritisation across states, and **households** (the other file) for campaign
 sizing within a state, since the funnel is household-based.
+
+
+## 2026-08-22 rebuild — 26 states
+
+Thirteen states built (`build_state.py MA IN MO GA OH KS VA AL NC MN LA MI UT`), taking the ranking
+from 13 states / 1,064 counties to **26 states / 2,200 counties / 20,536,151 unenrolled persons**.
+The new states are **33% of the total**.
+
+Two broke straight into the top 20 — **Wayne MI (Detroit) #16 at 133,605** and **Franklin OH
+(Columbus) #20 at 110,505** — and eleven more land in the top 62: Marion IN, Gwinnett GA, Salt Lake
+UT, Cuyahoga OH, Hennepin MN, Mecklenburg NC, St. Louis MO, Fulton GA, Middlesex MA, Oakland MI,
+Hamilton OH, DeKalb GA, Utah UT.
+
+**Massachusetts is finally in the ranking** — 14 counties, 302,859 unenrolled, led by Middlesex
+(64,622), Suffolk (38,578) and Essex (37,939). It had been invisible for the same reason California
+was: no county file existed.
+
+Still absent: 24 states and the territories. The ranking is a **26-state ranking** and must be
+described as one.

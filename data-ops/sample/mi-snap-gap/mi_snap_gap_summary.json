@@ -1,0 +1,11 @@
+{
+  "state": "MI",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 676987.0,
+  "eligible_persons_weighted_130fpl": 1430686.0,
+  "eligible_no_snap_households_130fpl": 369949.0,
+  "eligible_no_snap_persons_130fpl": 694045.0,
+  "weighted_non_enrollment_rate_130fpl": 0.5464639645960705,
+  "n_counties": 83,
+  "n_pumas": 68
+}

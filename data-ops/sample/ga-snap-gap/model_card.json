@@ -1,0 +1,8 @@
+{
+  "methodology": "Identical to tools/tx-snap-gap/build.py (reference impl): 2023 1-Year PUMS gross-income 130% fact base + fractional tract-count PUMA->county allocation. See that file's docstring and known-bias list.",
+  "known_biases": "Gross-income-only proxy overstates eligible (state asset/BBCE rules not modeled); ACS under-reports receipt, overstating non-enrollment. Upper-range estimate. State BBCE status NOT encoded here - check before any state-specific eligibility claim.",
+  "acs_vintage": "2023 1-Year PUMS",
+  "fpl_vintage": "2023 HHS Poverty Guidelines (48 states)",
+  "gross_income_multiplier": 1.3,
+  "built": "2026-08-24T22:35:06.574252+00:00"
+}

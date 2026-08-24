@@ -1,0 +1,4 @@
+{
+  "source": "US Census Bureau, 2023 ACS 1-Year PUMS, AL household file (csv_hal.zip), pulled 2026-08-22",
+  "builder": "tools/snap-gap-states/build_state.py (TODO-61 fan-out; reference impl tools/tx-snap-gap/build.py, oracle-verified on TX)"
+}
