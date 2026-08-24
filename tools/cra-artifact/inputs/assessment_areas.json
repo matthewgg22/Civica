@@ -333,6 +333,68 @@
       "plan_period": "2024-01-01 to 2026-12-31",
       "plan_note": "Donations are GOAL THREE in the 2024-2026 plan (they were Goal Four in the 2021-2023 plan the PE evaluated) — cite the right number. Contact of record for the plan: Craig Robinson, Head of Community Relations, 1 East Washington Street, Suite 1400, Phoenix AZ 85004, (408) 689-8417.",
       "other_aa_counties": "Greater Los Angeles (Los Angeles, Orange, Ventura, Riverside, San Bernardino), San Diego, San Francisco Bay Area (11 counties), Las Vegas (Clark), Tucson (Pima), Reno-Carson City, Flagstaff, Fallon; limited-service Chicago (Cook +4), New York (Kings +7), Denver. The plan's PROPOSED Atlanta and Houston AAs NEVER TOOK EFFECT — FDIC structure data pulled 2026-08-24 shows 38 offices in NV/CA/AZ/CO/IL/NY only, with no Texas or Georgia office, so Harris County is NOT in a Western Alliance assessment area. Full goal table: data-ops/analysis/bank-pe-mining/western_alliance_plan_2024_2026.csv"
+    },
+    "texas_first_bank": {
+      "cert": "23799",
+      "rssd": "473266",
+      "name": "Texas First Bank",
+      "state": "TX",
+      "aa_counties": [
+        "Harris",
+        "Brazoria",
+        "Chambers",
+        "Fort Bend",
+        "Galveston",
+        "Liberty",
+        "Montgomery"
+      ],
+      "aa_structure": "multiple AAs; the Houston Metropolitan AA is the target and the bank's core market (24 of its full-service branches). A separate Beaumont Metropolitan AA covers Hardin and Jefferson counties and is NOT included here.",
+      "pe_date": "2024-05-28",
+      "pe_url": "https://www.federalreserve.gov/apps/CRAPubWeb/CRA/DownloadPDF/473266_20240528",
+      "regulator": "FED",
+      "exam_method": "Large Bank",
+      "ask_usd": 15000,
+      "ask_usd_prior": 15000,
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide: 36 donations totaling $258,000 in the Houston Metropolitan assessment area, of which Community Services — the category SNAP outreach falls in — is 32 donations totaling $156,000 (avg ~$4,875). A $15,000 ask is ~3x their average community-services donation in that assessment area.",
+      "verified": true,
+      "verify_note": "Verified 2026-08-24 from the May 28, 2024 Federal Reserve public evaluation. The PE delineates the Houston Metropolitan assessment area as follows: the AA 'consists of the following counties from the Houston-The Woodlands-Sugar Land, Texas Metropolitan Statistical Area (MSA): Brazoria, Chambers, Fort Bend, Galveston, Harris, Liberty, and Montgomery.' Austin and Waller counties are in the MSA but EXPLICITLY EXCLUDED by the bank — they are excluded here too. Found via the Federal Reserve CRA search filtered on Investment Test = Low Satisfactory; Texas First is Fed-supervised and does not appear in CRAPES.",
+      "pe_giving": "36 qualified donations totaling $258,000 in the Houston Metropolitan AA; Community Services alone is 32 donations totaling $156,000",
+      "pe_need_quote": "Donations were made to … organizations … providing financial education to LMI students, workforce development for LMI individuals",
+      "pe_mined": "per-assessment-area, 2026-08-24",
+      "component_ratings": "Lending High Satisfactory / Investment LOW SATISFACTORY / Service — overall Satisfactory",
+      "documented_gap": "Investment Test is Low Satisfactory institution-wide. A cash grant is a qualified investment under 12 CFR __.12(t), so this is the test our activity feeds directly. Houston is not a peripheral AA for them — 24 full-service branches, 0.6% deposit share, 19th of 101 institutions in the market.",
+      "cluster_role": "Harris primary — deepest Houston-AA donation program of the Fed-supervised Harris candidates, and Houston is its core market",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+    },
+    "third_coast_bank": {
+      "cert": "58716",
+      "rssd": "3630323",
+      "name": "Third Coast Bank",
+      "state": "TX",
+      "aa_counties": [
+        "Harris",
+        "Brazoria",
+        "Montgomery"
+      ],
+      "aa_structure": "SEVEN delineated AAs across Texas. Houston Metropolitan (Brazoria, Harris, Montgomery) is full-scope and carries the most weight — the PE says it 'represents the' largest share of the bank. Beaumont-Port Arthur and Austin are the other full-scope AAs; Dallas-Fort Worth, San Antonio, Detroit Nonmetro and Nixon Nonmetro are limited-scope. Do NOT merge them.",
+      "pe_date": "2024-08-12",
+      "pe_url": "https://www.federalreserve.gov/apps/CRAPubWeb/CRA/DownloadPDF/3630323_20240812",
+      "regulator": "FED",
+      "exam_method": "Large Bank",
+      "ask_usd": 10000,
+      "ask_usd_prior": 10000,
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide: 30 donations totaling $65,000 in the Houston Metropolitan assessment area over the Apr 2022 - Mar 2024 review period (avg ~$2,167), of which Community Services is 19 donations totaling $34,000. Their Austin assessment area by contrast received only four donations totaling ~$7,000 — the per-AA spread is why the ask is anchored on Houston.",
+      "verified": true,
+      "verify_note": "Verified 2026-08-24 from the Aug 12, 2024 Federal Reserve public evaluation. Table 2 delineates the bank's assessment areas and their scope of review: 'Houston Metropolitan — Brazoria, Harris, and Montgomery counties — Full-Scope.' Headquartered in Humble, Harris County. Found via the Federal Reserve CRA search filtered on Investment AND Service = Low Satisfactory. CAUTION: the PE's most quotable line — 'the bank only made four qualified donations totaling approximately $7,000' — is about the AUSTIN AA, not Houston. Do not misattribute it.",
+      "pe_giving": "30 qualified donations totaling $65,000 in the Houston Metropolitan AA (Apr 2022 - Mar 2024); Community Services is 19 donations totaling $34,000",
+      "pe_need_quote": "Donations were made to a variety of organizations, including those providing financial education to LMI students, workforce development for LMI individuals, and essentials to the homeless",
+      "pe_mined": "per-assessment-area, 2026-08-24",
+      "component_ratings": "Investment LOW SATISFACTORY / Service LOW SATISFACTORY — overall Satisfactory",
+      "documented_gap": "BOTH tests our activity feeds are Low Satisfactory institution-wide. In the Houston AA the investment test is 'adequate' with the bank 'rarely in a leadership position' and making 'rare use of innovative and/or complex investments.' Harris County is its headquarters county.",
+      "cluster_role": "Harris secondary — smaller Houston donation program than Texas First, but the only Harris-headquartered bank with a double component gap",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
     }
   }
 }
