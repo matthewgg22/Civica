@@ -1,0 +1,11 @@
+{
+  "state": "ID",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 94374.0,
+  "eligible_persons_weighted_130fpl": 229438.0,
+  "eligible_no_snap_households_130fpl": 68288.0,
+  "eligible_no_snap_persons_130fpl": 154518.0,
+  "weighted_non_enrollment_rate_130fpl": 0.7235891241231696,
+  "n_counties": 44,
+  "n_pumas": 14
+}

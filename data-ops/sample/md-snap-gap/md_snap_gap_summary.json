@@ -1,0 +1,11 @@
+{
+  "state": "MD",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 286450.0,
+  "eligible_persons_weighted_130fpl": 606949.0,
+  "eligible_no_snap_households_130fpl": 179263.0,
+  "eligible_no_snap_persons_130fpl": 348588.0,
+  "weighted_non_enrollment_rate_130fpl": 0.6258090417175772,
+  "n_counties": 24,
+  "n_pumas": 48
+}

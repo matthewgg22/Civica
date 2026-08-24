@@ -1,0 +1,11 @@
+{
+  "state": "WV",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 158025.0,
+  "eligible_persons_weighted_130fpl": 327490.0,
+  "eligible_no_snap_households_130fpl": 77384.0,
+  "eligible_no_snap_persons_130fpl": 143049.0,
+  "weighted_non_enrollment_rate_130fpl": 0.48969466856510047,
+  "n_counties": 55,
+  "n_pumas": 12
+}

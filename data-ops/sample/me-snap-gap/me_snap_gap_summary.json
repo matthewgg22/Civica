@@ -1,0 +1,11 @@
+{
+  "state": "ME",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 84334.0,
+  "eligible_persons_weighted_130fpl": 163449.0,
+  "eligible_no_snap_households_130fpl": 40171.0,
+  "eligible_no_snap_persons_130fpl": 64894.0,
+  "weighted_non_enrollment_rate_130fpl": 0.4763322029074869,
+  "n_counties": 16,
+  "n_pumas": 10
+}

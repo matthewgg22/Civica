@@ -1,0 +1,11 @@
+{
+  "state": "OR",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 254124.0,
+  "eligible_persons_weighted_130fpl": 508189.0,
+  "eligible_no_snap_households_130fpl": 132896.0,
+  "eligible_no_snap_persons_130fpl": 238842.0,
+  "weighted_non_enrollment_rate_130fpl": 0.5229572964379594,
+  "n_counties": 36,
+  "n_pumas": 35
+}

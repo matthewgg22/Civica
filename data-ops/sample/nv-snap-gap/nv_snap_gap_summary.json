@@ -1,0 +1,11 @@
+{
+  "state": "NV",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 174843.0,
+  "eligible_persons_weighted_130fpl": 398484.0,
+  "eligible_no_snap_households_130fpl": 108829.0,
+  "eligible_no_snap_persons_130fpl": 217073.0,
+  "weighted_non_enrollment_rate_130fpl": 0.6224384161790864,
+  "n_counties": 17,
+  "n_pumas": 20
+}

@@ -1,0 +1,11 @@
+{
+  "state": "NM",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 172233.0,
+  "eligible_persons_weighted_130fpl": 395043.0,
+  "eligible_no_snap_households_130fpl": 83211.0,
+  "eligible_no_snap_persons_130fpl": 163165.0,
+  "weighted_non_enrollment_rate_130fpl": 0.48313041054850114,
+  "n_counties": 33,
+  "n_pumas": 17
+}

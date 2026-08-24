@@ -1,0 +1,11 @@
+{
+  "state": "DE",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 49968.0,
+  "eligible_persons_weighted_130fpl": 107358.0,
+  "eligible_no_snap_households_130fpl": 30302.0,
+  "eligible_no_snap_persons_130fpl": 59004.0,
+  "weighted_non_enrollment_rate_130fpl": 0.6064281139929555,
+  "n_counties": 3,
+  "n_pumas": 8
+}

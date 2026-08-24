@@ -1,0 +1,11 @@
+{
+  "state": "WY",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 36562.0,
+  "eligible_persons_weighted_130fpl": 78449.0,
+  "eligible_no_snap_households_130fpl": 29959.0,
+  "eligible_no_snap_persons_130fpl": 60483.0,
+  "weighted_non_enrollment_rate_130fpl": 0.819402658497894,
+  "n_counties": 23,
+  "n_pumas": 5
+}

@@ -72,3 +72,29 @@ was: no county file existed.
 
 Still absent: 24 states and the territories. The ranking is a **26-state ranking** and must be
 described as one.
+
+## 2026-08-22 completion — 50 of 51 jurisdictions
+
+All remaining states built. **3,135 counties across 50 jurisdictions, 24,385,681 eligible-unenrolled
+persons.** The ranking is now national in fact, not just in framing.
+
+New entrants near the top: **Clark NV #15 (165,838)** — higher than Wayne MI — **King WA #28
+(100,101)**, Prince George's MD #44, Oklahoma OK #48, Honolulu HI #54, Milwaukee WI #59.
+
+**Alaska and Hawaii required a builder change.** They were absent from `STATE_FIPS` entirely and the
+docstring said "contiguous-48 + DC only", because they use different HHS poverty guidelines — an
+Alaska one-person household is $18,210 against $14,580 in the lower 48. Using the contiguous table
+would have understated their eligible populations badly. Both tables are now in `build_state.py`
+and selected by postal code.
+
+### ⚠️ Connecticut is the one gap, and it is structural
+
+CT replaced counties with **nine Planning Regions** for Census purposes effective 2022 — the
+gazetteer lists Capitol Planning Region, Greater Bridgeport Planning Region and so on, with GEOIDs
+like 09110. The PUMA→county crosswalk and county-name lookup both assume counties, so Connecticut
+needs its own handling rather than a rerun. Its 2023 PUMS download was also intermittently returning
+HTML.
+
+Connecticut matters modestly for this channel — it has a state CRA covering banks and credit unions
+(not mortgage lenders), and CT/RI are the two states applying CRA only to credit unions with a
+geographic field of membership.

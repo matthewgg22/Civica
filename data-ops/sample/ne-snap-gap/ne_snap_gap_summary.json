@@ -1,0 +1,11 @@
+{
+  "state": "NE",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 105526.0,
+  "eligible_persons_weighted_130fpl": 216433.0,
+  "eligible_no_snap_households_130fpl": 75488.0,
+  "eligible_no_snap_persons_130fpl": 141949.0,
+  "weighted_non_enrollment_rate_130fpl": 0.7153497716202643,
+  "n_counties": 93,
+  "n_pumas": 14
+}
