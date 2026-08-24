@@ -1,0 +1,9 @@
+county,natl_rank,bank,cert,assets_b,overall,investment_test,service_test,aa_evidence,disclosed_giving,ask,note
+Kings NY,6,Amalgamated Bank,622,8.01,Satisfactory,High Satisfactory,Low Satisfactory,"PE: 'The New York assessment area consists of six contiguous counties, including Bronx, Kings, New York, Queens, and Westchester Counties... and Nassau County'","87 qualified investments and donations totaling $22.8M (prior eval)",15000,mission-driven bank; Service Test is the documented gap
+Kings NY,6,Habib American Bank,25093,2.86,Satisfactory,Low Satisfactory,Low Satisfactory,"two AAs; one a portion of the NY MD (Kings referenced) — county list NOT fully read","30 donations totaling $328,000 (avg $10,933)",10000,both tests Low Satisfactory; read the AA before send
+Kings NY,6,Shinhan Bank America,33188,1.84,Satisfactory,Low Satisfactory,Low Satisfactory,"Brooklyn referenced; AA county list NOT read",,7500,read the AA before send
+Dallas TX,5,NexBank,29209,13.94,Satisfactory,High Satisfactory,Low Satisfactory,"main office and branches in Dallas County per the PE branch table",,15000,largest Dallas-County target found
+Dallas TX,5,Independent Bank,3076,18.25,Satisfactory,Low Satisfactory,Low Satisfactory,"PE names a DFW MSA assessment area",,15000,both tests Low Satisfactory; also covers Harris
+Dallas TX,5,Oakwood Bank,10334,0.86,Needs to Improve,,,"PE: 95% of giving in the Dallas MSA AA","14 donations totaling $60,000 (avg $4,286)",5000,current NTI
+Clark NV,15,GBank,58626,1.19,Needs to Improve,,,"PE: AA is the Las Vegas-Henderson-Paradise NV MSA #29820 = Clark County","26 donations totaling $176,000 (avg $6,769)",10000,only pressured FDIC-supervised bank in NV
+Maricopa AZ,4,Zenith Bank & Trust,59318,0.11,Needs to Improve,,,"PE: 'ZBT designated one AA consisting of the entirety of Maricopa County'",,2500,only pressured FDIC-supervised bank in AZ; very small
