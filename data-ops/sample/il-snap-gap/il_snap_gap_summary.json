@@ -1,0 +1,11 @@
+{
+  "state": "IL",
+  "acs_vintage": "2023 1-Year PUMS",
+  "eligible_households_weighted_130fpl": 753150.0,
+  "eligible_persons_weighted_130fpl": 1561410.0,
+  "eligible_no_snap_households_130fpl": 411481.0,
+  "eligible_no_snap_persons_130fpl": 746516.0,
+  "weighted_non_enrollment_rate_130fpl": 0.5463466772887207,
+  "n_counties": 102,
+  "n_pumas": 88
+}
