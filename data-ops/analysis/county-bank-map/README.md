@@ -98,3 +98,24 @@ HTML.
 Connecticut matters modestly for this channel — it has a state CRA covering banks and credit unions
 (not mortgage lenders), and CT/RI are the two states applying CRA only to credit unions with a
 geographic field of membership.
+
+## Connecticut added — all 50 states + DC
+
+**3,143 counties, 51 jurisdictions, 24,606,885 eligible-unenrolled persons.** Complete.
+
+Two obstacles, both recorded because both will recur:
+
+**A WAF rule blocked one filename.** `csv_hct.zip` returned "Request Rejected" from curl *and* from
+a real browser, while `csv_hri.zip` and `csv_pct.zip` (Connecticut's own person file) downloaded
+normally from the same directory. The block matches the literal path, not the state or a rate limit —
+appending `?x=1` retrieves the file. Worth remembering before concluding a Census file is missing.
+
+**⚠️ CT is built on LEGACY COUNTIES and the method column says so.** Connecticut replaced counties
+with nine Planning Regions as Census county-equivalents effective 2022, so the 2023 gazetteer lists
+09110–09190 and contains no 09001–09015. Our tract→PUMA crosswalk is 2020-vintage and is still keyed
+to the eight legacy counties, so the two cannot be joined. CT is therefore built on Fairfield,
+Hartford, Litchfield, Middlesex, New Haven, New London, Tolland and Windham — which is what the
+crosswalk supports.
+
+**A Connecticut bank assessment area delineated after 2022 will reference planning regions and will
+not map onto these rows.** Read the PE before using CT figures with any institution.

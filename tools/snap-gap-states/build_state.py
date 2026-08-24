@@ -64,7 +64,24 @@ def fpl_for_size(n: int, postal: str = "") -> float:
     return table[8] + extra * (n - 8)
 
 
+# Connecticut replaced counties with nine Planning Regions as Census
+# county-equivalents effective 2022, so the 2023 gazetteer lists 09110-09190
+# and has no 09001-09015. Our tract->PUMA crosswalk is 2020-vintage and is
+# still keyed to the eight legacy counties, so the two cannot be joined. CT is
+# therefore built on its LEGACY COUNTIES, which is what the crosswalk supports;
+# the output is labelled accordingly. A CT bank assessment area delineated
+# after 2022 will reference planning regions and will NOT map directly onto
+# these rows -- read the PE before using CT figures with any lender.
+CT_LEGACY_COUNTIES = {
+    "001": "Fairfield", "003": "Hartford", "005": "Litchfield",
+    "007": "Middlesex", "009": "New Haven", "011": "New London",
+    "013": "Tolland", "015": "Windham",
+}
+
+
 def county_names(state_fp: str) -> dict[str, str]:
+    if state_fp == "09":
+        return dict(CT_LEGACY_COUNTIES)
     names = {}
     with open(GAZETTEER, encoding="utf-8-sig") as f:
         header = f.readline().split("\t")
