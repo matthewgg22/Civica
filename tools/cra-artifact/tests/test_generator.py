@@ -683,3 +683,33 @@ def test_pooled_report_offers_examiner_verification():
     blk = quarterly.build(banks["ocean_bank"], org, assumptions, _PA(5000, 15000, 3))["pool_block"]
     assert "Verification without disclosure" in blk
     assert "directly to them on request" in blk
+
+
+def test_verified_banks_carry_the_pe_sentence_that_verifies_them():
+    """verified:true asserts someone read the assessment-area delineation out
+    of the PE. The evidence must travel with the claim, so the next person can
+    check the reading instead of trusting it -- Hanmi's record merged four
+    separate California assessment areas into one before this was enforced."""
+    banks, _, _ = generate.load_inputs()
+    for name, b in banks.items():
+        if not b.get("verified"):
+            continue
+        note = b.get("verify_note", "")
+        assert len(note) > 120, f"{name}: verified but verify_note is not an evidence trail"
+        assert "'" in note or '"' in note or "\u2018" in note, (
+            f"{name}: verified but verify_note quotes no PE language")
+        assert any(w in note.lower() for w in ("assessment area", "delineat")), (
+            f"{name}: verify_note does not reference the AA delineation")
+
+
+def test_hanmi_targets_one_assessment_area_not_four():
+    """Regression: Hanmi delineates NINE assessment areas, four in California,
+    evaluated separately. The record previously listed Los Angeles, Orange,
+    San Diego, San Francisco and Santa Clara as one AA -- which would have
+    overstated the area to the bank and mismatched the $281,080 giving figure,
+    which is the Los Angeles AA alone."""
+    banks, _, _ = generate.load_inputs()
+    h = banks["hanmi_bank"]
+    assert h["aa_counties"] == ["Los Angeles", "Orange"]
+    for wrong in ("San Diego", "San Francisco", "Santa Clara"):
+        assert wrong not in h["aa_counties"]
