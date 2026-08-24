@@ -85,7 +85,7 @@ def build_memo_values(bank, org, args) -> dict:
     )
 
     phone = org.get("contact_phone") or ""
-    return {
+    values = {
         "org_name": org["org_name"],
         "program_name": org["program_name"],
         "program_description": org.get("program_description", org["engine_line"]),
@@ -116,10 +116,20 @@ def build_memo_values(bank, org, args) -> dict:
         "model_note": meta["model_note"],
         "specimen_mark": ('<div class="specimen"><span>SPECIMEN</span></div>'
                           if args.specimen else ""),
-        # Long county lists push the memo past one page; tighten leading rather
-        # than drop content. The page-count guard below is the real backstop.
-        "density": (" dense" if len(counties) > 24 else ""),
     }
+    # Tighten leading rather than drop content when the page runs long. The
+    # trigger measures TOTAL variable-length content, not the county line:
+    # `counties` is a string, so the old `len(counties) > 24` was string length
+    # dressed up as a county count. Ocean Bank exposed it -- shortest county
+    # line in the set ("Miami-Dade County"), longest PE quote, so it never
+    # qualified for dense and overflowed to two pages. The page-count guard
+    # below is still the real backstop.
+    values["density"] = (
+        " dense"
+        if len(values["counties_line"]) + len(values["nexus_paragraph"])
+           + len(values["pe_need_block"]) + len(values["responsiveness_paragraph"]) > 1000
+        else "")
+    return values
 
 
 def main(argv=None):

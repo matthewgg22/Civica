@@ -276,11 +276,18 @@ def test_specimen_is_watermarked_and_unpriced():
     assert "SPECIMEN" in html and "[grant amount]" in html
 
 
-def test_dense_mode_engages_for_long_assessment_areas():
+def test_dense_mode_engages_on_total_content_not_the_county_line():
+    """The trigger measures ALL variable-length content. The old rule read
+    `len(counties) > 24` where `counties` is a string -- string length dressed
+    up as a county count. Ocean Bank exposed it: shortest county line in the
+    set ("Miami-Dade County") but the longest PE quote, so it never went dense
+    and overflowed to two pages."""
     banks, _a, org = generate.load_inputs()
     short = memo.build_memo_values(banks["bank_irvine"], org, _Args(specimen=True))
-    long_ = memo.build_memo_values(banks["bank_of_marin"], org, _Args(specimen=True))
-    assert short["density"] == "" and long_["density"] == " dense"
+    assert short["density"] == ""
+    ocean = memo.build_memo_values(banks["ocean_bank"], org, _Args(specimen=True))
+    assert len(ocean["counties_line"]) < 24          # would have failed the old rule
+    assert ocean["density"] == " dense"              # but its total content needs it
 
 
 @pytest.mark.skipif(not Path(generate.CHROME).exists(), reason="Chrome not installed")
@@ -713,3 +720,31 @@ def test_hanmi_targets_one_assessment_area_not_four():
     assert h["aa_counties"] == ["Los Angeles", "Orange"]
     for wrong in ("San Diego", "San Francisco", "Santa Clara"):
         assert wrong not in h["aa_counties"]
+
+
+def test_no_bank_merges_separately_evaluated_assessment_areas():
+    """The 2026-08-22 adversarial pass found FIVE of eight banks merging AAs
+    that their examiners evaluate separately. Merging overstates the area to
+    the bank, aggregates need across areas scored apart, and mismatches the
+    per-AA giving the ask is anchored on. Where a bank has multiple AAs, the
+    record must target ONE and say so."""
+    banks, _, _ = generate.load_inputs()
+    known_multi = {"five_star_bank", "ocean_bank", "banco_do_brasil_americas",
+                   "helm_bank", "hanmi_bank"}
+    for name in known_multi:
+        b = banks[name]
+        assert b.get("aa_counties_prior"), f"{name}: correction not recorded"
+        assert len(b["aa_counties"]) < len(b["aa_counties_prior"]), (
+            f"{name}: aa_counties was not narrowed to a single assessment area")
+        assert b.get("verified") is not True or "CORRECTED" in b.get("verify_note", ""), (
+            f"{name}: verified without recording the correction")
+
+
+def test_ocean_bank_does_not_claim_orange_county():
+    """Ocean's PE tables exactly two AAs -- Miami MD (Miami-Dade) and Fort
+    Lauderdale MD (Broward). Orange County was in our record and appears in
+    neither. A county the bank does not serve is the fastest way to lose a
+    CRA officer's confidence."""
+    banks, _, _ = generate.load_inputs()
+    assert "Orange" not in banks["ocean_bank"]["aa_counties"]
+    assert banks["ocean_bank"]["aa_counties"] == ["Miami-Dade"]
