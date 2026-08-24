@@ -33,3 +33,23 @@ sums the Tier A and B asks in that county — what a pooled county programme cou
   county table. CA figures live in `ca-snap-gap`, MA in `ma-snap-gap`.
 - 12 states, 1,006 counties, 5,304,426 eligible-unenrolled households covered.
 - 2023 ACS 1-Year PUMS, 130% gross-income screen — an upper-range estimate of unmet need.
+
+## county_need_persons_2026.csv — CORRECTION, supersedes the household ranking for prioritisation
+
+The household ranking excluded California entirely, because CA's fact base carries
+`eligible_pop` and `non_enroll_rate` but **not** household columns. That was a schema mismatch, not
+a finding — and it hid the largest opportunity in the dataset.
+
+Ranked in **persons**, which all 13 states carry: **Los Angeles is #1 at 796,577 eligible-unenrolled
+persons**, 60% larger than Harris TX (497,207). California holds **five of the top twenty** — LA #1,
+San Diego #7, Orange #8, Riverside #11, San Bernardino #12 — and 2,825,452 unenrolled persons in
+total, 21% of the 13,686,208 across all covered states.
+
+⚠️ **Methodology differs and the column says so.** California is `MODELED` (gradient-boosted
+classifier over ACS PUMS, PUMA-level, allocated to counties); the other twelve states are
+`survey-weighted` direct estimates. They are ranked together because persons is the only common
+unit, but a bank scrutinising the CA figure is scrutinising a model output. Say "footprint-level",
+never "tract-level".
+
+Use **persons** for prioritisation across states, and **households** (the other file) for campaign
+sizing within a state, since the funnel is household-based.
