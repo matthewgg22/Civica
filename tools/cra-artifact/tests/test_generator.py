@@ -550,3 +550,25 @@ def test_lender_artifact_renders_three_pages_unclipped():
     tail = subprocess.run(["pdftotext", "-layout", "-f", "3", "-l", "3", str(pdf), "-"],
                           capture_output=True, text=True).stdout
     assert "Prepared" in tail and "Guaranteed Rate" in tail
+
+
+def test_every_bank_ask_is_anchored_to_disclosed_giving_in_its_target_aa():
+    """Per-AA re-baseline. Giving varies by orders of magnitude BETWEEN
+    assessment areas of the same bank -- Hanmi runs $281,080 in Los Angeles
+    against $13,000 in Houston, and Woodforest $17.8M in Houston against
+    $86,614 in Dallas. An institution-wide average misprices both ends, so
+    every ask must record which AA's giving it is anchored on."""
+    banks, _, _ = generate.load_inputs()
+    for name, b in banks.items():
+        assert b.get("pe_giving"), f"{name}: no disclosed giving recorded"
+        assert "assessment area" in b.get("ask_basis", ""), (
+            f"{name}: ask_basis must state the anchor is the target AA")
+
+
+def test_the_per_aa_rule_can_raise_an_ask_not_only_lower_it():
+    """Guards against reading the correction as 'always ask for less'. Hanmi's
+    prior $15,000 sat below their average Los Angeles donation of $20,077."""
+    banks, _, _ = generate.load_inputs()
+    h = banks["hanmi_bank"]
+    assert h["ask_usd"] > h["ask_usd_prior"]
+    assert "281,080" in h["pe_giving"]
