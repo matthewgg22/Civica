@@ -305,6 +305,24 @@ def test_dense_mode_engages_on_total_content_not_the_county_line():
 
 
 @pytest.mark.skipif(not Path(generate.CHROME).exists(), reason="Chrome not installed")
+def test_every_bank_declares_a_state_the_registry_supports():
+    """`state` defaults to "CA" in memo.py and quarterly.py. A bank loaded without
+    one is therefore scored against California county metrics silently — which is
+    the same failure mode that once dropped California out of the national ranking
+    entirely. Every AA county must resolve, so an omitted state must be an error
+    here rather than a plausible-looking wrong number in a bank's PDF."""
+    banks, _a, _o = generate.load_inputs()
+    for key, bank in banks.items():
+        assert bank.get("state"), f"{key} does not declare a state"
+        meta = states.state_meta(bank["state"])  # raises for an unregistered state
+        metrics = score.load_county_metrics(meta["metrics"])
+        covered = [c for c in bank["aa_counties"] if c in metrics]
+        assert covered, (
+            f"{key} declares state {bank['state']} but none of its AA counties "
+            f"{bank['aa_counties']} appear in that state's fact base"
+        )
+
+
 def test_every_loaded_bank_memo_is_exactly_one_page():
     """The memo is the bank's exam evidence — it must fit one page, and the
     generator must fail loudly rather than clip content."""
