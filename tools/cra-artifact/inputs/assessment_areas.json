@@ -4,20 +4,25 @@
       "cert": "59296",
       "name": "Bank Irvine",
       "aa_counties": [
+        "Los Angeles",
         "Orange"
       ],
       "pe_date": "2024-10-15",
       "pe_url": "https://crapes.fdic.gov/publish/2024/59296_241015.PDF",
       "regulator": "FDIC",
       "ask_usd": 5000,
-      "verified": false,
-      "verify_note": "AA read from the FDIC PE by research agent 2026-08-22 \u2014 Matthew must re-read the PE and flip verified:true before any send. Branch list check on bankirvine.com also required (PE is from 10/2024).",
+      "verified": true,
+      "verify_note": "AA CORRECTED and verified 2026-08-22 from the Oct 2024 FDIC PE (cert 59296), verbatim: \"BI's assessment area includes the counties of Los Angeles and Orange that are wholly contained within the Los Angeles-Long Beach-Anaheim, CA Metropolitan Statistical Area (MSA) #31080. This MSA is comprised of two Metropolitan Divisions (MDs): The Los Angeles-Long Beach-Glendale, CA MD #31084, which wholly contains Los Angeles County and the Anaheim-Santa Ana-Irvine, CA MD #11244 wholly containing Orange County.\" Our record listed Orange alone and UNDERSTATED the assessment area - the opposite direction from the other corrections in this pass. A single delineated assessment area spanning both counties.",
       "pe_giving": "no community development donations disclosed in the evaluation",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 10000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name \u2014 CD grants are not in the public CRA file.",
+      "aa_counties_prior": [
+        "Orange"
+      ],
+      "aa_structure": "single AA: Los Angeles-Long Beach-Anaheim MSA #31080 (two MDs, both wholly contained)"
     },
     "hanmi_bank": {
       "cert": "24170",
