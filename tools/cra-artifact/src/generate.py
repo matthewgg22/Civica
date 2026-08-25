@@ -21,7 +21,7 @@ from pathlib import Path
 
 TOOL_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOL_ROOT))
-from src import mapsvg, report, score, states  # noqa: E402
+from src import liveness, mapsvg, report, score, states  # noqa: E402
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
@@ -202,6 +202,7 @@ def main(argv=None):
     print(f"PDF:  {pdf_path} ({pdf_path.stat().st_size/1024:.0f} KB)")
 
     if args.send:
+        liveness.assert_alive(args.bank, bank)
         if bank.get("target_status") == "no-target":
             raise NoDocumentedGapError(
                 f"{args.bank} has target_status:no-target — the PE shows no gap on any "

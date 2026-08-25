@@ -87,7 +87,27 @@ others in that group (HomeStreet, HTLF, Citizens First) are closed institutions.
    across these two passes, two of them ($9.3B HomeStreet, $11.7B Berkshire) recent enough
    to have looked entirely plausible in a pitch list.
 
+## The liveness check, now built — and it caught a live one
+
+`tools/cra-artifact/src/liveness.py`. The network call queries FDIC BankFind
+(`ACTIVE` / `ENDEFYMD`) and **records the answer on each bank**; enforcement is a set of
+offline tests reading the stored answer, so CI never depends on a third-party API. A
+`--send` gate refuses any bank not verified alive, and the checks go stale after 180 days.
+
+One subtlety it has to get right: BankFind writes the sentinel **`12/31/9999`** rather
+than null for an open institution. Read literally, that marks every live bank as closed.
+
+**Run against the 151-bank FDIC pressure universe, 16 (11%) are closed institutions** —
+including three above $6B. The one that mattered:
+
+> **Independent Bank (TX, $18.3B) closed 2025-01-01 — and it was one of our four Harris
+> candidates at $15,000.**
+
+Its PE ratings had been spot-checked and confirmed accurate earlier the same day. That is
+exactly the trap: a *correct* rating on an institution that no longer exists. **Ratings
+verification and liveness verification are separate checks, and neither substitutes for
+the other.** Harris drops to three candidates.
+
 ## Open
 
 - Meridian Bank is blocked on the PA registry refusal, not on evidence.
-- The universe build still has no automated liveness check.

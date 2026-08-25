@@ -29,7 +29,10 @@
       "documented_gap": "Needs to Improve OVERALL, but on the Lending Test — geographic distribution of loans 'reflects very poor dispersion' and borrower distribution is 'poor'. Both are lending-distribution problems fixed by lending differently, not by funding outreach. The original first target of this channel turns out to have no test we can move.",
       "component_ratings": "SMALL BANK evaluation — Lending Test only, rated NEEDS TO IMPROVE. No Investment, Service or CD Test exists.",
       "target_status": "no-target",
-      "ask_note": "This bank has NO documented gap on any test our activity feeds. The ask figure is retained only so historical artifacts still render; target_status blocks it from --send."
+      "ask_note": "This bank has NO documented gap on any test our activity feeds. The ask figure is retained only so historical artifacts still render; target_status blocks it from --send.",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "hanmi_bank": {
       "cert": "24170",
@@ -68,7 +71,10 @@
       "component_ratings": "Lending Low Satisfactory / Investment LOW SATISFACTORY / Service High Satisfactory",
       "ask_verdict": "earmark",
       "documented_gap": "Investment Test is Low Satisfactory — the test a cash grant feeds directly under 12 CFR __.12(t). Service Test is High Satisfactory, so the pitch is the investment side only.",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "five_star_bank": {
       "cert": "35361",
@@ -114,7 +120,10 @@
       "component_ratings": "Lending High Satisfactory / Investment High Satisfactory / Service LOW SATISFACTORY — overall Satisfactory",
       "documented_gap": "Service Test is Low Satisfactory — a real gap our outreach feeds.",
       "ask_verdict": "unsized",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "bank_of_marin": {
       "cert": "32779",
@@ -158,7 +167,10 @@
       "component_ratings": "Lending Low Satisfactory / Investment LOW SATISFACTORY / Service LOW SATISFACTORY — overall Satisfactory",
       "documented_gap": "BOTH tests our activity feeds are Low Satisfactory. The PE adds that San Francisco AA performance is consistent with the overall Investment conclusion while Sacramento and Amador are not.",
       "ask_verdict": "unsized",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "american_business_bank": {
       "cert": "34788",
@@ -193,7 +205,10 @@
       "inv_rating": "High Satisfactory",
       "svc_rating": "High Satisfactory",
       "target_status": "no-target",
-      "ask_note": "This bank has NO documented gap on any test our activity feeds. The ask figure is retained only so historical artifacts still render; target_status blocks it from --send."
+      "ask_note": "This bank has NO documented gap on any test our activity feeds. The ask figure is retained only so historical artifacts still render; target_status blocks it from --send.",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "helm_bank": {
       "cert": "32718",
@@ -235,7 +250,10 @@
       "ask_sizing": "NO TARGET — Intermediate Small Bank evaluation. The Community Development Test IS the test our activity feeds, and it is rated SATISFACTORY. No gap.",
       "ask_verdict": "no-target",
       "target_status": "no-target",
-      "ask_note": "This bank has NO documented gap on any test our activity feeds. The ask figure is retained only so historical artifacts still render; target_status blocks it from --send."
+      "ask_note": "This bank has NO documented gap on any test our activity feeds. The ask figure is retained only so historical artifacts still render; target_status blocks it from --send.",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "banco_do_brasil_americas": {
       "cert": "26725",
@@ -275,7 +293,10 @@
       "ask_verdict": "pool",
       "inv_rating": "High Satisfactory",
       "svc_rating": "Low Satisfactory",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "ocean_bank": {
       "cert": "24156",
@@ -313,7 +334,10 @@
       "ask_verdict": "earmark",
       "inv_rating": "Low Satisfactory",
       "svc_rating": "",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "city_national": {
       "cert": 17281,
@@ -348,7 +372,10 @@
       "ask_verdict": "pool",
       "inv_rating": "Outstanding",
       "svc_rating": "Low Satisfactory",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "mega_bank": {
       "cert": 58401,
@@ -378,7 +405,10 @@
       "ask_usd_prior": 5000,
       "ask_verdict": "no-target",
       "target_status": "no-target",
-      "ask_note": "This bank has NO documented gap on any test our activity feeds. The ask figure is retained only so historical artifacts still render; target_status blocks it from --send."
+      "ask_note": "This bank has NO documented gap on any test our activity feeds. The ask figure is retained only so historical artifacts still render; target_status blocks it from --send.",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "western_alliance": {
       "cert": "57512",
@@ -417,7 +447,10 @@
       "ask_verdict": "earmark",
       "inv_rating": "Low Satisfactory",
       "svc_rating": "",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "texas_first_bank": {
       "cert": "23799",
@@ -457,7 +490,10 @@
       "ask_verdict": "earmark",
       "inv_rating": "Low Satisfactory",
       "svc_rating": "",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "third_coast_bank": {
       "cert": "58716",
@@ -493,7 +529,10 @@
       "ask_verdict": "pool",
       "inv_rating": "Low Satisfactory",
       "svc_rating": "Low Satisfactory",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "lakeside_bank": {
       "cert": "19573",
@@ -527,7 +566,10 @@
       "ask_verdict": "pool",
       "inv_rating": "Low Satisfactory",
       "svc_rating": "Low Satisfactory",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "first_american_bank": {
       "cert": "3657",
@@ -569,7 +611,10 @@
       "ask_verdict": "earmark",
       "inv_rating": "Low Satisfactory",
       "svc_rating": "Low Satisfactory",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "habib_american_bank": {
       "cert": "25093",
@@ -607,7 +652,10 @@
       "ask_verdict": "earmark",
       "inv_rating": "Low Satisfactory",
       "svc_rating": "Needs to Improve",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "busey_bank": {
       "cert": "16450",
@@ -643,7 +691,10 @@
       "ask_verdict": "earmark",
       "inv_rating": "High Satisfactory",
       "svc_rating": "Low Satisfactory",
-      "target_status": "target"
+      "target_status": "target",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "mechanics_bank": {
       "cert": "1768",
@@ -675,7 +726,10 @@
       "documented_gap": "Service Test is Low Satisfactory institution-wide, and the PE says California performance is consistent with that rating. Investment is Outstanding, so the pitch is the service side: outreach that reaches LMI households across the assessment area.",
       "cluster_role": "Fresno + Kern answer — the only pressured bank with both counties in delineated assessment areas, and it was hidden by a corrupt API row",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "river_city_bank": {
       "cert": "18983",
@@ -711,7 +765,10 @@
       "documented_gap": "Investment Test is Low Satisfactory — the test a cash grant feeds directly under 12 CFR __.12(t). Service Test is High Satisfactory, so the pitch is the investment side only.",
       "cluster_role": "Sacramento — overlaps Five Star Bank on El Dorado, Placer, Sacramento and Yolo, so the pro rata attribution rule applies if both fund",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "firstbank_tn": {
       "cert": "8663",
@@ -750,7 +807,10 @@
       "documented_gap": "Service Test is Low Satisfactory institution-wide, and the Nashville MSA AA finding is sharper than the rating: delivery systems are 'unreasonably accessible to significant portions' of the AA, with no ATMs in low- or moderate-income tracts — 'a very poor level'. That is a documented failure to reach LMI households through the bank's own channels, which is precisely what an outreach campaign answers.",
       "cluster_role": "Davidson/Nashville — real Service gap and a quotable LMI delivery failure, but a POOL candidate: this is a $12.2B bank whose entire donation programme is $126,000 because it meets CRA through large affordable-housing investments rather than grants.",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     },
     "ctbc_bank_usa": {
       "cert": "19416",
@@ -784,7 +844,10 @@
       "documented_gap": "BOTH tests our activity feeds are Low Satisfactory. In the Los Angeles assessment area the PE adds that CD investments and grants DECREASED 20.3% on an annualised basis since the prior evaluation, and that the bank 'does not lead peer institutions operating in the AA'.",
       "cluster_role": "Los Angeles — the #1 SNAP enrollment gap in the country. Overlaps Hanmi, Mega and City National on Los Angeles and Orange, so pro rata attribution applies.",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     }
   }
 }

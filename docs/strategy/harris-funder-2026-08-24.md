@@ -60,14 +60,20 @@ to a bank about its own exam. Third Coast delineates **seven** AAs; they must no
 
 | Bank | Regulator | Assets | Gap | Ask |
 |---|---|---|---|---|
-| Texas First Bank | FED | $2.4B | Investment Low Satisfactory | $15,000 |
+| Texas First Bank | FED | $2.4B | Investment Low Satisfactory | $12,500 |
 | Prosperity Bank | FDIC | $38.3B | Service Low Satisfactory | $15,000 |
-| Independent Bank | FDIC | $18.3B | Investment **and** Service Low Satisfactory | $15,000 |
-| Third Coast Bank | FED | $6.6B | Investment **and** Service Low Satisfactory | $10,000 |
+| Third Coast Bank | FED | $6.6B | Investment **and** Service Low Satisfactory | $7,500 (pool) |
+| ~~Independent Bank~~ | FDIC | $18.3B | — | **DEAD** |
 
-That is $55,000 of ask across four institutions, all with Harris in a PE-read assessment
-area. Overlap is total — every one of them claims Harris — so the pro rata attribution rule
-applies if more than one funds.
+**Independent Bank closed on 2025-01-01** and was removed on 2026-08-25 by the liveness
+check. Its PE ratings had been confirmed accurate against the evaluation earlier the same
+day — which is precisely the trap: a *correct* rating on an institution that no longer
+exists. Ratings verification and liveness verification are separate checks and neither
+substitutes for the other.
+
+Prosperity's ratings were also spot-checked against its PE and stand. Overlap on Harris is
+total among the three survivors, so the pro rata attribution rule applies if more than one
+funds.
 
 ## Recorded negatives
 
