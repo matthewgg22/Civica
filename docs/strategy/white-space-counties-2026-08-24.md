@@ -62,19 +62,30 @@ That is now **two corrupt CRAPES rows resolved the same way** (Busey, Mechanics)
 guard is doing exactly what it should — but a dropped row is a *lead to chase*, not a
 bank to discard. Anything the guard flags needs a PE read, not a delete.
 
-### Mechanics is loaded UNSIZED, deliberately
+### Both AAs now sized — and both are deep pool candidates
 
-The gap is real and the counties are confirmed, but **both Fresno and Bakersfield are
-limited-scope assessment areas**, so the PE breaks out no per-AA donation figure for
-either. Institution-wide giving is large — 151 donations totaling $621,000 in 2019, 267
-totaling $1.4M in 2020, 239 totaling $1.3M in 2021 — and the per-AA rule forbids
-anchoring on it. That is the same discipline that caught City National's 10× overpricing.
+The first read looked for per-AA giving in the AA *narrative* and found none, so Mechanics
+went in at a $15,000 placeholder marked UNSIZED. **The figures are in the PE's
+limited-scope FACTS TABLE, not the narrative.** Both counties now have their own record:
 
-The $15,000 on the record is a placeholder and `ask_sizing` says so. It is not sendable
-until someone gets a Fresno-AA or Bakersfield-AA figure.
+| AA | County | Branches | Donations disclosed | Ask |
+|---|---|---|---|---|
+| Fresno | Fresno (+ Kings) | 3 | **3 totaling $11,000** | **$500** (pool) |
+| Bakersfield | **Kern** | 5 | **6 totaling $20,000** | **$1,000** (pool) |
 
-**Kern needs its own record.** The Bakersfield AA is separately delineated and must not
-be merged into the Fresno one.
+Mechanics does **large investments and almost no donations** in these counties — 4 new
+investments totaling $24.4M in Fresno against $11,000 of grants. Its Fresno programme is
+$3,667 a year. **It cannot fund a standalone campaign in either county.**
+
+**And the AA-level gap points the other way from the institution rating.** Institution-wide
+Mechanics is Investment *Outstanding* / Service Low Satisfactory. But the PE's limited-scope
+summary rates the Investment Test **Below** in Fresno *and* Bakersfield — ten of its eleven
+California AAs are marked Below on investments. In these counties the investment side is
+the weak one, against an Outstanding overall rating.
+
+**Strategic consequence: Fresno (#26) and Kern (#30) have a pressured bank in a delineated
+assessment area and still have no viable single funder.** They are pooling counties, or
+they need a funder type this screen does not reach.
 
 ## What this changes about the method
 
@@ -91,8 +102,10 @@ there is no funder there.
 
 ## Open
 
-- **Kern**: create the Mechanics Bakersfield-AA record.
-- **Mechanics**: get a per-AA donation figure, or ask the bank directly.
+- ~~Kern: create the Mechanics Bakersfield-AA record.~~ **Done — `mechanics_bank_bakersfield`.**
+- ~~Mechanics: get a per-AA donation figure.~~ **Done — it was in the limited-scope facts table.**
+- **Fresno and Kern need a pooling partner or a different funder type** — the one pressured
+  bank in each cannot fund a campaign alone.
 - Re-check every row the corruption guard drops — there were 7 in the national sweep and
   two have now turned out to be real targets.
 - Remaining uncovered in the top 100: ranks 74, 77, 91 (not yet examined).

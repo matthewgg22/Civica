@@ -31,7 +31,8 @@ not a bigger first cheque.
 SHARE = 0.15
 MIN_VIABLE_GRANT = 10_000
 CEILING = 25_000
-STEP = 2_500
+STEP = 2_500          # earmark asks round to a figure a grants committee recognises
+POOL_STEP = 500       # pooled shares round finer -- see size_ask
 
 # Our activity feeds the Investment Test (a grant is a qualified investment
 # under 12 CFR __.12(t)) and the Service Test. Lending is NOT ours to move, so
@@ -91,5 +92,12 @@ def size_ask(aa_giving_usd, review_period_years, investment, service):
         "raw_usd": round(raw),
     }
     if rounded < MIN_VIABLE_GRANT:
-        return rounded, "pool", detail
+        # Pooled shares round to POOL_STEP, not STEP. Mechanics Bank gives $11,000
+        # over three years in its Fresno assessment area; at a $2,500 step that
+        # share rounds to ZERO, which is not a contribution -- it is a rounding
+        # artefact that would quietly drop the bank out of a county pool. The
+        # whole pooling thesis depends on small real numbers summing.
+        pooled = int(round(raw / POOL_STEP) * POOL_STEP)
+        detail["pool_step"] = POOL_STEP
+        return pooled, "pool", detail
     return min(rounded, CEILING), "earmark", detail
