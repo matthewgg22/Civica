@@ -101,3 +101,20 @@ def test_every_bank_declares_a_target_status():
     banks, _a, _o = generate.load_inputs()
     for key, b in banks.items():
         assert b.get("target_status") in ("target", "no-target"), key
+
+
+def test_a_pooled_share_never_rounds_away_to_nothing():
+    """Mechanics Bank gives $11,000 over three years in its Fresno assessment
+    area. At the earmark step of $2,500 that share rounds to ZERO -- not a
+    contribution but a rounding artefact that would silently drop the bank out
+    of a county pool. Pooling only works if small real numbers still sum."""
+    ask, verdict, detail = size_ask(11_000, 3, "Outstanding", "Low Satisfactory")
+    assert verdict == "pool"
+    assert ask > 0, "a pool share rounded to zero is a bug, not a small ask"
+    assert detail["pool_step"] < 2_500
+
+
+def test_pool_shares_stay_proportional_to_giving():
+    small, _v, _d = size_ask(11_000, 3, "Outstanding", "Low Satisfactory")
+    bigger, _v2, _d2 = size_ask(20_000, 3, "Outstanding", "Low Satisfactory")
+    assert bigger > small, "a bank that gives more must not be asked for less"
