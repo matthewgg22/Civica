@@ -305,6 +305,28 @@ def test_dense_mode_engages_on_total_content_not_the_county_line():
 
 
 @pytest.mark.skipif(not Path(generate.CHROME).exists(), reason="Chrome not installed")
+def test_component_ratings_are_not_internally_impossible():
+    """The FDIC CRAPES API served Busey Bank a 2022 record with LENDING_RATING and
+    SERVICE_RATING both "Substantial Non Complianc" against an overall rating of
+    Satisfactory -- with Investment and Rating Points missing. The row was corrupt,
+    and the tell was that the combination cannot exist: the lending test is weighted
+    most heavily (12 CFR 345.28 / Appendix A), so Substantial Noncompliance there
+    caps the overall rating far below Satisfactory. Any bank record reproducing that
+    combination is carrying API data that was never checked against the PE."""
+    banks, _a, _o = generate.load_inputs()
+    for key, bank in banks.items():
+        cr = (bank.get("component_ratings") or "").lower()
+        if not cr:
+            continue
+        overall_ok = "overall satisfactory" in cr or "overall outstanding" in cr
+        if overall_ok and "lending" in cr:
+            lending = cr.split("lending", 1)[1].split("/")[0]
+            assert "substantial" not in lending, (
+                f"{key}: claims a satisfactory-or-better overall rating alongside a "
+                f"Lending Test at Substantial Noncompliance -- impossible; re-read the PE"
+            )
+
+
 def test_every_bank_declares_a_state_the_registry_supports():
     """`state` defaults to "CA" in memo.py and quarterly.py. A bank loaded without
     one is therefore scored against California county metrics silently — which is
