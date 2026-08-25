@@ -45,6 +45,29 @@ NewRez, Nationstar, PennyMac, Movement and CMG are all on it.
 Prefer the role mailbox where one exists. `CRA@busey.com` and
 `crafairlendingcompliance@firstbankonline.com` outlive whoever holds the seat.
 
+## The bulk harvest mostly failed — and that is the finding
+
+Fetching all 202 verified bank domains (plus their `/cra` paths) to extract contacts
+returned **180 HTTP errors out of 202**. Bank websites block scripted clients the same way
+mass.gov does. Scripted harvesting is not a viable route to bank contact data.
+
+What it did yield:
+
+- **3 CRA mailboxes** — `CRA@lakecitybank.com` (Lake City Bank, IN),
+  `cra-cbom@communitybank.net` (Community Bank of Mississippi), and a named officer,
+  `paul.crawford@yakimafed.com` (Yakima Federal Savings)
+- **134 phone numbers**, all marked **UNVERIFIED — dial to confirm**
+
+**The phone numbers contain false positives.** A spot check found `(793) 982-1793` and
+`(842) 672-1226`; neither 793 nor 842 is an assigned NANP area code. A format check does
+not catch these — real validation needs the assigned-code list, which we do not hold. Most
+of the rest look plausible (Ocean Bank `(305) 569-5000`, Bank of Hope `(855) 325-2226`),
+but **treat every harvested number as a lead to dial, not a fact**.
+
+The reliable route for a specific bank is the in-app browser, which presents a real TLS
+fingerprint and gets through — that is how the mass.gov block was beaten earlier. It is
+accurate but manual, roughly a minute per bank.
+
 ## Why tier 2 has no names, and why that is fine
 
 CRA rules require a bank to publish *where* to send comments, not *who* reads them. Most
