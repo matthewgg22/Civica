@@ -16,7 +16,7 @@
       "verify_note": "AA CORRECTED and verified 2026-08-22 from the Oct 2024 FDIC PE (cert 59296), verbatim: \"BI's assessment area includes the counties of Los Angeles and Orange that are wholly contained within the Los Angeles-Long Beach-Anaheim, CA Metropolitan Statistical Area (MSA) #31080. This MSA is comprised of two Metropolitan Divisions (MDs): The Los Angeles-Long Beach-Glendale, CA MD #31084, which wholly contains Los Angeles County and the Anaheim-Santa Ana-Irvine, CA MD #11244 wholly containing Orange County.\" Our record listed Orange alone and UNDERSTATED the assessment area - the opposite direction from the other corrections in this pass. A single delineated assessment area spanning both counties.",
       "pe_giving": "no community development donations disclosed in the evaluation",
       "pe_mined": "per-assessment-area, 2026-08-22",
-      "ask_usd_prior": 10000,
+      "ask_usd_prior": 5000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
@@ -24,7 +24,12 @@
         "Orange"
       ],
       "aa_structure": "single AA: Los Angeles-Long Beach-Anaheim MSA #31080 (two MDs, both wholly contained)",
-      "ask_sizing": "UNSIZED — the PE discloses no usable per-assessment-area donation figure"
+      "ask_sizing": "NO TARGET — STRUCTURAL. The Oct 2024 PE is a SMALL BANK evaluation: the Lending Test is the only test, and it is rated Needs to Improve. No Investment Test, no Service Test and no Community Development Test exists. A grant cannot move a Lending Test, so there is no test here our activity feeds.",
+      "ask_verdict": "no-target",
+      "documented_gap": "Needs to Improve OVERALL, but on the Lending Test — geographic distribution of loans 'reflects very poor dispersion' and borrower distribution is 'poor'. Both are lending-distribution problems fixed by lending differently, not by funding outreach. The original first target of this channel turns out to have no test we can move.",
+      "component_ratings": "SMALL BANK evaluation — Lending Test only, rated NEEDS TO IMPROVE. No Investment, Service or CD Test exists.",
+      "target_status": "no-target",
+      "ask_note": "This bank has NO documented gap on any test our activity feeds. The ask figure is retained only so historical artifacts still render; target_status blocks it from --send."
     },
     "hanmi_bank": {
       "cert": "24170",
@@ -38,12 +43,12 @@
       "pe_date": "2023-06-05",
       "pe_url": "https://crapes.fdic.gov/publish/2023/24170_230606.PDF",
       "regulator": "FDIC",
-      "ask_usd": 25000,
+      "ask_usd": 15000,
       "verified": true,
       "verify_note": "AA CORRECTED and verified 2026-08-22 from the June 5 2023 PE: 'The Los Angeles assessment area is located in Southern California and consists of Los Angeles and Orange Counties. These two counties are contiguous and comprise the entirety of the Los Angeles-Long Beach-Anaheim MSA. There were no changes to the assessment area since the previous evaluation.' Hanmi delineates NINE assessment areas (four in California, two in Texas, one each in Illinois, Virginia and the NY-Newark-Jersey City MMSA) which are evaluated separately. Our prior record merged four California AAs into one; San Diego, San Francisco and Santa Clara are DIFFERENT assessment areas and are not targeted here. The $281,080 giving figure is the Los Angeles AA specifically.",
       "pe_giving": "PER-AA: Los Angeles 14 donations $281,080 (avg $20,077); Dallas 5 donations $20,500 (avg $4,100); Houston 4 donations $13,000 (avg $3,250)",
       "pe_mined": "per-assessment-area, 2026-08-22",
-      "ask_usd_prior": 15000,
+      "ask_usd_prior": 25000,
       "ask_note": "LA is their richest AA — prior $15,000 ask sat BELOW their average LA donation",
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
@@ -57,7 +62,13 @@
       ],
       "aa_giving_usd": 281080,
       "review_period_years": 3,
-      "ask_sizing": "UNSIZED — no Investment or Service Test gap recorded. Either the PE is an Intermediate Small Bank evaluation (Community Development Test only, no Investment/Service components exist) or the component ratings were never read out of the PE."
+      "ask_sizing": "sized by src/ask.py: $93,693/yr in the Los Angeles assessment area x 15% x 1.00 = $14,054 -> $15,000 (earmark)",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": "High Satisfactory",
+      "component_ratings": "Lending Low Satisfactory / Investment LOW SATISFACTORY / Service High Satisfactory",
+      "ask_verdict": "earmark",
+      "documented_gap": "Investment Test is Low Satisfactory — the test a cash grant feeds directly under 12 CFR __.12(t). Service Test is High Satisfactory, so the pitch is the investment side only.",
+      "target_status": "target"
     },
     "five_star_bank": {
       "cert": "35361",
@@ -80,7 +91,7 @@
       "pe_giving": "195 donations totaling $1.3M (avg $6,667)",
       "pe_need_quote": "poverty and homelessness, unemployment, and a lack of knowledge for financial resources … more can be done to meet economic needs",
       "pe_mined": "per-assessment-area, 2026-08-22",
-      "ask_usd_prior": 30000,
+      "ask_usd_prior": 25000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
@@ -97,7 +108,13 @@
       "aa_structure": "three AAs: Sacramento (targeted) / Chico (Butte) / Redding (Shasta)",
       "aa_giving_usd": 1300000,
       "review_period_years": 3,
-      "ask_sizing": "UNSIZED — no Investment or Service Test gap recorded. Either the PE is an Intermediate Small Bank evaluation (Community Development Test only, no Investment/Service components exist) or the component ratings were never read out of the PE."
+      "ask_sizing": "UNSIZED — the gap is real (Service Low Satisfactory) but the PE discloses donations ONLY institution-wide: '195 donations totaling $1.3 million', with the explicit warning that 'several investments benefited multiple AAs'. There is no per-assessment-area donation figure to anchor on, and the prior record treated the institution-wide number as if it were assessment-area giving.",
+      "inv_rating": "High Satisfactory",
+      "svc_rating": "Low Satisfactory",
+      "component_ratings": "Lending High Satisfactory / Investment High Satisfactory / Service LOW SATISFACTORY — overall Satisfactory",
+      "documented_gap": "Service Test is Low Satisfactory — a real gap our outreach feeds.",
+      "ask_verdict": "unsized",
+      "target_status": "target"
     },
     "bank_of_marin": {
       "cert": "32779",
@@ -116,7 +133,7 @@
       "ask_usd": 10000,
       "verified": true,
       "verify_note": "AA CORRECTED and verified 2026-08-22 from the Nov 2023 PE. Bank of Marin has THREE assessment areas. The San Francisco AA table lists CRA-delineated counties: Marin (San Rafael MD), Sonoma (Santa Rosa-Petaluma MSA), 'Alameda (partial)' (Oakland-Berkeley-Livermore MD), Napa (Napa MSA) and San Francisco (San Francisco-San Mateo-Redwood City MSA). The Sacramento AA 'consists of Sacramento and Placer counties'. The Amador AA is limited-scope and rated Below on Lending, Investment and Service. Our record merged all three. Targeting the San Francisco AA, their primary at 20 of 20 branches in the table. ALAMEDA IS DELIBERATELY EXCLUDED: the PE marks it '(partial)', and counting a whole county would overstate need.",
-      "pe_giving": "387 grants and donations totaling $1.3M within the AA (avg $3,359)",
+      "pe_giving": "436 qualified grants and donations totaling $1,583K — INSTITUTION-WIDE across all three assessment areas; the PE does not break donations out by AA",
       "pe_need_quote": "CD opportunities exist in the AA with … business technical assistance, and financial literacy education",
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_usd_prior": 10000,
@@ -135,7 +152,13 @@
       "aa_structure": "three AAs: San Francisco (full-scope, targeted) / Sacramento (full-scope: Sacramento + Placer) / Amador (limited-scope, rated Below on all three tests)",
       "aa_giving_usd": 1300000,
       "review_period_years": 3,
-      "ask_sizing": "UNSIZED — no Investment or Service Test gap recorded. Either the PE is an Intermediate Small Bank evaluation (Community Development Test only, no Investment/Service components exist) or the component ratings were never read out of the PE."
+      "ask_sizing": "UNSIZED — CORRECTION. The prior record claimed '387 grants and donations totaling $1.3M within the AA'. The PE's qualified-investments table breaks out INVESTMENTS by assessment area but lumps 'Qualified Grants & Donations' into a single row across all three AAs (436 grants, $1,583K total). There is no per-assessment-area donation figure in this PE, so the ask cannot be anchored per the per-AA rule.",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": "Low Satisfactory",
+      "component_ratings": "Lending Low Satisfactory / Investment LOW SATISFACTORY / Service LOW SATISFACTORY — overall Satisfactory",
+      "documented_gap": "BOTH tests our activity feeds are Low Satisfactory. The PE adds that San Francisco AA performance is consistent with the overall Investment conclusion while Sacramento and Amador are not.",
+      "ask_verdict": "unsized",
+      "target_status": "target"
     },
     "american_business_bank": {
       "cert": "34788",
@@ -156,14 +179,21 @@
       "pe_giving": "258 grants and donations totaling $1.6M (avg $6,202)",
       "pe_need_quote": "the need for affordable housing as well as community service needs",
       "pe_mined": "per-assessment-area, 2026-08-22",
-      "ask_usd_prior": 50000,
+      "ask_usd_prior": 25000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "aa_structure": "single CSA-level AA",
       "aa_giving_usd": 1600000,
       "review_period_years": 3,
-      "ask_sizing": "UNSIZED — no Investment or Service Test gap recorded. Either the PE is an Intermediate Small Bank evaluation (Community Development Test only, no Investment/Service components exist) or the component ratings were never read out of the PE."
+      "ask_sizing": "NO TARGET — the Oct 2024 PE rates Lending High Satisfactory / Investment High Satisfactory / Service High Satisfactory. There is no gap on either test our activity feeds.",
+      "ask_verdict": "no-target",
+      "documented_gap": "NONE. All three tests are High Satisfactory or better. This bank was carrying a $25,000 ask with no documented gap; it is a capacity play at best, never a pressure pitch.",
+      "component_ratings": "Lending High Satisfactory / Investment High Satisfactory / Service High Satisfactory — overall Satisfactory",
+      "inv_rating": "High Satisfactory",
+      "svc_rating": "High Satisfactory",
+      "target_status": "no-target",
+      "ask_note": "This bank has NO documented gap on any test our activity feeds. The ask figure is retained only so historical artifacts still render; target_status blocks it from --send."
     },
     "helm_bank": {
       "cert": "32718",
@@ -184,12 +214,12 @@
       "pe_giving": "19 donations totaling $25,161 (avg $1,324) — entire program over the review period",
       "pe_need_quote": "a significant need for … financial literacy education to low- and moderate-income individuals",
       "pe_mined": "per-assessment-area, 2026-08-22",
-      "ask_usd_prior": 7500,
+      "ask_usd_prior": 5000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "component_ratings": "Lending NTI / Community Development Test SATISFACTORY",
-      "documented_gap": "overall NTI is driven by the LENDING test; the CD Test is already Satisfactory",
+      "documented_gap": "Lending Test is Needs to Improve, but that is a lending-distribution problem. The Community Development Test — which covers CD loans, investments AND services, and is therefore the test a grant and an outreach campaign feed — is rated Satisfactory. No documented gap on our test.",
       "cluster_role": "THIRD — a grant does not fix their rating; pitch participation, never remediation",
       "aa_counties_prior": [
         "Miami-Dade",
@@ -202,7 +232,10 @@
       "aa_structure": "two AAs: Miami = Miami-Dade + Broward + Palm Beach (targeted) / Orlando = Orange + Osceola + Seminole, NOT evaluated",
       "aa_giving_usd": 25161,
       "review_period_years": 3.2,
-      "ask_sizing": "UNSIZED — no Investment or Service Test gap recorded. Either the PE is an Intermediate Small Bank evaluation (Community Development Test only, no Investment/Service components exist) or the component ratings were never read out of the PE."
+      "ask_sizing": "NO TARGET — Intermediate Small Bank evaluation. The Community Development Test IS the test our activity feeds, and it is rated SATISFACTORY. No gap.",
+      "ask_verdict": "no-target",
+      "target_status": "no-target",
+      "ask_note": "This bank has NO documented gap on any test our activity feeds. The ask figure is retained only so historical artifacts still render; target_status blocks it from --send."
     },
     "banco_do_brasil_americas": {
       "cert": "26725",
@@ -241,7 +274,8 @@
       "ask_sizing": "sized by src/ask.py: $31,657/yr in the target assessment area x 15% share x 1.00 gap multiplier = $4,748 -> $5,000 (pool)",
       "ask_verdict": "pool",
       "inv_rating": "High Satisfactory",
-      "svc_rating": "Low Satisfactory"
+      "svc_rating": "Low Satisfactory",
+      "target_status": "target"
     },
     "ocean_bank": {
       "cert": "24156",
@@ -278,7 +312,8 @@
       "ask_sizing": "sized by src/ask.py: $164,000/yr in the target assessment area x 15% share x 1.00 gap multiplier = $24,600 -> $25,000 (earmark)",
       "ask_verdict": "earmark",
       "inv_rating": "Low Satisfactory",
-      "svc_rating": ""
+      "svc_rating": "",
+      "target_status": "target"
     },
     "city_national": {
       "cert": 17281,
@@ -312,7 +347,8 @@
       "ask_sizing": "sized by src/ask.py: $47,333/yr in the target assessment area x 15% share x 1.00 gap multiplier = $7,100 -> $7,500 (pool)",
       "ask_verdict": "pool",
       "inv_rating": "Outstanding",
-      "svc_rating": "Low Satisfactory"
+      "svc_rating": "Low Satisfactory",
+      "target_status": "target"
     },
     "mega_bank": {
       "cert": 58401,
@@ -332,13 +368,17 @@
       "pe_mined": "per-assessment-area, 2026-08-22",
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "component_ratings": "Lending NTI / Community Development Test SATISFACTORY",
-      "documented_gap": "current NTI 5/2025, driven by the LENDING test; the CD Test is already Satisfactory",
+      "documented_gap": "Lending Test is Needs to Improve, but that is a lending-distribution problem. The Community Development Test — which covers CD loans, investments AND services, and is therefore the test a grant and an outreach campaign feed — is rated Satisfactory. No documented gap on our test.",
       "cluster_role": "LA cluster, third ask. Participation framing only - a grant does not fix their rating.",
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name.",
       "aa_giving_usd": 46300,
       "review_period_years": 3,
-      "ask_sizing": "UNSIZED — no Investment or Service Test gap recorded. Either the PE is an Intermediate Small Bank evaluation (Community Development Test only, no Investment/Service components exist) or the component ratings were never read out of the PE."
+      "ask_sizing": "NO TARGET — Intermediate Small Bank evaluation. The Community Development Test IS the test our activity feeds, and it is rated SATISFACTORY. No gap.",
+      "ask_usd_prior": 5000,
+      "ask_verdict": "no-target",
+      "target_status": "no-target",
+      "ask_note": "This bank has NO documented gap on any test our activity feeds. The ask figure is retained only so historical artifacts still render; target_status blocks it from --send."
     },
     "western_alliance": {
       "cert": "57512",
@@ -376,7 +416,8 @@
       "ask_sizing": "sized by src/ask.py: $591,776/yr in the target assessment area x 15% share x 1.00 gap multiplier = $88,766 -> $25,000 (earmark)",
       "ask_verdict": "earmark",
       "inv_rating": "Low Satisfactory",
-      "svc_rating": ""
+      "svc_rating": "",
+      "target_status": "target"
     },
     "texas_first_bank": {
       "cert": "23799",
@@ -415,7 +456,8 @@
       "ask_sizing": "sized by src/ask.py: $86,000/yr in the target assessment area x 15% share x 1.00 gap multiplier = $12,900 -> $12,500 (earmark)",
       "ask_verdict": "earmark",
       "inv_rating": "Low Satisfactory",
-      "svc_rating": ""
+      "svc_rating": "",
+      "target_status": "target"
     },
     "third_coast_bank": {
       "cert": "58716",
@@ -450,7 +492,8 @@
       "ask_sizing": "sized by src/ask.py: $33,854/yr in the target assessment area x 15% share x 1.25 gap multiplier = $6,348 -> $7,500 (pool)",
       "ask_verdict": "pool",
       "inv_rating": "Low Satisfactory",
-      "svc_rating": "Low Satisfactory"
+      "svc_rating": "Low Satisfactory",
+      "target_status": "target"
     },
     "lakeside_bank": {
       "cert": "19573",
@@ -483,7 +526,8 @@
       "ask_sizing": "sized by src/ask.py: $24,000/yr in the target assessment area x 15% share x 1.25 gap multiplier = $4,500 -> $5,000 (pool)",
       "ask_verdict": "pool",
       "inv_rating": "Low Satisfactory",
-      "svc_rating": "Low Satisfactory"
+      "svc_rating": "Low Satisfactory",
+      "target_status": "target"
     },
     "first_american_bank": {
       "cert": "3657",
@@ -524,7 +568,8 @@
       "ask_sizing": "sized by src/ask.py: $146,667/yr in the target assessment area x 15% share x 1.25 gap multiplier = $27,500 -> $25,000 (earmark)",
       "ask_verdict": "earmark",
       "inv_rating": "Low Satisfactory",
-      "svc_rating": "Low Satisfactory"
+      "svc_rating": "Low Satisfactory",
+      "target_status": "target"
     },
     "habib_american_bank": {
       "cert": "25093",
@@ -561,7 +606,8 @@
       "ask_sizing": "sized by src/ask.py: $68,333/yr in the target assessment area x 15% share x 1.55 gap multiplier = $15,887 -> $15,000 (earmark)",
       "ask_verdict": "earmark",
       "inv_rating": "Low Satisfactory",
-      "svc_rating": "Needs to Improve"
+      "svc_rating": "Needs to Improve",
+      "target_status": "target"
     },
     "busey_bank": {
       "cert": "16450",
@@ -596,7 +642,8 @@
       "ask_sizing": "sized by src/ask.py: $132,667/yr in the target assessment area x 15% share x 1.00 gap multiplier = $19,900 -> $20,000 (earmark)",
       "ask_verdict": "earmark",
       "inv_rating": "High Satisfactory",
-      "svc_rating": "Low Satisfactory"
+      "svc_rating": "Low Satisfactory",
+      "target_status": "target"
     }
   }
 }

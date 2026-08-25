@@ -35,6 +35,16 @@ class TemplateFieldError(Exception):
     pass
 
 
+class NoDocumentedGapError(Exception):
+    """Raised when --send targets a bank with no gap on any test we feed.
+
+    A pitch to such a bank asks it to fund an activity that cannot help its
+    examination. American Business Bank sat in the roster with a $25,000 ask and
+    three High Satisfactory component ratings; Bank Irvine, the original first
+    target of this channel, is a Small Bank whose only test is Lending -- which
+    no grant can move."""
+
+
 class UnverifiedBankError(Exception):
     pass
 
@@ -192,6 +202,10 @@ def main(argv=None):
     print(f"PDF:  {pdf_path} ({pdf_path.stat().st_size/1024:.0f} KB)")
 
     if args.send:
+        if bank.get("target_status") == "no-target":
+            raise NoDocumentedGapError(
+                f"{args.bank} has target_status:no-target — the PE shows no gap on any "
+                "test our activity feeds, so there is nothing to pitch. See ask_sizing.")
         if not bank.get("verified"):
             raise UnverifiedBankError(
                 f"{args.bank} has verified:false — re-read the PE and flip the "
