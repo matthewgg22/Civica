@@ -825,10 +825,21 @@ def test_no_bank_merges_separately_evaluated_assessment_areas():
 
 
 def test_ocean_bank_does_not_claim_orange_county():
-    """Ocean's PE tables exactly two AAs -- Miami MD (Miami-Dade) and Fort
-    Lauderdale MD (Broward). Orange County was in our record and appears in
-    neither. A county the bank does not serve is the fastest way to lose a
-    CRA officer's confidence."""
+    """Ocean's PE tables exactly two EVALUATED AAs -- Miami MD (Miami-Dade) and
+    Fort Lauderdale MD (Broward) -- and we anchor on Miami-Dade, their primary
+    at 20 of 22 branches.
+
+    The docstring here used to say Orange "appears in neither" and that the bank
+    "does not serve" it. Both were wrong. Orange IS a delineated assessment area:
+    the bank opened an Orlando office and added it, but the office had been open
+    about a month, so "examiners did not evaluate the bank's performance in
+    Orange County." Delineated and unexamined, not absent. Palm Beach was added
+    later still and appears nowhere in the 2023 PE.
+
+    The exclusion stands -- our figures cover the primary evaluated AA -- but for
+    the right reason. Claiming an unexamined county's need as though it were
+    examined would be the error; so would telling a CRA officer their own bank
+    does not serve Orlando."""
     banks, _, _ = generate.load_inputs()
     assert "Orange" not in banks["ocean_bank"]["aa_counties"]
     assert banks["ocean_bank"]["aa_counties"] == ["Miami-Dade"]
