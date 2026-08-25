@@ -297,7 +297,8 @@
       "target_status": "target",
       "active": true,
       "active_end_date": null,
-      "active_checked": "2026-08-25"
+      "active_checked": "2026-08-25",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: NO CRA PAGE reachable on bancodobrasilamericas.com at the standard paths."
     },
     "ocean_bank": {
       "cert": "24156",
@@ -498,7 +499,8 @@
       "target_status": "target",
       "active": true,
       "active_end_date": null,
-      "active_checked": "2026-08-25"
+      "active_checked": "2026-08-25",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: NO CRA PAGE. Six candidate paths all 404 on texasfirst.bank; the only public-file artefact is the 2024 PDF found earlier, which carries no email and no named officer."
     },
     "third_coast_bank": {
       "cert": "58716",
@@ -537,7 +539,8 @@
       "target_status": "target",
       "active": true,
       "active_end_date": null,
-      "active_checked": "2026-08-25"
+      "active_checked": "2026-08-25",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: NO CRA PAGE reachable on thirdcoast.bank. Combined with their open CRA-officer requisition, expect the public-file route to be slow; use the Humble head office."
     },
     "lakeside_bank": {
       "cert": "19573",
@@ -574,7 +577,8 @@
       "target_status": "target",
       "active": true,
       "active_end_date": null,
-      "active_checked": "2026-08-25"
+      "active_checked": "2026-08-25",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: CONSISTENT. Their 2026 Assessment Area Map and Census Tract Listing names Cook and DuPage only — exact match. Their public file also carries a 'State of Illinois - Community Reinvestment Notice', so Lakeside is additionally subject to the Illinois state CRA (205 ILCS 735), a second lever we have not used."
     },
     "first_american_bank": {
       "cert": "3657",
@@ -661,7 +665,8 @@
       "target_status": "target",
       "active": true,
       "active_end_date": null,
-      "active_checked": "2026-08-25"
+      "active_checked": "2026-08-25",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: REBRANDED. Habib American Bank now trades as HAB BANK at hab.bank. No CRA page is reachable anywhere on the new site and /cra, /about-us/cra and /community-reinvestment-act all 404. Address them as HAB Bank. Their New York State CRA evaluations remain public on dfs.ny.gov and are the better evidence route."
     },
     "busey_bank": {
       "cert": "16450",
@@ -738,7 +743,8 @@
       "active_end_date": null,
       "active_checked": "2026-08-25",
       "aa_giving_usd": 11000,
-      "review_period_years": 3
+      "review_period_years": 3,
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: NO CRA PAGE reachable on mechanicsbank.com at the standard paths."
     },
     "river_city_bank": {
       "cert": "18983",
@@ -777,7 +783,8 @@
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "active": true,
       "active_end_date": null,
-      "active_checked": "2026-08-25"
+      "active_checked": "2026-08-25",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: NO CRA PAGE. rivercitybank.com/cra-public-file and /community-reinvestment-act-public-file both 404 and the site's CRA pages are not linked from the homepage; only /community resolves and it carries no CRA content. Fall back to the CRA Officer address, 2480 Natomas Park Dr Ste 100, Sacramento CA 95833."
     },
     "firstbank_tn": {
       "cert": "8663",
@@ -819,7 +826,8 @@
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "active": true,
       "active_end_date": null,
-      "active_checked": "2026-08-25"
+      "active_checked": "2026-08-25",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: CONSISTENT. Their FY2026 CRA public file confirms the Nashville MSA AA as Cannon, Davidson, Dickson, Rutherford, Williamson and Wilson — exact match — and the bundled PE contains BOTH spellings, confirming 'Canon' is a typo for Cannon. The page also confirms the 2022 FDIC exam and Satisfactory rating. NOTE: BankFind lists this bank as Fed-supervised today while the PE was FDIC-conducted; the supervisor changed after the exam."
     },
     "ctbc_bank_usa": {
       "cert": "19416",
@@ -949,7 +957,8 @@
           "Cecil"
         ]
       },
-      "artifact_note": "Buildable in COVERAGE mode only. This assessment area spans four states and no state's gross-income fact base can support an absolute claim across it — PA and NJ carry FNS-divergence CAUTIONs and DE and MD have no fact base at all. The national coverage index covers all eleven counties, so the artifact ranks them and states no gap size and no dollar figure. See src/coverage.py."
+      "artifact_note": "Buildable in COVERAGE mode only. This assessment area spans four states and no state's gross-income fact base can support an absolute claim across it — PA and NJ carry FNS-divergence CAUTIONs and DE and MD have no fact base at all. The national coverage index covers all eleven counties, so the artifact ranks them and states no gap size and no dollar figure. See src/coverage.py.",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: NO CRA CONTENT on meridianbanker.com/community — the word CRA does not appear. Main line (866) 327-9199. Their assessment area therefore cannot be re-checked against a current public file; the Nov 2022 PE remains the only source."
     }
   }
 }
