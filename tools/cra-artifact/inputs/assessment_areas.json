@@ -74,7 +74,8 @@
       "target_status": "target",
       "active": true,
       "active_end_date": null,
-      "active_checked": "2026-08-25"
+      "active_checked": "2026-08-25",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: CONSISTENT. hanmi.com/community-reinvestment-act lists nine assessment areas (LA-OC, San Diego, NorCal, Chicago, Dallas, NY-NJ, Houston, Fairfax, Duluth), confirming we target LA-OC alone. Their public-comments file records a 2024 CRA PROTEST LETTER from Southern Dallas Community Development Corporation — the bank is under documented community challenge, though in Dallas rather than our AA."
     },
     "five_star_bank": {
       "cert": "35361",
@@ -338,7 +339,8 @@
       "active": true,
       "active_end_date": null,
       "active_checked": "2026-08-25",
-      "pitch_note": "Orange County is a CLEAN-SLATE angle: a delineated assessment area the examiners have never assessed, so there is no prior record to compare against at the next exam. Palm Beach is newer still. Both sit outside the figures in this artifact, which covers Miami-Dade only."
+      "pitch_note": "Orange County is a CLEAN-SLATE angle: a delineated assessment area the examiners have never assessed, so there is no prior record to compare against at the next exam. Palm Beach is newer still. Both sit outside the figures in this artifact, which covers Miami-Dade only.",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: DIVERGENCE FOUND and resolved — see verify_note. Their file lists four AA counties against our one."
     },
     "city_national": {
       "cert": 17281,
@@ -615,7 +617,8 @@
       "target_status": "target",
       "active": true,
       "active_end_date": null,
-      "active_checked": "2026-08-25"
+      "active_checked": "2026-08-25",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: CONSISTENT (page titled 'IL, WI, FL CRA', matching the Multistate / Florida / Kankakee structure). CONTACT UPGRADED: 'David J. Leeney, CRA Officer at First American Bank, 1650 Louis Avenue, Elk Grove Village, IL 60007' is stated on the bank's OWN CRA page, not merely a search result."
     },
     "habib_american_bank": {
       "cert": "25093",
@@ -695,7 +698,8 @@
       "target_status": "target",
       "active": true,
       "active_end_date": null,
-      "active_checked": "2026-08-25"
+      "active_checked": "2026-08-25",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: our Chicago MD AA (Cook, DuPage, Grundy, Will) is INTACT in Busey's 2026 assessment set. But the institution has expanded enormously since the 2022 PE — the current set also covers Maricopa and Pima (AZ), Dallas/Collin/Tarrant/El Paso (TX), Denver/Arapahoe (CO), Tulsa/Oklahoma (OK), Sedgwick/Johnson/Wyandotte (KS) and Sarasota/Lee (FL), consistent with a merger. Their next exam will cover a far larger footprint than the one we read, which strengthens the timing argument and probably means a larger CD budget."
     },
     "mechanics_bank": {
       "cert": "1768",
@@ -850,7 +854,8 @@
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "active": true,
       "active_end_date": null,
-      "active_checked": "2026-08-25"
+      "active_checked": "2026-08-25",
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: CONSISTENT. ctbcbankusa.com/Community names California, New York and New Jersey, matching the PE's four AAs. The page also names 'Community Services (including financial education)' as a stated focus area — the CRA category our activity falls under."
     },
     "mechanics_bank_bakersfield": {
       "cert": "1768",
