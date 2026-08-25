@@ -905,8 +905,6 @@
       "regulator": "FDIC",
       "exam_method": "Large Bank",
       "target_status": "target",
-      "artifact_status": "blocked",
-      "artifact_block_reason": "NOT BUILDABLE. None of the assessment area's four states resolves in the generator registry. PA and NJ are refused ON PURPOSE — their fact-base summaries carry FNS-divergence CAUTION notes (FNS rates Pennsylvania participation at essentially 100%, a statistically-zero gap), so the artifact's headline metric — absolute unmet need — cannot be stated for them; those figures are usable only for geographic ranking. DE and MD are simply not built. Nine of the eleven counties are in refused states and the other two have no fact base, so not one county in this assessment area can be quantified. The block is on our data, NOT on the bank: the evidence, the gap and the ask below are all sound and ready the moment a PA-appropriate template exists.",
       "inv_rating": "Low Satisfactory",
       "svc_rating": "Low Satisfactory",
       "component_ratings": "Lending High Satisfactory / Investment LOW SATISFACTORY / Service LOW SATISFACTORY — overall Satisfactory",
@@ -928,7 +926,22 @@
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "active": true,
       "active_end_date": null,
-      "active_checked": "2026-08-25"
+      "active_checked": "2026-08-25",
+      "aa_counties_other_states": {
+        "NJ": [
+          "Burlington",
+          "Camden",
+          "Gloucester",
+          "Salem"
+        ],
+        "DE": [
+          "New Castle"
+        ],
+        "MD": [
+          "Cecil"
+        ]
+      },
+      "artifact_note": "Buildable in COVERAGE mode only. This assessment area spans four states and no state's gross-income fact base can support an absolute claim across it — PA and NJ carry FNS-divergence CAUTIONs and DE and MD have no fact base at all. The national coverage index covers all eleven counties, so the artifact ranks them and states no gap size and no dollar figure. See src/coverage.py."
     }
   }
 }

@@ -74,6 +74,24 @@ STATES = {
            "model_note": "estimated directly from 2023 ACS 1-Year PUMS household records (gross-income eligibility test, survey-weighted)",
            "method_short": "survey-weighted fact base",
            "method_bullet": "Estimated directly from the 2023 American Community Survey 1-Year Public Use Microdata Sample (PUMS): households passing the SNAP gross-income test (130% of the federal poverty guideline by household size) that do not report SNAP receipt, survey-weighted, allocated from Public Use Microdata Areas to counties by a tract-weighted crosswalk."},
+    # ---- FNS-divergence states -------------------------------------------
+    # These carry a CAUTION in their fact base: the gross-income proxy and the
+    # FNS administrative estimate disagree badly, and in these states the proxy's
+    # upward biases dominate. They are wired in "coverage" mode -- the artifact
+    # ranks counties by relative coverage and states NO absolute gap and NO
+    # unclaimed-dollar figure. See src/coverage.py.
+    "PA": {"fips": "42", "metrics": REPO_ROOT / "data-ops/sample/pa-snap-gap/pa_county_metrics.csv",
+           "geojson": "national", "program_ref": "SNAP", "headline_mode": "coverage",
+           "fns_note": "USDA FNS rates Pennsylvania participation at 100% (a capped estimate) under federal eligibility rules for FY2022 — statistically, no measurable enrollment gap. This document therefore makes no claim about the number of eligible residents not enrolled, and puts no dollar figure on unclaimed benefits.",
+           "model_note": "ranked from the national county coverage index (ACS 2024 5-year, tables B22003 and B17017)",
+           "method_short": "relative coverage ranking",
+           "method_bullet": "Counties are RANKED, not counted. Coverage is SNAP households divided by households below 100% of the federal poverty line (ACS 2024 5-year, B22003 and B17017). Because SNAP eligibility reaches roughly 130-200% of poverty while that denominator stops at 100%, coverage above 1.0 is expected and does not indicate over-enrollment. This is a screening index for choosing where to work; it is not an eligibility model and produces no population estimate."},
+    "NJ": {"fips": "34", "metrics": REPO_ROOT / "data-ops/sample/nj-snap-gap/nj_county_metrics.csv",
+           "geojson": "national", "program_ref": "SNAP", "headline_mode": "coverage",
+           "fns_note": "USDA FNS rates New Jersey participation at 91% for FY2022 — roughly 70,000 eligible residents not enrolled statewide, far below what a gross-income proxy suggests. This document therefore makes no claim about the number of eligible residents not enrolled in this assessment area, and puts no dollar figure on unclaimed benefits.",
+           "model_note": "ranked from the national county coverage index (ACS 2024 5-year, tables B22003 and B17017)",
+           "method_short": "relative coverage ranking",
+           "method_bullet": "Counties are RANKED, not counted. Coverage is SNAP households divided by households below 100% of the federal poverty line (ACS 2024 5-year, B22003 and B17017). Because SNAP eligibility reaches roughly 130-200% of poverty while that denominator stops at 100%, coverage above 1.0 is expected and does not indicate over-enrollment. This is a screening index for choosing where to work; it is not an eligibility model and produces no population estimate."},
     "IL": {"fips": "17", "metrics": REPO_ROOT / "data-ops/sample/il-snap-gap/il_county_metrics.csv",
            "geojson": "national", "program_ref": "SNAP",
            "model_note": "estimated directly from 2023 ACS 1-Year PUMS household records (gross-income eligibility test, survey-weighted)",

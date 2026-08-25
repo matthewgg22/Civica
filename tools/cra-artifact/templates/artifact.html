@@ -76,11 +76,7 @@
 <!-- PAGE 1 — the need -->
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 1 of 5</div></div>
-  <div class="big">[[headline_unenrolled]]</div>
-  <div class="head-sentence">eligible residents of <em>your assessment area</em> are not receiving [[program_ref]] benefits they qualify for.</div>
-  <div class="subline">That is an estimated <strong>[[benefit_range]] per year</strong> in unclaimed federal nutrition benefits that would be spent in [[aa_label]] grocery stores.</div>
-  <div class="qualifier">Estimated from 2023 ACS 1-Year PUMS ([[method_short]]); dollar range reflects household-size assumptions, not a confidence interval. Methodology and known biases: page 5.</div>
-  [[ratio_line]]
+  [[headline_block]]
   <div class="maprow">
     <div class="mapbox">
       <div class="maplabel">[[map_caption]]</div>
@@ -88,9 +84,7 @@
       <div class="legend"><span><span class="sw" style="background:#1d4d3b"></span>assessment area</span><span><span class="sw" style="background:#3f7360"></span>higher need</span><span><span class="sw" style="background:#cdddd5"></span>lower need</span><span><span class="sw" style="background:#e8eae9;border:1px solid #d8ddda"></span>no data</span></div>
     </div>
     <div class="stats">
-      <div class="stat"><div class="label">Eligible residents, est.</div><div class="value">[[eligible_fmt]]</div><div class="note">in covered assessment-area counties</div></div>
-      <div class="stat"><div class="label">Currently enrolled, est.</div><div class="value">[[aa_enrolled_pct]]%</div><div class="note">vs. [[state_enrolled_pct]]% statewide</div></div>
-      <div class="stat"><div class="label">Avg. household benefit</div><div class="value">$[[benefit_monthly]]/mo</div><div class="note">USDA FNS, FY2024 national average</div></div>
+      [[stat_tiles]]
     </div>
   </div>
   <div class="research">
@@ -141,7 +135,7 @@
   <div class="projected-wrap">
     <div class="watermark"><span>PROJECTED</span></div>
     <table class="report">
-      <caption>Illustrative one-quarter pilot at $[[ask_fmt]], [[aa_label]]. Conservative and mid-range scenarios; all figures projected from the assumption set on page 4.</caption>
+      <caption>Illustrative one-quarter pilot at $[[ask_fmt]], [[aa_label]]. Conservative and mid-range scenarios; all figures projected from the assumption set on page 4.[[funnel_caveat]]</caption>
       <thead><tr><th>Quarterly outcome</th><th>Conservative</th><th>Mid-range</th></tr></thead>
       <tbody>
         <tr><td colspan="3" style="background:var(--tint); font-size:8pt; letter-spacing:.08em; text-transform:uppercase; text-align:left;">Delivery &amp; service — observed in-product</td></tr>
