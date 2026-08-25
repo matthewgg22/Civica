@@ -204,8 +204,21 @@ def test_pdf_smoke(tmp_path):
 
 # ---- multi-state wiring ------------------------------------------------------
 def test_unsupported_state_refused():
+    """A state with no fact base at all must still be refused.
+
+    This used to assert PA. PA was refused because its fact base diverges from
+    FNS, which is a different problem from having no data -- and the right
+    answer turned out to be a coverage-mode template, not exclusion. Wyoming has
+    no fact base of any kind, so it is the honest example now."""
     with pytest.raises(states.UnsupportedStateError):
-        states.state_meta("PA")  # FNS-divergence exclusion is deliberate
+        states.state_meta("WY")
+
+
+def test_the_fns_divergence_states_are_supported_but_constrained():
+    """PA and NJ are wired, and wired in coverage mode specifically. If either
+    ever silently became a normal absolute-claim state, this fails."""
+    for st in ("PA", "NJ"):
+        assert states.state_meta(st)["headline_mode"] == "coverage"
 
 def test_fl_metrics_load_and_state_average():
     meta = states.state_meta("FL")
@@ -828,12 +841,17 @@ def test_a_blocked_bank_is_refused_loudly_not_by_an_opaque_registry_error():
     built. Nine of eleven counties are in refused states and the other two have no
     data. The generator must say that, rather than surfacing 'state not wired'."""
     banks, _a, _o = generate.load_inputs()
-    blocked = {k: b for k, b in banks.items() if b.get("artifact_status") == "blocked"}
-    assert "meridian_bank" in blocked
-    for key, bank in blocked.items():
-        assert bank.get("artifact_block_reason"), f"{key}: blocked without a reason"
-        with pytest.raises(states.ArtifactBlockedError):
-            generate.main(["--bank", key, "--html-only"])
+    # Meridian was the original member and is no longer blocked -- coverage mode
+    # unblocked it. The guard still matters for the next such bank, so it is
+    # exercised against a fixture rather than deleted along with its last user.
+    fixture = dict(banks["meridian_bank"])
+    fixture["artifact_status"] = "blocked"
+    fixture["artifact_block_reason"] = "fixture: no usable fact base"
+    with pytest.raises(states.ArtifactBlockedError):
+        states.assert_buildable("__blocked_fixture__", fixture)
+    for key, bank in banks.items():
+        if bank.get("artifact_status") == "blocked":
+            assert bank.get("artifact_block_reason"), f"{key}: blocked without a reason"
 
 
 def test_a_blocked_bank_still_carries_full_evidence():
@@ -846,3 +864,7 @@ def test_a_blocked_bank_still_carries_full_evidence():
         assert bank.get("verified") is True, f"{key}: blocked AND unverified"
         assert bank.get("aa_giving_usd"), f"{key}: no assessment-area giving recorded"
         assert bank.get("ask_usd"), f"{key}: no ask computed"
+    # Meridian kept its full evidence while blocked, which is why unblocking it
+    # required no rework at all.
+    m = banks["meridian_bank"]
+    assert m["verified"] is True and m["aa_giving_usd"] and m["ask_usd"]
