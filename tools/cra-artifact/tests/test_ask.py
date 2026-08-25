@@ -65,7 +65,7 @@ def test_sized_banks_agree_with_the_formula():
     a hand-edited number can drift away from its own stated basis."""
     banks, _a, _o = generate.load_inputs()
     for key, b in banks.items():
-        if "UNSIZED" in b.get("ask_sizing", ""):
+        if b.get("target_status") != "target" or "UNSIZED" in b.get("ask_sizing", ""):
             continue
         amt, yrs = b.get("aa_giving_usd"), b.get("review_period_years")
         assert amt and yrs, f"{key}: sized but missing aa_giving_usd/review_period_years"
@@ -78,6 +78,26 @@ def test_sized_banks_store_their_ratings_as_data_not_only_prose():
     as fields, or the ask cannot be recomputed when a PE is re-read."""
     banks, _a, _o = generate.load_inputs()
     for key, b in banks.items():
-        if "UNSIZED" in b.get("ask_sizing", ""):
+        if b.get("target_status") != "target" or "UNSIZED" in b.get("ask_sizing", ""):
             continue
         assert "inv_rating" in b and "svc_rating" in b, f"{key}: ratings not stored as fields"
+
+
+def test_send_refuses_a_bank_with_no_gap_on_any_test_we_feed():
+    """American Business Bank carried a $25,000 ask against three High
+    Satisfactory ratings, and Bank Irvine -- this channel's original first
+    target -- is a Small Bank whose only test is Lending, which no grant moves.
+    Both must be unsendable rather than merely mis-sized."""
+    from src import generate
+    banks, _a, _o = generate.load_inputs()
+    flagged = {k for k, b in banks.items() if b.get("target_status") == "no-target"}
+    assert {"american_business_bank", "bank_irvine", "helm_bank", "mega_bank"} <= flagged
+    for key in flagged:
+        assert "NO TARGET" in banks[key].get("ask_sizing", ""), f"{key}: no stated reason"
+
+
+def test_every_bank_declares_a_target_status():
+    from src import generate
+    banks, _a, _o = generate.load_inputs()
+    for key, b in banks.items():
+        assert b.get("target_status") in ("target", "no-target"), key

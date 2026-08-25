@@ -152,6 +152,7 @@ def test_send_refuses_unverified_bank(monkeypatch):
     depend on real data happening to be in the failing state."""
     banks, assumptions, org = generate.load_inputs()
     fake = dict(banks["bank_irvine"]); fake["verified"] = False
+    fake["target_status"] = "target"  # isolate the verified:false path from the no-target guard
     patched = dict(banks); patched["__unverified_fixture__"] = fake
     monkeypatch.setattr(generate, "load_inputs",
                         lambda: (patched, assumptions, org))
@@ -627,12 +628,19 @@ def test_every_bank_ask_is_anchored_to_disclosed_giving_in_its_target_aa():
 
 
 def test_the_per_aa_rule_can_raise_an_ask_not_only_lower_it():
-    """Guards against reading the correction as 'always ask for less'. Hanmi's
-    prior $15,000 sat below their average Los Angeles donation of $20,077."""
+    """Guards against reading the correction as 'always ask for less'.
+
+    Hanmi was the original example, on the reasoning that its prior $15,000 sat
+    below its average Los Angeles donation of $20,077. src/ask.py disagreed and
+    moved it back to $15,000 -- anchoring on a share of the assessment area's
+    ANNUAL budget ($93,693/yr) rather than on the size of a typical cheque. The
+    principle still holds, so the test now points at the banks where the rule
+    actually raised the ask."""
     banks, _, _ = generate.load_inputs()
-    h = banks["hanmi_bank"]
-    assert h["ask_usd"] > h["ask_usd_prior"]
-    assert "281,080" in h["pe_giving"]
+    raised = {k: b for k, b in banks.items()
+              if b.get("ask_usd_prior") and b["ask_usd"] > b["ask_usd_prior"]}
+    assert raised, "the per-AA rule must be able to raise an ask, not only lower it"
+    assert "first_american_bank" in raised and "busey_bank" in raised
 
 
 # ---- pro rata attribution for pooled county programs -------------------------
