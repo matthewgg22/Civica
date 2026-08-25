@@ -10,7 +10,45 @@ send"* — the step that broke five of eight banks in the earlier adversarial pa
 Two things came out of this: the OCC/Fed route, which rescued Maricopa and Harris, produces
 **nothing** in either county; and reading the PEs **changed the answer for Kings**.
 
-## Cook: Lakeside Bank
+## Cook: Busey Bank — the dispute is resolved, and it is the primary
+
+Busey (cert 16450, **$12.45B**) had been flagged DISPUTED because the FDIC API and the PE
+text disagreed on its Service rating. **The API record is corrupt.**
+
+Its 2022 CRAPES row carries `LENDING_RATING` **and** `SERVICE_RATING` both as *"Substantial
+Non Complianc"*, with `INVEST_RATING` and `RATING_POINTS` **missing entirely** — the only one
+of Busey's eleven records missing those fields. Every other record from 1992 onward is
+complete and internally consistent.
+
+The row is also impossible on its face: **a bank cannot be rated Satisfactory overall with a
+Lending Test at Substantial Noncompliance**, since the lending test is weighted most heavily.
+That contradiction is the proof, independent of the PE.
+
+The PE states plainly: **Lending Low Satisfactory / Investment High Satisfactory / Service Low
+Satisfactory**, overall Satisfactory. So the disagreement was never only about Service — the
+API is wrong on two fields and silent on two more.
+
+Reading the PE also promotes Busey to the **primary Cook target**:
+
+| | |
+|---|---|
+| Assets | **$12.45B** — largest verified Cook candidate |
+| PE | Mar 25, 2022 (published Dec 2022) — **4 years old, next exam likely imminent** |
+| Service Test | Low Satisfactory institution-wide |
+| Chicago MD AA | *"Cook, DuPage, Grundy, and Will County"* — 15 branches, second-most weight of the Illinois AAs |
+| Giving in that AA | 89 donations totaling **$398,000** (up from $41,000 at the prior exam) |
+| Ask | **$15,000** |
+
+The reason it is the best fit is not the size. In the Chicago MD AA the PE finds **"poor
+performance under the Service Test"** — harsher than the institution-wide rating — and names
+the cause: *"Busey Bank has no branches, limited service facilities, or ATMs within low- and
+moderate-income areas."* A digital outreach campaign reaching LMI households across Cook
+County is a service-delivery response to that specific finding, not a generic donation.
+
+Busey also shows the per-AA rule at its most extreme: **$398,000 in Chicago against $2,000 in
+Bloomington** — a 199× spread inside one bank.
+
+## Cook secondary: Lakeside Bank
 
 | | |
 |---|---|
@@ -26,7 +64,7 @@ question of *which* market a component rating describes; Lakeside has only one, 
 gaps describe Cook County directly. Both counties are whole-county, so county data does not
 overstate the area either. Seven locations in Cook, six of them in Chicago.
 
-**Cook secondary — First American Bank** (cert 3657, $7.1B): Investment and Service both Low
+**Cook third — First American Bank** (cert 3657, $7.1B): Investment and Service both Low
 Satisfactory, and the PE says the Investment Test is Low Satisfactory *in the Multistate AA
 specifically* — the gap is confirmed in the target market. 166 donations totaling **$440,000**
 there. Ask **$15,000**. Kenosha County, Wisconsin is in its AA and is excluded from our
@@ -88,8 +126,10 @@ Cook County alone carries **728,176 eligible people at a 46.2% non-enrollment ra
 
 ## Open
 
-- **Busey Bank (cert 16450) remains DISPUTED** — the FDIC API and the PE text disagree on its
-  Service rating. Unresolved; do not use it until someone reads the PE.
+- ~~Busey Bank remains DISPUTED.~~ **Resolved 2026-08-24: the API row is corrupt, the PE
+  governs, and Busey is now the primary Cook target.**
+- **Busey's PE is 4 years old.** Confirm no newer evaluation has published before sending —
+  and note the timing argument cuts our way if one is pending.
 - Parkway Bank, Republic Bank of Chicago and Shinhan Bank America are still unverified
   FDIC-pass candidates. They are plausible, not confirmed.
 - IL and NY charitable solicitation registration are send gates. **NY CHAR410 is known to be

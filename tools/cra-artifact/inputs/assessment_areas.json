@@ -488,6 +488,35 @@
       "cluster_role": "Kings primary — the only verified Kings candidate whose documented gap is actually in the New York assessment area",
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+    },
+    "busey_bank": {
+      "cert": "16450",
+      "name": "Busey Bank",
+      "state": "IL",
+      "aa_counties": [
+        "Cook",
+        "DuPage",
+        "Grundy",
+        "Will"
+      ],
+      "aa_structure": "EIGHT assessment areas across Illinois and Missouri: Chicago MD (the target), Champaign MSA, Peoria MSA, Bloomington MSA, Decatur MSA, Illinois Non-MSA, St. Louis MSA and others. Do NOT merge — per-AA giving ranges from $2,000 (Bloomington) to $398,000 (Chicago).",
+      "pe_date": "2022-03-25",
+      "pe_url": "https://crapes.fdic.gov/publish/2022/16450_220325.PDF",
+      "regulator": "FDIC",
+      "exam_method": "Large Bank",
+      "ask_usd": 15000,
+      "ask_usd_prior": 10000,
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide: 89 qualified donations totaling $398,000 in the Chicago MD assessment area (avg ~$4,472), which is 19.9% of the bank's total investment and donation activity by dollar volume. Their Bloomington assessment area by contrast received six donations totaling $2,000 — a 199x spread across assessment areas of the same bank, and the clearest case in the roster for why the ask is anchored per-AA.",
+      "verified": true,
+      "verify_note": "Verified 2026-08-24 from the Mar 25, 2022 FDIC public evaluation (published Dec 2022). The PE delineates the target assessment area: 'The Chicago MD assessment area includes Cook, DuPage, Grundy, and Will County. This area encompasses all of Chicago and most of the surrounding metropolitan area.' Fifteen branches there, and the Chicago MD 'carried the second most weight in arriving at overall conclusions' among the Illinois assessment areas. This record also RESOLVES the prior DISPUTED flag: the FDIC CRAPES API's 2022 record carries LENDING_RATING and SERVICE_RATING both as 'Substantial Non Complianc' with INVEST_RATING and RATING_POINTS missing entirely, while the PE plainly states Lending Low Satisfactory / Investment High Satisfactory / Service Low Satisfactory. The API record is corrupt; the PE governs.",
+      "pe_giving": "89 qualified donations totaling $398,000 in the Chicago MD assessment area (alongside 38 qualified investments totaling $44.8M); up from 28 donations totaling $41,000 at the prior evaluation",
+      "pe_need_quote": "Delivery systems are accessible to limited portions of the assessment area. Busey Bank has no branches, limited service facilities, or ATMs within low- and moderate-income areas",
+      "pe_mined": "per-assessment-area, 2026-08-24",
+      "component_ratings": "Lending Low Satisfactory / Investment High Satisfactory / Service LOW SATISFACTORY — overall Satisfactory",
+      "documented_gap": "The Service Test is Low Satisfactory institution-wide, and in the Chicago MD assessment area specifically the PE finds 'poor performance under the Service Test' — a harsher AA-level conclusion than the institution rating. The stated reason is directly addressable: the bank has 'no branches, limited service facilities, or ATMs within low- and moderate-income areas' of the AA. A digital outreach campaign that reaches LMI households across Cook County is a service-delivery response to exactly that finding, not a generic donation.",
+      "cluster_role": "Cook primary by size and by fit — largest verified Cook candidate at $12.45B, deepest Cook-area giving at $398,000, and the only one whose PE names an LMI service-delivery gap our activity answers directly",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
     }
   }
 }
