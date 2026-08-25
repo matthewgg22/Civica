@@ -644,6 +644,38 @@
       "inv_rating": "High Satisfactory",
       "svc_rating": "Low Satisfactory",
       "target_status": "target"
+    },
+    "mechanics_bank": {
+      "cert": "1768",
+      "name": "Mechanics Bank",
+      "state": "CA",
+      "aa_counties": [
+        "Fresno",
+        "Kings"
+      ],
+      "aa_structure": "MANY California assessment areas (San Francisco, Los Angeles, Sacramento full-scope; Fresno, Bakersfield, Chico, El Centro, Redding, Salinas, Visalia, Santa Barbara and California Non-MSA limited-scope). The Fresno AA is targeted here. The Bakersfield AA — 'the entirety of the Bakersfield-Delano MSA', i.e. KERN COUNTY — is a separate delineated AA and the answer for Kern; it needs its own record. Do NOT merge them.",
+      "pe_date": "2022-04-18",
+      "pe_url": "https://crapes.fdic.gov/publish/2022/1768_220418.PDF",
+      "regulator": "FDIC",
+      "exam_method": "Large Bank",
+      "target_status": "target",
+      "inv_rating": "Outstanding",
+      "svc_rating": "Low Satisfactory",
+      "component_ratings": "Lending Low Satisfactory / Investment Outstanding / Service LOW SATISFACTORY — overall Satisfactory",
+      "ask_usd": 15000,
+      "ask_usd_prior": 15000,
+      "ask_basis": "anchored on the TARGET assessment area — but see ask_sizing: the Fresno assessment area is limited-scope and the PE gives no per-assessment-area donation figure, so this ask is a PLACEHOLDER and must not be sent.",
+      "ask_sizing": "UNSIZED — the gap is real and the counties are confirmed, but the Fresno and Bakersfield assessment areas are LIMITED-SCOPE, so the PE breaks out no per-assessment-area donation figure for either. Institution-wide giving is large (151 donations $621,000 in 2019; 267 totaling $1.4M in 2020; 239 totaling $1.3M in 2021) but the per-AA rule forbids anchoring on it. Needs a follow-up read or a direct ask to the bank.",
+      "ask_verdict": "unsized",
+      "verified": true,
+      "verify_note": "Verified 2026-08-24 from the Apr 18, 2022 FDIC public evaluation. The PE delineates the Fresno assessment area as 'a portion of Fresno CSA #260, which includes Fresno MSA #23420 and Hanford-Corcoran MSA #25260', excluding Madera — i.e. Fresno and Kings counties, and the AA table lists it as 'Fresno, Kings'. This record also RESOLVES a second corrupt CRAPES row: the API reports LENDING_RATING and SERVICE_RATING both as 'Substantial Non Complianc' against a Satisfactory overall rating, which cannot be true; the PE states Lending Low Satisfactory / Investment Outstanding / Service Low Satisfactory.",
+      "pe_giving": "INSTITUTION-WIDE ONLY — 151 donations totaling $621,000 (2019), 267 totaling $1.4M (2020), 239 totaling $1.3M (2021). The PE gives no Fresno-AA or Bakersfield-AA donation figure.",
+      "pe_need_quote": "The Service Test is rated “Low-Satisfactory.” The bank’s performance in California is consistent with this rating",
+      "pe_mined": "per-assessment-area, 2026-08-24",
+      "documented_gap": "Service Test is Low Satisfactory institution-wide, and the PE says California performance is consistent with that rating. Investment is Outstanding, so the pitch is the service side: outreach that reaches LMI households across the assessment area.",
+      "cluster_role": "Fresno + Kern answer — the only pressured bank with both counties in delineated assessment areas, and it was hidden by a corrupt API row",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
     }
   }
 }
