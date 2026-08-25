@@ -751,6 +751,40 @@
       "cluster_role": "Davidson/Nashville — real Service gap and a quotable LMI delivery failure, but a POOL candidate: this is a $12.2B bank whose entire donation programme is $126,000 because it meets CRA through large affordable-housing investments rather than grants.",
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+    },
+    "ctbc_bank_usa": {
+      "cert": "19416",
+      "name": "CTBC Bank Corp. (USA)",
+      "state": "CA",
+      "aa_counties": [
+        "Los Angeles",
+        "Orange"
+      ],
+      "aa_structure": "FOUR assessment areas across California, New York and New Jersey. Two are in California; the Los Angeles AA is targeted. Do NOT merge — per-AA giving is separately disclosed.",
+      "pe_date": "2023-02-06",
+      "pe_url": "https://crapes.fdic.gov/publish/2023/19416_230206.PDF",
+      "regulator": "FDIC",
+      "exam_method": "Large Bank",
+      "target_status": "target",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": "Low Satisfactory",
+      "component_ratings": "Lending High Satisfactory / Investment LOW SATISFACTORY / Service LOW SATISFACTORY — overall Satisfactory",
+      "aa_giving_usd": 490000,
+      "review_period_years": 3,
+      "ask_usd": 25000,
+      "ask_usd_prior": 25000,
+      "ask_verdict": "earmark",
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide: 81 qualified grants and donations totaling $490,000 in the Los Angeles assessment area, of which Community Services — the category SNAP outreach falls in — is 50 donations totaling $339,000. Bank-wide giving across all four assessment areas was $869,000 over the same period.",
+      "ask_sizing": "sized by src/ask.py: $163,333/yr in the Los Angeles assessment area x 15% x 1.25 = $30,625 -> $25,000 (earmark, at the ceiling)",
+      "verified": true,
+      "verify_note": "Verified 2026-08-25 from the Feb 6, 2023 FDIC public evaluation. The PE delineates the target assessment area: 'The Los Angeles AA is comprised of Los Angeles and Orange Counties … These two MDs comprise the entirety of the Los Angeles-Long Beach-Anaheim CSA. There were no changes to the AA since the previous evaluation.' RESOLVES a 2022-vintage corrupt row: the API reported BOTH Investment and Service as 'Substantial Non Complianc'; the PE states Lending High Satisfactory / Investment Low Satisfactory / Service Low Satisfactory. The gap is real but two grades milder than the API claimed.",
+      "pe_giving": "81 qualified grants and donations totaling $490,000 in the Los Angeles assessment area (Community Services 50 donations / $339,000); bank-wide $869,000 across all four assessment areas",
+      "pe_need_quote": "On an annualized basis, the institution’s CD investments and grants decreased by 20.3 percent since the previous evaluation",
+      "pe_mined": "per-assessment-area, 2026-08-25",
+      "documented_gap": "BOTH tests our activity feeds are Low Satisfactory. In the Los Angeles assessment area the PE adds that CD investments and grants DECREASED 20.3% on an annualised basis since the prior evaluation, and that the bank 'does not lead peer institutions operating in the AA'.",
+      "cluster_role": "Los Angeles — the #1 SNAP enrollment gap in the country. Overlaps Hanmi, Mega and City National on Los Angeles and Orange, so pro rata attribution applies.",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
     }
   }
 }
