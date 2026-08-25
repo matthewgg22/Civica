@@ -172,6 +172,7 @@ def _pool_block(pool, budget, co_txt=""):
 
 
 def build(bank, org, assumptions, args):
+    states.assert_buildable(bank.get("name", "bank"), bank)
     meta = states.state_meta(bank["state"])  # no default: a missing state must fail, not silently score against CA
     metrics = score.load_county_metrics(meta["metrics"])
     need = score.bank_need(bank["aa_counties"], metrics, assumptions)

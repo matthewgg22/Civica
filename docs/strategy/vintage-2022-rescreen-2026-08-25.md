@@ -108,6 +108,45 @@ exactly the trap: a *correct* rating on an institution that no longer exists. **
 verification and liveness verification are separate checks, and neither substitutes for
 the other.** Harris drops to three candidates.
 
+## Meridian Bank — read, and blocked on all eleven counties
+
+Meridian's evidence is the strongest of any blocked bank in the roster:
+
+| | |
+|---|---|
+| Regulator | FDIC (cert 57777), $2.5B |
+| PE | Nov 29, 2022 |
+| **Investment / Service** | **Low Satisfactory / Low Satisfactory** |
+| Assessment area | **ONE** AA of *"11 contiguous counties"* spanning **four states** |
+| Giving | **65 donations/EITCs totaling $511,526** — single AA, so this *is* the AA figure |
+| Ask | **$25,000** (formula returns $31,970, clamped) |
+
+The AA is the Philadelphia-Camden-Wilmington PA-NJ-DE-MD MSA in its entirety: Bucks,
+Chester, Montgomery, Delaware and **Philadelphia** (PA); Burlington, Camden, Gloucester and
+Salem (NJ); New Castle (DE); Cecil (MD).
+
+**The block is worse than "PA is refused".** PA and NJ are refused on purpose — their fact
+bases carry FNS-divergence CAUTION notes, and FNS rates Pennsylvania participation at
+essentially 100%, a statistically-zero gap, so our headline metric cannot be stated there.
+DE and MD were never built. **Nine of eleven counties sit in refused states and the other
+two have no fact base, so not one county in this assessment area can be quantified.**
+
+The AA contains **Philadelphia County — the 18th largest SNAP enrollment gap in the
+country** — which is exactly the county our data cannot speak to.
+
+Loaded with `artifact_status: blocked` and a stated reason. The generator now refuses it
+with `ArtifactBlockedError` rather than an opaque "state not wired", and tests enforce that
+a blocked bank still carries full evidence — verified, giving recorded, ask computed — so
+nothing needs redoing when the fact base arrives.
+
+One caveat on the anchor: the $511,526 is *"65 donations or educational improvement tax
+credits (EITCs)"*. EITCs are a Pennsylvania tax-credit programme rather than straight
+grants, so the donation-only figure is lower by an unstated amount and this ask sits at the
+optimistic end.
+
 ## Open
 
-- Meridian Bank is blocked on the PA registry refusal, not on evidence.
+- **Unblocking Meridian is a product decision, not a data chore.** It needs a template
+  variant that leads with something other than absolute unmet need for FNS-divergent
+  states. That changes the deliverable's core claim structure for a whole class of states
+  and should be decided deliberately.

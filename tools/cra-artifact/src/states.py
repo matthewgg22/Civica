@@ -11,6 +11,25 @@ the generator refuses those states until a state-appropriate template exists.
 """
 from pathlib import Path
 
+
+class ArtifactBlockedError(Exception):
+    """Raised for a bank whose evidence is sound but whose fact base is not.
+
+    Meridian Bank's single assessment area spans Pennsylvania, New Jersey,
+    Delaware and Maryland. PA and NJ are refused on purpose -- their fact bases
+    carry FNS-divergence CAUTION notes, so the artifact's headline metric cannot
+    be stated for them -- and DE and MD were never built. Nine of its eleven
+    counties are in refused states and the other two have no data, so no figure
+    in that assessment area can be produced. The bank is fine; our data is not.
+    """
+
+
+def assert_buildable(key, bank):
+    """Refuse a blocked bank loudly, before any figure is computed."""
+    if bank.get("artifact_status") == "blocked":
+        raise ArtifactBlockedError(
+            f"{key}: {bank.get('artifact_block_reason', 'no reason recorded')}")
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 STATES = {
