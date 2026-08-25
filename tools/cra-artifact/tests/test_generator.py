@@ -337,6 +337,13 @@ def test_every_bank_declares_a_state_the_registry_supports():
     banks, _a, _o = generate.load_inputs()
     for key, bank in banks.items():
         assert bank.get("state"), f"{key} does not declare a state"
+        if bank.get("artifact_status") == "blocked":
+            # A blocked bank is one whose evidence is sound but whose state has no
+            # usable fact base -- Meridian's single assessment area spans PA, NJ, DE
+            # and MD, and not one of the four resolves. It must still declare its
+            # state and say WHY it cannot be built, so the block is legible later.
+            assert bank.get("artifact_block_reason"), f"{key}: blocked without a reason"
+            continue
         meta = states.state_meta(bank["state"])  # raises for an unregistered state
         metrics = score.load_county_metrics(meta["metrics"])
         covered = [c for c in bank["aa_counties"] if c in metrics]
@@ -350,7 +357,9 @@ def test_every_loaded_bank_memo_is_exactly_one_page():
     """The memo is the bank's exam evidence — it must fit one page, and the
     generator must fail loudly rather than clip content."""
     banks, _a, _o = generate.load_inputs()
-    for key in banks:
+    for key, bank in banks.items():
+        if bank.get("artifact_status") == "blocked":
+            continue  # no figures can be produced; see test_a_blocked_bank_is_refused_loudly
         rc = memo.main(["--bank", key, "--specimen"])  # raises MemoOverflowError if >1
         assert rc == 0
 
@@ -810,3 +819,30 @@ def test_ocean_bank_does_not_claim_orange_county():
     banks, _, _ = generate.load_inputs()
     assert "Orange" not in banks["ocean_bank"]["aa_counties"]
     assert banks["ocean_bank"]["aa_counties"] == ["Miami-Dade"]
+
+
+def test_a_blocked_bank_is_refused_loudly_not_by_an_opaque_registry_error():
+    """Meridian Bank's single assessment area spans PA, NJ, DE and MD. PA and NJ
+    are refused on purpose -- their fact bases carry FNS-divergence CAUTION notes,
+    so the artifact's headline metric cannot be stated -- and DE and MD were never
+    built. Nine of eleven counties are in refused states and the other two have no
+    data. The generator must say that, rather than surfacing 'state not wired'."""
+    banks, _a, _o = generate.load_inputs()
+    blocked = {k: b for k, b in banks.items() if b.get("artifact_status") == "blocked"}
+    assert "meridian_bank" in blocked
+    for key, bank in blocked.items():
+        assert bank.get("artifact_block_reason"), f"{key}: blocked without a reason"
+        with pytest.raises(states.ArtifactBlockedError):
+            generate.main(["--bank", key, "--html-only"])
+
+
+def test_a_blocked_bank_still_carries_full_evidence():
+    """Blocked is a data problem, not an evidence problem. The record must stay
+    send-ready so it needs no rework when the fact base arrives."""
+    banks, _a, _o = generate.load_inputs()
+    for key, bank in banks.items():
+        if bank.get("artifact_status") != "blocked":
+            continue
+        assert bank.get("verified") is True, f"{key}: blocked AND unverified"
+        assert bank.get("aa_giving_usd"), f"{key}: no assessment-area giving recorded"
+        assert bank.get("ask_usd"), f"{key}: no ask computed"
