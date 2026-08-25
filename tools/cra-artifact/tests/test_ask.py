@@ -118,3 +118,39 @@ def test_pool_shares_stay_proportional_to_giving():
     small, _v, _d = size_ask(11_000, 3, "Outstanding", "Low Satisfactory")
     bigger, _v2, _d2 = size_ask(20_000, 3, "Outstanding", "Low Satisfactory")
     assert bigger > small, "a bank that gives more must not be asked for less"
+
+
+def test_every_anchor_names_the_assessment_area_it_came_from():
+    """The recurring failure, three times in one day and always the same way.
+
+    City National carried "$13.2M (institution-wide); one AA $142,000". Both
+    labels were backwards: the $13.2M was the Los Angeles CSA figure and the
+    $142,000 belonged to the Washington MMSA. Ocean carried $492,000 as though
+    it were Miami-Dade when it was the bank-wide total across two assessment
+    areas plus regional activity. FirstBank's $126,000 genuinely is bank-wide.
+
+    A test cannot re-read a PE. What it CAN do is refuse a figure that does not
+    say where it came from -- which is what let all three slip through.
+    """
+    import re
+    banks, _a, _o = generate.load_inputs()
+    NAMES_AA = re.compile(
+        r"(assessment area|rated area|\bAA\b|\bMSA\b|\bMD\b|\bCSA\b|\bMMSA\b)", re.I)
+    SAYS_WIDE = re.compile(
+        r"(institution-wide|bank-wide|bank as a whole|across (all|both))", re.I)
+
+    for key, bank in banks.items():
+        if bank.get("target_status") != "target" or not bank.get("aa_giving_usd"):
+            continue
+        giving = bank.get("pe_giving") or ""
+        assert giving, f"{key}: sized with no pe_giving recorded"
+        assert NAMES_AA.search(giving) or SAYS_WIDE.search(giving), (
+            f"{key}: pe_giving names no assessment area and does not declare "
+            f"itself institution-wide — the City National failure mode: {giving[:90]!r}")
+        if SAYS_WIDE.search(giving) and not NAMES_AA.search(giving):
+            # An institution-wide anchor is allowed only as a stated upper bound.
+            sizing = bank.get("ask_sizing", "")
+            assert re.search(r"upper bound|INSTITUTION-WIDE", sizing, re.I), (
+                f"{key}: anchored on institution-wide giving without saying so in "
+                f"ask_sizing — it must be declared an upper bound, not passed off "
+                f"as an assessment-area figure")
