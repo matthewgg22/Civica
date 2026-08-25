@@ -52,10 +52,8 @@ rata attribution rule applies if both fund.
 
 ## The other live three
 
-**FirstBank (TN, $12.2B)** has a real **Service Test gap** and 132 offices across
-Williamson, Rutherford, Hamilton and Davidson in Tennessee plus Jefferson County,
-Alabama — Nashville and Birmingham. Its PE has a complex full-scope/limited-scope
-structure that was not read here. **This is the largest unworked lead in the roster.**
+**FirstBank (TN, $12.2B)** — AAs now read; see below. Real Service Test gap, but a
+**pool candidate**, not the large earmark its balance sheet suggests.
 
 **Gateway First (OK, $1.9B)** has a genuine Service gap but only 16 offices scattered
 across Oklahoma, Tennessee, Washington, Louisiana and Arizona — four in Tulsa. Too
@@ -74,9 +72,38 @@ Signature Bank, which failed in March 2023. Three of these nine are closed insti
 banks that no longer exist. Berkshire Bank ended in September 2025 — recently enough
 that it would have looked entirely plausible in a pitch list.
 
+## FirstBank — read, and the lesson is that assets do not predict grant capacity
+
+FirstBank runs **five rated areas** (Tennessee, Alabama, Georgia, Kentucky, and a
+Chattanooga multi-state MSA) with five full-scope AAs. The target is:
+
+> "The Nashville MSA AA includes all 281 census tracts that make up Canon, Davidson,
+> Dickson, Rutherford, Williamson, and Wilson Counties, six of 13 total counties that
+> make up the Nashville-Davidson-Murfreesboro-Franklin, Tennessee MSA"
+
+(The PE spells it "Canon". The county is **Cannon** County, FIPS 47015. All six resolve
+in the Tennessee fact base.)
+
+**The Nashville service finding is sharper than the institution rating.** The PE says the
+bank "makes its alternative delivery systems **unreasonably accessible** to significant
+portions of the Nashville MSA AA" and "does not have ATMs in low- and moderate-income
+tracts, thereby reflecting a **very poor** level." That is a documented failure to reach
+LMI households through the bank's own channels — exactly what an outreach campaign
+answers. Nashville's AA also carries a disproportionality ratio of **1.19**, above the
+1.15 display threshold, so the artifact renders it.
+
+**And yet the ask is $7,500 — a pool figure.** FirstBank made 93 qualified investments
+totaling **$84,493,000** "for the bank as a whole", of which **donations are $126,000**.
+It meets CRA through large affordable-housing investments, not grants. Even assuming
+every donated dollar landed in Nashville — a deliberately generous upper bound, since
+the PE gives no per-AA donation figure — the formula returns a pool candidate.
+
+**This is the clearest case yet that asset size does not predict grant capacity.** A
+$12.2B bank with a $126,000 donation programme is a worse earmark prospect than River
+City at $4.0B with $1.4M in a single assessment area. Balance sheet is not the signal;
+disclosed per-AA giving is.
+
 ## Open
 
-- **FirstBank's assessment areas** — read the PE. Davidson (Nashville) and Jefferson
-  (Birmingham) are both meaningful, and Tennessee is already wired into the generator.
 - Re-screen the 2022-vintage window generally, not just the rows the guard caught.
 - Add a liveness check to any future universe build, sourced from BankFind.

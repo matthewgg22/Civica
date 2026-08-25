@@ -712,6 +712,45 @@
       "cluster_role": "Sacramento — overlaps Five Star Bank on El Dorado, Placer, Sacramento and Yolo, so the pro rata attribution rule applies if both fund",
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+    },
+    "firstbank_tn": {
+      "cert": "8663",
+      "rssd": "",
+      "name": "FirstBank",
+      "state": "TN",
+      "aa_counties": [
+        "Davidson",
+        "Rutherford",
+        "Williamson",
+        "Wilson",
+        "Dickson",
+        "Cannon"
+      ],
+      "aa_structure": "FIVE rated areas — Tennessee, Alabama, Georgia, Kentucky and a Chattanooga multi-state MSA — with five full-scope AAs: Nashville MSA (targeted), Knoxville MSA (Knox + Union), Chattanooga Multi-State (Hamilton), Huntsville MSA (Madison AL) and Florence MSA (Lauderdale AL). Limited-scope: Birmingham MSA (Jefferson AL), Dalton MSA (GA), Bowling Green MSA (KY), Jackson MSA (Chester, Crockett, Madison TN). Do NOT merge.",
+      "pe_date": "2022-06-06",
+      "pe_url": "https://crapes.fdic.gov/publish/2022/8663_220606.PDF",
+      "regulator": "FED",
+      "exam_method": "Large Bank",
+      "target_status": "target",
+      "inv_rating": "High Satisfactory",
+      "svc_rating": "Low Satisfactory",
+      "component_ratings": "Lending Low Satisfactory / Investment High Satisfactory / Service LOW SATISFACTORY — overall Satisfactory",
+      "aa_giving_usd": 126000,
+      "review_period_years": 3,
+      "ask_usd": 7500,
+      "ask_usd_prior": 7500,
+      "ask_verdict": "pool",
+      "ask_basis": "the per-assessment area rule CANNOT be satisfied here: the PE gives no donation figure for the target assessment area, so this ask is anchored on the INSTITUTION-WIDE donation total ($126,000) as a deliberately generous upper bound. Even assuming every donated dollar landed in the Nashville assessment area, the result is a pool figure rather than an earmark.",
+      "ask_sizing": "sized by src/ask.py on an upper bound: $42,000/yr institution-wide x 15% x 1.00 = $6,300 -> $7,500 (pool). POOL CANDIDATE.",
+      "verified": true,
+      "verify_note": "Verified 2026-08-24 from the Jun 6, 2022 FDIC public evaluation. The PE delineates the target AA: 'The Nashville MSA AA includes all 281 census tracts that make up Canon, Davidson, Dickson, Rutherford, Williamson, and Wilson Counties, six of 13 total counties that make up the Nashville-Davidson-Murfreesboro-Franklin, Tennessee MSA'. NOTE: the PE spells it 'Canon'; the county is CANNON County, TN (FIPS 47015), and all six resolve in the Tennessee fact base. RESOLVES a fourth corrupt CRAPES row — the API reported LENDING_RATING 'Substantial Non Complianc' with INVEST_RATING missing against a Satisfactory overall rating.",
+      "pe_giving": "INSTITUTION-WIDE ONLY — 93 qualified investments totaling $84,493,000 'for the bank as a whole', of which DONATIONS are just $126,000. The Nashville MSA AA received 45 QIs totaling $39.6M but the PE gives no Nashville donation figure.",
+      "pe_need_quote": "The bank makes its alternative delivery systems unreasonably accessible to significant portions of the Nashville MSA AA … the bank does not have ATMs in low- and moderate-income tracts, thereby reflecting a very poor level",
+      "pe_mined": "per-assessment-area, 2026-08-24",
+      "documented_gap": "Service Test is Low Satisfactory institution-wide, and the Nashville MSA AA finding is sharper than the rating: delivery systems are 'unreasonably accessible to significant portions' of the AA, with no ATMs in low- or moderate-income tracts — 'a very poor level'. That is a documented failure to reach LMI households through the bank's own channels, which is precisely what an outreach campaign answers.",
+      "cluster_role": "Davidson/Nashville — real Service gap and a quotable LMI delivery failure, but a POOL candidate: this is a $12.2B bank whose entire donation programme is $126,000 because it meets CRA through large affordable-housing investments rather than grants.",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
     }
   }
 }
