@@ -676,6 +676,42 @@
       "cluster_role": "Fresno + Kern answer — the only pressured bank with both counties in delineated assessment areas, and it was hidden by a corrupt API row",
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+    },
+    "river_city_bank": {
+      "cert": "18983",
+      "name": "River City Bank",
+      "state": "CA",
+      "aa_counties": [
+        "Sacramento",
+        "Yolo",
+        "Placer",
+        "El Dorado"
+      ],
+      "aa_structure": "TWO assessment areas: Sacramento (targeted — Sacramento, Yolo, Placer, El Dorado) and a separate Contra Costa AA consisting solely of Contra Costa County. Do NOT merge.",
+      "pe_date": "2022-11-02",
+      "pe_url": "https://crapes.fdic.gov/publish/2022/18983_221102.PDF",
+      "regulator": "FDIC",
+      "exam_method": "Large Bank",
+      "target_status": "target",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": "High Satisfactory",
+      "component_ratings": "Lending Low Satisfactory / Investment LOW SATISFACTORY / Service High Satisfactory — overall Satisfactory",
+      "aa_giving_usd": 1400000,
+      "review_period_years": 3,
+      "ask_usd": 25000,
+      "ask_usd_prior": 25000,
+      "ask_verdict": "earmark",
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide: 141 grants and donations totaling $1.4 million in the Sacramento assessment area.",
+      "ask_sizing": "sized by src/ask.py: $466,667/yr in the Sacramento assessment area x 15% x 1.00 = $70,000 -> $25,000 (earmark, at the ceiling)",
+      "verified": true,
+      "verify_note": "Verified 2026-08-24 from the Nov 2, 2022 FDIC public evaluation. The PE delineates 'Sacramento AA - a contiguous area that consists of the following counties: El Dorado, ...' and restates it as 'The Sacramento AA consists of Sacramento, Yolo, Placer, and El Dorado Counties'. A separate Contra Costa AA 'consists solely of Contra Costa County' and is excluded. RESOLVES a third corrupt CRAPES row: the API reports LENDING_RATING 'Substantial Non Complianc' with SERVICE_RATING missing against a Satisfactory overall rating; the PE states Lending Low Satisfactory / Investment Low Satisfactory / Service High Satisfactory.",
+      "pe_giving": "141 grants and donations totaling $1.4 million in the Sacramento assessment area (alongside 5 new investments totaling $13.3M and 7 retained totaling $7.2M)",
+      "pe_need_quote": "The institution has an adequate level of qualified CD investments and grants, although rarely in a leadership position",
+      "pe_mined": "per-assessment-area, 2026-08-24",
+      "documented_gap": "Investment Test is Low Satisfactory — the test a cash grant feeds directly under 12 CFR __.12(t). Service Test is High Satisfactory, so the pitch is the investment side only.",
+      "cluster_role": "Sacramento — overlaps Five Star Bank on El Dorado, Placer, Sacramento and Yolo, so the pro rata attribution rule applies if both fund",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
     }
   }
 }
