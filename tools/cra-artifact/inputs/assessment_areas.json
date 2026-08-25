@@ -23,7 +23,8 @@
       "aa_counties_prior": [
         "Orange"
       ],
-      "aa_structure": "single AA: Los Angeles-Long Beach-Anaheim MSA #31080 (two MDs, both wholly contained)"
+      "aa_structure": "single AA: Los Angeles-Long Beach-Anaheim MSA #31080 (two MDs, both wholly contained)",
+      "ask_sizing": "UNSIZED — the PE discloses no usable per-assessment-area donation figure"
     },
     "hanmi_bank": {
       "cert": "24170",
@@ -53,7 +54,10 @@
         "San Diego",
         "San Francisco",
         "Santa Clara"
-      ]
+      ],
+      "aa_giving_usd": 281080,
+      "review_period_years": 3,
+      "ask_sizing": "UNSIZED — no Investment or Service Test gap recorded. Either the PE is an Intermediate Small Bank evaluation (Community Development Test only, no Investment/Service components exist) or the component ratings were never read out of the PE."
     },
     "five_star_bank": {
       "cert": "35361",
@@ -90,7 +94,10 @@
         "Butte",
         "Shasta"
       ],
-      "aa_structure": "three AAs: Sacramento (targeted) / Chico (Butte) / Redding (Shasta)"
+      "aa_structure": "three AAs: Sacramento (targeted) / Chico (Butte) / Redding (Shasta)",
+      "aa_giving_usd": 1300000,
+      "review_period_years": 3,
+      "ask_sizing": "UNSIZED — no Investment or Service Test gap recorded. Either the PE is an Intermediate Small Bank evaluation (Community Development Test only, no Investment/Service components exist) or the component ratings were never read out of the PE."
     },
     "bank_of_marin": {
       "cert": "32779",
@@ -125,7 +132,10 @@
         "Placer",
         "Amador"
       ],
-      "aa_structure": "three AAs: San Francisco (full-scope, targeted) / Sacramento (full-scope: Sacramento + Placer) / Amador (limited-scope, rated Below on all three tests)"
+      "aa_structure": "three AAs: San Francisco (full-scope, targeted) / Sacramento (full-scope: Sacramento + Placer) / Amador (limited-scope, rated Below on all three tests)",
+      "aa_giving_usd": 1300000,
+      "review_period_years": 3,
+      "ask_sizing": "UNSIZED — no Investment or Service Test gap recorded. Either the PE is an Intermediate Small Bank evaluation (Community Development Test only, no Investment/Service components exist) or the component ratings were never read out of the PE."
     },
     "american_business_bank": {
       "cert": "34788",
@@ -150,7 +160,10 @@
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
-      "aa_structure": "single CSA-level AA"
+      "aa_structure": "single CSA-level AA",
+      "aa_giving_usd": 1600000,
+      "review_period_years": 3,
+      "ask_sizing": "UNSIZED — no Investment or Service Test gap recorded. Either the PE is an Intermediate Small Bank evaluation (Community Development Test only, no Investment/Service components exist) or the component ratings were never read out of the PE."
     },
     "helm_bank": {
       "cert": "32718",
@@ -186,7 +199,10 @@
         "Osceola",
         "Seminole"
       ],
-      "aa_structure": "two AAs: Miami = Miami-Dade + Broward + Palm Beach (targeted) / Orlando = Orange + Osceola + Seminole, NOT evaluated"
+      "aa_structure": "two AAs: Miami = Miami-Dade + Broward + Palm Beach (targeted) / Orlando = Orange + Osceola + Seminole, NOT evaluated",
+      "aa_giving_usd": 25161,
+      "review_period_years": 3.2,
+      "ask_sizing": "UNSIZED — no Investment or Service Test gap recorded. Either the PE is an Intermediate Small Bank evaluation (Community Development Test only, no Investment/Service components exist) or the component ratings were never read out of the PE."
     },
     "banco_do_brasil_americas": {
       "cert": "26725",
@@ -200,13 +216,13 @@
       "pe_date": "2025-05-12",
       "pe_url": "https://crapes.fdic.gov/publish/2025/26725_250512.PDF",
       "regulator": "FDIC",
-      "ask_usd": 10000,
+      "ask_usd": 5000,
       "verified": true,
       "verify_note": "AA CORRECTED 2026-08-22. PE: 'The assessment area consists of Miami-Dade and Broward counties, which are part of the Miami-[Fort Lauderdale-West Palm Beach MSA]' and separately 'The assessment area consists of Orange and Osceola counties, which are part of the Orlando-[Kissimmee-Sanford MSA]'. Two separately-evaluated AAs; our record merged them. Targeting the Miami AA.",
       "pe_giving": "60 donations/grants totaling $246,765 (avg $4,113); per-AA 11 donations $36,000, 5 donations $94,970 spanning both AAs",
       "pe_need_quote": "a significant need for … financial literacy education to low- and moderate-income individuals",
       "pe_mined": "per-assessment-area, 2026-08-22",
-      "ask_usd_prior": 15000,
+      "ask_usd_prior": 10000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide",
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
@@ -219,7 +235,13 @@
         "Orange",
         "Osceola"
       ],
-      "aa_structure": "two AAs: Miami = Miami-Dade + Broward (targeted) / Orlando = Orange + Osceola"
+      "aa_structure": "two AAs: Miami = Miami-Dade + Broward (targeted) / Orlando = Orange + Osceola",
+      "aa_giving_usd": 94970,
+      "review_period_years": 3,
+      "ask_sizing": "sized by src/ask.py: $31,657/yr in the target assessment area x 15% share x 1.00 gap multiplier = $4,748 -> $5,000 (pool)",
+      "ask_verdict": "pool",
+      "inv_rating": "High Satisfactory",
+      "svc_rating": "Low Satisfactory"
     },
     "ocean_bank": {
       "cert": "24156",
@@ -250,7 +272,13 @@
         "Broward",
         "Orange"
       ],
-      "aa_structure": "two AAs: Miami MD = Miami-Dade (targeted) / Fort Lauderdale MD = Broward"
+      "aa_structure": "two AAs: Miami MD = Miami-Dade (targeted) / Fort Lauderdale MD = Broward",
+      "aa_giving_usd": 492000,
+      "review_period_years": 3,
+      "ask_sizing": "sized by src/ask.py: $164,000/yr in the target assessment area x 15% share x 1.00 gap multiplier = $24,600 -> $25,000 (earmark)",
+      "ask_verdict": "earmark",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": ""
     },
     "city_national": {
       "cert": 17281,
@@ -266,7 +294,7 @@
       "pe_date": "2024-04-01",
       "pe_url": "https://www.occ.gov/static/cra/craeval/Apr24/14695.pdf",
       "regulator": "OCC",
-      "ask_usd": 75000,
+      "ask_usd": 7500,
       "verified": true,
       "verify_note": "Verified 2026-08-22 from the Apr 2024 OCC PE (charter 14695): 'CNB delineated three AAs within the Los Angeles CSA that were combined for analysis and presentation purposes. These included the entire Los Angeles-Long Beach-Anaheim, CA, Oxnard-Thousand Oaks-Ventura, CA, and Riverside-San Bernardino-Ontario, CA MSAs.' Those MSAs comprise Los Angeles + Orange, Ventura, and Riverside + San Bernardino respectively (OMB delineations). NOTE: these are three assessment areas that the examiner combines for analysis and reports at CSA level; ratings and giving are reported for the LA CSA as a whole, so targeting the CSA is consistent with how it is evaluated.",
       "pe_giving": "$13.2M in qualifying grants and donations to ~359 organizations (avg $36,769); one AA $142,000 to 14 organizations",
@@ -277,7 +305,14 @@
       "cluster_role": "LA cluster, largest ask. Pitch the Service Test and the $31M consent order geography. NEVER imply a grant repairs the rating - Investment is already Outstanding.",
       "charter": "14695",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name.",
+      "aa_giving_usd": 142000,
+      "review_period_years": 3,
+      "ask_usd_prior": 75000,
+      "ask_sizing": "sized by src/ask.py: $47,333/yr in the target assessment area x 15% share x 1.00 gap multiplier = $7,100 -> $7,500 (pool)",
+      "ask_verdict": "pool",
+      "inv_rating": "Outstanding",
+      "svc_rating": "Low Satisfactory"
     },
     "mega_bank": {
       "cert": 58401,
@@ -300,7 +335,10 @@
       "documented_gap": "current NTI 5/2025, driven by the LENDING test; the CD Test is already Satisfactory",
       "cluster_role": "LA cluster, third ask. Participation framing only - a grant does not fix their rating.",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name.",
+      "aa_giving_usd": 46300,
+      "review_period_years": 3,
+      "ask_sizing": "UNSIZED — no Investment or Service Test gap recorded. Either the PE is an Intermediate Small Bank evaluation (Community Development Test only, no Investment/Service components exist) or the component ratings were never read out of the PE."
     },
     "western_alliance": {
       "cert": "57512",
@@ -332,7 +370,13 @@
       "plan_url": "https://www.federalreserve.gov/consumerscommunities/files/western-alliance-bank-strategic-plan.pdf",
       "plan_period": "2024-01-01 to 2026-12-31",
       "plan_note": "Donations are GOAL THREE in the 2024-2026 plan (they were Goal Four in the 2021-2023 plan the PE evaluated) — cite the right number. Contact of record for the plan: Craig Robinson, Head of Community Relations, 1 East Washington Street, Suite 1400, Phoenix AZ 85004, (408) 689-8417.",
-      "other_aa_counties": "Greater Los Angeles (Los Angeles, Orange, Ventura, Riverside, San Bernardino), San Diego, San Francisco Bay Area (11 counties), Las Vegas (Clark), Tucson (Pima), Reno-Carson City, Flagstaff, Fallon; limited-service Chicago (Cook +4), New York (Kings +7), Denver. The plan's PROPOSED Atlanta and Houston AAs NEVER TOOK EFFECT — FDIC structure data pulled 2026-08-24 shows 38 offices in NV/CA/AZ/CO/IL/NY only, with no Texas or Georgia office, so Harris County is NOT in a Western Alliance assessment area. Full goal table: data-ops/analysis/bank-pe-mining/western_alliance_plan_2024_2026.csv"
+      "other_aa_counties": "Greater Los Angeles (Los Angeles, Orange, Ventura, Riverside, San Bernardino), San Diego, San Francisco Bay Area (11 counties), Las Vegas (Clark), Tucson (Pima), Reno-Carson City, Flagstaff, Fallon; limited-service Chicago (Cook +4), New York (Kings +7), Denver. The plan's PROPOSED Atlanta and Houston AAs NEVER TOOK EFFECT — FDIC structure data pulled 2026-08-24 shows 38 offices in NV/CA/AZ/CO/IL/NY only, with no Texas or Georgia office, so Harris County is NOT in a Western Alliance assessment area. Full goal table: data-ops/analysis/bank-pe-mining/western_alliance_plan_2024_2026.csv",
+      "aa_giving_usd": 1775328,
+      "review_period_years": 3,
+      "ask_sizing": "sized by src/ask.py: $591,776/yr in the target assessment area x 15% share x 1.00 gap multiplier = $88,766 -> $25,000 (earmark)",
+      "ask_verdict": "earmark",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": ""
     },
     "texas_first_bank": {
       "cert": "23799",
@@ -353,7 +397,7 @@
       "pe_url": "https://www.federalreserve.gov/apps/CRAPubWeb/CRA/DownloadPDF/473266_20240528",
       "regulator": "FED",
       "exam_method": "Large Bank",
-      "ask_usd": 15000,
+      "ask_usd": 12500,
       "ask_usd_prior": 15000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide: 36 donations totaling $258,000 in the Houston Metropolitan assessment area, of which Community Services — the category SNAP outreach falls in — is 32 donations totaling $156,000 (avg ~$4,875). A $15,000 ask is ~3x their average community-services donation in that assessment area.",
       "verified": true,
@@ -365,7 +409,13 @@
       "documented_gap": "Investment Test is Low Satisfactory institution-wide. A cash grant is a qualified investment under 12 CFR __.12(t), so this is the test our activity feeds directly. Houston is not a peripheral AA for them — 24 full-service branches, 0.6% deposit share, 19th of 101 institutions in the market.",
       "cluster_role": "Harris primary — deepest Houston-AA donation program of the Fed-supervised Harris candidates, and Houston is its core market",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "aa_giving_usd": 258000,
+      "review_period_years": 3,
+      "ask_sizing": "sized by src/ask.py: $86,000/yr in the target assessment area x 15% share x 1.00 gap multiplier = $12,900 -> $12,500 (earmark)",
+      "ask_verdict": "earmark",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": ""
     },
     "third_coast_bank": {
       "cert": "58716",
@@ -382,7 +432,7 @@
       "pe_url": "https://www.federalreserve.gov/apps/CRAPubWeb/CRA/DownloadPDF/3630323_20240812",
       "regulator": "FED",
       "exam_method": "Large Bank",
-      "ask_usd": 10000,
+      "ask_usd": 7500,
       "ask_usd_prior": 10000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide: 30 donations totaling $65,000 in the Houston Metropolitan assessment area over the Apr 2022 - Mar 2024 review period (avg ~$2,167), of which Community Services is 19 donations totaling $34,000. Their Austin assessment area by contrast received only four donations totaling ~$7,000 — the per-AA spread is why the ask is anchored on Houston.",
       "verified": true,
@@ -394,7 +444,13 @@
       "documented_gap": "BOTH tests our activity feeds are Low Satisfactory institution-wide. In the Houston AA the investment test is 'adequate' with the bank 'rarely in a leadership position' and making 'rare use of innovative and/or complex investments.' Harris County is its headquarters county.",
       "cluster_role": "Harris secondary — smaller Houston donation program than Texas First, but the only Harris-headquartered bank with a double component gap",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "aa_giving_usd": 65000,
+      "review_period_years": 1.92,
+      "ask_sizing": "sized by src/ask.py: $33,854/yr in the target assessment area x 15% share x 1.25 gap multiplier = $6,348 -> $7,500 (pool)",
+      "ask_verdict": "pool",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": "Low Satisfactory"
     },
     "lakeside_bank": {
       "cert": "19573",
@@ -409,7 +465,7 @@
       "pe_url": "https://crapes.fdic.gov/publish/2023/19573_231204.PDF",
       "regulator": "FDIC",
       "exam_method": "Large Bank",
-      "ask_usd": 10000,
+      "ask_usd": 5000,
       "ask_usd_prior": 10000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide — trivially so here, because the bank has only one assessment area: 32 donations and grants totaling $72,000 (avg ~$2,250). A $10,000 ask is ~4.4x their average donation, the same multiple used for Prosperity.",
       "verified": true,
@@ -421,7 +477,13 @@
       "documented_gap": "BOTH tests our activity feeds are Low Satisfactory, and because the bank has a single assessment area those ratings describe Cook County directly — there is no chance the gap lives in some other market. That is what makes this the cleanest Cook target despite its size.",
       "cluster_role": "Cook primary — single-AA bank, so the component gap is unambiguously in the target county",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "aa_giving_usd": 72000,
+      "review_period_years": 3,
+      "ask_sizing": "sized by src/ask.py: $24,000/yr in the target assessment area x 15% share x 1.25 gap multiplier = $4,500 -> $5,000 (pool)",
+      "ask_verdict": "pool",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": "Low Satisfactory"
     },
     "first_american_bank": {
       "cert": "3657",
@@ -444,7 +506,7 @@
       "pe_url": "https://crapes.fdic.gov/publish/2024/3657_241021.PDF",
       "regulator": "FDIC",
       "exam_method": "Large Bank",
-      "ask_usd": 15000,
+      "ask_usd": 25000,
       "ask_usd_prior": 15000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide: 166 qualified donations and grants totaling $440,000 in the Multistate assessment area (avg ~$2,651). The bank's Florida assessment area separately reports 34 donations totaling $82,000 — anchoring on the institution-wide $529,000 or on the Florida figure would misprice this ask in opposite directions.",
       "verified": true,
@@ -456,7 +518,13 @@
       "documented_gap": "Both tests our activity feeds are Low Satisfactory institution-wide, and the PE states the Investment Test is Low Satisfactory in the Multistate assessment area specifically — so the gap is confirmed in the target market, not inherited from Florida or Kankakee.",
       "cluster_role": "Cook secondary — largest Cook-area donation program of the verified candidates",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "aa_giving_usd": 440000,
+      "review_period_years": 3,
+      "ask_sizing": "sized by src/ask.py: $146,667/yr in the target assessment area x 15% share x 1.25 gap multiplier = $27,500 -> $25,000 (earmark)",
+      "ask_verdict": "earmark",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": "Low Satisfactory"
     },
     "habib_american_bank": {
       "cert": "25093",
@@ -476,7 +544,7 @@
       "regulator": "FDIC",
       "exam_method": "Large Bank",
       "ask_usd": 15000,
-      "ask_usd_prior": 10000,
+      "ask_usd_prior": 15000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide: 22 donations totaling approximately $205,000 in the NY-NJ rated area (avg ~$9,318), against 8 donations totaling ~$123,000 in the California rated area. A $15,000 ask is ~1.6x their average NY-NJ donation — conservative for the multiple, and ~7% of that assessment area's donation program.",
       "verified": true,
       "verify_note": "Verified 2026-08-24 from the Jul 14, 2025 FDIC public evaluation. The bank 'designates two assessment areas located in two rated areas'; the PE delineates the NY portion of the NY-NJ assessment area as 'Bronx, Kings, Nassau, New York, and Queens Counties', with a separate New Jersey portion excluded here. The NY-NJ rated area 'received the most weight in the overall ratings and conclusions', so the institution-wide Service Test rating describes this assessment area rather than being inherited from California.",
@@ -487,7 +555,13 @@
       "documented_gap": "The strongest documented gap in the roster: the Service Test is rated NEEDS TO IMPROVE, not merely Low Satisfactory, and the Investment Test is Low Satisfactory. The NY-NJ rated area carries the most weight in both. Their giving in this assessment area also DECLINED from $4.6M to $3.5M since the prior evaluation.",
       "cluster_role": "Kings primary — the only verified Kings candidate whose documented gap is actually in the New York assessment area",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "aa_giving_usd": 205000,
+      "review_period_years": 3,
+      "ask_sizing": "sized by src/ask.py: $68,333/yr in the target assessment area x 15% share x 1.55 gap multiplier = $15,887 -> $15,000 (earmark)",
+      "ask_verdict": "earmark",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": "Needs to Improve"
     },
     "busey_bank": {
       "cert": "16450",
@@ -504,8 +578,8 @@
       "pe_url": "https://crapes.fdic.gov/publish/2022/16450_220325.PDF",
       "regulator": "FDIC",
       "exam_method": "Large Bank",
-      "ask_usd": 15000,
-      "ask_usd_prior": 10000,
+      "ask_usd": 20000,
+      "ask_usd_prior": 15000,
       "ask_basis": "anchored on disclosed giving in the TARGET assessment area, not institution-wide: 89 qualified donations totaling $398,000 in the Chicago MD assessment area (avg ~$4,472), which is 19.9% of the bank's total investment and donation activity by dollar volume. Their Bloomington assessment area by contrast received six donations totaling $2,000 — a 199x spread across assessment areas of the same bank, and the clearest case in the roster for why the ask is anchored per-AA.",
       "verified": true,
       "verify_note": "Verified 2026-08-24 from the Mar 25, 2022 FDIC public evaluation (published Dec 2022). The PE delineates the target assessment area: 'The Chicago MD assessment area includes Cook, DuPage, Grundy, and Will County. This area encompasses all of Chicago and most of the surrounding metropolitan area.' Fifteen branches there, and the Chicago MD 'carried the second most weight in arriving at overall conclusions' among the Illinois assessment areas. This record also RESOLVES the prior DISPUTED flag: the FDIC CRAPES API's 2022 record carries LENDING_RATING and SERVICE_RATING both as 'Substantial Non Complianc' with INVEST_RATING and RATING_POINTS missing entirely, while the PE plainly states Lending Low Satisfactory / Investment High Satisfactory / Service Low Satisfactory. The API record is corrupt; the PE governs.",
@@ -516,7 +590,13 @@
       "documented_gap": "The Service Test is Low Satisfactory institution-wide, and in the Chicago MD assessment area specifically the PE finds 'poor performance under the Service Test' — a harsher AA-level conclusion than the institution rating. The stated reason is directly addressable: the bank has 'no branches, limited service facilities, or ATMs within low- and moderate-income areas' of the AA. A digital outreach campaign that reaches LMI households across Cook County is a service-delivery response to exactly that finding, not a generic donation.",
       "cluster_role": "Cook primary by size and by fit — largest verified Cook candidate at $12.45B, deepest Cook-area giving at $398,000, and the only one whose PE names an LMI service-delivery gap our activity answers directly",
       "cofunder_naming_consent": null,
-      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file."
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "aa_giving_usd": 398000,
+      "review_period_years": 3,
+      "ask_sizing": "sized by src/ask.py: $132,667/yr in the target assessment area x 15% share x 1.00 gap multiplier = $19,900 -> $20,000 (earmark)",
+      "ask_verdict": "earmark",
+      "inv_rating": "High Satisfactory",
+      "svc_rating": "Low Satisfactory"
     }
   }
 }
