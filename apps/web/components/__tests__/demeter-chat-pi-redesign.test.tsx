@@ -240,25 +240,34 @@ describe("sign-in opens over the chat (owner rec 2026-08-22)", () => {
 });
 
 describe("state-first onboarding", () => {
-  it("the empty state asks for the state and never a name", () => {
+  it("the empty state never asks for a name", () => {
+    // THE ASK-STATE LINE IS GONE (owner, 2026-08-26): it captioned a picker
+    // that already says "Your state". What must NOT come back is the thing
+    // this test was really built for — the retention line says avoid names, so
+    // the greeting may never ask for one.
     const { container } = mountChat();
     const empty = container.querySelector(".demeter__empty")!;
-    expect(empty.textContent).toContain(T.en.emptyAskState);
     expect(empty.textContent!.toLowerCase()).not.toMatch(/your name|first name/);
+    expect(empty.querySelector(".demeter__emptyask")).toBeNull();
   });
 
   it("the ask-state line exists in all four languages and never asks a name", () => {
     for (const lang of ["en", "es", "vi", "zh"] as const) {
-      const s = T[lang].emptyAskState;
-      expect(s?.trim(), lang).toBeTruthy();
-      expect(s.toLowerCase(), lang).not.toMatch(/name|nombre|tên|名字|姓名/);
+      // The line is retired, but the copy key stays until every locale's
+      // replacement is settled — what is pinned is that NO empty-state string
+      // asks for a name, which is the retention promise, not this one line.
+      const s = [T[lang].emptyTitle, T[lang].emptyWhatIsSnap, T[lang].emptyLede, T[lang].emptyModes].join(" ");
+      expect(s.toLowerCase(), lang).not.toMatch(/your name|nombre completo|tên của bạn|您的姓名/);
     }
   });
 
   it("keeps the framing block — the redesign restyles it, it does not delete it", () => {
     mountChat();
     expect(screen.getByText(T.en.emptyTitle)).toBeTruthy();
-    expect(screen.getByText(T.en.emptyModes)).toBeTruthy();
+    // The mode labels are wrapped in their own elements now, so the sentence
+    // is split across nodes — match on the paragraph's assembled text.
+    const modes = document.querySelector(".demeter__emptymodes");
+    expect(modes?.textContent).toBe(T.en.emptyModes);
   });
 });
 
