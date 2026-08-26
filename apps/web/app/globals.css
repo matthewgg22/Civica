@@ -9083,3 +9083,21 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   outline: 2px solid var(--demeter-terracotta); outline-offset: 1px;
 }
 @media (prefers-reduced-motion: reduce) { .demeter__langpick { transition: none; } }
+
+/* THE GEAR MENU WAS CROPPED. It anchored `left: 0` on the gear BUTTON, and the
+   gear sits at the right end of the bottom row — so a 12rem panel opened from
+   roughly x=170 in a 229px rail and ran off the edge, where the rail's own
+   `overflow-y: auto` (which makes overflow-x compute to auto too) clipped it.
+   Anchoring to the ROW instead makes it exactly the rail's content width: it
+   cannot overflow, whatever the gear's position in the row becomes later. */
+.demeter__railfoot { position: relative; }
+.demeter__railfoot .demeter__gear { position: static; }
+.demeter__railfoot .demeter__gearmenu {
+  left: 0;
+  right: 0;
+  min-width: 0;
+  bottom: calc(100% + 0.35rem);
+  top: auto;
+}
+/* Free to use the full width now rather than sitting in a 14rem column. */
+.demeter__railfoot .demeter__gearnote { max-width: none; }
