@@ -190,9 +190,12 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
 # ---- PDF smoke (skips when Chrome absent) -----------------------------------
 @pytest.mark.skipif(not Path(generate.CHROME).exists(), reason="Chrome not installed")
 def test_pdf_smoke(tmp_path):
-    rc = generate.main(["--bank", "bank_irvine"])
+    """Smoke-tests a bank we would actually send. This used bank_irvine until it
+    was reclassified no-target -- a smoke test should exercise the sendable
+    path, not a bank the generator now refuses."""
+    rc = generate.main(["--bank", "busey_bank"])
     assert rc == 0
-    pdf = TOOL_ROOT / "out/bank_irvine.pdf"
+    pdf = TOOL_ROOT / "out/busey_bank.pdf"
     assert pdf.exists() and 10_000 < pdf.stat().st_size < 10 * 1024 * 1024
     # 5 pages
     n_pages = subprocess.run(
@@ -879,3 +882,62 @@ def test_a_blocked_bank_still_carries_full_evidence():
     # required no rework at all.
     m = banks["meridian_bank"]
     assert m["verified"] is True and m["aa_giving_usd"] and m["ask_usd"]
+
+
+def test_generator_refuses_a_no_target_bank_before_writing_anything(tmp_path):
+    """A PDF that exists is a PDF that can be attached to an email.
+
+    Three test fixtures and four no-target banks reached the operator's send
+    folder because the guards ran at --send time, AFTER the file was written.
+    The refusal now happens before any file is produced."""
+    out = TOOL_ROOT / "out/american_business_bank.pdf"
+    before = out.stat().st_mtime if out.exists() else None
+    with pytest.raises(generate.NoDocumentedGapError):
+        generate.main(["--bank", "american_business_bank"])
+    after = out.stat().st_mtime if out.exists() else None
+    assert before == after, "a refused bank must not (re)write a PDF"
+
+
+def test_generator_refuses_an_unsized_bank():
+    """Five Star and Bank of Marin have real gaps but no per-assessment-area
+    giving figure, so their ask is a retained placeholder. Printing it would put
+    a number in front of a bank that we cannot justify."""
+    for key in ("five_star_bank", "bank_of_marin"):
+        with pytest.raises(generate.UnsizedAskError):
+            generate.main(["--bank", key])
+
+
+def test_nonsendable_banks_can_still_be_inspected_deliberately():
+    """The refusal must be overridable on purpose -- otherwise a record can
+    never be eyeballed again -- but only by an explicit flag."""
+    rc = generate.main(["--bank", "bank_irvine", "--html-only", "--allow-nonsendable"])
+    assert rc == 0
+
+
+def test_every_sendable_bank_still_generates():
+    """The guard must not over-refuse: everything with a computed ask renders."""
+    banks, _a, _o = generate.load_inputs()
+    sendable = [k for k, b in banks.items()
+                if b.get("target_status") == "target"
+                and b.get("ask_verdict") in ("earmark", "pool")]
+    assert len(sendable) == 17, f"expected 17 sendable banks, got {len(sendable)}"
+    rc = generate.main(["--bank", sendable[0], "--html-only"])
+    assert rc == 0
+
+
+def test_send_gates_run_before_any_file_is_written():
+    """Refusing after the PDF exists still leaves a sendable file on disk.
+
+    The three __*_fixture__ PDFs found in the operator's Downloads folder were
+    produced exactly this way: the guard raised, the test passed, and the file
+    stayed behind. Every gate now runs before generation."""
+    banks, assumptions, org = generate.load_inputs()
+    fake = dict(banks["busey_bank"]); fake["verified"] = False
+    patched = dict(banks); patched["__leak_probe__"] = fake
+    import unittest.mock as m
+    with m.patch.object(generate, "load_inputs", lambda: (patched, assumptions, org)):
+        with pytest.raises(generate.UnverifiedBankError):
+            generate.main(["--bank", "__leak_probe__", "--send"])
+    for ext in ("pdf", "html"):
+        assert not (TOOL_ROOT / f"out/__leak_probe__.{ext}").exists(), (
+            f"a refused bank left a .{ext} behind")
