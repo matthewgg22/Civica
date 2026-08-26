@@ -13,7 +13,6 @@ import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { hasLocalProgramName } from "../lib/program-name";
 import { stateName } from "../lib/state-names";
 import { StateDirectory, type DirectoryCopy, type DirectoryRow } from "./StateDirectory";
-import { DemeterNav } from "./DemeterNav";
 import { DemeterFooter } from "./DemeterFooter";
 
 /** Alphabetical by the state's NAME, not its code — someone scanning for
@@ -84,9 +83,22 @@ export function StateDirectoryPage({ lang = "en" }: { lang?: AnswerLang }) {
 
   return (
     <>
-      <DemeterNav lang={lang} path="/states" />
+      {/* NO SITE NAV, owner's call — the same one made for /chat (2026-08-22).
+          The bar carried a brand, two tabs and four language links above a page
+          whose entire job is one list, and on a phone that was most of the
+          first screen. What a reader needs here is the way back, so that is
+          all there is.
+
+          It is also the FIRST focusable element, which is why this page needs
+          no skip link: there is nothing to skip. */}
       <main className="vpage vpage--states" id="main-content">
         <header className="vpage__head">
+          <Link className="vback" href={chatHref}>
+            <span className="vback__arrow" aria-hidden>
+              ←
+            </span>
+            {c.back}
+          </Link>
           <h1 className="vpage__title">{c.h1}</h1>
           {/* ONE SENTENCE, then the sources line. The reader is here to find a
               row, not to read a page — every sentence above the list is a

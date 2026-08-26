@@ -5014,6 +5014,20 @@ html {
    lines, which put back exactly the ragged row heights the list was for.
    1080 still sits inside the nav's own 1180 max. */
 .vpage--states { color: #000000; max-width: 1080px; }
+
+/* The only way back, because this page carries no site nav. Left-aligned above
+   the title and sized like a control rather than a link: it is the one piece
+   of navigation on the page and should not read as body text. */
+.vback {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.86rem; font-weight: 600; color: var(--demeter-terracotta-deep);
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  min-height: 44px; margin-bottom: 0.5rem;
+}
+.vback:hover { text-decoration: underline; }
+/* Sized above the label: the arrow is what the eye finds, the words confirm it. */
+.vback__arrow { font-size: 1.15rem; line-height: 1; }
 .vpage--states .vpage__title { color: #000000; }
 .vpage--states .vpage__lede { color: #141414; }
 
@@ -5077,9 +5091,6 @@ html {
   border-bottom: 1px solid var(--demeter-rule); padding-bottom: 0.5rem;
 }
 .vstates__list { list-style: none; margin: 0; padding: 0; }
-/* .dmnav is position:sticky at 60px, so a heading linked to by its #letter-X
-   id would otherwise land underneath it. */
-.vstates__letter { scroll-margin-top: 5rem; }
 
 /* Long unbroken agency names and portal URLs have no break opportunity and
    used to set a floor on the card width — /verify overflowed by 96px at

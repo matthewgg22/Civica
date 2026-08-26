@@ -27,6 +27,9 @@ export interface Pair {
  *  four translations of a regulation number. The placeholder also lets each
  *  language put the citation where its own word order wants it. */
 export interface StateDirectoryCopy {
+  /** The way out. This page carries no site nav, so this is the only link
+   *  back to the product. */
+  back: string;
   h1: string;
   lede: string;
   /** Contains the literal "{rule}". */
@@ -534,6 +537,7 @@ const en: PageCopy = {
     "Not listed? Demeter still answers at the federal floor, and points you to your own state agency for figures that vary by state.",
   statesLink: "See the states we have checked",
   directory: {
+    back: "Back to Demeter",
     h1: "SNAP in your state",
     lede: "SNAP is one federal program, but every state runs it under its own name, through its own agency, with its own application.",
     sources: "Each row is built from that state's own published rules, and from {rule}.",
@@ -819,6 +823,7 @@ const es: PageCopy = {
     "¿No aparece el tuyo? Demeter igual responde con la base federal, y te remite a tu propia agencia estatal para las cifras que varían por estado.",
   statesLink: "Mira los estados que hemos verificado",
   directory: {
+    back: "Volver a Demeter",
     h1: "SNAP en tu estado",
     lede: "SNAP es un solo programa federal, pero cada estado lo administra con su propio nombre, a través de su propia agencia y con su propia solicitud.",
     sources: "Cada fila se basa en las reglas publicadas por ese estado y en {rule}.",
@@ -1105,6 +1110,7 @@ const vi: PageCopy = {
     "Không thấy tiểu bang của bạn? Demeter vẫn trả lời theo mức nền liên bang, và chỉ bạn tới cơ quan tiểu bang của mình cho những con số thay đổi theo từng nơi.",
   statesLink: "Xem các tiểu bang chúng tôi đã kiểm chứng",
   directory: {
+    back: "Quay lại Demeter",
     h1: "SNAP tại tiểu bang của bạn",
     lede: "SNAP là một chương trình liên bang duy nhất, nhưng mỗi tiểu bang điều hành nó dưới tên riêng, qua cơ quan riêng, với đơn xin riêng.",
     sources: "Mỗi dòng được dựng từ chính các quy định do tiểu bang đó công bố và từ {rule}.",
@@ -1390,6 +1396,7 @@ const zh: PageCopy = {
     "没看到您所在的州？Demeter 仍会按联邦底线回答，并把各州不同的具体金额指引到您自己的州机构。",
   statesLink: "查看我们已核实的州",
   directory: {
+    back: "返回 Demeter",
     h1: "您所在州的 SNAP",
     lede: "SNAP 是一项联邦计划，但每个州都以自己的名称、通过自己的机构、用自己的申请表来实施。",
     sources: "每一行都依据该州自己公布的规则以及 {rule} 编制。",
