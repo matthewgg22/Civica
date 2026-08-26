@@ -20,6 +20,41 @@ export interface Pair {
   d: string;
 }
 
+/** The state directory (/states) — the page that lists every jurisdiction.
+ *
+ *  "7 CFR Part 273" is a CITATION and never translates (DEMETER-DESIGN §2.1),
+ *  so `sources` carries a {rule} placeholder the page splits on rather than
+ *  four translations of a regulation number. The placeholder also lets each
+ *  language put the citation where its own word order wants it. */
+export interface StateDirectoryCopy {
+  h1: string;
+  lede: string;
+  /** Contains the literal "{rule}". */
+  sources: string;
+  searchLabel: string;
+  searchPlaceholder: string;
+  clear: string;
+  countyTag: string;
+  /** One word — it is repeated on all 53 rows. */
+  ask: string;
+  /** Resolved per row on the SERVER, so these may stay functions. */
+  askAbout: (state: string) => string;
+  applyIn: (portal: string, state: string) => string;
+  /** Resolved in the CLIENT, against a query only it knows, so these are
+   *  placeholder strings rather than functions. A function cannot cross the
+   *  server/client boundary at all — Next throws "Functions cannot be passed
+   *  directly to Client Components" at prerender, which no unit test rendering
+   *  the component directly will ever reproduce. */
+  noMatch: string;
+  noMatchAsk: string;
+  countedAll: string;
+  countedSome: string;
+  ctaBody: string;
+  ctaLink: string;
+  metaTitle: string;
+  metaDescription: string;
+}
+
 export interface PageCopy {
   /** THE ORIENTATION BAR — the page's h1 and the first thing anyone reads.
    *
@@ -215,6 +250,7 @@ export interface PageCopy {
   /** Link to /verify, which is now the state directory rather than a page
    *  about our pipeline — so the label names the states, not the checking. */
   statesLink: string;
+  directory: StateDirectoryCopy;
 }
 
 const en: PageCopy = {
@@ -497,6 +533,27 @@ const en: PageCopy = {
   agenciesNote:
     "Not listed? Demeter still answers at the federal floor, and points you to your own state agency for figures that vary by state.",
   statesLink: "See the states we have checked",
+  directory: {
+    h1: "SNAP in your state",
+    lede: "SNAP is one federal program, but every state runs it under its own name, through its own agency, with its own application.",
+    sources: "Each row is built from that state's own published rules, and from {rule}.",
+    searchLabel: "Search states and territories",
+    searchPlaceholder: "Search by state, agency, or portal",
+    clear: "Clear",
+    countyTag: "county-administered",
+    ask: "Ask",
+    askAbout: (state) => `Ask Demeter about ${state}`,
+    applyIn: (portal, state) => `Apply in ${state} at ${portal} (opens in a new tab)`,
+    noMatch: "No state or territory matches “{query}”.",
+    noMatchAsk: "Ask Demeter instead",
+    countedAll: "{total} states and territories",
+    countedSome: "{shown} of {total}",
+    ctaBody: "A list can tell you who runs SNAP. It can't tell you whether you qualify.",
+    ctaLink: "Ask Demeter",
+    metaTitle: "Who runs SNAP in your state, and where to apply",
+    metaDescription:
+      "Every state and territory Demeter covers: the local name for SNAP where there is one, the agency that administers it, and a direct link to that agency's own application.",
+  },
 };
 
 const es: PageCopy = {
@@ -761,6 +818,27 @@ const es: PageCopy = {
   agenciesNote:
     "¿No aparece el tuyo? Demeter igual responde con la base federal, y te remite a tu propia agencia estatal para las cifras que varían por estado.",
   statesLink: "Mira los estados que hemos verificado",
+  directory: {
+    h1: "SNAP en tu estado",
+    lede: "SNAP es un solo programa federal, pero cada estado lo administra con su propio nombre, a través de su propia agencia y con su propia solicitud.",
+    sources: "Cada fila se basa en las reglas publicadas por ese estado y en {rule}.",
+    searchLabel: "Buscar estados y territorios",
+    searchPlaceholder: "Busca por estado, agencia o portal",
+    clear: "Borrar",
+    countyTag: "administrado por el condado",
+    ask: "Preguntar",
+    askAbout: (state) => `Pregúntale a Demeter sobre ${state}`,
+    applyIn: (portal, state) => `Solicita en ${state} con ${portal} (se abre en una pestaña nueva)`,
+    noMatch: "Ningún estado o territorio coincide con «{query}».",
+    noMatchAsk: "Mejor pregúntale a Demeter",
+    countedAll: "{total} estados y territorios",
+    countedSome: "{shown} de {total}",
+    ctaBody: "Una lista puede decirte quién administra SNAP. No puede decirte si calificas.",
+    ctaLink: "Pregúntale a Demeter",
+    metaTitle: "Quién administra SNAP en tu estado y dónde solicitar",
+    metaDescription:
+      "Todos los estados y territorios que cubre Demeter: el nombre local de SNAP cuando lo hay, la agencia que lo administra y un enlace directo a su propia solicitud.",
+  },
 };
 
 const vi: PageCopy = {
@@ -1026,6 +1104,27 @@ const vi: PageCopy = {
   agenciesNote:
     "Không thấy tiểu bang của bạn? Demeter vẫn trả lời theo mức nền liên bang, và chỉ bạn tới cơ quan tiểu bang của mình cho những con số thay đổi theo từng nơi.",
   statesLink: "Xem các tiểu bang chúng tôi đã kiểm chứng",
+  directory: {
+    h1: "SNAP tại tiểu bang của bạn",
+    lede: "SNAP là một chương trình liên bang duy nhất, nhưng mỗi tiểu bang điều hành nó dưới tên riêng, qua cơ quan riêng, với đơn xin riêng.",
+    sources: "Mỗi dòng được dựng từ chính các quy định do tiểu bang đó công bố và từ {rule}.",
+    searchLabel: "Tìm tiểu bang và vùng lãnh thổ",
+    searchPlaceholder: "Tìm theo tiểu bang, cơ quan hoặc cổng nộp đơn",
+    clear: "Xóa",
+    countyTag: "do quận điều hành",
+    ask: "Hỏi",
+    askAbout: (state) => `Hỏi Demeter về ${state}`,
+    applyIn: (portal, state) => `Nộp đơn tại ${state} qua ${portal} (mở trong tab mới)`,
+    noMatch: "Không có tiểu bang hoặc vùng lãnh thổ nào khớp với “{query}”.",
+    noMatchAsk: "Hỏi Demeter thay vì vậy",
+    countedAll: "{total} tiểu bang và vùng lãnh thổ",
+    countedSome: "{shown} trên {total}",
+    ctaBody: "Danh sách có thể cho biết ai điều hành SNAP. Nó không cho biết bạn có đủ điều kiện hay không.",
+    ctaLink: "Hỏi Demeter",
+    metaTitle: "Ai điều hành SNAP tại tiểu bang của bạn và nộp đơn ở đâu",
+    metaDescription:
+      "Mọi tiểu bang và vùng lãnh thổ Demeter bao gồm: tên gọi địa phương của SNAP nếu có, cơ quan điều hành, và liên kết trực tiếp tới đơn xin của chính cơ quan đó.",
+  },
 };
 
 const zh: PageCopy = {
@@ -1290,6 +1389,27 @@ const zh: PageCopy = {
   agenciesNote:
     "没看到您所在的州？Demeter 仍会按联邦底线回答，并把各州不同的具体金额指引到您自己的州机构。",
   statesLink: "查看我们已核实的州",
+  directory: {
+    h1: "您所在州的 SNAP",
+    lede: "SNAP 是一项联邦计划，但每个州都以自己的名称、通过自己的机构、用自己的申请表来实施。",
+    sources: "每一行都依据该州自己公布的规则以及 {rule} 编制。",
+    searchLabel: "搜索州和地区",
+    searchPlaceholder: "按州、机构或申请门户搜索",
+    clear: "清除",
+    countyTag: "由县负责办理",
+    ask: "询问",
+    askAbout: (state) => `向 Demeter 询问${state}`,
+    applyIn: (portal, state) => `在${state}通过${portal}申请（在新标签页中打开）`,
+    noMatch: "没有与“{query}”匹配的州或地区。",
+    noMatchAsk: "改为询问 Demeter",
+    countedAll: "{total} 个州和地区",
+    countedSome: "{total} 个中的 {shown} 个",
+    ctaBody: "列表能告诉您谁负责 SNAP，但不能告诉您是否符合资格。",
+    ctaLink: "询问 Demeter",
+    metaTitle: "各州 SNAP 负责机构与申请入口",
+    metaDescription:
+      "Demeter 覆盖的所有州和地区：当地对 SNAP 的称呼（如有）、负责办理的机构，以及该机构自有申请页面的直接链接。",
+  },
 };
 
 export const PAGE_COPY: Record<AnswerLang, PageCopy> = { en, es, vi, zh };

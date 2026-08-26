@@ -5017,22 +5017,54 @@ html {
 .vpage--states .vpage__title { color: #000000; }
 .vpage--states .vpage__lede { color: #141414; }
 
-/* Jump-to-letter. 53 rows is about four phone screens to reach Wyoming. */
-.vjump {
-  display: flex; flex-wrap: wrap; gap: 0.15rem;
-  margin: 0 0 1.5rem; padding-bottom: 0.9rem;
+/* SEARCH, not an A–Z row. The letter jump only answered "where does W start",
+   and cost three lines of phone screen before a single state appeared. Typing
+   also answers "who runs this in Ohio" and "which state is BenefitsCal" —
+   the agency and the portal are searchable, because somebody holding a letter
+   from "the Department of Transitional Assistance" may not connect it to
+   Massachusetts.
+
+   Values reuse .dmst__search's, the picker's own box, rather than inventing a
+   second input style for the same job. */
+.vsearch { display: flex; gap: 0.5rem; align-items: center; margin: 0 0 0.6rem; }
+.vsearch__input {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  flex: 1 1 auto; min-width: 0; min-height: 48px; padding: 0.55rem 0.8rem; font-size: 0.95rem;
+  color: #000000; background: var(--demeter-tint);
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner);
+}
+.vsearch__input::placeholder { color: #5A5A5A; }
+.vsearch__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.vsearch__clear {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  flex: none; min-height: 48px; padding: 0 0.9rem; font-size: 0.86rem; font-weight: 600;
+  color: var(--demeter-terracotta-deep); background: transparent;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-pill);
+  cursor: pointer;
+}
+.vsearch__clear:hover { background: var(--demeter-tint); }
+.vsearch__count {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
+  color: #5A5A5A; margin: 0 0 1.25rem; padding-bottom: 0.9rem;
   border-bottom: 1px solid var(--demeter-rule);
 }
-.vjump__letter {
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.82rem; font-weight: 700; color: var(--demeter-terracotta-deep);
-  text-decoration: none; border-radius: var(--demeter-radius-inner);
-  /* 44px targets, edge to edge: these sit adjacent, so anything smaller puts
-     26 mistappable links in a row on a phone. */
-  min-width: 2.4rem; min-height: 44px;
-  display: inline-flex; align-items: center; justify-content: center;
+/* A dead end is where a question gets asked, not where the page stops. */
+.vsearch__empty {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem;
+  padding: 1.25rem 1.35rem; margin: 0 0 1.5rem;
+  border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
 }
-.vjump__letter:hover { background: var(--demeter-tint); }
+.vsearch__emptyline {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.55; color: #1F1F1F; margin: 0; flex: 1 1 16rem;
+}
+.vsearch__emptycta {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.9rem; font-weight: 700; color: var(--demeter-terracotta-deep);
+  text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; gap: 0.35rem;
+}
+.vsearch__emptycta:hover { text-decoration: underline; }
 
 .vstates__group { margin: 0 0 1.75rem; }
 /* The initial is a WAYFINDING MARK rather than a heading anyone reads as
@@ -5045,8 +5077,8 @@ html {
   border-bottom: 1px solid var(--demeter-rule); padding-bottom: 0.5rem;
 }
 .vstates__list { list-style: none; margin: 0; padding: 0; }
-/* .dmnav is position:sticky at 60px, so a letter jumped to from .vjump would
-   otherwise land underneath it. */
+/* .dmnav is position:sticky at 60px, so a heading linked to by its #letter-X
+   id would otherwise land underneath it. */
 .vstates__letter { scroll-margin-top: 5rem; }
 
 /* Long unbroken agency names and portal URLs have no break opportunity and
@@ -5094,6 +5126,7 @@ html {
 .vrow__admin { color: #5A5A5A; white-space: nowrap; }
 /* The parenthetical lifted out of a portal name. Small and grey because it is
    a caveat on the link above it, not a second link. */
+.vrow__note--only { display: flex; align-items: center; min-height: 44px; }
 .vrow__note {
   display: block;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;

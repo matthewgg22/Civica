@@ -68,7 +68,7 @@ export function DemeterEntry({
           copy={copy.picker}
           hint={hint}
         />
-        <a className="dment__verify" href="/verify">
+        <a className="dment__verify" href={lang === "en" ? "/states" : `/${lang}/states`}>
           {copy.statesLink}
         </a>
       </div>

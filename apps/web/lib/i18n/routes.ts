@@ -56,3 +56,20 @@ export function alternateLanguages(
 
 /** Languages that get a prefixed route (everything except the canonical). */
 export const PREFIXED_LANGS = ANSWER_LANGS.filter((l): l is Exclude<AnswerLang, "en"> => l !== "en");
+
+/** Same shape again for /states, the jurisdiction directory.
+ *
+ *  It was /verify, a page about our verification pipeline, and it is now a
+ *  list of every state's programme, agency and application link. The old URL
+ *  redirects (next.config.ts) rather than 404ing, because it is indexed and
+ *  linked from the chat, the landing page and the footer.
+ *
+ *  Unlike /verify, this one HAS localized routes — which is what makes it safe
+ *  for the footer to prefix the link by language again. */
+export function statesPath(lang: AnswerLang): string {
+  return lang === "en" ? "/states" : `/${lang}/states`;
+}
+
+export function statesUrl(lang: AnswerLang): string {
+  return SITE_URL ? `${SITE_URL}${statesPath(lang)}` : statesPath(lang);
+}

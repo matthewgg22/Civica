@@ -16,7 +16,7 @@ import { PAGE_COPY } from "../lib/i18n/snap-page";
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 
 const LINK_PATHS = {
-  verify: "/verify",
+  states: "/states",
   questions: "/questions",
   privacy: "/privacy",
   terms: "/terms",
@@ -30,18 +30,18 @@ const LINK_PATHS = {
  *  when a translated one ships, drop it from here and add the [lang] route in
  *  the SAME change.
  *
- *  /verify joined the list for the same reason supporters did in #837, and had
- *  the same symptom: there is no app/[lang]/verify route, so the state
- *  directory's own link 404'd from every Spanish, Vietnamese and Chinese page
- *  — including the one place whose label promises a reader their own state. It
- *  had been grouped with /questions, which DOES have a localized route. */
+ *  /verify was on this list, because there was no app/[lang]/verify route and
+ *  its link 404'd from every Spanish, Vietnamese and Chinese page — the same
+ *  defect supporters had in #837. It is off the list again now that the page
+ *  is /states and app/[lang]/states EXISTS. That is the rule: a path belongs
+ *  here only while it has no localized route, and comes off the day it gets
+ *  one. */
 const UNLOCALIZED: readonly string[] = [
   LINK_PATHS.privacy,
   LINK_PATHS.terms,
   LINK_PATHS.safety,
   LINK_PATHS.feedback,
   LINK_PATHS.supporters,
-  LINK_PATHS.verify,
 ];
 
 /** English is un-prefixed; everything else lives under /es|/vi|/zh. Privacy,
@@ -73,7 +73,7 @@ export function DemeterFooter({ lang = "en" }: { lang?: AnswerLang }) {
         </div>
 
         <nav className="dmft__nav" aria-label="Footer">
-          <Link className="dmft__link" href={href(LINK_PATHS.verify, lang)}>
+          <Link className="dmft__link" href={href(LINK_PATHS.states, lang)}>
             {c.statesLink}
           </Link>
           <Link className="dmft__link" href={href(LINK_PATHS.questions, lang)}>
