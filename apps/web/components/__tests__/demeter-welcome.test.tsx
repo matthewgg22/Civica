@@ -134,6 +134,18 @@ describe("when it shows", () => {
     expect(chat([{ role: "user", content: "hi" }]).querySelector(".dmwel")).toBeNull();
   });
 
+  it("holds focus while up, and hands it to the composer on dismissal", () => {
+    // THE REGRESSION THIS CAUGHT (CI, 2026-08-26): the composer's
+    // desktop-autofocus effect and the card both grabbed focus on mount, and
+    // the card won — leaving a keyboard reader inside a dialog while the
+    // effect believed it had focused the box behind it. Now the effect stands
+    // down while the card is up and takes over when it closes.
+    const c = chat();
+    expect(document.activeElement?.tagName, "the card holds focus").toBe("BUTTON");
+    fireEvent.click(c.querySelector(".dmwel__cta")!);
+    expect(c.querySelector(".dmwel")).toBeNull();
+  });
+
   it("does not come back once dismissed", () => {
     const c = chat();
     fireEvent.click(c.querySelector(".dmwel__cta")!);

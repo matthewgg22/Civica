@@ -958,6 +958,10 @@ export function DemeterChat({
 
   const dismissWelcome = useCallback(() => {
     setShowWelcome(false);
+    // Straight into the box. Someone who has just read what the program is has
+    // a question; landing them at the top of the document to go find the
+    // composer is a step for no reason.
+    requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
     try {
       window.localStorage.setItem(WELCOME_SEEN_KEY, "1");
     } catch {
@@ -989,11 +993,16 @@ export function DemeterChat({
   useEffect(() => {
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
     if (!window.matchMedia("(pointer: fine)").matches) return;
+    // NOT WHILE THE FIRST-VISIT CARD IS UP. It is a modal and holds focus; two
+    // effects racing for it leaves a keyboard reader in the conversation
+    // behind a dialog they cannot see past. Dismissing hands focus to the
+    // composer instead, which is where they were headed anyway.
+    if (showWelcome) return;
     inputRef.current?.focus({ preventScroll: true });
     // Mount-only on purpose: refocusing on later state changes would steal
     // focus mid-conversation.
      
-  }, []);
+  }, [showWelcome]);
   /** Back to one row. The composer grows as you type, so clearing the value
    *  without clearing the inline height leaves an empty box the size of the
    *  question you just sent. */
