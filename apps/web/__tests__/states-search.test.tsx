@@ -172,3 +172,32 @@ describe("everything handed to the client component is serializable", () => {
     }
   });
 });
+
+describe("the field is labelled, not just placeheld", () => {
+  it("has a real <label> wired to the input", () => {
+    // ux-guidelines, Forms / Input Labels (High): a placeholder is not a
+    // label. It disappears on the first keystroke, taking the only statement
+    // of what the control does with it — on the one field somebody comes back
+    // to after being interrupted.
+    const { container } = renderDirectory();
+    const label = container.querySelector("label");
+    const input = box();
+    expect(label).toBeTruthy();
+    expect(label!.textContent).toBe(COPY.searchLabel);
+    expect(label!.getAttribute("for")).toBe(input.getAttribute("id"));
+    expect(input.getAttribute("id")).toBeTruthy();
+  });
+
+  it("does not double up an aria-label over the visible one", () => {
+    // Two accessible names for one control is how they drift apart.
+    renderDirectory();
+    expect(box().getAttribute("aria-label")).toBeNull();
+  });
+
+  it("keeps the placeholder for the EXAMPLE, not the label", () => {
+    renderDirectory();
+    const input = box();
+    expect(input.getAttribute("placeholder")).toBe(COPY.searchPlaceholder);
+    expect(input.getAttribute("placeholder")).not.toBe(COPY.searchLabel);
+  });
+});
