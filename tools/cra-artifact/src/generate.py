@@ -21,7 +21,7 @@ from pathlib import Path
 
 TOOL_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOL_ROOT))
-from src import coverage, liveness, mapsvg, report, score, states  # noqa: E402
+from src import archetype, coverage, liveness, mapsvg, report, score, states  # noqa: E402
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
@@ -230,6 +230,8 @@ def build_values(bank, assumptions, org, metrics, meta):
         "method_short": meta["method_short"],
         "method_bullet": meta["method_bullet"],
         "data_gaps_note": gaps,
+        "rationale_block": archetype.rationale_block(bank),
+        "pitch_headline": archetype.headline(bank),
         "ask_fmt": fmt_int(bank["ask_usd"]),
         "assumptions_version": assumptions["version"],
         "hh_low": hh["low_dollar"],
@@ -281,7 +283,17 @@ def main(argv=None):
     # operator's send folder because the guards only ran after the file was
     # written, and at --send time rather than at generation.
     if not args.allow_nonsendable:
-        if bank.get("target_status") == "no-target":
+        # A "peer" bank has no gap on purpose -- that is the whole archetype, and
+        # it is the segment the old gap-only screen excluded by construction. It
+        # still needs the capacity evidence a no-target bank lacks, so require a
+        # disclosed giving figure rather than waving the guard through.
+        if archetype.resolve(bank) == "peer" and not bank.get("aa_giving_usd"):
+            raise NoDocumentedGapError(
+                f"{args.bank}: pitched as peer but discloses no per-assessment-area "
+                f"giving. A peer pitch leads with their own figure, so without one "
+                f"there is nothing to say.")
+        if (bank.get("target_status") == "no-target"
+                and archetype.resolve(bank) != "peer"):
             raise NoDocumentedGapError(
                 f"{args.bank}: target_status is no-target — the PE shows no gap on any "
                 f"test our activity feeds, so no artifact should exist. "

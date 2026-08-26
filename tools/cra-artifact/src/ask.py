@@ -51,6 +51,9 @@ class NoDocumentedGapError(ValueError):
     """Raised when neither test our activity feeds carries a gap."""
 
 
+PEER_MULTIPLIER = 1.0   # capacity only -- no gap to escalate against
+
+
 def gap_multiplier(investment: str, service: str) -> float:
     """Severity of the documented gap, across the two tests we can move.
 
@@ -66,7 +69,8 @@ def gap_multiplier(investment: str, service: str) -> float:
     return worse + (0.25 * other)
 
 
-def size_ask(aa_giving_usd, review_period_years, investment, service):
+def size_ask(aa_giving_usd, review_period_years, investment, service,
+             archetype=None):
     """Return (ask_usd, verdict, detail).
 
     verdict is "earmark" or "pool". A pool verdict returns the computed share
@@ -79,7 +83,15 @@ def size_ask(aa_giving_usd, review_period_years, investment, service):
         raise ValueError("review_period_years must be positive")
 
     annual = aa_giving_usd / years
-    mult = gap_multiplier(investment, service)
+    # A "peer" bank has no documented gap by definition -- that is what makes
+    # it a peer pitch rather than a remediation one. Sizing it still works:
+    # capacity supplies the anchor, and there is simply nothing to escalate
+    # against. Routing it through gap_multiplier would raise, which is why
+    # the old gap-only screen could not price these banks at all.
+    if archetype == "peer":
+        mult = PEER_MULTIPLIER
+    else:
+        mult = gap_multiplier(investment, service)
     raw = annual * SHARE * mult
     rounded = int(round(raw / STEP) * STEP)
 
