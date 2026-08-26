@@ -61,7 +61,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     },
     title: "Save your conversation",
     subtitle:
-      "Sign in and this conversation will be here when you come back. The chat itself is always free — an account is only for saving.",
+      "Sign in and this conversation will be here when you come back. The chat itself is always free. An account is only for saving.",
     continueGoogle: "Continue with Google",
     close: "Close",
     googleDisclosure:
@@ -73,7 +73,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     emailSending: "Sending…",
     emailSentTitle: "Check your email",
     emailSentBody:
-      "We sent a sign-in link to {email}. Open it on this device to finish — it expires shortly.",
+      "We sent a sign-in link to {email}. Open it on this device to finish. It expires shortly.",
     emailRetry: "Use a different address",
     emailDisclosure:
       "We use your email only to sign you in. No password to remember, and no marketing.",
@@ -94,7 +94,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     },
     title: "Guarda tu conversación",
     subtitle:
-      "Inicia sesión y esta conversación estará aquí cuando regreses. El chat siempre es gratis — la cuenta es solo para guardar.",
+      "Inicia sesión y esta conversación estará aquí cuando regreses. El chat siempre es gratis. La cuenta es solo para guardar.",
     continueGoogle: "Continúa con Google",
     close: "Cerrar",
     googleDisclosure:
@@ -106,7 +106,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     emailSending: "Enviando…",
     emailSentTitle: "Revisa tu correo",
     emailSentBody:
-      "Enviamos un enlace de inicio de sesión a {email}. Ábrelo en este dispositivo para terminar — vence pronto.",
+      "Enviamos un enlace de inicio de sesión a {email}. Ábrelo en este dispositivo para terminar. Vence pronto.",
     emailRetry: "Usar otro correo",
     emailDisclosure:
       "Usamos tu correo solo para iniciar sesión. Sin contraseña que recordar y sin publicidad.",
@@ -127,7 +127,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     },
     title: "Lưu cuộc trò chuyện của bạn",
     subtitle:
-      "Đăng nhập và cuộc trò chuyện này sẽ ở đây khi bạn quay lại. Trò chuyện luôn miễn phí — tài khoản chỉ dùng để lưu.",
+      "Đăng nhập và cuộc trò chuyện này sẽ ở đây khi bạn quay lại. Trò chuyện luôn miễn phí. Tài khoản chỉ dùng để lưu.",
     continueGoogle: "Tiếp tục với Google",
     close: "Đóng",
     googleDisclosure:
@@ -139,7 +139,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     emailSending: "Đang gửi…",
     emailSentTitle: "Kiểm tra email của bạn",
     emailSentBody:
-      "Chúng tôi đã gửi liên kết đăng nhập đến {email}. Mở nó trên thiết bị này để hoàn tất — liên kết sẽ sớm hết hạn.",
+      "Chúng tôi đã gửi liên kết đăng nhập đến {email}. Mở nó trên thiết bị này để hoàn tất. Liên kết sẽ sớm hết hạn.",
     emailRetry: "Dùng địa chỉ khác",
     emailDisclosure:
       "Chúng tôi chỉ dùng email của bạn để đăng nhập. Không cần nhớ mật khẩu, không gửi quảng cáo.",
@@ -159,7 +159,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
       after: '。',
     },
     title: "保存您的对话",
-    subtitle: "登录后，这段对话会在您回来时依然在这里。聊天本身永远免费——账户只用于保存。",
+    subtitle: "登录后，这段对话会在您回来时依然在这里。聊天本身永远免费，账户只用于保存。",
     continueGoogle: "使用 Google 继续",
     close: "关闭",
     googleDisclosure: "我们只使用您的 Google 账户来登录和保存您的对话。",
@@ -169,7 +169,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     emailCta: "给我发送登录链接",
     emailSending: "发送中…",
     emailSentTitle: "请查收邮件",
-    emailSentBody: "我们已将登录链接发送到 {email}。请在本设备上打开以完成登录——链接很快会过期。",
+    emailSentBody: "我们已将登录链接发送到 {email}。请在本设备上打开以完成登录，链接很快会过期。",
     emailRetry: "换一个邮箱",
     emailDisclosure: "我们只使用您的邮箱来登录。无需记住密码，也不会发送营销邮件。",
     errorInvalidEmail: "请输入有效的电子邮箱地址。",

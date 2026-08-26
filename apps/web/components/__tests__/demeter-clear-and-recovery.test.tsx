@@ -179,7 +179,7 @@ describe("a failed send hands the question back", () => {
     await waitFor(() => expect(screen.getByRole("alert")).toBeTruthy());
     const shown = screen.getByRole("alert").textContent ?? "";
     expect(shown).toContain("resets tomorrow");
-    expect(shown).not.toContain("give it a minute");
+    expect(shown.toLowerCase()).not.toContain("give it a minute");
   });
 
   it("still says 'a minute' for an ordinary rate limit", async () => {
@@ -194,6 +194,6 @@ describe("a failed send hands the question back", () => {
     render(<DemeterChat states={STATES} />);
     typeAndSend("Do I qualify?");
     await waitFor(() => expect(screen.getByRole("alert")).toBeTruthy());
-    expect(screen.getByRole("alert").textContent).toContain("give it a minute");
+    expect(screen.getByRole("alert").textContent?.toLowerCase()).toContain("give it a minute");
   });
 });

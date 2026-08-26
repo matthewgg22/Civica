@@ -30,6 +30,7 @@ import {
 import type { ScreeningClassification, PartialFacts } from "@civica/demeter-engine";
 import { DemeterMark } from "./DemeterMark";
 import { DemeterStatePicker } from "./DemeterStatePicker";
+import { DemeterWelcome } from "./DemeterWelcome";
 import { DemeterWorksheet, type WorksheetMode } from "./DemeterWorksheet";
 import { DemeterFeedback } from "./DemeterFeedback";
 import { DemeterSave } from "./DemeterSave";
@@ -588,6 +589,11 @@ export { T };
 const STREAM_TICK_MS = 34;
 const STREAM_MAX_STEP = 2;
 
+/** Remembers that the first-visit card has been seen. Deliberately its own
+ *  key rather than a field on the saved session: clearing a conversation must
+ *  not make the product introduce itself again. */
+const WELCOME_SEEN_KEY = "demeter.welcome.seen";
+
 export function DemeterChat({
   states,
   initialState = null,
@@ -805,6 +811,11 @@ export function DemeterChat({
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  /** The first-visit card. Starts CLOSED and is opened by an effect, not by
+   *  initial state: reading localStorage during render would differ between
+   *  server and client and hydrate mismatched. Never shown over an existing
+   *  conversation — someone resuming has already met the product. */
+  const [showWelcome, setShowWelcome] = useState(false);
 
   // ── PACED STREAMING ────────────────────────────────────────────────────────
   // The reader used to render every network chunk the instant it arrived, and
@@ -934,6 +945,30 @@ export function DemeterChat({
     });
   }, [messages, state, lang, busy, worksheetMode, classification]);
 
+  useEffect(() => {
+    if (initialMessages.length > 0) return;
+    try {
+      if (window.localStorage.getItem(WELCOME_SEEN_KEY)) return;
+      setShowWelcome(true);
+    } catch {
+      // localStorage disabled (private mode, blocked cookies). Showing the
+      // card every visit would be worse than never showing it, so: never.
+    }
+  }, [initialMessages.length]);
+
+  const dismissWelcome = useCallback(() => {
+    setShowWelcome(false);
+    // Straight into the box. Someone who has just read what the program is has
+    // a question; landing them at the top of the document to go find the
+    // composer is a step for no reason.
+    requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+    try {
+      window.localStorage.setItem(WELCOME_SEEN_KEY, "1");
+    } catch {
+      /* nothing to remember it with; it simply shows again next time */
+    }
+  }, []);
+
   useEffect(() => () => clearTimeout(rafRef.current), []);
 
   // THE URL CLAIMS WHAT THE SCREEN SHOWS (vercel-guidelines finding 3).
@@ -958,11 +993,16 @@ export function DemeterChat({
   useEffect(() => {
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
     if (!window.matchMedia("(pointer: fine)").matches) return;
+    // NOT WHILE THE FIRST-VISIT CARD IS UP. It is a modal and holds focus; two
+    // effects racing for it leaves a keyboard reader in the conversation
+    // behind a dialog they cannot see past. Dismissing hands focus to the
+    // composer instead, which is where they were headed anyway.
+    if (showWelcome) return;
     inputRef.current?.focus({ preventScroll: true });
     // Mount-only on purpose: refocusing on later state changes would steal
     // focus mid-conversation.
      
-  }, []);
+  }, [showWelcome]);
   /** Back to one row. The composer grows as you type, so clearing the value
    *  without clearing the inline height leaves an empty box the size of the
    *  question you just sent. */
@@ -1712,22 +1752,11 @@ export function DemeterChat({
               {t.signin}
             </a>
           )}
-          {/* RETARGETED with the rename (owner, 2026-08-22). The label became
-              "What is SNAP?", and /questions is the page about what the
-              APPLICATION asks — a different question, and a link whose label
-              disagrees with where it goes is worse than a clumsy label. It now
-              points at the landing page's own "What SNAP is" band, which
-              already carries id="what-is-snap" — that band lives in
-              SnapOverview, which renders on /screen/ask (the Demeter landing),
-              NOT on "/" (still the older Civica marketing page). /questions
-              keeps its entry from the landing form cards, so nothing is
-              orphaned. */}
-          <a
-            className="demeter__navlink"
-            href={lang === "en" ? "/screen/ask#what-is-snap" : `/${lang}/screen/ask#what-is-snap`}
-          >
-            {t.navQuestions}
-          </a>
+          {/* The "What is SNAP?" link is GONE (owner, 2026-08-22). It sent
+              someone out of the chat to read a definition — and the definition
+              is now the first thing the empty state says, alongside the
+              first-visit card, so the trip is pointless. The chrome row is
+              sign-in and nothing else. */}
         </div>
       </header>
 
@@ -1769,6 +1798,12 @@ export function DemeterChat({
           <div className="demeter__empty">
             <DemeterMark size={52} />
             <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
+            {/* WHAT THE PROGRAM IS, then what this is (owner, 2026-08-22).
+                The "What is SNAP?" link is gone, so the definition it pointed
+                at leads here instead — someone who has just been told to
+                "apply for SNAP" may not know what the letters mean, and
+                sending them off the page to find out was the old answer. */}
+            <p className="demeter__emptywhat">{t.emptyWhatIsSnap}</p>
             <p className="demeter__emptylede">{t.emptyLede}</p>
             {/* Framing before the first word is typed (#898 P2-6): SNAP is
                 formula work this chat can walk through, and there are two
@@ -1935,6 +1970,12 @@ export function DemeterChat({
           state picker straight away, because an estimate without a state is a
           federal-floor guess and the picker is the next thing needed either
           way. */}
+      {showWelcome && (
+        <DemeterWelcome
+          copy={{ ...t.welcome, whatIsSnap: t.emptyWhatIsSnap }}
+          onDismiss={dismissWelcome}
+        />
+      )}
       {showModeOffer && (
         <div
           className="demeter__modeoffer"
@@ -2219,7 +2260,6 @@ export function DemeterChat({
                   Demeter
                 </span>
               </a>
-              <p className="demeter__sbtag">{t.tagline}</p>
             </div>
             <button
               type="button"
@@ -2235,6 +2275,11 @@ export function DemeterChat({
               </svg>
             </button>
           </div>
+          {/* OUT of the brand column and under the whole head row (owner,
+              2026-08-26). Inside it, the tagline shared its width with the
+              toggle button and wrapped to two lines. Full-width it fits on
+              one, which is what a label ought to do. */}
+          <p className="demeter__sbtag">{t.tagline}</p>
           <div className="demeter__side">
           {/* Yields to the in-column instance on narrow viewports — exactly
               one picker in the DOM at any width (see narrowViewport). */}
@@ -2469,46 +2514,41 @@ export function DemeterChat({
                     <path d="M10 4.5v11M4.5 10h11" />
                   </svg>
                 </button>
-                {/* A native <select> here rendered the OS dropdown — an
-                    unstyleable box that ignored every token in the design
-                    system and swallowed a third of the rail's bottom row.
-                    Same <details> disclosure the gear uses (Escape and
-                    outside-click come free, works with no JavaScript), but
-                    showing a globe and the CURRENT language's own short code:
-                    visual, and it still answers "what am I reading in?"
-                    without opening anything. Each option carries its native
-                    name, because someone looking for Vietnamese is scanning
-                    for "Tiếng Việt", not for a flag or an ISO code. */}
-                <details className="demeter__langmenu">
-                  <summary className="demeter__langbtn" aria-label={t.languageLabel} title={t.languageLabel}>
-                    <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="9" />
-                      <path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18" />
-                    </svg>
-                    <span className="demeter__langcode">{LANG_SHORT_CODE[lang]}</span>
-                  </summary>
-                  <div className="demeter__langlist" role="group" aria-label={t.languageLabel}>
-                    {ANSWER_LANGS.map((code) => (
-                      <button
-                        key={code}
-                        type="button"
-                        className="demeter__langopt"
-                        aria-pressed={lang === code}
-                        onClick={(e) => {
-                          setLang(code);
-                          // Close the disclosure the same way a real menu
-                          // would; <details> has no auto-close on activation.
-                          e.currentTarget.closest("details")?.removeAttribute("open");
-                        }}
-                      >
-                        <span className="demeter__langtick" aria-hidden>
-                          {lang === code ? "✓" : ""}
+                {/* ALL FOUR, VISIBLE, NO DISCLOSURE (owner, 2026-08-26).
+                    This was a globe and the current code behind a popover, and
+                    before that a native <select>. Both hid three of the four
+                    languages behind an interaction — on a product where the
+                    person who most needs another language is the least likely
+                    to go hunting for a control to find it. Four initials and
+                    three slashes cost less width than the globe did, and the
+                    terracotta fill on the current one does the job the tick
+                    inside the old menu did: says which you are reading in,
+                    without being opened.
+
+                    The BUTTON shows the short code; the accessible name is the
+                    language's own name, so a screen reader announces "Tiếng
+                    Việt" rather than the letters "VI". */}
+                <div className="demeter__langrow" role="group" aria-label={t.languageLabel}>
+                  {ANSWER_LANGS.map((code, i) => (
+                    <span key={code} className="demeter__langitem">
+                      {i > 0 && (
+                        <span className="demeter__langsep" aria-hidden>
+                          /
                         </span>
-                        {LANG_NATIVE_NAME[code]}
+                      )}
+                      <button
+                        type="button"
+                        className="demeter__langpick"
+                        aria-pressed={lang === code}
+                        aria-label={LANG_NATIVE_NAME[code]}
+                        title={LANG_NATIVE_NAME[code]}
+                        onClick={() => setLang(code)}
+                      >
+                        {LANG_SHORT_CODE[code]}
                       </button>
-                    ))}
-                  </div>
-                </details>
+                    </span>
+                  ))}
+                </div>
           {/* SETTINGS, on the same line as sign-in (owner rec): a gear that
               discloses the standing pages. <details> rather than custom
               popover state — Escape and outside-click come free, and it
