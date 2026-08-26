@@ -1,12 +1,15 @@
 {
   "code": "CT",
   "program": "SNAP — Connecticut has no distinctive local program nickname; the manual and consumer pages both use plain \"SNAP\" (see PROVENANCE.md)",
+  "program_short": "SNAP",
   "agency": "Connecticut Department of Social Services (DSS)",
+  "agency_short": "Connecticut Department of Social Services (DSS)",
   "admin_model": "state",
   "admin_note": "Connecticut is a STATE-ADMINISTERED SNAP program (no county option-in like CA/NY/MN/WI/VA) — DSS administers directly, statewide, with no county-level policy variation. GENUINE STRUCTURAL DEPARTURE this pack found: Connecticut's operative policy source, the Uniform Policy Manual (UPM), is NOT organized as a dedicated SNAP volume the way most of this roster's states are — it is a single manual spanning EIGHT topical chapters (UPM1 Rights/Eligibility Process through UPM9 Special Benefits) shared across FOUR programs at once (AFDC/TFA, AABD, MA/Medicaid, and FS/SNAP), with each numbered section (e.g., \"5520.35\") carrying a \"Program:\" tag showing which of the four programs it applies to. There is no single \"the SNAP manual\" the way Kentucky's Volume 2 or Louisiana's B-1040-SNAP is — SNAP policy is threaded through the same topical sections as CT's other public-assistance programs. This pack also found CT's OWN current SNAP procedures use \"EDG\" (Eligibility Determination Group) as its household-unit term, distinct from \"assistance unit\" used in this manual's older (1980s-2000s) sections and from most other states' terminology in this roster. Confirm current operative practice with the applicant's own local DSS office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA/KY.",
   "system": "DSS processes SNAP centrally (no county offices with independent policy authority); applicants apply online through the ConneCT self-service portal (connect.ct.gov) or the newer, mobile-friendly MyDSS portal (same login), by phone through the DSS Benefits Center (1-855-626-6632), in person at a DSS office, or by mailing a printed Application for Benefits. Most households recertify every 12 months and complete a mandatory Periodic Report Form (PRF) at the 6-month midpoint — except ESAP households (all adult members elderly 60+ or disabled, with no earned income), which are exempt from the PRF.",
   "portal": {
     "name": "ConneCT (connect.ct.gov) / MyDSS",
+    "short": "ConneCT (connect.ct.gov) / MyDSS",
     "url": "https://www.connect.ct.gov/"
   },
   "update_channels": [

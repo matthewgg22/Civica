@@ -1,12 +1,16 @@
 {
   "code": "KS",
   "program": "SNAP — Kansas calls it the Food Assistance program; DCF's own consumer pages use \"Food Assistance,\" not \"SNAP,\" as the primary label (see PROVENANCE.md)",
+  "program_short": "SNAP",
   "agency": "Kansas Department for Children and Families (DCF)",
+  "agency_short": "Kansas Department for Children and Families (DCF)",
   "admin_model": "state",
   "admin_note": "Kansas is a STATE-ADMINISTERED SNAP program — DCF administers directly through the Kansas Eligibility Enforcement System (KEES), with no county option-in like CA/NY/MN/WI/VA. This pack found a genuinely consequential DISCREPANCY worth flagging up front: this repo's existing packages/snap-rules StatePolicy entry for KS is explicitly labeled \"Non-BBCE archetype (e.g. KS)\" in its own `label` field, and the file's top-of-file comment (states.ts line ~128) states \"Other states (TX/KS/AK) are policy archetypes used by the fixture; their SUA values are illustrative until the FNS-published values are loaded\" — language signaling a SYNTHETIC placeholder, not independently researched real Kansas policy. This pack's own independent primary-source research (KEESM, the Kansas Economic and Employment Support Manual, plus the current KEESM Appendix F-2 Food Assistance Program Standards PDF, effective 10/1/2025-9/30/2026, and K.S.A. 39-709e) CONFIRMS the existing engine's `bbce: false`, `asset_waiver: false`, and SUA figures (HCSUA $469 / LUA $345 / phone $44) as ACCURATE, current, real Kansas policy, not an arbitrary placeholder — real Kansas SUA figures happen to exactly match what a synthetic-archetype label implied. This pack also found a SEPARATE, undated in-code comment directly above the KS entry (states.ts lines ~1037-1042) that already claims \"confirmed live 2026-08-09\" for the SUA figures via KEESM §7226 — an apparent partial, undocumented prior correction that was never reconciled with the file's own \"archetype\"/\"illustrative\" language one screen above it. See PROVENANCE.md for the full discrepancy-resolution writeup; packages/snap-rules is NOT touched by this corpus-only pack.",
   "system": "DCF processes Food Assistance centrally through KEES (Kansas Eligibility Enforcement System); applicants apply online at cssp.kees.ks.gov, by phone through the DCF Consumer Assistance Line (1-888-369-4777), in person at a local DCF service center, or by mailing a paper Application for Benefits (ES-3100). Most non-elderly/non-disabled households recertify on a 12-month cycle; this pack could not confirm a Kansas-specific interim/periodic-report structure with primary-source confidence (see freshness.json).",
   "portal": {
     "name": "KEES (Kansas Eligibility Enforcement System)",
+    "short": "KEES",
+    "note": "Kansas Eligibility Enforcement System",
     "url": "https://cssp.kees.ks.gov/apspssp/sspNonMed.portal"
   },
   "update_channels": [

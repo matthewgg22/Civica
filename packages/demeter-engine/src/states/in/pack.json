@@ -1,12 +1,15 @@
 {
   "code": "IN",
   "program": "SNAP — Indiana uses the plain federal program name throughout FSSA/DFR materials and its own Program Policy Manual; Indiana does NOT give the food-assistance program itself a state brand name, though its EBT card carries the brand name \"Hoosier Works\"",
+  "program_short": "SNAP",
   "agency": "Indiana Family and Social Services Administration (FSSA), Division of Family Resources (DFR)",
+  "agency_short": "Indiana Family and Social Services Administration (FSSA)",
   "admin_model": "state",
   "admin_note": "Indiana is STATE-administered: FSSA is the state agency responsible for social service and financial assistance programs, and the Division of Family Resources (DFR) — one of FSSA's seven major service divisions — has statewide responsibility for SNAP, TANF, and Medicaid. DFR's county-level \"local offices\" are the state agency's own field offices (FSSA's own manual describes FSSA as \"responsible for ensuring federal regulations are initially implemented and consistently applied in each county\"), not independently governed county welfare departments the way Virginia's LDSS or North Carolina's county DSS are — matching the administrative archetype this roster's Georgia and Tennessee packs document, not the county-administered archetype. Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own DFR local office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA.",
   "system": "Indiana's eligibility caseworkers use the state's ICES (Indiana Client Eligibility System) case-management system; applicants apply through the FSSA Benefits Portal or in person/by mail/fax at a DFR local office",
   "portal": {
     "name": "FSSA Benefits Portal",
+    "short": "FSSA Benefits Portal",
     "url": "https://fssabenefits.in.gov/bp/"
   },
   "update_channels": [

@@ -1,12 +1,15 @@
 {
   "code": "MS",
   "program": "SNAP — Mississippi has no distinctive local program nickname; MDHS's own manual and consumer pages use plain \"SNAP\" throughout (see PROVENANCE.md)",
+  "program_short": "SNAP",
   "agency": "Mississippi Department of Human Services (MDHS)",
+  "agency_short": "Mississippi Department of Human Services (MDHS)",
   "admin_model": "state",
   "admin_note": "Mississippi is a STATE-ADMINISTERED SNAP program — MDHS administers directly through 82 county offices with no county-level policy authority (an applicant's county determines which physical office serves them, not which rules apply, the same non-devolved structure as Connecticut's DSS). GENUINE STRUCTURAL DEPARTURE this pack found: Mississippi's own current SNAP Policy Manual (Title 18, Part 14, revised through May 2026 — directly fetched, no access barrier) confirms Mississippi does NOT operate any form of Broad-Based or Expanded Categorical Eligibility. Rule 15.1 limits categorical eligibility strictly to households where every member receives or is eligible for TANF and/or SSI — there is no income-based BBCE track raising the gross-income ceiling for other households, unlike the large majority of this roster's other states. A second genuine departure: Rule 13.12 ties Mississippi's ABAWD waiver authority to a formal state or federal natural-disaster declaration with the Governor's approval (Miss. Code Ann. §43-12-19) — not the federal unemployment-rate waiver criteria most other states' packs in this roster describe. Confirm current operative practice with the applicant's own local MDHS county office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA/KY/CT.",
   "system": "MDHS processes SNAP through 82 county offices with no independent county policy authority; applicants apply online through the Access Mississippi self-service portal (access.ms.gov), by phone through Economic Assistance Eligibility Client Services (1-800-948-3050), in person at a county MDHS office, or by mailing, faxing, or emailing a paper application. Most households recertify every 12 months (up to 24 months if the household is all-elderly/disabled); ESAP households (all members 65+, no earned income) get a 36-month certification period with an annual interim-contact form instead of a full recertification; MSCAP households also get a 36-month certification period.",
   "portal": {
     "name": "Access Mississippi",
+    "short": "Access Mississippi",
     "url": "https://www.access.ms.gov/consumer/home"
   },
   "update_channels": [

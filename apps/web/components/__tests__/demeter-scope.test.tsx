@@ -11,26 +11,22 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { DemeterStatePicker } from "../DemeterStatePicker";
 import { T } from "../../lib/i18n/demeter-chat-copy";
+import { makePack, makePortal } from "../../__tests__/fixtures/pack";
 
 const STATES = [
-  {
+  makePack({
     code: "CA",
     program: "CalFresh",
     agency: "California Department of Social Services",
-    adminModel: "county" as const,
-    portal: { name: "BenefitsCal", url: "https://benefitscal.com/" },
-    verified: true as const,
-    verification: { verified_on: "2026-01-01", method: "m", gates: "g", sources: [] },
-  },
-  {
+    adminModel: "county",
+    portal: makePortal({ name: "BenefitsCal", url: "https://benefitscal.com/" }),
+  }),
+  makePack({
     code: "TX",
     program: "SNAP Food Benefits",
     agency: "Texas HHSC",
-    adminModel: "state" as const,
-    portal: { name: "YourTexasBenefits", url: "https://www.yourtexasbenefits.com/" },
-    verified: true as const,
-    verification: { verified_on: "2026-01-01", method: "m", gates: "g", sources: [] },
-  },
+    portal: makePortal({ name: "YourTexasBenefits", url: "https://www.yourtexasbenefits.com/" }),
+  }),
 ];
 
 const COPY = T.en.picker;

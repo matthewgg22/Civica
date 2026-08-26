@@ -1,12 +1,15 @@
 {
   "code": "NJ",
   "program": "NJ SNAP — New Jersey's own name for the Supplemental Nutrition Assistance Program throughout N.J.A.C. 10:87 and its public materials; NOTE that inside New Jersey's own manual the acronym \"FNS\" is used the OPPOSITE way from North Carolina's pack in this roster — New Jersey's manual defines \"FNS\" as the federal USDA Food and Nutrition Service, never as New Jersey's own program name",
+  "program_short": "NJ SNAP",
   "agency": "New Jersey Department of Human Services (DHS), Division of Family Development (DFD)",
+  "agency_short": "New Jersey Department of Human Services (DHS)",
   "admin_model": "county",
   "admin_note": "New Jersey runs a state-supervised, COUNTY-administered system: DFD writes the N.J.A.C. 10:87 NJ SNAP Manual and issues policy through it, but eligibility determination and case processing happen at County Social Service Agencies (CSSA — the manual's current defined term; older codified section text still uses the legacy term \"County Welfare Agency\"/CWA for the same entity) using the state's FAMIS (Family Assistance Management Information System) eligibility system. Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own CSSA, the same caution this roster already carries for CA/NY/MN/WI/OH/NC.",
   "system": "FAMIS (Family Assistance Management Information System — the state's eligibility system caseworkers use); applicants apply through the MyNJHelps self-service portal",
   "portal": {
     "name": "MyNJHelps",
+    "short": "MyNJHelps",
     "url": "https://www.mynjhelps.gov"
   },
   "update_channels": [

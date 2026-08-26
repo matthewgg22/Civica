@@ -69,29 +69,61 @@ export interface PackVerification {
 
 export interface PackMeta {
   code: string;
-  /** What the state calls the program (e.g. "CalFresh", "Basic Food"). */
+  /** What the state calls the program (e.g. "CalFresh", "Basic Food").
+   *
+   *  MODEL-FACING. Carries corpus annotation behind an em-dash on 32 packs
+   *  ("Food Assistance Program (FAP) — Michigan's name for SNAP"). Retrieval
+   *  wants that; a reader does not. Show `programShort`. */
   program: string;
+  /** The reader-facing program name. Always present. */
+  programShort: string;
+  /** MODEL-FACING, and the longest field in the pack — up to 211 characters
+   *  of department, divisions and local-administration prose. Show
+   *  `agencyShort`. */
   agency: string;
+  /** The department alone, as a reader would name it. Always present. */
+  agencyShort: string;
   adminModel: "state" | "county";
-  portal?: { name: string; url: string } | undefined;
+  portal?:
+    | {
+        /** MODEL-FACING; may carry a trailing annotation. Show `short`. */
+        name: string;
+        /** The portal as it is branded, e.g. "PAIS", "myBenefits.ny.gov". */
+        short: string;
+        /** The annotation lifted out of `name`, where there was one. Sometimes
+         *  an acronym expansion, sometimes the only warning on the row — New
+         *  York's portal does not cover NYC. Never drop it. */
+        note?: string | undefined;
+        url: string;
+      }
+    | undefined;
+  /** Why there is no portal, where that is a fact about the jurisdiction
+   *  rather than a gap in what we know. Set only when `portal` is absent. */
+  applyNote?: string | undefined;
   verified: true;
-  /** Public verification trail (rendered on /verify and the guide pages). */
+  /** Public verification trail (rendered on the guide pages). */
   verification: PackVerification;
 }
 
 const meta = (p: {
   code: string;
   program: string;
+  program_short: string;
   agency: string;
+  agency_short: string;
   admin_model: string;
-  portal?: { name: string; url: string } | undefined;
+  portal?: { name: string; short: string; note?: string; url: string } | undefined;
+  apply_note?: string | undefined;
   verification: PackVerification;
 }): PackMeta => ({
   code: p.code,
   program: p.program,
+  programShort: p.program_short,
   agency: p.agency,
+  agencyShort: p.agency_short,
   adminModel: p.admin_model === "county" ? "county" : "state",
   portal: p.portal,
+  applyNote: p.apply_note,
   verified: true,
   verification: p.verification,
 });

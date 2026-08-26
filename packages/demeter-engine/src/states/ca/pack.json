@@ -1,12 +1,15 @@
 {
   "code": "CA",
   "program": "CalFresh",
+  "program_short": "CalFresh",
   "agency": "California Department of Social Services (CDSS)",
+  "agency_short": "California Department of Social Services (CDSS)",
   "admin_model": "county",
   "admin_note": "58 County Welfare Departments on CalSAWS; state policy issues via ACL/ACIN; operative practice can vary by county.",
   "system": "CalSAWS",
   "portal": {
     "name": "BenefitsCal",
+    "short": "BenefitsCal",
     "url": "https://benefitscal.com"
   },
   "update_channels": [

@@ -1,12 +1,15 @@
 {
   "code": "SC",
   "program": "SNAP — no distinctive local nickname; SCDSS uses the plain federal name (see PROVENANCE.md)",
+  "program_short": "SNAP",
   "agency": "South Carolina Department of Social Services (SCDSS), Division of Economic Services",
+  "agency_short": "South Carolina Department of Social Services (SCDSS)",
   "admin_model": "state",
   "admin_note": "South Carolina is a STATE-ADMINISTERED SNAP program: SCDSS is a single statewide agency with an office in every county, staffed by SCDSS's own eligibility caseworkers (state employees) and \"guided by a state office which provides centralized management, support, and accountability functions\" (SCDSS's own Agency Overview). This matches this roster's Georgia/Indiana/Tennessee/Missouri/Maryland state-agency-with-local-offices archetype, NOT the independently-governed-county archetype documented for Virginia/North Carolina/Colorado. Confirm current operative practice (local processing times, office hours, specific outreach materials) with the applicant's own county DSS office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO.",
   "system": "SCDSS's eligibility caseworkers process SNAP through the DSS Benefits Portal (benefitsportal.dss.sc.gov), where applicants can apply online, check status, and report changes; applications may also be submitted in person, by mail, or by fax at a county DSS office. SCDSS separately administers TANF (also called \"Family Independence\") — a SEPARATE cash-assistance program, not another name for SNAP, though TANF receipt confers Basic Categorical Eligibility for SNAP.",
   "portal": {
     "name": "DSS Benefits Portal",
+    "short": "DSS Benefits Portal",
     "url": "https://benefitsportal.dss.sc.gov/"
   },
   "update_channels": [

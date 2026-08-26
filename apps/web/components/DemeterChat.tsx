@@ -40,7 +40,7 @@ import { stateName } from "../lib/state-names";
 import { detectState, detectUncoveredPlace, type StateMention } from "../lib/detect-state";
 import type { SavedMsg } from "../lib/demeter-conversations";
 import { shieldCitations } from "../lib/no-translate";
-import { agencyDisplayName } from "../lib/program-name";
+
 import {
   saveChatSession,
   readChatSession,
@@ -91,7 +91,6 @@ export function announcementFor(answer: string): string {
 // then a straight hydrate with no translation layer, and a message that can be
 // rendered is by construction a message that can be saved and read back.
 type Msg = SavedMsg;
-
 
 
 // Answers arrive as light markdown (the engine's prompt asks for bold, bullets,
@@ -579,7 +578,6 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
 // renders the entry card on the server and needs it.
 // Re-exported so existing imports of `T` from this file keep working.
 export { T };
-
 
 /** How fast a streamed answer is REVEALED — deliberately slower than it
  *  arrives. ~40 characters a second at rest, ~120 catching up. Module scope so
@@ -1074,7 +1072,7 @@ export function DemeterChat({
       const portal =
         pack?.portal && name
           ? [
-              t.portalLead.replace("{state}", name).replace("{agency}", agencyDisplayName(pack.agency)),
+              t.portalLead.replace("{state}", name).replace("{agency}", pack.agencyShort),
               t.portalCta
                 .replace("{portal}", pack.portal.name)
                 .replace(/^(.*)$/, `[$1](${pack.portal.url})`),
@@ -1149,7 +1147,7 @@ export function DemeterChat({
           facts: factsRef.current,
           stillNeeded: classification?.completeness?.stillNeeded ?? [],
           stateName: state ? stateName(state) : null,
-          agency: pack?.agency ? agencyDisplayName(pack.agency) : null,
+          agency: pack?.agencyShort ?? null,
           portalName: pack?.portal?.name ?? null,
           portalUrl: pack?.portal?.url ?? null,
         }),
@@ -1187,7 +1185,7 @@ export function DemeterChat({
           facts: factsRef.current,
           stillNeeded: classification?.completeness?.stillNeeded ?? [],
           stateName: state ? stateName(state) : null,
-          agency: pack?.agency ? agencyDisplayName(pack.agency) : null,
+          agency: pack?.agencyShort ?? null,
           portalName: pack?.portal?.name ?? null,
           portalUrl: pack?.portal?.url ?? null,
         }),
@@ -1589,7 +1587,7 @@ export function DemeterChat({
   /** The agency the disclaimer points at. Their own state's, once one is set —
    *  a generic "your state agency" is exactly the sort of advice that sounds
    *  complete and leaves someone with nowhere to go. */
-  const agencyHref = selectedPack?.portal?.url ?? "/verify";
+  const agencyHref = selectedPack?.portal?.url ?? "/states";
 
   const hasChat = messages.length > 0;
   /** At least one answer has finished. The mode offer waits for this: before an
@@ -2521,7 +2519,7 @@ export function DemeterChat({
               </svg>
             </summary>
             <div className="demeter__gearmenu">
-              <a className="demeter__settingslink" href="/verify">
+              <a className="demeter__settingslink" href="/states">
                 {t.statesLink}
               </a>
               <a className="demeter__settingslink" href="/terms">

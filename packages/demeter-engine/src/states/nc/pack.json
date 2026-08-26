@@ -1,12 +1,15 @@
 {
   "code": "NC",
   "program": "Food and Nutrition Services (FNS) — North Carolina's own name for SNAP throughout its policy manual and public materials; NOTE the acronym collision with the FEDERAL agency also called \"FNS\" (USDA Food and Nutrition Service) — North Carolina's \"FNS\" always means the state's SNAP program in this pack unless explicitly marked USDA/federal",
+  "program_short": "Food and Nutrition Services (FNS)",
   "agency": "North Carolina Department of Health and Human Services (NCDHHS), Division of Social Services / Division of Child and Family Well-Being, administered locally by the 100 County Departments of Social Services (DSS)",
+  "agency_short": "North Carolina Department of Health and Human Services (NCDHHS)",
   "admin_model": "county",
   "admin_note": "North Carolina runs a state-supervised, COUNTY-administered system: NCDHHS writes the FNS Certification Manual policy and issues FNS Change Notices, but each of North Carolina's 100 counties has its own Department of Social Services (DSS) — a county government agency, not a state field office — that determines eligibility and processes applications through NC FAST. Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own county DSS, the same caution this roster already carries for CA/NY/MN/WI/OH.",
   "system": "NC FAST (North Carolina Families Accessing Services through Technology — the state's integrated eligibility system caseworkers use); applicants apply through the ePASS self-service portal",
   "portal": {
     "name": "ePASS",
+    "short": "ePASS",
     "url": "https://epass.nc.gov"
   },
   "update_channels": [

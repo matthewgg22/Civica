@@ -25,6 +25,7 @@ import type { PackMeta } from "@civica/demeter-engine/packs";
 
 import { DemeterChat } from "../DemeterChat";
 import { T } from "../../lib/i18n/demeter-chat-copy";
+import { makePack } from "../../__tests__/fixtures/pack";
 
 const LOCALES = ["en", "es", "vi", "zh"] as const;
 
@@ -32,23 +33,7 @@ const LOCALES = ["en", "es", "vi", "zh"] as const;
 // transcript. Same stub as the other DemeterChat render suites.
 Element.prototype.scrollTo = vi.fn() as unknown as typeof Element.prototype.scrollTo;
 
-const verification = {
-  verified_on: "2026-08-05",
-  method: "test fixture",
-  gates: "n/a",
-  sources: [],
-};
-const STATES: PackMeta[] = [
-  {
-    code: "MA",
-    program: "Massachusetts SNAP",
-    agency: "DTA",
-    adminModel: "state",
-    portal: undefined,
-    verified: true,
-    verification,
-  },
-];
+const STATES: PackMeta[] = [makePack({ code: "MA", program: "Massachusetts SNAP", agency: "DTA" })];
 
 describe("empty-chat framing (#898 P2-6)", () => {
   afterEach(cleanup);

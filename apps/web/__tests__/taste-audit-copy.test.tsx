@@ -76,7 +76,11 @@ describe("the screen-reader state roster is user copy, not the research annexe (
 
   it("the visible map panel also cleans the agency line", () => {
     const src = readFileSync(join(__dirname, "..", "components", "UsCoverageMap.tsx"), "utf8");
-    expect(src).toContain("agencyDisplayName(");
+    // The cut moved from render time into the pack (agency_short), so the
+    // map reads the short field instead of calling the helper. What this
+    // guards is unchanged: the visible panel must not print pack.agency.
+    expect(src).toContain("chosen.agencyShort");
+    expect(src).not.toMatch(/\bchosen\.agency\b/);
     // The raw field must not reach either render site.
     expect(src).not.toMatch(/\{chosen\.agency\}/);
   });

@@ -4,6 +4,7 @@ import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/re
 import type { PackMeta } from "@civica/demeter-engine/packs";
 import { DemeterChat } from "../DemeterChat";
 import { T } from "../../lib/i18n/demeter-chat-copy";
+import { makePack } from "../../__tests__/fixtures/pack";
 
 // Regression for the #833 audit (2026-08-15): a real 15-turn conversation,
 // with real content in it, never once saw either offer a second time.
@@ -25,22 +26,8 @@ import { T } from "../../lib/i18n/demeter-chat-copy";
 // 5000ms default flaked two unrelated PRs in a row (#890, #896) before
 // these were added.
 
-const verification = {
-  verified_on: "2026-08-05",
-  method: "test fixture",
-  gates: "n/a",
-  sources: [],
-};
 const STATES: PackMeta[] = [
-  {
-    code: "NH",
-    program: "New Hampshire SNAP",
-    agency: "NH DHHS",
-    adminModel: "state",
-    portal: undefined,
-    verified: true,
-    verification,
-  },
+  makePack({ code: "NH", program: "New Hampshire SNAP", agency: "NH DHHS" }),
 ];
 
 function streamedResponse(text: string): Response {

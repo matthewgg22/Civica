@@ -1,12 +1,15 @@
 {
   "code": "MA",
   "program": "Supplemental Nutrition Assistance Program (SNAP) — Massachusetts uses the federal name; \"Food Stamps\" survives only as the older, still-recognized public name (formally retired federally in 2008)",
+  "program_short": "Supplemental Nutrition Assistance Program (SNAP)",
   "agency": "Department of Transitional Assistance (DTA), Executive Office of Health and Human Services (EOHHS)",
+  "agency_short": "Department of Transitional Assistance (DTA)",
   "admin_model": "state",
   "admin_note": "State-administered: DTA runs SNAP directly through Transitional Assistance Offices (TAOs); there is no independent county eligibility layer (unlike CA, NY, WI, or MN in this roster). Policy lives in 106 CMR 360-366 (regulation text) plus the DTA Online Guide (BEACON5) — a worker-facing knowledge base at eohhs.ehs.state.ma.us that pairs narrative policy pages with dollar-figure charts, amended by numbered Online Guide Transmittals (OLGT). The eligibility system is BEACON; the applicant-facing portal/app is DTA Connect.",
   "system": "BEACON (worker-facing eligibility system); EBT card is not separately branded from the federal Massachusetts EBT card",
   "portal": {
     "name": "DTA Connect",
+    "short": "DTA Connect",
     "url": "https://dtaconnect.eohhs.mass.gov"
   },
   "update_channels": [

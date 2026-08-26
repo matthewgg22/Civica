@@ -1,12 +1,15 @@
 {
   "code": "MI",
   "program": "Food Assistance Program (FAP) — Michigan's name for SNAP",
+  "program_short": "Food Assistance Program (FAP)",
   "agency": "Michigan Department of Health and Human Services (MDHHS)",
+  "agency_short": "Michigan Department of Health and Human Services (MDHHS)",
   "admin_model": "state",
   "admin_note": "State-administered: MDHHS runs FAP directly through local offices; there are no independent county eligibility agencies. Policy lives in the Bridges Eligibility Manual (BEM) and Bridges Administrative Manual (BAM), amended by numbered Bulletins (BPB — Bridges Policy Bulletin); dollar tables live separately in the Reference Tables Manual (RFT), amended by Reference Table Bulletins (RFB). Bridges is both MDHHS's eligibility system and the name lending itself to the manuals.",
   "system": "Bridges (state eligibility system)",
   "portal": {
     "name": "MI Bridges",
+    "short": "MI Bridges",
     "url": "https://newmibridges.michigan.gov"
   },
   "update_channels": [

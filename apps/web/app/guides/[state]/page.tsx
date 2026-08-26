@@ -10,7 +10,6 @@ import { QUESTIONS } from "../../../lib/guide-questions";
 import { absoluteUrl } from "../../../lib/site-url";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { DemeterFooter } from "../../../components/DemeterFooter";
-import { agencyDisplayName, programDisplayName } from "../../../lib/program-name";
 
 export const dynamicParams = false;
 
@@ -32,8 +31,8 @@ export async function generateMetadata({
   if (!pack) return {};
   return {
     alternates: { canonical: absoluteUrl(`/guides/${pack.code.toLowerCase()}`) },
-    title: `SNAP in ${pack.code} — ${programDisplayName(pack.program)} | verified ${pack.verification.verified_on}`,
-    description: `How SNAP works in ${pack.code}: ${programDisplayName(pack.program)}, run by ${agencyDisplayName(pack.agency)}. Verified from primary sources ${pack.verification.verified_on} — ask Demeter anything about it.`,
+    title: `SNAP in ${pack.code} — ${pack.programShort} | verified ${pack.verification.verified_on}`,
+    description: `How SNAP works in ${pack.code}: ${pack.programShort}, run by ${pack.agencyShort}. Verified from primary sources ${pack.verification.verified_on} — ask Demeter anything about it.`,
   };
 }
 
@@ -62,7 +61,7 @@ export default async function GuidePage({
         "@type": "Answer",
         text:
           `Demeter answers this from ${pack.code}'s own SNAP policy sources, with citations you ` +
-          `can check. ${programDisplayName(pack.program)} is run by ${agencyDisplayName(pack.agency)}. Verified from primary sources on ` +
+          `can check. ${pack.programShort} is run by ${pack.agencyShort}. Verified from primary sources on ` +
           `${pack.verification.verified_on}.`,
       },
     })),
@@ -81,21 +80,21 @@ export default async function GuidePage({
           <Link href="/screen/ask">Demeter</Link> / SNAP in {pack.code}
         </p>
         <h1 className="gpage__title">
-          SNAP in {pack.code}: {programDisplayName(pack.program)}
+          SNAP in {pack.code}: {pack.programShort}
         </h1>
         <p className="gpage__badge">
           ✓ Verified from primary sources · {pack.verification.verified_on} ·{" "}
-          <Link href="/verify">how we verify</Link>
+          <Link href="/states">every state we cover</Link>
         </p>
       </header>
 
       <section className="gpage__facts">
         <dl>
           <dt>What it&apos;s called</dt>
-          <dd>{programDisplayName(pack.program)}</dd>
+          <dd>{pack.programShort}</dd>
           <dt>Who runs it</dt>
           <dd>
-            {agencyDisplayName(pack.agency)}
+            {pack.agencyShort}
             {pack.adminModel === "county"
               ? " — administered by county/local offices, so office practice can vary; state policy is the baseline."
               : " — administered directly by the state."}

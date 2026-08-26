@@ -1,12 +1,15 @@
 {
   "code": "AZ",
   "program": "Nutrition Assistance (NA) — Arizona's own worker-facing term for SNAP; the public-facing name is still \"SNAP\"",
+  "program_short": "Nutrition Assistance (NA)",
   "agency": "Arizona Department of Economic Security (DES), Family Assistance Administration (FAA)",
+  "agency_short": "Arizona Department of Economic Security (DES)",
   "admin_model": "state",
   "admin_note": "State-administered: FAA runs NA directly through DES offices; there is no independent county eligibility agency layer. NA and Cash Assistance (CA/TANF) share ONE combined manual — the Cash and Nutrition Assistance Policy (CNAP) Manual — organized into numbered Parts (FAA1 System Information, FAA2 The Application and Interview, FAA3 Nonfinancial Eligibility Factors, FAA4 Financial Eligibility Factors, FAA5 Work Registration and Program Determinations, FAA6 Case Maintenance/Administrative/Standards & Amounts/Glossary, FAA8 Appendix). Most sections print combined NA/CA policy; this pack draws only from the NA-labeled content or NA-only sections. Every topic page carries its own \"last revised\"/\"effective\" date, the best per-topic freshness signal fetched live in this pass.",
   "system": "AZTECS (Arizona Technical Eligibility Computer System, worker-facing); EBT is branded \"QUEST Card\", accessed at ebtEDGE.com",
   "portal": {
     "name": "Health-e-Arizona Plus (HEAplus)",
+    "short": "Health-e-Arizona Plus (HEAplus)",
     "url": "https://www.healthearizonaplus.gov/"
   },
   "update_channels": [

@@ -21,26 +21,11 @@ import type { PackMeta } from "@civica/demeter-engine/packs";
 import { DemeterChat } from "../DemeterChat";
 import { T } from "../../lib/i18n/demeter-chat-copy";
 import { OUTCOME_COPY } from "../../lib/screening-worksheet-shape";
+import { makePack } from "../../__tests__/fixtures/pack";
 
 Element.prototype.scrollTo = vi.fn() as unknown as typeof Element.prototype.scrollTo;
 
-const verification = {
-  verified_on: "2026-08-05",
-  method: "test fixture",
-  gates: "n/a",
-  sources: [],
-};
-const STATES: PackMeta[] = [
-  {
-    code: "MA",
-    program: "Massachusetts SNAP",
-    agency: "DTA",
-    adminModel: "state",
-    portal: undefined,
-    verified: true,
-    verification,
-  },
-];
+const STATES: PackMeta[] = [makePack({ code: "MA", program: "Massachusetts SNAP", agency: "DTA" })];
 
 const SESSION = {
   messages: [

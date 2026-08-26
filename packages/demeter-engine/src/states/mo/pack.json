@@ -1,12 +1,15 @@
 {
   "code": "MO",
   "program": "SNAP — Missouri uses the plain federal program name in current public-facing material, but its own Family Support Division manual is still titled the \"Supplemental Nutrition Assistance Program (SNAP) Manual\" while living entirely under a legacy \"food-stamps\" URL path (dssmanuals.mo.gov/food-stamps/) and citing itself through a memo series still called \"IM\" (Income Maintenance) memos — a naming artifact that predates SNAP's 2008 federal rename and persists in Missouri's internal document structure",
+  "program_short": "SNAP",
   "agency": "Missouri Department of Social Services (DSS), Family Support Division (FSD)",
+  "agency_short": "Missouri Department of Social Services (DSS)",
   "admin_model": "state",
   "admin_note": "Missouri is STATE-administered: the Family Support Division (FSD) is, by its own official description, \"a state-administered agency responsible by law for the administration of programs and services,\" whose Director is appointed by the Director of the Department of Social Services. FSD maintains an office in each of Missouri's 114 counties and the City of St. Louis, but — matching this roster's Georgia/Indiana/Tennessee administrative archetype, not Virginia's/North Carolina's independently governed county-welfare-department archetype — these are the STATE agency's own field offices. Notably, FSD's own appeals-process language still refers colloquially to \"the decision made by a county office,\" a naming holdover from a genuinely county-administered predecessor era, even though the agency's own current legal description is unambiguously state-administered. Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own FSD Resource Center, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN.",
   "system": "Missouri's eligibility caseworkers use the state's FAMIS (Family Assistance Management Information System, referenced as \"FAMIS\" throughout the manual's own screen-name citations, e.g. the FM30 Supercase Eligibility Unit Summary screen and FM4A Food Stamp Budget Summary screen) and MEDES case-management systems; applicants apply online through myDSS.mo.gov, or in person, by mail, fax, or phone at an FSD Resource Center",
   "portal": {
     "name": "myDSS Benefits Portal",
+    "short": "myDSS Benefits Portal",
     "url": "https://mydss.mo.gov/"
   },
   "update_channels": [
