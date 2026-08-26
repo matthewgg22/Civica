@@ -959,6 +959,52 @@
       },
       "artifact_note": "Buildable in COVERAGE mode only. This assessment area spans four states and no state's gross-income fact base can support an absolute claim across it — PA and NJ carry FNS-divergence CAUTIONs and DE and MD have no fact base at all. The national coverage index covers all eleven counties, so the artifact ranks them and states no gap size and no dollar figure. See src/coverage.py.",
       "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: NO CRA CONTENT on meridianbanker.com/community — the word CRA does not appear. Main line (866) 327-9199. Their assessment area therefore cannot be re-checked against a current public file; the Nov 2022 PE remains the only source."
+    },
+    "firstrust_savings_bank": {
+      "cert": "26647",
+      "name": "Firstrust Savings Bank",
+      "state": "PA",
+      "aa_counties": [
+        "Philadelphia",
+        "Delaware",
+        "Bucks",
+        "Chester",
+        "Montgomery"
+      ],
+      "aa_counties_other_states": {
+        "NJ": [
+          "Camden"
+        ]
+      },
+      "aa_note": " (Camden County, New Jersey is part of this assessment area and is ranked with it; the bank's separate Lehigh County PA and Towson MD assessment areas are excluded)",
+      "aa_structure": "THREE assessment areas: Philadelphia PA-NJ Multistate MSA (targeted — Bucks, Chester, Delaware, Montgomery and Philadelphia in PA plus Camden in NJ), Lehigh County PA, and Towson MD (census tracts in Baltimore County, added when the Towson branch opened in Aug 2020). Do NOT merge.",
+      "pe_date": "2023-11-06",
+      "pe_url": "https://crapes.fdic.gov/publish/2023/26647_231106.PDF",
+      "regulator": "FDIC",
+      "exam_method": "Large Bank",
+      "target_status": "target",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": "Low Satisfactory",
+      "component_ratings": "Lending Low Satisfactory / Investment LOW SATISFACTORY / Service LOW SATISFACTORY",
+      "aa_giving_usd": 8900000,
+      "review_period_years": 3,
+      "ask_usd": 25000,
+      "ask_usd_prior": 25000,
+      "ask_verdict": "earmark",
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area: 122 grants and donations totaling nearly $8.9 million that the PE says 'specifically benefitted this assessment area' — the Philadelphia PA-NJ Multistate MSA. Institution-wide giving is $9.4M across three assessment areas and is deliberately not used.",
+      "ask_sizing": "sized by src/ask.py: $2,966,667/yr in the Philadelphia assessment area x 15% x 1.25 = $556,250 -> $25,000 (earmark, at the ceiling)",
+      "verified": true,
+      "verify_note": "Verified 2026-08-25 from the Nov 6, 2023 FDIC public evaluation. The PE delineates the target assessment area: 'Philadelphia-Camden-Wilmington, PA-NJ-Delaware (DE)-Maryland (MD) Metropolitan Statistical Area … includes Bucks, Chester, Delaware, Montgomery, and Philadelphia Counties in PA, and Camden County in NJ.' All three tests are Low Satisfactory. Found by pricing the severe-gap subset of the national pressure universe, not by county search.",
+      "pe_giving": "122 grants and donations totaling nearly $8.9 million specifically benefitting the Philadelphia PA-NJ Multistate MSA assessment area, within 142 qualified investments, donations and EITCs totaling $17.7M there. Institution-wide giving is $9.4M plus $735,000 of EITCs.",
+      "pe_need_quote": "Firstrust has a significant level of qualified community development investments and grants within the Philadelphia, PA-NJ Multistate MSA, occasionally in a leadership position",
+      "pe_mined": "per-assessment-area, 2026-08-25",
+      "documented_gap": "ALL THREE tests are Low Satisfactory — the only bank in the roster where that is true. Both tests our activity feeds are gapped.",
+      "cluster_role": "Philadelphia — a second, independent route into the #18 county alongside Meridian, with far larger disclosed assessment-area giving ($8.9M against Meridian's $511,526).",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     }
   }
 }
