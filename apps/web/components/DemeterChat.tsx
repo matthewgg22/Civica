@@ -594,6 +594,25 @@ const STREAM_MAX_STEP = 2;
  *  not make the product introduce itself again. */
 const WELCOME_SEEN_KEY = "demeter.welcome.seen";
 
+/** Wrap the two mode labels wherever they appear in a sentence.
+ *
+ *  Keyed off the copy table's labels, not off quote characters: Spanish uses
+ *  «», Chinese uses 「」, and a regex over punctuation would emphasise the
+ *  wrong span in half the languages. */
+function emphasiseModes(text: string, labels: string[]): ReactNode[] {
+  const esc = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(`(${labels.filter(Boolean).map(esc).join("|")})`, "g");
+  return text.split(re).map((part, i) =>
+    labels.includes(part) ? (
+      <em className="demeter__modename" key={i}>
+        {part}
+      </em>
+    ) : (
+      <span key={i}>{part}</span>
+    ),
+  );
+}
+
 export function DemeterChat({
   states,
   initialState = null,
@@ -1809,12 +1828,20 @@ export function DemeterChat({
                 formula work this chat can walk through, and there are two
                 modes. A full-length real conversation ended without the
                 tester ever learning either. */}
-            <p className="demeter__emptymodes">{t.emptyModes}</p>
-            {/* STATE-FIRST onboarding (Pi redesign, state-only by decision —
-                the retention line says avoid names, so the greeting asks for
-                the one thing answers actually depend on). Gone the moment a
-                state is chosen. */}
-            {!state && <p className="demeter__emptyask">{t.emptyAskState}</p>}
+            {/* The two labels are the SWITCH's own words, so they are set
+                apart from the sentence around them: someone scanning for what
+                to press finds them without reading the line. Split on the copy
+                table's own labels rather than on quote marks, so it stays
+                right in a language that quotes differently. */}
+            <p className="demeter__emptymodes">
+              {emphasiseModes(t.emptyModes, [t.worksheet.modeAsk, t.worksheet.modeEstimate])}
+            </p>
+            {/* THE ASK-STATE LINE IS GONE (owner, 2026-08-26). It told people to
+                "choose it above" — and the picker it points at is the first
+                thing in the rail, labelled "Your state", so the line was a
+                caption for a control that already says what it is. The
+                federal-floor caveat it also carried survives on the picker's
+                own scope line and in the divider the moment a state is set. */}
             {/* NO STARTER QUESTIONS. There were three — "Do I earn too much to
                 qualify?", "I need food this week", "Will I have to do an
                 interview?" — and none of them is what someone actually opens
