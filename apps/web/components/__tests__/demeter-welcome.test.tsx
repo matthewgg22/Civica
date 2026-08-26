@@ -9,7 +9,7 @@
 // and the logo may not be altered. Those two are what this file protects —
 // they are the difference between permitted use and a product that looks like
 // a government service.
-import { describe, it, expect, afterEach, vi } from "vitest";
+import { describe, it, expect, afterEach, afterAll, vi } from "vitest";
 import { render, cleanup, fireEvent, screen } from "@testing-library/react";
 
 import { DemeterWelcome, SNAP_SERVICE_MARK } from "../DemeterWelcome";
@@ -25,6 +25,11 @@ Element.prototype.scrollTo = vi.fn() as unknown as typeof Element.prototype.scro
 // would exercise that fallback and silently prove nothing about first-visit
 // behaviour. Stubbing the ENVIRONMENT, not the component.
 const store = new Map<string, string>();
+// Captured so it can be PUT BACK. Without this the stub leaks into every test
+// file that shares the worker: the card starts rendering in their mounts, and
+// it intercepts clicks, so unrelated suites fail in the full run while passing
+// alone. That is exactly how it failed once here.
+const originalLocalStorage = Object.getOwnPropertyDescriptor(window, "localStorage");
 Object.defineProperty(window, "localStorage", {
   configurable: true,
   value: {
@@ -40,6 +45,15 @@ Object.defineProperty(window, "localStorage", {
 });
 
 afterEach(cleanup);
+
+afterAll(() => {
+  if (originalLocalStorage) {
+    Object.defineProperty(window, "localStorage", originalLocalStorage);
+  } else {
+    // This jsdom had none to begin with — restore that, don't leave a stub.
+    delete (window as unknown as Record<string, unknown>).localStorage;
+  }
+});
 
 const copy = { ...T.en.welcome, whatIsSnap: T.en.emptyWhatIsSnap };
 
@@ -81,7 +95,9 @@ describe("the conditions attached to using the SNAP logo", () => {
 
   it("renders the logo unaltered, at its true ratio", () => {
     // "The logo cannot be altered" is a condition of being allowed to use it.
-    const img = card().querySelector("img")!;
+    // Scoped to the SNAP logo's own box: the card carries Demeter's mark as
+    // well now, and querySelector("img") would grab whichever comes first.
+    const img = card().querySelector(".dmwel__logo img")!;
     const w = Number(img.getAttribute("width"));
     const h = Number(img.getAttribute("height"));
     expect(img.getAttribute("src")).toContain("snap-logo");
