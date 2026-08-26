@@ -920,9 +920,11 @@ def test_every_sendable_bank_still_generates():
     sendable = [k for k, b in banks.items()
                 if b.get("target_status") == "target"
                 and b.get("ask_verdict") in ("earmark", "pool")]
-    assert len(sendable) == 17, f"expected 17 sendable banks, got {len(sendable)}"
-    rc = generate.main(["--bank", sendable[0], "--html-only"])
-    assert rc == 0
+    # A floor, not a fixed count -- the roster grows as PEs are read, and a
+    # hardcoded number turns every new target into a failing test.
+    assert len(sendable) >= 17, f"sendable roster shrank to {len(sendable)}"
+    for key in sendable:
+        assert generate.main(["--bank", key, "--html-only"]) == 0, f"{key} failed to render"
 
 
 def test_send_gates_run_before_any_file_is_written():
