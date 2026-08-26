@@ -63,7 +63,17 @@ export function assessFreshness(now: Date, corpusDate: string, state?: string | 
   // more often than it is acted on. "federal figures FY26 (current through
   // 2026-09-30)" became "FY26 figures through 2026-09-30" — same two facts
   // (which fiscal year, when they lapse), fewer words competing with the answer.
-  const asOf = `eCFR ${corpusDate || "unknown"} · FY26 figures through 2026-09-30`;
+  // PLAIN LANGUAGE, NOT A STAMP. This read "eCFR 2026-06-02 · FY26 figures
+  // through 2026-09-30" — accurate, and shaped like a filename. Nobody outside
+  // the team parses two ISO dates and a fiscal-year abbreviation, and the part
+  // that actually builds trust (a named source, and how long the figures hold)
+  // was the least legible part of it.
+  //
+  // The corpus fetch date is GONE from the visible line on purpose. It answers
+  // "when did we last pull the regulations", which is our question, not the
+  // reader's; when it matters, the staleness warning below fires and says so
+  // in words.
+  const asOf = "FY2026 figures, valid through Sept 30, 2026";
   return { asOf, warnings };
 }
 
@@ -78,9 +88,7 @@ export function formatFreshnessFooter(
 ): string {
   const { asOf, warnings } = assessFreshness(now, corpusDate, state);
   const asOfLocalized =
-    lang === "es"
-      ? asOf.replace("FY26 figures through", "cifras FY26 vigentes hasta")
-      : asOf;
+    lang === "es" ? "Cifras del año fiscal 2026, vigentes hasta el 30 de septiembre de 2026" : asOf;
   // "Source", not "Sources as of". It sits at the foot of every answer, so it
   // is read hundreds of times more often than it is acted on, and the shorter
   // it is the less it competes with the answer above it.
@@ -88,9 +96,11 @@ export function formatFreshnessFooter(
   // AND IT LINKS. A citation the reader cannot go and check is a claim about
   // having checked, which is the opposite of this product's argument. eCFR
   // Title 7 Part 273 is where every federal figure in an answer comes from.
-  const label = lang === "es" ? "Fuente" : "Source";
+  // THE LINK IS ON THE SOURCE'S NAME, not the whole line. Underlining the
+  // dates gave a footnote more visual pull than a citation deserves.
+  const lead = lang === "es" ? "Según las reglas federales de SNAP" : "Based on federal SNAP rules";
   const lines = [
-    `\n\n*${label}: [${asOfLocalized}](https://www.ecfr.gov/current/title-7/part-273).*`,
+    `\n\n*${lead} ([eCFR](https://www.ecfr.gov/current/title-7/part-273)). ${asOfLocalized}.*`,
   ];
   for (const w of warnings) lines.push(`\n> ⚠️ ${w}`);
   return lines.join("");
