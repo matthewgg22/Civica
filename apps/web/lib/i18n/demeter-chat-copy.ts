@@ -183,7 +183,7 @@ export const T = {
     pdfWorking: "Preparing…",
     pdfDownloaded: "Your outlined application has downloaded.",
     pdfError: "That didn't download. Please try again.",
-    howWeVerify: "How we verify",
+    statesLink: "SNAP by state",
     languageLabel: "Language",
     feedback: {
       prompt: "Was this helpful?",
@@ -410,7 +410,7 @@ export const T = {
     pdfWorking: "Preparando…",
     pdfDownloaded: "Se descargó tu solicitud esbozada.",
     pdfError: "No se pudo descargar. Intenta de nuevo.",
-    howWeVerify: "Cómo verificamos",
+    statesLink: "SNAP por estado",
     languageLabel: "Idioma",
     feedback: {
       prompt: "¿Te sirvió esta respuesta?",
@@ -601,7 +601,7 @@ export const T = {
     pdfWorking: "Đang chuẩn bị…",
     pdfDownloaded: "Bản phác thảo đơn của bạn đã tải về.",
     pdfError: "Chưa tải về được. Vui lòng thử lại.",
-    howWeVerify: "Cách chúng tôi xác minh",
+    statesLink: "SNAP theo tiểu bang",
     languageLabel: "Ngôn ngữ",
     feedback: {
       prompt: "Câu trả lời này có hữu ích không?",
@@ -787,7 +787,7 @@ export const T = {
     pdfWorking: "正在准备…",
     pdfDownloaded: "您的申请提纲已下载。",
     pdfError: "没能下载，请再试一次。",
-    howWeVerify: "我们如何核实",
+    statesLink: "各州 SNAP",
     languageLabel: "语言",
     feedback: {
       prompt: "这个回答有帮助吗？",

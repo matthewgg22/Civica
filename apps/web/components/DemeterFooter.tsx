@@ -67,7 +67,7 @@ export function DemeterFooter({ lang = "en" }: { lang?: AnswerLang }) {
 
         <nav className="dmft__nav" aria-label="Footer">
           <Link className="dmft__link" href={href(LINK_PATHS.verify, lang)}>
-            {c.verifyLink}
+            {c.statesLink}
           </Link>
           <Link className="dmft__link" href={href(LINK_PATHS.questions, lang)}>
             {c.questionsLink}

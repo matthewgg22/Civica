@@ -212,7 +212,9 @@ export interface PageCopy {
   agenciesH2: string;
   agenciesBody: string;
   agenciesNote: string;
-  verifyLink: string;
+  /** Link to /verify, which is now the state directory rather than a page
+   *  about our pipeline — so the label names the states, not the checking. */
+  statesLink: string;
 }
 
 const en: PageCopy = {
@@ -494,7 +496,7 @@ const en: PageCopy = {
     "Demeter never decides your case. Your state agency does. These are the agencies whose own published rules the verified answers are built from, and where you actually apply.",
   agenciesNote:
     "Not listed? Demeter still answers at the federal floor, and points you to your own state agency for figures that vary by state.",
-  verifyLink: "See how we verify",
+  statesLink: "See the states we have checked",
 };
 
 const es: PageCopy = {
@@ -758,7 +760,7 @@ const es: PageCopy = {
     "Demeter nunca decide tu caso. Lo hace la agencia de tu estado. Estas son las agencias cuyas reglas publicadas sustentan las respuestas verificadas, y donde realmente se solicita.",
   agenciesNote:
     "¿No aparece el tuyo? Demeter igual responde con la base federal, y te remite a tu propia agencia estatal para las cifras que varían por estado.",
-  verifyLink: "Mira cómo verificamos",
+  statesLink: "Mira los estados que hemos verificado",
 };
 
 const vi: PageCopy = {
@@ -1023,7 +1025,7 @@ const vi: PageCopy = {
     "Demeter không bao giờ quyết định hồ sơ của bạn. Cơ quan tiểu bang mới quyết định. Đây là những cơ quan có quy định công bố làm nền cho các câu trả lời đã xác minh, và cũng là nơi bạn thực sự nộp đơn.",
   agenciesNote:
     "Không thấy tiểu bang của bạn? Demeter vẫn trả lời theo mức nền liên bang, và chỉ bạn tới cơ quan tiểu bang của mình cho những con số thay đổi theo từng nơi.",
-  verifyLink: "Xem cách chúng tôi xác minh",
+  statesLink: "Xem các tiểu bang chúng tôi đã kiểm chứng",
 };
 
 const zh: PageCopy = {
@@ -1287,7 +1289,7 @@ const zh: PageCopy = {
     "Demeter 从不决定您的个案，作出决定的是您所在州的机构。以下这些机构自己公布的规定，正是已核实答案的依据，也是您实际递交申请的地方。",
   agenciesNote:
     "没看到您所在的州？Demeter 仍会按联邦底线回答，并把各州不同的具体金额指引到您自己的州机构。",
-  verifyLink: "了解我们如何核实",
+  statesLink: "查看我们已核实的州",
 };
 
 export const PAGE_COPY: Record<AnswerLang, PageCopy> = { en, es, vi, zh };

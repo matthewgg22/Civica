@@ -438,7 +438,7 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
                   {step.d}{" "}
                   {i === c.steps.length - 1 ? (
                     <a className="dmx__link" href={lang === "en" ? "/verify" : `/${lang}/verify`}>
-                      {c.verifyLink}
+                      {c.statesLink}
                     </a>
                   ) : null}
                 </p>

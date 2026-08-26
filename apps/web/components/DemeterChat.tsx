@@ -2522,7 +2522,7 @@ export function DemeterChat({
             </summary>
             <div className="demeter__gearmenu">
               <a className="demeter__settingslink" href="/verify">
-                {t.howWeVerify}
+                {t.statesLink}
               </a>
               <a className="demeter__settingslink" href="/terms">
                 {t.termsLink}
