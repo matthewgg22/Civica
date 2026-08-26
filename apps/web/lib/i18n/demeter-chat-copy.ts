@@ -120,6 +120,19 @@ export const T = {
     // measured whitespace read as stray controls; a mark, a line, and the
     // questions grouped under it read as an invitation.
     emptyTitle: "Ask me anything about SNAP",
+    // USDA's OWN SENTENCE, reproduced rather than reworded (fns.usda.gov/snap).
+    // It leads because the "What is SNAP?" link is gone (owner, 2026-08-22) —
+    // someone who does not yet know what the program IS should not have to
+    // leave the chat to find out. A US government work, so free to reproduce;
+    // translated below because a definition nobody can read is not a
+    // definition, and this is a program description, not a mandated notice.
+    welcome: {
+      title: "Food benefits, called SNAP",
+      body: "Demeter is not the government and cannot decide your case. It answers questions about SNAP from the rules themselves, and shows you which rule each answer came from.",
+      cta: "Start asking",
+    },
+    emptyWhatIsSnap:
+      "SNAP provides food benefits to low-income families to supplement their grocery budget so they can afford the nutritious food essential to health and well-being.",
     // SAYS WHAT IT DOES, and stops short of what it does not (owner, 2026-08-22).
     // "likely to qualify", never "find out if you are eligible": this produces
     // an ESTIMATE, and the panel two inches away says "an estimate, not a
@@ -368,6 +381,13 @@ export const T = {
     errRequest: "Demeter no pudo leer eso. Empezar una conversación nueva suele resolverlo — una conversación muy larga es la causa más común.",
     thinking: "Un momento",
     emptyTitle: "Pregúntame lo que quieras sobre SNAP",
+    welcome: {
+      title: "Beneficios de alimentos, llamados SNAP",
+      body: "Demeter no es el gobierno y no puede decidir tu caso. Responde preguntas sobre SNAP a partir de las reglas mismas, y te muestra de qué regla salió cada respuesta.",
+      cta: "Empezar a preguntar",
+    },
+    emptyWhatIsSnap:
+      "SNAP ofrece beneficios de alimentos a familias de bajos ingresos para complementar su presupuesto de comida, de modo que puedan pagar los alimentos nutritivos esenciales para la salud y el bienestar.",
     emptyLede:
       "Puedo ayudarte a ver si es probable que califiques e ir armando tu solicitud sobre la marcha — citando la regla detrás de cada respuesta, para que puedas comprobarla.",
     emptyModes:
@@ -559,6 +579,13 @@ export const T = {
     errRequest: "Demeter không đọc được nội dung đó. Bắt đầu cuộc trò chuyện mới thường xử lý được — nguyên nhân hay gặp là cuộc trò chuyện quá dài.",
     thinking: "Chờ một chút",
     emptyTitle: "Hỏi tôi bất cứ điều gì về SNAP",
+    welcome: {
+      title: "Trợ cấp thực phẩm, gọi là SNAP",
+      body: "Demeter không phải là chính phủ và không thể quyết định hồ sơ của bạn. Demeter trả lời các câu hỏi về SNAP dựa trên chính các quy định, và cho bạn thấy mỗi câu trả lời dựa vào quy định nào.",
+      cta: "Bắt đầu hỏi",
+    },
+    emptyWhatIsSnap:
+      "SNAP cung cấp trợ cấp thực phẩm cho các gia đình thu nhập thấp để bổ sung vào ngân sách đi chợ, giúp họ mua được thực phẩm dinh dưỡng thiết yếu cho sức khỏe và đời sống.",
     emptyLede:
       "Tôi có thể giúp bạn xem mình có khả năng đủ điều kiện hay không và dần dựng nên đơn xin — kèm trích dẫn điều luật cho mỗi câu trả lời, để bạn tự kiểm chứng.",
     emptyModes:
@@ -746,6 +773,13 @@ export const T = {
     errRequest: "Demeter 读不了这条内容。开始新的对话通常就能解决——最常见的原因是对话太长。",
     thinking: "请稍候",
     emptyTitle: "关于 SNAP，什么都可以问我",
+    welcome: {
+      title: "食品补助，简称 SNAP",
+      body: "Demeter 不是政府机构，无法决定您的案件。它依据法规本身回答关于 SNAP 的问题，并告诉您每条回答的依据是哪一条。",
+      cta: "开始提问",
+    },
+    emptyWhatIsSnap:
+      "SNAP 为低收入家庭提供食品补助，补贴他们的买菜开支，使其能够负担对健康和生活至关重要的营养食品。",
     emptyLede:
       "我可以帮您看看是否可能符合资格，并一步步整理出您的申请内容——每条回答都会附上依据的条文，方便您自行核对。",
     emptyModes:

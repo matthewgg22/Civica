@@ -30,6 +30,7 @@ import {
 import type { ScreeningClassification, PartialFacts } from "@civica/demeter-engine";
 import { DemeterMark } from "./DemeterMark";
 import { DemeterStatePicker } from "./DemeterStatePicker";
+import { DemeterWelcome } from "./DemeterWelcome";
 import { DemeterWorksheet, type WorksheetMode } from "./DemeterWorksheet";
 import { DemeterFeedback } from "./DemeterFeedback";
 import { DemeterSave } from "./DemeterSave";
@@ -588,6 +589,11 @@ export { T };
 const STREAM_TICK_MS = 34;
 const STREAM_MAX_STEP = 2;
 
+/** Remembers that the first-visit card has been seen. Deliberately its own
+ *  key rather than a field on the saved session: clearing a conversation must
+ *  not make the product introduce itself again. */
+const WELCOME_SEEN_KEY = "demeter.welcome.seen";
+
 export function DemeterChat({
   states,
   initialState = null,
@@ -805,6 +811,11 @@ export function DemeterChat({
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  /** The first-visit card. Starts CLOSED and is opened by an effect, not by
+   *  initial state: reading localStorage during render would differ between
+   *  server and client and hydrate mismatched. Never shown over an existing
+   *  conversation — someone resuming has already met the product. */
+  const [showWelcome, setShowWelcome] = useState(false);
 
   // ── PACED STREAMING ────────────────────────────────────────────────────────
   // The reader used to render every network chunk the instant it arrived, and
@@ -933,6 +944,26 @@ export function DemeterChat({
       worksheet: { mode: worksheetMode, facts: factsRef.current, classification },
     });
   }, [messages, state, lang, busy, worksheetMode, classification]);
+
+  useEffect(() => {
+    if (initialMessages.length > 0) return;
+    try {
+      if (window.localStorage.getItem(WELCOME_SEEN_KEY)) return;
+      setShowWelcome(true);
+    } catch {
+      // localStorage disabled (private mode, blocked cookies). Showing the
+      // card every visit would be worse than never showing it, so: never.
+    }
+  }, [initialMessages.length]);
+
+  const dismissWelcome = useCallback(() => {
+    setShowWelcome(false);
+    try {
+      window.localStorage.setItem(WELCOME_SEEN_KEY, "1");
+    } catch {
+      /* nothing to remember it with; it simply shows again next time */
+    }
+  }, []);
 
   useEffect(() => () => clearTimeout(rafRef.current), []);
 
@@ -1712,22 +1743,11 @@ export function DemeterChat({
               {t.signin}
             </a>
           )}
-          {/* RETARGETED with the rename (owner, 2026-08-22). The label became
-              "What is SNAP?", and /questions is the page about what the
-              APPLICATION asks — a different question, and a link whose label
-              disagrees with where it goes is worse than a clumsy label. It now
-              points at the landing page's own "What SNAP is" band, which
-              already carries id="what-is-snap" — that band lives in
-              SnapOverview, which renders on /screen/ask (the Demeter landing),
-              NOT on "/" (still the older Civica marketing page). /questions
-              keeps its entry from the landing form cards, so nothing is
-              orphaned. */}
-          <a
-            className="demeter__navlink"
-            href={lang === "en" ? "/screen/ask#what-is-snap" : `/${lang}/screen/ask#what-is-snap`}
-          >
-            {t.navQuestions}
-          </a>
+          {/* The "What is SNAP?" link is GONE (owner, 2026-08-22). It sent
+              someone out of the chat to read a definition — and the definition
+              is now the first thing the empty state says, alongside the
+              first-visit card, so the trip is pointless. The chrome row is
+              sign-in and nothing else. */}
         </div>
       </header>
 
@@ -1769,6 +1789,12 @@ export function DemeterChat({
           <div className="demeter__empty">
             <DemeterMark size={52} />
             <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
+            {/* WHAT THE PROGRAM IS, then what this is (owner, 2026-08-22).
+                The "What is SNAP?" link is gone, so the definition it pointed
+                at leads here instead — someone who has just been told to
+                "apply for SNAP" may not know what the letters mean, and
+                sending them off the page to find out was the old answer. */}
+            <p className="demeter__emptywhat">{t.emptyWhatIsSnap}</p>
             <p className="demeter__emptylede">{t.emptyLede}</p>
             {/* Framing before the first word is typed (#898 P2-6): SNAP is
                 formula work this chat can walk through, and there are two
@@ -1935,6 +1961,12 @@ export function DemeterChat({
           state picker straight away, because an estimate without a state is a
           federal-floor guess and the picker is the next thing needed either
           way. */}
+      {showWelcome && (
+        <DemeterWelcome
+          copy={{ ...t.welcome, whatIsSnap: t.emptyWhatIsSnap }}
+          onDismiss={dismissWelcome}
+        />
+      )}
       {showModeOffer && (
         <div
           className="demeter__modeoffer"

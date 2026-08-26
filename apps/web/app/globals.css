@@ -8929,3 +8929,72 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 }
 .dmw__askbtn:hover { color: var(--demeter-terracotta-deep); text-decoration-color: currentColor; }
 .dmw__askbtn:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 2px; }
+
+/* ── First-visit card (owner, 2026-08-22) ────────────────────────────────
+   Says what the PROGRAM is before what this is. Not a gate: Escape and the
+   backdrop both close it, and the chat behind is already loaded. */
+.dmwel {
+  position: fixed; inset: 0; z-index: 80;
+  display: grid; place-items: center; padding: 1rem;
+  background: rgba(35, 34, 32, 0.42);
+  backdrop-filter: blur(8px);
+}
+.dmwel__card {
+  width: min(30rem, 100%);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  background: var(--demeter-card);
+  border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-card);
+  padding: 1.6rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom));
+  box-shadow: 0 18px 50px rgba(35, 34, 32, 0.18);
+  text-align: center;
+}
+/* The mark is reproduced UNALTERED at its true 663:460 ratio — a condition of
+   being allowed to use it at all. Only the box is ours. */
+.dmwel__logo { display: flex; justify-content: center; margin-bottom: 0.9rem; }
+.dmwel__logo img { height: auto; max-width: 193px; }
+.dmwel__title {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.3rem; font-weight: 600; letter-spacing: -0.01em;
+  color: var(--demeter-ink); margin: 0 0 0.5rem;
+  text-wrap: balance;
+}
+.dmwel__what,
+.dmwel__body {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.95rem; line-height: 1.6; margin: 0 0 0.7rem;
+  text-wrap: pretty;
+}
+.dmwel__what { color: var(--demeter-body); }
+.dmwel__body { color: var(--demeter-muted); }
+/* Directly under the logo's own card, at readable size. A product that is not
+   the government opening with the government's mark is the exact confusion
+   this notice exists to prevent, so it does not get to be fine print. */
+.dmwel__mark {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.7rem; line-height: 1.5; color: var(--demeter-muted);
+  margin: 0 0 1.1rem; padding-top: 0.7rem;
+  border-top: 1px solid var(--demeter-rule);
+  text-align: left;
+}
+.dmwel__cta {
+  width: 100%; min-height: 44px; padding: 0.7rem 1rem;
+  border: 0; border-radius: var(--demeter-radius-pill); cursor: pointer;
+  background: var(--demeter-terracotta); color: var(--demeter-paper);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; font-weight: 600; letter-spacing: 0.02em;
+}
+.dmwel__cta:hover { background: var(--demeter-terracotta-deep); }
+.dmwel__cta:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) {
+  .dmwel__card { animation: dmwelin 160ms ease-out; }
+  @keyframes dmwelin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}
+
+/* The definition, above the line about what Demeter does. */
+.demeter__emptywhat {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.6; color: var(--demeter-body);
+  margin: 0.5rem 0 0;
+}
