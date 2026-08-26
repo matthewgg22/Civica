@@ -254,6 +254,19 @@ export interface PageCopy {
   /** Link to /verify, which is now the state directory rather than a page
    *  about our pipeline — so the label names the states, not the checking. */
   statesLink: string;
+  /** SHORT footer labels. The in-page links above are sentences because they
+   *  are the call to action where they sit; a footer wants nouns, and mixing
+   *  the two registers in one list is what made it read as ragged. */
+  footerStates: string;
+  footerQuestions: string;
+  /** Column headings. Seven links in one flat column is a menu; three named
+   *  groups is a footer. */
+  footerGroupReference: string;
+  footerGroupLegal: string;
+  footerGroupAbout: string;
+  /** One line, not the product lede again. The lede runs to three lines of
+   *  serif, which is what left a tall brand block with a void beneath it. */
+  footerMission: string;
   directory: StateDirectoryCopy;
 }
 
@@ -537,6 +550,12 @@ const en: PageCopy = {
   agenciesNote:
     "Not listed? Demeter still answers at the federal floor, and points you to your own state agency for figures that vary by state.",
   statesLink: "See the states we have checked",
+  footerStates: "SNAP by state",
+  footerQuestions: "Application questions",
+  footerGroupReference: "Reference",
+  footerGroupLegal: "Legal",
+  footerGroupAbout: "About",
+  footerMission: "Free, anonymous SNAP answers with the rule attached.",
   directory: {
     back: "Back to Demeter",
     h1: "SNAP in your state",
@@ -823,6 +842,12 @@ const es: PageCopy = {
   agenciesNote:
     "¿No aparece el tuyo? Demeter igual responde con la base federal, y te remite a tu propia agencia estatal para las cifras que varían por estado.",
   statesLink: "Mira los estados que hemos verificado",
+  footerStates: "SNAP por estado",
+  footerQuestions: "Preguntas de la solicitud",
+  footerGroupReference: "Referencia",
+  footerGroupLegal: "Legal",
+  footerGroupAbout: "Acerca de",
+  footerMission: "Respuestas gratuitas y anónimas sobre SNAP, con la regla incluida.",
   directory: {
     back: "Volver a Demeter",
     h1: "SNAP en tu estado",
@@ -1110,6 +1135,12 @@ const vi: PageCopy = {
   agenciesNote:
     "Không thấy tiểu bang của bạn? Demeter vẫn trả lời theo mức nền liên bang, và chỉ bạn tới cơ quan tiểu bang của mình cho những con số thay đổi theo từng nơi.",
   statesLink: "Xem các tiểu bang chúng tôi đã kiểm chứng",
+  footerStates: "SNAP theo tiểu bang",
+  footerQuestions: "Câu hỏi trong đơn",
+  footerGroupReference: "Tra cứu",
+  footerGroupLegal: "Pháp lý",
+  footerGroupAbout: "Giới thiệu",
+  footerMission: "Giải đáp SNAP miễn phí, ẩn danh, kèm theo điều luật.",
   directory: {
     back: "Quay lại Demeter",
     h1: "SNAP tại tiểu bang của bạn",
@@ -1396,6 +1427,12 @@ const zh: PageCopy = {
   agenciesNote:
     "没看到您所在的州？Demeter 仍会按联邦底线回答，并把各州不同的具体金额指引到您自己的州机构。",
   statesLink: "查看我们已核实的州",
+  footerStates: "各州 SNAP",
+  footerQuestions: "申请表问题",
+  footerGroupReference: "参考",
+  footerGroupLegal: "法律",
+  footerGroupAbout: "关于",
+  footerMission: "免费、匿名的 SNAP 解答，附上依据条文。",
   directory: {
     back: "返回 Demeter",
     h1: "您所在州的 SNAP",

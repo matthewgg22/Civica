@@ -64,6 +64,15 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
     <>
       <main className="lgl" id="main-content">
         <header className="lgl__head">
+          {/* The only way out. These pages carry no site nav, so the sole exit
+              used to be the footer — three screens past an arbitration
+              clause. Same control as /states. */}
+          <Link className="vback" href="/chat">
+            <span className="vback__arrow" aria-hidden>
+              ←
+            </span>
+            <span className="vback__label">Back to Demeter</span>
+          </Link>
           <h1 className="lgl__title">{doc.title}</h1>
           <p className="lgl__lede">{doc.lede}</p>
           <p className="lgl__updated">Last updated {doc.lastUpdated}</p>
@@ -78,42 +87,64 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
             </p>
           )}
 
+          {/* NOT A SEGMENTED CONTROL. Filled pills implied three views of one
+              document; these are three separate agreements. The current one is
+              plain text rather than a link — you are on it, so it is the one
+              thing here that needs no emphasis at all, and a filled terracotta
+              pill made it the loudest element on the page while competing with
+              the draft banner right above it. */}
           <nav className="lgl__docnav" aria-label="Legal documents">
-            {DOC_NAV.map((d) => (
-              <Link
-                key={d.slug}
-                href={`/${d.slug}`}
-                className={`lgl__docnav-link${d.slug === doc.slug ? " is-current" : ""}`}
-                aria-current={d.slug === doc.slug ? "page" : undefined}
-              >
-                {d.label}
-              </Link>
-            ))}
+            {DOC_NAV.map((d) =>
+              d.slug === doc.slug ? (
+                <span key={d.slug} className="lgl__docnav-current" aria-current="page">
+                  {d.label}
+                </span>
+              ) : (
+                <Link key={d.slug} href={`/${d.slug}`} className="lgl__docnav-link">
+                  {d.label}
+                </Link>
+              ),
+            )}
           </nav>
         </header>
 
-        {/* On-page contents. These documents are long, and the section a person
-            actually came for — retention, immigration, arbitration — is
-            otherwise several screens of scrolling away. */}
-        <nav className="lgl__toc" aria-label="Contents">
-          <p className="lgl__toc-label">Contents</p>
-          <ol className="lgl__toc-list">
-            {doc.sections.map((s) => (
-              <li key={s.id}>
-                <a href={`#${s.id}`}>{s.heading}</a>
-              </li>
-            ))}
-          </ol>
-        </nav>
+        {/* CONTENTS BESIDE THE DOCUMENT, not stacked on top of it.
+            The prose column is 680px because that is the right measure to read
+            at; on a 1440px screen the other half of the page did nothing while
+            sixteen contents entries sat between the reader and Section 1. The
+            margin now holds the contents and keeps them in view while you
+            scroll, which is what a sixteen-section document needs.
 
-        {doc.sections.map((section) => (
-          <section key={section.id} id={section.id} className="lgl__section">
-            <h2 className="lgl__h2">{section.heading}</h2>
-            {section.blocks.map((block, i) => (
-              <BlockView key={i} block={block} />
+            The nav stays FIRST in the DOM — before the body — so it is
+            reachable in reading order and lands above the text on a phone.
+            Grid places it in the second column on desktop. */}
+        <div className="lgl__grid">
+          <nav className="lgl__toc" aria-label="Contents">
+            <p className="lgl__toc-label">Contents</p>
+            {/* No list marker: every heading already carries its own number,
+                and the numbers are cross-referenced in the body ("Section
+                13.10"), so they belong in the text rather than in a marker
+                that would print "1. 1. This agreement". */}
+            <ol className="lgl__toc-list">
+              {doc.sections.map((s) => (
+                <li key={s.id}>
+                  <a href={`#${s.id}`}>{s.heading}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+
+          <div className="lgl__body">
+            {doc.sections.map((section) => (
+              <section key={section.id} id={section.id} className="lgl__section">
+                <h2 className="lgl__h2">{section.heading}</h2>
+                {section.blocks.map((block, i) => (
+                  <BlockView key={i} block={block} />
+                ))}
+              </section>
             ))}
-          </section>
-        ))}
+          </div>
+        </div>
       </main>
       <DemeterFooter />
     </>

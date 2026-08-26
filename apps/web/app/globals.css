@@ -5015,9 +5015,10 @@ html {
    1080 still sits inside the nav's own 1180 max. */
 .vpage--states { color: #000000; max-width: 1080px; }
 
-/* The only way back, because this page carries no site nav. Left-aligned above
-   the title and sized like a control rather than a link: it is the one piece
-   of navigation on the page and should not read as body text. */
+/* The only way back, on any page that carries no site nav — /states and the
+   three legal documents. Left-aligned above the title and sized like a control
+   rather than a link: it is the one piece of navigation on the page and should
+   not read as body text. */
 .vback {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.86rem; font-weight: 600; color: var(--demeter-terracotta-deep);
@@ -7414,7 +7415,10 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 .dmft__inner {
   width: 100%; max-width: 1180px; margin: 0 auto;
   display: grid; gap: clamp(1.75rem, 3vw, 2.5rem);
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  /* Brand, then three link groups. Two columns left the middle of the footer
+     empty and turned the right into a tall menu; the brand only ever needs
+     about a third, and the links want to sit side by side. */
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
   align-items: start;
 }
 .dmft__brand { display: flex; align-items: flex-start; gap: 0.85rem; }
@@ -7429,7 +7433,15 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
      paper tone at reduced opacity, which keeps the warm cast. */
   color: rgba(242, 239, 234, 0.72);
 }
-.dmft__nav { display: flex; flex-direction: column; gap: 0.7rem; }
+.dmft__nav { display: contents; }
+.dmft__group { display: flex; flex-direction: column; gap: 0.15rem; }
+/* A quiet label. It names the group without competing with the links under
+   it — the heading is wayfinding, the links are the content. */
+.dmft__grouphead {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  color: rgba(242, 239, 234, 0.5); margin: 0 0 0.35rem;
+}
 .dmft__link {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.92rem; font-weight: 500; color: #F2EFEA; text-decoration: none;
@@ -7458,6 +7470,12 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    would have checked it. 0.55 composites to #94928E at 5.23:1. */
 .dmft__org { color: rgba(242, 239, 234, 0.55); }
 
+/* Two-up before one-up: three link groups side by side need more room than a
+   tablet has, but stacking all four at 720px wastes half the width. */
+@media (max-width: 1000px) {
+  .dmft__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .dmft__brand { grid-column: 1 / -1; }
+}
 @media (max-width: 720px) {
   .dmft__inner { grid-template-columns: 1fr; }
   .dmft__nav { flex-direction: row; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
@@ -8759,16 +8777,25 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 }
 .lgl__draft strong { color: var(--demeter-terracotta-deep); }
 
-.lgl__docnav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.1rem; }
-.lgl__docnav-link {
+.lgl__docnav {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0 1.1rem;
+  margin-top: 1.1rem;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.82rem; font-weight: 600; text-decoration: none;
-  color: var(--demeter-body); background: var(--demeter-card);
-  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-pill);
-  padding: 0.4rem 0.9rem; min-height: 36px; display: inline-flex; align-items: center;
+  font-size: 0.9rem;
 }
-.lgl__docnav-link:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
-.lgl__docnav-link.is-current { background: var(--demeter-terracotta); border-color: var(--demeter-terracotta); color: #fff; }
+/* The document you are already reading. Ink and weight, no fill: it is the one
+   item here that needs no emphasis, and as a filled pill it was both the
+   loudest thing on the page and a third terracotta element competing with the
+   draft banner directly above it. */
+.lgl__docnav-current {
+  font-weight: 700; color: var(--demeter-ink);
+  min-height: 44px; display: inline-flex; align-items: center;
+}
+.lgl__docnav-link {
+  font-weight: 600; color: var(--demeter-terracotta-deep); text-decoration: none;
+  min-height: 44px; display: inline-flex; align-items: center;
+}
+.lgl__docnav-link:hover { text-decoration: underline; }
 
 .lgl__toc {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -8779,12 +8806,21 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em;
   color: var(--demeter-muted); margin-bottom: 0.5rem;
 }
-.lgl__toc-list { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.3rem; font-size: 0.88rem; }
+/* NO MARKER. Every heading already begins with its own number, so an <ol>'s
+   marker printed "1. 1. This agreement". The numbers stay in the text rather
+   than becoming markers because the body cross-references them ("Section
+   13.10") and a marker is not selectable, searchable, or linkable. */
+.lgl__toc-list {
+  margin: 0; padding-left: 0; list-style: none;
+  display: grid; gap: 0.3rem; font-size: 0.88rem;
+}
 .lgl__toc-list a { color: var(--demeter-body); text-decoration: none; }
 .lgl__toc-list a:hover { color: var(--demeter-terracotta-deep); text-decoration: underline; }
 
-/* scroll-margin so an anchored heading does not land under the sticky nav. */
-.lgl__section { margin-bottom: 2.25rem; scroll-margin-top: 5rem; }
+/* A little breathing room above an anchored heading, not the 5rem that used to
+   be here — that was clearing a sticky site nav these pages have never had, so
+   every jump from the contents landed the heading 80px too low. */
+.lgl__section { margin-bottom: 2.25rem; scroll-margin-top: 1.5rem; }
 .lgl__h2 {
   font-size: 1.3rem; font-weight: 700; line-height: 1.25; color: var(--demeter-ink);
   margin-bottom: 0.7rem; padding-top: 0.25rem;
@@ -8802,10 +8838,17 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   background: var(--demeter-card); color: var(--demeter-ink);
 }
 .lgl__callout--promise { border-left-color: var(--demeter-wheat); font-weight: 600; }
+/* DO NOT SENTENCE-CASE THESE. The warranty disclaimer and the arbitration and
+   class-action waiver are capitalised to satisfy conspicuousness requirements
+   — that is a legal function, not a styling choice, and "cleaning it up" would
+   weaken the document. What CAN be fixed is that all-caps is genuinely harder
+   to read, because every word becomes the same rectangle: give it a shorter
+   measure, more leading and a little tracking, and stop there. */
 .lgl__callout--warning {
   border-left-color: var(--demeter-terracotta-deep); background: #FBF1EC;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.9rem; font-weight: 600;
+  line-height: 1.75; letter-spacing: 0.015em; max-width: 58ch;
 }
 
 .lgl__tablewrap { overflow-x: auto; margin-bottom: 1.1rem; -webkit-overflow-scrolling: touch; }
@@ -8826,8 +8869,51 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 @media (min-width: 720px) {
   .lgl { padding: 3rem 1.5rem 5rem; }
   .lgl__title { font-size: 2.35rem; }
+}
+/* Two columns ONLY in the band where the contents are still a full-width card
+   above the document. Past 1024 they move into a 16rem sidebar, where two
+   columns broke every entry onto four lines. */
+@media (min-width: 720px) and (max-width: 1023px) {
   .lgl__toc-list { grid-template-columns: 1fr 1fr; }
 }
+
+/* PROSE STAYS AT 680px AT EVERY WIDTH. 680 is roughly 68 characters, which is
+   the measure this text should be read at; the empty half of a wide screen is
+   not an argument for longer lines, it is an argument for putting something
+   else in it. So the page grows and the column does not. */
+@media (min-width: 1024px) {
+  .lgl { max-width: 1030px; }
+  .lgl__head { max-width: 680px; }
+  .lgl__grid {
+    display: grid;
+    /* 16rem, because the longest entry is "5. What you type, and what we may
+       do with it" — narrower and every second entry wraps to four lines. */
+    grid-template-columns: minmax(0, 680px) 16rem;
+    column-gap: 2.5rem;
+    align-items: start;
+  }
+  /* DOM order is contents-then-body; grid puts the contents on the right.
+     Explicit placement rather than `order`, so the reading order a screen
+     reader and a phone get is the one that makes sense. */
+  .lgl__toc { grid-column: 2; grid-row: 1; position: sticky; top: 2rem; margin: 0; }
+  .lgl__body { grid-column: 1; grid-row: 1; min-width: 0; }
+  /* Its own scroll region, so a sixteen-section contents list cannot grow
+     taller than the viewport and strand its last entries. */
+  .lgl__toc-list {
+    grid-template-columns: 1fr;
+    font-size: 0.82rem; line-height: 1.4; gap: 0.5rem;
+    /* Its own scroll region, so a sixteen-entry list cannot outgrow the
+       viewport and strand its last entries where nobody can reach them. */
+    max-height: calc(100vh - 10rem); overflow-y: auto;
+  }
+  /* Lighter than the card it was: in the margin it is a companion to the text,
+     not a panel competing with it. */
+  .lgl__toc {
+    background: transparent; border: 0; border-left: 1px solid var(--demeter-rule);
+    border-radius: 0; padding: 0.15rem 0 0.15rem 1.1rem;
+  }
+}
+
 
 /* ── Composer footer, compressed (owner, 2026-08-22) ──────────────────────
    Three stacked lines became one. The PII hint now renders only before the

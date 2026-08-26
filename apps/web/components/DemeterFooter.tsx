@@ -65,35 +65,54 @@ export function DemeterFooter({ lang = "en" }: { lang?: AnswerLang }) {
           <DemeterMark size={32} />
           <div>
             <p className="dmft__name">Demeter</p>
-            {/* The mission, in one line, in the reader's language. Reuses the
-                orientation bar's own product sentence rather than inventing a
-                second description that would drift from it. */}
-            <p className="dmft__mission">{c.productLede}</p>
+            {/* ONE LINE. It used to reuse the orientation bar's product lede
+                — the same sentence, three lines of serif — which is what left
+                a tall brand block with nothing under it. A footer mission is a
+                caption, not a pitch. */}
+            <p className="dmft__mission">{c.footerMission}</p>
           </div>
         </div>
 
+        {/* THREE NAMED GROUPS, not one column of seven.
+            Two columns (1.4fr / 1fr) gave the brand block more room than three
+            lines of text could fill and stacked every link down the right, so
+            the middle of the footer was empty and the right of it was a menu.
+            Grouping by KIND is also what makes a footer scannable: somebody
+            looking for the privacy policy is not reading past "SNAP by state"
+            to find it. */}
         <nav className="dmft__nav" aria-label="Footer">
-          <Link className="dmft__link" href={href(LINK_PATHS.states, lang)}>
-            {c.statesLink}
-          </Link>
-          <Link className="dmft__link" href={href(LINK_PATHS.questions, lang)}>
-            {c.questionsLink}
-          </Link>
-          <Link className="dmft__link" href={LINK_PATHS.privacy}>
-            {c.footerPrivacy}
-          </Link>
-          <Link className="dmft__link" href={LINK_PATHS.terms}>
-            {c.footerTerms}
-          </Link>
-          <Link className="dmft__link" href={LINK_PATHS.safety}>
-            {c.footerSafety}
-          </Link>
-          <Link className="dmft__link" href={href(LINK_PATHS.supporters, lang)}>
-            {c.footerSupporters}
-          </Link>
-          <Link className="dmft__link" href={href(LINK_PATHS.feedback, lang)}>
-            {c.footerFeedback}
-          </Link>
+          <div className="dmft__group">
+            <h2 className="dmft__grouphead">{c.footerGroupReference}</h2>
+            <Link className="dmft__link" href={href(LINK_PATHS.states, lang)}>
+              {c.footerStates}
+            </Link>
+            <Link className="dmft__link" href={href(LINK_PATHS.questions, lang)}>
+              {c.footerQuestions}
+            </Link>
+          </div>
+
+          <div className="dmft__group">
+            <h2 className="dmft__grouphead">{c.footerGroupLegal}</h2>
+            <Link className="dmft__link" href={LINK_PATHS.privacy}>
+              {c.footerPrivacy}
+            </Link>
+            <Link className="dmft__link" href={LINK_PATHS.terms}>
+              {c.footerTerms}
+            </Link>
+            <Link className="dmft__link" href={LINK_PATHS.safety}>
+              {c.footerSafety}
+            </Link>
+          </div>
+
+          <div className="dmft__group">
+            <h2 className="dmft__grouphead">{c.footerGroupAbout}</h2>
+            <Link className="dmft__link" href={href(LINK_PATHS.supporters, lang)}>
+              {c.footerSupporters}
+            </Link>
+            <Link className="dmft__link" href={href(LINK_PATHS.feedback, lang)}>
+              {c.footerFeedback}
+            </Link>
+          </div>
         </nav>
 
         {/* The disclosures. Not fine print in the legal sense — these are the
