@@ -1249,9 +1249,9 @@
       "ask_usd": 10000,
       "ask_verdict": "earmark",
       "ask_sizing": "service-partnership floor: grant history is not capacity. $3,489,000 of donations against $557,397,000 of qualified investments (both TEXAS-scoped \u2014 see ask_scope_caveat). Anchored on MIN_VIABLE_GRANT ($10,000), which does not depend on the giving figure.",
-      "ask_basis": "service-partnership floor; no Houston-scoped giving figure is disclosed",
+      "ask_basis": "service-partnership floor. The PE discloses NO giving figure scoped to the Houston MSA assessment area \u2014 investments are broken out by assessment area, donations are not \u2014 so there is no per-assessment-area anchor and the ask does not use one.",
       "verified": true,
-      "verify_note": "Identity confirmed via FDIC BankFind: cert 16835, RSSD 664756, El Campo TX, regulator FDIC, $43.9B, active. Houston MSA AA counties read from the July 18, 2022 PE. Texas ratings read from the narrative, verbatim: \"CRA RATING FOR STATE OF TEXAS: SATISFACTORY The Lending Test is rated: High Satisfactory The Investment Test is rated: High Satisfactory The Service Test is rated: Low Satisfactory\".",
+      "verify_note": "Identity confirmed via FDIC BankFind: cert 16835, RSSD 664756, El Campo TX, regulator FDIC, $43.9B, active. The assessment area delineation was read from the July 18, 2022 PE: the Houston MSA AA comprises \"Austin, Brazoria, Chambers, Fort Bend, Galveston, Harris, Liberty, Montgomery, and Waller Counties\". Texas ratings read from the narrative, verbatim: \"CRA RATING FOR STATE OF TEXAS: SATISFACTORY The Lending Test is rated: High Satisfactory The Investment Test is rated: High Satisfactory The Service Test is rated: Low Satisfactory\" \u2014 note the FIRST ratings block in the document is Oklahoma's, which carries a different set.",
       "pe_verified_current_against": "FDIC CRAPES, 2026-08-26 \u2014 cert 16835, newest exam 2022-07-18.",
       "active": true,
       "active_checked": "2026-08-26"
