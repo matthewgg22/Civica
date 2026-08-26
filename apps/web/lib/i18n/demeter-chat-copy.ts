@@ -128,12 +128,18 @@ export const T = {
     // definition, and this is a program description, not a mandated notice.
     welcome: {
       title: "Food benefits, called SNAP",
+      // TWO SHORT LINES, NOT TWO PARAGRAPHS. The card carried two dense blocks
+      // and the reader had to mine both for the one fact that matters. Each
+      // line makes ONE point now.
+      signIn: "Sign in to save your conversation",
+      continueWithout: "Continue without signing in",
       // LEADS WITH WHAT IT DOES. It opened on "is not the government and
       // cannot decide your case" — two negations before a word about what the
       // thing is for, which reads as a disclaimer wearing an introduction's
       // clothes. The disclaimer still has to be here (it is the confusion the
       // SNAP mark invites), it just does not go first.
-      body: "Demeter answers questions about SNAP from the rules themselves, and shows you which rule each answer came from. It is not the government and cannot decide your case.",
+      body: "Every answer quotes the rule it came from, so you can check it.",
+      bodyTwo: "Demeter is not the government and cannot decide your case.",
       cta: "Start asking",
       close: "Close",
     },
@@ -392,7 +398,10 @@ export const T = {
     emptyTitle: "Pregúntame lo que quieras sobre SNAP",
     welcome: {
       title: "Beneficios de alimentos, llamados SNAP",
-      body: "Demeter responde preguntas sobre SNAP a partir de las reglas mismas, y te muestra de qué regla salió cada respuesta. No es el gobierno y no puede decidir tu caso.",
+      signIn: "Inicia sesión para guardar tu conversación",
+      continueWithout: "Continuar sin iniciar sesión",
+      body: "Cada respuesta cita la regla de la que salió, para que puedas comprobarla.",
+      bodyTwo: "Demeter no es el gobierno y no puede decidir tu caso.",
       cta: "Empezar a preguntar",
       close: "Cerrar",
     },
@@ -591,7 +600,10 @@ export const T = {
     emptyTitle: "Hỏi tôi bất cứ điều gì về SNAP",
     welcome: {
       title: "Trợ cấp thực phẩm, gọi là SNAP",
-      body: "Demeter trả lời các câu hỏi về SNAP dựa trên chính các quy định, và cho bạn thấy mỗi câu trả lời dựa vào quy định nào. Demeter không phải là chính phủ và không thể quyết định hồ sơ của bạn.",
+      signIn: "Đăng nhập để lưu cuộc trò chuyện",
+      continueWithout: "Tiếp tục mà không đăng nhập",
+      body: "Mỗi câu trả lời đều trích dẫn quy định mà nó dựa vào, để bạn tự kiểm chứng.",
+      bodyTwo: "Demeter không phải là chính phủ và không thể quyết định hồ sơ của bạn.",
       cta: "Bắt đầu hỏi",
       close: "Đóng",
     },
@@ -786,7 +798,10 @@ export const T = {
     emptyTitle: "关于 SNAP，什么都可以问我",
     welcome: {
       title: "食品补助，简称 SNAP",
-      body: "Demeter 依据法规本身回答关于 SNAP 的问题，并告诉您每条回答的依据是哪一条。它不是政府机构，无法决定您的案件。",
+      signIn: "登录以保存对话",
+      continueWithout: "不登录，继续使用",
+      body: "每条回答都会附上依据的法规，方便您自行核对。",
+      bodyTwo: "Demeter 不是政府机构，无法决定您的案件。",
       cta: "开始提问",
       close: "关闭",
     },

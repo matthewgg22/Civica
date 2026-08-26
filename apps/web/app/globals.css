@@ -9243,3 +9243,46 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   color: var(--demeter-terracotta-deep);
   text-decoration-color: currentColor;
 }
+
+/* ── The empty state's head is one line ──────────────────────────────────── */
+.demeter__emptyhead { display: flex; align-items: center; gap: 0.6rem; }
+.demeter__emptyhead .demeter__emptytitle { margin: 0; }
+
+/* ── The rail's identity lines up ────────────────────────────────────────── */
+/* The descriptor sat under the whole head row, so it floated a line below the
+   wordmark with no relationship to the mark beside it. Pulled up to sit
+   directly under "Demeter", with its left edge on the wordmark's, so the mark,
+   the name and the descriptor read as one block. */
+.demeter__sbtag { margin-top: -1.15rem; padding-left: calc(34px + 0.5rem); }
+
+/* ── Yellow ground takes white text ──────────────────────────────────────── */
+/* --demeter-wheat is a strong mid-yellow; ink on it reads as a caution label.
+   White is the pairing the mark itself already uses. */
+.vcard__cta { color: var(--demeter-paper); }
+
+/* ── The estimate panel's gaps ───────────────────────────────────────────── */
+/* Each block below the switch carried its own top margin AND the column's gap,
+   so the empty/pick states sat in a pocket of space that read as something
+   missing rather than as breathing room. */
+.dmw__mode + .dmw__empty,
+.dmw__mode + .dmw__pick { margin-top: 0.25rem; }
+.dmw__empty, .dmw__pick { margin-bottom: 0; }
+.dmw__pick { gap: 0.5rem; }
+
+/* The card's second line is the caveat, so it sits a step back from the first
+   without leaving the ink. */
+.dmwel__body--quiet { color: var(--demeter-muted); font-size: 0.9rem; }
+/* Continuing without an account is an offer, not the offer. */
+.dmwel__secondary {
+  display: block; width: 100%; margin-top: 0.55rem;
+  padding: 0.55rem 1rem; min-height: 40px;
+  border: 0; background: none; cursor: pointer;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; color: var(--demeter-muted);
+  text-decoration: underline; text-decoration-color: var(--demeter-rule-strong);
+  text-underline-offset: 3px;
+}
+.dmwel__secondary:hover { color: var(--demeter-ink); text-decoration-color: currentColor; }
+.dmwel__secondary:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 4px; }
+/* The primary is a link now, so it needs the button's own box back. */
+a.dmwel__cta { display: inline-flex; text-decoration: none; }

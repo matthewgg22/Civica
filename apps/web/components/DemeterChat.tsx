@@ -1825,8 +1825,12 @@ export function DemeterChat({
           // whichever end the chips were pinned to, they read as controls
           // someone forgot rather than as the start of a conversation.
           <div className="demeter__empty">
-            <DemeterMark size={52} />
-            <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
+            {/* MARK AND TITLE ON ONE LINE (owner, 2026-08-26). Stacked, the
+                mark sat alone above the heading and read as a spacer. */}
+            <div className="demeter__emptyhead">
+              <DemeterMark size={40} />
+              <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
+            </div>
             {/* WHAT THE PROGRAM IS, then what this is (owner, 2026-08-22).
                 The "What is SNAP?" link is gone, so the definition it pointed
                 at leads here instead — someone who has just been told to
@@ -2018,6 +2022,7 @@ export function DemeterChat({
         <DemeterWelcome
           copy={{ ...t.welcome, whatIsSnap: t.emptyWhatIsSnap }}
           onDismiss={dismissWelcome}
+          signInHref={`/sign-in?next=${encodeURIComponent(lang === "en" ? "/chat" : `/${lang}/chat`)}&lang=${lang}`}
         />
       )}
       {showModeOffer && (
@@ -2626,10 +2631,9 @@ export function DemeterChat({
               >
                 {t.feedbackLink}
               </a>
-              {/* The permanent home for the safety hint that used to occupy a
-                  line under the composer forever. Reachable for the whole
-                  conversation, not only before the first message. */}
-              <p className="demeter__gearnote">{t.piiHint}</p>
+              {/* The safety hint lived here too. Removed (owner, 2026-08-26):
+                  it already shows under the composer, where it is actionable,
+                  and a settings menu is not where anyone looks before typing. */}
             </div>
           </details>
               </>
