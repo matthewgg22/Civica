@@ -15,7 +15,7 @@ import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { stateName } from "../lib/state-names";
-import { agencyDisplayName } from "../lib/program-name";
+import { hasLocalProgramName, primaryAgency, programDisplayName, splitPortalName } from "../lib/program-name";
 import VerifyPage from "../app/verify/page";
 
 const html = renderToStaticMarkup(<VerifyPage />);
@@ -69,7 +69,7 @@ describe("a row carries the three things somebody came for", () => {
   it("names the agency that runs the program", () => {
     for (const s of VERIFIED_STATES) {
       // Escaped by React on the way out, so compare against the escaped form.
-      const agency = agencyDisplayName(s.agency).replace(/&/g, "&amp;").replace(/'/g, "&#x27;");
+      const agency = primaryAgency(s.agency).replace(/&/g, "&amp;").replace(/'/g, "&#x27;");
       expect(html, `${s.code} has no agency`).toContain(agency);
     }
   });
@@ -117,5 +117,62 @@ describe("the page is only the states and the way into the chat", () => {
     // The palette allows one wheat next action per page. 53 rows of filled
     // buttons is the card grid again in another shape.
     expect([...html.matchAll(/vstates__askcta/g)]).toHaveLength(1);
+  });
+});
+
+describe("a row prints only what varies", () => {
+  it("names the program only where the state calls it something else", () => {
+    // 44 of 53 packs say "SNAP". Printing that on every row put the page's own
+    // subject 44 times down a column and buried the nine names that actually
+    // distinguish a state.
+    const shown = [...html.matchAll(/class="vrow__program">([^<]*)</g)].map((m) => m[1]);
+    const expected = VERIFIED_STATES.filter((s) => hasLocalProgramName(s.program)).map((s) =>
+      programDisplayName(s.program),
+    );
+    expect(shown.sort()).toEqual(expected.sort());
+    expect(shown).toContain("CalFresh");
+    expect(shown).toContain("3SquaresVT");
+    expect(shown.length).toBeLessThan(VERIFIED_STATES.length / 2);
+  });
+
+  it("never leaves a bare 'SNAP' as a program line", () => {
+    const shown = [...html.matchAll(/class="vrow__program">([^<]*)</g)].map((m) => m[1].trim());
+    expect(shown).not.toContain("SNAP");
+    expect(shown).not.toContain("Supplemental Nutrition Assistance Program (SNAP)");
+  });
+
+  it("says county-administered exactly where the pack says so", () => {
+    // The agency string is cut back to the department, which drops clauses
+    // like "administered locally by the 100 County Departments of Social
+    // Services". That is not a detail to lose silently — in these states the
+    // county is who you deal with — so it comes back from adminModel.
+    const tags = [...html.matchAll(/class="vrow__admin">([^<]*)</g)];
+    const expected = VERIFIED_STATES.filter((s) => s.adminModel === "county");
+    expect(tags).toHaveLength(expected.length);
+    expect(expected.length).toBeGreaterThan(0);
+  });
+
+  it("keeps every portal annotation it lifts out of a link label", () => {
+    for (const s of VERIFIED_STATES) {
+      if (!s.portal) continue;
+      const { note } = splitPortalName(s.portal.name);
+      if (!note) continue;
+      const escaped = note.replace(/&/g, "&amp;").replace(/'/g, "&#x27;");
+      expect(html, `${s.code} dropped "${note}"`).toContain(escaped);
+    }
+  });
+
+  it("still warns where there is no online application at all", () => {
+    // The single case where the note is the whole message.
+    expect(html).toMatch(/paper application only/);
+  });
+});
+
+describe("the letter jump reaches every group", () => {
+  it("offers one target per group, and each one exists", () => {
+    const jumps = [...html.matchAll(/class="vjump__letter" href="#letter-(\w)"/g)].map((m) => m[1]);
+    const headings = [...html.matchAll(/class="vstates__letter" id="letter-(\w)"/g)].map((m) => m[1]);
+    expect(jumps.length).toBeGreaterThan(1);
+    expect(jumps).toEqual(headings);
   });
 });

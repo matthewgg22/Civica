@@ -74,7 +74,17 @@ describe("model-facing pack fields never reach a reader raw (#931)", () => {
           );
           if (reads.length === 0) return;
           if (line.trimStart().startsWith("//") || line.trimStart().startsWith("*")) return;
-          if (/programDisplayName\(|agencyDisplayName\(/.test(line)) return;
+          // primaryAgency runs agencyDisplayName itself, so it is safe on a
+          // raw field. hasLocalProgramName returns a BOOLEAN — a predicate
+          // over the raw string publishes nothing, and it normalizes through
+          // programDisplayName internally. Both are in program-name.ts, which
+          // this scan already exempts as the place the cutting happens.
+          if (
+            /programDisplayName\(|agencyDisplayName\(|primaryAgency\(|hasLocalProgramName\(/.test(
+              line,
+            )
+          )
+            return;
           if (ALLOWED.some((a) => line.includes(a.match))) return;
           offenders.push(`${rel}:${i + 1}  ${line.trim().slice(0, 110)}`);
         });
