@@ -1523,6 +1523,84 @@
       "pe_verified_current_against": "FDIC CRAPES, 2026-08-26 \u2014 cert 35583, newest exam 2023-05-08.",
       "active": true,
       "active_checked": "2026-08-26"
+    },
+    "republic_louisville": {
+      "cert": "23627",
+      "rssd": "316840",
+      "name": "Republic Bank & Trust Company",
+      "state": "KY",
+      "aa_counties": [
+        "Jefferson",
+        "Bullitt",
+        "Shelby"
+      ],
+      "aa_counties_other_states": {
+        "IN": [
+          "Clark",
+          "Floyd"
+        ]
+      },
+      "aa_note": " (Louisville MSA \u2014 a multistate rated area in its own right, with Clark and Floyd Counties forming the Indiana portion)",
+      "aa_structure": "The Louisville MSA is a RATED AREA for this bank, not one AA among many, and it is rated Outstanding overall",
+      "pe_date": "2026-02-02",
+      "pe_url": "https://crapes.fdic.gov/publish/2026/23627_260202.PDF",
+      "regulator": "FDIC",
+      "exam_method": "Large Bank",
+      "inv_rating": "Outstanding",
+      "svc_rating": "Outstanding",
+      "component_ratings": "LOUISVILLE MSA rated area: \"CRA RATING FOR LOUISVILLE MSA: OUTSTANDING The Lending Test is rated: High Satisfactory The Investment Test is rated: Outstanding The Service Test is rated: Outstanding\". The Kentucky and Florida rated areas carry different, lower Service ratings.",
+      "aa_giving_usd": 1113000,
+      "review_period_years": 3,
+      "pe_investment_usd": 45945000,
+      "pe_giving": "Table 'Qualified Investments \u2013 Louisville MSA', Qualified Grants & Donations row: 173 items totaling $1,113 thousand, against an investments subtotal of $45,945 thousand in the same table. Read from the row itself, not derived from the total-minus-subtotal difference. Source line on the table: 1/1/2023-12/31/2025.",
+      "pe_mined": true,
+      "target_status": "target",
+      "pitch_archetype": "peer",
+      "documented_gap": "none \u2014 Outstanding on Investment and Service in this rated area. On the list for CAPACITY. This is the most recent evaluation on the roster (February 2, 2026).",
+      "ask_usd": 25000,
+      "ask_verdict": "earmark",
+      "ask_sizing": "peer path: CAPACITY anchor with no gap multiplier (PEER_MULTIPLIER=1.0). $1,113,000/3yr of disclosed assessment-area giving x 15% = $55,650 -> $25,000 (earmark). No documented Service Test gap.",
+      "ask_basis": "173 qualified grants and donations totaling $1,113,000 disclosed for the Louisville MSA assessment area",
+      "verified": true,
+      "verify_note": "Identity confirmed via FDIC BankFind: cert 23627, RSSD 316840, Louisville KY, regulator FDIC, $7.05B, active. Assessment area read from the February 2, 2026 PE, verbatim: \"The Louisville MSA consists of all portions of Jefferson, Bullitt, and Shelby counties in Kentucky, and Clark and Floyd counties in Indiana.\" Ratings read from the rated-area header, not the institution grid.",
+      "pe_verified_current_against": "FDIC CRAPES, 2026-08-26 \u2014 cert 23627, newest exam 2026-02-02.",
+      "active": true,
+      "active_checked": "2026-08-26"
+    },
+    "enterprise_phoenix": {
+      "cert": "27237",
+      "rssd": "1190476",
+      "name": "Enterprise Bank & Trust",
+      "state": "AZ",
+      "aa_counties": [
+        "Maricopa"
+      ],
+      "aa_note": " (Phoenix assessment area \u2014 Maricopa County, 916 of the 1,009 census tracts in the Phoenix-Mesa-Chandler MSA; the bank operates two branches here)",
+      "aa_structure": "Phoenix AA is the bank's entire Arizona rated area",
+      "pe_date": "2023-06-05",
+      "pe_url": "https://crapes.fdic.gov/publish/2023/27237_230605.PDF",
+      "regulator": "FED",
+      "exam_method": "Large Bank",
+      "inv_rating": "Outstanding",
+      "svc_rating": "High Satisfactory",
+      "component_ratings": "ARIZONA rated area: \"CRA RATING FOR ARIZONA: SATISFACTORY The Lending Test is rated: High Satisfactory The Investment Test is rated: Outstanding The Service Test is rated: High Satisfactory\". The California rated area is Low Satisfactory across all three and must not be confused with this one.",
+      "aa_giving_usd": 263000,
+      "review_period_years": 3,
+      "pe_investment_usd": 19049000,
+      "pe_giving": "Table 'Community Development Investments and Donations by Year in the Phoenix Assessment Area', Donations row: 27 items totaling $263 thousand, against an investments subtotal of $19,049 thousand in the same table. The table is titled by the assessment area, so the scope is explicit.",
+      "pe_mined": true,
+      "target_status": "target",
+      "pitch_archetype": "peer",
+      "documented_gap": "none \u2014 Investment Outstanding, Service High Satisfactory in Arizona. On the list for CAPACITY.",
+      "ask_usd": 12500,
+      "ask_verdict": "earmark",
+      "ask_sizing": "peer path: CAPACITY anchor with no gap multiplier (PEER_MULTIPLIER=1.0). $263,000/3yr of disclosed assessment-area giving x 15% = $13,150 -> $12,500 (earmark). No documented Service Test gap.",
+      "ask_basis": "27 donations totaling $263,000 disclosed for the Phoenix assessment area",
+      "verified": true,
+      "verify_note": "Identity confirmed via FDIC BankFind: cert 27237, RSSD 1190476, Clayton MO, regulator FED, $17.36B, active. Assessment area read from the June 5, 2023 PE, verbatim: \"Enterprise's assessment area in Arizona consists of Maricopa County in southwestern Arizona\" and \"Maricopa County is one of the two counties that comprise the Phoenix-Mesa-Chandler MSA\".",
+      "pe_verified_current_against": "FDIC CRAPES, 2026-08-26 \u2014 cert 27237, newest exam 2023-06-05.",
+      "active": true,
+      "active_checked": "2026-08-26"
     }
   }
 }
