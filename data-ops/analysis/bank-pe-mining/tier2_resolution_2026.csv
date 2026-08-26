@@ -23,15 +23,15 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 23296,Salem Five Cents Savings Bank,Massachusetts,7117552,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#53 Middlesex, 12br",Middlesex,53,12,,
 3657,First American Bank,Illinois,7074673,Low Satisfactory,Low Satisfactory,both,LOADED,already in the roster,,,,,
 33510,East Boston Savings Bank,Massachusetts,6619632,High Satisfactory,Low Satisfactory,one,DEAD,closed institution,,,,,
-17393,German American Bank,Indiana,6144423,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#21 Franklin, 15br, both gap",Franklin,21,15,"$3.9M institution-wide across 1,200 donations; no clean per-AA total found",needs a targeted read of the Franklin/Indianapolis AA section
+17393,German American Bank,Indiana,6144423,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#21 Franklin, 15br, both gap",Franklin,21,15,"$3.9M institution-wide across 1,200 donations",no usable AA figure — needs a table read
 24156,Ocean Bank,Florida,5986172,Low Satisfactory,Low Satisfactory,both,LOADED,already in the roster,,,,,
 29546,Great Southern Bank,Missouri,5723662,High Satisfactory,Low Satisfactory,one,OUT — TOKEN PRESENCE,1br in #5 Dallas,Dallas,5,1,,
-58228,b1BANK,Louisiana,5531431,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#2 Harris, 4br, both gap",Harris,2,4,,
+58228,b1BANK,Louisiana,5531431,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#2 Harris, 4br, both gap",Harris,2,4,"$93,000 grants institution-wide; per-AA split not in sentence form",no usable AA figure — needs a table read
 18429,Morton Community Bank,Illinois,5467281,High Satisfactory,Low Satisfactory,one,OUT — LOW NEED,best county ranks #179,Champaign,179,1,,
 26647,Firstrust Savings Bank,Pennsylvania,5122806,Low Satisfactory,Low Satisfactory,both,LOADED,already in the roster,,,,,
 90250,Institution for Savings in Newburyport and Its Vicinity,Massachusetts,5085006,Outstanding,Low Satisfactory,one,OUT — LOW NEED,best county ranks #123,Essex,123,13,,
 34294,CFG Bank,Maryland,5027779,High Satisfactory,Low Satisfactory,one,OUT — TOKEN PRESENCE,1br in #68 Baltimore,Baltimore,68,1,,
-10248,First International Bank & Trust,North Dakota,4876751,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#4 Maricopa, 4br, both gap",Maricopa,4,4,,
+10248,First International Bank & Trust,North Dakota,4876751,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#4 Maricopa, 4br, both gap",Maricopa,4,4,AA figures are North Dakota and Minnesota; no Maricopa donation total stated,no usable AA figure — needs a table read
 19416,CTBC Bank Corp. (USA),California,4816873,Substantial Non Complianc,Substantial Non Complianc,crit,LOADED,already in the roster,,,,,
 15359,Southern Bank and Trust Company,North Carolina,4758607,High Satisfactory,Low Satisfactory,one,OUT — TOKEN PRESENCE,1br in #75 Wake,Wake,75,1,,
 8879,Community Bank of Mississippi,Mississippi,4608467,Low Satisfactory,High Satisfactory,one,OUT — TOKEN PRESENCE,1br in #35 Shelby,Shelby,35,1,,
@@ -73,9 +73,9 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 16470,Jefferson Bank,Texas,2802550,Low Satisfactory,Outstanding,one,DEFER — SINGLE GAP,"#13 Bexar, 10br",Bexar,13,10,,
 34533,First Community Bank,Arkansas,2757543,High Satisfactory,Low Satisfactory,one,OUT — TOKEN PRESENCE,2br in #87 Pulaski,Pulaski,87,2,,
 34618,"Macatawa Bank, National Association",Michigan,2733572,High Satisfactory,Low Satisfactory,one,OUT — LOW NEED,best county ranks #112,Kent,112,11,,
-17514,Banterra Bank,Illinois,2726883,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#4 Maricopa, 4br, both gap",Maricopa,4,4,,
+17514,Banterra Bank,Illinois,2726883,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#4 Maricopa, 4br, both gap",Maricopa,4,4,"$4,000 in the Arizona AA",rejected — negligible AA giving despite 4 Maricopa branches
 19333,Republic Bank of Chicago,Illinois,2681738,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#3 Cook, 13br",Cook,3,13,,
-90215,Avidia Bank,Massachusetts,2662177,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#53 Middlesex, 5br, both gap",Middlesex,53,5,,
+90215,Avidia Bank,Massachusetts,2662177,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#53 Middlesex, 5br, both gap",Middlesex,53,5,no AA-scoped donation sentence,no usable AA figure — needs a table read
 57591,West Coast Community Bank,California,2650147,High Satisfactory,Low Satisfactory,one,OUT — TOKEN PRESENCE,2br in #39 Santa Clara,Santa Clara,39,2,,
 57633,1st Security Bank of Washington,Washington,2632273,Outstanding,Low Satisfactory,one,DEFER — SINGLE GAP,"#28 King, 3br",King,28,3,,
 58309,American Momentum Bank,Texas,2579369,High Satisfactory,Low Satisfactory,one,OUT — TOKEN PRESENCE,1br in #5 Dallas,Dallas,5,1,,
@@ -120,7 +120,7 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 15809,Security State Bank & Trust,Texas,1984577,Low Satisfactory,High Satisfactory,one,OUT — TOKEN PRESENCE,2br in #16 Tarrant,Tarrant,16,2,,
 28116,Yakima Federal Savings and Loan Association,Washington,1984560,High Satisfactory,Low Satisfactory,one,OUT — LOW NEED,best county ranks #287,Yakima,287,4,,
 26856,Falcon International Bank,Texas,1975494,High Satisfactory,Low Satisfactory,one,OUT — TOKEN PRESENCE,2br in #13 Bexar,Bexar,13,2,,
-26336,The Village Bank,Massachusetts,1946483,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#53 Middlesex, 11br, both gap",Middlesex,53,11,,
+26336,The Village Bank,Massachusetts,1946483,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#53 Middlesex, 11br, both gap",Middlesex,53,11,"figures scoped only to ""DESCRIPTION OF"" fragments",no usable AA figure — needs a table read
 58513,The Bank of Princeton,New Jersey,1916497,High Satisfactory,Low Satisfactory,one,OUT — TOKEN PRESENCE,1br in #9 Queens,Queens,9,1,,
 28453,Timberland Bank,Washington,1906715,High Satisfactory,Low Satisfactory,one,OUT — TOKEN PRESENCE,1br in #28 King,King,28,1,,
 3440,First Northern Bank of Dixon,California,1903284,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#25 Sacramento, 3br",Sacramento,25,3,,
@@ -151,7 +151,7 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 15990,Watertown Savings Bank,New York,925416,Low Satisfactory,Outstanding,one,OUT — LOW NEED,best county ranks #454,Jefferson,454,10,,
 11113,Hamlin Bank and Trust Company,Pennsylvania,421614,Low Satisfactory,Low Satisfactory,both,OUT — LOW NEED,best county ranks #639,Cattaraugus,639,1,,
 4433,First Citizens Bank,Iowa,1905697,Low Satisfactory,Low Satisfactory,both,OUT — LOW NEED,best county ranks #1231,Cerro Gordo,1231,2,,
-23473,First Fidelity Bank,Oklahoma,2894984,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#4 Maricopa, 6br, both gap",Maricopa,4,6,"only individual donation examples ($6,600, $17,500); no AA total stated",needs a table read
+23473,First Fidelity Bank,Oklahoma,2894984,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#4 Maricopa, 6br, both gap",Maricopa,4,6,"only individual donation examples ($6,600, $17,500); no AA total",no usable AA figure — needs a table read
 660,The Adirondack Trust Company,New York,1714346,Low Satisfactory,Low Satisfactory,both,OUT — LOW NEED,best county ranks #480,Saratoga,480,10,,
 7542,Ameriserv Financial Bank,Pennsylvania,1426921,Low Satisfactory,Low Satisfactory,both,OUT — TOKEN PRESENCE,1br in #42 Allegheny,Allegheny,42,1,,
 16604,Bank Independent,Alabama,2814773,Low Satisfactory,,one,OUT — LOW NEED,best county ranks #161,Madison,161,5,,
@@ -162,9 +162,9 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 1487,First Farmers and Merchants Bank,Tennessee,1763096,Low Satisfactory,Low Satisfactory,both,OUT — TOKEN PRESENCE,2br in #65 Davidson,Davidson,65,2,,
 20488,Five Points Bank,Nebraska,2008090,Low Satisfactory,,one,OUT — LOW NEED,best county ranks #132,Douglas,132,3,,
 22334,One Community Bank,Wisconsin,2181049,Low Satisfactory,Needs to Improve,crit,OUT — LOW NEED,best county ranks #124,Dane,124,9,,
-12614,Origin Bank,Louisiana,9882221,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#2 Harris, 9br, both gap",Harris,2,9,no donation figure matched any standard phrasing,needs a manual read
-15399,RCB Bank,Oklahoma,3899432,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#49 Oklahoma, 7br, both gap",Oklahoma,49,7,,
-24563,Texas Community Bank,Texas,2104571,Low Satisfactory,Needs to Improve,crit,READ THE PE,"#13 Bexar, 3br, crit gap",Bexar,13,3,,
+12614,Origin Bank,Louisiana,9882221,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#2 Harris, 9br, both gap",Harris,2,9,per-AA tables exist but no Houston donation total in sentence form,no usable AA figure — needs a table read
+15399,RCB Bank,Oklahoma,3899432,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#49 Oklahoma, 7br, both gap",Oklahoma,49,7,PE retrieved; not yet read,queued
+24563,Texas Community Bank,Texas,2104571,Low Satisfactory,Needs to Improve,crit,READ THE PE,"#13 Bexar, 3br, crit gap",Bexar,13,3,"matched figures are CD loans, not donations",no usable AA figure — needs a table read
 26906,Texas Regional Bank,Texas,2660302,Low Satisfactory,,one,OUT — TOKEN PRESENCE,2br in #2 Harris,Harris,2,2,,
 6423,Amboy Bank,New Jersey,2638667,Low Satisfactory,,one,DEFER — SINGLE GAP,"#82 Middlesex, 13br",Middlesex,82,13,,
 14521,Bank Iowa,Iowa,2117855,Low Satisfactory,Low Satisfactory,both,OUT — LOW NEED,best county ranks #146,Polk,146,2,,
@@ -173,7 +173,7 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 34147,Bank Rhode Island,Rhode Island,3378281,Low Satisfactory,,one,DEAD,closed institution,,,,,
 15555,Central Bank,Iowa,2135960,Low Satisfactory,,one,OUT — LOW NEED,best county ranks #146,Polk,146,5,,
 1014,ChoiceOne Bank,Michigan,2724240,Low Satisfactory,Low Satisfactory,both,OUT — TOKEN PRESENCE,1br in #57 Oakland,Oakland,57,1,,
-57873,Commonwealth Business Bank,California,1654826,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#1 Los Angeles, 4br, both gap",Los Angeles,1,4,no donation figure matched any standard phrasing,needs a manual read
+57873,Commonwealth Business Bank,California,1654826,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#1 Los Angeles, 4br, both gap",Los Angeles,1,4,"$215,500 in the Los Angeles-Orange AA (Dallas AA separately got $52,500)","LOADED $12,500 earmark"
 19123,First Western Bank & Trust,North Dakota,2208449,Low Satisfactory,Low Satisfactory,both,OUT — TOKEN PRESENCE,1br in #4 Maricopa,Maricopa,4,1,,
 1040,Midland States Bank,Illinois,7782095,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#48 St. Louis, 7br, both gap",St. Louis,48,7,"$156,850 in the St. Louis AA","$10,000 earmark — but its ""Chicago"" AA excludes Cook entirely"
 12944,Orange Bank & Trust Company,New York,2438041,Low Satisfactory,,one,OUT — TOKEN PRESENCE,2br in #22 Bronx,Bronx,22,2,,
@@ -196,10 +196,10 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 1058,Midwest BankCentre,Missouri,2374880,Low Satisfactory,,one,DEFER — SINGLE GAP,"#48 St. Louis, 9br",St. Louis,48,9,,
 25858,Equity Bank,Kansas,3862184,Low Satisfactory,Low Satisfactory,both,OUT — TOKEN PRESENCE,2br in #49 Oklahoma,Oklahoma,49,2,,
 12839,First Farmers Bank & Trust Co.,Indiana,2298100,Low Satisfactory,,one,OUT — LOW NEED,best county ranks #236,Tippecanoe,236,2,,
-713,Orrstown Bank,Pennsylvania,2780990,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#68 Baltimore, 4br, both gap",Baltimore,68,4,,
+713,Orrstown Bank,Pennsylvania,2780990,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#68 Baltimore, 4br, both gap",Baltimore,68,4,"$89,000 Harrisburg PA, $6,000 Hagerstown MD; Baltimore AA total not stated",no usable AA figure — needs a table read
 58463,SmartBank,Tennessee,4606198,Low Satisfactory,Low Satisfactory,both,OUT — TOKEN PRESENCE,1br in #72 Jefferson,Jefferson,72,1,,
 16876,Banco Popular de Puerto Rico,Puerto Rico,41627000,Low Satisfactory,,one,DEAD,closed institution,,,,,
-17798,Beacon Bank and Trust,Massachusetts,4966140,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#53 Middlesex, 12br, both gap",Middlesex,53,12,,
+17798,Beacon Bank and Trust,Massachusetts,4966140,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#53 Middlesex, 12br, both gap",Middlesex,53,12,PE retrieved; not yet read,queued
 26247,Central Bank of the Midwest,Missouri,3577679,Low Satisfactory,,one,DEAD,closed institution,,,,,
 8675,Essex Bank,Virginia,1614861,Low Satisfactory,Low Satisfactory,both,DEAD,closed institution,,,,,
 30836,Territorial Savings Bank,Hawaii,2085473,Low Satisfactory,,one,DEAD,closed institution,,,,,

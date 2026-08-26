@@ -164,6 +164,20 @@ def main(argv=None):
     pdf_path = out / f"{stem}.pdf"
     generate.html_to_pdf(html_path, pdf_path)
     pages = page_count(pdf_path)
+
+    if pages > 1 and not values["density"]:
+        # The length threshold is a guess, and a bank can land just under it
+        # with content that still overflows -- Commonwealth Business Bank has
+        # SHORTER fields than Busey and overflowed where Busey fits, because
+        # Busey's length trips the dense style and CBB's does not. Rather than
+        # keep tuning the number, measure and escalate: re-render dense and
+        # re-check. The page-count guard below still refuses two pages.
+        values["density"] = " dense"
+        html = generate.render((TOOL_ROOT / "templates/memo.html").read_text(), values)
+        html_path.write_text(html)
+        generate.html_to_pdf(html_path, pdf_path)
+        pages = page_count(pdf_path)
+
     if pages != 1:
         raise MemoOverflowError(
             f"memo rendered {pages} pages — the qualification memo must be one "

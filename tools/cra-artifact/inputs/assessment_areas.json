@@ -1005,6 +1005,44 @@
       "active": true,
       "active_end_date": null,
       "active_checked": "2026-08-25"
+    },
+    "commonwealth_business_bank": {
+      "cert": "57873",
+      "rssd": "3337097",
+      "name": "Commonwealth Business Bank",
+      "state": "CA",
+      "aa_counties": [
+        "Los Angeles",
+        "Orange"
+      ],
+      "aa_structure": "THREE rated areas: California (Los Angeles-Orange, targeted), Texas (Dallas) and one other. Do NOT merge — Dallas separately received $52,500 against Los Angeles-Orange's $215,500.",
+      "pe_date": "2024-09-23",
+      "pe_url": "https://www.federalreserve.gov/apps/CRAPubWeb/CRA/DownloadPDF/3337097_20240923",
+      "regulator": "FED",
+      "exam_method": "Large Bank",
+      "target_status": "target",
+      "inv_rating": "Low Satisfactory",
+      "svc_rating": "Low Satisfactory",
+      "component_ratings": "Lending Low Satisfactory / Investment LOW SATISFACTORY / Service LOW SATISFACTORY",
+      "aa_giving_usd": 215500,
+      "review_period_years": 3,
+      "ask_usd": 12500,
+      "ask_usd_prior": 12500,
+      "ask_verdict": "earmark",
+      "ask_basis": "anchored on disclosed giving in the TARGET assessment area: '$215,500 in qualified community development donations impacting this assessment area' — the Los Angeles-Orange assessment area. Their Dallas assessment area separately received $52,500, which is why the anchor must name its area.",
+      "ask_sizing": "sized by src/ask.py: $71,833/yr in the Los Angeles-Orange assessment area x 15% x 1.25 = $13,469 -> $12,500 (earmark)",
+      "verified": true,
+      "verify_note": "Verified 2026-08-25 from the Sep 23, 2024 Federal Reserve public evaluation. The PE states 'The Los Angeles-Orange assessment area consists of Los Angeles and Orange Counties in their entirety'. All three tests are rated Low Satisfactory. FDIC cert is 57873, confirmed via BankFind by RSSD 3337097 after the liveness gate rejected a guessed number. Found by reading the severe-gap subset of the national pressure universe. CAUTION recorded: the bank's OTHER donation figure, $52,500, belongs to its DALLAS assessment area — reading that as the Los Angeles figure would understate the anchor fourfold.",
+      "pe_giving": "$215,500 in qualified community development donations impacting the Los Angeles-Orange assessment area, alongside 14 investments totaling $5.1 million that directly benefit it",
+      "pe_need_quote": "exhibited a poor responsiveness to community development needs through investments in this area",
+      "pe_mined": "per-assessment-area, 2026-08-25",
+      "documented_gap": "ALL THREE tests Low Satisfactory. In the Los Angeles-Orange assessment area the PE additionally finds the bank 'exhibited a poor responsiveness to community development needs through investments' — harsher than the rating.",
+      "cluster_role": "Los Angeles — a fourth route into the #1 county alongside Hanmi, CTBC and City National.",
+      "cofunder_naming_consent": null,
+      "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
+      "active": true,
+      "active_end_date": null,
+      "active_checked": "2026-08-25"
     }
   }
 }
