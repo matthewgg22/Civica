@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
   if (!gate.allowed) {
     if (gate.reason === "rate_limited") {
       return NextResponse.json(
-        { error: "Too many questions at once — try again in a minute.", reason: "rate_limited" },
+        { error: "Too many questions at once, try again in a minute.", reason: "rate_limited" },
         { status: 429, headers: { "Retry-After": "60" } },
       );
     }
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "You've asked a lot of questions today — this resets tomorrow. " +
+            "You've asked a lot of questions today, this resets tomorrow. " +
             "If you need help now, call your state SNAP agency or 211.",
           reason: "ip_daily_cap",
         },

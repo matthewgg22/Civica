@@ -118,7 +118,10 @@ describe("the assent notice stays at the composer", () => {
 describe("the footer is one line at rest", () => {
   it("shows the PII hint before the first message, when it can still help", () => {
     const { container } = mountChat();
-    expect(container.querySelector(".demeter__piihint")?.textContent).toBe(T.en.piiHint);
+    // Inside the disclaimer paragraph since 2026-08-26 rather than its own
+    // block, so it carries a trailing space. The invariant is that the hint
+    // is SHOWN before the first message, not that it owns a <p>.
+    expect(container.querySelector(".demeter__piihint")?.textContent?.trim()).toBe(T.en.piiHint);
   });
 
   it("drops the hint once a conversation exists — that is the compression", () => {
@@ -143,6 +146,8 @@ describe("the footer is one line at rest", () => {
     const { container } = mountChat();
     const paras = container.querySelectorAll("p.demeter__disclaimer");
     expect(paras.length, "the footer grew a second disclaimer line back").toBe(1);
+    // And the hint is INSIDE it, not a second block above it.
+    expect(container.querySelectorAll("p.demeter__piihint")).toHaveLength(0);
     // Both halves live in that one paragraph.
     const text = paras[0]!.textContent ?? "";
     expect(text).toContain(T.en.disclaimer);

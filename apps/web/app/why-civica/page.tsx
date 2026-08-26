@@ -82,7 +82,7 @@ export default function WhyCivicaPage() {
             <p className="eyebrow">How it helps</p>
             <h2 className="section__title">Built to remove every obstacle</h2>
             <p className="section__body">
-              Civica combines AI guidance, peer support, and trusted CBO expertise — so you
+              Civica combines AI guidance, peer support, and trusted CBO expertise. So you
               arrive at your application confident in every answer.
             </p>
 
@@ -106,8 +106,8 @@ export default function WhyCivicaPage() {
                 </div>
                 <h3 className="why-feature-card__title">Demeter, your AI guide</h3>
                 <p className="why-feature-card__text">
-                  Ask Demeter any eligibility question — income limits, deductions, what documents
-                  to bring — in plain language, before you ever touch the form. No jargon,
+                  Ask Demeter any eligibility question. Income limits, deductions, what documents
+                  to bring. In plain language, before you ever touch the form. No jargon,
                   no guessing.
                 </p>
               </div>
@@ -132,7 +132,7 @@ export default function WhyCivicaPage() {
                 <h3 className="why-feature-card__title">The Buddy system</h3>
                 <p className="why-feature-card__text">
                   Get matched with someone who has already navigated the process. Real
-                  guidance from a peer — at the exact moment you need it most.
+                  guidance from a peer. At the exact moment you need it most.
                 </p>
               </div>
 
@@ -163,7 +163,7 @@ export default function WhyCivicaPage() {
                 <h3 className="why-feature-card__title">Personalized recommendations</h3>
                 <p className="why-feature-card__text">
                   Based on your household profile, the app and your local CBO surface the
-                  specific benefits, programs, and services you actually qualify for — not a
+                  specific benefits, programs, and services you actually qualify for. Not a
                   generic list.
                 </p>
               </div>
@@ -175,7 +175,7 @@ export default function WhyCivicaPage() {
         <section className="welcome-ecosystem">
           <div className="home-section__inner">
             <h2 className="welcome-ecosystem__title">One connected system</h2>
-            <p className="welcome-ecosystem__sub">Start on web, continue on iOS, get support from a CBO partner — your progress syncs everywhere.</p>
+            <p className="welcome-ecosystem__sub">Start on web, continue on iOS, get support from a CBO partner. Your progress syncs everywhere.</p>
             <div className="ecosystem-grid">
               <div className="ecosystem-card">
                 <span className="ecosystem-card__icon" aria-hidden="true">

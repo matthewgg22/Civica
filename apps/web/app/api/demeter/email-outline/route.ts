@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
   const result = await sendMail({
     to: user.email,
     subject: input.stateName
-      ? `Your outlined SNAP application — ${input.stateName}`
+      ? `Your outlined SNAP application, ${input.stateName}`
       : "Your outlined SNAP application",
     text: outlineToText(input),
   });

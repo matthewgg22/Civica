@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
   // Namespaced so submitting feedback does not consume someone's
   // lead-capture allowance (the limiter is a shared in-memory map).
   if (!rateLimit(`fb:${clientIp(req)}`)) {
-    return NextResponse.json({ error: "Too many reports — try again later." }, { status: 429 });
+    return NextResponse.json({ error: "Too many reports, try again later." }, { status: 429 });
   }
 
   let body: Record<string, unknown>;

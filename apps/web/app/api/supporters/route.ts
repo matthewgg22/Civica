@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   const gate = await checkUsageGate(clientIp(req));
   if (!gate.allowed) {
     return NextResponse.json(
-      { error: "Too many submissions — try again in a minute." },
+      { error: "Too many submissions, try again in a minute." },
       { status: 429, headers: { "Retry-After": "60" } },
     );
   }
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("[supporters] insert failed:", err instanceof Error ? err.message : String(err));
     return NextResponse.json(
-      { error: "Couldn't save your sign-on — please email us instead." },
+      { error: "Couldn't save your sign-on, please email us instead." },
       { status: 503 },
     );
   }

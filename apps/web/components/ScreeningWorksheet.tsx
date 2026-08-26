@@ -91,7 +91,7 @@ export function ScreeningWorksheet({
 
       {!classification && (
         <p className="worksheet__empty">
-          Describe the household and the file will build here — questions asked, citations,
+          Describe the household and the file will build here, questions asked, citations,
           and the benefit calculation.
         </p>
       )}
@@ -100,7 +100,7 @@ export function ScreeningWorksheet({
         <p className="worksheet__guest-note">
           {guestScreeningsLeft > 0
             ? `${guestScreeningsLeft} guest screening${guestScreeningsLeft === 1 ? "" : "s"} left. Sign in to keep this one and export it.`
-            : "Guest screening limit reached — sign in to keep going."}
+            : "Guest screening limit reached, sign in to keep going."}
         </p>
       )}
 

@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
   // feedback route — three different forms, three independent allowances.
   if (!rateLimit(`sfb:${clientIp(req)}`)) {
     return NextResponse.json(
-      { error: "Too many submissions — try again in a bit." },
+      { error: "Too many submissions, try again in a bit." },
       { status: 429 },
     );
   }
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("[site-feedback] insert failed:", err instanceof Error ? err.message : String(err));
     return NextResponse.json(
-      { error: "Couldn't save your feedback — please try again." },
+      { error: "Couldn't save your feedback, please try again." },
       { status: 503 },
     );
   }

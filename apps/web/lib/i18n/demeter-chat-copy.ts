@@ -47,10 +47,10 @@ export const T = {
     federal: "All states (federal rules)",
     verified: "Verified",
     federalBadge: "Federal guidance",
-    dividerTo: (name: string) => `Now answering for ${name} — earlier answers may not apply.`,
+    dividerTo: (name: string) => `Now answering for ${name}. Earlier answers may not apply.`,
     dividerFederal: "Now answering with federal rules only. Earlier answers may not apply.",
     dividerUncovered: (place: string) =>
-      `Demeter does not cover ${place} yet — answers below use federal rules, and your local agency is the one to confirm with.`,
+      `Demeter does not cover ${place} yet. Answers below use federal rules, and your local agency is the one to confirm with.`,
     // "Demeter is AI" up front, because someone who knows that reads the rest
     // differently. The agency is a LINK: telling somebody to check with an
     // office without saying which one is the same as not telling them.
@@ -145,7 +145,7 @@ export const T = {
     // decision". A chat that opens by promising an eligibility answer has
     // already made the claim the whole product is built to avoid.
     emptyLede:
-      "I can help you see whether you\u2019re likely to qualify and build up your application as we go \u2014 quoting the rule behind every answer, so you can check it.",
+      "I can help you see whether you\u2019re likely to qualify and build up your application as we go, quoting the rule behind every answer, so you can check it.",
     // Pre-chat framing (#898 P2-6): a real tester finished a full 25-turn
     // conversation without ever being told that SNAP is formula work this
     // chat can walk through, or that TWO modes exist. Names the modes by
@@ -350,11 +350,11 @@ export const T = {
     verified: "Verificado",
     federalBadge: "Guía federal",
     dividerTo: (name: string) =>
-      `Ahora respondiendo para ${name} — las respuestas anteriores pueden no aplicar.`,
+      `Ahora respondiendo para ${name}. Las respuestas anteriores pueden no aplicar.`,
     dividerFederal:
       "Ahora respondiendo solo con reglas federales. Las respuestas anteriores pueden no aplicar.",
     dividerUncovered: (place: string) =>
-      `Demeter todavía no cubre ${place} — las respuestas de abajo usan reglas federales, y tu agencia local es la que debe confirmarlo.`,
+      `Demeter todavía no cubre ${place}. Las respuestas de abajo usan reglas federales, y tu agencia local es la que debe confirmarlo.`,
     disclaimer: "Demeter es IA y puede equivocarse. Verifica las fuentes citadas y",
     disclaimerAgency: "tu agencia estatal",
     piiHint: "Por favor no escribas tu número de Seguro Social ni datos bancarios.",
@@ -549,11 +549,11 @@ export const T = {
     verified: "Đã xác minh",
     federalBadge: "Hướng dẫn liên bang",
     dividerTo: (name: string) =>
-      `Bây giờ đang trả lời cho ${name} — các câu trả lời trước có thể không còn áp dụng.`,
+      `Bây giờ đang trả lời cho ${name}. Các câu trả lời trước có thể không còn áp dụng.`,
     dividerFederal:
       "Bây giờ chỉ trả lời theo quy định liên bang. Các câu trả lời trước có thể không còn áp dụng.",
     dividerUncovered: (place: string) =>
-      `Demeter chưa hỗ trợ ${place} — các câu trả lời dưới đây theo quy định liên bang, và cơ quan địa phương của bạn mới là nơi xác nhận.`,
+      `Demeter chưa hỗ trợ ${place}. Các câu trả lời dưới đây theo quy định liên bang, và cơ quan địa phương của bạn mới là nơi xác nhận.`,
     disclaimer: "Demeter là AI và có thể sai. Vui lòng kiểm tra lại các nguồn được trích dẫn và",
     disclaimerAgency: "cơ quan tiểu bang của bạn",
     piiHint: "Xin đừng nhập số An sinh Xã hội hay thông tin ngân hàng.",
@@ -747,10 +747,10 @@ export const T = {
     federal: "所有州（联邦规定）",
     verified: "已核实",
     federalBadge: "联邦指引",
-    dividerTo: (name: string) => `现在按 ${name} 的规定回答——之前的回答可能不再适用。`,
+    dividerTo: (name: string) => `现在按 ${name} 的规定回答，之前的回答可能不再适用。`,
     dividerFederal: "现在仅按联邦规定回答。之前的回答可能不再适用。",
     dividerUncovered: (place: string) =>
-      `Demeter 尚未覆盖${place}——下面的回答按联邦规定，请以您当地机构的说法为准。`,
+      `Demeter 尚未覆盖${place}，下面的回答按联邦规定，请以您当地机构的说法为准。`,
     disclaimer: "Demeter 是 AI，可能出错。请核对引用的来源，并咨询",
     disclaimerAgency: "您所在州的机构",
     piiHint: "请不要输入社会安全号码或银行信息。",

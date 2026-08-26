@@ -118,7 +118,7 @@ export async function POST(request: Request) {
     let { data, error } = await doUpdate(row);
     if (error && isMissingWorksheetColumn(error)) {
       console.warn(
-        "[demeter-conversations] worksheet column missing — paste migration 20260821; saving without it",
+        "[demeter-conversations] worksheet column missing, paste migration 20260821; saving without it",
       );
       ({ data, error } = await doUpdate(rowWithoutWorksheet()));
     }
@@ -167,7 +167,7 @@ export async function POST(request: Request) {
   let { data, error } = await doInsert(row);
   if (error && isMissingWorksheetColumn(error)) {
     console.warn(
-      "[demeter-conversations] worksheet column missing — paste migration 20260821; saving without it",
+      "[demeter-conversations] worksheet column missing, paste migration 20260821; saving without it",
     );
     ({ data, error } = await doInsert(rowWithoutWorksheet()));
   }

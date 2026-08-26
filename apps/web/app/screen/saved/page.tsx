@@ -22,7 +22,7 @@ import { askPath } from "../../../lib/i18n/routes";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Your saved conversations — Demeter AI",
+  title: "Your saved conversations: Demeter AI",
   robots: { index: false, follow: false },
 };
 

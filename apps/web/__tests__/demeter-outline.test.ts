@@ -108,8 +108,8 @@ describe("the outlined application", () => {
     const text = outlineToText(full);
     expect(text).not.toContain("applicant");
     expect(text).not.toContain("child_1");
-    expect(text).toContain("You — age 34");
-    expect(text).toContain("Child — age 6");
+    expect(text).toContain("You: age 34");
+    expect(text).toContain("Child: age 6");
   });
 
   it("names whose income it is by role, not by slug", () => {

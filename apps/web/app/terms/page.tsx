@@ -9,9 +9,9 @@ import { TERMS_OF_SERVICE } from "../../lib/legal";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — Demeter",
+  title: "Terms of Service: Demeter",
   description:
-    "The agreement for using Demeter. Demeter is free, gives information rather than legal advice, and does not decide your SNAP case — your state agency does.",
+    "The agreement for using Demeter. Demeter is free, gives information rather than legal advice, and does not decide your SNAP case. Your state agency does.",
 };
 
 export default function TermsPage() {

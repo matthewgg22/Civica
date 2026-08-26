@@ -4781,7 +4781,7 @@ html {
    framing block is test-pinned); only the posture moved. */
 .demeter__empty {
   display: flex; flex-direction: column; align-items: flex-start; text-align: left;
-  gap: 0.6rem; margin: auto 0; padding: 1rem 0 9vh; max-width: 58ch;
+  gap: 0.6rem; margin: auto 0; padding: 1rem 0 9vh; max-width: 74ch;
   /* Centered as a BLOCK in the column (text stays left inside) — Pi's
      composition; hugging the column's left edge left the right half of the
      screen dead. The bottom padding floats it slightly high of true center,
@@ -9101,3 +9101,50 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 }
 /* Free to use the full width now rather than sitting in a 14rem column. */
 .demeter__railfoot .demeter__gearnote { max-width: none; }
+
+/* ── Welcome card, third pass (owner, 2026-08-26) ────────────────────────── */
+
+/* The two marks share a row: whose card this is, beside whose programme. On
+   its own line the wordmark left empty bands either side and read as a header
+   the card did not need. */
+.dmwel__marks {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.85rem; flex-wrap: wrap; margin-bottom: 1rem;
+}
+.dmwel__brand { display: inline-flex; align-items: center; gap: 0.4rem; }
+.dmwel__marksep {
+  width: 1px; align-self: stretch; min-height: 2.4rem;
+  background: var(--demeter-rule);
+}
+.dmwel__logo { display: inline-flex; margin: 0; }
+.dmwel__logo img { height: auto; max-width: 150px; }
+
+/* ONE VOICE, ONE COLOUR. The card had the two paragraphs in the display serif
+   and the notice in the sans, at three different greys — which read as three
+   registers on a card with one thing to say. All three are the serif now, all
+   three on the ink. The notice stays smaller and keeps its rule above it, so
+   it is still legibly a different KIND of sentence without being a different
+   typeface at a different weight of grey. */
+.dmwel__what,
+.dmwel__body,
+.dmwel__mark {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  color: var(--demeter-ink);
+}
+.dmwel__mark {
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.dmwel__marklink { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.dmwel__marklink:hover { color: var(--demeter-terracotta-deep); }
+
+/* ── The thread has room to read (owner, 2026-08-26) ─────────────────────── */
+/* 46rem was set when the rail was a fixed column beside it. With the rail
+   collapsible and the window wide, it left the answer squeezed into the middle
+   third of the screen. 62rem keeps a comfortable measure for the serif at this
+   size while using the space that is actually there. */
+.dmchat__body .demeter { max-width: 62rem; }
+
+/* The safety hint rides inside the disclaimer paragraph now, so it needs to
+   read as its own clause without being its own block. */
+.demeter__piihint { display: inline; padding: 0; margin: 0; }

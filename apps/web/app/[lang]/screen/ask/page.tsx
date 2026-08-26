@@ -39,19 +39,19 @@ export function generateStaticParams(): Array<{ lang: string }> {
 
 const META: Record<string, { title: string; description: string }> = {
   es: {
-    title: "Demeter AI — respuestas verificadas sobre SNAP, con la regla incluida",
+    title: "Demeter AI. Respuestas verificadas sobre SNAP, con la regla incluida",
     description:
-      "Pregunta lo que sea sobre SNAP (cupones de alimentos) y recibe una respuesta basada en las reglas reales — la regulación federal más la política estatal verificada, cada afirmación citada, y marcada como segura o no confirmada.",
+      "Pregunta lo que sea sobre SNAP (cupones de alimentos) y recibe una respuesta basada en las reglas reales. La regulación federal más la política estatal verificada, cada afirmación citada, y marcada como segura o no confirmada.",
   },
   vi: {
-    title: "Demeter AI — câu trả lời đã xác minh về SNAP, kèm theo quy định",
+    title: "Demeter AI. Câu trả lời đã xác minh về SNAP, kèm theo quy định",
     description:
-      "Hỏi bất cứ điều gì về SNAP (phiếu thực phẩm) và nhận câu trả lời dựa trên quy định thật — quy định liên bang cùng chính sách tiểu bang đã được xác minh, mọi khẳng định đều có trích dẫn, và được đánh dấu chắc chắn hay chưa chắc.",
+      "Hỏi bất cứ điều gì về SNAP (phiếu thực phẩm) và nhận câu trả lời dựa trên quy định thật. Quy định liên bang cùng chính sách tiểu bang đã được xác minh, mọi khẳng định đều có trích dẫn, và được đánh dấu chắc chắn hay chưa chắc.",
   },
   zh: {
-    title: "Demeter AI — 经过核实的 SNAP 答案，并附上依据",
+    title: "Demeter AI: 经过核实的 SNAP 答案，并附上依据",
     description:
-      "关于 SNAP（食品券）想问什么都可以，得到的答案以真实法规为依据——联邦法规加上经过核实的州级政策，每条结论都有出处，并标注为确定或不确定。",
+      "关于 SNAP（食品券）想问什么都可以，得到的答案以真实法规为依据，联邦法规加上经过核实的州级政策，每条结论都有出处，并标注为确定或不确定。",
   },
 };
 

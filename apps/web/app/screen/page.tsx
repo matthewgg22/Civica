@@ -23,11 +23,11 @@ import { redirect } from "next/navigation";
 import { resolveOrgIdentity } from "../../lib/screening-auth";
 
 export const metadata: Metadata = {
-  title: "Demeter AI — verified SNAP answers",
-  description: "Free, verified answers to SNAP questions — for any state.",
+  title: "Demeter AI. Verified SNAP answers",
+  description: "Free, verified answers to SNAP questions. For any state.",
   openGraph: {
-    title: "Demeter AI — verified SNAP answers",
-    description: "Free, verified answers to SNAP questions — for any state.",
+    title: "Demeter AI. Verified SNAP answers",
+    description: "Free, verified answers to SNAP questions. For any state.",
     type: "website",
   },
 };

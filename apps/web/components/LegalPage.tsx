@@ -72,7 +72,7 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
               like a live one is the failure this banner exists to prevent. */}
           {doc.status === "draft" && (
             <p className="lgl__draft" role="note">
-              <strong>Draft — not yet in effect.</strong> This document has been
+              <strong>Draft, not yet in effect.</strong> This document has been
               written but not yet reviewed by counsel. It describes how Demeter
               works today and is published here for review.
             </p>

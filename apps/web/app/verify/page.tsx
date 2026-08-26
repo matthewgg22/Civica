@@ -21,7 +21,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "How Demeter verifies its answers",
   description:
-    "Every state in Demeter is built from primary sources and adversarially fact-checked before it ships — here is the verification trail, state by state.",
+    "Every state in Demeter is built from primary sources and adversarially fact-checked before it ships. Here is the verification trail, state by state.",
 };
 
 // Below this many real answers, a percentage is false precision — "16.7%"
@@ -53,12 +53,12 @@ export default async function VerifyPage() {
         <p className="vpage__lede vpage__lede--lead">
           Looking for help with food assistance means trusting someone with a
           decision that matters enormously, often while already under strain. We
-          think that deserves accuracy and honesty rather than confidence — which
+          think that deserves accuracy and honesty rather than confidence. Which
           also means being open about how the answers are produced, and admitting
           that a system like this can still be wrong.
         </p>
         <p className="vpage__lede">
-          So: Demeter answers from the actual rules — the federal SNAP regulations
+          So: Demeter answers from the actual rules. The federal SNAP regulations
           (7 CFR 273, vendored and dated) plus per-state policy packs built from each
           state&apos;s own primary sources. Before a state ships, its pack goes through
           an adversarial pipeline: independent cross-checking, an eval suite, and a
@@ -119,7 +119,7 @@ export default async function VerifyPage() {
                     If you reflow this paragraph, re-check the rendered output. */}
                 Measured over the past {stats.windowDays}{" "}
                 days from Demeter&apos;s own
-                answer log — not a target, not a claim. An answer only counts as
+                answer log. Not a target, not a claim. An answer only counts as
                 certain when every rule it cites is backed by regulation text pulled
                 for that specific question. Answers where Demeter fell back to quoting
                 sources verbatim count as <em>failures</em> here ({stats.degraded}{" "}
@@ -138,7 +138,7 @@ export default async function VerifyPage() {
               <p className="vstat__note">
                 This space shows the share of answers Demeter marks{" "}
                 <strong>CERTAIN</strong>, counted from its own answer log over a rolling
-                30 days. It stays blank until there are real answers to count — we&apos;d
+                30 days. It stays blank until there are real answers to count, we&apos;d
                 rather show nothing than a number with no observations behind it.
               </p>
             </>
@@ -146,7 +146,7 @@ export default async function VerifyPage() {
         </section>
 
         <p className="vpage__lede">
-          States without a verified pack get <strong>federal guidance only</strong> — and
+          States without a verified pack get <strong>federal guidance only</strong>, and
           for rules that vary by state (income limits, deductions), Demeter declines to
           state exact dollar figures rather than risk a wrong number, and points you to
           your state agency instead.
@@ -267,7 +267,7 @@ export default async function VerifyPage() {
                     href={s.portal.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`${s.portal.name} — apply in ${stateName(s.code)} (opens in a new tab)`}
+                    aria-label={`${s.portal.name}, apply in ${stateName(s.code)} (opens in a new tab)`}
                   >
                     {s.portal.name} <span aria-hidden>↗</span>
                   </a>
@@ -282,9 +282,9 @@ export default async function VerifyPage() {
         <p>
           This page counts the sources behind each state rather than listing them,
           because a citation is worth something when it is attached to the claim it
-          supports. Ask a question and the answer names the specific rule it used —
+          supports. Ask a question and the answer names the specific rule it used , 
           the federal regulation, and your state&apos;s own manual where we have
-          verified one — linked, so you can read it yourself.
+          verified one. Linked, so you can read it yourself.
         </p>
         {/* CLOSING ON AN INVITATION TO CORRECT US, which is the only honest end
             for a page that has just spent several hundred words explaining why
@@ -292,7 +292,7 @@ export default async function VerifyPage() {
         <p>
           New states are verified and added continuously, and this work is not
           finished. If you find something here that does not match what your agency
-          told you, we want to know — that is how the next correction gets caught.{" "}
+          told you, we want to know. That is how the next correction gets caught.{" "}
           <Link href="/chat">Ask Demeter a question</Link>, or tell us what we got
           wrong through the <Link href="/supporters">organizations supporting this work</Link>.
         </p>
