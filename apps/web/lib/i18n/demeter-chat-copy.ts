@@ -145,7 +145,7 @@ export const T = {
     // decision". A chat that opens by promising an eligibility answer has
     // already made the claim the whole product is built to avoid.
     emptyLede:
-      "I can help you see whether you\u2019re likely to qualify and build up your application as we go \u2014 quoting the rule behind every answer, so you can check it.",
+      "I can help you see whether you\u2019re likely to qualify and build up your application as we go, quoting the rule behind every answer, so you can check it.",
     // Pre-chat framing (#898 P2-6): a real tester finished a full 25-turn
     // conversation without ever being told that SNAP is formula work this
     // chat can walk through, or that TWO modes exist. Names the modes by

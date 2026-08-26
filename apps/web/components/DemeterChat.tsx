@@ -2183,7 +2183,7 @@ export function DemeterChat({
           message — the moment someone is most likely to paste an SSN or a case
           number — and lives permanently in the gear menu after that, so the
           resting state of an ongoing conversation is a single line. */}
-      {!hasChat && <p className="demeter__piihint">{t.piiHint}</p>}
+
       {/* "Demeter is AI" leads, because someone who knows that reads
           everything above it differently. And the agency is a real link:
           telling somebody to check with an office without saying which office
@@ -2200,6 +2200,12 @@ export function DemeterChat({
           the two lines costs nothing legally — both remain conspicuous, and
           neither is smaller than the other. Burying one would. */}
       <p className="demeter__disclaimer">
+        {/* ONE PARAGRAPH, not two (owner, 2026-08-26). The safety hint had its
+            own line above this one; both are the same register and the same
+            size, so the break bought nothing but height under the composer.
+            Still first-message-only: it is advice for the moment someone is
+            about to type, and it lives permanently in the gear menu. */}
+        {!hasChat && <span className="demeter__piihint">{t.piiHint} </span>}
         {t.disclaimer}{" "}
         <a
           className="demeter__link"

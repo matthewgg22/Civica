@@ -120,19 +120,25 @@ export function DemeterWelcome({
             logo reads as the government's card — which is the confusion the
             service mark below exists to prevent, so the fix belongs here too,
             not only in the notice. */}
-        <div className="dmwel__brand">
-          <DemeterMark size={26} />
-          <span className="dmwel__brandword" translate="no">
-            Demeter <em>AI</em>
+        {/* SIDE BY SIDE, not stacked. On its own line the wordmark left a band
+            of empty rail either side of it and read as a header the card did
+            not need. Beside the programme's mark it does the job it is here
+            for: says whose card this is, next to whose programme this is. */}
+        <div className="dmwel__marks">
+          <span className="dmwel__brand">
+            <DemeterMark size={30} />
+            <span className="dmwel__brandword" translate="no">
+              Demeter <em>AI</em>
+            </span>
           </span>
-        </div>
-
+          <span className="dmwel__marksep" aria-hidden />
         {/* Unaltered, at its true 663:460 ratio — "the logo cannot be altered"
             is a condition of being allowed to use it; only its box is ours to
             set. Decorative: the heading beside it names the program, so alt
             text would announce the same thing twice. */}
-        <div className="dmwel__logo">
-          <Image src="/snap-logo.png" alt="" aria-hidden width={193} height={134} priority />
+          <span className="dmwel__logo">
+            <Image src="/snap-logo.png" alt="" aria-hidden width={150} height={104} priority />
+          </span>
         </div>
 
         <h2 className="dmwel__title" id="dmwel-title">
@@ -141,9 +147,22 @@ export function DemeterWelcome({
         <p className="dmwel__what">{copy.whatIsSnap}</p>
         <p className="dmwel__body">{copy.body}</p>
 
-        {/* English on every language, by requirement. */}
+        {/* English on every language, by requirement. VERIFIED VERBATIM against
+            fns.usda.gov/snap/logo-guidance on 2026-08-26, including the space
+            in "U. S." — that is FNS's own spacing, not a typo of ours.
+            The link is additive: it points at the programme the mark belongs
+            to and changes not one character of the required sentence. */}
         <p className="dmwel__mark" lang="en">
-          {SNAP_SERVICE_MARK}
+          The SNAP logo is a service mark of the{" "}
+          <a
+            className="dmwel__marklink"
+            href="https://www.fns.usda.gov/snap"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            U. S. Department of Agriculture
+          </a>
+          . USDA does not endorse any goods, services, or enterprises.
         </p>
 
         <button type="button" className="dmwel__cta" onClick={onDismiss} ref={ctaRef}>

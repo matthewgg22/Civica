@@ -399,7 +399,7 @@ const en: PageCopy = {
   fears: [
     {
       q: "Does this affect my immigration status?",
-      a: "This one is changing, so we will not give you a flat answer. Federal public charge rules have not counted SNAP since 2022, but DHS has rescinded that rule effective 18 September 2026, and after that date officers can weigh benefits case by case. If anyone in your household is not a US citizen, talk to a free immigration legal aid before you apply \u2014 not to us, and not to a caseworker.",
+      a: "This one is changing, so we will not give you a flat answer. Federal public charge rules have not counted SNAP since 2022, but DHS has rescinded that rule effective 18 September 2026, and after that date officers can weigh benefits case by case. If anyone in your household is not a US citizen, talk to a free immigration legal aid before you apply. Not to us, and not to a caseworker.",
     },
     {
       q: "Will I have to pay it back?",
@@ -674,15 +674,15 @@ const es: PageCopy = {
   foodNow211: "Llama o visita el 211",
   fearsH2: "Por qu\u00e9 la gente no solicita",
   fearsBody:
-    "Estas son las preocupaciones que detienen a personas que s\u00ed calificar\u00edan. Esto es lo que realmente ocurre \u2014 incluida la \u00fanica sobre la que no podemos darte una respuesta rotunda.",
+    "Estas son las preocupaciones que detienen a personas que s\u00ed calificar\u00edan. Esto es lo que realmente ocurre. Incluida la \u00fanica sobre la que no podemos darte una respuesta rotunda.",
   fears: [
     {
       q: "\u00bfEsto afecta mi estatus migratorio?",
-      a: "Esta est\u00e1 cambiando, as\u00ed que no te daremos una respuesta rotunda. Las reglas federales de carga p\u00fablica no cuentan SNAP desde 2022, pero el DHS derog\u00f3 esa norma con efecto el 18 de septiembre de 2026, y a partir de esa fecha los oficiales pueden considerar los beneficios caso por caso. Si alguien en tu hogar no es ciudadano estadounidense, consulta con ayuda legal migratoria gratuita antes de solicitar \u2014 no con nosotros, ni con un trabajador del condado.",
+      a: "Esta est\u00e1 cambiando, as\u00ed que no te daremos una respuesta rotunda. Las reglas federales de carga p\u00fablica no cuentan SNAP desde 2022, pero el DHS derog\u00f3 esa norma con efecto el 18 de septiembre de 2026, y a partir de esa fecha los oficiales pueden considerar los beneficios caso por caso. Si alguien en tu hogar no es ciudadano estadounidense, consulta con ayuda legal migratoria gratuita antes de solicitar. No con nosotros, ni con un trabajador del condado.",
     },
     {
       q: "\u00bfTendr\u00e9 que devolverlo?",
-      a: "No, si lo que reportaste era correcto. Los beneficios no son un pr\u00e9stamo. Si la agencia descubre despu\u00e9s que pag\u00f3 m\u00e1s de lo que te correspond\u00eda \u2014 casi siempre un error de reporte, de cualquiera de las dos partes \u2014 puede pedirte ese pago de m\u00e1s.",
+      a: "No, si lo que reportaste era correcto. Los beneficios no son un pr\u00e9stamo. Si la agencia descubre despu\u00e9s que pag\u00f3 m\u00e1s de lo que te correspond\u00eda. Casi siempre un error de reporte, de cualquiera de las dos partes. Puede pedirte ese pago de m\u00e1s.",
     },
     {
       q: "\u00bfLe estoy quitando a alguien que lo necesita m\u00e1s?",
@@ -694,7 +694,7 @@ const es: PageCopy = {
     },
     {
       q: "\u00bfTengo que estar desempleado?",
-      a: "No. En la mayor\u00eda de los hogares con SNAP que tienen un adulto en edad de trabajar, alguien trabaja. Trabajar no te descalifica \u2014 los ingresos se cuentan despu\u00e9s de las deducciones a las que tienes derecho, por eso el l\u00edmite es m\u00e1s alto de lo que la gente supone.",
+      a: "No. En la mayor\u00eda de los hogares con SNAP que tienen un adulto en edad de trabajar, alguien trabaja. Trabajar no te descalifica. Los ingresos se cuentan despu\u00e9s de las deducciones a las que tienes derecho, por eso el l\u00edmite es m\u00e1s alto de lo que la gente supone.",
     },
     {
       q: "\u00bfMe van a investigar?",
