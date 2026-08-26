@@ -1,4 +1,4 @@
-// /verify may not print our own provenance.
+// /states may not print our own provenance.
 //
 // The page once rendered, for all 53 states at once: every primary source by
 // name, the pipeline that built each pack, the corrections its refute gate
@@ -14,7 +14,12 @@ import { readFileSync } from "node:fs";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { publicVerification } from "../lib/verification-summary";
 
-const PAGE = readFileSync(new URL("../app/verify/page.tsx", import.meta.url), "utf8");
+// All three files that make the page. Reading only the route file would miss
+// a provenance section added to the shared body or to the client list, which
+// is where it would actually go.
+const PAGE = ["../app/states/page.tsx", "../components/StateDirectoryPage.tsx", "../components/StateDirectory.tsx"]
+  .map((f) => readFileSync(new URL(f, import.meta.url), "utf8"))
+  .join("\n");
 
 describe("the page renders no provenance at all", () => {
   // Cheap and blunt on purpose: the failure mode is someone re-adding

@@ -29,7 +29,7 @@ describe("sitemap", () => {
     // 301s there, plus the /screen landing itself.
     expect(urls).toContain("https://demeter.ai/screen");
     expect(urls).toContain("https://demeter.ai/screen/ask");
-    expect(urls).toContain("https://demeter.ai/verify");
+    expect(urls).toContain("https://demeter.ai/states");
   });
 
   it("indexes /questions in every language — moved content must stay findable", async () => {

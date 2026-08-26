@@ -16,9 +16,10 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { stateName } from "../lib/state-names";
 import { hasLocalProgramName, primaryAgency, programDisplayName, splitPortalName } from "../lib/program-name";
-import VerifyPage from "../app/verify/page";
+import StatesPage from "../app/states/page";
+import { PAGE_COPY as T } from "../lib/i18n/snap-page";
 
-const html = renderToStaticMarkup(<VerifyPage />);
+const html = renderToStaticMarkup(<StatesPage />);
 
 /** The codes as the page actually prints them, in document order. */
 const renderedCodes = [...html.matchAll(/class="vrow__code">\((\w+)\)</g)].map((m) => m[1]);
@@ -168,11 +169,26 @@ describe("a row prints only what varies", () => {
   });
 });
 
-describe("the letter jump reaches every group", () => {
-  it("offers one target per group, and each one exists", () => {
-    const jumps = [...html.matchAll(/class="vjump__letter" href="#letter-(\w)"/g)].map((m) => m[1]);
+describe("the search box replaces the letter jump", () => {
+  it("ships a search input, server-rendered", () => {
+    // The A–Z row answered "where does W start" and cost three lines of phone
+    // screen before a single state appeared. Typing answers that question and
+    // two better ones — "who runs this in Ohio", "which state is BenefitsCal".
+    expect(html).toContain('type="search"');
+    expect(html).toContain(T.en.directory.searchPlaceholder);
+    expect(html).not.toContain("vjump__letter");
+  });
+
+  it("still renders all 53 rows without JavaScript", () => {
+    // The list is a client component for the filtering only. If hydration
+    // never happens — a crawler, a slow phone, JS disabled — the whole
+    // directory must still be there.
+    expect(renderedCodes).toHaveLength(VERIFIED_STATES.length);
+  });
+
+  it("keeps the alphabetical group headings the jump bar used to target", () => {
     const headings = [...html.matchAll(/class="vstates__letter" id="letter-(\w)"/g)].map((m) => m[1]);
-    expect(jumps.length).toBeGreaterThan(1);
-    expect(jumps).toEqual(headings);
+    expect(headings.length).toBeGreaterThan(1);
+    expect(headings).toEqual([...headings].sort());
   });
 });
