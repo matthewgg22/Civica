@@ -71,3 +71,62 @@ def probe(label, file_id, aa):
 
 if __name__ == "__main__":
     print(*probe(*sys.argv[1:4]), sep="  |  ")
+
+
+STATE_NAME = {
+    "AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado",
+    "CT":"Connecticut","DE":"Delaware","DC":"District of Columbia","FL":"Florida","GA":"Georgia",
+    "HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas",
+    "KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts",
+    "MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana",
+    "NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico",
+    "NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma",
+    "OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina",
+    "SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont",
+    "VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming",
+}
+
+
+def phantom_check(label, file_id, state_abbr, county=None):
+    """Does this evaluation cover the target geography AT ALL?
+
+    Two banks reached a reading queue with branches in a county their evaluation
+    never mentions. German American has 20 Ohio branches and an April 2024 PE
+    whose rated areas are Indiana and Kentucky -- "Ohio" appears once, "Franklin"
+    never. Umpqua has Arizona branches and a December 2023 PE mentioning Arizona,
+    Phoenix and Maricopa ZERO times each.
+
+    The cause is that FDIC branch data is CURRENT while an evaluation is
+    HISTORICAL, so any acquisition or expansion in between manufactures a target
+    that does not exist. This is the cheap check that catches it before a read.
+
+    Returns (ok, detail). ok is False when the PE does not cover the geography.
+    """
+    pdf, txt = f"/tmp/sp_{label}.pdf", f"/tmp/sp_{label}.txt"
+    if not os.path.exists(txt):
+        url = (file_id if file_id.startswith("http")
+               else f"https://crapes.fdic.gov/publish/{file_id}")
+        subprocess.run(["curl","-sSL","--max-time","180","-A",UA,url,"-o",pdf], capture_output=True)
+        subprocess.run(["pdftotext","-q","-layout",pdf,txt], capture_output=True)
+    try:
+        flat = re.sub(r"\s+", " ", open(txt, errors="ignore").read())
+    except OSError:
+        return False, "FETCH FAILED"
+
+    name = STATE_NAME.get(state_abbr.upper(), state_abbr)
+    n_state = len(re.findall(r"\b" + re.escape(name) + r"\b", flat))
+    n_county = len(re.findall(r"\b" + re.escape(county) + r"\b", flat)) if county else None
+    rated = re.findall(r"CRA RATING FOR ([A-Z][A-Za-z ]{2,28}?)\s*:", flat)
+    in_rated = any(name.lower() in r.lower() for r in rated)
+
+    detail = f"{name}={n_state}"
+    if county: detail += f" {county}={n_county}"
+    if rated: detail += f" rated={rated[:6]}"
+
+    # A single stray mention is how German American reads -- one "Ohio" in a
+    # glossary or address line is not coverage.
+    if n_state <= 1 and not in_rated:
+        return False, "PHANTOM: " + detail
+    if county and n_county == 0 and not in_rated:
+        return False, "county absent: " + detail
+    return True, detail
