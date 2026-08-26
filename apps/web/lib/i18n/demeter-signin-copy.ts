@@ -24,7 +24,6 @@ export interface DemeterSigninCopy {
   continueGoogle: string;
   /** Dismiss label for the in-chat modal (2026-08-22). */
   close: string;
-  googleDisclosure: string;
   or: string;
   emailLabel: string;
   emailPlaceholder: string;
@@ -61,11 +60,9 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     },
     title: "Save your conversation",
     subtitle:
-      "Sign in and this conversation will be here when you come back. The chat itself is always free. An account is only for saving.",
+      "Sign in and this conversation will be here when you come back.",
     continueGoogle: "Continue with Google",
     close: "Close",
-    googleDisclosure:
-      "We only use your Google account to sign you in and save your conversation.",
     or: "or",
     emailLabel: "Email address",
     emailPlaceholder: "you@example.com",
@@ -76,7 +73,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
       "We sent a sign-in link to {email}. Open it on this device to finish. It expires shortly.",
     emailRetry: "Use a different address",
     emailDisclosure:
-      "We use your email only to sign you in. No password to remember, and no marketing.",
+      "We use your email only to sign you in.",
     errorInvalidEmail: "Please enter a valid email address.",
     errorRateLimited: "Too many attempts. Please wait 10 minutes and try again.",
     errorGeneric: "Something went wrong. Please try again.",
@@ -94,11 +91,9 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     },
     title: "Guarda tu conversación",
     subtitle:
-      "Inicia sesión y esta conversación estará aquí cuando regreses. El chat siempre es gratis. La cuenta es solo para guardar.",
+      "Inicia sesión y esta conversación estará aquí cuando regreses.",
     continueGoogle: "Continúa con Google",
     close: "Cerrar",
-    googleDisclosure:
-      "Solo usamos tu cuenta de Google para iniciar sesión y guardar tu conversación.",
     or: "o",
     emailLabel: "Correo electrónico",
     emailPlaceholder: "tu@ejemplo.com",
@@ -109,7 +104,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
       "Enviamos un enlace de inicio de sesión a {email}. Ábrelo en este dispositivo para terminar. Vence pronto.",
     emailRetry: "Usar otro correo",
     emailDisclosure:
-      "Usamos tu correo solo para iniciar sesión. Sin contraseña que recordar y sin publicidad.",
+      "Usamos tu correo solo para iniciar sesión.",
     errorInvalidEmail: "Por favor ingresa un correo electrónico válido.",
     errorRateLimited: "Demasiados intentos. Por favor espera 10 minutos e intenta de nuevo.",
     errorGeneric: "Algo salió mal. Por favor intenta de nuevo.",
@@ -127,11 +122,9 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     },
     title: "Lưu cuộc trò chuyện của bạn",
     subtitle:
-      "Đăng nhập và cuộc trò chuyện này sẽ ở đây khi bạn quay lại. Trò chuyện luôn miễn phí. Tài khoản chỉ dùng để lưu.",
+      "Đăng nhập và cuộc trò chuyện này sẽ ở đây khi bạn quay lại.",
     continueGoogle: "Tiếp tục với Google",
     close: "Đóng",
-    googleDisclosure:
-      "Chúng tôi chỉ dùng tài khoản Google của bạn để đăng nhập và lưu cuộc trò chuyện.",
     or: "hoặc",
     emailLabel: "Địa chỉ email",
     emailPlaceholder: "ban@vidu.com",
@@ -142,7 +135,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
       "Chúng tôi đã gửi liên kết đăng nhập đến {email}. Mở nó trên thiết bị này để hoàn tất. Liên kết sẽ sớm hết hạn.",
     emailRetry: "Dùng địa chỉ khác",
     emailDisclosure:
-      "Chúng tôi chỉ dùng email của bạn để đăng nhập. Không cần nhớ mật khẩu, không gửi quảng cáo.",
+      "Chúng tôi chỉ dùng email của bạn để đăng nhập.",
     errorInvalidEmail: "Vui lòng nhập địa chỉ email hợp lệ.",
     errorRateLimited: "Quá nhiều lần thử. Vui lòng đợi 10 phút rồi thử lại.",
     errorGeneric: "Đã xảy ra lỗi. Vui lòng thử lại.",
@@ -159,10 +152,9 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
       after: '。',
     },
     title: "保存您的对话",
-    subtitle: "登录后，这段对话会在您回来时依然在这里。聊天本身永远免费，账户只用于保存。",
+    subtitle: "登录后，这段对话会在您回来时依然在这里。",
     continueGoogle: "使用 Google 继续",
     close: "关闭",
-    googleDisclosure: "我们只使用您的 Google 账户来登录和保存您的对话。",
     or: "或",
     emailLabel: "电子邮箱",
     emailPlaceholder: "you@example.com",

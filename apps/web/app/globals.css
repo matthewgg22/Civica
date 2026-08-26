@@ -9195,3 +9195,11 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   margin-right: auto;
   text-wrap: balance;
 }
+
+/* THE CHIPS' HOVER DID NOTHING. `background: var(--demeter-card)` is #FFFFFF,
+   the same as the page, so the fill it promised was invisible — and against a
+   white ground a transparent chip reads as a slightly-off patch rather than a
+   crisp one. An explicit paper fill at rest, the tint on hover: the one
+   neutral step off white that exists for exactly this. */
+.demeter__followup { background: var(--demeter-paper); }
+.demeter__followup:hover { background: var(--demeter-tint); border-color: var(--demeter-terracotta); }

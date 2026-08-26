@@ -285,8 +285,12 @@ export const T = {
       // taking more room than the estimate it qualified. Every clause that was
       // load-bearing is still here: it goes when the tab closes, we keep the
       // text, and this is not a decision.
-      privacy: "Closing the tab ends this. We keep the text to check our accuracy. Avoid names.",
-      privacySaved: "Saved to your account, along with this estimate. We keep the text to check our accuracy. Avoid names.",
+      // ONE LINE, TWO FACTS (owner, 2026-08-26). It ran as two sentences plus
+      // a separate "An estimate, not a decision" below it — three statements
+      // where two do. The retention ask survives verbatim in substance: we
+      // keep the text, so avoid names.
+      privacy: "An estimate, not a decision. We keep the text to check our accuracy, so avoid names.",
+      privacySaved: "An estimate, not a decision. Saved to your account; we keep the text to check our accuracy, so avoid names.",
       disclaimer: "An estimate, not a decision.",
       pickState: "Pick your state above and your estimate can build here as you talk.",
       pickStateCta: "Choose your state",
@@ -502,9 +506,9 @@ export const T = {
       empty:
         "Cuéntale a Demeter sobre tu hogar: quién vive contigo, cuánto ganas, cuánto pagas de renta. Tu estimado se arma aquí.",
       privacy:
-        "Cerrar la pestaña termina esto. Guardamos el texto para verificar nuestra exactitud. Evita nombres.",
+        "Un estimado, no una decisión. Guardamos el texto para verificar nuestra exactitud, así que evita nombres.",
       privacySaved:
-        "Guardada en tu cuenta, junto con este estimado. Guardamos el texto para verificar nuestra exactitud. Evita nombres.",
+        "Un estimado, no una decisión. Guardada en tu cuenta. Guardamos el texto para verificar nuestra exactitud, así que evita nombres.",
       disclaimer: "Un estimado, no una decisión.",
       pickState: "Elige tu estado arriba y tu estimado se irá armando aquí.",
       pickStateCta: "Elige tu estado",
@@ -701,9 +705,9 @@ export const T = {
       empty:
         "Hãy cho Demeter biết về hộ gia đình của bạn: ai sống cùng bạn, bạn kiếm được bao nhiêu, bạn trả bao nhiêu tiền thuê nhà. Ước tính sẽ hiện ở đây.",
       privacy:
-        "Đóng tab là kết thúc. Chúng tôi lưu nội dung để kiểm tra độ chính xác. Đừng nhập tên.",
+        "Chỉ là ước tính, không phải quyết định. Chúng tôi lưu nội dung để kiểm tra độ chính xác, nên đừng nhập tên.",
       privacySaved:
-        "Đã lưu vào tài khoản của bạn, cùng với mức ước tính này. Chúng tôi lưu nội dung để kiểm tra độ chính xác. Đừng nhập tên.",
+        "Chỉ là ước tính, không phải quyết định. Đã lưu vào tài khoản. Chúng tôi lưu nội dung để kiểm tra độ chính xác, nên đừng nhập tên.",
       disclaimer: "Chỉ là ước tính, không phải quyết định.",
       pickState: "Chọn tiểu bang của bạn ở trên để ước tính có thể hiện ở đây.",
       pickStateCta: "Chọn tiểu bang",
@@ -894,9 +898,9 @@ export const T = {
       empty:
         "告诉 Demeter 您的家庭情况：谁和您同住、收入多少、房租多少。估算就会在这里逐步生成。",
       privacy:
-        "关闭标签页即结束。我们保留文字以核查准确性，请勿输入姓名。",
+        "只是估算，不是决定。我们保留文字以核查准确性，请勿输入姓名。",
       privacySaved:
-        "已保存到您的账户，包括此估算。我们保留文字以核查准确性，请勿输入姓名。",
+        "只是估算，不是决定。已保存到您的账户。我们保留文字以核查准确性，请勿输入姓名。",
       disclaimer: "这只是估算，不是决定。",
       pickState: "请在上方选择您所在的州，估算就能在这里生成。",
       pickStateCta: "选择您所在的州",

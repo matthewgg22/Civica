@@ -1651,6 +1651,16 @@ export function DemeterChat({
   const agencyHref = selectedPack?.portal?.url ?? "/verify";
 
   const hasChat = messages.length > 0;
+  /** The newest assistant message with content. Follow-ups hang off this one
+   *  alone — see the comment at their render. */
+  const lastAnswerIndex = (() => {
+    for (let i = messages.length - 1; i >= 0; i -= 1) {
+      const m = messages[i];
+      if (m && m.role === "assistant" && m.content) return i;
+    }
+    return -1;
+  })();
+
   /** At least one answer has finished. The mode offer waits for this: before an
    *  answer exists there is nothing to have an opinion about. */
   const answeredOnce = messages.some((m) => m.role === "assistant" && m.content !== "");
@@ -1908,7 +1918,14 @@ export function DemeterChat({
                   starter questions: a suggestion you can edit before asking is
                   a suggestion, and one that fires on touch is a decision made
                   for you. */}
-              {m.role === "assistant" && m.content && !(busy && i === messages.length - 1) && (
+              {/* ONLY UNDER THE NEWEST ANSWER (owner, 2026-08-26: "I don't need
+                  it for every prompt follow-up"). Every assistant message kept
+                  its own set, so scrolling back through a long conversation
+                  walked past a row of stale suggestions under each one —
+                  answered questions still offering themselves. The follow-ups
+                  are about where the conversation is NOW, so only the last
+                  answer carries them. */}
+              {m.role === "assistant" && m.content && i === lastAnswerIndex && !busy && (
                 <>
                   {splitFollowups(m.content).followups.length > 0 && (
                     <div className="demeter__followups">

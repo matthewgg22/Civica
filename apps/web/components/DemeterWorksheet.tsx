@@ -395,10 +395,11 @@ export function DemeterWorksheet({
       )}
 
       <p className="dmw__privacy">{saved ? copy.privacySaved : copy.privacy}</p>
-      {/* Only where there is an estimate to disclaim. The retention line above
-          stays in both modes — questions are logged either way, which is the
-          whole reason it cannot be quietly dropped. */}
-      {mode === "estimate" && <p className="dmw__disclaimer">{copy.disclaimer}</p>}
+      {/* The estimate disclaimer MERGED INTO the retention line above (owner,
+          2026-08-26): "An estimate, not a decision" now opens that sentence, so
+          printing it again here was the third statement where two do the work.
+          The retention ask itself is unchanged and still shows in both modes,
+          because questions are logged either way. */}
       {footLinks && <div className="dmw__footlinks">{footLinks}</div>}
     </aside>
   );
