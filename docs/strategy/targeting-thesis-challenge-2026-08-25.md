@@ -104,3 +104,60 @@ This came from Matthew, not from the data. The pattern was visible in four separ
 reads — the "big investments, negligible grants" note recurs in the commit history — and
 was recorded each time as a curiosity about that bank rather than as evidence against the
 screen producing it.
+
+---
+
+# Correction, 2026-08-26
+
+Re-opening the no-gap banks meant reading their evaluations properly rather than
+trusting the figures I had extracted in bulk. Two of the five were wrong.
+
+**"Beverly Bank, $2.9M" does not exist.** FDIC certificate 26484 is **North Shore Bank,
+a Co-operative Bank** (Peabody, MA), which made **84 qualified donations totaling
+$658,900**. Beverly Bank was a 2019 merger *into* North Shore, and "Beverly Bootstraps" —
+which is what I actually matched on — is one of its **grantees**. I read a grantee's name
+as a bank and a nearby figure as its giving.
+
+**North Shore is not a clean-rated bank either**, and the reason is worth keeping. Its
+evaluation states plainly:
+
+> "…in lieu of 'low satisfactory' for the Lending, Investment, and Service Test ratings,
+> **as the Division does not have a 'low satisfactory' rating**."
+
+**The Massachusetts Division of Banks does not use "Low Satisfactory."** A Massachusetts
+state-chartered bank showing "Satisfactory" on a component is showing what a federal
+examiner would call Low Satisfactory. North Shore therefore belongs in the *gapped* set,
+not the clean one. See `docs/strategy/ma-rating-scale-2026-08-26.md` — this affects every
+MA institution we have screened.
+
+**Flagstar is unresolved, not confirmed.** Its evaluation reports per-AA giving of
+$285,000, $334,000, $718,000, $783,000 and $9.2 million across different assessment areas.
+The $783,000 I cited is one AA among several and I have not yet established which. Given
+how often the wrong-AA error has bitten this project, it stays out until someone reads it
+end to end.
+
+**Woodforest survives, and it was checked hard.** The Houston figure is real and correctly
+scoped — "In the Houston CSA, WNB provided… **36 grants totaling $17.8 million**." Its
+grants in *other* assessment areas are two to three orders of magnitude smaller ($14,433 in
+Charleston, $56,849 in Charlotte), which is exactly the pattern that has produced wrong-AA
+errors before. Houston is genuinely the outlier.
+
+## Corrected comparison
+
+| | n | Median AA giving |
+|---|---|---|
+| Clean-rated, verified AA-scoped | **3** | $1,600,000 |
+| Gap-rated | **20** | $269,540 |
+
+**5.9×**, against the 6.2× reported yesterday.
+
+**The direction survives; the strength of the evidence does not.** A clean sample of three
+is too small to carry an argument, and I should not have put a ratio in a table off five
+banks when two of them had not been read properly. Treat the reallocation toward capacity
+as a **hypothesis worth testing with real reply rates**, not as a measured result.
+
+**What does not change:** the mechanism argument, which never depended on this comparison.
+Parkway's $27.1M of investments against $7,000 of grants is a direct reading of its
+evaluation, and it is still true that an Investment Test rating cannot predict grant
+propensity. The Service Test is still the signal that matters. The four-archetype structure
+still follows.
