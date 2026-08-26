@@ -291,16 +291,17 @@ describe("boxless messages (CSS contract)", () => {
     expect(container.querySelectorAll(".demeter__langmenu").length).toBe(1);
   });
 
-  it("the chrome row carries the skip link, the reference page, and a boxed sign-in", () => {
+  it("the chrome row carries the skip link and a boxed sign-in, and nothing else", () => {
     // What the retired nav is replaced by: the composer skip target (a
-    // keyboard reader would otherwise cross the whole rail to reach the
-    // box), the reference page, and sign-in — the rest of the nav's job
-    // moved into the rail.
+    // keyboard reader would otherwise cross the whole rail to reach the box)
+    // and sign-in. The "What is SNAP?" link went too (owner, 2026-08-22) —
+    // it sent someone out of the chat to read a definition that the empty
+    // state and the first-visit card now both carry.
     const { container } = mountChat();
     const skip = container.querySelector("a.demeter__skip")!;
     expect(skip.getAttribute("href")).toBe("#demeter-composer");
     expect(container.querySelector("form#demeter-composer")).toBeTruthy();
-    expect(container.querySelector(".demeter__headright a.demeter__navlink")).toBeTruthy();
+    expect(container.querySelector(".demeter__headright a.demeter__navlink")).toBeNull();
   });
 
   it("the rail's bottom line holds new-conversation, language and settings", () => {
