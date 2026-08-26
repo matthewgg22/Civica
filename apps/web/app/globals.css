@@ -8755,54 +8755,6 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   max-width: 14rem;
 }
 
-/* ── Language picker: a disclosure, not an OS dropdown ────────────────────
-   The native <select> rendered the operating system's own menu — unstyleable,
-   ignoring every token here, and wide enough to take a third of the rail's
-   bottom row on its own. This is the same <details> pattern as the gear, so
-   the two controls beside each other now look like siblings. */
-.demeter__langmenu { position: relative; }
-.demeter__langbtn {
-  list-style: none;
-  display: inline-flex; align-items: center; gap: 0.35rem;
-  height: 38px; padding: 0 0.5rem;
-  border-radius: var(--demeter-radius-input);
-  color: var(--demeter-body); cursor: pointer;
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.78rem; letter-spacing: 0.02em;
-}
-.demeter__langbtn::-webkit-details-marker { display: none; }
-.demeter__langbtn:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
-.demeter__langmenu[open] .demeter__langbtn { background: var(--demeter-tint); color: var(--demeter-ink); }
-.demeter__langcode { font-variant-numeric: tabular-nums; }
-/* Opens UPWARD. This control sits on the last row of the rail, so a menu
-   dropping down would open off the bottom of the viewport. */
-.demeter__langlist {
-  position: absolute; left: 0; bottom: calc(100% + 0.35rem); z-index: 40;
-  min-width: 10.5rem; display: flex; flex-direction: column;
-  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: var(--demeter-radius-card); padding: 0.3rem;
-  box-shadow: 0 8px 24px rgba(35, 34, 32, 0.1);
-}
-.demeter__langopt {
-  display: flex; align-items: center; gap: 0.5rem;
-  padding: 0.4rem 0.6rem; border-radius: var(--demeter-radius-input);
-  background: none; border: 0; cursor: pointer; text-align: left;
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.85rem; color: var(--demeter-body);
-}
-.demeter__langopt:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
-.demeter__langopt[aria-pressed="true"] { color: var(--demeter-ink); font-weight: 600; }
-/* Fixed-width gutter so the four names start on the same x, checked or not —
-   a tick that shifts the label is the cheapest way to make a menu feel loose. */
-.demeter__langtick { width: 0.85rem; flex: none; color: var(--demeter-terracotta-deep); }
-@media (prefers-reduced-motion: no-preference) {
-  .demeter__langlist { animation: dmlangin 120ms ease-out; }
-  @keyframes dmlangin {
-    from { opacity: 0; transform: translateY(3px); }
-    to { opacity: 1; transform: none; }
-  }
-}
-
 /* The gear lives on the rail's LAST row, at the rail's left edge. Its menu
    inherited `right: 0; top: 100%` from when the control sat in the chrome row
    at the top right — which now anchors a 12rem panel off the left of the
@@ -9093,3 +9045,41 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 @media (max-width: 399px) {
   .demeter__sbtag { white-space: normal; }
 }
+
+/* ── Languages: all four, inline (owner, 2026-08-26) ─────────────────────
+   EN / ES / VI / 中文, with the current one filled. This replaced a globe
+   behind a popover, which replaced a native <select> — both hid three of the
+   four behind an interaction, on a product where the person who most needs
+   another language is the least likely to go looking for the control. */
+.demeter__langrow { display: inline-flex; align-items: center; }
+.demeter__langitem { display: inline-flex; align-items: center; }
+.demeter__langsep {
+  padding: 0 0.1rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem;
+  /* --demeter-rule is a HAIRLINE colour (#E8E6E2): correct for a 1px border,
+     invisible as a glyph — the slashes rendered and could not be seen. This is
+     text, so it takes a text colour. */
+  color: var(--demeter-muted);
+}
+.demeter__langpick {
+  padding: 0.26rem 0.4rem;
+  border: 0; border-radius: var(--demeter-radius-pill);
+  background: none; cursor: pointer;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em;
+  color: var(--demeter-muted);
+  transition: background 140ms ease-out, color 140ms ease-out;
+}
+.demeter__langpick:hover { color: var(--demeter-ink); }
+/* THE FILL IS THE ANSWER TO "which am I reading in?" — it does the job the
+   tick inside the old menu did, without anything being opened. White on
+   #C0553B measures 4.56:1, which clears 4.5:1 for this size and weight. */
+.demeter__langpick[aria-pressed="true"] {
+  background: var(--demeter-terracotta);
+  color: var(--demeter-paper);
+}
+.demeter__langpick:focus-visible {
+  outline: 2px solid var(--demeter-terracotta); outline-offset: 1px;
+}
+@media (prefers-reduced-motion: reduce) { .demeter__langpick { transition: none; } }

@@ -60,7 +60,7 @@ export const T = {
     // estimate rail, where it used to live and where it vanished entirely at
     // narrow widths. Names the three things redactPii cannot save someone from
     // (it strips structured identifiers but deliberately not names).
-    piiHint: "Please don’t type your Social Security number, bank details, or a full name.",
+    piiHint: "Please don’t type your Social Security number or bank details.",
     // The wording is load-bearing. This clears THIS BROWSER; every question and
     // answer is still written to mae_query_log. Saying "clear" without saying
     // that would be the retention lie #703 fixed, rebuilt as a button.
@@ -357,8 +357,7 @@ export const T = {
       `Demeter todavía no cubre ${place} — las respuestas de abajo usan reglas federales, y tu agencia local es la que debe confirmarlo.`,
     disclaimer: "Demeter es IA y puede equivocarse. Verifica las fuentes citadas y",
     disclaimerAgency: "tu agencia estatal",
-    piiHint:
-      "Por favor no escribas tu número de Seguro Social, datos bancarios ni un nombre completo.",
+    piiHint: "Por favor no escribas tu número de Seguro Social ni datos bancarios.",
     clear: "Empezar una conversación nueva",
     stateOffer: "Mencionaste {place}. ¿Respondo para {state}?",
     modeOffer: "¿Quieres que calcule una cifra aproximada, o por ahora solo buscas respuestas?",
@@ -557,7 +556,7 @@ export const T = {
       `Demeter chưa hỗ trợ ${place} — các câu trả lời dưới đây theo quy định liên bang, và cơ quan địa phương của bạn mới là nơi xác nhận.`,
     disclaimer: "Demeter là AI và có thể sai. Vui lòng kiểm tra lại các nguồn được trích dẫn và",
     disclaimerAgency: "cơ quan tiểu bang của bạn",
-    piiHint: "Xin đừng nhập số An sinh Xã hội, thông tin ngân hàng hay họ tên đầy đủ.",
+    piiHint: "Xin đừng nhập số An sinh Xã hội hay thông tin ngân hàng.",
     clear: "Bắt đầu cuộc trò chuyện mới",
     stateOffer: "Bạn có nhắc đến {place}. Trả lời cho {state} nhé?",
     modeOffer: "Bạn có muốn tôi ước tính một con số không, hay hiện giờ chỉ cần câu trả lời?",
@@ -754,7 +753,7 @@ export const T = {
       `Demeter 尚未覆盖${place}——下面的回答按联邦规定，请以您当地机构的说法为准。`,
     disclaimer: "Demeter 是 AI，可能出错。请核对引用的来源，并咨询",
     disclaimerAgency: "您所在州的机构",
-    piiHint: "请不要输入社会安全号码、银行信息或完整姓名。",
+    piiHint: "请不要输入社会安全号码或银行信息。",
     clear: "开始新的对话",
     stateOffer: "您提到了 {place}。要按 {state} 来回答吗？",
     modeOffer: "需要我帮您估算一个大致金额吗？还是目前只想先了解情况？",

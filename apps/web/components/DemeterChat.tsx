@@ -2514,46 +2514,41 @@ export function DemeterChat({
                     <path d="M10 4.5v11M4.5 10h11" />
                   </svg>
                 </button>
-                {/* A native <select> here rendered the OS dropdown — an
-                    unstyleable box that ignored every token in the design
-                    system and swallowed a third of the rail's bottom row.
-                    Same <details> disclosure the gear uses (Escape and
-                    outside-click come free, works with no JavaScript), but
-                    showing a globe and the CURRENT language's own short code:
-                    visual, and it still answers "what am I reading in?"
-                    without opening anything. Each option carries its native
-                    name, because someone looking for Vietnamese is scanning
-                    for "Tiếng Việt", not for a flag or an ISO code. */}
-                <details className="demeter__langmenu">
-                  <summary className="demeter__langbtn" aria-label={t.languageLabel} title={t.languageLabel}>
-                    <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="9" />
-                      <path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18" />
-                    </svg>
-                    <span className="demeter__langcode">{LANG_SHORT_CODE[lang]}</span>
-                  </summary>
-                  <div className="demeter__langlist" role="group" aria-label={t.languageLabel}>
-                    {ANSWER_LANGS.map((code) => (
-                      <button
-                        key={code}
-                        type="button"
-                        className="demeter__langopt"
-                        aria-pressed={lang === code}
-                        onClick={(e) => {
-                          setLang(code);
-                          // Close the disclosure the same way a real menu
-                          // would; <details> has no auto-close on activation.
-                          e.currentTarget.closest("details")?.removeAttribute("open");
-                        }}
-                      >
-                        <span className="demeter__langtick" aria-hidden>
-                          {lang === code ? "✓" : ""}
+                {/* ALL FOUR, VISIBLE, NO DISCLOSURE (owner, 2026-08-26).
+                    This was a globe and the current code behind a popover, and
+                    before that a native <select>. Both hid three of the four
+                    languages behind an interaction — on a product where the
+                    person who most needs another language is the least likely
+                    to go hunting for a control to find it. Four initials and
+                    three slashes cost less width than the globe did, and the
+                    terracotta fill on the current one does the job the tick
+                    inside the old menu did: says which you are reading in,
+                    without being opened.
+
+                    The BUTTON shows the short code; the accessible name is the
+                    language's own name, so a screen reader announces "Tiếng
+                    Việt" rather than the letters "VI". */}
+                <div className="demeter__langrow" role="group" aria-label={t.languageLabel}>
+                  {ANSWER_LANGS.map((code, i) => (
+                    <span key={code} className="demeter__langitem">
+                      {i > 0 && (
+                        <span className="demeter__langsep" aria-hidden>
+                          /
                         </span>
-                        {LANG_NATIVE_NAME[code]}
+                      )}
+                      <button
+                        type="button"
+                        className="demeter__langpick"
+                        aria-pressed={lang === code}
+                        aria-label={LANG_NATIVE_NAME[code]}
+                        title={LANG_NATIVE_NAME[code]}
+                        onClick={() => setLang(code)}
+                      >
+                        {LANG_SHORT_CODE[code]}
                       </button>
-                    ))}
-                  </div>
-                </details>
+                    </span>
+                  ))}
+                </div>
           {/* SETTINGS, on the same line as sign-in (owner rec): a gear that
               discloses the standing pages. <details> rather than custom
               popover state — Escape and outside-click come free, and it
