@@ -1601,6 +1601,46 @@
       "pe_verified_current_against": "FDIC CRAPES, 2026-08-26 \u2014 cert 27237, newest exam 2023-06-05.",
       "active": true,
       "active_checked": "2026-08-26"
+    },
+    "citizens_business_la": {
+      "cert": "21716",
+      "rssd": "933966",
+      "charter": "25382",
+      "name": "Citizens Business Bank",
+      "state": "CA",
+      "aa_counties": [
+        "Los Angeles",
+        "Orange",
+        "Riverside",
+        "San Bernardino",
+        "Ventura"
+      ],
+      "aa_note": " (Los Angeles AA \u2014 a contiguous five-county area, 4,286 census tracts, 45 branches; one of the bank's ten California assessment areas and one of only two taken full-scope)",
+      "aa_structure": "Los Angeles AA, FULL-SCOPE and given the most weight in the evaluation. NOTE: our ranking listed this bank as '12 branches, Orange County' \u2014 Orange is one county inside a five-county assessment area carrying 45 branches.",
+      "pe_date": "2023-02-27",
+      "pe_url": "https://crapes.fdic.gov/publish/2023/21716_230227.PDF",
+      "regulator": "OCC",
+      "exam_method": "Large Bank",
+      "inv_rating": "High Satisfactory",
+      "svc_rating": "Outstanding",
+      "component_ratings": "Institution: Lending High Satisfactory / Investment High Satisfactory / Service OUTSTANDING. In the Los Angeles AA specifically: \"Investment test performance in the Los Angeles AA is good\" and \"Service test performance in the Los Angeles AA is outstanding\". Single-state (California) bank, so there are no competing rated areas to confuse.",
+      "aa_giving_usd": 3401000,
+      "review_period_years": 3,
+      "pe_investment_usd": 124897000,
+      "pe_giving": "Table 'Qualified Investments \u2013 Los Angeles', Qualified Grants & Donations row: 377 items totaling $3,401 thousand, against an investments subtotal of $124,897 thousand in the same table. The narrative states the same figure independently: \"CBB made a total of 430 investments and donations totaling $128.3 million... including... $3.4 million in grants and donations\" in the Los Angeles AA.",
+      "pe_mined": true,
+      "target_status": "target",
+      "pitch_archetype": "peer",
+      "documented_gap": "none \u2014 Service OUTSTANDING in this assessment area and institution-wide. On the list for CAPACITY, and at $3.4M it is the second-largest peer capacity on the roster after Woodforest.",
+      "ask_usd": 25000,
+      "ask_verdict": "earmark",
+      "ask_sizing": "peer path: CAPACITY anchor with no gap multiplier (PEER_MULTIPLIER=1.0). $3,401,000/3yr of disclosed assessment-area giving x 15% = $170,050 -> $25,000 (earmark). No documented Service Test gap.",
+      "ask_basis": "377 qualified grants and donations totaling $3,401,000 disclosed for the Los Angeles assessment area",
+      "verified": true,
+      "verify_note": "Identity confirmed via FDIC BankFind: cert 21716, RSSD 933966, charter 25382, Ontario CA, regulator OCC, $21.18B, active \u2014 the legal name is \"Citizens Business Bank, National Association\", and it is NOT the roster's Commonwealth Business Bank, which also abbreviates to CBB. Assessment area read from the February 27, 2023 PE, verbatim: \"CBB's Los Angeles AA includes the contiguous area consisting of Los Angeles, Orange, Riverside, San Bernardino, and Ventura Counties.\" Ratings read from the AA narrative.",
+      "pe_verified_current_against": "OCC archive probed month-by-month Jan 2023 - Dec 2026 on charter 25382: NO OCC evaluation published. The bank converted to a national association after its February 2023 FDIC exam and has not yet been examined by the OCC, so that exam is current. Checked 2026-08-26.",
+      "active": true,
+      "active_checked": "2026-08-26"
     }
   }
 }
