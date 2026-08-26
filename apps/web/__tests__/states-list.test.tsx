@@ -12,6 +12,7 @@
 // dropped, if a state stops rendering, or if a row loses the agency or the
 // application link that are the reason to visit at all.
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { renderToStaticMarkup } from "react-dom/server";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { stateName } from "../lib/state-names";
@@ -190,5 +191,38 @@ describe("the search box replaces the letter jump", () => {
     const headings = [...html.matchAll(/class="vstates__letter" id="letter-(\w)"/g)].map((m) => m[1]);
     expect(headings.length).toBeGreaterThan(1);
     expect(headings).toEqual([...headings].sort());
+  });
+});
+
+describe("the page carries no site nav, only a way back", () => {
+  it("has no DemeterNav on either route", () => {
+    // Owner's call, the same one made for /chat (2026-08-22). Asserted at the
+    // SOURCE, not the markup: a hidden nav is still a nav, and the point is
+    // that the brand, the two tabs and the four language links are not on a
+    // page whose entire job is one list.
+    for (const page of ["../components/StateDirectoryPage.tsx", "../app/states/page.tsx"]) {
+      const src = readFileSync(new URL(page, import.meta.url), "utf8");
+      expect(src, page).not.toMatch(/DemeterNav/);
+    }
+    expect(html).not.toContain("dmnav");
+  });
+
+  it("the back link is the FIRST focusable thing on the page", () => {
+    // Which is what makes a skip link unnecessary here: there is nothing to
+    // skip. If chrome is ever added above it, the skip link has to come back.
+    const firstLink = html.indexOf("<a ");
+    const backLink = html.indexOf('class="vback"');
+    expect(backLink).toBeGreaterThan(-1);
+    expect(backLink).toBeLessThan(firstLink === -1 ? Infinity : firstLink + 200);
+    expect(html.slice(0, backLink)).not.toContain("<button");
+  });
+
+  it("points at the chat, and keeps the reader's language", () => {
+    expect(html).toContain('class="vback" href="/chat"');
+    expect(html).toContain(T.en.directory.back);
+  });
+
+  it("main still carries the skip target other surfaces link to", () => {
+    expect(html).toContain('id="main-content"');
   });
 });
