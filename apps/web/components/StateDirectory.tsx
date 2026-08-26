@@ -107,14 +107,22 @@ export function StateDirectory({
 
   return (
     <>
+      {/* A VISIBLE label, not a placeholder standing in for one. The
+          placeholder vanishes the moment you type, taking with it the only
+          statement of what the field does — and it is the field someone comes
+          back to after being interrupted. The placeholder now carries the
+          example ("state, agency, or portal"), which is what it is good at. */}
+      <label className="vsearch__label" htmlFor="state-search">
+        {copy.searchLabel}
+      </label>
       <div className="vsearch">
         <input
+          id="state-search"
           type="search"
           className="vsearch__input"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={copy.searchPlaceholder}
-          aria-label={copy.searchLabel}
           // No autoFocus: on a phone that opens the keyboard over the list the
           // reader came to look at, and steals the page from a screen reader
           // before it has announced what the page is.

@@ -93,11 +93,15 @@ export function StateDirectoryPage({ lang = "en" }: { lang?: AnswerLang }) {
           no skip link: there is nothing to skip. */}
       <main className="vpage vpage--states" id="main-content">
         <header className="vpage__head">
+          {/* The label is its own span so the hover underline lands on the
+              WORDS only. Underlining the whole link drew a second rule under
+              the arrow, separated from the text by the flex gap — two stubby
+              lines rather than one. */}
           <Link className="vback" href={chatHref}>
             <span className="vback__arrow" aria-hidden>
               ←
             </span>
-            {c.back}
+            <span className="vback__label">{c.back}</span>
           </Link>
           <h1 className="vpage__title">{c.h1}</h1>
           {/* ONE SENTENCE, then the sources line. The reader is here to find a

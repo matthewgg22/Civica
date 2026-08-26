@@ -34,6 +34,7 @@ export interface StateDirectoryCopy {
   lede: string;
   /** Contains the literal "{rule}". */
   sources: string;
+  /** Rendered as a VISIBLE <label>, not just an accessible name. */
   searchLabel: string;
   searchPlaceholder: string;
   clear: string;
@@ -541,7 +542,7 @@ const en: PageCopy = {
     h1: "SNAP in your state",
     lede: "SNAP is one federal program, but every state runs it under its own name, through its own agency, with its own application.",
     sources: "Each row is built from that state's own published rules, and from {rule}.",
-    searchLabel: "Search states and territories",
+    searchLabel: "Find your state",
     searchPlaceholder: "Search by state, agency, or portal",
     clear: "Clear",
     countyTag: "county-administered",
@@ -827,7 +828,7 @@ const es: PageCopy = {
     h1: "SNAP en tu estado",
     lede: "SNAP es un solo programa federal, pero cada estado lo administra con su propio nombre, a través de su propia agencia y con su propia solicitud.",
     sources: "Cada fila se basa en las reglas publicadas por ese estado y en {rule}.",
-    searchLabel: "Buscar estados y territorios",
+    searchLabel: "Encuentra tu estado",
     searchPlaceholder: "Busca por estado, agencia o portal",
     clear: "Borrar",
     countyTag: "administrado por el condado",
@@ -1114,7 +1115,7 @@ const vi: PageCopy = {
     h1: "SNAP tại tiểu bang của bạn",
     lede: "SNAP là một chương trình liên bang duy nhất, nhưng mỗi tiểu bang điều hành nó dưới tên riêng, qua cơ quan riêng, với đơn xin riêng.",
     sources: "Mỗi dòng được dựng từ chính các quy định do tiểu bang đó công bố và từ {rule}.",
-    searchLabel: "Tìm tiểu bang và vùng lãnh thổ",
+    searchLabel: "Tìm tiểu bang của bạn",
     searchPlaceholder: "Tìm theo tiểu bang, cơ quan hoặc cổng nộp đơn",
     clear: "Xóa",
     countyTag: "do quận điều hành",
@@ -1400,7 +1401,7 @@ const zh: PageCopy = {
     h1: "您所在州的 SNAP",
     lede: "SNAP 是一项联邦计划，但每个州都以自己的名称、通过自己的机构、用自己的申请表来实施。",
     sources: "每一行都依据该州自己公布的规则以及 {rule} 编制。",
-    searchLabel: "搜索州和地区",
+    searchLabel: "查找您所在的州",
     searchPlaceholder: "按州、机构或申请门户搜索",
     clear: "清除",
     countyTag: "由县负责办理",

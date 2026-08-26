@@ -5025,9 +5025,21 @@ html {
   display: inline-flex; align-items: center; gap: 0.4rem;
   min-height: 44px; margin-bottom: 0.5rem;
 }
-.vback:hover { text-decoration: underline; }
+/* The underline goes on the WORDS, never on the whole link. Underlining the
+   flex container drew a second rule under the arrow, separated from the text
+   by the gap — two stubby lines instead of one, which is what "off" looked
+   like. */
+.vback:hover .vback__label,
+.vback:focus-visible .vback__label { text-decoration: underline; }
 /* Sized above the label: the arrow is what the eye finds, the words confirm it. */
-.vback__arrow { font-size: 1.15rem; line-height: 1; }
+.vback__arrow { font-size: 1.15rem; line-height: 1; transition: transform 120ms ease-out; }
+/* The arrow moves the way the link goes. Motion as the affordance, so the
+   hover state is not carried by a decoration alone. */
+.vback:hover .vback__arrow { transform: translateX(-3px); }
+@media (prefers-reduced-motion: reduce) {
+  .vback__arrow { transition: none; }
+  .vback:hover .vback__arrow { transform: none; }
+}
 .vpage--states .vpage__title { color: #000000; }
 .vpage--states .vpage__lede { color: #141414; }
 
@@ -5040,7 +5052,23 @@ html {
 
    Values reuse .dmst__search's, the picker's own box, rather than inventing a
    second input style for the same job. */
-.vsearch { display: flex; gap: 0.5rem; align-items: center; margin: 0 0 0.6rem; }
+/* A VISIBLE label (ux-guidelines: Forms / Input Labels, High). The
+   placeholder was carrying the whole meaning of the control and disappears on
+   the first keystroke. */
+.vsearch__label {
+  display: block;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.86rem; font-weight: 600; color: #1F1F1F; margin: 0 0 0.35rem;
+}
+/* BOUNDED, not full-bleed. The page is 1080px wide because the state ROWS need
+   three columns; a search field stretched to match was a 1000px input holding
+   six characters, which reads as a page-wide banner rather than a control.
+   28rem is about the longest thing anyone types here ("transitional
+   assistance") with room to spare. */
+.vsearch {
+  display: flex; gap: 0.5rem; align-items: center;
+  margin: 0 0 0.6rem; max-width: 28rem;
+}
 .vsearch__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: 1 1 auto; min-width: 0; min-height: 48px; padding: 0.55rem 0.8rem; font-size: 0.95rem;
@@ -5057,6 +5085,20 @@ html {
   cursor: pointer;
 }
 .vsearch__clear:hover { background: var(--demeter-tint); }
+
+/* Every operable control on the page gets the SAME visible focus ring, rather
+   than whatever each element's user-agent default happens to be — the row
+   links are terracotta text on white, where a default outline is easy to lose. */
+.vback:focus-visible,
+.vrow__link:focus-visible,
+.vsearch__clear:focus-visible,
+.vsearch__emptycta:focus-visible,
+.vstates__askcta:focus-visible,
+.vpage__srclink:focus-visible {
+  outline: 2px solid var(--demeter-terracotta);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 .vsearch__count {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.72rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
