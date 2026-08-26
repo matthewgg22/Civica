@@ -9148,3 +9148,50 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 /* The safety hint rides inside the disclaimer paragraph now, so it needs to
    read as its own clause without being its own block. */
 .demeter__piihint { display: inline; padding: 0; margin: 0; }
+
+/* ── One colour, one measure (owner, 2026-08-26) ─────────────────────────── */
+
+/* THE RAGGED EDGE had a cause: the definition paragraph carried no max-width
+   while the three around it were capped at 58ch, so it ran to the container's
+   full measure and they stopped short. One measure, set on the block, and the
+   paragraphs inherit it — a second place to set a width is a second place for
+   them to disagree. */
+.demeter__empty > p { max-width: none; }
+
+/* AND ONE COLOUR. The block was ink for the title, --demeter-body for two
+   paragraphs and --demeter-muted for the third, which read as text of three
+   different importances when it is one introduction. */
+.demeter__emptywhat,
+.demeter__emptylede,
+.demeter__emptymodes,
+.demeter__emptyask {
+  color: var(--demeter-ink);
+}
+
+/* The switch's own words, set apart from the sentence carrying them. */
+.demeter__modename { font-style: italic; font-weight: 700; font-synthesis-weight: none; }
+
+/* ── The line under the composer ─────────────────────────────────────────── */
+
+/* THE GAP IN THE MIDDLE was 1rem of side padding on an element that is now
+   INLINE: .dmchat .demeter__piihint out-specifies the plain class, so the
+   earlier `padding: 0.25rem 1rem 0` survived and opened a hole between the two
+   clauses. Inline text takes no side padding. */
+.dmchat .demeter__piihint { padding: 0; margin: 0; display: inline; }
+
+/* Ink, not grey, and a measure so the centred line breaks in a readable place
+   instead of running the width of the composer and wrapping once at the end. */
+.dmchat .demeter__disclaimer,
+.dmchat .demeter__piihint,
+.dmchat .demeter__assent {
+  color: var(--demeter-ink);
+}
+.dmchat .demeter__disclaimer {
+  /* Wide enough to sit under the composer rather than as a narrow column
+     beneath it: 68ch broke it into three short centred lines that read as a
+     separate, narrower element. */
+  max-width: 92ch;
+  margin-left: auto;
+  margin-right: auto;
+  text-wrap: balance;
+}
