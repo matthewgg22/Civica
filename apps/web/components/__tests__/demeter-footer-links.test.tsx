@@ -18,6 +18,7 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
 import { DemeterFooter } from "../DemeterFooter";
+import { PAGE_COPY as T } from "../../lib/i18n/snap-page";
 
 const hrefFor = (container: HTMLElement, path: string) =>
   [...container.querySelectorAll("a")]
@@ -62,5 +63,58 @@ describe("footer links from localized pages (#837)", () => {
     // someone emptied href() out entirely.
     const { container } = render(<DemeterFooter lang="es" />);
     expect(hrefFor(container, "questions")).toBe("/es/questions");
+  });
+});
+
+describe("the footer is grouped, not one column of seven", () => {
+  it("has three named groups", () => {
+    // Two columns (1.4fr / 1fr) gave the brand more room than three lines
+    // could fill and stacked every link down the right, so the middle was
+    // empty and the right was a menu.
+    const { container } = render(<DemeterFooter />);
+    const groups = [...container.querySelectorAll(".dmft__group")];
+    expect(groups).toHaveLength(3);
+    expect(groups.map((g) => g.querySelector(".dmft__grouphead")!.textContent)).toEqual([
+      T.en.footerGroupReference,
+      T.en.footerGroupLegal,
+      T.en.footerGroupAbout,
+    ]);
+  });
+
+  it("every link is inside a group — none left loose", () => {
+    const { container } = render(<DemeterFooter />);
+    const all = container.querySelectorAll(".dmft__link");
+    const grouped = container.querySelectorAll(".dmft__group .dmft__link");
+    expect(all.length).toBe(grouped.length);
+    expect(all.length).toBe(7);
+  });
+
+  it("uses NOUNS, not the in-page sentences", () => {
+    // The ragged mix of "See the states we have checked" beside "Privacy" was
+    // the footer's real slop tell. The long forms still earn their place
+    // in-page, where they are the call to action.
+    const { container } = render(<DemeterFooter />);
+    const text = container.textContent ?? "";
+    expect(text).toContain(T.en.footerStates);
+    expect(text).not.toContain(T.en.statesLink);
+    expect(text).toContain(T.en.footerQuestions);
+  });
+
+  it("carries one mission line, not the product lede again", () => {
+    const { container } = render(<DemeterFooter />);
+    const mission = container.querySelector(".dmft__mission")!;
+    expect(mission.textContent).toBe(T.en.footerMission);
+    expect(mission.textContent).not.toBe(T.en.productLede);
+  });
+
+  it("keeps every language complete", () => {
+    for (const lang of ["en", "es", "vi", "zh"] as const) {
+      for (const key of [
+        "footerStates", "footerQuestions", "footerMission",
+        "footerGroupReference", "footerGroupLegal", "footerGroupAbout",
+      ] as const) {
+        expect(T[lang][key]?.trim(), `${lang}.${key}`).toBeTruthy();
+      }
+    }
   });
 });
