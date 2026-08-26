@@ -110,3 +110,39 @@ def test_no_publication_month_is_stored_as_an_exam_date():
         if b.get("pe_date_prior_value"):
             assert b.get("pe_date_note", "").startswith("CORRECTED"), \
                 f"{key}: date was changed without recording why"
+
+
+MAX_REMEDIATION_AGE_YEARS = 4
+
+
+def test_an_old_finding_is_not_quoted_without_a_caution():
+    """Busey generalised.
+
+    A remediation pitch quotes an examiner's finding back at the bank. Busey's
+    2022 finding was resolved by its 2025 exam, and we came within a step of
+    sending it. A PE that is merely CURRENT can still be old enough that the
+    finding no longer describes the institution -- so past four years, the record
+    must say so explicitly rather than let the artifact imply currency.
+    """
+    import datetime
+    from src import archetype
+
+    banks, _a, _o = generate.load_inputs()
+    today = datetime.date.today()
+    offenders = []
+    for key, b in banks.items():
+        if b.get("target_status") != "target":
+            continue
+        try:
+            if archetype.resolve(b) != "remediation":
+                continue
+        except archetype.ArchetypeError:
+            continue
+        try:
+            pe = datetime.datetime.strptime(b["pe_date"], "%Y-%m-%d").date()
+        except (KeyError, ValueError):
+            continue
+        years = (today - pe).days / 365.25
+        if years > MAX_REMEDIATION_AGE_YEARS and not b.get("pe_age_caution"):
+            offenders.append(f"{key}: quotes a {years:.1f}-year-old finding with no pe_age_caution")
+    assert not offenders, "stale findings quoted as current:\n  " + "\n  ".join(offenders)
