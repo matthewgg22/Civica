@@ -14,7 +14,7 @@ const read = (relPath: string) => readFileSync(join(root, relPath), "utf8");
 describe("Demeter branding — marketing copy says Demeter, not Mae", () => {
   it("welcome page's own-section CTA and disclaimer", () => {
     const src = read("app/welcome/page.tsx");
-    expect(src).toContain("Ask Demeter — Civica&rsquo;s AI guide");
+    expect(src).toContain("Ask Demeter: Civica&rsquo;s AI guide");
     expect(src).toContain("Demeter&rsquo;s answers are based on federal SNAP citations");
   });
 

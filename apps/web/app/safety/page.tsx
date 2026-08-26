@@ -11,7 +11,7 @@ import { SAFETY_NOTICE } from "../../lib/legal";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "Safety and How Demeter Answers — Demeter",
+  title: "Safety and How Demeter Answers: Demeter",
   description:
     "Where Demeter's answers come from, how its citations are checked, when to be careful, and where to get help from a person.",
 };

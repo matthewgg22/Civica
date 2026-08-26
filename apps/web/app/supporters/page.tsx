@@ -14,7 +14,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "Demeter Supporters",
   description:
-    "Community organizations endorsing free, accurate SNAP guidance. Join them — sign on as a Demeter Supporter.",
+    "Community organizations endorsing free, accurate SNAP guidance. Join them. Sign on as a Demeter Supporter.",
 };
 
 interface SupporterRow {
@@ -53,16 +53,16 @@ export default async function SupportersPage() {
         </p>
         <p className="spage__sub">
           Supporting is free. Founding organizations additionally back the work with a
-          $20/month commitment — which may qualify as an allowable outreach cost under
+          $20/month commitment, which may qualify as an allowable outreach cost under
           your state&apos;s SNAP outreach plan (50% federal share today; 25% from FY2027)
-          — and get first access to the partner dashboard when it ships.
+         , and get first access to the partner dashboard when it ships.
         </p>
       </header>
 
       {supporters.length > 0 ? (
         <section className="spage__wall" aria-label="Supporting organizations">
           <p className="spage__count">
-            {supporters.length} organization{supporters.length === 1 ? "" : "s"} — and
+            {supporters.length} organization{supporters.length === 1 ? "" : "s"}, and
             growing.
           </p>
           <ul className="spage__list">
@@ -83,7 +83,7 @@ export default async function SupportersPage() {
       ) : (
         <section className="spage__wall">
           <p className="spage__count">
-            The founding cohort is signing on now — your organization can be among the
+            The founding cohort is signing on now, your organization can be among the
             first.
           </p>
         </section>

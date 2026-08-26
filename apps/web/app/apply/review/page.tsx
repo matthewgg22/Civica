@@ -142,7 +142,7 @@ function ReviewSection({
           ))}
         </dl>
       ) : (
-        <p className="review__card-empty">—</p>
+        <p className="review__card-empty">, </p>
       )}
     </div>
   );
@@ -211,7 +211,7 @@ function summarize(
     case "documents-checklist": {
       const docs = d.documentsChecklist.documentsAvailable;
       return docs.length === 0
-        ? [{ label: "—", value: "—" }]
+        ? [{ label: ", ", value: ", " }]
         : docs.map((doc) => ({ label: doc, value: "✓" }));
     }
   }

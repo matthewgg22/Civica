@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
   if (!gate.allowed) {
     if (gate.reason === "rate_limited") {
       return NextResponse.json(
-        { error: "Too many requests — try again in a minute.", reason: "rate_limited" },
+        { error: "Too many requests, try again in a minute.", reason: "rate_limited" },
         { status: 429, headers: { "Retry-After": "60" } },
       );
     }
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     if (err instanceof GuestCapReachedError) {
       return NextResponse.json(
-        { error: "Guest screening limit reached — sign in to keep going.", reason: "guest_cap_reached" },
+        { error: "Guest screening limit reached, sign in to keep going.", reason: "guest_cap_reached" },
         { status: 403 },
       );
     }

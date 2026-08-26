@@ -48,7 +48,7 @@ export const snapStrings = {
     signin_google_disclosure_conversation:
       "We only use your Google account to sign you in and save your conversation.",
     signin_subtitle_conversation:
-      "Sign in and this conversation will be here when you come back. The chat itself is always free — an account is only for saving.",
+      "Sign in and this conversation will be here when you come back. The chat itself is always free. An account is only for saving.",
 
     // Email magic link (PR #690's route; this is its UI).
     signin_or: "or",
@@ -58,7 +58,7 @@ export const snapStrings = {
     signin_email_sending: "Sending…",
     signin_email_sent_title: "Check your email",
     signin_email_sent_body:
-      "We sent a sign-in link to {email}. Open it on this device to finish — it expires shortly.",
+      "We sent a sign-in link to {email}. Open it on this device to finish. It expires shortly.",
     signin_email_retry: "Use a different address",
     signin_error_invalid_email: "Please enter a valid email address.",
     signin_email_disclosure:
@@ -123,7 +123,7 @@ export const snapStrings = {
     // Applicant age
     field_date_of_birth: "Date of birth",
     field_age: "Age (years)",
-    field_age_helper: "Either your date of birth OR your age is fine — both are not required.",
+    field_age_helper: "Either your date of birth OR your age is fine. Both are not required.",
 
     // Household
     field_household_size: "How many people live in your food household?",
@@ -204,14 +204,14 @@ export const snapStrings = {
     upload_drop_zone: "Drop a file or click to browse",
     upload_select_kind: "What is this document?",
     upload_uploading: "Uploading…",
-    upload_success: "Uploaded — processing…",
+    upload_success: "Uploaded. Processing…",
     upload_error: "Upload failed. Please try again.",
     upload_status_uploaded: "Uploaded",
     upload_status_classifying: "Classifying",
     upload_status_extracting: "Reading text",
     upload_status_awaiting: "Awaiting navigator review",
     upload_status_confirmed: "Confirmed",
-    upload_status_rejected: "Rejected — please re-upload",
+    upload_status_rejected: "Rejected. Please re-upload",
 
     // Document kinds (mirrors EnrollmentDocumentKind.displayLabel)
     kind_photo_id: "Photo ID",
@@ -297,7 +297,7 @@ export const snapStrings = {
     signin_google_disclosure_conversation:
       "Solo usamos tu cuenta de Google para iniciar sesión y guardar tu conversación.",
     signin_subtitle_conversation:
-      "Inicia sesión y esta conversación estará aquí cuando regreses. El chat siempre es gratis — la cuenta es solo para guardar.",
+      "Inicia sesión y esta conversación estará aquí cuando regreses. El chat siempre es gratis. La cuenta es solo para guardar.",
 
     signin_or: "o",
     signin_email_label: "Correo electrónico",
@@ -306,7 +306,7 @@ export const snapStrings = {
     signin_email_sending: "Enviando…",
     signin_email_sent_title: "Revisa tu correo",
     signin_email_sent_body:
-      "Enviamos un enlace de inicio de sesión a {email}. Ábrelo en este dispositivo para terminar — vence pronto.",
+      "Enviamos un enlace de inicio de sesión a {email}. Ábrelo en este dispositivo para terminar. Vence pronto.",
     signin_email_retry: "Usar otro correo",
     signin_error_invalid_email: "Por favor ingresa un correo electrónico válido.",
     signin_email_disclosure:
@@ -365,7 +365,7 @@ export const snapStrings = {
 
     field_date_of_birth: "Fecha de nacimiento",
     field_age: "Edad (años)",
-    field_age_helper: "Tu fecha de nacimiento O tu edad — no se requieren ambas.",
+    field_age_helper: "Tu fecha de nacimiento O tu edad. No se requieren ambas.",
 
     field_household_size: "¿Cuántas personas viven en tu hogar alimentario?",
     field_buys_prepares_food: "¿Compras y preparas comida con las otras personas en tu hogar?",
@@ -437,14 +437,14 @@ export const snapStrings = {
     upload_drop_zone: "Suelta un archivo o haz clic para buscar",
     upload_select_kind: "¿Qué documento es este?",
     upload_uploading: "Subiendo…",
-    upload_success: "Subido — procesando…",
+    upload_success: "Subido. Procesando…",
     upload_error: "Falló la subida. Por favor intenta de nuevo.",
     upload_status_uploaded: "Subido",
     upload_status_classifying: "Clasificando",
     upload_status_extracting: "Leyendo texto",
     upload_status_awaiting: "Esperando revisión del navigator",
     upload_status_confirmed: "Confirmado",
-    upload_status_rejected: "Rechazado — por favor vuelve a subir",
+    upload_status_rejected: "Rechazado. Por favor vuelve a subir",
 
     kind_photo_id: "Identificación con foto",
     kind_paystub: "Talón de pago",
@@ -531,11 +531,11 @@ export const welcomeStrings = {
 
     // ─── What is SNAP ───
     home_what_title: "What is SNAP?",
-    home_what_body: "SNAP is monthly money for groceries, loaded onto a card you use just like a debit card. You might know it by another name — CalFresh in California, EBT, or food stamps — but it's all the same federal program. It's not a loan, and it never has to be paid back.",
+    home_what_body: "SNAP is monthly money for groceries, loaded onto a card you use just like a debit card. You might know it by another name: CalFresh in California, EBT, or food stamps. But it's all the same federal program. It's not a loan, and it never has to be paid back.",
 
     // ─── What you can buy ───
     home_buy_title: "What you can buy with it",
-    home_buy_can_label: "Yes — food to bring home",
+    home_buy_can_label: "Yes. Food to bring home",
     home_buy_can: "Fruits & vegetables|Meat, fish & eggs|Milk, cheese & yogurt|Bread, rice & cereal|Snacks & non-alcoholic drinks|Seeds & plants that grow food",
     home_buy_cant: "Hot or prepared deli food|Alcohol & tobacco|Vitamins & medicine|Soap, diapers & household items|Pet food",
     home_cant_q: "What can't I buy with SNAP?",
@@ -544,27 +544,27 @@ export const welcomeStrings = {
 
     // ─── Income guide ───
     home_income_title: "How much can I earn and still qualify?",
-    home_income_intro: "These are rough guideposts — many states, including California, use the higher end shown here.",
+    home_income_intro: "These are rough guideposts. Many states, including California, use the higher end shown here.",
     home_income_col_size: "Household size",
     home_income_col_amount: "Monthly income (about)",
     home_income_person: "person",
     home_income_people: "people",
-    home_income_benefit: "If you're approved, benefits go up to about {max} a month for one person — and more for a larger household.",
-    home_income_note: "This is a guide, not a cutoff. Many people who think they earn too much actually qualify once rent, childcare, and medical costs are counted. The only way to know is to apply — and Civica figures out your state's real limit for you.",
+    home_income_benefit: "If you're approved, benefits go up to about {max} a month for one person, and more for a larger household.",
+    home_income_note: "This is a guide, not a cutoff. Many people who think they earn too much actually qualify once rent, childcare, and medical costs are counted. The only way to know is to apply. And Civica figures out your state's real limit for you.",
 
     // ─── FAQ ───
     home_faq_title: "Questions people ask",
     home_faq_q1: "Isn't SNAP the same everywhere?",
-    home_faq_a1: "No — and that's the confusing part. SNAP is one federal program, but every state runs it a little differently. Even the name changes: SNAP in most states, CalFresh in California, \"food stamps\" to a lot of people. The income limits, the documents you need, and the rules about students, cars, and savings are all set state by state. Civica reads your state's rules for you and only asks for what your state actually needs.",
+    home_faq_a1: "No, and that's the confusing part. SNAP is one federal program, but every state runs it a little differently. Even the name changes: SNAP in most states, CalFresh in California, \"food stamps\" to a lot of people. The income limits, the documents you need, and the rules about students, cars, and savings are all set state by state. Civica reads your state's rules for you and only asks for what your state actually needs.",
     home_faq_q2: "Do I make too much to qualify?",
-    home_faq_a2: "Probably not as much as you'd think. Most states let you earn well above the federal guideline, and costs like rent, childcare, and medical bills lower the income they actually count. Many working people, seniors, students, and families qualify — though the exact rules (especially for students) depend on your state. The only way to know is to check, and we do that math for you.",
+    home_faq_a2: "Probably not as much as you'd think. Most states let you earn well above the federal guideline, and costs like rent, childcare, and medical bills lower the income they actually count. Many working people, seniors, students, and families qualify. Though the exact rules (especially for students) depend on your state. The only way to know is to check, and we do that math for you.",
     home_faq_q3: "Am I taking food from someone who needs it more?",
-    home_faq_a3: "No. SNAP isn't a fixed pot that runs out — your benefit doesn't reduce anyone else's. If you qualify, the help is there for you.",
+    home_faq_a3: "No. SNAP isn't a fixed pot that runs out. Your benefit doesn't reduce anyone else's. If you qualify, the help is there for you.",
     home_faq_q4: "Do I have to pay it back?",
-    home_faq_a4: "No. SNAP isn't a loan. You've already paid into it through your taxes — this is help you've earned, not a debt.",
+    home_faq_a4: "No. SNAP isn't a loan. You've already paid into it through your taxes. This is help you've earned, not a debt.",
     home_faq_q5: "Will it affect my immigration status?",
     home_faq_a5:
-      "This is changing, so we won't give you a flat answer. Federal public charge rules haven't counted SNAP since 2022 — but DHS has rescinded that rule effective 18 September 2026, and after that date officers can weigh benefits case by case. If anyone in your household is not a US citizen, talk to a free immigration legal aid before you apply — not to us, and not to a caseworker.",
+      "This is changing, so we won't give you a flat answer. Federal public charge rules haven't counted SNAP since 2022. But DHS has rescinded that rule effective 18 September 2026, and after that date officers can weigh benefits case by case. If anyone in your household is not a US citizen, talk to a free immigration legal aid before you apply. Not to us, and not to a caseworker.",
 
     // ─── App island ───
     home_app_cta: "Get the app →",
@@ -596,11 +596,11 @@ export const welcomeStrings = {
 
     // ─── Qué es SNAP ───
     home_what_title: "¿Qué es SNAP?",
-    home_what_body: "SNAP es dinero mensual para comprar comida, cargado en una tarjeta que usas igual que una de débito. Quizás lo conozcas con otro nombre — CalFresh en California, EBT o estampillas de comida — pero es el mismo programa federal. No es un préstamo y nunca tienes que devolverlo.",
+    home_what_body: "SNAP es dinero mensual para comprar comida, cargado en una tarjeta que usas igual que una de débito. Quizás lo conozcas con otro nombre: CalFresh en California, EBT o estampillas de comida. Pero es el mismo programa federal. No es un préstamo y nunca tienes que devolverlo.",
 
     // ─── Qué puedes comprar ───
     home_buy_title: "Qué puedes comprar con SNAP",
-    home_buy_can_label: "Sí — comida para llevar a casa",
+    home_buy_can_label: "Sí. Comida para llevar a casa",
     home_buy_can: "Frutas y verduras|Carne, pescado y huevos|Leche, queso y yogur|Pan, arroz y cereal|Bocadillos y bebidas sin alcohol|Semillas y plantas que dan alimento",
     home_buy_cant: "Comida caliente o preparada|Alcohol y tabaco|Vitaminas y medicinas|Jabón, pañales y artículos del hogar|Comida para mascotas",
     home_cant_q: "¿Qué no puedo comprar con SNAP?",
@@ -609,27 +609,27 @@ export const welcomeStrings = {
 
     // ─── Guía de ingresos ───
     home_income_title: "¿Cuánto puedo ganar y aún calificar?",
-    home_income_intro: "Estas cifras son orientativas — muchos estados, incluido California, usan el extremo más alto que se muestra aquí.",
+    home_income_intro: "Estas cifras son orientativas. Muchos estados, incluido California, usan el extremo más alto que se muestra aquí.",
     home_income_col_size: "Tamaño del hogar",
     home_income_col_amount: "Ingreso mensual (aprox.)",
     home_income_person: "persona",
     home_income_people: "personas",
-    home_income_benefit: "Si te aprueban, los beneficios llegan hasta cerca de {max} al mes para una persona — y más para un hogar más grande.",
-    home_income_note: "Esto es una guía, no un límite. Muchas personas que creen que ganan demasiado sí califican una vez que se cuentan la renta, el cuidado de niños y los gastos médicos. La única forma de saberlo es solicitar — y Civica calcula el límite real de tu estado por ti.",
+    home_income_benefit: "Si te aprueban, los beneficios llegan hasta cerca de {max} al mes para una persona, y más para un hogar más grande.",
+    home_income_note: "Esto es una guía, no un límite. Muchas personas que creen que ganan demasiado sí califican una vez que se cuentan la renta, el cuidado de niños y los gastos médicos. La única forma de saberlo es solicitar. Y Civica calcula el límite real de tu estado por ti.",
 
     // ─── Preguntas frecuentes ───
     home_faq_title: "Preguntas que la gente hace",
     home_faq_q1: "¿No es SNAP igual en todas partes?",
-    home_faq_a1: "No — y esa es la parte confusa. SNAP es un programa federal, pero cada estado lo maneja un poco diferente. Hasta el nombre cambia: SNAP en la mayoría de los estados, CalFresh en California, \"estampillas de comida\" para muchas personas. Los límites de ingresos, los documentos que necesitas y las reglas sobre estudiantes, autos y ahorros los fija cada estado. Civica lee las reglas de tu estado por ti y solo te pide lo que tu estado realmente necesita.",
+    home_faq_a1: "No, y esa es la parte confusa. SNAP es un programa federal, pero cada estado lo maneja un poco diferente. Hasta el nombre cambia: SNAP en la mayoría de los estados, CalFresh en California, \"estampillas de comida\" para muchas personas. Los límites de ingresos, los documentos que necesitas y las reglas sobre estudiantes, autos y ahorros los fija cada estado. Civica lee las reglas de tu estado por ti y solo te pide lo que tu estado realmente necesita.",
     home_faq_q2: "¿Gano demasiado para calificar?",
-    home_faq_a2: "Probablemente no tanto como crees. La mayoría de los estados permiten ganar bastante más que la guía federal, y gastos como la renta, el cuidado de niños y las facturas médicas reducen el ingreso que realmente cuentan. Muchas personas que trabajan, personas mayores, estudiantes y familias califican — aunque las reglas exactas (sobre todo para estudiantes) dependen de tu estado. La única forma de saberlo es revisar, y nosotros hacemos ese cálculo por ti.",
+    home_faq_a2: "Probablemente no tanto como crees. La mayoría de los estados permiten ganar bastante más que la guía federal, y gastos como la renta, el cuidado de niños y las facturas médicas reducen el ingreso que realmente cuentan. Muchas personas que trabajan, personas mayores, estudiantes y familias califican. Aunque las reglas exactas (sobre todo para estudiantes) dependen de tu estado. La única forma de saberlo es revisar, y nosotros hacemos ese cálculo por ti.",
     home_faq_q3: "¿Le estoy quitando comida a alguien que la necesita más?",
-    home_faq_a3: "No. SNAP no es una olla fija que se acaba — tu beneficio no reduce el de nadie más. Si calificas, la ayuda está ahí para ti.",
+    home_faq_a3: "No. SNAP no es una olla fija que se acaba. Tu beneficio no reduce el de nadie más. Si calificas, la ayuda está ahí para ti.",
     home_faq_q4: "¿Tengo que devolverlo?",
-    home_faq_a4: "No. SNAP no es un préstamo. Ya has aportado a través de tus impuestos — es ayuda que te has ganado, no una deuda.",
+    home_faq_a4: "No. SNAP no es un préstamo. Ya has aportado a través de tus impuestos. Es ayuda que te has ganado, no una deuda.",
     home_faq_q5: "¿Afecta mi estatus migratorio?",
     home_faq_a5:
-      "Esto está cambiando, así que no te daremos una respuesta rotunda. Desde 2022 las reglas federales de carga pública no cuentan SNAP, pero el DHS derogó esa norma con efecto el 18 de septiembre de 2026, y a partir de esa fecha los oficiales pueden considerar los beneficios caso por caso. Si alguien en tu hogar no es ciudadano estadounidense, consulta con ayuda legal migratoria gratuita antes de solicitar — no con nosotros, ni con un trabajador del condado.",
+      "Esto está cambiando, así que no te daremos una respuesta rotunda. Desde 2022 las reglas federales de carga pública no cuentan SNAP, pero el DHS derogó esa norma con efecto el 18 de septiembre de 2026, y a partir de esa fecha los oficiales pueden considerar los beneficios caso por caso. Si alguien en tu hogar no es ciudadano estadounidense, consulta con ayuda legal migratoria gratuita antes de solicitar. No con nosotros, ni con un trabajador del condado.",
 
     // ─── App island ───
     home_app_cta: "Obtén la app →",
@@ -658,10 +658,10 @@ export const welcomeStrings = {
     home_hero_secondary: "登录以继续",
 
     home_what_title: "什么是 SNAP?",
-    home_what_body: "SNAP 是每月用于购买食品的钱,存入一张像借记卡一样使用的卡。它可能有别的名字——在加州叫 CalFresh,也有人叫 EBT 或食品券——但都是同一个联邦项目。它不是贷款,永远不用偿还。",
+    home_what_body: "SNAP 是每月用于购买食品的钱,存入一张像借记卡一样使用的卡。它可能有别的名字，在加州叫 CalFresh,也有人叫 EBT 或食品券，但都是同一个联邦项目。它不是贷款,永远不用偿还。",
 
     home_buy_title: "可以用它买什么",
-    home_buy_can_label: "可以——带回家的食物",
+    home_buy_can_label: "可以，带回家的食物",
     home_buy_can: "水果和蔬菜|肉、鱼和蛋|牛奶、奶酪和酸奶|面包、米和谷物|零食和无酒精饮料|可种植食物的种子和植物",
     home_buy_cant: "热食或熟食|酒类和烟草|维生素和药品|肥皂、尿布和家居用品|宠物食品",
     home_cant_q: "SNAP 不能买什么?",
@@ -669,26 +669,26 @@ export const welcomeStrings = {
     home_findfood_body: "Civica 应用会在地图上显示附近的食物银行、免费餐点,以及接受 EBT 卡的商店。",
 
     home_income_title: "我能挣多少还能符合资格?",
-    home_income_intro: "以下数字仅供参考——许多州(包括加州)采用这里显示的较高标准。",
+    home_income_intro: "以下数字仅供参考，许多州(包括加州)采用这里显示的较高标准。",
     home_income_col_size: "家庭人数",
     home_income_col_amount: "每月收入(约)",
     home_income_person: "人",
     home_income_people: "人",
-    home_income_benefit: "如果获批,一个人的福利最高约为每月 {max}——家庭人数越多,金额越高。",
-    home_income_note: "这只是参考,不是上限。很多以为自己挣得太多的人,在算上房租、托儿和医疗费用后其实符合资格。唯一确定的方法就是申请——Civica 会替你算出你所在州的真实限额。",
+    home_income_benefit: "如果获批,一个人的福利最高约为每月 {max}，家庭人数越多,金额越高。",
+    home_income_note: "这只是参考,不是上限。很多以为自己挣得太多的人,在算上房租、托儿和医疗费用后其实符合资格。唯一确定的方法就是申请，Civica 会替你算出你所在州的真实限额。",
 
     home_faq_title: "人们常问的问题",
     home_faq_q1: "SNAP 在各地不是都一样吗?",
-    home_faq_a1: "不一样——这正是让人困惑的地方。SNAP 是一个联邦项目,但每个州的做法都略有不同。连名字都会变:大多数州叫 SNAP,加州叫 CalFresh,很多人叫“食品券”。收入限额、所需文件,以及关于学生、车辆和存款的规定,都由各州自行决定。Civica 会替你解读你所在州的规定,只询问你所在州真正需要的内容。",
+    home_faq_a1: "不一样，这正是让人困惑的地方。SNAP 是一个联邦项目,但每个州的做法都略有不同。连名字都会变:大多数州叫 SNAP,加州叫 CalFresh,很多人叫“食品券”。收入限额、所需文件,以及关于学生、车辆和存款的规定,都由各州自行决定。Civica 会替你解读你所在州的规定,只询问你所在州真正需要的内容。",
     home_faq_q2: "我挣得太多,会不会不符合资格?",
-    home_faq_a2: "可能没有你想的那么多。大多数州允许的收入远高于联邦标准,而房租、托儿和医疗账单等支出会降低实际计算的收入。许多有工作的人、长者、学生和家庭都符合资格——不过具体规定(尤其是学生)取决于你所在的州。唯一确定的方法就是核对,我们会替你做这个计算。",
+    home_faq_a2: "可能没有你想的那么多。大多数州允许的收入远高于联邦标准,而房租、托儿和医疗账单等支出会降低实际计算的收入。许多有工作的人、长者、学生和家庭都符合资格，不过具体规定(尤其是学生)取决于你所在的州。唯一确定的方法就是核对,我们会替你做这个计算。",
     home_faq_q3: "我是不是抢走了更需要的人的食物?",
-    home_faq_a3: "不会。SNAP 不是一个会用完的固定额度——你的福利不会减少别人的。只要你符合资格,这份帮助就属于你。",
+    home_faq_a3: "不会。SNAP 不是一个会用完的固定额度，你的福利不会减少别人的。只要你符合资格,这份帮助就属于你。",
     home_faq_q4: "我需要偿还吗?",
-    home_faq_a4: "不需要。SNAP 不是贷款。你已经通过纳税为它做出了贡献——这是你应得的帮助,不是债务。",
+    home_faq_a4: "不需要。SNAP 不是贷款。你已经通过纳税为它做出了贡献，这是你应得的帮助,不是债务。",
     home_faq_q5: "它会影响我的移民身份吗?",
     home_faq_a5:
-      "这一条正在变化，所以我们不会给出肯定的答案。自 2022 年起，联邦“公共负担”规则不将 SNAP 计入——但国土安全部已废除该规则，自 2026 年 9 月 18 日起生效；此后官员可逐案考量福利领取情况。如果您家中有人不是美国公民，请在申请前咨询免费的移民法律援助——不要问我们，也不要问个案工作人员。",
+      "这一条正在变化，所以我们不会给出肯定的答案。自 2022 年起，联邦“公共负担”规则不将 SNAP 计入，但国土安全部已废除该规则，自 2026 年 9 月 18 日起生效；此后官员可逐案考量福利领取情况。如果您家中有人不是美国公民，请在申请前咨询免费的移民法律援助，不要问我们，也不要问个案工作人员。",
 
     home_app_cta: "获取应用 →",
 
@@ -715,10 +715,10 @@ export const welcomeStrings = {
     home_hero_secondary: "Đăng nhập để tiếp tục",
 
     home_what_title: "SNAP là gì?",
-    home_what_body: "SNAP là tiền hằng tháng để mua thực phẩm, nạp vào một thẻ bạn dùng như thẻ ghi nợ. Bạn có thể biết nó với tên khác — CalFresh ở California, EBT, hay tem phiếu thực phẩm — nhưng đều là cùng một chương trình liên bang. Đây không phải khoản vay và không bao giờ phải trả lại.",
+    home_what_body: "SNAP là tiền hằng tháng để mua thực phẩm, nạp vào một thẻ bạn dùng như thẻ ghi nợ. Bạn có thể biết nó với tên khác: CalFresh ở California, EBT, hay tem phiếu thực phẩm. Nhưng đều là cùng một chương trình liên bang. Đây không phải khoản vay và không bao giờ phải trả lại.",
 
     home_buy_title: "Bạn có thể mua gì bằng SNAP",
-    home_buy_can_label: "Được — thực phẩm mang về nhà",
+    home_buy_can_label: "Được. Thực phẩm mang về nhà",
     home_buy_can: "Trái cây và rau|Thịt, cá và trứng|Sữa, phô mai và sữa chua|Bánh mì, gạo và ngũ cốc|Đồ ăn vặt và đồ uống không cồn|Hạt giống và cây trồng ra thực phẩm",
     home_buy_cant: "Đồ ăn nóng hoặc chế biến sẵn|Rượu bia và thuốc lá|Vitamin và thuốc men|Xà phòng, tã và đồ gia dụng|Thức ăn cho thú cưng",
     home_cant_q: "Tôi không thể mua gì bằng SNAP?",
@@ -726,26 +726,26 @@ export const welcomeStrings = {
     home_findfood_body: "Ứng dụng Civica hiển thị bản đồ các ngân hàng thực phẩm, bữa ăn miễn phí và cửa hàng chấp nhận thẻ EBT gần bạn.",
 
     home_income_title: "Tôi kiếm được bao nhiêu mà vẫn đủ điều kiện?",
-    home_income_intro: "Đây là các mốc tham khảo — nhiều tiểu bang, gồm California, dùng mức cao hơn hiển thị bên dưới.",
+    home_income_intro: "Đây là các mốc tham khảo. Nhiều tiểu bang, gồm California, dùng mức cao hơn hiển thị bên dưới.",
     home_income_col_size: "Số người trong hộ",
     home_income_col_amount: "Thu nhập hằng tháng (khoảng)",
     home_income_person: "người",
     home_income_people: "người",
-    home_income_benefit: "Nếu được duyệt, trợ cấp lên tới khoảng {max} mỗi tháng cho một người — và nhiều hơn cho hộ đông người hơn.",
-    home_income_note: "Đây là hướng dẫn, không phải giới hạn. Nhiều người nghĩ mình kiếm quá nhiều nhưng thực ra vẫn đủ điều kiện sau khi tính tiền thuê nhà, giữ trẻ và chi phí y tế. Cách duy nhất để biết là nộp đơn — và Civica sẽ tính ra hạn mức thực của tiểu bang bạn.",
+    home_income_benefit: "Nếu được duyệt, trợ cấp lên tới khoảng {max} mỗi tháng cho một người, và nhiều hơn cho hộ đông người hơn.",
+    home_income_note: "Đây là hướng dẫn, không phải giới hạn. Nhiều người nghĩ mình kiếm quá nhiều nhưng thực ra vẫn đủ điều kiện sau khi tính tiền thuê nhà, giữ trẻ và chi phí y tế. Cách duy nhất để biết là nộp đơn. Và Civica sẽ tính ra hạn mức thực của tiểu bang bạn.",
 
     home_faq_title: "Những câu hỏi thường gặp",
     home_faq_q1: "SNAP không phải giống nhau ở mọi nơi sao?",
-    home_faq_a1: "Không — và đó là phần gây bối rối. SNAP là một chương trình liên bang, nhưng mỗi tiểu bang vận hành hơi khác nhau. Ngay cả tên gọi cũng thay đổi: SNAP ở hầu hết các bang, CalFresh ở California, “tem phiếu thực phẩm” với nhiều người. Hạn mức thu nhập, giấy tờ cần nộp, và quy định về sinh viên, xe cộ và tiền tiết kiệm đều do từng tiểu bang đặt ra. Civica đọc quy định của tiểu bang bạn và chỉ hỏi những gì tiểu bang bạn thực sự cần.",
+    home_faq_a1: "Không, và đó là phần gây bối rối. SNAP là một chương trình liên bang, nhưng mỗi tiểu bang vận hành hơi khác nhau. Ngay cả tên gọi cũng thay đổi: SNAP ở hầu hết các bang, CalFresh ở California, “tem phiếu thực phẩm” với nhiều người. Hạn mức thu nhập, giấy tờ cần nộp, và quy định về sinh viên, xe cộ và tiền tiết kiệm đều do từng tiểu bang đặt ra. Civica đọc quy định của tiểu bang bạn và chỉ hỏi những gì tiểu bang bạn thực sự cần.",
     home_faq_q2: "Tôi kiếm quá nhiều nên không đủ điều kiện?",
-    home_faq_a2: "Có lẽ không nhiều như bạn nghĩ. Hầu hết các tiểu bang cho phép thu nhập cao hơn nhiều so với hướng dẫn liên bang, và các chi phí như tiền thuê nhà, giữ trẻ và hóa đơn y tế làm giảm thu nhập thực được tính. Nhiều người đi làm, người cao tuổi, sinh viên và gia đình đều đủ điều kiện — dù quy định chính xác (nhất là với sinh viên) tùy theo tiểu bang. Cách duy nhất để biết là kiểm tra, và chúng tôi làm phép tính đó giúp bạn.",
+    home_faq_a2: "Có lẽ không nhiều như bạn nghĩ. Hầu hết các tiểu bang cho phép thu nhập cao hơn nhiều so với hướng dẫn liên bang, và các chi phí như tiền thuê nhà, giữ trẻ và hóa đơn y tế làm giảm thu nhập thực được tính. Nhiều người đi làm, người cao tuổi, sinh viên và gia đình đều đủ điều kiện. Dù quy định chính xác (nhất là với sinh viên) tùy theo tiểu bang. Cách duy nhất để biết là kiểm tra, và chúng tôi làm phép tính đó giúp bạn.",
     home_faq_q3: "Tôi có đang lấy mất thực phẩm của người cần hơn không?",
-    home_faq_a3: "Không. SNAP không phải một khoản cố định sẽ cạn — trợ cấp của bạn không làm giảm của ai khác. Nếu bạn đủ điều kiện, sự trợ giúp đó là dành cho bạn.",
+    home_faq_a3: "Không. SNAP không phải một khoản cố định sẽ cạn. Trợ cấp của bạn không làm giảm của ai khác. Nếu bạn đủ điều kiện, sự trợ giúp đó là dành cho bạn.",
     home_faq_q4: "Tôi có phải trả lại không?",
-    home_faq_a4: "Không. SNAP không phải khoản vay. Bạn đã đóng góp qua tiền thuế của mình — đây là sự trợ giúp bạn xứng đáng nhận, không phải món nợ.",
+    home_faq_a4: "Không. SNAP không phải khoản vay. Bạn đã đóng góp qua tiền thuế của mình: đây là sự trợ giúp bạn xứng đáng nhận, không phải món nợ.",
     home_faq_q5: "Nó có ảnh hưởng đến tình trạng di trú của tôi không?",
     home_faq_a5:
-      "Điều này đang thay đổi, nên chúng tôi sẽ không trả lời dứt khoát. Từ năm 2022, quy định liên bang về “gánh nặng xã hội” không tính SNAP — nhưng Bộ Nội an đã bãi bỏ quy định đó, có hiệu lực từ ngày 18 tháng 9 năm 2026, và sau ngày đó viên chức có thể xét từng trường hợp. Nếu trong nhà bạn có người không phải công dân Hoa Kỳ, hãy hỏi trợ giúp pháp lý di trú miễn phí trước khi nộp đơn — không phải hỏi chúng tôi, cũng không phải hỏi nhân viên xét hồ sơ.",
+      "Điều này đang thay đổi, nên chúng tôi sẽ không trả lời dứt khoát. Từ năm 2022, quy định liên bang về “gánh nặng xã hội” không tính SNAP. Nhưng Bộ Nội an đã bãi bỏ quy định đó, có hiệu lực từ ngày 18 tháng 9 năm 2026, và sau ngày đó viên chức có thể xét từng trường hợp. Nếu trong nhà bạn có người không phải công dân Hoa Kỳ, hãy hỏi trợ giúp pháp lý di trú miễn phí trước khi nộp đơn. Không phải hỏi chúng tôi, cũng không phải hỏi nhân viên xét hồ sơ.",
 
     home_app_cta: "Tải ứng dụng →",
 
@@ -772,10 +772,10 @@ export const welcomeStrings = {
     home_hero_secondary: "Mag-sign in para magpatuloy",
 
     home_what_title: "Ano ang SNAP?",
-    home_what_body: "Ang SNAP ay buwanang pera para sa pagkain, nasa isang card na ginagamit mo na parang debit card. Maaaring kilala mo ito sa ibang pangalan — CalFresh sa California, EBT, o food stamps — pero iisang pederal na programa lang ito. Hindi ito utang at hindi kailangang bayaran kailanman.",
+    home_what_body: "Ang SNAP ay buwanang pera para sa pagkain, nasa isang card na ginagamit mo na parang debit card. Maaaring kilala mo ito sa ibang pangalan: CalFresh sa California, EBT, o food stamps. Pero iisang pederal na programa lang ito. Hindi ito utang at hindi kailangang bayaran kailanman.",
 
     home_buy_title: "Ano ang pwede mong bilhin gamit ito",
-    home_buy_can_label: "Oo — pagkaing iuuwi",
+    home_buy_can_label: "Oo. Pagkaing iuuwi",
     home_buy_can: "Prutas at gulay|Karne, isda at itlog|Gatas, keso at yogurt|Tinapay, bigas at cereal|Meryenda at inuming walang alak|Buto at halamang nagbubunga ng pagkain",
     home_buy_cant: "Mainit o nakahandang pagkain|Alak at tabako|Bitamina at gamot|Sabon, diaper at gamit sa bahay|Pagkain ng alagang hayop",
     home_cant_q: "Ano ang hindi ko mabibili gamit ang SNAP?",
@@ -783,26 +783,26 @@ export const welcomeStrings = {
     home_findfood_body: "Ipinapakita ng Civica app ang mga food bank, libreng pagkain, at tindahang tumatanggap ng EBT card na malapit sa iyo.",
 
     home_income_title: "Magkano ang pwede kong kitain at kwalipikado pa rin?",
-    home_income_intro: "Mga panimulang gabay lang ito — maraming estado, kasama ang California, ang gumagamit ng mas mataas na antas na ipinapakita rito.",
+    home_income_intro: "Mga panimulang gabay lang ito. Maraming estado, kasama ang California, ang gumagamit ng mas mataas na antas na ipinapakita rito.",
     home_income_col_size: "Laki ng sambahayan",
     home_income_col_amount: "Buwanang kita (humigit-kumulang)",
     home_income_person: "tao",
     home_income_people: "tao",
-    home_income_benefit: "Kung maaprubahan, ang benepisyo ay umaabot hanggang mga {max} kada buwan para sa isang tao — at mas mataas para sa mas malaking sambahayan.",
-    home_income_note: "Gabay ito, hindi hangganan. Maraming nag-aakalang masyadong malaki ang kita nila ay kwalipikado pala kapag isinama na ang upa, pag-aalaga ng bata, at gastusing medikal. Ang tanging paraan para malaman ay mag-apply — at kukwentahin ng Civica ang totoong limitasyon ng iyong estado para sa iyo.",
+    home_income_benefit: "Kung maaprubahan, ang benepisyo ay umaabot hanggang mga {max} kada buwan para sa isang tao. At mas mataas para sa mas malaking sambahayan.",
+    home_income_note: "Gabay ito, hindi hangganan. Maraming nag-aakalang masyadong malaki ang kita nila ay kwalipikado pala kapag isinama na ang upa, pag-aalaga ng bata, at gastusing medikal. Ang tanging paraan para malaman ay mag-apply. At kukwentahin ng Civica ang totoong limitasyon ng iyong estado para sa iyo.",
 
     home_faq_title: "Mga tanong ng mga tao",
     home_faq_q1: "Hindi ba pareho ang SNAP saan man?",
-    home_faq_a1: "Hindi — at iyan ang nakalilito. Ang SNAP ay iisang pederal na programa, pero bahagyang magkaiba ang pagpapatakbo nito sa bawat estado. Kahit ang pangalan ay nagbabago: SNAP sa karamihan ng estado, CalFresh sa California, “food stamps” para sa marami. Ang mga limitasyon sa kita, ang mga dokumentong kailangan, at ang mga patakaran tungkol sa estudyante, sasakyan, at ipon ay itinatakda ng bawat estado. Binabasa ng Civica ang mga patakaran ng iyong estado para sa iyo at tinatanong lang ang talagang kailangan ng estado mo.",
+    home_faq_a1: "Hindi. At iyan ang nakalilito. Ang SNAP ay iisang pederal na programa, pero bahagyang magkaiba ang pagpapatakbo nito sa bawat estado. Kahit ang pangalan ay nagbabago: SNAP sa karamihan ng estado, CalFresh sa California, “food stamps” para sa marami. Ang mga limitasyon sa kita, ang mga dokumentong kailangan, at ang mga patakaran tungkol sa estudyante, sasakyan, at ipon ay itinatakda ng bawat estado. Binabasa ng Civica ang mga patakaran ng iyong estado para sa iyo at tinatanong lang ang talagang kailangan ng estado mo.",
     home_faq_q2: "Masyado ba akong malaki ang kita para maging kwalipikado?",
-    home_faq_a2: "Malamang hindi kasing-laki ng iniisip mo. Pinapayagan ng karamihan ng estado ang kita na mas mataas kaysa sa pederal na gabay, at ang mga gastos tulad ng upa, pag-aalaga ng bata, at mga bayarin sa medikal ay nagpapababa sa kita na talagang binibilang. Maraming nagtatrabaho, nakatatanda, estudyante, at pamilya ang kwalipikado — bagaman ang eksaktong patakaran (lalo na sa mga estudyante) ay depende sa iyong estado. Ang tanging paraan para malaman ay suriin, at ginagawa namin ang kuwentang iyon para sa iyo.",
+    home_faq_a2: "Malamang hindi kasing-laki ng iniisip mo. Pinapayagan ng karamihan ng estado ang kita na mas mataas kaysa sa pederal na gabay, at ang mga gastos tulad ng upa, pag-aalaga ng bata, at mga bayarin sa medikal ay nagpapababa sa kita na talagang binibilang. Maraming nagtatrabaho, nakatatanda, estudyante, at pamilya ang kwalipikado. Bagaman ang eksaktong patakaran (lalo na sa mga estudyante) ay depende sa iyong estado. Ang tanging paraan para malaman ay suriin, at ginagawa namin ang kuwentang iyon para sa iyo.",
     home_faq_q3: "Inaagawan ko ba ng pagkain ang mas nangangailangan?",
-    home_faq_a3: "Hindi. Ang SNAP ay hindi isang takdang pondo na nauubos — ang benepisyo mo ay hindi nagpapababa sa kanino man. Kung kwalipikado ka, nariyan ang tulong para sa iyo.",
+    home_faq_a3: "Hindi. Ang SNAP ay hindi isang takdang pondo na nauubos. Ang benepisyo mo ay hindi nagpapababa sa kanino man. Kung kwalipikado ka, nariyan ang tulong para sa iyo.",
     home_faq_q4: "Kailangan ko ba itong bayaran?",
-    home_faq_a4: "Hindi. Ang SNAP ay hindi utang. Nakapag-ambag ka na rito sa pamamagitan ng iyong buwis — tulong ito na nararapat sa iyo, hindi utang.",
+    home_faq_a4: "Hindi. Ang SNAP ay hindi utang. Nakapag-ambag ka na rito sa pamamagitan ng iyong buwis. Tulong ito na nararapat sa iyo, hindi utang.",
     home_faq_q5: "Maaapektuhan ba nito ang aking katayuan sa imigrasyon?",
     home_faq_a5:
-      "Nagbabago ito, kaya hindi kami magbibigay ng tiyak na sagot. Mula 2022, hindi ibinibilang ng pederal na public charge rules ang SNAP — ngunit binawi ito ng DHS, epektibo sa ika-18 ng Setyembre 2026, at pagkatapos ng petsang iyon maaaring timbangin ng mga opisyal ang mga benepisyo kada kaso. Kung may hindi mamamayan ng US sa inyong sambahayan, kumonsulta muna sa libreng immigration legal aid bago mag-apply — hindi sa amin, at hindi sa caseworker.",
+      "Nagbabago ito, kaya hindi kami magbibigay ng tiyak na sagot. Mula 2022, hindi ibinibilang ng pederal na public charge rules ang SNAP. Ngunit binawi ito ng DHS, epektibo sa ika-18 ng Setyembre 2026, at pagkatapos ng petsang iyon maaaring timbangin ng mga opisyal ang mga benepisyo kada kaso. Kung may hindi mamamayan ng US sa inyong sambahayan, kumonsulta muna sa libreng immigration legal aid bago mag-apply. Hindi sa amin, at hindi sa caseworker.",
 
     home_app_cta: "Kunin ang app →",
 

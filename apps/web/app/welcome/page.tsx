@@ -83,7 +83,7 @@ export default function WelcomePage() {
                 <path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6L12 2Z" fill="currentColor" opacity="0.15" stroke="currentColor" strokeWidth="1.5"/>
                 <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              USDA SNAP — Federal Program
+              USDA SNAP: Federal Program
             </a>
             <p className="home-hero__eyebrow">{t.home_hero_eyebrow}</p>
             <p className="home-hero__snap-note">Supplemental Nutrition Assistance Program · formerly known as Food Stamps</p>
@@ -190,7 +190,7 @@ export default function WelcomePage() {
           <div className="faq-mae-cta">
             <p className="faq-mae-cta__heading">Any other questions?</p>
             <p className="faq-mae-cta__body">
-              Ask Demeter — Civica&rsquo;s AI guide trained on federal SNAP regulations, real application experiences, and caseworker review.
+              Ask Demeter: Civica&rsquo;s AI guide trained on federal SNAP regulations, real application experiences, and caseworker review.
             </p>
             <button
               type="button"
@@ -205,7 +205,7 @@ export default function WelcomePage() {
               Ask Demeter
             </button>
             <p className="faq-mae-cta__disclaimer">
-              Demeter&rsquo;s answers are based on federal SNAP citations (7 CFR 273), real application experiences, and caseworker review — but may occasionally be incorrect. Always confirm eligibility with your county office. We flag uncertainty and cite sources where possible.
+              Demeter&rsquo;s answers are based on federal SNAP citations (7 CFR 273), real application experiences, and caseworker review. But may occasionally be incorrect. Always confirm eligibility with your county office. We flag uncertainty and cite sources where possible.
             </p>
           </div>
         </div>

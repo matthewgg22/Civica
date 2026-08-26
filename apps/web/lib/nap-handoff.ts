@@ -24,17 +24,17 @@ const COPY = {
       `${name} does not run SNAP. Food assistance there is provided through ${program}, a separate program funded by a federal block grant.`,
     why: "That matters for your question: the territory sets its own income limits, benefit amounts and rules, so the federal SNAP figures this tool works from do not apply where you live.",
     who: (agency: string) => `Apply and ask questions through ${agency}.`,
-    banner: "✓ **CERTAIN** — this is a scope limit, not an estimate.",
-    source: "Source: USDA Food and Nutrition Service — Nutrition Assistance Program block grants.",
+    banner: "✓ **CERTAIN**. This is a scope limit, not an estimate.",
+    source: "Source: USDA Food and Nutrition Service: Nutrition Assistance Program block grants.",
   },
   es: {
     lead: (name: string, program: string) =>
       `${name} no administra SNAP. La ayuda alimentaria allí se brinda a través de ${program}, un programa aparte financiado por una subvención federal en bloque.`,
     why: "Eso importa para tu pregunta: el territorio fija sus propios límites de ingreso, montos y reglas, así que las cifras federales de SNAP con las que trabaja esta herramienta no aplican donde vives.",
     who: (agency: string) => `Solicita y haz tus preguntas a través de ${agency}.`,
-    banner: "✓ **SEGURO** — es un límite de alcance, no un estimado.",
+    banner: "✓ **SEGURO**. Es un límite de alcance, no un estimado.",
     source:
-      "Fuente: USDA Food and Nutrition Service — subvenciones en bloque del Programa de Asistencia Nutricional.",
+      "Fuente: USDA Food and Nutrition Service. Subvenciones en bloque del Programa de Asistencia Nutricional.",
   },
 } as const;
 

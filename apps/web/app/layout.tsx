@@ -70,11 +70,11 @@ const beVietnamPro = localFont({
 // Next emits relative og:image paths that crawlers and Slack can't resolve.
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: "Civica — Apply for SNAP food benefits",
+  title: "Civica: Apply for SNAP food benefits",
   description:
-    "SNAP — also called CalFresh, EBT, or food stamps — is monthly money for groceries. Civica reads your state's rules and walks you through the application in about 10 minutes.",
+    "SNAP. Also called CalFresh, EBT, or food stamps. Is monthly money for groceries. Civica reads your state's rules and walks you through the application in about 10 minutes.",
   openGraph: {
-    title: "Civica — Apply for SNAP food benefits",
+    title: "Civica: Apply for SNAP food benefits",
     description:
       "See if you qualify for SNAP food benefits. Civica figures out your state's rules and guides you through the application step by step.",
     type: "website",

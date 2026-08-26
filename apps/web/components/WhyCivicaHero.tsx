@@ -57,7 +57,7 @@ export default function WhyCivicaHero() {
           </h1>
           <p className="why-gemini-sub">
             SNAP eligibility depends on income, household size, and rules that vary
-            state&nbsp;by&nbsp;state. Civica walks you through every question — so you
+            state&nbsp;by&nbsp;state. Civica walks you through every question, so you
             arrive at your application confident in every answer.
           </p>
         </div>

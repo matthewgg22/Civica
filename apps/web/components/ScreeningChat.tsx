@@ -26,7 +26,7 @@ const STARTERS = [
 ];
 
 const OUTCOME_LINE: Record<string, (c: ScreeningClassification) => string> = {
-  not_enough_information: () => "Still building the picture — a few more details and I can screen this.",
+  not_enough_information: () => "Still building the picture. A few more details and I can screen this.",
   needs_county_review: (c) => c.summary,
   categorically_eligible: (c) => `Categorically eligible. ${c.summary}`,
   expedited: (c) => c.summary,
@@ -75,9 +75,9 @@ export function ScreeningChat({ initialState }: { initialState: string }) {
           if (res.status === 403 && j.reason === "guest_cap_reached") {
             setGuestLeft(0);
             setErrorReason("guest_cap_reached");
-            setError("Guest screening limit reached — sign in to keep going.");
+            setError("Guest screening limit reached, sign in to keep going.");
           } else if (res.status === 429) {
-            setError("Too many requests — try again in a minute.");
+            setError("Too many requests, try again in a minute.");
           } else {
             setError(j.error ?? "Something went wrong. Please try again.");
           }

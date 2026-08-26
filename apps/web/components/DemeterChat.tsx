@@ -1278,7 +1278,7 @@ export function DemeterChat({
 
   /** The worksheet as it stands RIGHT NOW, for the sign-in stash (#898 P2-9).
    *  A getter so DemeterSave reads it at write time; stable identity because
-   *  it reads a ref and state via the render closure would go stale — so it
+   *  it reads a ref and state via the render closure would go stale. So it
    *  reads refs and the setters' current values through a second ref. */
   const worksheetSnapRef = useRef<WorksheetSnapshot>({
     mode: "ask",
@@ -1294,7 +1294,7 @@ export function DemeterChat({
   /** Recompute against an EXPLICIT state.
    *
    *  changeState calls this, and at that moment the `state` STATE still holds
-   *  the old code — setState has not applied yet — so a version closing over
+   *  the old code. SetState has not applied yet. So a version closing over
    *  it would rescope the estimate to the state the reader just left. */
   const refreshWorksheetFor = useCallback(
     async (
@@ -1302,7 +1302,7 @@ export function DemeterChat({
       forState: string | null,
       /** True when apiMessages IS the whole conversation, not a tail window.
        *  Callers compute it by comparing what they held against what they
-       *  sent — see #966. Guessing here would defeat the point. */
+       *  sent, see #966. Guessing here would defeat the point. */
       windowComplete = false,
     ) => {
       if (!forState) return;
@@ -1353,7 +1353,7 @@ export function DemeterChat({
     // Tail-window to the server's MAX_MESSAGES (20). A strictly alternating,
     // user-first history is ALWAYS odd length once the new question is
     // appended, and slicing an odd-length array to an even window (20) drops
-    // an odd number of leading elements — meaning the surviving array starts
+    // an odd number of leading elements. Meaning the surviving array starts
     // with the assistant every single time this branch is taken, forever,
     // for any conversation that ever reaches 10 exchanges. Server-side,
     // that's a hard 400 ("Conversation must start with a user message") on
@@ -1364,13 +1364,13 @@ export function DemeterChat({
     if (apiMessages[0]?.role !== "user") {
       apiMessages = apiMessages.slice(1);
     }
-    // Did they name somewhere? Offered, not applied — and only when it
+    // Did they name somewhere? Offered, not applied. And only when it
     // disagrees with the scope they are already on.
     const mentioned = detectState(question);
     setStateOffer(mentioned && mentioned.code !== state ? mentioned : null);
 
     // A place we do NOT cover has to be said out loud. "Washington DC" used to
-    // match the word "washington" and quietly answer for Washington State — a
+    // match the word "washington" and quietly answer for Washington State. A
     // different agency, a different portal, different figures, and nothing on
     // screen admitting it. Saying "not yet, here is what still applies" is a
     // worse answer and a far better outcome than a confident wrong one.
@@ -1398,7 +1398,7 @@ export function DemeterChat({
     // The rail updates ALONGSIDE the answer, not after it: a second round trip
     // in series would make every reply feel slower for a panel that is
     // supplementary. It is intentionally not awaited and intentionally cannot
-    // throw into this scope — the answer must not depend on it.
+    // throw into this scope. The answer must not depend on it.
     // THE GATE. In "ask" mode this call never happens, so no facts are
     // extracted, nothing lands in factsRef, and the paid extraction round trip
     // is not made either.
@@ -1421,14 +1421,14 @@ export function DemeterChat({
     /** Hand the question back so the next tap is Send, not retyping it.
      *
      *  Without this a failed request left the composer EMPTY and the user's
-     *  message stranded in the transcript above an error — so someone on a
+     *  message stranded in the transcript above an error. So someone on a
      *  flaky prepaid connection, which is most of this audience, had to retype
      *  a question they had already carefully worded. That is the opposite of an
      *  actionable recovery step.
      *
      *  Drops their turn from the transcript as well as the empty assistant
      *  bubble, because the honest state after a failed send is "you typed this
-     *  and it did not go", not "you asked this and were ignored" — and leaving
+     *  and it did not go", not "you asked this and were ignored". And leaving
      *  it would duplicate the turn when they send again.
      *
      *  Only for failures where trying again can actually work. At capacity for
@@ -1456,7 +1456,7 @@ export function DemeterChat({
           state,
           lang,
           sessionId: sessionIdRef.current || undefined,
-          // Counts ANSWERS, not attempts — because an audit row is written per
+          // Counts ANSWERS, not attempts, because an audit row is written per
           // answer, so this has to agree with what actually lands in the log.
           //
           // Two wrong versions came before this one, both of which inflate the
@@ -1482,13 +1482,13 @@ export function DemeterChat({
         // distinction the route makes on purpose: it returns 429 for BOTH a
         // per-minute rate limit and a per-IP DAILY cap, with different bodies
         // and different Retry-After values (60s vs 3600s). The client showed
-        // "give it a minute" for both — so someone who had hit the daily cap
+        // "give it a minute" for both. So someone who had hit the daily cap
         // was told to wait a minute for something that resets tomorrow, and
         // would sit there retrying. The route's own comment calls the two
         // "distinct ON PURPOSE"; this is where that distinction was being lost.
         //
         // WHOSE FAULT IT IS. Everything unmapped used to fall through to
-        // "Something went wrong. Please try again." — which was also the copy
+        // "Something went wrong. Please try again.". Which was also the copy
         // for a genuine connection failure, so a 500 on our side and a dropped
         // wifi connection were indistinguishable. They call for different
         // actions, and neither reader could tell which they had.
@@ -1528,7 +1528,7 @@ export function DemeterChat({
 
           // The marker REPLACES the unverified draft, so it is resolved against
           // everything received rather than against what is currently on
-          // screen — the display may legitimately be behind.
+          // screen. The display may legitimately be behind.
           const markerAt = rawRef.current.lastIndexOf(RECOMPOSE_MARKER);
           const next =
             markerAt >= 0
@@ -1536,7 +1536,7 @@ export function DemeterChat({
               : rawRef.current;
 
           // If the recomposed answer does not continue what is already shown,
-          // the draft was thrown away — so the display starts over and the
+          // the draft was thrown away. So the display starts over and the
           // replacement types out. Seeing it rewrite is the honest rendering of
           // what just happened.
           if (!next.startsWith(fullRef.current.slice(0, shownRef.current))) shownRef.current = 0;
@@ -1561,11 +1561,11 @@ export function DemeterChat({
       // feedback row asks about an answer the person has to have seen.
       //
       // BOUNDED anyway. The timer survives a backgrounded tab, but it is
-      // throttled hard there, and an unbounded wait would leave busy stuck on —
-      // Stop showing instead of Send — for as long as the tab stayed hidden.
+      // throttled hard there, and an unbounded wait would leave busy stuck on , 
+      // Stop showing instead of Send. For as long as the tab stayed hidden.
       if (shownRef.current < fullRef.current.length) {
         // A STALL WATCHDOG, not a deadline. A fixed ceiling would truncate a
-        // long answer that is pacing correctly — at reading pace a 2,000
+        // long answer that is pacing correctly. At reading pace a 2,000
         // character reply legitimately takes eight seconds. What actually needs
         // catching is the timer STOPPING (a hidden tab throttles it to
         // nothing), so this watches for no progress rather than for elapsed
@@ -1601,7 +1601,7 @@ export function DemeterChat({
         });
       }
     } catch (err) {
-      // An abort is the user pressing Stop, not a failure — their question was
+      // An abort is the user pressing Stop, not a failure. Their question was
       // answered as far as they wanted it to be, so nothing is handed back.
       if (err instanceof DOMException && err.name === "AbortError") {
         dropPlaceholder();
@@ -1624,9 +1624,9 @@ export function DemeterChat({
 
   /** The pack for whichever state is selected, or null on the federal floor.
    *  agencyHref (the disclaimer's link) and the "Apply at {portal}" link
-   *  next to "How we verify" both read off this — one lookup, not two. */
+   *  next to "How we verify" both read off this. One lookup, not two. */
   const selectedPack = state ? states.find((x) => x.code === state) ?? null : null;
-  /** The agency the disclaimer points at. Their own state's, once one is set —
+  /** The agency the disclaimer points at. Their own state's, once one is set , 
    *  a generic "your state agency" is exactly the sort of advice that sounds
    *  complete and leaves someone with nowhere to go. */
   const agencyHref = selectedPack?.portal?.url ?? "/verify";
@@ -1638,7 +1638,7 @@ export function DemeterChat({
   const answeredCount = messages.filter((m) => m.role === "assistant" && m.content !== "").length;
   /** How much more conversation has to happen, after a "just asking" dismissal,
    *  before it is worth asking again. Six answered turns is deliberately a
-   *  while — this must not feel like nagging — but not "never": the real
+   *  while. This must not feel like nagging. But not "never": the real
    *  transcript that found this gap ran fifteen turns deep with a full income
    *  and household established and was never asked a second time. */
   const MODE_REOFFER_AFTER_TURNS = 6;
@@ -1654,7 +1654,7 @@ export function DemeterChat({
    *  than MODE_REOFFER_AFTER_TURNS deliberately: losing the WHOLE
    *  conversation is a bigger loss than not getting a structured estimate,
    *  so it is worth mentioning sooner. A real 15-turn conversation with real
-   *  content in it never once saw this (#833 audit, 2026-08-15) — the Save
+   *  content in it never once saw this (#833 audit, 2026-08-15). The Save
    *  button existed the whole time, tucked in the side panel. Started at 4;
    *  real feedback the same day was that it fired too soon (felt like
    *  turn 4-5 of an ordinary conversation, not yet "long enough to lose"),
@@ -1664,14 +1664,14 @@ export function DemeterChat({
     !busy && !conversationSaved && !saveNudgeDismissed && answeredCount >= SAVE_NUDGE_AFTER_TURNS;
 
   // What the composer asks for. If Demeter's last answer ended in a question,
-  // that question — otherwise the standing invitation. Never while an answer is
+  // that question. Otherwise the standing invitation. Never while an answer is
   // still arriving: the placeholder would change under the person mid-read.
   const lastAssistant = busy
     ? null
     : [...messages].reverse().find((m) => m.role === "assistant" && m.content)?.content ?? null;
   // The standing invitation, worded for the mode you are actually in. The two
-  // modes do different things with what you type — one gathers it into a
-  // document, one deliberately does not — and the box you type into was the
+  // modes do different things with what you type. One gathers it into a
+  // document, one deliberately does not. And the box you type into was the
   // one place that never said which was happening.
   //
   // t.inputPlaceholder is a FIRST-TIME invitation ("Happy to answer any

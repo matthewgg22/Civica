@@ -13,7 +13,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
-export const alt = "Demeter — verified answers about SNAP, for any state";
+export const alt = "Demeter. Verified answers about SNAP, for any state";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -70,7 +70,7 @@ export default function OpengraphImage() {
               maxWidth: 900,
             }}
           >
-            Verified answers about SNAP — for any state.
+            Verified answers about SNAP. For any state.
           </div>
           <div style={{ fontSize: 30, color: "#5E4F45", lineHeight: 1.45, maxWidth: 820 }}>
             Free. No account. Every answer cites the rule it came from, so you can check it

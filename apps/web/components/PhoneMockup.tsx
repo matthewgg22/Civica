@@ -13,7 +13,7 @@ export function PhoneMockup() {
             place the image optimizer earns its keep on this site. */}
         <Image
           src="/civica-ios-screenshot.png"
-          alt="Civica iOS app — Apply for SNAP"
+          alt="Civica iOS app: Apply for SNAP"
           className="iphone__screenshot"
           width={1206}
           height={2622}
