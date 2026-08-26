@@ -4916,63 +4916,6 @@ html {
 .vpage__lede, .spage__definition { font-size: 1rem; line-height: 1.6; color: var(--civica-graphite); margin-bottom: 0.9rem; }
 .spage__definition { font-weight: 600; color: var(--civica-ink); }
 .spage__sub { font-size: 0.9rem; line-height: 1.55; color: var(--civica-graphite); }
-/* /verify was still wearing the CIVICA palette — pine buttons, green badges,
-   heavy sans — on a page DEMETER-DESIGN.md governs. Next to the rest of the
-   product it read as a different site, which is most of what made it look
-   broken at awkward widths. Demeter tokens throughout now.
-
-   auto-fit rather than a hard two columns at 700px: fourteen cards of unequal
-   content were being forced into a rigid pair, so every short card stretched to
-   its tall neighbour and opened a hole above its button. */
-.vpage__grid {
-  display: grid; gap: 1rem; margin: 1.5rem 0;
-  grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
-  align-items: start;
-}
-.vcard {
-  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: var(--demeter-radius-card); padding: 1.15rem 1.25rem;
-  display: flex; flex-direction: column; gap: 0.5rem;
-}
-.vcard__head { display: flex; align-items: center; gap: 0.55rem; }
-.vcard__state { margin: 0; }
-/* The heading's weight lives on the code, since the flag component owns the
-   markup inside it. */
-.vcard__state .dmflag__code {
-  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em; color: var(--demeter-ink);
-}
-.vcard__badge {
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--demeter-terracotta-deep); border: 1px solid var(--demeter-terracotta);
-  border-radius: var(--demeter-radius-pill); padding: 0.2rem 0.55rem; margin-left: auto;
-}
-.vcard__program {
-  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1rem; line-height: 1.35; color: var(--demeter-body); margin: 0 0 0.3rem;
-}
-.vcard__facts { display: flex; flex-direction: column; gap: 0.7rem; margin: 0 0 1rem; }
-.vcard__facts dt {
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.09em;
-  color: var(--demeter-muted); margin: 0 0 0.2rem;
-}
-/* A <dd> carries a 40px browser indent that made every value look misaligned
-   against its own label. */
-.vcard__facts dd {
-  margin: 0;
-  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 0.92rem; line-height: 1.5; color: var(--demeter-body);
-}
-.vcard__cta {
-  margin-top: auto; align-self: flex-start;
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
-  border-radius: var(--demeter-radius-pill); padding: 0.55rem 1.1rem; font-weight: 600; font-size: 0.88rem;
-  text-decoration: none; min-height: 44px; display: inline-flex; align-items: center;
-}
-.vcard__cta:hover { background: var(--demeter-ink); }
 .gpage__cta { margin-top: auto; align-self: flex-start; background: var(--civica-pine); color: #fff; border-radius: var(--demeter-radius-pill); padding: 0.55rem 1.1rem; font-weight: 700; font-size: 0.9rem; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
 .vpage__foot, .gpage__foot, .spage__foot { font-size: 0.85rem; color: var(--civica-graphite); border-top: 1px solid #E4DFD5; padding-top: 1rem; margin-top: 2rem; }
 .gpage__crumb { font-size: 0.8rem; color: var(--civica-muted); margin-bottom: 0.4rem; }
@@ -5003,24 +4946,14 @@ html {
 .ssignon__submit { align-self: flex-start; background: var(--civica-pine); color: #fff; border: none; border-radius: var(--demeter-radius-pill); padding: 0.7rem 1.4rem; font-weight: 700; font-size: 0.95rem; min-height: 48px; }
 .ssignon__submit:disabled { background: var(--civica-pine-disabled); }
 
-/* /verify — measured grounded-rate readout. Deliberately restrained: this is
-   evidence, not a marketing stat, so no gradient, no oversized number. */
-.vstat { margin: 1.75rem 0 0; padding: 1.25rem 1.35rem; background: #fff;
-  border: 1px solid #E4DFD5; border-radius: var(--demeter-radius-card); }
-.vstat__figure { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.6rem; }
-.vstat__pct { font-size: 2.1rem; font-weight: 650; color: var(--civica-pine); line-height: 1; }
-.vstat__unit { font-size: 0.97rem; color: var(--civica-ink); }
-.vstat__pending { font-size: 1.15rem; font-weight: 600; color: #6E5F55; }
-.vstat__note { margin: 0.7rem 0 0; font-size: 0.9rem; line-height: 1.55; color: #5E4F45; }
-
 /* /verify is a DEMETER surface (DEMETER-DESIGN.md), and was the last page still
    wearing Civica's. Half of it converted with the cards, which is worse than
    either — a heavy sans headline above serif cards reads as two sites stapled
    together. The shared .vpage/.gpage/.spage rules above keep dressing the
    guides and supporters pages; these take ONLY /verify off that palette.
 
-   Wider than the shared 780px because the grid now flows: at 780 the cards
-   never got a third column no matter how much room the window had. */
+   Wider than the shared 780px because the state list runs three columns —
+   name, program and agency, links — and 780 crushed the middle one. */
 .vpage { color: var(--demeter-ink); max-width: 940px; }
 .vpage__title {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
@@ -5038,35 +4971,11 @@ html {
   max-width: 62ch; line-height: 1.6;
 }
 .vpage__foot a { color: var(--demeter-terracotta-deep); }
-.vstat {
-  background: var(--demeter-card); border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
-}
-.vstat__pct {
-  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  color: var(--demeter-terracotta-deep); font-weight: 600;
-}
-.vstat__unit, .vstat__pending { color: var(--demeter-ink); }
-/* Serif speaks, sans labels: "Not yet measured" is a status label and stays
-   sans; the paragraph explaining it is prose, and was the one block of body
-   copy on the page still set in the wrong family. */
-.vstat__note, .vstat__unit {
-  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-}
-.vstat__note { color: var(--demeter-muted); }
-/* Same soft-callout pattern as .worksheet__guest-note and
-   .screen-landing__ask-note — reused, not a new tint. */
-.vstat__flag {
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.85rem; line-height: 1.5; color: var(--demeter-terracotta-deep);
-  background: #FBF1EC; border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner);
-  padding: 0.6rem 0.85rem; margin: 0.85rem 0 0;
-}
 
 /* ── /verify, the pass ──────────────────────────────────────────────────────
    Many of this page's conventions had drifted from the rest of the surface:
-   headings at page-title weight inside cards, labels in the serif that is
-   reserved for prose, and a grid whose cards each ended wherever their own
-   content did. */
+   headings at page-title weight, and labels set in the serif that is reserved
+   for prose. */
 
 /* #21 — the page breathes. Sections ran into each other at a uniform 1rem, so
    nothing signalled where one idea ended. */
@@ -5079,76 +4988,141 @@ html {
   font-size: 1.16rem; line-height: 1.55; color: var(--demeter-ink);
   margin-bottom: 1.4rem;
 }
-.vstat { margin-top: 2rem; }
+/* ── /verify — the state list ───────────────────────────────────────────────
+   The page's job is "find your state", so the states are a LIST, not a grid of
+   cards. 53 cards of unequal height in ship order made the one task the page
+   exists for the hardest thing on it: no scan order, no shared edge to run an
+   eye down, and each row's real content — the agency, the application link —
+   buried under a status badge and four provenance labels.
 
-/* #25 — THE UMBRELLA. Full width above the grid, in paper rather than card
-   white, so it reads as the ground the cards sit on rather than as a
-   fifty-fourth card. */
-.vusda {
-  margin: 2.25rem 0 1.25rem; padding: 1.15rem 1.35rem;
-  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
-  border-radius: var(--demeter-radius-card);
-}
-.vusda__eyebrow {
+   Rows, alphabetical, grouped by initial. Nothing here is a box. */
+.vpage__srclink { color: var(--demeter-terracotta-deep); }
+
+.vstates__count {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
-  color: var(--demeter-muted); margin: 0 0 0.45rem;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--demeter-muted); margin: 0 0 1.25rem;
 }
-.vusda__body {
+
+.vstates__group { margin: 0 0 1.75rem; }
+/* The initial is a WAYFINDING MARK rather than a heading anyone reads as
+   prose — muted, so it registers peripherally while scrolling and never
+   competes with the state names beside it. */
+.vstates__letter {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1rem; line-height: 1.6; color: var(--demeter-body); margin: 0; max-width: 68ch;
+  font-size: 1.4rem; font-weight: 600; color: var(--demeter-muted);
+  line-height: 1; margin: 0 0 0.25rem;
+  border-bottom: 1px solid var(--demeter-rule); padding-bottom: 0.5rem;
 }
-.vusda__link { color: var(--demeter-terracotta-deep); }
+.vstates__list { list-style: none; margin: 0; padding: 0; }
 
-/* #26 — EQUAL HEIGHTS. `align-items: start` let every card end wherever its
-   own content did, so a row read as a ragged edge rather than as a set of
-   comparable things. Stretch, and the actions block pins to the bottom. */
-.vpage__grid { align-items: stretch; gap: 1.15rem; margin: 1.25rem 0 2.25rem; }
-.vcard { height: 100%; }
+/* Long unbroken agency names and portal URLs have no break opportunity and
+   used to set a floor on the card width — /verify overflowed by 96px at
+   320px. On a row that floor would push the whole grid instead. */
+.vrow {
+  display: grid; gap: 0.25rem 1rem;
+  padding: 0.7rem 0.25rem;
+  border-bottom: 1px solid var(--demeter-rule);
+  overflow-wrap: anywhere;
+}
+.vrow:last-child { border-bottom: 0; }
+.vrow:hover { background: var(--demeter-tint); }
 
-/* #22b — the state's name, spelled out, with a bigger flag beside it. */
-.vcard__head { align-items: flex-start; gap: 0.7rem; }
-.vcard__state { display: flex; align-items: center; gap: 0.65rem; }
-.vcard__statename {
+.vrow__id { display: flex; align-items: center; gap: 0.6rem; }
+.vrow__name {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; color: var(--demeter-ink);
-  line-height: 1.2;
+  font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; color: var(--demeter-ink);
+  line-height: 1.25;
 }
-.vcard__statecode { color: var(--demeter-muted); font-weight: 400; }
-/* The flag component prints the code too; with the name beside it that is the
-   same fact twice. */
-.vcard__state .dmflag__code { display: none; }
+.vrow__code { color: var(--demeter-muted); font-weight: 400; }
+/* The flag component prints the code beside the flag; with the full name in
+   the row that is the same fact twice. Hidden only where there IS a flag, so
+   a jurisdiction with no asset still renders something readable. */
+.vrow .dmflag:not([data-noflag]) .dmflag__code { display: none; }
 
-/* #24 — the badge is FILLED. An outline in terracotta read as one more label
-   among the card's other labels; this is the page's only claim of status and
-   should look like a stamp. */
-.vcard__badge {
-  display: inline-flex; align-items: center; gap: 0.25rem;
-  color: var(--demeter-paper); background: var(--demeter-terracotta-deep);
-  border: 0; flex: none;
+.vrow__prog { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.vrow__program {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.95rem; line-height: 1.4; color: var(--demeter-body);
 }
-
-/* #22a — two doors, side by side, sitting on the bottom edge of every card. */
-.vcard__actions {
-  margin-top: auto; padding-top: 0.9rem;
-  display: flex; flex-wrap: wrap; gap: 0.5rem;
-}
-.vcard__cta { margin-top: 0; }
-/* Ask is the wheat one — it is the product. The agency is terracotta and
-   outlined: a real destination, but not the thing this page is for. */
-.vcard__cta {
-  background: var(--demeter-wheat); color: var(--demeter-ink); font-weight: 700;
-}
-.vcard__cta:hover { background: var(--demeter-wheat); filter: brightness(0.94); }
-.vcard__cta--agency {
-  background: transparent; color: var(--demeter-terracotta-deep);
-  border: 1px solid var(--demeter-terracotta); font-weight: 600;
-}
-.vcard__cta--agency:hover {
-  background: var(--demeter-tint); filter: none; color: var(--demeter-terracotta-deep);
+/* Serif speaks, sans labels: the program is what the state calls SNAP and is
+   read; the agency underneath it is an attribution. */
+.vrow__agency {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; line-height: 1.45; color: var(--demeter-muted);
 }
 
-/* #27 — the tail is prose now, and the graphite footer closes the page. */
+/* PLAIN LINKS, not buttons. 53 rows of filled pills is the card grid again in
+   another shape — and the palette allows one wheat next-action per page,
+   which is the CTA at the foot. */
+.vrow__links { display: flex; flex-wrap: wrap; gap: 0 1rem; }
+.vrow__link {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.86rem; font-weight: 600; color: var(--demeter-terracotta-deep);
+  text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem;
+  /* 44px of vertical target without 44px of visual weight. */
+  min-height: 44px;
+}
+.vrow__link:hover { text-decoration: underline; }
+/* One inline box inside the flex link, so a wrapping label carries its arrow
+   with it instead of leaving it pinned to the far edge. */
+.vrow__linktext { display: inline; }
+/* The portal name is the variable-width thing in the row ("Idalink" against
+   "PAIS (Hawaii DHS SNAP/TANF Application Portal)"). It shrinks and wraps
+   inside its own link; Ask never moves. */
+.vrow__link--portal { min-width: 0; }
+/* NOT --demeter-terracotta: that token is 4.22:1 on paper and is a fill, a
+   border and a hover — never text (see demeter-contrast.test.ts). Ask is
+   distinguished from the agency link by weight and by its inward arrow, and
+   holds its own position in every row. */
+.vrow__link--ask { font-weight: 700; flex: none; }
+
+@media (min-width: 760px) {
+  /* Three columns that ALIGN down the page — the thing a grid of ragged cards
+     could never give you, and the reason this is a list.
+
+     EVERY TRACK IS CONTENT-INDEPENDENT, which is the whole trick: each row is
+     its own grid, so an `auto` track sized to "PAIS (Hawaii DHS SNAP/TANF
+     Application Portal)" on one row and to "Idalink" on the next, and the two
+     fr columns beside it absorbed the difference. The result was 53 rows whose
+     columns each started somewhere slightly different — the card grid's ragged
+     edge, rebuilt in a list. A fixed final track pins all three. */
+  .vrow {
+    grid-template-columns: minmax(9rem, 0.72fr) minmax(0, 1.35fr) 16rem;
+    align-items: center;
+  }
+  /* NOWRAP is the point: with wrapping on, a long portal name pushed Ask onto
+     a line of its own and made that row taller than its neighbours. The name
+     wraps INSIDE its own link instead, and Ask holds its position in every
+     row. */
+  .vrow__links {
+    flex-wrap: nowrap; justify-content: flex-end; align-items: center;
+    gap: 0.85rem; text-align: right;
+  }
+}
+
+/* The one thing a list cannot do: answer a question. The page's only CTA, and
+   the only wheat on it. */
+.vstates__ask {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem;
+  margin: 2.5rem 0 0; padding: 1.25rem 1.35rem;
+  border: 1px solid var(--demeter-rule); border-radius: var(--demeter-radius-card);
+}
+.vstates__askbody {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.55; color: var(--demeter-body); margin: 0; flex: 1 1 18rem;
+}
+.vstates__askcta {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  background: var(--demeter-wheat); color: var(--demeter-ink);
+  border-radius: var(--demeter-radius-pill); padding: 0.55rem 1.2rem;
+  font-weight: 700; font-size: 0.9rem; text-decoration: none;
+  min-height: 44px; display: inline-flex; align-items: center; gap: 0.35rem;
+}
+.vstates__askcta:hover { filter: brightness(0.94); }
+
+/* The prose tail above the graphite footer. /verify no longer has one — this
+   now dresses /feedback, which shares .vpage. */
 .vpage__foot {
   border-top: 1px solid var(--demeter-rule);
   padding-top: 1.5rem; margin-top: 2.5rem;
@@ -8347,11 +8321,11 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    changes per language, so no single breakpoint is right for four of them. */
 .dmnav__inner { flex-wrap: wrap; }
 
-/* /verify overflowed by 96px at 320px, and the offender was inside the card,
-   not the grid: verification sources are long unbroken URLs and instrument
-   names, which have no break opportunity and so set a floor on the card's
-   width. Everything else reflowed correctly around them. */
-.vcard, .vcard__facts dd, .gpage__facts dd {
+/* Long unbroken agency names and URLs have no break opportunity, and on the
+   guides page they still set a floor on the facts block's width — /verify
+   overflowed by 96px at 320px before this. (/verify's own rows carry the
+   same rule on .vrow.) */
+.gpage__facts dd {
   overflow-wrap: anywhere;
 }
 
