@@ -100,3 +100,48 @@ def test_no_archetype_asserts_a_rating_will_change():
         for forbidden in ("will improve", "will raise", "guarantee",
                           "ensures a", "upgrade your rating"):
             assert forbidden not in block
+
+
+def test_a_wrong_scope_giving_figure_blocks_the_artifact():
+    """FirstBank's $126,000 is bank-wide, so pricing one AA off it overstates the
+    ask. Wrong-scope figures have caused more errors in this project than
+    anything else, so the caveat must stop generation, not just annotate it."""
+    import json
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    banks = json.loads((root / "inputs/assessment_areas.json").read_text())["banks"]
+    assert banks["firstbank_tn"].get("ask_scope_caveat"), "fixture lost its caveat"
+
+    before = set((root / "out").glob("firstbank_tn.*"))
+    r = subprocess.run([sys.executable, "-m", "src.generate", "--bank", "firstbank_tn"],
+                       cwd=root, capture_output=True, text=True)
+    assert r.returncode != 0, "a wrong-scope bank generated anyway"
+    assert "wrong scope" in (r.stderr + r.stdout).lower()
+    assert set((root / "out").glob("firstbank_tn.*")) == before, \
+        "refused bank still left a file behind"
+
+
+def test_instrument_quote_is_preferred_over_a_needs_quote():
+    bank = dict(INSTRUMENT, pe_need_quote="a needs narrative",
+                pe_instrument_quote="credit is reflected at the institution level")
+    block = archetype.rationale_block(bank)
+    assert "institution level" in block
+    assert "a needs narrative" not in block
+
+
+def test_a_missing_service_rating_is_refused_not_treated_as_clean():
+    """Ocean, Texas First and Western Alliance had EMPTY svc_rating and fell
+    through to `peer` -- which would have sent them a letter praising giving we
+    never verified, justified by a rating nobody read. An absent rating is not a
+    clean rating."""
+    with pytest.raises(archetype.ArchetypeError):
+        archetype.resolve({"name": "No Rating", "aa_giving_usd": 900_000})
+    with pytest.raises(archetype.ArchetypeError):
+        archetype.resolve({"name": "Blank", "svc_rating": "  ",
+                           "inv_rating": "Low Satisfactory", "aa_giving_usd": 900_000})
+    # ...but an explicit archetype, which requires a human decision, still works.
+    assert archetype.resolve({"name": "Plan bank", "aa_giving_usd": 900_000,
+                              "pitch_archetype": "pooled"}) == "pooled"

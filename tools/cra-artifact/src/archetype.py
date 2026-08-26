@@ -83,6 +83,17 @@ def resolve(bank) -> str:
                 f"unknown pitch_archetype {explicit!r}; valid: {sorted(VALID)}")
         return explicit
 
+    # An ABSENT service rating is not a clean one. Falling through to `peer`
+    # would send a bank a letter praising giving we never verified, on the basis
+    # of a rating we never read -- the unsafe default this project keeps paying
+    # for. Refuse and make someone read the PE.
+    if not _norm(bank.get("svc_rating")):
+        raise ArchetypeError(
+            f"{bank.get('name', 'bank')}: no svc_rating recorded, so the archetype "
+            f"cannot be resolved. The Service Test is the only component that "
+            f"signals anything for us -- read it from the PE, or set "
+            f"pitch_archetype explicitly with a reason.")
+
     band = capacity_band(bank)
     gap = has_service_gap(bank)
 
@@ -170,6 +181,12 @@ def rationale_block(bank) -> str:
         )
 
     quote_html = ""
+    # An instrument-heavy bank has a better quote available than a needs
+    # narrative: the examiner's own statement about where its investments land.
+    if kind == "service_partnership" and bank.get("pe_instrument_quote"):
+        return ('<div class="body-block"><h3>Why we are writing to you</h3>' + lead
+                + f'<div class="quote" style="margin-top:8px;">From that evaluation: '
+                  f'&ldquo;…{bank["pe_instrument_quote"]}.&rdquo;</div></div>')
     if quote and kind in ("remediation", "service_partnership"):
         quote_html = (f'<div class="quote" style="margin-top:8px;">From that '
                       f'evaluation: &ldquo;…{quote}.&rdquo;</div>')

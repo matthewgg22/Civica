@@ -7,6 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.ask import (size_ask, gap_multiplier, NoDocumentedGapError,
                      MIN_VIABLE_GRANT, CEILING)
 from src import generate
+from src import archetype  # noqa: E402
 
 
 def test_ask_is_a_share_of_the_assessment_area_budget_not_the_whole_thing():
@@ -69,7 +70,9 @@ def test_sized_banks_agree_with_the_formula():
             continue
         amt, yrs = b.get("aa_giving_usd"), b.get("review_period_years")
         assert amt and yrs, f"{key}: sized but missing aa_giving_usd/review_period_years"
-        ask, _verdict, _d = size_ask(amt, yrs, b.get("inv_rating", ""), b.get("svc_rating", ""))
+        ask, _verdict, _d = size_ask(amt, yrs, b.get("inv_rating", ""),
+                                     b.get("svc_rating", ""),
+                                     archetype=b.get("pitch_archetype"))
         assert ask == b["ask_usd"], f"{key}: stored {b['ask_usd']} != computed {ask}"
 
 
@@ -84,16 +87,39 @@ def test_sized_banks_store_their_ratings_as_data_not_only_prose():
 
 
 def test_send_refuses_a_bank_with_no_gap_on_any_test_we_feed():
-    """American Business Bank carried a $25,000 ask against three High
-    Satisfactory ratings, and Bank Irvine -- this channel's original first
-    target -- is a Small Bank whose only test is Lending, which no grant moves.
-    Both must be unsendable rather than merely mis-sized."""
+    """Bank Irvine -- this channel's original first target -- is a Small Bank
+    whose only test is Lending, which no grant moves. Helm and Mega have neither
+    a gap nor the capacity to make a peer pitch honest. All must be unsendable
+    rather than merely mis-sized.
+
+    American Business Bank was in this set until 2026-08-26. It is High
+    Satisfactory on both tests, which under the old gap-only screen made it a
+    refusal -- but it discloses $1.6M of assessment-area giving, and capacity is
+    now a screen in its own right. It is a PEER target, covered by the test
+    below.
+    """
     from src import generate
     banks, _a, _o = generate.load_inputs()
     flagged = {k for k, b in banks.items() if b.get("target_status") == "no-target"}
-    assert {"american_business_bank", "bank_irvine", "helm_bank", "mega_bank"} <= flagged
+    assert {"bank_irvine", "helm_bank", "mega_bank"} <= flagged
     for key in flagged:
         assert "NO TARGET" in banks[key].get("ask_sizing", ""), f"{key}: no stated reason"
+
+
+def test_a_peer_target_states_capacity_as_its_basis():
+    """A peer bank has no gap by design, so its ask cannot be justified by
+    pressure. It must instead record the disclosed giving that put it on the
+    list -- otherwise 'no gap' and 'no reason' become indistinguishable."""
+    from src import generate
+    banks, _a, _o = generate.load_inputs()
+    peers = {k: b for k, b in banks.items() if b.get("pitch_archetype") == "peer"}
+    assert peers, "no peer targets loaded"
+    for key, b in peers.items():
+        assert b.get("target_status") == "target", f"{key}: a peer bank is a target"
+        assert b.get("aa_giving_usd"), f"{key}: peer pitch with no disclosed giving"
+        assert "NO TARGET" not in b.get("ask_sizing", ""), key
+        assert "capacity" in b.get("ask_sizing", "").lower(), \
+            f"{key}: ask_sizing must say the anchor is capacity, not a gap"
 
 
 def test_every_bank_declares_a_target_status():
@@ -101,6 +127,11 @@ def test_every_bank_declares_a_target_status():
     banks, _a, _o = generate.load_inputs()
     for key, b in banks.items():
         assert b.get("target_status") in ("target", "no-target"), key
+        # A peer bank is a TARGET. The old vocabulary conflated "target" with
+        # "has a documented gap", which is the exact conflation the capacity
+        # screen undid -- see docs/strategy/targeting-thesis-challenge-2026-08-25.md.
+        if b.get("pitch_archetype"):
+            assert b["pitch_archetype"] in archetype.VALID, key
 
 
 def test_a_pooled_share_never_rounds_away_to_nothing():
@@ -154,3 +185,16 @@ def test_every_anchor_names_the_assessment_area_it_came_from():
                 f"{key}: anchored on institution-wide giving without saying so in "
                 f"ask_sizing — it must be declared an upper bound, not passed off "
                 f"as an assessment-area figure")
+
+
+def test_a_service_partnership_is_not_priced_off_its_grant_history():
+    """Mechanics discloses $11,000 of Fresno grants against $26.41M of Fresno
+    investments. Sizing off the grant figure returns $500 -- reading the bank
+    with the enormous balance sheet as the one that can least afford us. The low
+    grant number IS the finding this archetype exists to name."""
+    tiny, _v, _d = size_ask(11_000, 3, "Outstanding", "Low Satisfactory")
+    assert tiny < 1_000, "fixture no longer reproduces the underpricing"
+    ask, verdict, detail = size_ask(11_000, 3, "Outstanding", "Low Satisfactory",
+                                    archetype="service_partnership")
+    assert ask == 10_000 and verdict == "earmark"
+    assert "not capacity" in detail["note"]

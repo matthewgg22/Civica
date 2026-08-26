@@ -88,6 +88,18 @@ def size_ask(aa_giving_usd, review_period_years, investment, service,
     # capacity supplies the anchor, and there is simply nothing to escalate
     # against. Routing it through gap_multiplier would raise, which is why
     # the old gap-only screen could not price these banks at all.
+    # An instrument-heavy bank's grant history is NOT its capacity. Mechanics
+    # discloses $11,000 of Fresno grants against $26.41M of Fresno
+    # investments; sizing off the grant figure returns $500, which reads the
+    # bank with an enormous balance sheet as the one that can least afford
+    # us. The low number IS the finding, not the budget. So anchor a service
+    # partnership on the floor -- the smallest grant that can actually fund a
+    # quarter of outreach -- rather than on a deliberate policy of not giving.
+    if archetype == "service_partnership":
+        detail = {"basis": "service_partnership floor",
+                  "note": "grant history is not capacity for this archetype",
+                  "floor": MIN_VIABLE_GRANT}
+        return MIN_VIABLE_GRANT, "earmark", detail
     if archetype == "peer":
         mult = PEER_MULTIPLIER
     else:

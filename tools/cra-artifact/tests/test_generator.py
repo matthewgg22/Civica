@@ -890,10 +890,14 @@ def test_generator_refuses_a_no_target_bank_before_writing_anything(tmp_path):
     Three test fixtures and four no-target banks reached the operator's send
     folder because the guards ran at --send time, AFTER the file was written.
     The refusal now happens before any file is produced."""
-    out = TOOL_ROOT / "out/american_business_bank.pdf"
+    # ABB was the fixture here until 2026-08-26, when it was reclassified a
+    # PEER target: High Satisfactory on both tests but $1.6M of disclosed AA
+    # giving. Under a capacity screen that is a target, not a refusal. helm_bank
+    # is a genuine no-target -- no gap AND no capacity ($25,161).
+    out = TOOL_ROOT / "out/helm_bank.pdf"
     before = out.stat().st_mtime if out.exists() else None
     with pytest.raises(generate.NoDocumentedGapError):
-        generate.main(["--bank", "american_business_bank"])
+        generate.main(["--bank", "helm_bank"])
     after = out.stat().st_mtime if out.exists() else None
     assert before == after, "a refused bank must not (re)write a PDF"
 
@@ -919,7 +923,9 @@ def test_every_sendable_bank_still_generates():
     banks, _a, _o = generate.load_inputs()
     sendable = [k for k, b in banks.items()
                 if b.get("target_status") == "target"
-                and b.get("ask_verdict") in ("earmark", "pool")]
+                and b.get("ask_verdict") in ("earmark", "pool")
+                # a recorded wrong-scope giving figure blocks generation on purpose
+                and not b.get("ask_scope_caveat")]
     # A floor, not a fixed count -- the roster grows as PEs are read, and a
     # hardcoded number turns every new target into a failing test.
     assert len(sendable) >= 17, f"sendable roster shrank to {len(sendable)}"

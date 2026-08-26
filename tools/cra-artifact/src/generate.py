@@ -298,6 +298,14 @@ def main(argv=None):
                 f"{args.bank}: target_status is no-target — the PE shows no gap on any "
                 f"test our activity feeds, so no artifact should exist. "
                 f"{bank.get('ask_sizing','')[:160]}")
+        # A giving figure at the wrong scope silently mis-sizes the ask. FirstBank
+        # discloses $126,000 BANK-WIDE, so pricing Nashville off it overstates the
+        # share. Wrong-scope figures have caused more errors here than any other
+        # single cause, so a recorded caveat blocks the artifact outright.
+        if bank.get("ask_scope_caveat"):
+            raise UnsizedAskError(
+                f"{args.bank}: giving figure is at the wrong scope — "
+                f"{bank['ask_scope_caveat']}")
         if bank.get("ask_verdict") == "unsized":
             raise UnsizedAskError(
                 f"{args.bank}: ask is UNSIZED — the PE discloses no per-assessment-area "
