@@ -25,6 +25,9 @@ export const SNAP_SERVICE_MARK =
 export interface DemeterWelcomeCopy {
   title: string;
   body: string;
+  bodyTwo: string;
+  signIn: string;
+  continueWithout: string;
   cta: string;
   /** Accessible name for the corner dismiss. */
   close: string;
@@ -46,9 +49,12 @@ export interface DemeterWelcomeCopy {
 export function DemeterWelcome({
   copy,
   onDismiss,
+  signInHref,
 }: {
   copy: DemeterWelcomeCopy;
   onDismiss: () => void;
+  /** Where "Sign in" goes. Omitted, the card shows only the continue action. */
+  signInHref?: string;
 }) {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const ctaRef = useRef<HTMLButtonElement | null>(null);
@@ -126,7 +132,7 @@ export function DemeterWelcome({
             for: says whose card this is, next to whose programme this is. */}
         <div className="dmwel__marks">
           <span className="dmwel__brand">
-            <DemeterMark size={30} />
+            <DemeterMark size={40} />
             <span className="dmwel__brandword" translate="no">
               Demeter <em>AI</em>
             </span>
@@ -145,7 +151,10 @@ export function DemeterWelcome({
           {copy.title}
         </h2>
         <p className="dmwel__what">{copy.whatIsSnap}</p>
+        {/* ONE POINT PER LINE. This was two dense paragraphs and the reader had
+            to mine both for the fact that matters. */}
         <p className="dmwel__body">{copy.body}</p>
+        <p className="dmwel__body dmwel__body--quiet">{copy.bodyTwo}</p>
 
         {/* English on every language, by requirement. VERIFIED VERBATIM against
             fns.usda.gov/snap/logo-guidance on 2026-08-26, including the space
@@ -165,14 +174,36 @@ export function DemeterWelcome({
           . USDA does not endorse any goods, services, or enterprises.
         </p>
 
-        <button type="button" className="dmwel__cta" onClick={onDismiss} ref={ctaRef}>
-          {copy.cta}
-          {/* Same arrow the rail's invitation carries, and the same meaning:
-              this goes somewhere. */}
-          <span className="dmwel__arrow" aria-hidden>
-            →
-          </span>
-        </button>
+        {/* SIGN IN LEADS, CONTINUING IS THE QUIET ONE (owner, 2026-08-26).
+            Saving a conversation is the thing someone regrets not doing, and
+            it is invisible until they have lost one. It is still only an
+            offer: continuing without an account is one tap, right underneath,
+            and nothing is gated behind the account. */}
+        {signInHref ? (
+          <>
+            <a className="dmwel__cta" href={signInHref}>
+              {copy.signIn}
+              <span className="dmwel__arrow" aria-hidden>
+                →
+              </span>
+            </a>
+            <button
+              type="button"
+              className="dmwel__secondary"
+              onClick={onDismiss}
+              ref={ctaRef}
+            >
+              {copy.continueWithout}
+            </button>
+          </>
+        ) : (
+          <button type="button" className="dmwel__cta" onClick={onDismiss} ref={ctaRef}>
+            {copy.cta}
+            <span className="dmwel__arrow" aria-hidden>
+              →
+            </span>
+          </button>
+        )}
       </div>
     </div>
   );

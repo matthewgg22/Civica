@@ -128,12 +128,18 @@ export const T = {
     // definition, and this is a program description, not a mandated notice.
     welcome: {
       title: "Food benefits, called SNAP",
+      // TWO SHORT LINES, NOT TWO PARAGRAPHS. The card carried two dense blocks
+      // and the reader had to mine both for the one fact that matters. Each
+      // line makes ONE point now.
+      signIn: "Sign in to save your conversation",
+      continueWithout: "Continue without signing in",
       // LEADS WITH WHAT IT DOES. It opened on "is not the government and
       // cannot decide your case" — two negations before a word about what the
       // thing is for, which reads as a disclaimer wearing an introduction's
       // clothes. The disclaimer still has to be here (it is the confusion the
       // SNAP mark invites), it just does not go first.
-      body: "Demeter answers questions about SNAP from the rules themselves, and shows you which rule each answer came from. It is not the government and cannot decide your case.",
+      body: "Every answer quotes the rule it came from, so you can check it.",
+      bodyTwo: "Demeter is not the government and cannot decide your case.",
       cta: "Start asking",
       close: "Close",
     },
@@ -285,8 +291,12 @@ export const T = {
       // taking more room than the estimate it qualified. Every clause that was
       // load-bearing is still here: it goes when the tab closes, we keep the
       // text, and this is not a decision.
-      privacy: "Closing the tab ends this. We keep the text to check our accuracy. Avoid names.",
-      privacySaved: "Saved to your account, along with this estimate. We keep the text to check our accuracy. Avoid names.",
+      // ONE LINE, TWO FACTS (owner, 2026-08-26). It ran as two sentences plus
+      // a separate "An estimate, not a decision" below it — three statements
+      // where two do. The retention ask survives verbatim in substance: we
+      // keep the text, so avoid names.
+      privacy: "An estimate, not a decision. We keep the text to check our accuracy, so avoid names.",
+      privacySaved: "An estimate, not a decision. Saved to your account; we keep the text to check our accuracy, so avoid names.",
       disclaimer: "An estimate, not a decision.",
       pickState: "Pick your state above and your estimate can build here as you talk.",
       pickStateCta: "Choose your state",
@@ -388,7 +398,10 @@ export const T = {
     emptyTitle: "Pregúntame lo que quieras sobre SNAP",
     welcome: {
       title: "Beneficios de alimentos, llamados SNAP",
-      body: "Demeter responde preguntas sobre SNAP a partir de las reglas mismas, y te muestra de qué regla salió cada respuesta. No es el gobierno y no puede decidir tu caso.",
+      signIn: "Inicia sesión para guardar tu conversación",
+      continueWithout: "Continuar sin iniciar sesión",
+      body: "Cada respuesta cita la regla de la que salió, para que puedas comprobarla.",
+      bodyTwo: "Demeter no es el gobierno y no puede decidir tu caso.",
       cta: "Empezar a preguntar",
       close: "Cerrar",
     },
@@ -502,9 +515,9 @@ export const T = {
       empty:
         "Cuéntale a Demeter sobre tu hogar: quién vive contigo, cuánto ganas, cuánto pagas de renta. Tu estimado se arma aquí.",
       privacy:
-        "Cerrar la pestaña termina esto. Guardamos el texto para verificar nuestra exactitud. Evita nombres.",
+        "Un estimado, no una decisión. Guardamos el texto para verificar nuestra exactitud, así que evita nombres.",
       privacySaved:
-        "Guardada en tu cuenta, junto con este estimado. Guardamos el texto para verificar nuestra exactitud. Evita nombres.",
+        "Un estimado, no una decisión. Guardada en tu cuenta. Guardamos el texto para verificar nuestra exactitud, así que evita nombres.",
       disclaimer: "Un estimado, no una decisión.",
       pickState: "Elige tu estado arriba y tu estimado se irá armando aquí.",
       pickStateCta: "Elige tu estado",
@@ -587,7 +600,10 @@ export const T = {
     emptyTitle: "Hỏi tôi bất cứ điều gì về SNAP",
     welcome: {
       title: "Trợ cấp thực phẩm, gọi là SNAP",
-      body: "Demeter trả lời các câu hỏi về SNAP dựa trên chính các quy định, và cho bạn thấy mỗi câu trả lời dựa vào quy định nào. Demeter không phải là chính phủ và không thể quyết định hồ sơ của bạn.",
+      signIn: "Đăng nhập để lưu cuộc trò chuyện",
+      continueWithout: "Tiếp tục mà không đăng nhập",
+      body: "Mỗi câu trả lời đều trích dẫn quy định mà nó dựa vào, để bạn tự kiểm chứng.",
+      bodyTwo: "Demeter không phải là chính phủ và không thể quyết định hồ sơ của bạn.",
       cta: "Bắt đầu hỏi",
       close: "Đóng",
     },
@@ -701,9 +717,9 @@ export const T = {
       empty:
         "Hãy cho Demeter biết về hộ gia đình của bạn: ai sống cùng bạn, bạn kiếm được bao nhiêu, bạn trả bao nhiêu tiền thuê nhà. Ước tính sẽ hiện ở đây.",
       privacy:
-        "Đóng tab là kết thúc. Chúng tôi lưu nội dung để kiểm tra độ chính xác. Đừng nhập tên.",
+        "Chỉ là ước tính, không phải quyết định. Chúng tôi lưu nội dung để kiểm tra độ chính xác, nên đừng nhập tên.",
       privacySaved:
-        "Đã lưu vào tài khoản của bạn, cùng với mức ước tính này. Chúng tôi lưu nội dung để kiểm tra độ chính xác. Đừng nhập tên.",
+        "Chỉ là ước tính, không phải quyết định. Đã lưu vào tài khoản. Chúng tôi lưu nội dung để kiểm tra độ chính xác, nên đừng nhập tên.",
       disclaimer: "Chỉ là ước tính, không phải quyết định.",
       pickState: "Chọn tiểu bang của bạn ở trên để ước tính có thể hiện ở đây.",
       pickStateCta: "Chọn tiểu bang",
@@ -782,7 +798,10 @@ export const T = {
     emptyTitle: "关于 SNAP，什么都可以问我",
     welcome: {
       title: "食品补助，简称 SNAP",
-      body: "Demeter 依据法规本身回答关于 SNAP 的问题，并告诉您每条回答的依据是哪一条。它不是政府机构，无法决定您的案件。",
+      signIn: "登录以保存对话",
+      continueWithout: "不登录，继续使用",
+      body: "每条回答都会附上依据的法规，方便您自行核对。",
+      bodyTwo: "Demeter 不是政府机构，无法决定您的案件。",
       cta: "开始提问",
       close: "关闭",
     },
@@ -894,9 +913,9 @@ export const T = {
       empty:
         "告诉 Demeter 您的家庭情况：谁和您同住、收入多少、房租多少。估算就会在这里逐步生成。",
       privacy:
-        "关闭标签页即结束。我们保留文字以核查准确性，请勿输入姓名。",
+        "只是估算，不是决定。我们保留文字以核查准确性，请勿输入姓名。",
       privacySaved:
-        "已保存到您的账户，包括此估算。我们保留文字以核查准确性，请勿输入姓名。",
+        "只是估算，不是决定。已保存到您的账户。我们保留文字以核查准确性，请勿输入姓名。",
       disclaimer: "这只是估算，不是决定。",
       pickState: "请在上方选择您所在的州，估算就能在这里生成。",
       pickStateCta: "选择您所在的州",

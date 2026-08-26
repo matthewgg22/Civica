@@ -107,7 +107,8 @@ describe("the conditions attached to using the SNAP logo", () => {
   it("says plainly that this is not the government", () => {
     // The clause permits outreach and education, not the appearance of being
     // the agency. The logo makes that confusion easy; the body undoes it.
-    expect(copy.body.toLowerCase()).toContain("not the government");
+    // It moved to its own line when the card was split into one-point-per-line.
+    expect(copy.bodyTwo.toLowerCase()).toContain("not the government");
   });
 });
 
@@ -158,13 +159,15 @@ describe("when it shows", () => {
     // down while the card is up and takes over when it closes.
     const c = chat();
     expect(document.activeElement?.tagName, "the card holds focus").toBe("BUTTON");
-    fireEvent.click(c.querySelector(".dmwel__cta")!);
+    // "Sign in" is the primary and is a LINK; the dismiss is the quiet button
+    // beneath it, and it is the one that holds focus.
+    fireEvent.click(c.querySelector(".dmwel__secondary")!);
     expect(c.querySelector(".dmwel")).toBeNull();
   });
 
   it("does not come back once dismissed", () => {
     const c = chat();
-    fireEvent.click(c.querySelector(".dmwel__cta")!);
+    fireEvent.click(c.querySelector(".dmwel__secondary")!);
     expect(c.querySelector(".dmwel")).toBeNull();
     // A fresh mount, same browser: it stays gone.
     cleanup();

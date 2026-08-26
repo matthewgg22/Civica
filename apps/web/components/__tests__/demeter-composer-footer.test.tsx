@@ -135,11 +135,15 @@ describe("the footer is one line at rest", () => {
     expect(container.querySelector(".demeter__assent a[href='/terms']")).toBeTruthy();
   });
 
-  it("keeps the safety hint permanently reachable in the gear", () => {
-    // It stops taking a line under the composer, so it must not stop existing.
+  it("the safety hint is under the composer, not filed in the gear", () => {
+    // It WAS in both (owner, 2026-08-26 removed the gear copy): a settings
+    // menu is not where anyone looks before typing, and the hint is only
+    // useful at the moment of typing — which is where it still shows.
     const { container } = mountChat();
     const gear = container.querySelector("details.demeter__gear")!;
-    expect(gear.querySelector(".demeter__gearnote")?.textContent).toBe(T.en.piiHint);
+    expect(gear.querySelector(".demeter__gearnote")).toBeNull();
+    expect(gear.textContent).not.toContain(T.en.piiHint);
+    expect(container.querySelector(".demeter__piihint")?.textContent?.trim()).toBe(T.en.piiHint);
   });
 
   it("the disclaimer and the assent occupy a single paragraph", () => {

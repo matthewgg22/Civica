@@ -146,7 +146,6 @@ export function DemeterSignInModal({
               </svg>
               {dt.continueGoogle}
             </a>
-            <p className="signin-disclosure">{dt.googleDisclosure}</p>
             <div className="signin-divider" role="separator">
               <span>{dt.or}</span>
             </div>

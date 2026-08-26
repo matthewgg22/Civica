@@ -71,7 +71,7 @@ describe("retention copy — the estimate rail must not understate what is kept"
     // keep something, and say why. Loosening this is only safe in that
     // direction; a version that says we keep NOTHING has to keep failing.
     const KEEPS: Record<(typeof LOCALES)[number], RegExp> = {
-      en: /We keep the (question and answer|text)/,
+      en: /we keep the (question and answer|text)/i,
       es: /Guardamos (la pregunta y la respuesta|el texto)/,
       vi: /Chúng tôi (lưu|giữ) (câu hỏi và câu trả lời|nội dung)/,
       zh: /(我们会保留问题和回答|我们保留文字)/,

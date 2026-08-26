@@ -1651,6 +1651,16 @@ export function DemeterChat({
   const agencyHref = selectedPack?.portal?.url ?? "/verify";
 
   const hasChat = messages.length > 0;
+  /** The newest assistant message with content. Follow-ups hang off this one
+   *  alone — see the comment at their render. */
+  const lastAnswerIndex = (() => {
+    for (let i = messages.length - 1; i >= 0; i -= 1) {
+      const m = messages[i];
+      if (m && m.role === "assistant" && m.content) return i;
+    }
+    return -1;
+  })();
+
   /** At least one answer has finished. The mode offer waits for this: before an
    *  answer exists there is nothing to have an opinion about. */
   const answeredOnce = messages.some((m) => m.role === "assistant" && m.content !== "");
@@ -1815,8 +1825,12 @@ export function DemeterChat({
           // whichever end the chips were pinned to, they read as controls
           // someone forgot rather than as the start of a conversation.
           <div className="demeter__empty">
-            <DemeterMark size={52} />
-            <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
+            {/* MARK AND TITLE ON ONE LINE (owner, 2026-08-26). Stacked, the
+                mark sat alone above the heading and read as a spacer. */}
+            <div className="demeter__emptyhead">
+              <DemeterMark size={40} />
+              <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
+            </div>
             {/* WHAT THE PROGRAM IS, then what this is (owner, 2026-08-22).
                 The "What is SNAP?" link is gone, so the definition it pointed
                 at leads here instead — someone who has just been told to
@@ -1908,7 +1922,14 @@ export function DemeterChat({
                   starter questions: a suggestion you can edit before asking is
                   a suggestion, and one that fires on touch is a decision made
                   for you. */}
-              {m.role === "assistant" && m.content && !(busy && i === messages.length - 1) && (
+              {/* ONLY UNDER THE NEWEST ANSWER (owner, 2026-08-26: "I don't need
+                  it for every prompt follow-up"). Every assistant message kept
+                  its own set, so scrolling back through a long conversation
+                  walked past a row of stale suggestions under each one —
+                  answered questions still offering themselves. The follow-ups
+                  are about where the conversation is NOW, so only the last
+                  answer carries them. */}
+              {m.role === "assistant" && m.content && i === lastAnswerIndex && !busy && (
                 <>
                   {splitFollowups(m.content).followups.length > 0 && (
                     <div className="demeter__followups">
@@ -2001,6 +2022,7 @@ export function DemeterChat({
         <DemeterWelcome
           copy={{ ...t.welcome, whatIsSnap: t.emptyWhatIsSnap }}
           onDismiss={dismissWelcome}
+          signInHref={`/sign-in?next=${encodeURIComponent(lang === "en" ? "/chat" : `/${lang}/chat`)}&lang=${lang}`}
         />
       )}
       {showModeOffer && (
@@ -2609,10 +2631,9 @@ export function DemeterChat({
               >
                 {t.feedbackLink}
               </a>
-              {/* The permanent home for the safety hint that used to occupy a
-                  line under the composer forever. Reachable for the whole
-                  conversation, not only before the first message. */}
-              <p className="demeter__gearnote">{t.piiHint}</p>
+              {/* The safety hint lived here too. Removed (owner, 2026-08-26):
+                  it already shows under the composer, where it is actionable,
+                  and a settings menu is not where anyone looks before typing. */}
             </div>
           </details>
               </>

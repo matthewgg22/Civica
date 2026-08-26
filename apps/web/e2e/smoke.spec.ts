@@ -13,8 +13,17 @@ import { test, expect, type Page } from "@playwright/test";
  *  chat has to meet it first, exactly as a real first visitor does. Tolerant of
  *  its absence so a test that has already dismissed it does not fail here. */
 async function dismissWelcome(page: Page) {
-  const cta = page.locator(".dmwel__cta");
-  if (await cta.count()) await cta.click();
+  // THE DISMISS IS THE SECONDARY ACTION. The primary is "Sign in", and it is a
+  // LINK — clicking it navigates instead of closing, so the card stayed up and
+  // everything behind it was unreachable. Falls back to the CTA for the
+  // signed-in-less variant, which has no secondary.
+  const secondary = page.locator(".dmwel__secondary");
+  if (await secondary.count()) {
+    await secondary.click();
+  } else {
+    const cta = page.locator("button.dmwel__cta");
+    if (await cta.count()) await cta.click();
+  }
   await page.locator(".dmwel").waitFor({ state: "detached" }).catch(() => {});
 }
 

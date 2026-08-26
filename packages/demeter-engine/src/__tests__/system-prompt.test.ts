@@ -116,6 +116,24 @@ describe("staff system prompt — persona-specific", () => {
     expect(PUBLIC_SYSTEM_PROMPT).toMatch(/Say what you checked and what it showed/);
   });
 
+  it("puts the ask on its own line instead of bolding it into a paragraph", () => {
+    // A live read: the citizenship question sat mid-paragraph behind a two-line
+    // run of bold. Bold across that many words reads as shouting, and the
+    // reader still had to dig the question out of the prose around it.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/END ON THE QUESTION, ON ITS OWN LINE/);
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/do not bold it into visibility/i);
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/One question, not three/i);
+  });
+
+  it("gives the figure the reader came for its own sentence", () => {
+    // "$5,358" — the limit someone came to find — sat inside parentheses
+    // inside a longer sentence, weighted the same as the words around it.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/THE NUMBER THEY CAME FOR GETS ITS OWN SENTENCE/);
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/bold the FIGURE only/);
+    // And explicitly NOT a card: the fix is a sentence, not a component.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/No callout box and no card/i);
+  });
+
   it("requires facts to be said back as they are heard", () => {
     // Facts are recorded silently and then govern every number after them. A
     // household of one heard as two changes every threshold, and the reader

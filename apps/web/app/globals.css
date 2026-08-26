@@ -9195,3 +9195,94 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   margin-right: auto;
   text-wrap: balance;
 }
+
+/* THE CHIPS' HOVER DID NOTHING. `background: var(--demeter-card)` is #FFFFFF,
+   the same as the page, so the fill it promised was invisible — and against a
+   white ground a transparent chip reads as a slightly-off patch rather than a
+   crisp one. An explicit paper fill at rest, the tint on hover: the one
+   neutral step off white that exists for exactly this. */
+.demeter__followup { background: var(--demeter-paper); }
+.demeter__followup:hover { background: var(--demeter-tint); border-color: var(--demeter-terracotta); }
+
+/* ── A user message is sized to what it says ─────────────────────────────── */
+/* It was capped at 75% of the column, which on the widened thread is ~740px:
+   a one-line question rendered as a band stretched across the right half of
+   the screen, reading as an empty text field rather than as something the
+   person said, and pulling the eye off the reply underneath it.
+   fit-content is the actual fix — the cap only stops a long message running
+   the full measure. */
+.demeter__msg--user {
+  width: fit-content;
+  max-width: min(70%, 34rem);
+  margin-left: auto;
+}
+
+/* ── The source line reads as a footnote ─────────────────────────────────── */
+/* It is emitted as a whole-line italic (`*Based on federal SNAP rules ([eCFR]
+   (url)). FY2026 figures, valid through Sept 30, 2026.*`), so a paragraph whose
+   ENTIRE content is one <em> is that line, and nothing else in an answer has
+   that shape. Targeted this way rather than by adding a marker to the answer
+   format, which every parser downstream would then have to know about.
+
+   Small and muted: the date is the trust-building part, and it was the least
+   legible thing on the line while a maroon underline across the whole citation
+   pulled more eye than a footnote deserves. */
+.demeter__para > em:only-child {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--demeter-muted);
+  font-style: normal;
+}
+.demeter__para > em:only-child a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--demeter-rule-strong);
+  text-underline-offset: 2px;
+}
+.demeter__para > em:only-child a:hover {
+  color: var(--demeter-terracotta-deep);
+  text-decoration-color: currentColor;
+}
+
+/* ── The empty state's head is one line ──────────────────────────────────── */
+.demeter__emptyhead { display: flex; align-items: center; gap: 0.6rem; }
+.demeter__emptyhead .demeter__emptytitle { margin: 0; }
+
+/* ── The rail's identity lines up ────────────────────────────────────────── */
+/* The descriptor sat under the whole head row, so it floated a line below the
+   wordmark with no relationship to the mark beside it. Pulled up to sit
+   directly under "Demeter", with its left edge on the wordmark's, so the mark,
+   the name and the descriptor read as one block. */
+.demeter__sbtag { margin-top: -1.15rem; padding-left: calc(34px + 0.5rem); }
+
+/* ── Yellow ground takes white text ──────────────────────────────────────── */
+/* --demeter-wheat is a strong mid-yellow; ink on it reads as a caution label.
+   White is the pairing the mark itself already uses. */
+.vcard__cta { color: var(--demeter-paper); }
+
+/* ── The estimate panel's gaps ───────────────────────────────────────────── */
+/* Each block below the switch carried its own top margin AND the column's gap,
+   so the empty/pick states sat in a pocket of space that read as something
+   missing rather than as breathing room. */
+.dmw__mode + .dmw__empty,
+.dmw__mode + .dmw__pick { margin-top: 0.25rem; }
+.dmw__empty, .dmw__pick { margin-bottom: 0; }
+.dmw__pick { gap: 0.5rem; }
+
+/* The card's second line is the caveat, so it sits a step back from the first
+   without leaving the ink. */
+.dmwel__body--quiet { color: var(--demeter-muted); font-size: 0.9rem; }
+/* Continuing without an account is an offer, not the offer. */
+.dmwel__secondary {
+  display: block; width: 100%; margin-top: 0.55rem;
+  padding: 0.55rem 1rem; min-height: 40px;
+  border: 0; background: none; cursor: pointer;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; color: var(--demeter-muted);
+  text-decoration: underline; text-decoration-color: var(--demeter-rule-strong);
+  text-underline-offset: 3px;
+}
+.dmwel__secondary:hover { color: var(--demeter-ink); text-decoration-color: currentColor; }
+.dmwel__secondary:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 4px; }
+/* The primary is a link now, so it needs the button's own box back. */
+a.dmwel__cta { display: inline-flex; text-decoration: none; }

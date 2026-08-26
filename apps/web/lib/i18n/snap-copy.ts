@@ -62,7 +62,7 @@ export const snapStrings = {
     signin_email_retry: "Use a different address",
     signin_error_invalid_email: "Please enter a valid email address.",
     signin_email_disclosure:
-      "We use your email only to sign you in. No password to remember, and no marketing.",
+      "We use your email only to sign you in.",
 
     // Wizard frame
     wizard_step_of: "Section {current} of {total}",
@@ -310,7 +310,7 @@ export const snapStrings = {
     signin_email_retry: "Usar otro correo",
     signin_error_invalid_email: "Por favor ingresa un correo electrónico válido.",
     signin_email_disclosure:
-      "Usamos tu correo solo para iniciar sesión. Sin contraseña que recordar y sin publicidad.",
+      "Usamos tu correo solo para iniciar sesión.",
 
     wizard_step_of: "Sección {current} de {total}",
     wizard_completed: "% Completado",
