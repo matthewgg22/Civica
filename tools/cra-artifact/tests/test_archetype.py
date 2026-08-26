@@ -103,9 +103,15 @@ def test_no_archetype_asserts_a_rating_will_change():
 
 
 def test_a_wrong_scope_giving_figure_blocks_the_artifact():
-    """FirstBank's $126,000 is bank-wide, so pricing one AA off it overstates the
-    ask. Wrong-scope figures have caused more errors in this project than
-    anything else, so the caveat must stop generation, not just annotate it."""
+    """A pitch that QUOTES a giving figure must not quote one at the wrong scope.
+
+    The fixture was firstbank_tn until 2026-08-26. Its $126,000 is institution-
+    wide, but it is a SERVICE PARTNERSHIP -- the ask is the floor and the pitch
+    never cites a donations number -- so the scope caveat no longer blocks it.
+    glacier_phoenix is the case that still bites: a PEER pitch leads with the
+    bank's own disclosed figure, and Glacier's Phoenix area is limited-scope with
+    no figure of its own.
+    """
     import json
     import subprocess
     import sys
@@ -113,14 +119,14 @@ def test_a_wrong_scope_giving_figure_blocks_the_artifact():
 
     root = Path(__file__).resolve().parents[1]
     banks = json.loads((root / "inputs/assessment_areas.json").read_text())["banks"]
-    assert banks["firstbank_tn"].get("ask_scope_caveat"), "fixture lost its caveat"
+    assert banks["glacier_phoenix"].get("ask_scope_caveat"), "fixture lost its caveat"
 
-    before = set((root / "out").glob("firstbank_tn.*"))
-    r = subprocess.run([sys.executable, "-m", "src.generate", "--bank", "firstbank_tn"],
+    before = set((root / "out").glob("glacier_phoenix.*"))
+    r = subprocess.run([sys.executable, "-m", "src.generate", "--bank", "glacier_phoenix"],
                        cwd=root, capture_output=True, text=True)
-    assert r.returncode != 0, "a wrong-scope bank generated anyway"
+    assert r.returncode != 0, "a wrong-scope peer bank generated anyway"
     assert "wrong scope" in (r.stderr + r.stdout).lower()
-    assert set((root / "out").glob("firstbank_tn.*")) == before, \
+    assert set((root / "out").glob("glacier_phoenix.*")) == before, \
         "refused bank still left a file behind"
 
 
@@ -145,3 +151,43 @@ def test_a_missing_service_rating_is_refused_not_treated_as_clean():
     # ...but an explicit archetype, which requires a human decision, still works.
     assert archetype.resolve({"name": "Plan bank", "aa_giving_usd": 900_000,
                               "pitch_archetype": "pooled"}) == "pooled"
+
+
+def test_a_service_partnership_survives_a_wrong_scope_giving_figure():
+    """The scope guard exists to stop a MIS-SIZED ask and a MIS-QUOTED figure.
+    A service partnership does neither: its ask is the floor, and its pitch leads
+    on the investment-versus-service mismatch rather than on a donations number.
+
+    Prosperity, Glacier and FirstBank each disclose no per-assessment-area
+    donations figure anywhere in their evaluations -- limited-scope areas get no
+    breakout, and FirstBank's $126,000 is institution-wide. Blocking on scope
+    alone would permanently bar real targets over a number that does not exist.
+    """
+    import json
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    banks = json.loads((root / "inputs/assessment_areas.json").read_text())["banks"]
+
+    sp = banks["prosperity_houston"]
+    assert sp.get("ask_scope_caveat"), "fixture lost its caveat"
+    assert archetype.resolve(sp) == "service_partnership"
+    r = subprocess.run([sys.executable, "-m", "src.generate", "--bank",
+                        "prosperity_houston", "--html-only"],
+                       cwd=root, capture_output=True, text=True)
+    assert r.returncode == 0, f"service partnership wrongly refused:\n{r.stderr[-600:]}"
+
+    # ...and the artifact must NOT cite the wrong-scope figure it carries.
+    html = (root / "out/prosperity_houston.html").read_text()
+    assert "3,489,000" not in html and "$3.489" not in html, \
+        "a state-level giving figure leaked into an assessment-area pitch"
+
+    # A PEER bank with a wrong-scope figure is still refused: its pitch quotes it.
+    glacier = banks["glacier_phoenix"]
+    assert archetype.resolve(glacier) == "peer"
+    r2 = subprocess.run([sys.executable, "-m", "src.generate", "--bank", "glacier_phoenix"],
+                        cwd=root, capture_output=True, text=True)
+    assert r2.returncode != 0, "a peer pitch built on a wrong-scope figure"
+    assert "wrong scope" in (r2.stdout + r2.stderr).lower()

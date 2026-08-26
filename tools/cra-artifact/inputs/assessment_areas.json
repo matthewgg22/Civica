@@ -844,7 +844,7 @@
       "ask_sizing": "service-partnership floor: grant history is not capacity. $126,000 of donations against $84,493,000 of qualified investments (both BANK-WIDE - see ask_scope_caveat). Anchored on MIN_VIABLE_GRANT ($10,000), which does not depend on the giving figure, so the amount is sound even while the scope caveat blocks sending.",
       "verified": true,
       "verify_note": "Verified 2026-08-24 from the Jun 6, 2022 FDIC public evaluation. The PE delineates the target AA: 'The Nashville MSA AA includes all 281 census tracts that make up Canon, Davidson, Dickson, Rutherford, Williamson, and Wilson Counties, six of 13 total counties that make up the Nashville-Davidson-Murfreesboro-Franklin, Tennessee MSA'. NOTE: the PE spells it 'Canon'; the county is CANNON County, TN (FIPS 47015), and all six resolve in the Tennessee fact base. RESOLVES a fourth corrupt CRAPES row \u2014 the API reported LENDING_RATING 'Substantial Non Complianc' with INVEST_RATING missing against a Satisfactory overall rating.",
-      "pe_giving": "INSTITUTION-WIDE ONLY \u2014 93 qualified investments totaling $84,493,000 'for the bank as a whole', of which DONATIONS are just $126,000. The Nashville MSA AA received 45 QIs totaling $39.6M but the PE gives no Nashville donation figure.",
+      "pe_giving": "NO NASHVILLE-SCOPED DONATIONS FIGURE EXISTS in this PE. The State of Tennessee table gives the Nashville MSA AA as 45 qualified investments totaling $39,639 thousand \u2014 investments-inclusive, not donations. Donations appear exactly once in the document, on the institution table: 26 qualified grants and donations totaling $126 thousand, BANK-WIDE across all states, against $116,633 thousand of investments. There is no per-AA and no per-state donations row.",
       "pe_need_quote": "The bank makes its alternative delivery systems unreasonably accessible to significant portions of the Nashville MSA AA \u2026 the bank does not have ATMs in low- and moderate-income tracts, thereby reflecting a very poor level",
       "pe_mined": "per-assessment-area, 2026-08-24",
       "documented_gap": "Service Test is Low Satisfactory institution-wide, and the Nashville MSA AA finding is sharper than the rating: delivery systems are 'unreasonably accessible to significant portions' of the AA, with no ATMs in low- or moderate-income tracts \u2014 'a very poor level'. That is a documented failure to reach LMI households through the bank's own channels, which is precisely what an outreach campaign answers.",
@@ -857,7 +857,7 @@
       "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: CONSISTENT. Their FY2026 CRA public file confirms the Nashville MSA AA as Cannon, Davidson, Dickson, Rutherford, Williamson and Wilson \u2014 exact match \u2014 and the bundled PE contains BOTH spellings, confirming 'Canon' is a typo for Cannon. The page also confirms the 2022 FDIC exam and Satisfactory rating. NOTE: BankFind lists this bank as Fed-supervised today while the PE was FDIC-conducted; the supervisor changed after the exam.",
       "pe_investment_usd": 84493000,
       "pe_investment_note": "BANK-WIDE, not Nashville-scoped: '93 QIs totaling $84,493,000, which includes donations of $126,000'. The $126,000 giving figure on this record is bank-wide from the SAME sentence, so the ratio is apples-to-apples -- but the ask is sized off a bank-wide giving figure and therefore OVERSTATES the Nashville share. Resolve to a Tennessee/Nashville figure before sending.",
-      "ask_scope_caveat": "aa_giving_usd is bank-wide, not AA-scoped. Do not send until resolved.",
+      "ask_scope_caveat": "aa_giving_usd is INSTITUTION-wide, because the PE contains no per-assessment-area donations figure anywhere. This does not block the artifact: the service-partnership ask is MIN_VIABLE_GRANT and the pitch never cites a donations number. It DOES mean no assessment-area giving claim may be made.",
       "pitch_archetype": "service_partnership",
       "pe_verified_current_against": "FED CRA search + FDIC CRAPES, 2026-08-26 \u2014 RSSD 436159 is absent from the Fed pull and cert 8663's newest CRAPES exam is the 2022-06-06 one on file, so this PE is current. An earlier staleness alarm here was a NAME COLLISION with First Bank of Waverly, Iowa (RSSD 376442)."
     },
@@ -1239,8 +1239,8 @@
       "aa_giving_usd": 3489000,
       "review_period_years": 5,
       "pe_investment_usd": 557397000,
-      "pe_giving": "STATE OF TEXAS, not Houston: donations subtotal 1,068 for $3,489 thousand against qualified investments of $557,397 thousand. The PE breaks investments out by assessment area but does NOT give a Houston-scoped donations figure.",
-      "ask_scope_caveat": "aa_giving_usd is STATE-level (Texas), not Houston-scoped. The PE discloses no per-AA donations figure. Do not send until someone reads a Houston figure out of the document or a successor PE.",
+      "pe_giving": "NO HOUSTON-SCOPED DONATIONS FIGURE EXISTS in this PE, and this was established by reading the tables, not inferred. Only the FULL-SCOPE areas (OKC and DFW) receive a 'Qualified Investments' table with a Qualified Donations row; the Houston MSA AA is LIMITED-SCOPE and appears only as a row in the state table \u2014 192 items totaling $158,870 thousand, investments and donations combined. Texas donations are given once, for the whole rated area: 1,068 for $3,489 thousand against $557,397 thousand of investments.",
+      "ask_scope_caveat": "aa_giving_usd is TEXAS rated-area, not Houston-scoped, because the PE contains no Houston donations figure at all \u2014 Houston is a limited-scope area and gets no breakout. This does not block the artifact: the service-partnership ask is MIN_VIABLE_GRANT and the pitch never cites a donations number. It DOES mean no assessment-area giving claim may be made.",
       "pe_mined": true,
       "target_status": "target",
       "pitch_archetype": "service_partnership",
@@ -1350,7 +1350,7 @@
       "aa_giving_usd": 43600000,
       "review_period_years": 3,
       "ask_scope_caveat": "aa_giving_usd is STATE-level Arizona ($43.6M of investments AND grants combined), not Phoenix-scoped and not donations-only. Phoenix is a LIMITED-SCOPE area and the PE discloses no Phoenix donations figure. Do not send until a Phoenix figure is read from a successor PE.",
-      "pe_giving": "NO PHOENIX ASSESSMENT AREA FIGURE EXISTS in this PE. The only Arizona number is for the whole rated area: \"the bank made 425 investments and grants totaling $43.6 million in the state of Arizona\" \u2014 investments and grants combined, statewide, not this assessment area. The full-scope Arizona area is the PRESCOTT assessment area, whose $886,000 of qualified investments, grants and donations belongs to Prescott and not to the Phoenix assessment area.",
+      "pe_giving": "NO PHOENIX-SCOPED DONATIONS FIGURE EXISTS in this PE. The Arizona table gives the Phoenix row as 10 items totaling $18,932 thousand, and that row sits ABOVE the 'Qualified Grants & Donations' line \u2014 so it is investments only. Grants and donations are reported once for the whole rated area: 403 for $1,008 thousand. Glacier is pitched as a PEER, and a peer pitch leads with the bank's own disclosed assessment-area figure, so this record stays BLOCKED. Phoenix is limited-scope; the full-scope Arizona area is Prescott.",
       "pe_mined": true,
       "target_status": "target",
       "pitch_archetype": "peer",
@@ -1363,7 +1363,8 @@
       "verify_note": "Identity confirmed via FDIC BankFind: cert 30788, RSSD 2634191, Kalispell MT, regulator FDIC, $31.6B, active. Assessment area read from the August 18, 2025 PE: the Arizona table lists \"Phoenix Maricopa, Pinal 1,104\" tracts, and the scope note states \"the Prescott AA was evaluated using full-scope procedures\" \u2014 Phoenix is limited-scope. Arizona ratings read from the narrative: \"CRA RATING FOR ARIZONA: SATISFACTORY The Lending Test is rated: Low Satisfactory The Investment Test is rated: High Satisfactory The Service Test is rated: High Satisfactory\".",
       "pe_verified_current_against": "FDIC CRAPES, 2026-08-26 \u2014 cert 30788, newest exam 2025-08-18.",
       "active": true,
-      "active_checked": "2026-08-26"
+      "active_checked": "2026-08-26",
+      "pe_investment_usd": 18932000
     }
   }
 }

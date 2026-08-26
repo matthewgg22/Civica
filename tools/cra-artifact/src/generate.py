@@ -302,7 +302,16 @@ def main(argv=None):
         # discloses $126,000 BANK-WIDE, so pricing Nashville off it overstates the
         # share. Wrong-scope figures have caused more errors here than any other
         # single cause, so a recorded caveat blocks the artifact outright.
-        if bank.get("ask_scope_caveat"):
+        # A wrong-scope giving figure is only dangerous where it actually does
+        # something: it either SIZES the ask or is QUOTED in the pitch. For a
+        # service partnership it does neither -- the ask is MIN_VIABLE_GRANT and
+        # the rationale block leads on the investment-versus-service mismatch,
+        # never on a donations number. Prosperity, Glacier and FirstBank each
+        # turned out to disclose no per-AA donations figure ANYWHERE (limited-
+        # scope areas get no breakout, and FirstBank's $126,000 is institution-
+        # wide), so blocking on scope alone would permanently bar three real
+        # targets over a figure their evaluations do not contain.
+        if bank.get("ask_scope_caveat") and archetype.resolve(bank) != "service_partnership":
             raise UnsizedAskError(
                 f"{args.bank}: giving figure is at the wrong scope — "
                 f"{bank['ask_scope_caveat']}")
