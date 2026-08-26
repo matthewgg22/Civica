@@ -4998,11 +4998,41 @@ html {
    Rows, alphabetical, grouped by initial. Nothing here is a box. */
 .vpage__srclink { color: var(--demeter-terracotta-deep); }
 
-.vstates__count {
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
-  color: var(--demeter-muted); margin: 0 0 1.25rem;
+/* BLACK TEXT, owner call (2026-08-26). The rest of the surface reads on a warm
+   near-black (--demeter-ink #232220) with body copy two steps lighter; on a
+   53-row directory that stack turned the agency line — the single fact most
+   people came for — into the palest thing on the page.
+
+   Written as literal colours on .vpage--states rather than as token overrides
+   on purpose: demeter-contrast.test.ts resolves each token by taking the FIRST
+   `--demeter-ink: #…` match in this file, so a local override sitting above
+   :root would silently redefine what that test measures. Scoped to the states
+   page, not .vpage, because /feedback shares that class. */
+/* Wider than the 940px the page inherits. Three real columns now carry real
+   content — a 67-character agency and portal names up to "ConneCT
+   (connect.ct.gov) / MyDSS" — and at 940 the third column wrapped to three
+   lines, which put back exactly the ragged row heights the list was for.
+   1080 still sits inside the nav's own 1180 max. */
+.vpage--states { color: #000000; max-width: 1080px; }
+.vpage--states .vpage__title { color: #000000; }
+.vpage--states .vpage__lede { color: #141414; }
+
+/* Jump-to-letter. 53 rows is about four phone screens to reach Wyoming. */
+.vjump {
+  display: flex; flex-wrap: wrap; gap: 0.15rem;
+  margin: 0 0 1.5rem; padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--demeter-rule);
 }
+.vjump__letter {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; font-weight: 700; color: var(--demeter-terracotta-deep);
+  text-decoration: none; border-radius: var(--demeter-radius-inner);
+  /* 44px targets, edge to edge: these sit adjacent, so anything smaller puts
+     26 mistappable links in a row on a phone. */
+  min-width: 2.4rem; min-height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.vjump__letter:hover { background: var(--demeter-tint); }
 
 .vstates__group { margin: 0 0 1.75rem; }
 /* The initial is a WAYFINDING MARK rather than a heading anyone reads as
@@ -5015,6 +5045,9 @@ html {
   border-bottom: 1px solid var(--demeter-rule); padding-bottom: 0.5rem;
 }
 .vstates__list { list-style: none; margin: 0; padding: 0; }
+/* .dmnav is position:sticky at 60px, so a letter jumped to from .vjump would
+   otherwise land underneath it. */
+.vstates__letter { scroll-margin-top: 5rem; }
 
 /* Long unbroken agency names and portal URLs have no break opportunity and
    used to set a floor on the card width — /verify overflowed by 96px at
@@ -5031,31 +5064,47 @@ html {
 .vrow__id { display: flex; align-items: center; gap: 0.6rem; }
 .vrow__name {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; color: var(--demeter-ink);
+  font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; color: #000000;
   line-height: 1.25;
 }
-.vrow__code { color: var(--demeter-muted); font-weight: 400; }
+/* The code stays lighter — it is a disambiguator beside a name already spelled
+   out, and black would give it the same weight as the name. */
+.vrow__code { color: #5A5A5A; font-weight: 400; }
 /* The flag component prints the code beside the flag; with the full name in
    the row that is the same fact twice. Hidden only where there IS a flag, so
    a jurisdiction with no asset still renders something readable. */
 .vrow .dmflag:not([data-noflag]) .dmflag__code { display: none; }
 
 .vrow__prog { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+/* Only nine rows have one, so it can afford to look like a name rather than a
+   label — it is the row's most distinctive fact when it is present at all. */
 .vrow__program {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 0.95rem; line-height: 1.4; color: var(--demeter-body);
+  font-size: 0.95rem; font-weight: 600; line-height: 1.4; color: #000000;
 }
 /* Serif speaks, sans labels: the program is what the state calls SNAP and is
-   read; the agency underneath it is an attribution. */
+   read; the agency is an attribution. Near-black rather than the muted grey —
+   on most rows this is the ONLY line, so it is body copy, not a caption. */
 .vrow__agency {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.82rem; line-height: 1.45; color: var(--demeter-muted);
+  font-size: 0.86rem; line-height: 1.45; color: #1F1F1F;
+}
+/* nowrap so the tag moves to the next line whole, rather than breaking as
+   "· county-" / "administered". */
+.vrow__admin { color: #5A5A5A; white-space: nowrap; }
+/* The parenthetical lifted out of a portal name. Small and grey because it is
+   a caveat on the link above it, not a second link. */
+.vrow__note {
+  display: block;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.75rem; line-height: 1.4; color: #5A5A5A;
 }
 
 /* PLAIN LINKS, not buttons. 53 rows of filled pills is the card grid again in
    another shape — and the palette allows one wheat next-action per page,
    which is the CTA at the foot. */
 .vrow__links { display: flex; flex-wrap: wrap; gap: 0 1rem; }
+.vrow__portal { min-width: 0; display: flex; flex-direction: column; }
 .vrow__link {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.86rem; font-weight: 600; color: var(--demeter-terracotta-deep);
@@ -5088,7 +5137,7 @@ html {
      columns each started somewhere slightly different — the card grid's ragged
      edge, rebuilt in a list. A fixed final track pins all three. */
   .vrow {
-    grid-template-columns: minmax(9rem, 0.72fr) minmax(0, 1.35fr) 16rem;
+    grid-template-columns: minmax(11rem, 0.8fr) minmax(0, 1.35fr) 16rem;
     align-items: center;
   }
   /* NOWRAP is the point: with wrapping on, a long portal name pushed Ask onto
