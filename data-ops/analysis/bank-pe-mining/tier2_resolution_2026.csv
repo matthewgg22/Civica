@@ -14,7 +14,7 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 609,Tompkins Bank & Trust,New York,7842153,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#18 Philadelphia, 1br",Philadelphia,18,1,,
 5903,BankPlus,Mississippi,7790270,Outstanding,Low Satisfactory,one,OUT — LOW NEED,best county ranks #128,Mobile,128,2,,
 4360,Horizon Bank,Indiana,7621571,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#34 Marion, 1br",Marion,34,1,,
-34697,WEX Bank,Utah,7597943,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#37 Salt Lake, both gap, 1br",Salt Lake,37,1,,
+34697,WEX Bank,Utah,7597943,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#37 Salt Lake, both gap, 1br",Salt Lake,37,1,Salt Lake in the PE (11 mentions) but no donation total stated,"in AA, no usable figure"
 16980,Bank of Colorado,Colorado,7572545,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#4 Maricopa, 2br",Maricopa,4,2,,
 29845,Premier Bank,Ohio,7423952,Low Satisfactory,Low Satisfactory,both,DEAD,closed institution,,,,,
 24170,Hanmi Bank,California,7407990,Low Satisfactory,High Satisfactory,one,LOADED,already in the roster,,,,,
@@ -38,21 +38,21 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 90211,Hingham Institution for Savings,Massachusetts,4449837,High Satisfactory,Low Satisfactory,one,OUT — LOW NEED,best county ranks #121,Suffolk,121,1,,
 58596,Carter Bank & Trust,Virginia,4446729,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#44 Mecklenburg, 1br",Mecklenburg,44,1,,
 1536,Bank of Stockton,California,4320510,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#25 Sacramento, 1br",Sacramento,25,1,,
-11507,The Fidelity Bank,North Carolina,4263695,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#44 Mecklenburg, both gap, 1br",Mecklenburg,44,1,,
+11507,The Fidelity Bank,North Carolina,4263695,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#44 Mecklenburg, both gap, 1br",Mecklenburg,44,1,Mecklenburg appears once,likely not a delineated AA county
 25103,City Bank,Texas,4184122,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#2 Harris, both gap, 2br",Harris,2,2,"199 donations totaling $927,385 institution-wide; the AA discussed is College Station MSA",Harris may not be a meaningful AA — verify before pursuing
 15229,First Business Bank,Wisconsin,4082035,Outstanding,Low Satisfactory,one,DEFER — SINGLE GAP,"#34 Marion, 1br",Marion,34,1,,
 32779,Bank of Marin,California,4036176,Low Satisfactory,Low Satisfactory,both,LOADED,already in the roster,,,,,
 33440,Citizens First Bank,Florida,4013943,Substantial Non Complianc,,crit,DEAD,closed institution,,,,,
 25679,International Bank of Commerce,Texas,3958855,Outstanding,Low Satisfactory,one,DEFER — SINGLE GAP,"#20 Hidalgo, 29br",Hidalgo,20,29,,
 57417,Commercial Bank of California,California,3846280,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#1 Los Angeles, 3br",Los Angeles,1,3,,
-14028,First Guaranty Bank,Louisiana,3794968,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#5 Dallas, both gap, 1br",Dallas,5,1,,
+14028,First Guaranty Bank,Louisiana,3794968,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#5 Dallas, both gap, 1br",Dallas,5,1,Dallas is in the PE (61 mentions) but no donation total is stated anywhere,"in AA, no usable figure — needs a table read"
 34102,"Summit Community Bank, Inc",West Virginia,3620991,Low Satisfactory,High Satisfactory,one,DEAD,closed institution,,,,,
 4705,Security Bank of Kansas City,Kansas,3613944,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#78 Jackson, 6br",Jackson,78,6,,
 11578,Burke & Herbert Bank & Trust Company,Virginia,3563307,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#93 Montgomery, 1br",Montgomery,93,1,,
 35361,Five Star Bank,California,3476132,High Satisfactory,Low Satisfactory,one,LOADED,already in the roster,,,,,
 19008,Parkway Bank and Trust Company,Illinois,3435859,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#3 Cook, both gap, 16br",Cook,3,16,"$7,000 in the Illinois AA (Cook/DuPage/Kane/Lake) — $27.1M of investments but almost no grants",$500 pool — not worth an earmark despite 16 Cook branches
 32296,Union Savings Bank,Ohio,3391585,High Satisfactory,Low Satisfactory,one,DEFER — SINGLE GAP,"#21 Franklin, 6br",Franklin,21,6,,
-8468,Exchange Bank,California,3304145,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#39 Santa Clara, both gap, 1br",Santa Clara,39,1,,
+8468,Exchange Bank,California,3304145,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#39 Santa Clara, both gap, 1br",Santa Clara,39,1,Santa Clara appears ZERO times in the PE,REJECTED — target county not in the assessment area
 4537,Landmark Bank,Missouri,3290384,Low Satisfactory,High Satisfactory,one,DEAD,closed institution,,,,,
 22134,Cache Valley Bank,Utah,3281738,High Satisfactory,Low Satisfactory,one,DEFER — SINGLE GAP,"#37 Salt Lake, 1br",Salt Lake,37,1,,
 57368,Bankwell Bank,Connecticut,3230601,High Satisfactory,Low Satisfactory,one,DEFER — SINGLE GAP,"#6 Kings, 1br",Kings,6,1,,
@@ -71,7 +71,7 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 25093,Habib American Bank,New York,2856490,Low Satisfactory,Low Satisfactory,both,LOADED,already in the roster,,,,,
 57463,PCB Bank,California,2854271,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#1 Los Angeles, 9br",Los Angeles,1,9,,
 16470,Jefferson Bank,Texas,2802550,Low Satisfactory,Outstanding,one,DEFER — SINGLE GAP,"#13 Bexar, 10br",Bexar,13,10,,
-34533,First Community Bank,Arkansas,2757543,High Satisfactory,Low Satisfactory,one,DEFER — SINGLE GAP,"#87 Pulaski, 2br",Pulaski,87,2,,
+34533,First Community Bank,Arkansas,2757543,High Satisfactory,Low Satisfactory,one,DEFER — SINGLE GAP,"#87 Pulaski, 2br",Pulaski,87,2,Fulton appears ZERO times in the PE,REJECTED — target county not in the assessment area
 34618,"Macatawa Bank, National Association",Michigan,2733572,High Satisfactory,Low Satisfactory,one,OUT — LOW NEED,best county ranks #112,Kent,112,11,,
 17514,Banterra Bank,Illinois,2726883,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#4 Maricopa, both gap, 4br",Maricopa,4,4,"$4,000 in the Arizona AA",rejected — negligible AA giving despite 4 Maricopa branches
 19333,Republic Bank of Chicago,Illinois,2681738,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#3 Cook, 13br",Cook,3,13,,
@@ -95,7 +95,7 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 698,Wayne Bank,Pennsylvania,2366498,High Satisfactory,Low Satisfactory,one,OUT — LOW NEED,best county ranks #167,Lancaster,167,2,,
 11112,Somerset Trust Company,Pennsylvania,2315834,Low Satisfactory,High Satisfactory,one,OUT — LOW NEED,best county ranks #107,Fairfax,107,1,,
 7799,Citizens & Northern Bank,Pennsylvania,2311213,Low Satisfactory,Low Satisfactory,both,OUT — LOW NEED,best county ranks #167,Lancaster,167,1,,
-57510,Avidbank,California,2298340,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#39 Santa Clara, both gap, 1br",Santa Clara,39,1,,
+57510,Avidbank,California,2298340,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#39 Santa Clara, both gap, 1br",Santa Clara,39,1,Santa Clara appears 4 times — marginal,likely not a delineated AA county; verify before pursuing
 28513,"WaterStone Bank, SSB",Wisconsin,2241040,High Satisfactory,Low Satisfactory,one,DEFER — SINGLE GAP,"#60 Milwaukee, 11br",Milwaukee,60,11,,
 28405,First Fed Bank,Washington,2219706,Low Satisfactory,High Satisfactory,one,OUT — LOW NEED,best county ranks #410,Whatcom,410,3,,
 58581,Texas Partners Bank,Texas,2200996,Low Satisfactory,Low Satisfactory,both,DEAD,closed institution,,,,,
@@ -128,7 +128,7 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 21573,Bank of Tennessee,Tennessee,1875869,Low Satisfactory,Low Satisfactory,both,"QUEUE — DOUBLE GAP, MID NEED","#65 Davidson, both gap",Davidson,65,1,,
 7714,QNB Bank,Pennsylvania,1873899,Low Satisfactory,High Satisfactory,one,OUT — LOW NEED,best county ranks #108,Montgomery,108,5,,
 12517,Bank Five Nine,Wisconsin,1850194,Low Satisfactory,High Satisfactory,one,DEFER — SINGLE GAP,"#60 Milwaukee, 3br",Milwaukee,60,3,,
-5854,"South Central Bank,  Inc.",Kentucky,1845172,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#46 Jefferson, both gap, 1br",Jefferson,46,1,,
+5854,"South Central Bank,  Inc.",Kentucky,1845172,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#46 Jefferson, both gap, 1br",Jefferson,46,1,"$118,380 and $112,730 are stated ""in the AAs"" — plural, institution-wide","in AA, no per-AA split"
 33188,Shinhan Bank America,New York,1841066,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#1 Los Angeles, both gap, 2br",Los Angeles,1,2,"$61,000 of grants is the NY-NJ Multistate MSA AA (53.5% of the bank); no Los Angeles AA figure found",LA AA is secondary — needs a deeper read
 18402,Blackhawk Bank & Trust,Illinois,1835223,Low Satisfactory,Low Satisfactory,both,OUT — LOW NEED,best county ranks #440,Scott,440,4,,
 57777,Meridian Bank,Pennsylvania,1831464,Substantial Non Complianc,Substantial Non Complianc,crit,LOADED,already in the roster,,,,,
@@ -138,7 +138,7 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 15995,PCSB Bank,New York,1788574,High Satisfactory,Low Satisfactory,one,DEAD,closed institution,,,,,
 2240,First American Bank,New Mexico,1779138,Outstanding,Low Satisfactory,one,LOADED,already in the roster,,,,,
 57228,Embassy Bank for the Lehigh Valley,Pennsylvania,1754946,Low Satisfactory,High Satisfactory,one,OUT — LOW NEED,best county ranks #135,Lehigh,135,6,,
-34047,First Community Bank,South Carolina,1735147,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#50 Fulton, both gap, 1br",Fulton,50,1,,
+34047,First Community Bank,South Carolina,1735147,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#50 Fulton, both gap, 1br",Fulton,50,1,Fulton appears ZERO times in the PE,REJECTED — target county not in the assessment area
 33758,Starion Bank,North Dakota,1720130,Low Satisfactory,Low Satisfactory,both,OUT — LOW NEED,best county ranks #124,Dane,124,3,,
 26484,TruNorth Bank,Massachusetts,1665529,Substantial Non Complianc,Substantial Non Complianc,crit,"QUEUE — DOUBLE GAP, MID NEED","#53 Middlesex, crit gap",Middlesex,53,1,,
 1711,Wellworth Bank,Tennessee,1659215,High Satisfactory,Low Satisfactory,one,OUT — LOW NEED,best county ranks #358,Sumner,358,1,,
@@ -153,11 +153,11 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 4433,First Citizens Bank,Iowa,1905697,Low Satisfactory,Low Satisfactory,both,OUT — LOW NEED,best county ranks #1231,Cerro Gordo,1231,2,,
 23473,First Fidelity Bank,Oklahoma,2894984,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#4 Maricopa, both gap, 6br",Maricopa,4,6,"only individual donation examples ($6,600, $17,500); no AA total",no usable AA figure — needs a table read
 660,The Adirondack Trust Company,New York,1714346,Low Satisfactory,Low Satisfactory,both,OUT — LOW NEED,best county ranks #480,Saratoga,480,10,,
-7542,Ameriserv Financial Bank,Pennsylvania,1426921,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#42 Allegheny, both gap, 1br",Allegheny,42,1,,
+7542,Ameriserv Financial Bank,Pennsylvania,1426921,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#42 Allegheny, both gap, 1br",Allegheny,42,1,Allegheny in the PE (9 mentions); disclosed donations belong to the Johnstown/Cambria County AA,"in AA, no Allegheny figure stated"
 16604,Bank Independent,Alabama,2814773,Low Satisfactory,,one,OUT — LOW NEED,best county ranks #161,Madison,161,5,,
 12633,The Central Trust Bank,Missouri,19551204,Low Satisfactory,,one,DEFER — SINGLE GAP,"#48 St. Louis, 10br",St. Louis,48,10,,
 22354,Commercial Bank,Tennessee,2238247,Low Satisfactory,Low Satisfactory,both,"QUEUE — DOUBLE GAP, MID NEED","#65 Davidson, both gap",Davidson,65,1,,
-34562,ENCORE BANK,Arkansas,3705306,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#5 Dallas, both gap, 1br",Dallas,5,1,,
+34562,ENCORE BANK,Arkansas,3705306,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#5 Dallas, both gap, 1br",Dallas,5,1,"Dallas in the PE (34 mentions); the $68,382 donations figure belongs to the LITTLE ROCK MSA AA, the larger figures are institution-level","in AA, no Dallas figure stated"
 16216,The Farmers & Merchants Bank,Arkansas,1852126,Low Satisfactory,,one,OUT — LOW NEED,best county ranks #127,Washington,127,6,,
 1487,First Farmers and Merchants Bank,Tennessee,1763096,Low Satisfactory,Low Satisfactory,both,"QUEUE — DOUBLE GAP, MID NEED","#65 Davidson, both gap",Davidson,65,2,,
 20488,Five Points Bank,Nebraska,2008090,Low Satisfactory,,one,OUT — LOW NEED,best county ranks #132,Douglas,132,3,,
@@ -174,7 +174,7 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 15555,Central Bank,Iowa,2135960,Low Satisfactory,,one,OUT — LOW NEED,best county ranks #146,Polk,146,5,,
 1014,ChoiceOne Bank,Michigan,2724240,Low Satisfactory,Low Satisfactory,both,"QUEUE — DOUBLE GAP, MID NEED","#57 Oakland, both gap",Oakland,57,1,,
 57873,Commonwealth Business Bank,California,1654826,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#1 Los Angeles, both gap, 4br",Los Angeles,1,4,"$215,500 in the Los Angeles-Orange AA (Dallas AA separately got $52,500)","LOADED $12,500 earmark"
-19123,First Western Bank & Trust,North Dakota,2208449,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#4 Maricopa, both gap, 1br",Maricopa,4,1,,
+19123,First Western Bank & Trust,North Dakota,2208449,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#4 Maricopa, both gap, 1br",Maricopa,4,1,Maricopa appears ZERO times in the PE,REJECTED — target county not in the assessment area
 1040,Midland States Bank,Illinois,7782095,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#48 St. Louis, both gap, 7br",St. Louis,48,7,"$156,850 in the St. Louis AA","$10,000 earmark — but its ""Chicago"" AA excludes Cook entirely"
 12944,Orange Bank & Trust Company,New York,2438041,Low Satisfactory,,one,DEFER — SINGLE GAP,"#22 Bronx, 2br",Bronx,22,2,,
 23799,Texas First Bank,Texas,2179880,Low Satisfactory,,one,LOADED,already in the roster,,,,,
@@ -189,12 +189,12 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 27210,InterBank,Oklahoma,4193164,Low Satisfactory,,one,DEFER — SINGLE GAP,"#5 Dallas, 2br",Dallas,5,2,,
 13102,Lake City Bank,Indiana,6412535,Low Satisfactory,,one,DEFER — SINGLE GAP,"#34 Marion, 3br",Marion,34,3,,
 34967,Popular Bank,New York,11104847,Low Satisfactory,,one,DEFER — SINGLE GAP,"#6 Kings, 6br",Kings,6,6,,
-57968,Primis Bank,Virginia,3831355,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#45 Prince George's, both gap, 1br",Prince George's,45,1,,
+57968,Primis Bank,Virginia,3831355,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#45 Prince George's, both gap, 1br",Prince George's,45,1,Prince George's appears once,likely not a delineated AA county
 18129,BankNewport,Rhode Island,2301356,Low Satisfactory,,one,OUT — LOW NEED,best county ranks #153,Providence,153,6,,
 7593,First Citizens Community Bank,Pennsylvania,2208830,Low Satisfactory,,one,DEFER — SINGLE GAP,"#18 Philadelphia, 3br",Philadelphia,18,3,,
 6085,First PREMIER Bank,South Dakota,3503723,Low Satisfactory,,one,OUT — LOW NEED,best county ranks #407,Minnehaha,407,5,,
 1058,Midwest BankCentre,Missouri,2374880,Low Satisfactory,,one,DEFER — SINGLE GAP,"#48 St. Louis, 9br",St. Louis,48,9,,
-25858,Equity Bank,Kansas,3862184,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#49 Oklahoma, both gap, 2br",Oklahoma,49,2,,
+25858,Equity Bank,Kansas,3862184,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#49 Oklahoma, both gap, 2br",Oklahoma,49,2,"Oklahoma heavily present (91 mentions); donation figures need care — one reads $88.9M, implausible for donations","in AA, figures need verification"
 12839,First Farmers Bank & Trust Co.,Indiana,2298100,Low Satisfactory,,one,OUT — LOW NEED,best county ranks #236,Tippecanoe,236,2,,
 713,Orrstown Bank,Pennsylvania,2780990,Low Satisfactory,Low Satisfactory,both,"QUEUE — DOUBLE GAP, MID NEED","#68 Baltimore, both gap",Baltimore,68,4,"$89,000 Harrisburg PA, $6,000 Hagerstown MD; Baltimore AA total not stated",no usable AA figure — needs a table read
 58463,SmartBank,Tennessee,4606198,Low Satisfactory,Low Satisfactory,both,"QUEUE — DOUBLE GAP, MID NEED","#72 Jefferson, both gap",Jefferson,72,1,,
@@ -205,7 +205,7 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 30836,Territorial Savings Bank,Hawaii,2085473,Low Satisfactory,,one,DEAD,closed institution,,,,,
 34422,American Bank,Pennsylvania,636580,Low Satisfactory,Low Satisfactory,both,OUT — LOW NEED,best county ranks #135,Lehigh,135,1,,
 1291,Farmers Bank & Trust Company,Arkansas,1621234,Low Satisfactory,Low Satisfactory,both,"QUEUE — DOUBLE GAP, MID NEED","#56 Collin, both gap",Collin,56,2,,
-27677,HomeTrust Bank,North Carolina,3409271,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#36 Gwinnett, both gap, 1br",Gwinnett,36,1,,
+27677,HomeTrust Bank,North Carolina,3409271,Low Satisfactory,Low Satisfactory,both,READ THE PE,"#36 Gwinnett, both gap, 1br",Gwinnett,36,1,Gwinnett appears ZERO times in the PE,REJECTED — target county not in the assessment area
 90303,South Shore Bank,Massachusetts,1482441,Low Satisfactory,,one,OUT — LOW NEED,best county ranks #180,Norfolk,180,8,,
 15511,First State Bank,Texas,1657003,Needs to Improve,,crit,"QUEUE — DOUBLE GAP, MID NEED","#56 Collin, crit gap",Collin,56,1,,
 58696,FVCbank,Virginia,2338667,Needs to Improve,,crit,"QUEUE — DOUBLE GAP, MID NEED","#76 Baltimore City, crit gap",Baltimore City,76,1,,
@@ -215,7 +215,7 @@ cert,name,state,assets_k,investment,service,severity,decision,why,best_county,be
 7783,The Citizens National Bank and Trust Company of Towanda,Pennsylvania,2656955,,Low Satisfactory,one,DEAD,closed institution,,,,,
 5496,Cornerstone Bank,Nebraska,2687176,,Low Satisfactory,one,OUT — LOW NEED,best county ranks #1113,Buffalo,1113,1,,
 12229,First Bank,Missouri,6554829,,Low Satisfactory,one,DEFER — SINGLE GAP,"#1 Los Angeles, 15br",Los Angeles,1,15,,
-13012,First Community Bank,Virginia,3213604,,Low Satisfactory,one,OUT — LOW NEED,best county ranks #253,Washington,253,2,,
+13012,First Community Bank,Virginia,3213604,,Low Satisfactory,one,OUT — LOW NEED,best county ranks #253,Washington,253,2,Fulton appears ZERO times in the PE,REJECTED — target county not in the assessment area
 4865,Sandy Spring Bank,Maryland,13883883,,Low Satisfactory,one,DEAD,closed institution,,,,,
 11579,Union Bank and Trust Company,Virginia,20495690,,Low Satisfactory,one,DEAD,closed institution,,,,,
 11241,Centennial Bank,Arkansas,22808174,,Low Satisfactory,one,DEFER — SINGLE GAP,"#5 Dallas, 1br",Dallas,5,1,,
