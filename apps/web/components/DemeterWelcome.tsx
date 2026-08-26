@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import { DemeterMark } from "./DemeterMark";
 
 /** REQUIRED VERBATIM by FNS wherever an organisation outside USDA uses the SNAP
  *  logo — the same string SnapOverview carries, and for the same reason. Not
@@ -25,6 +26,8 @@ export interface DemeterWelcomeCopy {
   title: string;
   body: string;
   cta: string;
+  /** Accessible name for the corner dismiss. */
+  close: string;
   /** USDA's own description of the program. */
   whatIsSnap: string;
 }
@@ -97,6 +100,33 @@ export function DemeterWelcome({
         ref={cardRef}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* A CORNER DISMISS, not only the button at the foot. Someone who
+            already knows what SNAP is should not have to read to the end of the
+            card to leave it. */}
+        <button
+          type="button"
+          className="dmwel__x"
+          onClick={onDismiss}
+          aria-label={copy.close}
+          title={copy.close}
+        >
+          <svg width="16" height="16" viewBox="0 0 20 20" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+            <path d="M5 5l10 10M15 5L5 15" />
+          </svg>
+        </button>
+
+        {/* WHOSE CARD THIS IS. The SNAP mark says what the PROGRAM is; without
+            Demeter's own mark beside it, a card that opens on the government's
+            logo reads as the government's card — which is the confusion the
+            service mark below exists to prevent, so the fix belongs here too,
+            not only in the notice. */}
+        <div className="dmwel__brand">
+          <DemeterMark size={26} />
+          <span className="dmwel__brandword" translate="no">
+            Demeter <em>AI</em>
+          </span>
+        </div>
+
         {/* Unaltered, at its true 663:460 ratio — "the logo cannot be altered"
             is a condition of being allowed to use it; only its box is ours to
             set. Decorative: the heading beside it names the program, so alt
@@ -118,6 +148,11 @@ export function DemeterWelcome({
 
         <button type="button" className="dmwel__cta" onClick={onDismiss} ref={ctaRef}>
           {copy.cta}
+          {/* Same arrow the rail's invitation carries, and the same meaning:
+              this goes somewhere. */}
+          <span className="dmwel__arrow" aria-hidden>
+            →
+          </span>
         </button>
       </div>
     </div>

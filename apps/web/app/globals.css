@@ -8998,3 +8998,56 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   font-size: 1rem; line-height: 1.6; color: var(--demeter-body);
   margin: 0.5rem 0 0;
 }
+
+/* ── First-visit card, second pass (owner, 2026-08-26) ───────────────────── */
+
+/* Whose card this is, above the program's mark. */
+.dmwel__brand {
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+.dmwel__brandword {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em;
+  color: var(--demeter-ink);
+}
+.dmwel__brandword em { font-style: normal; color: var(--demeter-terracotta-deep); }
+
+/* The corner dismiss. */
+.dmwel__card { position: relative; }
+.dmwel__x {
+  position: absolute; top: 0.6rem; right: 0.6rem;
+  display: grid; place-items: center; width: 32px; height: 32px;
+  border: 0; border-radius: 50%; background: none; cursor: pointer;
+  color: var(--demeter-muted);
+}
+.dmwel__x:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
+.dmwel__x:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
+
+/* LEGIBILITY WAS THE COMPLAINT, and two greys were the cause: the definition
+   sat on --demeter-body and the line below it on --demeter-muted, so the card
+   read as one paragraph that mattered and one that had been greyed out. Both
+   are the card's actual content. One colour, the darker one. */
+.dmwel__what,
+.dmwel__body {
+  color: var(--demeter-ink);
+  font-size: 0.98rem;
+  line-height: 1.62;
+}
+
+/* Smaller: a required notice has to be legible, not prominent. It keeps its
+   own rule above it so it still reads as a separate register from the card. */
+.dmwel__mark {
+  font-size: 0.62rem;
+  line-height: 1.45;
+  color: var(--demeter-muted);
+}
+
+.dmwel__cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+}
+.dmwel__arrow { font-size: 0.95em; line-height: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .dmwel__arrow { transition: transform 140ms ease-out; }
+  .dmwel__cta:hover .dmwel__arrow { transform: translateX(2px); }
+}

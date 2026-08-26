@@ -128,11 +128,17 @@ export const T = {
     // definition, and this is a program description, not a mandated notice.
     welcome: {
       title: "Food benefits, called SNAP",
-      body: "Demeter is not the government and cannot decide your case. It answers questions about SNAP from the rules themselves, and shows you which rule each answer came from.",
+      // LEADS WITH WHAT IT DOES. It opened on "is not the government and
+      // cannot decide your case" — two negations before a word about what the
+      // thing is for, which reads as a disclaimer wearing an introduction's
+      // clothes. The disclaimer still has to be here (it is the confusion the
+      // SNAP mark invites), it just does not go first.
+      body: "Demeter answers questions about SNAP from the rules themselves, and shows you which rule each answer came from. It is not the government and cannot decide your case.",
       cta: "Start asking",
+      close: "Close",
     },
     emptyWhatIsSnap:
-      "SNAP provides food benefits to low-income families to supplement their grocery budget so they can afford the nutritious food essential to health and well-being.",
+      "SNAP (formerly known as food stamps) provides food benefits to low-income families to supplement their grocery budget so they can afford the nutritious food essential to health and well-being.",
     // SAYS WHAT IT DOES, and stops short of what it does not (owner, 2026-08-22).
     // "likely to qualify", never "find out if you are eligible": this produces
     // an ESTIMATE, and the panel two inches away says "an estimate, not a
@@ -383,11 +389,12 @@ export const T = {
     emptyTitle: "Pregúntame lo que quieras sobre SNAP",
     welcome: {
       title: "Beneficios de alimentos, llamados SNAP",
-      body: "Demeter no es el gobierno y no puede decidir tu caso. Responde preguntas sobre SNAP a partir de las reglas mismas, y te muestra de qué regla salió cada respuesta.",
+      body: "Demeter responde preguntas sobre SNAP a partir de las reglas mismas, y te muestra de qué regla salió cada respuesta. No es el gobierno y no puede decidir tu caso.",
       cta: "Empezar a preguntar",
+      close: "Cerrar",
     },
     emptyWhatIsSnap:
-      "SNAP ofrece beneficios de alimentos a familias de bajos ingresos para complementar su presupuesto de comida, de modo que puedan pagar los alimentos nutritivos esenciales para la salud y el bienestar.",
+      "SNAP (antes conocido como cupones de alimentos) ofrece beneficios de alimentos a familias de bajos ingresos para complementar su presupuesto de comida, de modo que puedan pagar los alimentos nutritivos esenciales para la salud y el bienestar.",
     emptyLede:
       "Puedo ayudarte a ver si es probable que califiques e ir armando tu solicitud sobre la marcha — citando la regla detrás de cada respuesta, para que puedas comprobarla.",
     emptyModes:
@@ -581,11 +588,12 @@ export const T = {
     emptyTitle: "Hỏi tôi bất cứ điều gì về SNAP",
     welcome: {
       title: "Trợ cấp thực phẩm, gọi là SNAP",
-      body: "Demeter không phải là chính phủ và không thể quyết định hồ sơ của bạn. Demeter trả lời các câu hỏi về SNAP dựa trên chính các quy định, và cho bạn thấy mỗi câu trả lời dựa vào quy định nào.",
+      body: "Demeter trả lời các câu hỏi về SNAP dựa trên chính các quy định, và cho bạn thấy mỗi câu trả lời dựa vào quy định nào. Demeter không phải là chính phủ và không thể quyết định hồ sơ của bạn.",
       cta: "Bắt đầu hỏi",
+      close: "Đóng",
     },
     emptyWhatIsSnap:
-      "SNAP cung cấp trợ cấp thực phẩm cho các gia đình thu nhập thấp để bổ sung vào ngân sách đi chợ, giúp họ mua được thực phẩm dinh dưỡng thiết yếu cho sức khỏe và đời sống.",
+      "SNAP (trước đây gọi là tem phiếu thực phẩm) cung cấp trợ cấp thực phẩm cho các gia đình thu nhập thấp để bổ sung vào ngân sách đi chợ, giúp họ mua được thực phẩm dinh dưỡng thiết yếu cho sức khỏe và đời sống.",
     emptyLede:
       "Tôi có thể giúp bạn xem mình có khả năng đủ điều kiện hay không và dần dựng nên đơn xin — kèm trích dẫn điều luật cho mỗi câu trả lời, để bạn tự kiểm chứng.",
     emptyModes:
@@ -775,11 +783,12 @@ export const T = {
     emptyTitle: "关于 SNAP，什么都可以问我",
     welcome: {
       title: "食品补助，简称 SNAP",
-      body: "Demeter 不是政府机构，无法决定您的案件。它依据法规本身回答关于 SNAP 的问题，并告诉您每条回答的依据是哪一条。",
+      body: "Demeter 依据法规本身回答关于 SNAP 的问题，并告诉您每条回答的依据是哪一条。它不是政府机构，无法决定您的案件。",
       cta: "开始提问",
+      close: "关闭",
     },
     emptyWhatIsSnap:
-      "SNAP 为低收入家庭提供食品补助，补贴他们的买菜开支，使其能够负担对健康和生活至关重要的营养食品。",
+      "SNAP（旧称食品券）为低收入家庭提供食品补助，补贴他们的买菜开支，使其能够负担对健康和生活至关重要的营养食品。",
     emptyLede:
       "我可以帮您看看是否可能符合资格，并一步步整理出您的申请内容——每条回答都会附上依据的条文，方便您自行核对。",
     emptyModes:
