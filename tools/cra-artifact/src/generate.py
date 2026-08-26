@@ -35,6 +35,15 @@ class TemplateFieldError(Exception):
     pass
 
 
+class UnsizedAskError(Exception):
+    """Raised when a bank has no defensible ask.
+
+    Five Star and Bank of Marin have real documented gaps, but their PEs
+    disclose no per-assessment-area donation figure, so the ask on the record is
+    a retained placeholder rather than a computed figure. Printing it into a PDF
+    would put a number in front of a bank that we cannot justify."""
+
+
 class NoDocumentedGapError(Exception):
     """Raised when --send targets a bank with no gap on any test we feed.
 
@@ -258,12 +267,39 @@ def main(argv=None):
     ap.add_argument("--send", action="store_true",
                     help="content-hash archive the PDF into sent/")
     ap.add_argument("--html-only", action="store_true")
+    ap.add_argument("--allow-nonsendable", action="store_true",
+                    help="render a no-target or unsized bank anyway, for inspection only")
     args = ap.parse_args(argv)
 
     banks, assumptions, org = load_inputs()
     if args.bank not in banks:
         raise KeyError(f"unknown bank key {args.bank!r}; known: {sorted(banks)}")
     bank = banks[args.bank]
+
+    # Refuse before generating anything. A PDF that exists is a PDF that can be
+    # attached to an email -- test fixtures and no-target banks were reaching the
+    # operator's send folder because the guards only ran after the file was
+    # written, and at --send time rather than at generation.
+    if not args.allow_nonsendable:
+        if bank.get("target_status") == "no-target":
+            raise NoDocumentedGapError(
+                f"{args.bank}: target_status is no-target — the PE shows no gap on any "
+                f"test our activity feeds, so no artifact should exist. "
+                f"{bank.get('ask_sizing','')[:160]}")
+        if bank.get("ask_verdict") == "unsized":
+            raise UnsizedAskError(
+                f"{args.bank}: ask is UNSIZED — the PE discloses no per-assessment-area "
+                f"giving figure, so the ask on record is a placeholder. Resolve it before "
+                f"generating. {bank.get('ask_sizing','')[:160]}")
+        if args.send:
+            # Every send-gate runs BEFORE generation. Refusing after the PDF
+            # exists still leaves a sendable file on disk.
+            liveness.assert_alive(args.bank, bank)
+            if not bank.get("verified"):
+                raise UnverifiedBankError(
+                    f"{args.bank} has verified:false — re-read the PE and flip the "
+                    "flag before archiving a send copy")
+
     states.assert_buildable(bank.get("name", "bank"), bank)
     meta = states.state_meta(bank["state"])  # no default: a missing state must fail, not silently score against CA
     metrics = score.load_county_metrics(meta["metrics"])
@@ -301,15 +337,6 @@ def main(argv=None):
     print(f"PDF:  {pdf_path} ({pdf_path.stat().st_size/1024:.0f} KB)")
 
     if args.send:
-        liveness.assert_alive(args.bank, bank)
-        if bank.get("target_status") == "no-target":
-            raise NoDocumentedGapError(
-                f"{args.bank} has target_status:no-target — the PE shows no gap on any "
-                "test our activity feeds, so there is nothing to pitch. See ask_sizing.")
-        if not bank.get("verified"):
-            raise UnverifiedBankError(
-                f"{args.bank} has verified:false — re-read the PE and flip the "
-                "flag before archiving a send copy")
         digest = hashlib.sha256(pdf_path.read_bytes()).hexdigest()[:8]
         sent = TOOL_ROOT / "sent"
         sent.mkdir(exist_ok=True)
