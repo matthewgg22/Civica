@@ -9051,3 +9051,45 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   .dmwel__arrow { transition: transform 140ms ease-out; }
   .dmwel__cta:hover .dmwel__arrow { transform: translateX(2px); }
 }
+
+/* The rail's descriptor on ONE line (owner, 2026-08-26). It used to sit inside
+   the brand column, sharing its width with the toggle button, and wrapped.
+   Full-width now, and pinned: a label that wraps stops reading as a label.
+   Tracking eased from 0.09em so it still fits at the narrowest rail (85vw on
+   a small phone), and the whole rail is a flex column so this needs its own
+   negative margin-top to sit tight under the wordmark. */
+.demeter__sbtag {
+  margin-top: -0.75rem;
+  white-space: nowrap;
+  letter-spacing: 0.055em;
+  font-size: 0.6rem;
+}
+
+/* The rail's descriptor on ONE line (owner, 2026-08-26). It used to sit inside
+   the brand column, sharing its width with the toggle button, and wrapped.
+   Full-width now, and pinned: a label that wraps stops reading as a label.
+   Tracking eased from 0.09em so it still fits at the narrowest rail — min(21.5rem,
+   85vw), which on a 360px phone is ~306px of content. The rail is a flex column
+   with a 1rem gap, so it takes a negative margin to sit tight under the wordmark. */
+.demeter__sbtag {
+  margin-top: -0.85rem;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  /* SHRINKS RATHER THAN CLIPS. nowrap at a fixed size is only safe while the
+     rail is 21.5rem; below ~400px the rail becomes 85vw, and on a 320px phone
+     that leaves ~240px of content against ~270px of text — which nowrap turns
+     into an overflow instead of a wrap. The vw term only bites there: at any
+     width where the rail is its full 21.5rem, 2.2vw is far past the ceiling
+     and this resolves to the flat 0.6rem. */
+  font-size: clamp(0.5rem, 2.2vw, 0.6rem);
+}
+
+/* …AND WRAPS RATHER THAN CLIPS ON A VERY SMALL PHONE. Measured: the label is
+   331px at its full size in a 366px rail. Below ~400px the rail is 85vw, and
+   at 320px that leaves ~238px of content — which no legible size fits on one
+   line. nowrap there would hide the end of the sentence rather than shrink it,
+   so under 400px it is allowed to wrap. One line wherever one line is
+   possible; two lines beats a clipped one. */
+@media (max-width: 399px) {
+  .demeter__sbtag { white-space: normal; }
+}

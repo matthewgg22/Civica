@@ -2260,7 +2260,6 @@ export function DemeterChat({
                   Demeter
                 </span>
               </a>
-              <p className="demeter__sbtag">{t.tagline}</p>
             </div>
             <button
               type="button"
@@ -2276,6 +2275,11 @@ export function DemeterChat({
               </svg>
             </button>
           </div>
+          {/* OUT of the brand column and under the whole head row (owner,
+              2026-08-26). Inside it, the tagline shared its width with the
+              toggle button and wrapped to two lines. Full-width it fits on
+              one, which is what a label ought to do. */}
+          <p className="demeter__sbtag">{t.tagline}</p>
           <div className="demeter__side">
           {/* Yields to the in-column instance on narrow viewports — exactly
               one picker in the DOM at any width (see narrowViewport). */}
