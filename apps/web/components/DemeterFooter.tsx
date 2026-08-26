@@ -28,13 +28,20 @@ const LINK_PATHS = {
 /** Paths with no localized route — always linked canonically. The three legal
  *  documents are published in English only for now, so a /es/terms would 404;
  *  when a translated one ships, drop it from here and add the [lang] route in
- *  the SAME change. */
+ *  the SAME change.
+ *
+ *  /verify joined the list for the same reason supporters did in #837, and had
+ *  the same symptom: there is no app/[lang]/verify route, so the state
+ *  directory's own link 404'd from every Spanish, Vietnamese and Chinese page
+ *  — including the one place whose label promises a reader their own state. It
+ *  had been grouped with /questions, which DOES have a localized route. */
 const UNLOCALIZED: readonly string[] = [
   LINK_PATHS.privacy,
   LINK_PATHS.terms,
   LINK_PATHS.safety,
   LINK_PATHS.feedback,
   LINK_PATHS.supporters,
+  LINK_PATHS.verify,
 ];
 
 /** English is un-prefixed; everything else lives under /es|/vi|/zh. Privacy,
