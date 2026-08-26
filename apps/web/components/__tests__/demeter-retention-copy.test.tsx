@@ -99,9 +99,12 @@ describe("retention copy — the estimate rail must not understate what is kept"
     // Shortened to "avoid names" / "evita nombres" — the ask survives, the
     // verb went. Matched as a pattern so the ask is what is pinned.
     const ASKS: Record<(typeof LOCALES)[number], RegExp> = {
-      en: /avoid (typing )?names/,
-      es: /evita (escribir )?nombres/,
-      vi: /đừng nhập tên/,
+      // CASE-INSENSITIVE since the em-dash pass (2026-08-26): "…accuracy —
+      // avoid names" became two sentences, so the ask now starts a sentence
+      // and is capitalised. What is pinned is the ASK, not its position.
+      en: /avoid (typing )?names/i,
+      es: /evita (escribir )?nombres/i,
+      vi: /đừng nhập tên/i,
       zh: /请勿输入姓名/,
     };
     for (const locale of LOCALES) {
