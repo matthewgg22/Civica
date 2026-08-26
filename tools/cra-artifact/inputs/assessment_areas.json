@@ -33,7 +33,8 @@
       "active": true,
       "active_end_date": null,
       "active_checked": "2026-08-25",
-      "pitch_archetype": "pooled"
+      "pitch_archetype": "pooled",
+      "pe_verified_current_against": "FDIC CRAPES, 2026-08-26 \u2014 cert 59296, Small Bank Evaluation, newest exam 2024-10-15, matching the record. NOT an OCC bank; it was absent from the addressable universe because Small Bank evaluations are filtered out, not because it is OCC."
     },
     "hanmi_bank": {
       "cert": "24170",
@@ -76,7 +77,8 @@
       "active": true,
       "active_end_date": null,
       "active_checked": "2026-08-25",
-      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: CONSISTENT. hanmi.com/community-reinvestment-act lists nine assessment areas (LA-OC, San Diego, NorCal, Chicago, Dallas, NY-NJ, Houston, Fairfax, Duluth), confirming we target LA-OC alone. Their public-comments file records a 2024 CRA PROTEST LETTER from Southern Dallas Community Development Corporation \u2014 the bank is under documented community challenge, though in Dallas rather than our AA."
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25: CONSISTENT. hanmi.com/community-reinvestment-act lists nine assessment areas (LA-OC, San Diego, NorCal, Chicago, Dallas, NY-NJ, Houston, Fairfax, Duluth), confirming we target LA-OC alone. Their public-comments file records a 2024 CRA PROTEST LETTER from Southern Dallas Community Development Corporation \u2014 the bank is under documented community challenge, though in Dallas rather than our AA.",
+      "pe_date_note": "Roster date 2023-06-05 verified against the PE itself (\"PUBLIC DISCLOSURE June 5\"). The CRAPES file id encodes 230606, one day later \u2014 file-id dates are close but not exact, so the PE text wins."
     },
     "five_star_bank": {
       "cert": "35361",
@@ -359,7 +361,7 @@
         "Riverside",
         "San Bernardino"
       ],
-      "pe_date": "2024-04-01",
+      "pe_date": "2023-03-27",
       "pe_url": "https://www.occ.gov/static/cra/craeval/Apr24/14695.pdf",
       "regulator": "OCC",
       "ask_usd": 25000,
@@ -386,7 +388,10 @@
       "active_end_date": null,
       "active_checked": "2026-08-25",
       "aa_structure": "At the Apr 2024 exam the examiner COMBINED three Los Angeles CSA assessment areas 'for analysis and presentation purposes' \u2014 Los Angeles-Long Beach-Anaheim, Oxnard-Thousand Oaks-Ventura, and Riverside-San Bernardino-Ontario \u2014 so our five-county list mirrors the examination treatment rather than merging areas scored apart. NOTE: the bank's CURRENT public file (April 2026) delineates them SEPARATELY as LA-Orange, Ventura, and Riverside-San Bernardino, alongside Oakland, San Diego and San Francisco-San Mateo AAs. If the next exam scores them apart, this record must be narrowed to LA-Orange.",
-      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25 \u2014 cnb.com 'Our Assessment Areas (as of 4/1/2026)'. The bank now lists LA-Orange, Ventura, Riverside-San Bernardino, Oakland, San Diego and San Francisco-San Mateo as SEPARATE California assessment areas, plus DC, FL, GA, NV, NY, TN and VA. Our combined five-county list follows the 2024 examiner's own combination, but it is no longer how the bank presents itself. Re-check at the next exam."
+      "public_file_check": "PUBLIC-FILE CHECK 2026-08-25 \u2014 cnb.com 'Our Assessment Areas (as of 4/1/2026)'. The bank now lists LA-Orange, Ventura, Riverside-San Bernardino, Oakland, San Diego and San Francisco-San Mateo as SEPARATE California assessment areas, plus DC, FL, GA, NV, NY, TN and VA. Our combined five-county list follows the 2024 examiner's own combination, but it is no longer how the bank presents itself. Re-check at the next exam.",
+      "pe_date_prior_value": "2024-04-01",
+      "pe_date_note": "CORRECTED 2026-08-26. The record previously held 2024-04-01, which is the OCC PUBLICATION month (the PDF lives in the Apr24 folder), not the exam date. The document itself opens \"PUBLIC DISCLOSURE March 27, 2023 COMMUNITY REINVESTMENT ACT PERFORMANCE EVALUATION City National Bank Charter Number: 14695\". The artifact would have told the bank \"your April 2024 CRA Performance Evaluation\" about a March 2023 document.",
+      "pe_verified_current_against": "OCC archive probed month-by-month Apr 2024 - Aug 2026 on charter 14695; no later PE published. 2026-08-26."
     },
     "mega_bank": {
       "cert": 58401,
@@ -396,7 +401,7 @@
         "Los Angeles",
         "Orange"
       ],
-      "pe_date": "2025-05-01",
+      "pe_date": "2025-01-21",
       "pe_url": "https://crapes.fdic.gov/publish/2025/58401_250121.PDF",
       "regulator": "FDIC",
       "ask_usd": 5000,
@@ -420,7 +425,10 @@
       "active": true,
       "active_end_date": null,
       "active_checked": "2026-08-25",
-      "pitch_archetype": "pooled"
+      "pitch_archetype": "pooled",
+      "pe_date_prior_value": "2025-05-01",
+      "pe_date_note": "CORRECTED 2026-08-26. 2025-05-01 was the CRAPES public date; the PE itself opens \"PUBLIC DISCLOSURE January 21, 2025\" (file id 2025/58401_250121.PDF).",
+      "pe_verified_current_against": "FDIC CRAPES, 2026-08-26 \u2014 cert 58401, Intermediate Small Bank, newest exam 2025-01-21."
     },
     "western_alliance": {
       "cert": "57512",
@@ -1114,7 +1122,8 @@
       "verified": true,
       "verify_note": "Identity confirmed via FDIC BankFind: cert 23220, RSSD 412751, TX, $8.98B, active. The assessment area delineation was read from the May 22, 2023 OCC PE (charter 16892), verbatim: \"Houston-The Woodlands-Sugar Land MSA (Austin, Brazoria, Chambers, Fort Bend, Galveston, Harris, Liberty, Montgomery, and Waller Counties) and Non-Metro (Matagorda, Walker, Washington, and Wharton Counties)\". Giving, verbatim: \"In the Houston CSA, WNB provided 111 total investment allocations totaling $117.5 million... and 36 grants totaling $17.8 million.\" Component ratings read from the narrative (\"The Investment Test is rated: Outstanding... The Service Test is rated: Outstanding\") rather than the X-grid, which pdftotext flattens into an unusable \"X X X\".",
       "active": true,
-      "active_checked": "2026-08-26"
+      "active_checked": "2026-08-26",
+      "pe_verified_current_against": "OCC archive probed month-by-month May 2023 - Aug 2026 on charter 16892; the only PE published is Oct23/16892.pdf, which opens \"PUBLIC DISCLOSURE May 22, 2023\" \u2014 the exam already on file. Current. 2026-08-26."
     },
     "northfield_bank": {
       "cert": "28710",
@@ -1156,7 +1165,8 @@
       "verified": true,
       "verify_note": "Identity confirmed via FDIC BankFind: cert 28710, RSSD 28013, NY, $5.50B, active \u2014 distinguished from Northfield Savings Bank, cert 14140, VT. The assessment area delineation was read from the May 15, 2023 OCC PE (charter 718063), verbatim: \"The bank has delineated one AA within the New York-Newark Consolidated MMSA (New York MMSA AA), including: Kings and Richmond counties in the New York-Jersey City-White Plains, NY-NJ Metropolitan Division (MD), Union and a portion of Hunterdon counties in the Newark, NJ-PA MD, Middlesex County in the New Brunswick-Lakewood, NJ MD, and the entire Trenton-Princeton, NJ MSA.\" Giving, verbatim: \"Northfield made 138 qualified donations and grants totaling $1.3 million to organizations in the AA.\"",
       "active": true,
-      "active_checked": "2026-08-26"
+      "active_checked": "2026-08-26",
+      "pe_verified_current_against": "OCC archive probed month-by-month May 2023 - Aug 2026 on charter 718063; the only PE published is Oct23/718063.pdf, which opens \"PUBLIC DISCLOSURE May 15, 2023\" \u2014 the exam already on file. Current. 2026-08-26."
     }
   }
 }

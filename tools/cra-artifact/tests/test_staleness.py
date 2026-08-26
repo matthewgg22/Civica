@@ -83,3 +83,30 @@ def test_the_regulator_on_record_is_the_one_that_actually_examines_the_bank():
         if rssd and rssd in INDEX["by_rssd"] and b.get("target_status") == "target":
             assert b.get("regulator") in ("FED", "FRB"), \
                 f"{key}: RSSD {rssd} is in the Federal Reserve index but regulator says {b.get('regulator')}"
+
+
+def test_occ_banks_carry_a_hand_verification_note():
+    """The exam index cannot cover OCC banks -- the OCC publishes no searchable
+    component ratings, so absence from the index is not evidence of currency.
+    Those records must instead carry an explicit hand check."""
+    banks, _a, _o = generate.load_inputs()
+    for key, b in banks.items():
+        if b.get("regulator") != "OCC" or b.get("target_status") != "target":
+            continue
+        note = b.get("pe_verified_current_against", "")
+        assert "OCC archive probed" in note, \
+            f"{key}: OCC bank with no hand staleness check on record"
+
+
+def test_no_publication_month_is_stored_as_an_exam_date():
+    """City National held 2024-04-01 -- the OCC PUBLICATION folder month -- while
+    its evaluation is dated March 27, 2023, and Mega held a CRAPES public date.
+    An artifact that miscites the date of the bank's own evaluation is wrong on a
+    fact the reader can check in one click."""
+    banks, _a, _o = generate.load_inputs()
+    assert banks["city_national"]["pe_date"] == "2023-03-27"
+    assert banks["mega_bank"]["pe_date"] == "2025-01-21"
+    for key, b in banks.items():
+        if b.get("pe_date_prior_value"):
+            assert b.get("pe_date_note", "").startswith("CORRECTED"), \
+                f"{key}: date was changed without recording why"
