@@ -36,10 +36,12 @@ describe("Demeter CSS invariants", () => {
     // Terracotta is for CTAs, links and the mark. A language switcher styled
     // like a primary button competes with the button that starts a
     // conversation. Hover may use it — that means "interactive", not "act here".
-    // Retargeted 2026-08-22: the native select became a .demeter__langbtn
-    // disclosure. Same rule, same reason — a language switcher must not wear
-    // the colour that means "act here".
-    const body = ruleBody(".demeter__langbtn");
+    // Retargeted twice: native select → .demeter__langbtn disclosure →
+    // .demeter__langpick inline row (2026-08-26). Same rule, narrowed reason:
+    // an UNSELECTED language must not wear the colour that means "act here".
+    // The SELECTED one is filled with it deliberately — that fill is how the
+    // row says which language you are reading in.
+    const body = ruleBody(".demeter__langpick");
     expect(body).not.toMatch(/color:\s*var\(--demeter-terracotta\)/);
     expect(body).not.toMatch(/border:[^;]*--demeter-terracotta\)/);
   });

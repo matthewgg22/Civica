@@ -113,11 +113,14 @@ describe("the sidebar — the tracking panel, open by default", () => {
     // dropdown ignored the design system. What is pinned is the INVARIANT,
     // not the element: the picker is in the drawer, it offers every answer
     // language, and the chrome row has no second copy of it.
-    const picker = drawer.querySelector("details.demeter__langmenu")!;
+    // ALL FOUR INLINE since 2026-08-26 — no disclosure at all. The invariant
+    // is unchanged: the picker is in the drawer, it offers every answer
+    // language, and the chrome row has no second copy.
+    const picker = drawer.querySelector(".demeter__langrow")!;
     expect(picker).toBeTruthy();
-    expect(picker.querySelectorAll("button.demeter__langopt").length).toBe(ANSWER_LANGS.length);
+    expect(picker.querySelectorAll("button.demeter__langpick").length).toBe(ANSWER_LANGS.length);
     expect(container.querySelector(".demeter__head select")).toBeNull();
-    expect(container.querySelector(".demeter__head .demeter__langmenu")).toBeNull();
+    expect(container.querySelector(".demeter__head .demeter__langrow")).toBeNull();
   });
 
   it("keeps a state picker OUTSIDE the drawer for narrow screens", () => {
@@ -288,7 +291,7 @@ describe("boxless messages (CSS contract)", () => {
     }
     // And the rail still carries the one language control.
     const { container } = mountChat();
-    expect(container.querySelectorAll(".demeter__langmenu").length).toBe(1);
+    expect(container.querySelectorAll(".demeter__langrow").length).toBe(1);
   });
 
   it("the chrome row carries the skip link and a boxed sign-in, and nothing else", () => {
@@ -313,7 +316,7 @@ describe("boxless messages (CSS contract)", () => {
     const row = container.querySelector("#demeter-sidebar .demeter__railfoot")!;
     expect(row).toBeTruthy();
     expect(row.querySelector("button.demeter__railicon")?.getAttribute("aria-label")).toBe(T.en.clear);
-    expect(row.querySelector("details.demeter__langmenu")).toBeTruthy();
+    expect(row.querySelector(".demeter__langrow")).toBeTruthy();
     const gear = row.querySelector("details.demeter__gear")!;
     expect(gear.querySelector("a[href='/privacy']")).toBeTruthy();
     expect(gear.querySelector("a[href*='/feedback']")).toBeTruthy();
