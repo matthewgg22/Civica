@@ -147,6 +147,40 @@ describe("when it shows", () => {
     expect(chat().querySelector(".dmwel")).toBeTruthy();
   });
 
+  it("shows when storage is BLOCKED — we cannot know they have seen it", () => {
+    // Reversed 2026-08-26. It used to stay hidden when localStorage threw, on
+    // the reasoning that showing it every visit was worse. The two failure
+    // modes are not equal: a card shown again is a second of annoyance; a card
+    // never shown means someone who does not know what SNAP is never finds
+    // out, and never reads that this is not the government.
+    const throwing = {
+      getItem: () => {
+        throw new Error("storage blocked");
+      },
+      setItem: () => {
+        throw new Error("storage blocked");
+      },
+      removeItem: () => {},
+      clear: () => {},
+      key: () => null,
+      length: 0,
+    };
+    const saved = Object.getOwnPropertyDescriptor(window, "localStorage");
+    Object.defineProperty(window, "localStorage", { configurable: true, value: throwing });
+    try {
+      const c = render(
+        <DemeterChat states={VERIFIED_STATES} initialMessages={[]} />,
+      ).container;
+      expect(c.querySelector(".dmwel")).toBeTruthy();
+      // And dismissing still works for the session, even though the setItem
+      // that would remember it throws.
+      fireEvent.click(c.querySelector(".dmwel__secondary")!);
+      expect(c.querySelector(".dmwel")).toBeNull();
+    } finally {
+      if (saved) Object.defineProperty(window, "localStorage", saved);
+    }
+  });
+
   it("never over an existing conversation — they have already met the product", () => {
     expect(chat([{ role: "user", content: "hi" }]).querySelector(".dmwel")).toBeNull();
   });

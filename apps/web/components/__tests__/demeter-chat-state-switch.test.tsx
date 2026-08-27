@@ -321,11 +321,26 @@ describe("composer autofocus on desktop (vercel finding 6)", () => {
     // seed it would assert on the card's button and read as an autofocus
     // regression, which is exactly how it failed in CI: the local jsdom has no
     // localStorage, the card never rendered, and the race stayed invisible.
-    try {
-      window.localStorage.setItem("demeter.welcome.seen", "1");
-    } catch {
-      /* no localStorage here: the card never shows, which is the same state */
-    }
+    // A REAL STORE, not a best-effort seed. This jsdom has no localStorage, so
+    // the old try/catch seed silently did nothing — harmless only while
+    // blocked storage HID the card. It shows in that case now (owner,
+    // 2026-08-26), so the seed has to actually take, or the card takes focus
+    // and this reads as an autofocus regression.
+    const store = new Map<string, string>([["demeter.welcome.seen", "1"]]);
+    const savedLS = Object.getOwnPropertyDescriptor(window, "localStorage");
+    Object.defineProperty(window, "localStorage", {
+      configurable: true,
+      value: {
+        getItem: (k: string) => store.get(k) ?? null,
+        setItem: (k: string, v: string) => void store.set(k, String(v)),
+        removeItem: (k: string) => void store.delete(k),
+        clear: () => store.clear(),
+        key: () => null,
+        get length() {
+          return store.size;
+        },
+      },
+    });
     vi.stubGlobal("matchMedia", (q: string) => ({
       matches: /pointer:\s*fine/.test(q),
       media: q, addEventListener: () => {}, removeEventListener: () => {},
@@ -334,6 +349,9 @@ describe("composer autofocus on desktop (vercel finding 6)", () => {
     render(<DemeterChat states={STATES} />);
     await waitFor(() => expect(document.activeElement?.tagName).toBe("TEXTAREA"));
     vi.unstubAllGlobals();
+    // Put the environment back so the stub cannot leak into another file.
+    if (savedLS) Object.defineProperty(window, "localStorage", savedLS);
+    else delete (window as unknown as Record<string, unknown>).localStorage;
   });
 
   it("leaves focus alone on coarse pointers", async () => {
