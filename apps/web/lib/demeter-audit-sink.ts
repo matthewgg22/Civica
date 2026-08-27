@@ -46,7 +46,18 @@ export const publicAuditSink: MaeAuditSink = async (rec: MaeAuditRecord) => {
     if (error) throw error;
   } catch (err) {
     consoleAuditSink({ ...rec, answer: rec.answer.slice(0, 2000) });
-    console.info(
+    // console.ERROR, not info (#1049). Best-effort is right — an audit failure
+    // must never break someone's answer — but this was info, and info is not
+    // an alarm. mae_query_log recorded NOTHING for twelve days: every insert
+    // was rejected with `column "input_tokens" does not exist`, because the
+    // migration adding it shipped in the same commit as the code that writes
+    // it and was never pasted into prod. The chat answered perfectly
+    // throughout, so nothing outside this line could have shown it.
+    //
+    // No static check reaches that: the migration IS in the repo, so the code
+    // and the tree agree. Only the live database disagreed, and this line is
+    // the one signal that crosses the gap.
+    console.error(
       "[demeter-audit] public sink error:",
       err instanceof Error ? err.message : String(err),
     );
