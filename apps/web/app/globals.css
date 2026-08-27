@@ -8752,16 +8752,27 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    is read line by line, and 780px of serif is a tiring measure for it. Type per
    DEMETER-DESIGN.md — the document speaks in the display serif, and everything
    that labels it (contents, table head, dates, draft banner) is sans. */
+/* THE GROUND, same as the chat page. `body` is --civica-paper (#F7F5EF), the
+   older warm cream; every Demeter surface that has been done since paints
+   --demeter-paper (#FFFFFF) over it. The legal pages had never been, so they
+   sat on the cream while the rest of the product sat on white. It goes on a
+   WRAPPER, not on .lgl — .lgl is a centred column, so painting it would have
+   whitened the text and left cream down both sides. */
+.lglpage { min-height: 100dvh; background: var(--demeter-paper); }
 .lgl {
   max-width: 680px;
   margin: 0 auto;
   padding: 2rem 1rem 4rem;
-  color: var(--demeter-body);
+  /* BLACK, not --demeter-body (#4B4A46). These documents are long, dense and
+     consequential, and the mid-grey they were set in read as faded rather than
+     calm. Secondary lines below stay grey, so hierarchy survives the change. */
+  color: #000000;
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
 }
+.lgl__p, .lgl__ul li { color: #000000; }
 .lgl__head { border-bottom: 1px solid var(--demeter-rule); padding-bottom: 1.25rem; margin-bottom: 1.5rem; }
 .lgl__title { font-size: 2rem; font-weight: 700; line-height: 1.15; color: var(--demeter-ink); margin-bottom: 0.6rem; }
-.lgl__lede { font-size: 1.05rem; line-height: 1.6; color: var(--demeter-body); margin-bottom: 0.75rem; }
+.lgl__lede { font-size: 1.08rem; line-height: 1.6; color: #1F1F1F; margin-bottom: 0.75rem; }
 .lgl__updated {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.78rem; color: var(--demeter-muted); text-transform: uppercase; letter-spacing: 0.04em;
@@ -8769,13 +8780,6 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 
 /* Deliberately loud. A draft that reads like live policy is the thing this
    whole status flag exists to prevent. */
-.lgl__draft {
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.85rem; line-height: 1.55; color: var(--demeter-ink);
-  background: #FBF1EC; border: 1px solid var(--demeter-terracotta);
-  border-radius: 8px; padding: 0.75rem 0.9rem; margin-top: 1rem;
-}
-.lgl__draft strong { color: var(--demeter-terracotta-deep); }
 
 .lgl__docnav {
   display: flex; flex-wrap: wrap; align-items: center; gap: 0 1.1rem;
@@ -8814,8 +8818,23 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   margin: 0; padding-left: 0; list-style: none;
   display: grid; gap: 0.3rem; font-size: 0.88rem;
 }
-.lgl__toc-list a { color: var(--demeter-body); text-decoration: none; }
-.lgl__toc-list a:hover { color: var(--demeter-terracotta-deep); text-decoration: underline; }
+.lgl__toc-list a { color: #1F1F1F; text-decoration: none; }
+/* A HIGHLIGHT UNDER THE POINTER. Sixteen entries at 0.82rem in a narrow
+   margin are easy to lose your place in; a tint behind the whole row — not
+   just the text — tells you which one you are about to hit. The row is the
+   target, so the link fills it. */
+.lgl__toc-list li { border-radius: 6px; }
+.lgl__toc-list a {
+  display: block; padding: 0.28rem 0.5rem; margin: 0 -0.5rem; border-radius: 6px;
+}
+.lgl__toc-list a:hover,
+.lgl__toc-list a:focus-visible {
+  background: var(--demeter-tint); color: var(--demeter-terracotta-deep);
+  text-decoration: none;
+}
+.lgl__toc-list a:focus-visible {
+  outline: 2px solid var(--demeter-terracotta); outline-offset: 1px;
+}
 
 /* A little breathing room above an anchored heading, not the 5rem that used to
    be here — that was clearing a sticky site nav these pages have never had, so
@@ -8882,14 +8901,23 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    not an argument for longer lines, it is an argument for putting something
    else in it. So the page grows and the column does not. */
 @media (min-width: 1024px) {
-  .lgl { max-width: 1030px; }
-  .lgl__head { max-width: 680px; }
+  /* WIDER PAGE, AND THE TYPE GREW WITH IT — measured, not guessed.
+     The root font here is 17px, not 16, so the old 680px column was already
+     about 77 characters rather than the 68 a 16px root would give. Stretching
+     it to 800 put it at 84, past the band where lines stop being easy to
+     track back. So the column takes 750 at 1.125rem (about 76 characters) and
+     the width the page gained goes to the contents instead, which at 20rem
+     stop wrapping altogether. */
+  .lgl { max-width: 1180px; }
+  .lgl__head { max-width: 750px; }
+  /* NOT the warning callouts. Those are all-caps and carry their own smaller
+     size on purpose — scaling them with the body prose would have set a whole
+     arbitration waiver in 19px capitals. */
+  .lgl__p, .lgl__ul li, .lgl__callout--promise { font-size: 1.125rem; }
   .lgl__grid {
     display: grid;
-    /* 16rem, because the longest entry is "5. What you type, and what we may
-       do with it" — narrower and every second entry wraps to four lines. */
-    grid-template-columns: minmax(0, 680px) 16rem;
-    column-gap: 2.5rem;
+    grid-template-columns: minmax(0, 750px) 20rem;
+    column-gap: 3.5rem;
     align-items: start;
   }
   /* DOM order is contents-then-body; grid puts the contents on the right.
@@ -8901,7 +8929,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
      taller than the viewport and strand its last entries. */
   .lgl__toc-list {
     grid-template-columns: 1fr;
-    font-size: 0.82rem; line-height: 1.4; gap: 0.5rem;
+    font-size: 0.86rem; line-height: 1.45; gap: 0.15rem;
     /* Its own scroll region, so a sixteen-entry list cannot outgrow the
        viewport and strand its last entries where nobody can reach them. */
     max-height: calc(100vh - 10rem); overflow-y: auto;
