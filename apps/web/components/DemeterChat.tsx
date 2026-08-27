@@ -966,13 +966,21 @@ export function DemeterChat({
 
   useEffect(() => {
     if (initialMessages.length > 0) return;
+    let seen = false;
     try {
-      if (window.localStorage.getItem(WELCOME_SEEN_KEY)) return;
-      setShowWelcome(true);
+      seen = Boolean(window.localStorage.getItem(WELCOME_SEEN_KEY));
     } catch {
-      // localStorage disabled (private mode, blocked cookies). Showing the
-      // card every visit would be worse than never showing it, so: never.
+      // STORAGE BLOCKED (private mode, blocked cookies) — SHOW IT ANYWAY
+      // (owner, 2026-08-26, reversing the original call). We cannot remember a
+      // dismissal here, so we cannot know they have seen it. The two failure
+      // modes are not equal: a card shown again is a second of mild
+      // annoyance, while a card never shown means someone who does not know
+      // what SNAP is never finds out, and never learns this is not the
+      // government. Dismissing still works for the session; it just does not
+      // persist past a reload.
+      seen = false;
     }
+    if (!seen) setShowWelcome(true);
   }, [initialMessages.length]);
 
   const dismissWelcome = useCallback(() => {
