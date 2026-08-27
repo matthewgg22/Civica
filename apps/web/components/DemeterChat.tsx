@@ -2040,7 +2040,7 @@ export function DemeterChat({
           way. */}
       {showWelcome && (
         <DemeterWelcome
-          copy={{ ...t.welcome, whatIsSnap: t.emptyWhatIsSnap }}
+          copy={t.welcome}
           onDismiss={dismissWelcome}
           signInHref={`/sign-in?next=${encodeURIComponent(lang === "en" ? "/chat" : `/${lang}/chat`)}&lang=${lang}`}
         />
