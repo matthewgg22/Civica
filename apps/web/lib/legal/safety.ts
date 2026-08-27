@@ -39,7 +39,7 @@ export const SAFETY_NOTICE: LegalDocument = {
         },
         {
           kind: "p",
-          text: "If you apply for SNAP and qualify for expedited service. Which generally means very low income and few resources. Federal rules require benefits to be available within 7 days. Say when you apply that you have almost nothing coming in. Many states move faster than 7 days.",
+          text: "If you apply for SNAP and qualify for expedited service, which generally means very low income and few resources, federal rules require benefits to be available within 7 days. Say when you apply that you have almost nothing coming in. Many states move faster than 7 days.",
         },
         {
           kind: "p",
@@ -63,9 +63,9 @@ export const SAFETY_NOTICE: LegalDocument = {
         {
           kind: "ul",
           items: [
-            "Suicide and Crisis Lifeline. Call or text 988, any time, free and confidential.",
-            "National Domestic Violence Hotline. Call 1-800-799-7233, or text START to 88788.",
-            "Emergency. Call 911.",
+            "Suicide and Crisis Lifeline: call or text 988, any time, free and confidential.",
+            "National Domestic Violence Hotline: call 1-800-799-7233, or text START to 88788.",
+            "Emergency: call 911.",
           ],
         },
         {
@@ -94,7 +94,7 @@ export const SAFETY_NOTICE: LegalDocument = {
       blocks: [
         {
           kind: "p",
-          text: "Demeter does not answer from memory. Each question is used to search a collection of source documents. Federal SNAP regulations from the Electronic Code of Federal Regulations, and, for states we have verified, that state's own policy manual. The passages that come back are what the answer is written from.",
+          text: "Demeter does not answer from memory. Each question is used to search a collection of source documents: federal SNAP regulations from the Electronic Code of Federal Regulations, and, for states we have verified, that state's own policy manual. The passages that come back are what the answer is written from.",
         },
         {
           kind: "p",
@@ -116,7 +116,7 @@ export const SAFETY_NOTICE: LegalDocument = {
       blocks: [
         {
           kind: "p",
-          text: "SNAP is federal rules administered by states, and states differ in ways that change real answers. Income limits, deductions, work requirements, and which exemptions apply.",
+          text: "SNAP is federal rules administered by states, and states differ in ways that change real answers: income limits, deductions, work requirements, and which exemptions apply.",
         },
         {
           kind: "p",
@@ -145,7 +145,7 @@ export const SAFETY_NOTICE: LegalDocument = {
           items: [
             "The answer carries a ⚠ rather than a ✓.",
             "Your state is not one of the verified ones, so the answer is the federal floor.",
-            "Your situation involves rules that change often or vary locally. Work requirements and their exemptions, student eligibility, non-citizen eligibility, or how a specific kind of income is counted.",
+            "Your situation involves rules that change often or vary locally: work requirements and their exemptions, student eligibility, non-citizen eligibility, or how a specific kind of income is counted.",
             "The stakes are high and immediate: an appeal deadline, a recertification date, or a decision about whether to apply at all.",
             "Anything Demeter says conflicts with what your agency told you. The agency is the authority; Demeter is not.",
           ],
@@ -195,9 +195,9 @@ export const SAFETY_NOTICE: LegalDocument = {
         {
           kind: "ul",
           items: [
-            "Your state SNAP agency. The only office that can decide your case, and the place to apply, appeal, or report stolen benefits.",
-            "211, or 211.org. Food banks, community meals, and local help, right now.",
-            "Local legal aid. Free help if your benefits were denied, cut, or stopped and you think it was wrong.",
+            "Your state SNAP agency: the only office that can decide your case, and the place to apply, appeal, or report stolen benefits.",
+            "211, or 211.org: food banks, community meals, and local help, right now.",
+            "Local legal aid: free help if your benefits were denied, cut, or stopped and you think it was wrong.",
             "Community organizations near you that help with applications, in person.",
           ],
         },
