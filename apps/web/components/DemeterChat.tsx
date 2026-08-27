@@ -1341,6 +1341,7 @@ export function DemeterChat({
           // is the last thing that should be lost on the way out.
           portalNote: pack?.portal?.note ?? null,
           portalUrl: pack?.portal?.url ?? null,
+          notes: outlineNotes(),
         }),
       });
       if (res.status === 401) return setEmailState("signin");
@@ -1383,6 +1384,7 @@ export function DemeterChat({
           // is the last thing that should be lost on the way out.
           portalNote: pack?.portal?.note ?? null,
           portalUrl: pack?.portal?.url ?? null,
+          notes: outlineNotes(),
         }),
       });
       if (!res.ok) return setPdfState("error");
@@ -1838,6 +1840,30 @@ export function DemeterChat({
    *  real feedback the same day was that it fired too soon (felt like
    *  turn 4-5 of an ordinary conversation, not yet "long enough to lose"),
    *  so raised to 8. */
+  /** What the conversation raised that no outline field holds.
+   *
+   *  The outline is built from structured facts, so a caveat that changes how
+   *  a FIELD SHOULD BE READ has nowhere to live. The Uber case is the one that
+   *  prompted this: "self-employment income requires a caseworker calculation"
+   *  is not a number, but someone copying their income figure onto the real
+   *  form needs it beside that figure or they will enter gross earnings.
+   *
+   *  Sourced from what is already structured — the classification's own caveat
+   *  and the portal's annotation — rather than from the transcript. Free prose
+   *  said in chat is not here yet; that needs an extractor, and a transcript
+   *  pasted under an outline buries the outline. */
+  const outlineNotes = useCallback((): string[] => {
+    const notes: string[] = [];
+    const c = classification;
+    // Only where the summary is a caveat rather than a restatement of the
+    // verdict — "not enough information" adds nothing to a document whose
+    // "Still to work out" section already lists what is missing.
+    if (c && c.outcome !== "not_enough_information" && c.summary) notes.push(c.summary);
+    const note = states.find((x) => x.code === state)?.portal?.note;
+    if (note) notes.push(note);
+    return notes;
+  }, [classification, state, states]);
+
   const SAVE_NUDGE_AFTER_TURNS = 8;
   const showSaveNudge =
     !busy && !conversationSaved && !saveNudgeDismissed && answeredCount >= SAVE_NUDGE_AFTER_TURNS;

@@ -65,6 +65,15 @@ export async function POST(request: NextRequest) {
     portalNote: str("portalNote"),
     portalUrl: str("portalUrl"),
     stillNeeded,
+    // Finished sentences only — see OutlineInput.notes on why this is not
+    // the transcript.
+    // Same caps as stillNeeded: this comes from a client, so it gets the
+    // bounds that field already has rather than new ones.
+    notes: Array.isArray((body as { notes?: unknown }).notes)
+      ? ((body as { notes: unknown[] }).notes)
+          .filter((x): x is string => typeof x === "string")
+          .slice(0, 20)
+      : [],
     generatedAt: new Date(),
   };
 
