@@ -1,5 +1,26 @@
 import { test, expect, type Page } from "@playwright/test";
 
+/** THE FIRST-VISIT CARD IS NOW ON THE LANDING PAGE TOO (owner, 2026-08-26),
+ *  and it is a modal: it holds focus and intercepts clicks. Before that change
+ *  only the two /chat specs met it and they dismissed it by hand; every one of
+ *  the ~14 navigations to "/" and "/screen/ask" would now open it first and
+ *  never get past it.
+ *
+ *  So it is marked seen for every test by default, and the specs that are
+ *  ABOUT the card clear the key themselves. addInitScript runs before the
+ *  page's own scripts on every navigation, which is the only place early
+ *  enough — the card's effect reads localStorage on mount. */
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    try {
+      window.localStorage.setItem("demeter.welcome.seen", "1");
+    } catch {
+      /* blocked storage: the card shows, and dismissWelcome handles it */
+    }
+  });
+});
+
+
 /** The composer, located by what it IS rather than by what it says.
  *
  *  These specs used to match on the placeholder text. That made a copy edit —
@@ -35,6 +56,34 @@ function composer(page: Page) {
 // so the chat asserts "a response state arrives" — a real streamed answer when
 // a key is present (local), the honest unavailable banner when it isn't (CI).
 // Every spec runs on a phone profile (F8 mobile-first acceptance).
+
+test.describe("the first-visit card at the front door", () => {
+  test("greets someone arriving at the landing page, once", async ({ page }) => {
+    // The bare domain redirects here, so this is the door almost everyone
+    // comes through. Clearing the key makes this browser a first visitor
+    // despite the suite-wide seed above.
+    await page.addInitScript(() => {
+      try {
+        window.localStorage.removeItem("demeter.welcome.seen");
+      } catch {
+        /* nothing to clear */
+      }
+    });
+    await page.goto("/screen/ask");
+    await expect(page.locator(".dmwel")).toBeVisible();
+    // The required USDA notice rides with the logo, in English on every
+    // language — that is the condition of being allowed to show the mark.
+    await expect(page.locator(".dmwel__mark")).toContainText("service mark");
+
+    await page.locator(".dmwel__secondary").click();
+    await expect(page.locator(".dmwel")).toHaveCount(0);
+
+    // ONE KEY, BOTH DOORS: having met it here, the chat does not introduce
+    // itself a second time.
+    await page.goto("/chat");
+    await expect(page.locator(".dmwel")).toHaveCount(0);
+  });
+});
 
 test.describe("front door", () => {
   // The front door EXPLAINS and hands over; it no longer takes a question. The
