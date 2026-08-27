@@ -64,7 +64,7 @@ export const PRIVACY_POLICY: LegalDocument = {
       blocks: [
         {
           kind: "p",
-          text: `This policy covers Demeter, the free SNAP question-and-answer service operated by ${ENTITY}. The chat, the application-questions pages, conversations you save to an account, the outline you can email yourself, and the feedback form.`,
+          text: `This policy covers Demeter, the free SNAP question-and-answer service operated by ${ENTITY}: the chat, the application-questions pages, conversations you save to an account, the outline you can email yourself, and the feedback form.`,
         },
         {
           kind: "p",
@@ -169,7 +169,7 @@ export const PRIVACY_POLICY: LegalDocument = {
         },
         {
           kind: "p",
-          text: "We keep the filtered question and the answer because we make a specific promise about accuracy. That answers are grounded in real, cited regulations. And a promise nobody checks is just a slogan. The record lets us find wrong answers and fix them. It is not linked to your name, and unless you have made an account, it is not linked to you at all.",
+          text: "We keep the filtered question and the answer because we make a specific promise about accuracy: that answers are grounded in real, cited regulations. A promise nobody checks is just a slogan. The record lets us find wrong answers and fix them. It is not linked to your name, and unless you have made an account, it is not linked to you at all.",
         },
       ],
     },
@@ -213,7 +213,7 @@ export const PRIVACY_POLICY: LegalDocument = {
         },
         {
           kind: "p",
-          text: "The working estimate Demeter builds up as you talk. Your household, income and rent figures. Is deliberately never saved to our servers, even when you save the conversation. It lives in your browser, and it is rebuilt from the conversation if you come back.",
+          text: "The working estimate Demeter builds up as you talk (your household, income and rent figures) is deliberately never saved to our servers, even when you save the conversation. It lives in your browser, and it is rebuilt from the conversation if you come back.",
         },
       ],
     },
@@ -237,7 +237,7 @@ export const PRIVACY_POLICY: LegalDocument = {
       blocks: [
         {
           kind: "p",
-          text: "Fear of immigration consequences keeps eligible families. Especially families where some members are citizens and some are not. From applying for food assistance they are legally entitled to. So we want to be direct about this.",
+          text: "Fear of immigration consequences keeps eligible families, especially families where some members are citizens and some are not, from applying for food assistance they are legally entitled to. So we want to be direct about this.",
         },
         {
           kind: "callout",
@@ -254,7 +254,7 @@ export const PRIVACY_POLICY: LegalDocument = {
         },
         {
           kind: "p",
-          text: "We will not promise you something we could be forced to break. Any company can be served with a valid court order. What we can promise is that we have built this so there is little to take: no name, no immigration status, no reversible IP address, and. For anyone using the chat without an account. Nothing tying a question to a person at all. We would require valid legal process, give only what it actually compels, and challenge anything overbroad. See the next section.",
+          text: "We will not promise you something we could be forced to break. Any company can be served with a valid court order. What we can promise is that we have built this so there is little to take: no name, no immigration status, no reversible IP address, and, for anyone using the chat without an account, nothing tying a question to a person at all. We would require valid legal process, give only what it actually compels, and challenge anything overbroad. See the next section.",
         },
       ],
     },
@@ -269,11 +269,11 @@ export const PRIVACY_POLICY: LegalDocument = {
         {
           kind: "ul",
           items: [
-            "Anthropic. The AI model that writes the answers",
-            "Supabase. Our database and sign-in system",
-            "Vercel. Hosting for the website",
-            "Resend. Sending the outline email",
-            "Sentry. Error monitoring",
+            "Anthropic: the AI model that writes the answers",
+            "Supabase: our database and sign-in system",
+            "Vercel: hosting for the website",
+            "Resend: sending the outline email",
+            "Sentry: error monitoring",
           ],
         },
         {
@@ -282,7 +282,7 @@ export const PRIVACY_POLICY: LegalDocument = {
         },
         {
           kind: "p",
-          text: "We may publish aggregate figures. For example, how many questions were asked about a given topic, or how often answers cited a verified state source. These are counts, and they cannot be traced back to any person.",
+          text: "We may publish aggregate figures: for example, how many questions were asked about a given topic, or how often answers cited a verified state source. These are counts, and they cannot be traced back to any person.",
         },
       ],
     },
@@ -292,7 +292,7 @@ export const PRIVACY_POLICY: LegalDocument = {
       blocks: [
         {
           kind: "p",
-          text: "We have never received a government request for user information. If we receive one, we will require valid legal process, disclose only what that process actually compels, and. Unless a court forbids it or there is a risk to someone's safety. Tell the affected person.",
+          text: "We have never received a government request for user information. If we receive one, we will require valid legal process, disclose only what that process actually compels, and, unless a court forbids it or there is a risk to someone's safety, tell the affected person.",
         },
         {
           kind: "p",
@@ -315,14 +315,14 @@ export const PRIVACY_POLICY: LegalDocument = {
         {
           kind: "ul",
           items: [
-            `Deleted automatically: the text of questions and answers in our accuracy record, after ${RETENTION_DAYS.questionText} days. If an answer was flagged for review. For example, because it cited something we could not verify. The row is kept for ${RETENTION_DAYS.flaggedRow} days so a person can look at it.`,
+            `Deleted automatically: the text of questions and answers in our accuracy record, after ${RETENTION_DAYS.questionText} days. If an answer was flagged for review, for example because it cited something we could not verify, the row is kept for ${RETENTION_DAYS.flaggedRow} days so a person can look at it.`,
             "Kept until you delete it: your account, and any conversation you chose to save. Delete either one and it is gone from our systems within 30 days.",
             "Kept longer, for narrow reasons: records we need to keep to meet a legal obligation, to resolve a dispute, or to deal with abuse of the service. We keep only what the reason requires, and only while it applies.",
           ],
         },
         {
           kind: "p",
-          text: "Counts and measurements that identify nobody. How many questions were asked, how often citations verified. Are kept indefinitely, because they are how we show the service works. We keep that data in de-identified form, we do not attempt to re-identify it, and we require anyone we share it with to do the same.",
+          text: "Counts and measurements that identify nobody (how many questions were asked, how often citations verified) are kept indefinitely, because they are how we show the service works. We keep that data in de-identified form, we do not attempt to re-identify it, and we require anyone we share it with to do the same.",
         },
       ],
     },
