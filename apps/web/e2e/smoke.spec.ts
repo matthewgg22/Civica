@@ -1,5 +1,26 @@
 import { test, expect, type Page } from "@playwright/test";
 
+/** THE FIRST-VISIT CARD IS NOW ON THE LANDING PAGE TOO (owner, 2026-08-26),
+ *  and it is a modal: it holds focus and intercepts clicks. Before that change
+ *  only the two /chat specs met it and they dismissed it by hand; every one of
+ *  the ~14 navigations to "/" and "/screen/ask" would now open it first and
+ *  never get past it.
+ *
+ *  So it is marked seen for every test by default, and the specs that are
+ *  ABOUT the card clear the key themselves. addInitScript runs before the
+ *  page's own scripts on every navigation, which is the only place early
+ *  enough — the card's effect reads localStorage on mount. */
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    try {
+      window.localStorage.setItem("demeter.welcome.seen", "1");
+    } catch {
+      /* blocked storage: the card shows, and dismissWelcome handles it */
+    }
+  });
+});
+
+
 /** The composer, located by what it IS rather than by what it says.
  *
  *  These specs used to match on the placeholder text. That made a copy edit —

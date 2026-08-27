@@ -7986,15 +7986,16 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   position: fixed; top: 0; bottom: 0; left: 0; z-index: 30;
   /* top:0 — the site nav this used to clear is gone from /chat. */
   width: min(21.5rem, 85vw);
-  /* WHITE, like the rest of the page (owner, 2026-08-26). The rail was the
-     last surface still on the old grey ground: #F6F5F3 across 366px of a
-     1280px window, a third of the screen reading darker than the product it
-     frames. The white-ground decision of 2026-08-21 moved card separation to
-     hairlines, and every card in this rail already carries one — state
-     picker, outline card, links, the foot's buttons — so the tint was no
-     longer doing the job it was kept for. The right border stays: that is
-     what separates the rail from the thread now. */
-  background: var(--demeter-paper); border-right: 1px solid var(--demeter-rule);
+  /* A SHADE OFF WHITE, arrived at in two corrections (owner, 2026-08-26).
+     The rail had been --demeter-tint (#F6F5F3): too dark, a third of a
+     1280px window reading grey against the product it frames. Pure white
+     went too far the other way — with only a hairline at its edge, the rail
+     stopped reading as a panel at all. #FAF9F7 sits between them, nearer the
+     white end: enough to say "this is the tool's frame, not the answer",
+     not enough to be a grey column. Local, not a token: the palette was
+     pruned 16 -> 10 on purpose (DEMETER-DESIGN decisions log) and one
+     surface's shade is not a system value. */
+  background: #FAF9F7; border-right: 1px solid var(--demeter-rule);
   padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
   display: flex; flex-direction: column; gap: 1rem;
   overflow-y: auto;
@@ -9145,20 +9146,48 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    Quiet: it is not what the rail is for, it is what you do when you are
    finished. Full width, so it reads as a row of the rail rather than a chip
    floating beside the language codes. */
-/* The exit, with the identity it ends. Quiet — leaving is not a thing to
-   encourage — but a real, full-width target rather than a link buried in a
-   sentence. */
+/* THE ACCOUNT BLOCK, COMPACT (owner, 2026-08-26). It had grown to four
+   stacked lines at the rail's floor — "Signed in as", the address, a sentence
+   about auto-saving, then a button — for information that is, in substance,
+   one fact and one action. Two lines now: what is happening, then who it is
+   happening to with the way out beside them.
+
+   "Signed in as" is gone from the visible row. The address and an exit next
+   to it say it, and the phrase was costing a whole line to repeat what the
+   two things under it already meant. It survives as the row's accessible
+   name, so a screen reader still hears it. */
+.demeter__sidebarauth {
+  display: flex; flex-direction: column; gap: 0.3rem;
+  padding-top: 0.6rem; border-top: 1px solid var(--demeter-rule);
+}
+.demeter__authnote {
+  display: flex; align-items: center; gap: 0.3rem;
+  margin: 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--demeter-muted);
+}
+/* terracotta-deep, not terracotta: the lighter one is 4.22:1 on paper and
+   is a fill/border colour only (demeter-contrast). */
+.demeter__authtick { color: var(--demeter-terracotta-deep); font-size: 0.8rem; line-height: 1; }
+.demeter__authrow { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+/* The address can be long and is not worth a second line — it is an
+   identifier, and its tail is the part that identifies. */
+.demeter__authmail {
+  flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.74rem; color: var(--demeter-body);
+}
 .demeter__signout {
-  align-self: flex-start;
-  margin-top: 0.35rem;
-  padding: 0.3rem 0.6rem;
-  min-height: 32px;
+  flex: none;
+  padding: 0.25rem 0.6rem; min-height: 30px;
   background: none;
   border: 1px solid var(--demeter-rule);
   border-radius: var(--demeter-radius-pill);
   cursor: pointer;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.01em;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.01em;
   color: var(--demeter-body);
 }
 .demeter__signout:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }

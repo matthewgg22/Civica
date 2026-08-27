@@ -32,6 +32,7 @@
 
 import type { Metadata } from "next";
 import { LanguageLinks } from "../../../components/LanguageLinks";
+import { LandingWelcome } from "../../../components/LandingWelcome";
 import { VERIFIED_STATES, VERIFIED_STATE_CODES } from "@civica/demeter-engine/packs";
 import { redirect } from "next/navigation";
 import { geoHint } from "../../../lib/geo-hint";
@@ -95,6 +96,12 @@ export default async function ScreenAskPage({
 
   return (
     <main className="dmpage" id="main-content">
+      {/* THE FRONT DOOR GETS THE INTRODUCTION (owner, 2026-08-26). The bare
+          domain redirects here, so this is the door almost everyone comes
+          through — and the card only existed on /chat, the smaller one. Same
+          card, same seen-key as the chat's: dismiss it on either surface and
+          it is dismissed on both. */}
+      <LandingWelcome lang="en" />
       <LanguageLinks />
       
       <div className="dmpage__inner">
