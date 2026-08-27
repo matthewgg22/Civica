@@ -1,5 +1,10 @@
 import { siteUrl } from "../lib/site-url";
 import type { Metadata } from "next";
+import {
+  ROOT_DESCRIPTION,
+  ROOT_OG_DESCRIPTION,
+  ROOT_TITLE,
+} from "../lib/root-metadata-copy";
 import localFont from "next/font/local";
 // CJK, self-hosted from npm rather than fetched from Google at build time.
 // These two ship ~165 pre-subsetted woff2 files with unicode-range, so a
@@ -70,13 +75,11 @@ const beVietnamPro = localFont({
 // Next emits relative og:image paths that crawlers and Slack can't resolve.
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: "Civica: Apply for SNAP food benefits",
-  description:
-    "SNAP. Also called CalFresh, EBT, or food stamps. Is monthly money for groceries. Civica reads your state's rules and walks you through the application in about 10 minutes.",
+  title: ROOT_TITLE,
+  description: ROOT_DESCRIPTION,
   openGraph: {
-    title: "Civica: Apply for SNAP food benefits",
-    description:
-      "See if you qualify for SNAP food benefits. Civica figures out your state's rules and guides you through the application step by step.",
+    title: ROOT_TITLE,
+    description: ROOT_OG_DESCRIPTION,
     type: "website",
   },
 };
