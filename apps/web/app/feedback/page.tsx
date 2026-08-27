@@ -7,7 +7,7 @@
 // state" had nowhere to say so at all — direct user feedback, 2026-08-15.
 
 import type { Metadata } from "next";
-import { DemeterNav } from "../../components/DemeterNav";
+import { BackToChat } from "../../components/BackToChat";
 import { DemeterFooter } from "../../components/DemeterFooter";
 import { SiteFeedbackForm } from "../../components/SiteFeedbackForm";
 
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export default function FeedbackPage() {
   return (
     <>
-      <DemeterNav path="/feedback" />
+      <BackToChat />
       <main className="vpage fbpage">
         <header className="vpage__head">
           <h1 className="vpage__title">Feedback</h1>

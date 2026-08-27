@@ -13,6 +13,7 @@ import Link from "next/link";
 import { DemeterFooter } from "./DemeterFooter";
 import { DOC_NAV, type Block, type LegalDocument } from "../lib/legal";
 import { LegalContents } from "./LegalContents";
+import { BackToChat } from "./BackToChat";
 
 function BlockView({ block }: { block: Block }) {
   switch (block.kind) {
@@ -65,15 +66,7 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
     <div className="lglpage">
       <main className="lgl" id="main-content">
         <header className="lgl__head">
-          {/* The only way out. These pages carry no site nav, so the sole exit
-              used to be the footer — three screens past an arbitration
-              clause. Same control as /states. */}
-          <Link className="vback" href="/chat">
-            <span className="vback__arrow" aria-hidden>
-              ←
-            </span>
-            <span className="vback__label">Back to Demeter</span>
-          </Link>
+          <BackToChat />
           <h1 className="lgl__title">{doc.title}</h1>
           <p className="lgl__lede">{doc.lede}</p>
           <p className="lgl__updated">Last updated {doc.lastUpdated}</p>

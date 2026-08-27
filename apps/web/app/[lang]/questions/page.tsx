@@ -11,11 +11,11 @@
 // rendering an "unknown language" page.
 
 import type { Metadata } from "next";
+import { BackToChat } from "../../../components/BackToChat";
 import { notFound } from "next/navigation";
 import { isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
 import { SnapWhyHard, SnapFormQuestions, SnapTimeline, askHref } from "../../../components/SnapOverview";
 import { PAGE_COPY } from "../../../lib/i18n/snap-page";
-import { DemeterNav } from "../../../components/DemeterNav";
 import { DemeterFooter } from "../../../components/DemeterFooter";
 import {
   alternateLanguages,
@@ -84,7 +84,7 @@ export default async function LocalizedQuestionsPage({
 
   return (
     <main className="dmpage">
-      <DemeterNav lang={l} active="questions" path="/questions" />
+      <BackToChat lang={l} />
       <div className="dmpage__inner">
         <section className="dmo" aria-labelledby="questions-h1">
           <p className="dmo__eyebrow">{c.eyebrow}</p>

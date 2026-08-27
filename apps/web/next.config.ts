@@ -47,6 +47,13 @@ const nextConfig: NextConfig = {
       // link that shipped broken should land on the page rather than a 404.
       { source: "/verify", destination: "/states", permanent: true },
       { source: "/:lang(es|vi|zh)/verify", destination: "/:lang/states", permanent: true },
+      // /supporters retired from the footer (owner, 2026-08-27). TEMPORARY
+      // (307), unlike the /verify move: the supporter wall is a moderated
+      // Supabase table of approved organizations and a sign-on form, not a
+      // duplicate of the feedback page, so this is a decision that may be
+      // reversed. Redirected rather than deleted for the same reason — the
+      // rows and the page component are both untouched.
+      { source: "/supporters", destination: "/feedback", permanent: false },
     ];
   },
   webpack(config, { isServer }) {

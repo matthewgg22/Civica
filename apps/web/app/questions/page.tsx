@@ -20,6 +20,7 @@
 // carry the reciprocal hreflang set.
 
 import type { Metadata } from "next";
+import { BackToChat } from "../../components/BackToChat";
 import {
   SnapWhyHard,
   SnapTimeline,
@@ -27,7 +28,6 @@ import {
   askHref,
 } from "../../components/SnapOverview";
 import { PAGE_COPY } from "../../lib/i18n/snap-page";
-import { DemeterNav } from "../../components/DemeterNav";
 import { DemeterFooter } from "../../components/DemeterFooter";
 import { alternateLanguages, questionsUrl } from "../../lib/i18n/routes";
 import { questionsStructuredData } from "../screen/ask/structured-data";
@@ -50,7 +50,7 @@ export default function QuestionsPage() {
   const c = PAGE_COPY.en;
   return (
     <main className="dmpage">
-      <DemeterNav active="questions" path="/questions" />
+      <BackToChat />
       <div className="dmpage__inner">
         <section className="dmo" aria-labelledby="questions-h1">
           <p className="dmo__eyebrow">{c.eyebrow}</p>

@@ -25,31 +25,36 @@ const hrefFor = (container: HTMLElement, path: string) =>
     .map((a) => a.getAttribute("href"))
     .find((h) => h?.includes(path));
 
-const supportersHref = (container: HTMLElement) => hrefFor(container, "supporters");
 
 describe("footer links from localized pages (#837)", () => {
   afterEach(cleanup);
 
-  it("supporters stays canonical from every language — the localized route does not exist", () => {
+  // THE RULE, which outlived the two links that taught it: a path is linked
+  // canonically for exactly as long as it has no localized route, and gets
+  // prefixed the day it gets one. Supporters (#837) and Verify both 404'd
+  // from every localized page by being on the wrong side of it. Neither is in
+  // the footer any more, so the rule is asserted against what is.
+  it("the legal documents stay canonical — none has a localized route", () => {
     for (const lang of ["es", "vi", "zh"] as const) {
       const { container } = render(<DemeterFooter lang={lang} />);
-      expect(supportersHref(container), lang).toBe("/supporters");
+      for (const path of ["privacy", "terms", "safety"]) {
+        expect(hrefFor(container, path), `${lang} ${path}`).toBe(`/${path}`);
+      }
       cleanup();
     }
   });
 
-  it("and from English too", () => {
-    const { container } = render(<DemeterFooter />);
-    expect(supportersHref(container)).toBe("/supporters");
+  it("feedback stays canonical too", () => {
+    for (const lang of ["es", "vi", "zh"] as const) {
+      const { container } = render(<DemeterFooter lang={lang} />);
+      expect(hrefFor(container, "feedback"), lang).toBe("/feedback");
+      cleanup();
+    }
   });
 
-  it("states IS prefixed, now that app/[lang]/states exists", () => {
-    // This assertion is the reverse of what it was, deliberately. /verify was
-    // on the canonical list because it had no localized route and its link
-    // 404'd from every non-English page. The page is /states now and the
-    // localized route was built, so prefixing is correct again — and a path
-    // must come OFF the canonical list the day it gets a route, or the
-    // translated page nobody can reach is the new bug.
+  it("states IS prefixed, because app/[lang]/states exists", () => {
+    // The other half of the rule. A test that only checked the canonical ones
+    // would still pass if href() stopped localizing anything at all.
     for (const lang of ["es", "vi", "zh"] as const) {
       const { container } = render(<DemeterFooter lang={lang} />);
       expect(hrefFor(container, "states"), lang).toBe(`/${lang}/states`);
@@ -57,47 +62,43 @@ describe("footer links from localized pages (#837)", () => {
     }
   });
 
-  it("and questions still IS prefixed, because that route exists", () => {
-    // The point of the list is that it names the paths WITHOUT a localized
-    // route. A test that only checked the canonical ones would still pass if
-    // someone emptied href() out entirely.
-    const { container } = render(<DemeterFooter lang="es" />);
-    expect(hrefFor(container, "questions")).toBe("/es/questions");
+  it("and English is un-prefixed throughout", () => {
+    const { container } = render(<DemeterFooter />);
+    for (const path of ["states", "privacy", "terms", "safety", "feedback"]) {
+      expect(hrefFor(container, path), path).toBe(`/${path}`);
+    }
   });
 });
 
-describe("the footer is grouped, not one column of seven", () => {
-  it("has three named groups", () => {
-    // Two columns (1.4fr / 1fr) gave the brand more room than three lines
-    // could fill and stacked every link down the right, so the middle was
-    // empty and the right was a menu.
+describe("the footer is one row of five", () => {
+  it("carries exactly the five destinations that survived", () => {
+    // "Application questions" and "Supporters" were removed (owner,
+    // 2026-08-27). At five short nouns the named groups became more chrome
+    // than content, so the headings went with them.
     const { container } = render(<DemeterFooter />);
-    const groups = [...container.querySelectorAll(".dmft__group")];
-    expect(groups).toHaveLength(3);
-    expect(groups.map((g) => g.querySelector(".dmft__grouphead")!.textContent)).toEqual([
-      T.en.footerGroupReference,
-      T.en.footerGroupLegal,
-      T.en.footerGroupAbout,
+    const links = [...container.querySelectorAll(".dmft__link")];
+    expect(links.map((a) => a.getAttribute("href"))).toEqual([
+      "/states",
+      "/privacy",
+      "/terms",
+      "/safety",
+      "/feedback",
     ]);
+    expect(container.querySelectorAll(".dmft__grouphead")).toHaveLength(0);
   });
 
-  it("every link is inside a group — none left loose", () => {
+  it("no longer offers supporters or the application questions", () => {
     const { container } = render(<DemeterFooter />);
-    const all = container.querySelectorAll(".dmft__link");
-    const grouped = container.querySelectorAll(".dmft__group .dmft__link");
-    expect(all.length).toBe(grouped.length);
-    expect(all.length).toBe(7);
+    const html = container.innerHTML;
+    expect(html).not.toContain("/supporters");
+    expect(html).not.toContain("/questions");
   });
 
-  it("uses NOUNS, not the in-page sentences", () => {
-    // The ragged mix of "See the states we have checked" beside "Privacy" was
-    // the footer's real slop tell. The long forms still earn their place
-    // in-page, where they are the call to action.
+  it("uses NOUNS, not the in-page sentence", () => {
     const { container } = render(<DemeterFooter />);
     const text = container.textContent ?? "";
     expect(text).toContain(T.en.footerStates);
     expect(text).not.toContain(T.en.statesLink);
-    expect(text).toContain(T.en.footerQuestions);
   });
 
   it("carries one mission line, not the product lede again", () => {
@@ -109,12 +110,10 @@ describe("the footer is grouped, not one column of seven", () => {
 
   it("keeps every language complete", () => {
     for (const lang of ["en", "es", "vi", "zh"] as const) {
-      for (const key of [
-        "footerStates", "footerQuestions", "footerMission",
-        "footerGroupReference", "footerGroupLegal", "footerGroupAbout",
-      ] as const) {
+      for (const key of ["footerStates", "footerMission"] as const) {
         expect(T[lang][key]?.trim(), `${lang}.${key}`).toBeTruthy();
       }
+      expect(T[lang].directory.howItWorks.trim(), `${lang}.howItWorks`).toBeTruthy();
     }
   });
 });

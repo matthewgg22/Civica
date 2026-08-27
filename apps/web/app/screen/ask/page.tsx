@@ -31,6 +31,7 @@
 // hreflang annotations — a one-directional hreflang set is silently ignored.
 
 import type { Metadata } from "next";
+import { LanguageLinks } from "../../../components/LanguageLinks";
 import { VERIFIED_STATES, VERIFIED_STATE_CODES } from "@civica/demeter-engine/packs";
 import { redirect } from "next/navigation";
 import { geoHint } from "../../../lib/geo-hint";
@@ -42,7 +43,6 @@ import {
   SnapFears,
 } from "../../../components/SnapOverview";
 import { DemeterFooter } from "../../../components/DemeterFooter";
-import { DemeterNav } from "../../../components/DemeterNav";
 import { alternateLanguages, askUrl } from "../../../lib/i18n/routes";
 import { publicQuestionCount } from "../../../lib/live-counts";
 import { askStructuredData, EN_TITLE, EN_DESCRIPTION } from "./structured-data";
@@ -95,7 +95,8 @@ export default async function ScreenAskPage({
 
   return (
     <main className="dmpage" id="main-content">
-      <DemeterNav />
+      <LanguageLinks />
+      
       <div className="dmpage__inner">
         <SnapOrientation
           publicCount={publicCount}

@@ -17,11 +17,9 @@ import type { AnswerLang } from "@civica/demeter-engine/packs";
 
 const LINK_PATHS = {
   states: "/states",
-  questions: "/questions",
   privacy: "/privacy",
   terms: "/terms",
   safety: "/safety",
-  supporters: "/supporters",
   feedback: "/feedback",
 } as const;
 
@@ -41,7 +39,6 @@ const UNLOCALIZED: readonly string[] = [
   LINK_PATHS.terms,
   LINK_PATHS.safety,
   LINK_PATHS.feedback,
-  LINK_PATHS.supporters,
 ];
 
 /** English is un-prefixed; everything else lives under /es|/vi|/zh. Privacy,
@@ -73,46 +70,27 @@ export function DemeterFooter({ lang = "en" }: { lang?: AnswerLang }) {
           </div>
         </div>
 
-        {/* THREE NAMED GROUPS, not one column of seven.
-            Two columns (1.4fr / 1fr) gave the brand block more room than three
-            lines of text could fill and stacked every link down the right, so
-            the middle of the footer was empty and the right of it was a menu.
-            Grouping by KIND is also what makes a footer scannable: somebody
-            looking for the privacy policy is not reading past "SNAP by state"
-            to find it. */}
+        {/* ONE ROW OF FIVE, not three named groups.
+            The groups earned their place at seven links with mixed registers.
+            "Application questions" and "Supporters" are gone, and five short
+            nouns do not need headings to be scannable — a heading per group
+            would be more chrome than content. */}
         <nav className="dmft__nav" aria-label="Footer">
-          <div className="dmft__group">
-            <h2 className="dmft__grouphead">{c.footerGroupReference}</h2>
-            <Link className="dmft__link" href={href(LINK_PATHS.states, lang)}>
-              {c.footerStates}
-            </Link>
-            <Link className="dmft__link" href={href(LINK_PATHS.questions, lang)}>
-              {c.footerQuestions}
-            </Link>
-          </div>
-
-          <div className="dmft__group">
-            <h2 className="dmft__grouphead">{c.footerGroupLegal}</h2>
-            <Link className="dmft__link" href={LINK_PATHS.privacy}>
-              {c.footerPrivacy}
-            </Link>
-            <Link className="dmft__link" href={LINK_PATHS.terms}>
-              {c.footerTerms}
-            </Link>
-            <Link className="dmft__link" href={LINK_PATHS.safety}>
-              {c.footerSafety}
-            </Link>
-          </div>
-
-          <div className="dmft__group">
-            <h2 className="dmft__grouphead">{c.footerGroupAbout}</h2>
-            <Link className="dmft__link" href={href(LINK_PATHS.supporters, lang)}>
-              {c.footerSupporters}
-            </Link>
-            <Link className="dmft__link" href={href(LINK_PATHS.feedback, lang)}>
-              {c.footerFeedback}
-            </Link>
-          </div>
+          <Link className="dmft__link" href={href(LINK_PATHS.states, lang)}>
+            {c.footerStates}
+          </Link>
+          <Link className="dmft__link" href={LINK_PATHS.privacy}>
+            {c.footerPrivacy}
+          </Link>
+          <Link className="dmft__link" href={LINK_PATHS.terms}>
+            {c.footerTerms}
+          </Link>
+          <Link className="dmft__link" href={LINK_PATHS.safety}>
+            {c.footerSafety}
+          </Link>
+          <Link className="dmft__link" href={href(LINK_PATHS.feedback, lang)}>
+            {c.footerFeedback}
+          </Link>
         </nav>
 
         {/* The disclosures. Not fine print in the legal sense — these are the
