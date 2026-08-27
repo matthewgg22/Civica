@@ -1,0 +1,18 @@
+CORRECTION: this commit's message does not describe its diff.
+
+The message is about #1018 (two inherited test timeouts). The diff is
+mostly someone else's in-flight work — the short-closing-question feature
+in DemeterChat.tsx and globals.css, which belongs to #1044.
+
+Cause: the author of this commit ran `git add -A apps/web` in a worktree
+that held another session's uncommitted changes, and swept them in. The
+same mistake dropped the vitest.config.ts half of the intended fix, so
+vitest.setup.ts landed here with nothing referencing it.
+
+Where things actually are:
+  - the timeout fix        -> 54521dfe (#1045), which wired the setup file
+  - the closing-question   -> 52ac7c10 (#1044), which carried the rest
+  - vitest.setup.ts        -> added here, dead until #1045
+
+Not rewritten: 2 commits sit on top, two merged PRs reference these SHAs,
+and nine worktrees have this history. A note costs nobody a rebase.
