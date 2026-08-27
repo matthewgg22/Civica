@@ -1807,7 +1807,7 @@
         "San Bernardino",
         "Ventura"
       ],
-      "aa_note": " (Los Angeles CSA \u2014 COUNTY DELINEATION NOT YET CONFIRMED from this PE; the counties shown are borrowed from Chase's and Bank of America's LA CSA and must be verified before use)",
+      "aa_note": " (Los Angeles CSA \u2014 Anaheim-Santa Ana-Irvine MD, Los Angeles-Long Beach-Glendale MD, Oxnard-Thousand Oaks-Ventura MSA and Riverside-San Bernardino-Ontario MSA; 3,925 census tracts, population 18,388,091; taken FULL-SCOPE)",
       "aa_structure": "Los Angeles CSA, full-scope within the California rated area",
       "pe_date": "2023-02-06",
       "pe_url": "https://occ.gov/static/cra/craeval/Mar25/1.pdf",
@@ -1820,7 +1820,6 @@
       "review_period_years": 4,
       "pe_investment_usd": 1400000000,
       "pe_giving": "Los Angeles CSA section, verbatim: \"Los Angeles CSA The bank had an excellent level of qualified CD investments and grants... The current and prior period qualified investments totaled $1.4 billion... The investments also included 1,051 grants and donations totaling $80 million.\" This is the LARGEST assessment-area giving figure found anywhere. NOTE: an earlier search attributed Fresno CSA's $5.5 million to Los Angeles \u2014 the figure above was re-read from the section that opens with the assessment area's own name.",
-      "ask_scope_caveat": "The GIVING figure is confirmed AA-scoped, but the county DELINEATION is not. Wells does not state its Los Angeles CSA counties in a form this read could extract, and the counties on this record are borrowed from Chase and Bank of America. A peer artifact names the assessment area's counties, so it must not be built until Wells' own delineation is read.",
       "pe_mined": true,
       "target_status": "target",
       "pitch_archetype": "peer",
@@ -1830,10 +1829,106 @@
       "ask_sizing": "peer path: CAPACITY anchor, no gap multiplier. $80,000,000/4yr x 15% far exceeds the ceiling, so the ask is the $25,000 ceiling.",
       "ask_basis": "1,051 grants and donations totaling $80,000,000 disclosed for the Los Angeles CSA assessment area",
       "verified": true,
-      "verify_note": "Identity confirmed via FDIC BankFind: cert 3511, charter 1, RSSD 451965, regulator OCC, $1.91T, active. Giving read from the February 6, 2023 OCC PE, verbatim: \"Los Angeles CSA The bank had an excellent level of qualified CD investments and grants... The investments also included 1,051 grants and donations totaling $80 million.\" California ratings likewise verbatim: \"Investment Test in the state of California is rated Outstanding\", \"Service Test in the state of California is rated High Satisfactory\". The assessment-area county DELINEATION is NOT read \u2014 Wells does not state its Los Angeles CSA counties in a form this pass could extract, so the counties on this record are borrowed and the record is blocked. See ask_scope_caveat.",
+      "verify_note": "Identity confirmed via FDIC BankFind: cert 3511, charter 1, RSSD 451965, regulator OCC, $1.91T, active. Assessment area read from Appendix A of the February 6, 2023 OCC PE, which lists the Los Angeles CSA as Anaheim-Santa Ana-Irvine MD (Orange), Los Angeles-Long Beach-Glendale MD (Los Angeles), Oxnard-Thousand Oaks-Ventura MSA (Ventura) and Riverside-San Bernardino-Ontario MSA (Riverside, San Bernardino) \u2014 the same five counties Chase and Bank of America use, now READ rather than borrowed. Giving verbatim: \"Los Angeles CSA The bank had an excellent level of qualified CD investments and grants... The investments also included 1,051 grants and donations totaling $80 million.\" California ratings verbatim: \"Investment Test in the state of California is rated Outstanding\", \"Service Test in the state of California is rated High Satisfactory\".",
       "pe_verified_current_against": "OCC CRA API, 2026-08-26 \u2014 charter 1, newest evaluation 02/06/2023.",
       "active": true,
       "active_checked": "2026-08-26"
+    },
+    "td_philadelphia": {
+      "cert": "18409",
+      "rssd": "497404",
+      "charter": "24096",
+      "name": "TD Bank, N.A.",
+      "state": "PA",
+      "aa_counties": [
+        "Bucks",
+        "Chester",
+        "Delaware",
+        "Montgomery",
+        "Philadelphia"
+      ],
+      "aa_counties_other_states": {
+        "NJ": [
+          "Burlington",
+          "Camden",
+          "Gloucester",
+          "Salem"
+        ],
+        "DE": [
+          "New Castle"
+        ]
+      },
+      "aa_note": " (Philadelphia-Camden-Wilmington PA-NJ-DE MMSA, taken FULL-SCOPE \u2014 the AA is the entire multistate area)",
+      "aa_structure": "Philadelphia MMSA is a rated area in its own right for this bank",
+      "pe_date": "2024-07-01",
+      "pe_url": "https://occ.gov/static/cra/craeval/Aug25/24096.pdf",
+      "inv_rating": "Outstanding",
+      "svc_rating": "Outstanding",
+      "component_ratings": "PHILADELPHIA MMSA rated area: \"Investment Test in the Philadelphia MMSA is rated Outstanding\", \"Service Test in the Philadelphia MMSA is rated Outstanding\".",
+      "aa_giving_usd": 8400000,
+      "review_period_years": 3,
+      "pe_investment_usd": 452100000,
+      "pe_giving": "Philadelphia MMSA section, verbatim: \"During the evaluation period, TDBNA made 129 investments totaling $452.1 million and provided 261 grants and donations totaling $8.4 million.\" The $452.1 million is investments for the assessment area; the $8.4 million is the grants-and-donations subset.",
+      "ask_basis": "261 grants and donations totaling $8,400,000 disclosed for the Philadelphia MMSA assessment area",
+      "verify_note": "Identity confirmed via FDIC BankFind: cert 18409, charter 24096, RSSD 497404, regulator OCC, $342.8B, active. Assessment area read from the appendix of the July 1, 2024 OCC PE: \"Philadelphia-Camden-Wilmington, PA-NJ-DE ... DE New Castle County; NJ: Burlington, Camden, Gloucester and Salem Counties; PA: Bucks, Chester, Delaware, Montgomery, and Philadelphia Counties\", Full-Scope.",
+      "regulator": "OCC",
+      "exam_method": "Large Bank",
+      "pe_mined": true,
+      "target_status": "target",
+      "pitch_archetype": "peer",
+      "verified": true,
+      "active": true,
+      "active_checked": "2026-08-26",
+      "documented_gap": "none \u2014 Outstanding on Investment and Service in this rated area. On the list for CAPACITY.",
+      "ask_usd": 25000,
+      "ask_verdict": "earmark",
+      "ask_sizing": "peer path: CAPACITY anchor with no gap multiplier (PEER_MULTIPLIER=1.0). $8,400,000/3yr x 15% = $420,000 -> $25,000 (earmark).",
+      "pe_verified_current_against": "OCC CRA API, 2026-08-26 \u2014 charter 24096, newest evaluation 2024-07-01."
+    },
+    "pnc_louisville": {
+      "cert": "6384",
+      "rssd": "817824",
+      "charter": "1316",
+      "name": "PNC Bank, N.A.",
+      "state": "KY",
+      "aa_counties": [
+        "Bullitt",
+        "Jefferson",
+        "Oldham"
+      ],
+      "aa_counties_other_states": {
+        "IN": [
+          "Clark",
+          "Floyd",
+          "Washington"
+        ]
+      },
+      "aa_note": " (Louisville/Jefferson County KY-IN MMSA, taken FULL-SCOPE. NOTE this delineation differs from Stock Yards' and Republic's Louisville areas \u2014 three banks, three different county sets)",
+      "aa_structure": "Louisville/Jefferson County KY-IN MMSA is a rated area in its own right for this bank",
+      "pe_date": "2022-06-06",
+      "pe_url": "https://occ.gov/static/cra/craeval/May24/1316.pdf",
+      "inv_rating": "Outstanding",
+      "svc_rating": "Outstanding",
+      "component_ratings": "LOUISVILLE/JEFFERSON COUNTY KY-IN MMSA: \"The institution's performance under the Investment Test in the Louisville/Jefferson County, KY-IN MMSA is rated Outstanding\", and the Service Test likewise Outstanding.",
+      "aa_giving_usd": 7000000,
+      "review_period_years": 3,
+      "pe_investment_usd": 147600000,
+      "pe_giving": "Louisville/Jefferson County KY-IN MMSA section, verbatim: \"210 qualified grants totaling $7 million related to community service organizations that provided needed services to low- and moderate-income individuals\", alongside $121.1M + $17M + $9.5M of qualified investments in the same assessment area.",
+      "ask_basis": "210 qualified grants totaling $7,000,000 disclosed for the Louisville/Jefferson County KY-IN MMSA assessment area",
+      "verify_note": "Identity confirmed via FDIC BankFind: cert 6384, charter 1316, RSSD 817824, regulator OCC, $609.8B, active. Assessment area read from the appendix of the June 6, 2022 OCC PE: \"Louisville/Jefferson County, KY-IN \u2014 IN: Clark, Floyd, Washington; KY: Bullitt, Jefferson, Oldham\", Full. This is NOT the same county set as Stock Yards (which includes Shelby) or Republic.",
+      "regulator": "OCC",
+      "exam_method": "Large Bank",
+      "pe_mined": true,
+      "target_status": "target",
+      "pitch_archetype": "peer",
+      "verified": true,
+      "active": true,
+      "active_checked": "2026-08-26",
+      "documented_gap": "none \u2014 Outstanding on Investment and Service in this rated area. On the list for CAPACITY.",
+      "ask_usd": 25000,
+      "ask_verdict": "earmark",
+      "ask_sizing": "peer path: CAPACITY anchor with no gap multiplier (PEER_MULTIPLIER=1.0). $7,000,000/3yr x 15% = $350,000 -> $25,000 (earmark).",
+      "pe_verified_current_against": "OCC CRA API, 2026-08-26 \u2014 charter 1316, newest evaluation 2022-06-06."
     }
   }
 }
