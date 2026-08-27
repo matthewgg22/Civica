@@ -50,9 +50,9 @@ const META: Record<string, { title: string; description: string }> = {
       "Hỏi bất cứ điều gì về SNAP (phiếu thực phẩm) và nhận câu trả lời dựa trên quy định thật. Quy định liên bang cùng chính sách tiểu bang đã được xác minh, mọi khẳng định đều có trích dẫn, và được đánh dấu chắc chắn hay chưa chắc.",
   },
   zh: {
-    title: "Demeter AI: 经过核实的 SNAP 答案，并附上依据",
+    title: "Demeter AI：经过核实的 SNAP 答案，并附上依据",
     description:
-      "关于 SNAP（食品券）想问什么都可以，得到的答案以真实法规为依据，联邦法规加上经过核实的州级政策，每条结论都有出处，并标注为确定或不确定。",
+      "关于 SNAP（食品券）想问什么都可以，得到的答案以真实法规为依据：联邦法规加上经过核实的州级政策，每条结论都有出处，并标注为确定或不确定。",
   },
 };
 
