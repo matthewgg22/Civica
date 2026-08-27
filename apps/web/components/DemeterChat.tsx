@@ -30,6 +30,7 @@ import {
 import type { ScreeningClassification, PartialFacts } from "@civica/demeter-engine";
 import { DemeterMark } from "./DemeterMark";
 import { DemeterStatePicker } from "./DemeterStatePicker";
+import { DemeterWelcome } from "./DemeterWelcome";
 import { DemeterWorksheet, type WorksheetMode } from "./DemeterWorksheet";
 import { DemeterFeedback } from "./DemeterFeedback";
 import { DemeterSave } from "./DemeterSave";
@@ -586,6 +587,30 @@ export { T };
 const STREAM_TICK_MS = 34;
 const STREAM_MAX_STEP = 2;
 
+/** Remembers that the first-visit card has been seen. Deliberately its own
+ *  key rather than a field on the saved session: clearing a conversation must
+ *  not make the product introduce itself again. */
+const WELCOME_SEEN_KEY = "demeter.welcome.seen";
+
+/** Wrap the two mode labels wherever they appear in a sentence.
+ *
+ *  Keyed off the copy table's labels, not off quote characters: Spanish uses
+ *  «», Chinese uses 「」, and a regex over punctuation would emphasise the
+ *  wrong span in half the languages. */
+function emphasiseModes(text: string, labels: string[]): ReactNode[] {
+  const esc = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(`(${labels.filter(Boolean).map(esc).join("|")})`, "g");
+  return text.split(re).map((part, i) =>
+    labels.includes(part) ? (
+      <em className="demeter__modename" key={i}>
+        {part}
+      </em>
+    ) : (
+      <span key={i}>{part}</span>
+    ),
+  );
+}
+
 export function DemeterChat({
   states,
   initialState = null,
@@ -803,6 +828,11 @@ export function DemeterChat({
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  /** The first-visit card. Starts CLOSED and is opened by an effect, not by
+   *  initial state: reading localStorage during render would differ between
+   *  server and client and hydrate mismatched. Never shown over an existing
+   *  conversation — someone resuming has already met the product. */
+  const [showWelcome, setShowWelcome] = useState(false);
 
   // ── PACED STREAMING ────────────────────────────────────────────────────────
   // The reader used to render every network chunk the instant it arrived, and
@@ -932,6 +962,30 @@ export function DemeterChat({
     });
   }, [messages, state, lang, busy, worksheetMode, classification]);
 
+  useEffect(() => {
+    if (initialMessages.length > 0) return;
+    try {
+      if (window.localStorage.getItem(WELCOME_SEEN_KEY)) return;
+      setShowWelcome(true);
+    } catch {
+      // localStorage disabled (private mode, blocked cookies). Showing the
+      // card every visit would be worse than never showing it, so: never.
+    }
+  }, [initialMessages.length]);
+
+  const dismissWelcome = useCallback(() => {
+    setShowWelcome(false);
+    // Straight into the box. Someone who has just read what the program is has
+    // a question; landing them at the top of the document to go find the
+    // composer is a step for no reason.
+    requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+    try {
+      window.localStorage.setItem(WELCOME_SEEN_KEY, "1");
+    } catch {
+      /* nothing to remember it with; it simply shows again next time */
+    }
+  }, []);
+
   useEffect(() => () => clearTimeout(rafRef.current), []);
 
   // THE URL CLAIMS WHAT THE SCREEN SHOWS (vercel-guidelines finding 3).
@@ -956,11 +1010,16 @@ export function DemeterChat({
   useEffect(() => {
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
     if (!window.matchMedia("(pointer: fine)").matches) return;
+    // NOT WHILE THE FIRST-VISIT CARD IS UP. It is a modal and holds focus; two
+    // effects racing for it leaves a keyboard reader in the conversation
+    // behind a dialog they cannot see past. Dismissing hands focus to the
+    // composer instead, which is where they were headed anyway.
+    if (showWelcome) return;
     inputRef.current?.focus({ preventScroll: true });
     // Mount-only on purpose: refocusing on later state changes would steal
     // focus mid-conversation.
      
-  }, []);
+  }, [showWelcome]);
   /** Back to one row. The composer grows as you type, so clearing the value
    *  without clearing the inline height leaves an empty box the size of the
    *  question you just sent. */
@@ -1236,7 +1295,7 @@ export function DemeterChat({
 
   /** The worksheet as it stands RIGHT NOW, for the sign-in stash (#898 P2-9).
    *  A getter so DemeterSave reads it at write time; stable identity because
-   *  it reads a ref and state via the render closure would go stale — so it
+   *  it reads a ref and state via the render closure would go stale. So it
    *  reads refs and the setters' current values through a second ref. */
   const worksheetSnapRef = useRef<WorksheetSnapshot>({
     mode: "ask",
@@ -1252,7 +1311,7 @@ export function DemeterChat({
   /** Recompute against an EXPLICIT state.
    *
    *  changeState calls this, and at that moment the `state` STATE still holds
-   *  the old code — setState has not applied yet — so a version closing over
+   *  the old code. SetState has not applied yet. So a version closing over
    *  it would rescope the estimate to the state the reader just left. */
   const refreshWorksheetFor = useCallback(
     async (
@@ -1260,7 +1319,7 @@ export function DemeterChat({
       forState: string | null,
       /** True when apiMessages IS the whole conversation, not a tail window.
        *  Callers compute it by comparing what they held against what they
-       *  sent — see #966. Guessing here would defeat the point. */
+       *  sent, see #966. Guessing here would defeat the point. */
       windowComplete = false,
     ) => {
       if (!forState) return;
@@ -1311,7 +1370,7 @@ export function DemeterChat({
     // Tail-window to the server's MAX_MESSAGES (20). A strictly alternating,
     // user-first history is ALWAYS odd length once the new question is
     // appended, and slicing an odd-length array to an even window (20) drops
-    // an odd number of leading elements — meaning the surviving array starts
+    // an odd number of leading elements. Meaning the surviving array starts
     // with the assistant every single time this branch is taken, forever,
     // for any conversation that ever reaches 10 exchanges. Server-side,
     // that's a hard 400 ("Conversation must start with a user message") on
@@ -1322,13 +1381,13 @@ export function DemeterChat({
     if (apiMessages[0]?.role !== "user") {
       apiMessages = apiMessages.slice(1);
     }
-    // Did they name somewhere? Offered, not applied — and only when it
+    // Did they name somewhere? Offered, not applied. And only when it
     // disagrees with the scope they are already on.
     const mentioned = detectState(question);
     setStateOffer(mentioned && mentioned.code !== state ? mentioned : null);
 
     // A place we do NOT cover has to be said out loud. "Washington DC" used to
-    // match the word "washington" and quietly answer for Washington State — a
+    // match the word "washington" and quietly answer for Washington State. A
     // different agency, a different portal, different figures, and nothing on
     // screen admitting it. Saying "not yet, here is what still applies" is a
     // worse answer and a far better outcome than a confident wrong one.
@@ -1356,7 +1415,7 @@ export function DemeterChat({
     // The rail updates ALONGSIDE the answer, not after it: a second round trip
     // in series would make every reply feel slower for a panel that is
     // supplementary. It is intentionally not awaited and intentionally cannot
-    // throw into this scope — the answer must not depend on it.
+    // throw into this scope. The answer must not depend on it.
     // THE GATE. In "ask" mode this call never happens, so no facts are
     // extracted, nothing lands in factsRef, and the paid extraction round trip
     // is not made either.
@@ -1379,14 +1438,14 @@ export function DemeterChat({
     /** Hand the question back so the next tap is Send, not retyping it.
      *
      *  Without this a failed request left the composer EMPTY and the user's
-     *  message stranded in the transcript above an error — so someone on a
+     *  message stranded in the transcript above an error. So someone on a
      *  flaky prepaid connection, which is most of this audience, had to retype
      *  a question they had already carefully worded. That is the opposite of an
      *  actionable recovery step.
      *
      *  Drops their turn from the transcript as well as the empty assistant
      *  bubble, because the honest state after a failed send is "you typed this
-     *  and it did not go", not "you asked this and were ignored" — and leaving
+     *  and it did not go", not "you asked this and were ignored". And leaving
      *  it would duplicate the turn when they send again.
      *
      *  Only for failures where trying again can actually work. At capacity for
@@ -1414,7 +1473,7 @@ export function DemeterChat({
           state,
           lang,
           sessionId: sessionIdRef.current || undefined,
-          // Counts ANSWERS, not attempts — because an audit row is written per
+          // Counts ANSWERS, not attempts, because an audit row is written per
           // answer, so this has to agree with what actually lands in the log.
           //
           // Two wrong versions came before this one, both of which inflate the
@@ -1440,13 +1499,13 @@ export function DemeterChat({
         // distinction the route makes on purpose: it returns 429 for BOTH a
         // per-minute rate limit and a per-IP DAILY cap, with different bodies
         // and different Retry-After values (60s vs 3600s). The client showed
-        // "give it a minute" for both — so someone who had hit the daily cap
+        // "give it a minute" for both. So someone who had hit the daily cap
         // was told to wait a minute for something that resets tomorrow, and
         // would sit there retrying. The route's own comment calls the two
         // "distinct ON PURPOSE"; this is where that distinction was being lost.
         //
         // WHOSE FAULT IT IS. Everything unmapped used to fall through to
-        // "Something went wrong. Please try again." — which was also the copy
+        // "Something went wrong. Please try again.". Which was also the copy
         // for a genuine connection failure, so a 500 on our side and a dropped
         // wifi connection were indistinguishable. They call for different
         // actions, and neither reader could tell which they had.
@@ -1486,7 +1545,7 @@ export function DemeterChat({
 
           // The marker REPLACES the unverified draft, so it is resolved against
           // everything received rather than against what is currently on
-          // screen — the display may legitimately be behind.
+          // screen. The display may legitimately be behind.
           const markerAt = rawRef.current.lastIndexOf(RECOMPOSE_MARKER);
           const next =
             markerAt >= 0
@@ -1494,7 +1553,7 @@ export function DemeterChat({
               : rawRef.current;
 
           // If the recomposed answer does not continue what is already shown,
-          // the draft was thrown away — so the display starts over and the
+          // the draft was thrown away. So the display starts over and the
           // replacement types out. Seeing it rewrite is the honest rendering of
           // what just happened.
           if (!next.startsWith(fullRef.current.slice(0, shownRef.current))) shownRef.current = 0;
@@ -1519,11 +1578,11 @@ export function DemeterChat({
       // feedback row asks about an answer the person has to have seen.
       //
       // BOUNDED anyway. The timer survives a backgrounded tab, but it is
-      // throttled hard there, and an unbounded wait would leave busy stuck on —
-      // Stop showing instead of Send — for as long as the tab stayed hidden.
+      // throttled hard there, and an unbounded wait would leave busy stuck on , 
+      // Stop showing instead of Send. For as long as the tab stayed hidden.
       if (shownRef.current < fullRef.current.length) {
         // A STALL WATCHDOG, not a deadline. A fixed ceiling would truncate a
-        // long answer that is pacing correctly — at reading pace a 2,000
+        // long answer that is pacing correctly. At reading pace a 2,000
         // character reply legitimately takes eight seconds. What actually needs
         // catching is the timer STOPPING (a hidden tab throttles it to
         // nothing), so this watches for no progress rather than for elapsed
@@ -1559,7 +1618,7 @@ export function DemeterChat({
         });
       }
     } catch (err) {
-      // An abort is the user pressing Stop, not a failure — their question was
+      // An abort is the user pressing Stop, not a failure. Their question was
       // answered as far as they wanted it to be, so nothing is handed back.
       if (err instanceof DOMException && err.name === "AbortError") {
         dropPlaceholder();
@@ -1582,21 +1641,31 @@ export function DemeterChat({
 
   /** The pack for whichever state is selected, or null on the federal floor.
    *  agencyHref (the disclaimer's link) and the "Apply at {portal}" link
-   *  next to "How we verify" both read off this — one lookup, not two. */
+   *  next to "How we verify" both read off this. One lookup, not two. */
   const selectedPack = state ? states.find((x) => x.code === state) ?? null : null;
-  /** The agency the disclaimer points at. Their own state's, once one is set —
+  /** The agency the disclaimer points at. Their own state's, once one is set , 
    *  a generic "your state agency" is exactly the sort of advice that sounds
    *  complete and leaves someone with nowhere to go. */
   const agencyHref = selectedPack?.portal?.url ?? "/states";
 
   const hasChat = messages.length > 0;
+  /** The newest assistant message with content. Follow-ups hang off this one
+   *  alone — see the comment at their render. */
+  const lastAnswerIndex = (() => {
+    for (let i = messages.length - 1; i >= 0; i -= 1) {
+      const m = messages[i];
+      if (m && m.role === "assistant" && m.content) return i;
+    }
+    return -1;
+  })();
+
   /** At least one answer has finished. The mode offer waits for this: before an
    *  answer exists there is nothing to have an opinion about. */
   const answeredOnce = messages.some((m) => m.role === "assistant" && m.content !== "");
   const answeredCount = messages.filter((m) => m.role === "assistant" && m.content !== "").length;
   /** How much more conversation has to happen, after a "just asking" dismissal,
    *  before it is worth asking again. Six answered turns is deliberately a
-   *  while — this must not feel like nagging — but not "never": the real
+   *  while. This must not feel like nagging. But not "never": the real
    *  transcript that found this gap ran fifteen turns deep with a full income
    *  and household established and was never asked a second time. */
   const MODE_REOFFER_AFTER_TURNS = 6;
@@ -1612,7 +1681,7 @@ export function DemeterChat({
    *  than MODE_REOFFER_AFTER_TURNS deliberately: losing the WHOLE
    *  conversation is a bigger loss than not getting a structured estimate,
    *  so it is worth mentioning sooner. A real 15-turn conversation with real
-   *  content in it never once saw this (#833 audit, 2026-08-15) — the Save
+   *  content in it never once saw this (#833 audit, 2026-08-15). The Save
    *  button existed the whole time, tucked in the side panel. Started at 4;
    *  real feedback the same day was that it fired too soon (felt like
    *  turn 4-5 of an ordinary conversation, not yet "long enough to lose"),
@@ -1622,14 +1691,14 @@ export function DemeterChat({
     !busy && !conversationSaved && !saveNudgeDismissed && answeredCount >= SAVE_NUDGE_AFTER_TURNS;
 
   // What the composer asks for. If Demeter's last answer ended in a question,
-  // that question — otherwise the standing invitation. Never while an answer is
+  // that question. Otherwise the standing invitation. Never while an answer is
   // still arriving: the placeholder would change under the person mid-read.
   const lastAssistant = busy
     ? null
     : [...messages].reverse().find((m) => m.role === "assistant" && m.content)?.content ?? null;
   // The standing invitation, worded for the mode you are actually in. The two
-  // modes do different things with what you type — one gathers it into a
-  // document, one deliberately does not — and the box you type into was the
+  // modes do different things with what you type. One gathers it into a
+  // document, one deliberately does not. And the box you type into was the
   // one place that never said which was happening.
   //
   // t.inputPlaceholder is a FIRST-TIME invitation ("Happy to answer any
@@ -1710,22 +1779,11 @@ export function DemeterChat({
               {t.signin}
             </a>
           )}
-          {/* RETARGETED with the rename (owner, 2026-08-22). The label became
-              "What is SNAP?", and /questions is the page about what the
-              APPLICATION asks — a different question, and a link whose label
-              disagrees with where it goes is worse than a clumsy label. It now
-              points at the landing page's own "What SNAP is" band, which
-              already carries id="what-is-snap" — that band lives in
-              SnapOverview, which renders on /screen/ask (the Demeter landing),
-              NOT on "/" (still the older Civica marketing page). /questions
-              keeps its entry from the landing form cards, so nothing is
-              orphaned. */}
-          <a
-            className="demeter__navlink"
-            href={lang === "en" ? "/screen/ask#what-is-snap" : `/${lang}/screen/ask#what-is-snap`}
-          >
-            {t.navQuestions}
-          </a>
+          {/* The "What is SNAP?" link is GONE (owner, 2026-08-22). It sent
+              someone out of the chat to read a definition — and the definition
+              is now the first thing the empty state says, alongside the
+              first-visit card, so the trip is pointless. The chrome row is
+              sign-in and nothing else. */}
         </div>
       </header>
 
@@ -1765,19 +1823,37 @@ export function DemeterChat({
           // whichever end the chips were pinned to, they read as controls
           // someone forgot rather than as the start of a conversation.
           <div className="demeter__empty">
-            <DemeterMark size={52} />
-            <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
+            {/* MARK AND TITLE ON ONE LINE (owner, 2026-08-26). Stacked, the
+                mark sat alone above the heading and read as a spacer. */}
+            <div className="demeter__emptyhead">
+              <DemeterMark size={40} />
+              <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
+            </div>
+            {/* WHAT THE PROGRAM IS, then what this is (owner, 2026-08-22).
+                The "What is SNAP?" link is gone, so the definition it pointed
+                at leads here instead — someone who has just been told to
+                "apply for SNAP" may not know what the letters mean, and
+                sending them off the page to find out was the old answer. */}
+            <p className="demeter__emptywhat">{t.emptyWhatIsSnap}</p>
             <p className="demeter__emptylede">{t.emptyLede}</p>
             {/* Framing before the first word is typed (#898 P2-6): SNAP is
                 formula work this chat can walk through, and there are two
                 modes. A full-length real conversation ended without the
                 tester ever learning either. */}
-            <p className="demeter__emptymodes">{t.emptyModes}</p>
-            {/* STATE-FIRST onboarding (Pi redesign, state-only by decision —
-                the retention line says avoid names, so the greeting asks for
-                the one thing answers actually depend on). Gone the moment a
-                state is chosen. */}
-            {!state && <p className="demeter__emptyask">{t.emptyAskState}</p>}
+            {/* The two labels are the SWITCH's own words, so they are set
+                apart from the sentence around them: someone scanning for what
+                to press finds them without reading the line. Split on the copy
+                table's own labels rather than on quote marks, so it stays
+                right in a language that quotes differently. */}
+            <p className="demeter__emptymodes">
+              {emphasiseModes(t.emptyModes, [t.worksheet.modeAsk, t.worksheet.modeEstimate])}
+            </p>
+            {/* THE ASK-STATE LINE IS GONE (owner, 2026-08-26). It told people to
+                "choose it above" — and the picker it points at is the first
+                thing in the rail, labelled "Your state", so the line was a
+                caption for a control that already says what it is. The
+                federal-floor caveat it also carried survives on the picker's
+                own scope line and in the divider the moment a state is set. */}
             {/* NO STARTER QUESTIONS. There were three — "Do I earn too much to
                 qualify?", "I need food this week", "Will I have to do an
                 interview?" — and none of them is what someone actually opens
@@ -1844,7 +1920,14 @@ export function DemeterChat({
                   starter questions: a suggestion you can edit before asking is
                   a suggestion, and one that fires on touch is a decision made
                   for you. */}
-              {m.role === "assistant" && m.content && !(busy && i === messages.length - 1) && (
+              {/* ONLY UNDER THE NEWEST ANSWER (owner, 2026-08-26: "I don't need
+                  it for every prompt follow-up"). Every assistant message kept
+                  its own set, so scrolling back through a long conversation
+                  walked past a row of stale suggestions under each one —
+                  answered questions still offering themselves. The follow-ups
+                  are about where the conversation is NOW, so only the last
+                  answer carries them. */}
+              {m.role === "assistant" && m.content && i === lastAnswerIndex && !busy && (
                 <>
                   {splitFollowups(m.content).followups.length > 0 && (
                     <div className="demeter__followups">
@@ -1933,6 +2016,13 @@ export function DemeterChat({
           state picker straight away, because an estimate without a state is a
           federal-floor guess and the picker is the next thing needed either
           way. */}
+      {showWelcome && (
+        <DemeterWelcome
+          copy={{ ...t.welcome, whatIsSnap: t.emptyWhatIsSnap }}
+          onDismiss={dismissWelcome}
+          signInHref={`/sign-in?next=${encodeURIComponent(lang === "en" ? "/chat" : `/${lang}/chat`)}&lang=${lang}`}
+        />
+      )}
       {showModeOffer && (
         <div
           className="demeter__modeoffer"
@@ -2140,7 +2230,7 @@ export function DemeterChat({
           message — the moment someone is most likely to paste an SSN or a case
           number — and lives permanently in the gear menu after that, so the
           resting state of an ongoing conversation is a single line. */}
-      {!hasChat && <p className="demeter__piihint">{t.piiHint}</p>}
+
       {/* "Demeter is AI" leads, because someone who knows that reads
           everything above it differently. And the agency is a real link:
           telling somebody to check with an office without saying which office
@@ -2157,6 +2247,12 @@ export function DemeterChat({
           the two lines costs nothing legally — both remain conspicuous, and
           neither is smaller than the other. Burying one would. */}
       <p className="demeter__disclaimer">
+        {/* ONE PARAGRAPH, not two (owner, 2026-08-26). The safety hint had its
+            own line above this one; both are the same register and the same
+            size, so the break bought nothing but height under the composer.
+            Still first-message-only: it is advice for the moment someone is
+            about to type, and it lives permanently in the gear menu. */}
+        {!hasChat && <span className="demeter__piihint">{t.piiHint} </span>}
         {t.disclaimer}{" "}
         <a
           className="demeter__link"
@@ -2217,7 +2313,6 @@ export function DemeterChat({
                   Demeter
                 </span>
               </a>
-              <p className="demeter__sbtag">{t.tagline}</p>
             </div>
             <button
               type="button"
@@ -2233,6 +2328,11 @@ export function DemeterChat({
               </svg>
             </button>
           </div>
+          {/* OUT of the brand column and under the whole head row (owner,
+              2026-08-26). Inside it, the tagline shared its width with the
+              toggle button and wrapped to two lines. Full-width it fits on
+              one, which is what a label ought to do. */}
+          <p className="demeter__sbtag">{t.tagline}</p>
           <div className="demeter__side">
           {/* Yields to the in-column instance on narrow viewports — exactly
               one picker in the DOM at any width (see narrowViewport). */}
@@ -2467,46 +2567,41 @@ export function DemeterChat({
                     <path d="M10 4.5v11M4.5 10h11" />
                   </svg>
                 </button>
-                {/* A native <select> here rendered the OS dropdown — an
-                    unstyleable box that ignored every token in the design
-                    system and swallowed a third of the rail's bottom row.
-                    Same <details> disclosure the gear uses (Escape and
-                    outside-click come free, works with no JavaScript), but
-                    showing a globe and the CURRENT language's own short code:
-                    visual, and it still answers "what am I reading in?"
-                    without opening anything. Each option carries its native
-                    name, because someone looking for Vietnamese is scanning
-                    for "Tiếng Việt", not for a flag or an ISO code. */}
-                <details className="demeter__langmenu">
-                  <summary className="demeter__langbtn" aria-label={t.languageLabel} title={t.languageLabel}>
-                    <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="9" />
-                      <path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18" />
-                    </svg>
-                    <span className="demeter__langcode">{LANG_SHORT_CODE[lang]}</span>
-                  </summary>
-                  <div className="demeter__langlist" role="group" aria-label={t.languageLabel}>
-                    {ANSWER_LANGS.map((code) => (
-                      <button
-                        key={code}
-                        type="button"
-                        className="demeter__langopt"
-                        aria-pressed={lang === code}
-                        onClick={(e) => {
-                          setLang(code);
-                          // Close the disclosure the same way a real menu
-                          // would; <details> has no auto-close on activation.
-                          e.currentTarget.closest("details")?.removeAttribute("open");
-                        }}
-                      >
-                        <span className="demeter__langtick" aria-hidden>
-                          {lang === code ? "✓" : ""}
+                {/* ALL FOUR, VISIBLE, NO DISCLOSURE (owner, 2026-08-26).
+                    This was a globe and the current code behind a popover, and
+                    before that a native <select>. Both hid three of the four
+                    languages behind an interaction — on a product where the
+                    person who most needs another language is the least likely
+                    to go hunting for a control to find it. Four initials and
+                    three slashes cost less width than the globe did, and the
+                    terracotta fill on the current one does the job the tick
+                    inside the old menu did: says which you are reading in,
+                    without being opened.
+
+                    The BUTTON shows the short code; the accessible name is the
+                    language's own name, so a screen reader announces "Tiếng
+                    Việt" rather than the letters "VI". */}
+                <div className="demeter__langrow" role="group" aria-label={t.languageLabel}>
+                  {ANSWER_LANGS.map((code, i) => (
+                    <span key={code} className="demeter__langitem">
+                      {i > 0 && (
+                        <span className="demeter__langsep" aria-hidden>
+                          /
                         </span>
-                        {LANG_NATIVE_NAME[code]}
+                      )}
+                      <button
+                        type="button"
+                        className="demeter__langpick"
+                        aria-pressed={lang === code}
+                        aria-label={LANG_NATIVE_NAME[code]}
+                        title={LANG_NATIVE_NAME[code]}
+                        onClick={() => setLang(code)}
+                      >
+                        {LANG_SHORT_CODE[code]}
                       </button>
-                    ))}
-                  </div>
-                </details>
+                    </span>
+                  ))}
+                </div>
           {/* SETTINGS, on the same line as sign-in (owner rec): a gear that
               discloses the standing pages. <details> rather than custom
               popover state — Escape and outside-click come free, and it
@@ -2534,10 +2629,9 @@ export function DemeterChat({
               >
                 {t.feedbackLink}
               </a>
-              {/* The permanent home for the safety hint that used to occupy a
-                  line under the composer forever. Reachable for the whole
-                  conversation, not only before the first message. */}
-              <p className="demeter__gearnote">{t.piiHint}</p>
+              {/* The safety hint lived here too. Removed (owner, 2026-08-26):
+                  it already shows under the composer, where it is actionable,
+                  and a settings menu is not where anyone looks before typing. */}
             </div>
           </details>
               </>

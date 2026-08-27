@@ -25,13 +25,13 @@ export function SupporterSignOn() {
       });
       if (!res.ok) {
         const j = (await res.json().catch(() => ({}))) as { error?: string };
-        setErrMsg(j.error ?? "Something went wrong — please try again.");
+        setErrMsg(j.error ?? "Something went wrong, please try again.");
         setState("error");
         return;
       }
       setState("done");
     } catch {
-      setErrMsg("Network error — please try again.");
+      setErrMsg("Network error, please try again.");
       setState("error");
     }
   }
@@ -41,7 +41,7 @@ export function SupporterSignOn() {
       <section className="ssignon" aria-live="polite">
         <h2 className="ssignon__title">Thank you!</h2>
         <p>
-          Your sign-on is in — we review every submission before listing (usually within
+          Your sign-on is in, we review every submission before listing (usually within
           a few days). We&apos;ll email you at the address you provided.
         </p>
       </section>

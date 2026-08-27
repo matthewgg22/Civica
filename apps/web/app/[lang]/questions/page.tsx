@@ -32,19 +32,19 @@ export function generateStaticParams(): Array<{ lang: string }> {
 
 const META: Record<string, { title: string; description: string }> = {
   es: {
-    title: "Qué pregunta realmente una solicitud de SNAP — cada pregunta y su regla",
+    title: "Qué pregunta realmente una solicitud de SNAP. Cada pregunta y su regla",
     description:
-      "Las líneas donde la gente se atasca en una solicitud de SNAP, en lenguaje sencillo: composición del hogar, servicio acelerado, estatus de estudiante, reglas de trabajo ABAWD, preguntas sobre delitos — cada una con la regulación federal que la decide.",
+      "Las líneas donde la gente se atasca en una solicitud de SNAP, en lenguaje sencillo: composición del hogar, servicio acelerado, estatus de estudiante, reglas de trabajo ABAWD, preguntas sobre delitos. Cada una con la regulación federal que la decide.",
   },
   vi: {
-    title: "Đơn xin SNAP thực sự hỏi điều gì — từng câu hỏi và điều luật đằng sau",
+    title: "Đơn xin SNAP thực sự hỏi điều gì. Từng câu hỏi và điều luật đằng sau",
     description:
-      "Những dòng khiến người ta mắc kẹt trên đơn SNAP, giải thích dễ hiểu: thành phần hộ gia đình, xét duyệt khẩn cấp, tình trạng sinh viên, quy định làm việc ABAWD, câu hỏi về tiền án — mỗi mục kèm quy định liên bang quyết định nó.",
+      "Những dòng khiến người ta mắc kẹt trên đơn SNAP, giải thích dễ hiểu: thành phần hộ gia đình, xét duyệt khẩn cấp, tình trạng sinh viên, quy định làm việc ABAWD, câu hỏi về tiền án. Mỗi mục kèm quy định liên bang quyết định nó.",
   },
   zh: {
-    title: "SNAP 申请表到底在问什么——每一个问题及其依据",
+    title: "SNAP 申请表到底在问什么，每一个问题及其依据",
     description:
-      "人们在 SNAP 申请表上最容易卡住的那些行，用通俗语言说明：家庭组成、加急办理、学生身份、ABAWD 工作要求、重罪相关问题——每一项都附上决定它的联邦法规。",
+      "人们在 SNAP 申请表上最容易卡住的那些行，用通俗语言说明：家庭组成、加急办理、学生身份、ABAWD 工作要求、重罪相关问题，每一项都附上决定它的联邦法规。",
   },
 };
 

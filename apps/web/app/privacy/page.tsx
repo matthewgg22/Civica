@@ -15,7 +15,7 @@ import { PRIVACY_POLICY } from "../../lib/legal";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Demeter",
+  title: "Privacy Policy: Demeter",
   description:
     "What Demeter collects when you ask a question, and what it does not. No advertising, no data sales, no reporting to any agency.",
 };

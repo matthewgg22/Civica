@@ -175,7 +175,7 @@ function renderLine(line: string, key: string) {
       </Text>
     );
   }
-  // "Label: value" and "Who — details" both become a form-shaped row.
+  // "Label: value" and "Who. Details" both become a form-shaped row.
   const m = /^([^:]{1,48}): (.+)$/.exec(line) ?? /^(.{1,48}?) — (.+)$/.exec(line);
   if (m) {
     return (

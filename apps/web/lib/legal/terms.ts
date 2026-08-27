@@ -40,7 +40,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
         },
         {
           kind: "p",
-          text: "You agree to these Terms when you send Demeter a message or create an account. We tell you so at both of those moments, with a link to this page, rather than burying it in a footer and calling that agreement. If you do not agree, please do not use Demeter — and you can still get the same information from your state SNAP agency or by calling 211.",
+          text: "You agree to these Terms when you send Demeter a message or create an account. We tell you so at both of those moments, with a link to this page, rather than burying it in a footer and calling that agreement. If you do not agree, please do not use Demeter. And you can still get the same information from your state SNAP agency or by calling 211.",
         },
         {
           kind: "p",
@@ -68,7 +68,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
         },
         {
           kind: "p",
-          text: "Demeter uses artificial intelligence and can be wrong. It can misread a rule, miss a rule your state applies, or be out of date. Do not decide whether to apply based only on what Demeter tells you. If Demeter suggests you may not qualify, you are still entitled to apply and to receive a decision from your agency — applying is free, and the agency decides, not us.",
+          text: "Demeter uses artificial intelligence and can be wrong. It can misread a rule, miss a rule your state applies, or be out of date. Do not decide whether to apply based only on what Demeter tells you. If Demeter suggests you may not qualify, you are still entitled to apply and to receive a decision from your agency. Applying is free, and the agency decides, not us.",
         },
         {
           kind: "p",
@@ -119,7 +119,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
         {
           kind: "ul",
           items: [
-            "To produce an answer for you — which means sending your question, with identifiers stripped out, to the AI model that writes the answer.",
+            "To produce an answer for you. Which means sending your question, with identifiers stripped out, to the AI model that writes the answer.",
             "To check and improve the accuracy of Demeter's answers, by keeping a short-lived record of the question and answer as described in the Privacy Policy.",
             "To produce aggregate statistics that identify nobody, such as how many questions were asked about a topic.",
           ],
@@ -167,7 +167,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
       blocks: [
         {
           kind: "p",
-          text: "You do not need an account to use Demeter. If you make one, keep access to the email address you signed up with — anyone who can read your email can sign in as you. Tell us at " + CONTACT.privacy + " if you believe someone else has access to your account.",
+          text: "You do not need an account to use Demeter. If you make one, keep access to the email address you signed up with. Anyone who can read your email can sign in as you. Tell us at " + CONTACT.privacy + " if you believe someone else has access to your account.",
         },
         {
           kind: "p",
@@ -199,7 +199,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
         },
         {
           kind: "p",
-          text: "You may stop using Demeter at any time, and delete your account if you have one. The sections that by their nature should survive — disclaimers, limitation of liability, the license in Section 5, dispute resolution, and governing law — survive termination.",
+          text: "You may stop using Demeter at any time, and delete your account if you have one. The sections that by their nature should survive. Disclaimers, limitation of liability, the license in Section 5, dispute resolution, and governing law. Survive termination.",
         },
       ],
     },
@@ -239,7 +239,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
       blocks: [
         {
           kind: "p",
-          text: "If you misuse Demeter — by breaking the rules in Section 6, by violating the law, or by infringing someone else's rights — and a third party brings a claim against us because of it, you agree to defend and indemnify us against that claim and its reasonable costs, to the extent permitted by law.",
+          text: "If you misuse Demeter. By breaking the rules in Section 6, by violating the law, or by infringing someone else's rights. And a third party brings a claim against us because of it, you agree to defend and indemnify us against that claim and its reasonable costs, to the extent permitted by law.",
         },
         {
           kind: "p",
@@ -290,7 +290,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
         },
         {
           kind: "p",
-          text: '13.9 Mass disputes. If 25 or more notices raising similar Claims and brought by the same or coordinated counsel are received, they are a "Mass Dispute" and the AAA Mass Arbitration Supplementary Rules apply, as modified here. The parties will first select 20 notices — 10 chosen by each side — to proceed as initial arbitrations, each before its own arbitrator. No other demand may be filed, and no related fees assessed, until those conclude. The parties will then mediate all remaining notices once. If more than 100 notices remain unresolved after mediation, either side may elect, in writing within 30 days, to remove all remaining notices from arbitration, in which case they proceed in court under Section 14. Otherwise the AAA will randomly select up to 30 more to proceed, and the process repeats until all are resolved.',
+          text: '13.9 Mass disputes. If 25 or more notices raising similar Claims and brought by the same or coordinated counsel are received, they are a "Mass Dispute" and the AAA Mass Arbitration Supplementary Rules apply, as modified here. The parties will first select 20 notices: 10 chosen by each side. To proceed as initial arbitrations, each before its own arbitrator. No other demand may be filed, and no related fees assessed, until those conclude. The parties will then mediate all remaining notices once. If more than 100 notices remain unresolved after mediation, either side may elect, in writing within 30 days, to remove all remaining notices from arbitration, in which case they proceed in court under Section 14. Otherwise the AAA will randomly select up to 30 more to proceed, and the process repeats until all are resolved.',
         },
         {
           kind: "p",
@@ -302,7 +302,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
         },
         {
           kind: "p",
-          text: "13.12 Severability. If any part of this Section 13 is found unenforceable, that part is severed and the rest remains in effect — except that if the class-action waiver is found unenforceable as to some claims, those claims proceed in court rather than in arbitration, and the litigation of them is stayed until any individual arbitration concludes. If a part of this section would bar a claim for public injunctive relief, that part has no effect as to that claim.",
+          text: "13.12 Severability. If any part of this Section 13 is found unenforceable, that part is severed and the rest remains in effect. Except that if the class-action waiver is found unenforceable as to some claims, those claims proceed in court rather than in arbitration, and the litigation of them is stayed until any individual arbitration concludes. If a part of this section would bar a claim for public injunctive relief, that part has no effect as to that claim.",
         },
       ],
     },
@@ -334,7 +334,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
             "Entire agreement. These Terms and the Privacy Policy are the entire agreement between you and Civica about Demeter.",
             "Notices. We may give you notice by posting on the site or, if you have an account, by email. You give us notice at " + CONTACT.legal + ".",
             "No third-party beneficiaries. These Terms are between you and Civica. They do not give anyone else rights to enforce them.",
-            "Email. We send only the messages the service needs to work — your sign-in link, and an outline if you ask for one. We do not send marketing email. If that ever changes, it will be something you opt into, with a working unsubscribe link.",
+            "Email. We send only the messages the service needs to work. Your sign-in link, and an outline if you ask for one. We do not send marketing email. If that ever changes, it will be something you opt into, with a working unsubscribe link.",
             "No agency relationship. Nothing here makes you and Civica partners, employer and employee, or agents of one another.",
           ],
         },

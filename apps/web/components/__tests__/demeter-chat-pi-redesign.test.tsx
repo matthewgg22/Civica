@@ -113,11 +113,14 @@ describe("the sidebar — the tracking panel, open by default", () => {
     // dropdown ignored the design system. What is pinned is the INVARIANT,
     // not the element: the picker is in the drawer, it offers every answer
     // language, and the chrome row has no second copy of it.
-    const picker = drawer.querySelector("details.demeter__langmenu")!;
+    // ALL FOUR INLINE since 2026-08-26 — no disclosure at all. The invariant
+    // is unchanged: the picker is in the drawer, it offers every answer
+    // language, and the chrome row has no second copy.
+    const picker = drawer.querySelector(".demeter__langrow")!;
     expect(picker).toBeTruthy();
-    expect(picker.querySelectorAll("button.demeter__langopt").length).toBe(ANSWER_LANGS.length);
+    expect(picker.querySelectorAll("button.demeter__langpick").length).toBe(ANSWER_LANGS.length);
     expect(container.querySelector(".demeter__head select")).toBeNull();
-    expect(container.querySelector(".demeter__head .demeter__langmenu")).toBeNull();
+    expect(container.querySelector(".demeter__head .demeter__langrow")).toBeNull();
   });
 
   it("keeps a state picker OUTSIDE the drawer for narrow screens", () => {
@@ -237,25 +240,34 @@ describe("sign-in opens over the chat (owner rec 2026-08-22)", () => {
 });
 
 describe("state-first onboarding", () => {
-  it("the empty state asks for the state and never a name", () => {
+  it("the empty state never asks for a name", () => {
+    // THE ASK-STATE LINE IS GONE (owner, 2026-08-26): it captioned a picker
+    // that already says "Your state". What must NOT come back is the thing
+    // this test was really built for — the retention line says avoid names, so
+    // the greeting may never ask for one.
     const { container } = mountChat();
     const empty = container.querySelector(".demeter__empty")!;
-    expect(empty.textContent).toContain(T.en.emptyAskState);
     expect(empty.textContent!.toLowerCase()).not.toMatch(/your name|first name/);
+    expect(empty.querySelector(".demeter__emptyask")).toBeNull();
   });
 
   it("the ask-state line exists in all four languages and never asks a name", () => {
     for (const lang of ["en", "es", "vi", "zh"] as const) {
-      const s = T[lang].emptyAskState;
-      expect(s?.trim(), lang).toBeTruthy();
-      expect(s.toLowerCase(), lang).not.toMatch(/name|nombre|tên|名字|姓名/);
+      // The line is retired, but the copy key stays until every locale's
+      // replacement is settled — what is pinned is that NO empty-state string
+      // asks for a name, which is the retention promise, not this one line.
+      const s = [T[lang].emptyTitle, T[lang].emptyWhatIsSnap, T[lang].emptyLede, T[lang].emptyModes].join(" ");
+      expect(s.toLowerCase(), lang).not.toMatch(/your name|nombre completo|tên của bạn|您的姓名/);
     }
   });
 
   it("keeps the framing block — the redesign restyles it, it does not delete it", () => {
     mountChat();
     expect(screen.getByText(T.en.emptyTitle)).toBeTruthy();
-    expect(screen.getByText(T.en.emptyModes)).toBeTruthy();
+    // The mode labels are wrapped in their own elements now, so the sentence
+    // is split across nodes — match on the paragraph's assembled text.
+    const modes = document.querySelector(".demeter__emptymodes");
+    expect(modes?.textContent).toBe(T.en.emptyModes);
   });
 });
 
@@ -288,19 +300,20 @@ describe("boxless messages (CSS contract)", () => {
     }
     // And the rail still carries the one language control.
     const { container } = mountChat();
-    expect(container.querySelectorAll(".demeter__langmenu").length).toBe(1);
+    expect(container.querySelectorAll(".demeter__langrow").length).toBe(1);
   });
 
-  it("the chrome row carries the skip link, the reference page, and a boxed sign-in", () => {
+  it("the chrome row carries the skip link and a boxed sign-in, and nothing else", () => {
     // What the retired nav is replaced by: the composer skip target (a
-    // keyboard reader would otherwise cross the whole rail to reach the
-    // box), the reference page, and sign-in — the rest of the nav's job
-    // moved into the rail.
+    // keyboard reader would otherwise cross the whole rail to reach the box)
+    // and sign-in. The "What is SNAP?" link went too (owner, 2026-08-22) —
+    // it sent someone out of the chat to read a definition that the empty
+    // state and the first-visit card now both carry.
     const { container } = mountChat();
     const skip = container.querySelector("a.demeter__skip")!;
     expect(skip.getAttribute("href")).toBe("#demeter-composer");
     expect(container.querySelector("form#demeter-composer")).toBeTruthy();
-    expect(container.querySelector(".demeter__headright a.demeter__navlink")).toBeTruthy();
+    expect(container.querySelector(".demeter__headright a.demeter__navlink")).toBeNull();
   });
 
   it("the rail's bottom line holds new-conversation, language and settings", () => {
@@ -312,7 +325,7 @@ describe("boxless messages (CSS contract)", () => {
     const row = container.querySelector("#demeter-sidebar .demeter__railfoot")!;
     expect(row).toBeTruthy();
     expect(row.querySelector("button.demeter__railicon")?.getAttribute("aria-label")).toBe(T.en.clear);
-    expect(row.querySelector("details.demeter__langmenu")).toBeTruthy();
+    expect(row.querySelector(".demeter__langrow")).toBeTruthy();
     const gear = row.querySelector("details.demeter__gear")!;
     expect(gear.querySelector("a[href='/privacy']")).toBeTruthy();
     expect(gear.querySelector("a[href*='/feedback']")).toBeTruthy();

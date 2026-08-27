@@ -27,7 +27,7 @@ export const strings = {
     eyebrow: "CalFresh for California Students",
     heroHeadline: "Do you qualify for CalFresh?",
     heroSub:
-      "Civica walks you through the 10-minute application — no prior knowledge needed. No minimum income required.",
+      "Civica walks you through the 10-minute application. No prior knowledge needed. No minimum income required.",
     ctaCheckQualify: "Check if I qualify →",
     ctaAlreadyApplied: "Already applied? Sign in →",
     ctaStartApplication: "Start your application",
@@ -52,7 +52,7 @@ export const strings = {
     step3Body: "Your card arrives in the mail. Use it like a debit card at any grocery store.",
 
     ecosystemTitle: "One connected system",
-    ecosystemSub: "Start on web, continue on iOS, get support from a CBO partner — your progress syncs everywhere.",
+    ecosystemSub: "Start on web, continue on iOS, get support from a CBO partner. Your progress syncs everywhere.",
     ecosystemIOSTitle: "iOS App",
     ecosystemIOSBody: "Apply and track from your iPhone. Biometric login, push notifications for status updates.",
     ecosystemWebTitle: "Web",
@@ -67,7 +67,7 @@ export const strings = {
 
     whatTitle: "Up to $292/month for groceries",
     whatBody:
-      "CalFresh (SNAP) loads money onto a card you use like a debit card at any grocery store. Most eligible California Community College students don't claim it — they don't know the rules just changed.",
+      "CalFresh (SNAP) loads money onto a card you use like a debit card at any grocery store. Most eligible California Community College students don't claim it. They don't know the rules just changed.",
 
     formTitle: "Get notified when your campus launches.",
     formSub: "We'll text you as soon as Civica is ready for your school.",
@@ -85,7 +85,7 @@ export const strings = {
     formCampusRequired: "Please choose your campus.",
 
     formDraftRestored:
-      "We saved what you started — feel free to keep going where you left off.",
+      "We saved what you started. Feel free to keep going where you left off.",
     formDraftClear: "Clear draft",
 
     languageToggleAria: "Switch language",
@@ -109,7 +109,7 @@ export const strings = {
     eyebrow: "CalFresh para Estudiantes de California",
     heroHeadline: "¿Calificas para CalFresh?",
     heroSub:
-      "Civica te guía por la solicitud de 10 minutos — sin conocimiento previo requerido. No se requiere ingreso mínimo.",
+      "Civica te guía por la solicitud de 10 minutos. Sin conocimiento previo requerido. No se requiere ingreso mínimo.",
     ctaCheckQualify: "Ver si califico →",
     ctaAlreadyApplied: "¿Ya solicitaste? Iniciar sesión →",
     ctaStartApplication: "Comienza tu solicitud",
@@ -134,7 +134,7 @@ export const strings = {
     step3Body: "Tu tarjeta llega por correo. Úsala como débito en cualquier supermercado.",
 
     ecosystemTitle: "Un sistema conectado",
-    ecosystemSub: "Empieza en web, continúa en iOS, recibe apoyo de una organización asociada — tu progreso se sincroniza en todos lados.",
+    ecosystemSub: "Empieza en web, continúa en iOS, recibe apoyo de una organización asociada. Tu progreso se sincroniza en todos lados.",
     ecosystemIOSTitle: "App iOS",
     ecosystemIOSBody: "Solicita y da seguimiento desde tu iPhone. Inicio con biometría, notificaciones de estado.",
     ecosystemWebTitle: "Web",
@@ -149,7 +149,7 @@ export const strings = {
 
     whatTitle: "Hasta $292/mes para comestibles",
     whatBody:
-      "CalFresh (SNAP) carga dinero en una tarjeta que usas como débito en cualquier supermercado. La mayoría de los estudiantes elegibles en California no lo solicitan — no sabían que las reglas acaban de cambiar.",
+      "CalFresh (SNAP) carga dinero en una tarjeta que usas como débito en cualquier supermercado. La mayoría de los estudiantes elegibles en California no lo solicitan. No sabían que las reglas acaban de cambiar.",
 
     formTitle: "Recibe una notificación cuando tu campus esté listo.",
     formSub:
@@ -168,7 +168,7 @@ export const strings = {
     formCampusRequired: "Por favor elige tu campus.",
 
     formDraftRestored:
-      "Guardamos lo que empezaste — continúa donde lo dejaste.",
+      "Guardamos lo que empezaste. Continúa donde lo dejaste.",
     formDraftClear: "Borrar borrador",
 
     languageToggleAria: "Cambiar idioma",

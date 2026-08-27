@@ -31,8 +31,8 @@ export async function generateMetadata({
   if (!pack) return {};
   return {
     alternates: { canonical: absoluteUrl(`/guides/${pack.code.toLowerCase()}`) },
-    title: `SNAP in ${pack.code} — ${pack.programShort} | verified ${pack.verification.verified_on}`,
-    description: `How SNAP works in ${pack.code}: ${pack.programShort}, run by ${pack.agencyShort}. Verified from primary sources ${pack.verification.verified_on} — ask Demeter anything about it.`,
+    title: `SNAP in ${pack.code}: ${pack.programShort} | verified ${pack.verification.verified_on}`,
+    description: `How SNAP works in ${pack.code}: ${pack.programShort}, run by ${pack.agencyShort}. Verified from primary sources ${pack.verification.verified_on}. Ask Demeter anything about it.`,
   };
 }
 
@@ -96,8 +96,8 @@ export default async function GuidePage({
           <dd>
             {pack.agencyShort}
             {pack.adminModel === "county"
-              ? " — administered by county/local offices, so office practice can vary; state policy is the baseline."
-              : " — administered directly by the state."}
+              ? ". Administered by county/local offices, so office practice can vary; state policy is the baseline."
+              : ". Administered directly by the state."}
           </dd>
           {pack.portal && (
             <>
@@ -117,7 +117,7 @@ export default async function GuidePage({
       <section className="gpage__ask">
         <h2>Ask about SNAP in {pack.code}</h2>
         <p>
-          Demeter answers with citations from {pack.code}&apos;s own policy sources —
+          Demeter answers with citations from {pack.code}&apos;s own policy sources , 
           free, in English or Spanish, no account needed.
         </p>
         <ul className="gpage__questions">
@@ -134,7 +134,7 @@ export default async function GuidePage({
 
       <footer className="gpage__foot">
         <p>
-          Demeter gives information, not legal advice — confirm decisions with your SNAP
+          Demeter gives information, not legal advice. Confirm decisions with your SNAP
           agency. Sources current as of {pack.verification.verified_on}; dollar values
           re-verified on the federal October cycle.
         </p>

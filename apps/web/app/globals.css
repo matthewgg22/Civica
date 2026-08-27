@@ -4781,7 +4781,7 @@ html {
    framing block is test-pinned); only the posture moved. */
 .demeter__empty {
   display: flex; flex-direction: column; align-items: flex-start; text-align: left;
-  gap: 0.6rem; margin: auto 0; padding: 1rem 0 9vh; max-width: 58ch;
+  gap: 0.6rem; margin: auto 0; padding: 1rem 0 9vh; max-width: 74ch;
   /* Centered as a BLOCK in the column (text stays left inside) — Pi's
      composition; hugging the column's left edge left the right half of the
      screen dead. The bottom padding floats it slightly high of true center,
@@ -8991,54 +8991,6 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   max-width: 14rem;
 }
 
-/* ── Language picker: a disclosure, not an OS dropdown ────────────────────
-   The native <select> rendered the operating system's own menu — unstyleable,
-   ignoring every token here, and wide enough to take a third of the rail's
-   bottom row on its own. This is the same <details> pattern as the gear, so
-   the two controls beside each other now look like siblings. */
-.demeter__langmenu { position: relative; }
-.demeter__langbtn {
-  list-style: none;
-  display: inline-flex; align-items: center; gap: 0.35rem;
-  height: 38px; padding: 0 0.5rem;
-  border-radius: var(--demeter-radius-input);
-  color: var(--demeter-body); cursor: pointer;
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.78rem; letter-spacing: 0.02em;
-}
-.demeter__langbtn::-webkit-details-marker { display: none; }
-.demeter__langbtn:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
-.demeter__langmenu[open] .demeter__langbtn { background: var(--demeter-tint); color: var(--demeter-ink); }
-.demeter__langcode { font-variant-numeric: tabular-nums; }
-/* Opens UPWARD. This control sits on the last row of the rail, so a menu
-   dropping down would open off the bottom of the viewport. */
-.demeter__langlist {
-  position: absolute; left: 0; bottom: calc(100% + 0.35rem); z-index: 40;
-  min-width: 10.5rem; display: flex; flex-direction: column;
-  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: var(--demeter-radius-card); padding: 0.3rem;
-  box-shadow: 0 8px 24px rgba(35, 34, 32, 0.1);
-}
-.demeter__langopt {
-  display: flex; align-items: center; gap: 0.5rem;
-  padding: 0.4rem 0.6rem; border-radius: var(--demeter-radius-input);
-  background: none; border: 0; cursor: pointer; text-align: left;
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.85rem; color: var(--demeter-body);
-}
-.demeter__langopt:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
-.demeter__langopt[aria-pressed="true"] { color: var(--demeter-ink); font-weight: 600; }
-/* Fixed-width gutter so the four names start on the same x, checked or not —
-   a tick that shifts the label is the cheapest way to make a menu feel loose. */
-.demeter__langtick { width: 0.85rem; flex: none; color: var(--demeter-terracotta-deep); }
-@media (prefers-reduced-motion: no-preference) {
-  .demeter__langlist { animation: dmlangin 120ms ease-out; }
-  @keyframes dmlangin {
-    from { opacity: 0; transform: translateY(3px); }
-    to { opacity: 1; transform: none; }
-  }
-}
-
 /* The gear lives on the rail's LAST row, at the rail's left edge. Its menu
    inherited `right: 0; top: 100%` from when the control sat in the chrome row
    at the top right — which now anchors a 12rem panel off the left of the
@@ -9165,3 +9117,421 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 }
 .dmw__askbtn:hover { color: var(--demeter-terracotta-deep); text-decoration-color: currentColor; }
 .dmw__askbtn:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 2px; }
+
+/* ── First-visit card (owner, 2026-08-22) ────────────────────────────────
+   Says what the PROGRAM is before what this is. Not a gate: Escape and the
+   backdrop both close it, and the chat behind is already loaded. */
+.dmwel {
+  position: fixed; inset: 0; z-index: 80;
+  display: grid; place-items: center; padding: 1rem;
+  background: rgba(35, 34, 32, 0.42);
+  backdrop-filter: blur(8px);
+}
+.dmwel__card {
+  width: min(30rem, 100%);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  background: var(--demeter-card);
+  border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-card);
+  padding: 1.6rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom));
+  box-shadow: 0 18px 50px rgba(35, 34, 32, 0.18);
+  text-align: center;
+}
+/* The mark is reproduced UNALTERED at its true 663:460 ratio — a condition of
+   being allowed to use it at all. Only the box is ours. */
+.dmwel__logo { display: flex; justify-content: center; margin-bottom: 0.9rem; }
+.dmwel__logo img { height: auto; max-width: 193px; }
+.dmwel__title {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.3rem; font-weight: 600; letter-spacing: -0.01em;
+  color: var(--demeter-ink); margin: 0 0 0.5rem;
+  text-wrap: balance;
+}
+.dmwel__what,
+.dmwel__body {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.95rem; line-height: 1.6; margin: 0 0 0.7rem;
+  text-wrap: pretty;
+}
+.dmwel__what { color: var(--demeter-body); }
+.dmwel__body { color: var(--demeter-muted); }
+/* Directly under the logo's own card, at readable size. A product that is not
+   the government opening with the government's mark is the exact confusion
+   this notice exists to prevent, so it does not get to be fine print. */
+.dmwel__mark {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.7rem; line-height: 1.5; color: var(--demeter-muted);
+  margin: 0 0 1.1rem; padding-top: 0.7rem;
+  border-top: 1px solid var(--demeter-rule);
+  text-align: left;
+}
+.dmwel__cta {
+  width: 100%; min-height: 44px; padding: 0.7rem 1rem;
+  border: 0; border-radius: var(--demeter-radius-pill); cursor: pointer;
+  background: var(--demeter-terracotta); color: var(--demeter-paper);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; font-weight: 600; letter-spacing: 0.02em;
+}
+.dmwel__cta:hover { background: var(--demeter-terracotta-deep); }
+.dmwel__cta:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) {
+  .dmwel__card { animation: dmwelin 160ms ease-out; }
+  @keyframes dmwelin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}
+
+/* The definition, above the line about what Demeter does. */
+.demeter__emptywhat {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.6; color: var(--demeter-body);
+  margin: 0.5rem 0 0;
+}
+
+/* ── First-visit card, second pass (owner, 2026-08-26) ───────────────────── */
+
+/* Whose card this is, above the program's mark. */
+.dmwel__brand {
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+.dmwel__brandword {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em;
+  color: var(--demeter-ink);
+}
+.dmwel__brandword em { font-style: normal; color: var(--demeter-terracotta-deep); }
+
+/* The corner dismiss. */
+.dmwel__card { position: relative; }
+.dmwel__x {
+  position: absolute; top: 0.6rem; right: 0.6rem;
+  display: grid; place-items: center; width: 32px; height: 32px;
+  border: 0; border-radius: 50%; background: none; cursor: pointer;
+  color: var(--demeter-muted);
+}
+.dmwel__x:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
+.dmwel__x:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
+
+/* LEGIBILITY WAS THE COMPLAINT, and two greys were the cause: the definition
+   sat on --demeter-body and the line below it on --demeter-muted, so the card
+   read as one paragraph that mattered and one that had been greyed out. Both
+   are the card's actual content. One colour, the darker one. */
+.dmwel__what,
+.dmwel__body {
+  color: var(--demeter-ink);
+  font-size: 0.98rem;
+  line-height: 1.62;
+}
+
+/* Smaller: a required notice has to be legible, not prominent. It keeps its
+   own rule above it so it still reads as a separate register from the card. */
+.dmwel__mark {
+  font-size: 0.62rem;
+  line-height: 1.45;
+  color: var(--demeter-muted);
+}
+
+.dmwel__cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+}
+.dmwel__arrow { font-size: 0.95em; line-height: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .dmwel__arrow { transition: transform 140ms ease-out; }
+  .dmwel__cta:hover .dmwel__arrow { transform: translateX(2px); }
+}
+
+/* The rail's descriptor on ONE line (owner, 2026-08-26). It used to sit inside
+   the brand column, sharing its width with the toggle button, and wrapped.
+   Full-width now, and pinned: a label that wraps stops reading as a label.
+   Tracking eased from 0.09em so it still fits at the narrowest rail (85vw on
+   a small phone), and the whole rail is a flex column so this needs its own
+   negative margin-top to sit tight under the wordmark. */
+.demeter__sbtag {
+  margin-top: -0.75rem;
+  white-space: nowrap;
+  letter-spacing: 0.055em;
+  font-size: 0.6rem;
+}
+
+/* The rail's descriptor on ONE line (owner, 2026-08-26). It used to sit inside
+   the brand column, sharing its width with the toggle button, and wrapped.
+   Full-width now, and pinned: a label that wraps stops reading as a label.
+   Tracking eased from 0.09em so it still fits at the narrowest rail — min(21.5rem,
+   85vw), which on a 360px phone is ~306px of content. The rail is a flex column
+   with a 1rem gap, so it takes a negative margin to sit tight under the wordmark. */
+.demeter__sbtag {
+  margin-top: -0.85rem;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  /* SHRINKS RATHER THAN CLIPS. nowrap at a fixed size is only safe while the
+     rail is 21.5rem; below ~400px the rail becomes 85vw, and on a 320px phone
+     that leaves ~240px of content against ~270px of text — which nowrap turns
+     into an overflow instead of a wrap. The vw term only bites there: at any
+     width where the rail is its full 21.5rem, 2.2vw is far past the ceiling
+     and this resolves to the flat 0.6rem. */
+  font-size: clamp(0.5rem, 2.2vw, 0.6rem);
+}
+
+/* …AND WRAPS RATHER THAN CLIPS ON A VERY SMALL PHONE. Measured: the label is
+   331px at its full size in a 366px rail. Below ~400px the rail is 85vw, and
+   at 320px that leaves ~238px of content — which no legible size fits on one
+   line. nowrap there would hide the end of the sentence rather than shrink it,
+   so under 400px it is allowed to wrap. One line wherever one line is
+   possible; two lines beats a clipped one. */
+@media (max-width: 399px) {
+  .demeter__sbtag { white-space: normal; }
+}
+
+/* ── Languages: all four, inline (owner, 2026-08-26) ─────────────────────
+   EN / ES / VI / 中文, with the current one filled. This replaced a globe
+   behind a popover, which replaced a native <select> — both hid three of the
+   four behind an interaction, on a product where the person who most needs
+   another language is the least likely to go looking for the control. */
+.demeter__langrow { display: inline-flex; align-items: center; }
+.demeter__langitem { display: inline-flex; align-items: center; }
+.demeter__langsep {
+  padding: 0 0.1rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem;
+  /* --demeter-rule is a HAIRLINE colour (#E8E6E2): correct for a 1px border,
+     invisible as a glyph — the slashes rendered and could not be seen. This is
+     text, so it takes a text colour. */
+  color: var(--demeter-muted);
+}
+.demeter__langpick {
+  padding: 0.26rem 0.4rem;
+  border: 0; border-radius: var(--demeter-radius-pill);
+  background: none; cursor: pointer;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em;
+  color: var(--demeter-muted);
+  transition: background 140ms ease-out, color 140ms ease-out;
+}
+.demeter__langpick:hover { color: var(--demeter-ink); }
+/* THE FILL IS THE ANSWER TO "which am I reading in?" — it does the job the
+   tick inside the old menu did, without anything being opened. White on
+   #C0553B measures 4.56:1, which clears 4.5:1 for this size and weight. */
+.demeter__langpick[aria-pressed="true"] {
+  background: var(--demeter-terracotta);
+  color: var(--demeter-paper);
+}
+.demeter__langpick:focus-visible {
+  outline: 2px solid var(--demeter-terracotta); outline-offset: 1px;
+}
+@media (prefers-reduced-motion: reduce) { .demeter__langpick { transition: none; } }
+
+/* THE GEAR MENU WAS CROPPED. It anchored `left: 0` on the gear BUTTON, and the
+   gear sits at the right end of the bottom row — so a 12rem panel opened from
+   roughly x=170 in a 229px rail and ran off the edge, where the rail's own
+   `overflow-y: auto` (which makes overflow-x compute to auto too) clipped it.
+   Anchoring to the ROW instead makes it exactly the rail's content width: it
+   cannot overflow, whatever the gear's position in the row becomes later. */
+.demeter__railfoot { position: relative; }
+.demeter__railfoot .demeter__gear { position: static; }
+.demeter__railfoot .demeter__gearmenu {
+  left: 0;
+  right: 0;
+  min-width: 0;
+  bottom: calc(100% + 0.35rem);
+  top: auto;
+}
+/* Free to use the full width now rather than sitting in a 14rem column. */
+.demeter__railfoot .demeter__gearnote { max-width: none; }
+
+/* ── Welcome card, third pass (owner, 2026-08-26) ────────────────────────── */
+
+/* The two marks share a row: whose card this is, beside whose programme. On
+   its own line the wordmark left empty bands either side and read as a header
+   the card did not need. */
+.dmwel__marks {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.85rem; flex-wrap: wrap; margin-bottom: 1rem;
+}
+.dmwel__brand { display: inline-flex; align-items: center; gap: 0.4rem; }
+.dmwel__marksep {
+  width: 1px; align-self: stretch; min-height: 2.4rem;
+  background: var(--demeter-rule);
+}
+.dmwel__logo { display: inline-flex; margin: 0; }
+.dmwel__logo img { height: auto; max-width: 150px; }
+
+/* ONE VOICE, ONE COLOUR. The card had the two paragraphs in the display serif
+   and the notice in the sans, at three different greys — which read as three
+   registers on a card with one thing to say. All three are the serif now, all
+   three on the ink. The notice stays smaller and keeps its rule above it, so
+   it is still legibly a different KIND of sentence without being a different
+   typeface at a different weight of grey. */
+.dmwel__what,
+.dmwel__body,
+.dmwel__mark {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  color: var(--demeter-ink);
+}
+.dmwel__mark {
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.dmwel__marklink { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.dmwel__marklink:hover { color: var(--demeter-terracotta-deep); }
+
+/* ── The thread has room to read (owner, 2026-08-26) ─────────────────────── */
+/* 46rem was set when the rail was a fixed column beside it. With the rail
+   collapsible and the window wide, it left the answer squeezed into the middle
+   third of the screen. 62rem keeps a comfortable measure for the serif at this
+   size while using the space that is actually there. */
+.dmchat__body .demeter { max-width: 62rem; }
+
+/* The safety hint rides inside the disclaimer paragraph now, so it needs to
+   read as its own clause without being its own block. */
+.demeter__piihint { display: inline; padding: 0; margin: 0; }
+
+/* ── One colour, one measure (owner, 2026-08-26) ─────────────────────────── */
+
+/* THE RAGGED EDGE had a cause: the definition paragraph carried no max-width
+   while the three around it were capped at 58ch, so it ran to the container's
+   full measure and they stopped short. One measure, set on the block, and the
+   paragraphs inherit it — a second place to set a width is a second place for
+   them to disagree. */
+.demeter__empty > p { max-width: none; }
+
+/* AND ONE COLOUR. The block was ink for the title, --demeter-body for two
+   paragraphs and --demeter-muted for the third, which read as text of three
+   different importances when it is one introduction. */
+.demeter__emptywhat,
+.demeter__emptylede,
+.demeter__emptymodes,
+.demeter__emptyask {
+  color: var(--demeter-ink);
+}
+
+/* The switch's own words, set apart from the sentence carrying them. */
+.demeter__modename { font-style: italic; font-weight: 700; font-synthesis-weight: none; }
+
+/* ── The line under the composer ─────────────────────────────────────────── */
+
+/* THE GAP IN THE MIDDLE was 1rem of side padding on an element that is now
+   INLINE: .dmchat .demeter__piihint out-specifies the plain class, so the
+   earlier `padding: 0.25rem 1rem 0` survived and opened a hole between the two
+   clauses. Inline text takes no side padding. */
+.dmchat .demeter__piihint { padding: 0; margin: 0; display: inline; }
+
+/* Ink, not grey, and a measure so the centred line breaks in a readable place
+   instead of running the width of the composer and wrapping once at the end. */
+.dmchat .demeter__disclaimer,
+.dmchat .demeter__piihint,
+.dmchat .demeter__assent {
+  color: var(--demeter-ink);
+}
+.dmchat .demeter__disclaimer {
+  /* Wide enough to sit under the composer rather than as a narrow column
+     beneath it: 68ch broke it into three short centred lines that read as a
+     separate, narrower element. */
+  max-width: 92ch;
+  margin-left: auto;
+  margin-right: auto;
+  text-wrap: balance;
+}
+
+/* THE CHIPS' HOVER DID NOTHING. `background: var(--demeter-card)` is #FFFFFF,
+   the same as the page, so the fill it promised was invisible — and against a
+   white ground a transparent chip reads as a slightly-off patch rather than a
+   crisp one. An explicit paper fill at rest, the tint on hover: the one
+   neutral step off white that exists for exactly this. */
+.demeter__followup { background: var(--demeter-paper); }
+.demeter__followup:hover { background: var(--demeter-tint); border-color: var(--demeter-terracotta); }
+
+/* ── A user message is sized to what it says ─────────────────────────────── */
+/* It was capped at 75% of the column, which on the widened thread is ~740px:
+   a one-line question rendered as a band stretched across the right half of
+   the screen, reading as an empty text field rather than as something the
+   person said, and pulling the eye off the reply underneath it.
+   fit-content is the actual fix — the cap only stops a long message running
+   the full measure. */
+.demeter__msg--user {
+  width: fit-content;
+  max-width: min(70%, 34rem);
+  margin-left: auto;
+}
+
+/* ── The source line reads as a footnote ─────────────────────────────────── */
+/* It is emitted as a whole-line italic (`*Based on federal SNAP rules ([eCFR]
+   (url)). FY2026 figures, valid through Sept 30, 2026.*`), so a paragraph whose
+   ENTIRE content is one <em> is that line, and nothing else in an answer has
+   that shape. Targeted this way rather than by adding a marker to the answer
+   format, which every parser downstream would then have to know about.
+
+   Small and muted: the date is the trust-building part, and it was the least
+   legible thing on the line while a maroon underline across the whole citation
+   pulled more eye than a footnote deserves. */
+.demeter__para > em:only-child {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--demeter-muted);
+  font-style: normal;
+}
+.demeter__para > em:only-child a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--demeter-rule-strong);
+  text-underline-offset: 2px;
+}
+.demeter__para > em:only-child a:hover {
+  color: var(--demeter-terracotta-deep);
+  text-decoration-color: currentColor;
+}
+
+/* ── The empty state's head is one line ──────────────────────────────────── */
+.demeter__emptyhead { display: flex; align-items: center; gap: 0.6rem; }
+.demeter__emptyhead .demeter__emptytitle { margin: 0; }
+
+/* ── The rail's identity lines up ────────────────────────────────────────── */
+/* The descriptor sat under the whole head row, so it floated a line below the
+   wordmark with no relationship to the mark beside it. Pulled up to sit
+   directly under "Demeter", with its left edge on the wordmark's, so the mark,
+   the name and the descriptor read as one block. */
+.demeter__sbtag { margin-top: -1.15rem; padding-left: calc(34px + 0.5rem); }
+
+/* ── Yellow ground takes white text ──────────────────────────────────────── */
+/* --demeter-wheat is a strong mid-yellow; ink on it reads as a caution label.
+   White is the pairing the mark itself already uses. */
+.vcard__cta { color: var(--demeter-paper); }
+
+/* ── The estimate panel's gaps ───────────────────────────────────────────── */
+/* Each block below the switch carried its own top margin AND the column's gap,
+   so the empty/pick states sat in a pocket of space that read as something
+   missing rather than as breathing room. */
+.dmw__mode + .dmw__empty,
+.dmw__mode + .dmw__pick { margin-top: 0.25rem; }
+.dmw__empty, .dmw__pick { margin-bottom: 0; }
+.dmw__pick { gap: 0.5rem; }
+
+/* The card's second line is the caveat, so it sits a step back from the first
+   without leaving the ink. */
+.dmwel__body--quiet { color: var(--demeter-muted); font-size: 0.9rem; }
+/* Continuing without an account is an offer, not the offer. */
+.dmwel__secondary {
+  display: block; width: 100%; margin-top: 0.55rem;
+  padding: 0.55rem 1rem; min-height: 40px;
+  border: 0; background: none; cursor: pointer;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; color: var(--demeter-muted);
+  text-decoration: underline; text-decoration-color: var(--demeter-rule-strong);
+  text-underline-offset: 3px;
+}
+.dmwel__secondary:hover { color: var(--demeter-ink); text-decoration-color: currentColor; }
+.dmwel__secondary:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 4px; }
+/* The primary is a link now, so it needs the button's own box back. */
+a.dmwel__cta { display: inline-flex; text-decoration: none; }
+
+/* ── The rail's head tightens up ─────────────────────────────────────────── */
+/* Shorter descriptor, so it can sit closer under the wordmark instead of
+   floating a line below it. */
+.demeter__sbtag { margin-top: -1.4rem; }
+
+/* THE TOGGLE'S ICON GOES WHITE ON THE WHEAT. Closed, the control is a solid
+   --demeter-wheat square, and ink linework on it reads as a caution label for
+   the same reason ink-on-yellow did in the CTA. White is what the mark itself
+   uses on that ground.
+   OPEN, it stays ink: inside the rail the button is transparent on a light
+   tint, and a white icon there would be invisible. */
+.dmchat .demeter__sidebartoggle--closed { color: var(--demeter-paper); }

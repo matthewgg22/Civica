@@ -26,12 +26,12 @@ export async function generateMetadata({
   const forConversation = FOR_CONVERSATION.test(next ?? "/screen/ask");
   return forConversation
     ? {
-        title: "Sign in — Demeter",
+        title: "Sign in: Demeter",
         description: "Sign in to save your SNAP conversation and come back to it any time.",
         robots: { index: false, follow: true },
       }
     : {
-        title: "Sign in — Civica",
+        title: "Sign in: Civica",
         description: "Sign in to save your SNAP application.",
         robots: { index: false, follow: true },
       };

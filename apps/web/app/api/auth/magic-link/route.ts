@@ -57,7 +57,7 @@ export async function POST(request: Request) {
   const emailOk = await durableRateLimit("mlem", email, 3, 10 * 60_000);
   if (!ipOk || !emailOk) {
     return NextResponse.json(
-      { error: "Too many sign-in emails — try again in a few minutes." },
+      { error: "Too many sign-in emails, try again in a few minutes." },
       { status: 429, headers: { "Retry-After": "600" } },
     );
   }

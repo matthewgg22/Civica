@@ -71,7 +71,7 @@ describe("retention copy — the estimate rail must not understate what is kept"
     // keep something, and say why. Loosening this is only safe in that
     // direction; a version that says we keep NOTHING has to keep failing.
     const KEEPS: Record<(typeof LOCALES)[number], RegExp> = {
-      en: /We keep the (question and answer|text)/,
+      en: /we keep the (question and answer|text)/i,
       es: /Guardamos (la pregunta y la respuesta|el texto)/,
       vi: /Chúng tôi (lưu|giữ) (câu hỏi và câu trả lời|nội dung)/,
       zh: /(我们会保留问题和回答|我们保留文字)/,
@@ -99,9 +99,12 @@ describe("retention copy — the estimate rail must not understate what is kept"
     // Shortened to "avoid names" / "evita nombres" — the ask survives, the
     // verb went. Matched as a pattern so the ask is what is pinned.
     const ASKS: Record<(typeof LOCALES)[number], RegExp> = {
-      en: /avoid (typing )?names/,
-      es: /evita (escribir )?nombres/,
-      vi: /đừng nhập tên/,
+      // CASE-INSENSITIVE since the em-dash pass (2026-08-26): "…accuracy —
+      // avoid names" became two sentences, so the ask now starts a sentence
+      // and is capitalised. What is pinned is the ASK, not its position.
+      en: /avoid (typing )?names/i,
+      es: /evita (escribir )?nombres/i,
+      vi: /đừng nhập tên/i,
       zh: /请勿输入姓名/,
     };
     for (const locale of LOCALES) {

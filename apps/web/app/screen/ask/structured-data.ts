@@ -26,7 +26,7 @@ const EN_GENERAL_FAQ = [
   },
   {
     q: "What decides whether I qualify for SNAP?",
-    a: "Household size, your income after the deductions you are entitled to, and a short list of category rules. Deductions — rent, utilities, childcare, child support paid, and medical costs for members who are 60 or older or disabled — are applied before your income is compared to the limit, which is why gross income alone does not determine eligibility.",
+    a: "Household size, your income after the deductions you are entitled to, and a short list of category rules. Deductions. Rent, utilities, childcare, child support paid, and medical costs for members who are 60 or older or disabled. Are applied before your income is compared to the limit, which is why gross income alone does not determine eligibility.",
   },
   {
     q: "Do SNAP rules differ by state?",
@@ -121,6 +121,6 @@ export function questionsStructuredData(lang: AnswerLang): string {
 
 // The page title/description used by the canonical English route, kept here so
 // the route file and the structured data quote the same string.
-export const EN_TITLE = "Demeter AI — verified SNAP answers, with the rule attached";
+export const EN_TITLE = "Demeter AI. Verified SNAP answers, with the rule attached";
 export const EN_DESCRIPTION =
-  "Ask anything about SNAP (food stamps) and get an answer grounded in the actual rules — federal regulation plus adversarially verified state policy, every claim cited, and marked certain or uncertain so you know when to check.";
+  "Ask anything about SNAP (food stamps) and get an answer grounded in the actual rules. Federal regulation plus adversarially verified state policy, every claim cited, and marked certain or uncertain so you know when to check.";

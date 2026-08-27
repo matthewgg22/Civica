@@ -22,9 +22,9 @@ export function generateStaticParams(): Array<{ lang: string }> {
 }
 
 const TITLES: Record<string, string> = {
-  es: "Pregúntale a Demeter — respuestas sobre SNAP con la regla incluida",
-  vi: "Hỏi Demeter — câu trả lời về SNAP kèm theo quy định",
-  zh: "询问 Demeter — 附上依据的 SNAP 答案",
+  es: "Pregúntale a Demeter. Respuestas sobre SNAP con la regla incluida",
+  vi: "Hỏi Demeter. Câu trả lời về SNAP kèm theo quy định",
+  zh: "询问 Demeter: 附上依据的 SNAP 答案",
 };
 
 export async function generateMetadata({

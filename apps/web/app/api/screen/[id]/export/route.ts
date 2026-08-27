@@ -28,7 +28,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
   if (identity.kind !== "org") {
     return NextResponse.json(
-      { error: "Export needs an account — sign in to export this screening.", reason: "requires_account" },
+      { error: "Export needs an account, sign in to export this screening.", reason: "requires_account" },
       { status: 403 },
     );
   }

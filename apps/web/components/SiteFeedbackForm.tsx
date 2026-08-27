@@ -43,13 +43,13 @@ export function SiteFeedbackForm() {
       });
       if (!res.ok) {
         const j = (await res.json().catch(() => ({}))) as { error?: string };
-        setErrMsg(j.error ?? "Something went wrong — please try again.");
+        setErrMsg(j.error ?? "Something went wrong, please try again.");
         setState("error");
         return;
       }
       setState("done");
     } catch {
-      setErrMsg("Network error — please try again.");
+      setErrMsg("Network error, please try again.");
       setState("error");
     }
   }

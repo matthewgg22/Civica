@@ -215,3 +215,24 @@ describe("student seam (#898 second pass)", () => {
     expect(c.outcome).toBe("likely_ineligible");
   });
 });
+
+describe("the not-enough-information summary never names a field (#1008 follow-up)", () => {
+  it("does not claim household size and income are unknown when they were given", () => {
+    // THE CONTRADICTION ON SCREEN: a household that had stated size, income
+    // and rent saw "Household size and income are still unknown" directly
+    // above a panel listing all three. The summary was hardcoded for EVERY
+    // incomplete case; engine-grounding.ts already called it "often FALSE"
+    // and suppressed it, but the panel printed it unguarded.
+    const facts = {
+      household: [{ member_id: "a" }, { member_id: "b" }, { member_id: "c" }, { member_id: "d" }],
+      income: [{ member: "a", type: "wages", amount: 1300 }],
+      shelter: { rent: 2300 },
+    } as never;
+    const c = classifyScreening(facts, "CA", new Date("2026-08-26T00:00:00Z"));
+    if (c.outcome !== "not_enough_information") return; // computable: nothing to guard
+    expect(c.summary.toLowerCase()).not.toMatch(/household size/);
+    expect(c.summary.toLowerCase()).not.toMatch(/income/);
+    // What IS missing has to still be sayable, from the list that knows.
+    expect(c.completeness.stillNeeded.length).toBeGreaterThan(0);
+  });
+});

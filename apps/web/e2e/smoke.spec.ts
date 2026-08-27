@@ -6,6 +6,27 @@ import { test, expect, type Page } from "@playwright/test";
  *  "Ask anything about SNAP" → "Happy to answer any questions about SNAP" —
  *  break seven assertions across three files that were not testing copy at all.
  *  A locator should only be sensitive to the thing its test is about. */
+/** Get past the first-visit card the way a person does.
+ *
+ *  It is a modal: it holds focus and intercepts clicks until dismissed, which
+ *  is what a first-visit card is FOR — but it means every test that drives the
+ *  chat has to meet it first, exactly as a real first visitor does. Tolerant of
+ *  its absence so a test that has already dismissed it does not fail here. */
+async function dismissWelcome(page: Page) {
+  // THE DISMISS IS THE SECONDARY ACTION. The primary is "Sign in", and it is a
+  // LINK — clicking it navigates instead of closing, so the card stayed up and
+  // everything behind it was unreachable. Falls back to the CTA for the
+  // signed-in-less variant, which has no secondary.
+  const secondary = page.locator(".dmwel__secondary");
+  if (await secondary.count()) {
+    await secondary.click();
+  } else {
+    const cta = page.locator("button.dmwel__cta");
+    if (await cta.count()) await cta.click();
+  }
+  await page.locator(".dmwel").waitFor({ state: "detached" }).catch(() => {});
+}
+
 function composer(page: Page) {
   return page.locator("textarea.demeter__input");
 }
@@ -88,6 +109,7 @@ test.describe("chat surface", () => {
     page,
   }) => {
     await page.goto("/chat");
+    await dismissWelcome(page);
     const picker = page.getByRole("button", { name: "Your state", exact: true });
     // ONE LINE since 2026-08-22: unset, the trigger shows its label as a
     // placeholder instead of the old "All states (federal rules)" value. What
@@ -162,6 +184,7 @@ test.describe("chat surface", () => {
 
   test("send always yields a response state (answer or honest banner)", async ({ page }) => {
     await page.goto("/chat");
+    await dismissWelcome(page);
     await composer(page).fill("What is SNAP?");
     await page.getByRole("button", { name: /Send|Enviar/ }).click();
     // The user bubble appears immediately…

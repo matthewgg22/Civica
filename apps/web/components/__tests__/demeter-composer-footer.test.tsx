@@ -15,7 +15,7 @@
 // arbitration clause and every disclaimer in it down with it. The gear now
 // carries a Terms link too — that is an ADDITION, not a relocation, and the
 // difference is the whole point of this test.
-import { describe, it, expect, afterEach, vi } from "vitest";
+import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
 import { render, cleanup } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -29,11 +29,37 @@ Element.prototype.scrollTo = vi.fn() as unknown as typeof Element.prototype.scro
 
 afterEach(cleanup);
 
+// THE CHAT RESTORES ITSELF FROM STORAGE ON MOUNT. Without this, a test that
+// mounts with a message leaks into every test after it — the next mount
+// restores that conversation, hasChat is true, and the empty state never
+// renders. Pre-existing; surfaced by the first test in this file to assert on
+// the empty state.
+beforeEach(() => {
+  try {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+  } catch {
+    /* storage disabled in this environment */
+  }
+});
+
 const css = readFileSync(join(__dirname, "..", "..", "app", "globals.css"), "utf8");
 
 type Msg = { role: "user" | "assistant"; content: string };
 
 function mountChat(initialMessages: Msg[] = []) {
+  // THE CHAT RESTORES ITSELF FROM sessionStorage ON MOUNT, so a test that
+  // mounts with a message leaks into every test after it: the next mount
+  // restores that conversation, hasChat is true, and the empty state never
+  // renders. Cleared HERE rather than in beforeEach because the save is
+  // written by an effect whose timing relative to the hooks is not something
+  // a test should have to reason about.
+  try {
+    window.sessionStorage.clear();
+    window.localStorage.clear();
+  } catch {
+    /* storage disabled in this environment */
+  }
   return render(
     <DemeterChat
       states={VERIFIED_STATES}
@@ -92,7 +118,10 @@ describe("the assent notice stays at the composer", () => {
 describe("the footer is one line at rest", () => {
   it("shows the PII hint before the first message, when it can still help", () => {
     const { container } = mountChat();
-    expect(container.querySelector(".demeter__piihint")?.textContent).toBe(T.en.piiHint);
+    // Inside the disclaimer paragraph since 2026-08-26 rather than its own
+    // block, so it carries a trailing space. The invariant is that the hint
+    // is SHOWN before the first message, not that it owns a <p>.
+    expect(container.querySelector(".demeter__piihint")?.textContent?.trim()).toBe(T.en.piiHint);
   });
 
   it("drops the hint once a conversation exists — that is the compression", () => {
@@ -106,17 +135,23 @@ describe("the footer is one line at rest", () => {
     expect(container.querySelector(".demeter__assent a[href='/terms']")).toBeTruthy();
   });
 
-  it("keeps the safety hint permanently reachable in the gear", () => {
-    // It stops taking a line under the composer, so it must not stop existing.
+  it("the safety hint is under the composer, not filed in the gear", () => {
+    // It WAS in both (owner, 2026-08-26 removed the gear copy): a settings
+    // menu is not where anyone looks before typing, and the hint is only
+    // useful at the moment of typing — which is where it still shows.
     const { container } = mountChat();
     const gear = container.querySelector("details.demeter__gear")!;
-    expect(gear.querySelector(".demeter__gearnote")?.textContent).toBe(T.en.piiHint);
+    expect(gear.querySelector(".demeter__gearnote")).toBeNull();
+    expect(gear.textContent).not.toContain(T.en.piiHint);
+    expect(container.querySelector(".demeter__piihint")?.textContent?.trim()).toBe(T.en.piiHint);
   });
 
   it("the disclaimer and the assent occupy a single paragraph", () => {
     const { container } = mountChat();
     const paras = container.querySelectorAll("p.demeter__disclaimer");
     expect(paras.length, "the footer grew a second disclaimer line back").toBe(1);
+    // And the hint is INSIDE it, not a second block above it.
+    expect(container.querySelectorAll("p.demeter__piihint")).toHaveLength(0);
     // Both halves live in that one paragraph.
     const text = paras[0]!.textContent ?? "";
     expect(text).toContain(T.en.disclaimer);
@@ -124,51 +159,38 @@ describe("the footer is one line at rest", () => {
   });
 });
 
-// The chrome row's second link, renamed 2026-08-22 ("change the Application
-// Questions to What is SNAP?").
+// The chrome row's second link is GONE (owner, 2026-08-22).
 //
-// The rename forced a retarget. /questions is the page about what the
-// APPLICATION asks; a link labelled "What is SNAP?" pointing there would
-// disagree with itself, which is worse than the clumsy label it replaced. It
-// now goes to the landing band that answers the question it names — and that
-// band renders on /screen/ask, NOT on "/", which is still the older Civica
-// marketing page.
-describe("the What is SNAP? link goes where it says", () => {
-  it("is labelled for the question it answers", () => {
+// It was "Application questions", renamed to "What is SNAP?" the day before —
+// and then removed outright, because both versions did the same thing: send
+// someone OUT of the chat to read something. The definition it pointed at is
+// now the first paragraph of the empty state and the body of the first-visit
+// card, so the trip has no destination worth the leaving.
+describe("the chrome row is sign-in and nothing else", () => {
+  it("carries no second link", () => {
     const { container } = mountChat();
-    const link = container.querySelector(".demeter__navlink")!;
-    expect(link.textContent).toBe(T.en.navQuestions);
-    expect(T.en.navQuestions).toBe("What is SNAP?");
+    expect(container.querySelector(".demeter__navlink")).toBeNull();
   });
 
-  it("targets the band carrying that heading, not the application-questions page", () => {
+  it("still carries sign-in — removing the link removed ONE thing", () => {
     const { container } = mountChat();
-    const href = container.querySelector(".demeter__navlink")!.getAttribute("href")!;
-    expect(href).toContain("#what-is-snap");
-    expect(href, "/ is the Civica marketing page; the band is on /screen/ask").toContain(
-      "/screen/ask",
-    );
-    expect(href, "the label no longer describes /questions").not.toContain("/questions");
+    expect(container.querySelector(".demeter__headright")).toBeTruthy();
+    expect(container.textContent).toContain(T.en.signin);
   });
 
-  it("the anchor it points at actually exists in the rendered band", () => {
-    // A hash link is only as good as its target. Read from source rather than
-    // trusted: SnapOverview is where the heading lives.
-    const overview = readFileSync(
-      join(__dirname, "..", "SnapOverview.tsx"),
-      "utf8",
+  it("the definition it used to point at is on the page instead", () => {
+    // The whole justification for removing it. If this ever stops being true
+    // the link should come back, not quietly vanish along with the content.
+    const { container } = mountChat();
+    expect(container.querySelector(".demeter__emptywhat")?.textContent).toBe(
+      T.en.emptyWhatIsSnap,
     );
-    expect(overview).toContain('id="what-is-snap"');
   });
 
-  it("every language got the rename", () => {
+  it("every language has that definition", () => {
     for (const lang of ["en", "es", "vi", "zh"] as const) {
-      expect(T[lang].navQuestions, lang).toBeTruthy();
-      // The old label named the application; none of the new ones should.
-      expect(T[lang].navQuestions, lang).not.toBe(T[lang].save?.panelDismiss);
+      expect(T[lang].emptyWhatIsSnap?.trim(), lang).toBeTruthy();
+      expect(T[lang].emptyWhatIsSnap, `${lang} names the program`).toContain("SNAP");
     }
-    expect(T.es.navQuestions).toBe("¿Qué es SNAP?");
-    expect(T.vi.navQuestions).toBe("SNAP là gì?");
-    expect(T.zh.navQuestions).toBe("什么是 SNAP？");
   });
 });

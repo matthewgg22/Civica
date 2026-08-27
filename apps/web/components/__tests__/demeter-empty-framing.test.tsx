@@ -54,7 +54,9 @@ describe("empty-chat framing (#898 P2-6)", () => {
   it("renders in the empty state, before any message is sent", () => {
     render(<DemeterChat states={STATES} />);
     expect(screen.getByText(T.en.emptyTitle)).toBeTruthy();
-    expect(screen.getByText(T.en.emptyModes)).toBeTruthy();
+    // The mode labels are wrapped for emphasis, so the sentence spans several
+    // nodes — assert the paragraph's assembled text instead of a single node.
+    expect(document.querySelector(".demeter__emptymodes")?.textContent).toBe(T.en.emptyModes);
   });
 });
 

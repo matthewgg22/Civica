@@ -42,7 +42,7 @@ export default function Error({
   }, [error.digest]);
 
   const copy = strings[locale as keyof typeof strings] ?? strings.en;
-  const errorId = error.digest ?? "—";
+  const errorId = error.digest ?? ", ";
 
   return (
     <main className="error-page">

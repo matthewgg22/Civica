@@ -32,9 +32,9 @@ import { DemeterFooter } from "../../components/DemeterFooter";
 import { alternateLanguages, questionsUrl } from "../../lib/i18n/routes";
 import { questionsStructuredData } from "../screen/ask/structured-data";
 
-const TITLE = "What a SNAP application is actually asking — every question, and the rule behind it";
+const TITLE = "What a SNAP application is actually asking. Every question, and the rule behind it";
 const DESCRIPTION =
-  "The lines people get stuck on in a SNAP application, in plain language: household composition, expedited service, student status, ABAWD work rules, felony questions, and more — each with the federal regulation that decides it.";
+  "The lines people get stuck on in a SNAP application, in plain language: household composition, expedited service, student status, ABAWD work rules, felony questions, and more. Each with the federal regulation that decides it.";
 
 export const metadata: Metadata = {
   title: TITLE,

@@ -72,7 +72,15 @@ export function classifyScreening(
   if (!completeness.computable) {
     return {
       outcome: "not_enough_information",
-      summary: "Household size and income are still unknown.",
+      // NEVER NAME THE MISSING FIELDS HERE. This said "Household size and
+      // income are still unknown" for EVERY incomplete case, so a household
+      // that had given both — and could see both listed on the panel two
+      // inches below — was told they were unknown. engine-grounding.ts already
+      // called this out as "often FALSE" and suppressed it; the panel had no
+      // such guard and printed it. completeness.stillNeeded is the only thing
+      // that knows what is actually missing, so the summary stops guessing and
+      // the list speaks.
+      summary: "Not enough yet to work out an estimate.",
       completeness,
     };
   }

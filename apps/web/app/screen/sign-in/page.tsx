@@ -106,7 +106,7 @@ export default function ScreeningSignInPage() {
             type="button"
             className="screen-auth__sso"
             disabled
-            title="Organization SSO is coming soon — sign in with your work email and password for now."
+            title="Organization SSO is coming soon. Sign in with your work email and password for now."
           >
             Continue with your organization&apos;s SSO
           </button>

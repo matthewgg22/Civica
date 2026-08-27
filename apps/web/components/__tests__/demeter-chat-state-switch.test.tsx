@@ -308,6 +308,16 @@ describe("state scope syncs to the URL (vercel finding 3)", () => {
 // (mobile keyboards shift the layout).
 describe("composer autofocus on desktop (vercel finding 6)", () => {
   it("focuses the composer when the pointer is fine", async () => {
+    // PAST THE FIRST-VISIT CARD. That card is a modal and holds focus while it
+    // is up — correctly — so this test seeds it as already seen. Without the
+    // seed it would assert on the card's button and read as an autofocus
+    // regression, which is exactly how it failed in CI: the local jsdom has no
+    // localStorage, the card never rendered, and the race stayed invisible.
+    try {
+      window.localStorage.setItem("demeter.welcome.seen", "1");
+    } catch {
+      /* no localStorage here: the card never shows, which is the same state */
+    }
     vi.stubGlobal("matchMedia", (q: string) => ({
       matches: /pointer:\s*fine/.test(q),
       media: q, addEventListener: () => {}, removeEventListener: () => {},

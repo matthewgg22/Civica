@@ -351,7 +351,7 @@ const en: PageCopy = {
   officialH3: "Official program information",
   officialNote:
     "Demeter is not a government agency, and is not affiliated with or endorsed by USDA. For the official program and to find your own state agency:",
-  officialFns: "USDA Food and Nutrition Service — SNAP",
+  officialFns: "USDA Food and Nutrition Service: SNAP",
   officialDirectory: "SNAP state directory: find your agency",
   evidenceH2: "Better answers than a general AI assistant",
   evidenceBody:
@@ -363,7 +363,7 @@ const en: PageCopy = {
   evidenceDemoDay: "The twelve Policy2Code experiments",
   decidesH2: "What actually decides whether you qualify",
   decidesBody:
-    "Not your income alone. That is the most common reason people who qualify never apply. Eligibility turns on what is left after the deductions you are entitled to, and on a short list of category rules.\n\nAnd this is why a straight answer is genuinely hard to find anywhere: almost everyone is an edge case. A student who works twenty hours, a household where one person is not eligible, self-employment income that changes every month, a parent applying for citizen children — each of those changes the arithmetic, and a general answer written for nobody in particular is wrong for most of them. That is the gap a conversation can close and a web page cannot.",
+    "Not your income alone. That is the most common reason people who qualify never apply. Eligibility turns on what is left after the deductions you are entitled to, and on a short list of category rules.\n\nAnd this is why a straight answer is genuinely hard to find anywhere: almost everyone is an edge case. A student who works twenty hours, a household where one person is not eligible, self-employment income that changes every month, a parent applying for citizen children. Each of those changes the arithmetic, and a general answer written for nobody in particular is wrong for most of them. That is the gap a conversation can close and a web page cannot.",
   defs: [
     {
       t: "Household size",
@@ -454,7 +454,7 @@ const en: PageCopy = {
   fears: [
     {
       q: "Does this affect my immigration status?",
-      a: "This one is changing, so we will not give you a flat answer. Federal public charge rules have not counted SNAP since 2022, but DHS has rescinded that rule effective 18 September 2026, and after that date officers can weigh benefits case by case. If anyone in your household is not a US citizen, talk to a free immigration legal aid before you apply \u2014 not to us, and not to a caseworker.",
+      a: "This one is changing, so we will not give you a flat answer. Federal public charge rules have not counted SNAP since 2022, but DHS has rescinded that rule effective 18 September 2026, and after that date officers can weigh benefits case by case. If anyone in your household is not a US citizen, talk to a free immigration legal aid before you apply. Not to us, and not to a caseworker.",
     },
     {
       q: "Will I have to pay it back?",
@@ -513,7 +513,7 @@ const en: PageCopy = {
     {
       when: "By day 30",
       t: "The decision",
-      d: "Thirty days from filing, the agency must approve or deny — and say why if it denies.",
+      d: "Thirty days from filing, the agency must approve or deny, and say why if it denies.",
       img: "4-decision",
     },
     {
@@ -583,7 +583,7 @@ const en: PageCopy = {
 const es: PageCopy = {
   h1: "Pregunta sobre SNAP y obtén la regla exacta.",
   productLede:
-    "Demeter responde en lenguaje sencillo y cita el reglamento federal detrás de cada afirmación — y el manual de tu estado, donde hemos verificado uno.",
+    "Demeter responde en lenguaje sencillo y cita el reglamento federal detrás de cada afirmación, y el manual de tu estado, donde hemos verificado uno.",
   snapLine:
     "SNAP es dinero mensual para comida, depositado en una tarjeta EBT. Antes llamado cupones de alimentos. Solicitar es gratis.",
   skipToContent: "Saltar al contenido",
@@ -648,7 +648,7 @@ const es: PageCopy = {
     },
     {
       t: "Para qué sirve",
-      d: "Alimentos para llevar a casa y preparar, y semillas y plantas que producen alimentos. No alcohol, artículos del hogar ni comida caliente preparada para comer de inmediato — aunque algunos estados permiten que ciertos hogares compren comidas en restaurantes.",
+      d: "Alimentos para llevar a casa y preparar, y semillas y plantas que producen alimentos. No alcohol, artículos del hogar ni comida caliente preparada para comer de inmediato. Aunque algunos estados permiten que ciertos hogares compren comidas en restaurantes.",
     },
     {
       t: "Cuánto cuesta solicitar",
@@ -658,19 +658,19 @@ const es: PageCopy = {
   officialH3: "Información oficial del programa",
   officialNote:
     "Demeter no es una agencia del gobierno, ni está afiliado al USDA ni respaldado por él. Para la información oficial del programa y para encontrar la agencia de tu estado:",
-  officialFns: "Servicio de Alimentos y Nutrición del USDA — SNAP",
-  officialDirectory: "Directorio estatal de SNAP — encuentra tu agencia",
+  officialFns: "Servicio de Alimentos y Nutrición del USDA: SNAP",
+  officialDirectory: "Directorio estatal de SNAP. Encuentra tu agencia",
   evidenceH2: "Por qué te mostramos la regla en vez de solo responder",
   evidenceBody:
     "El Beeck Center de la Universidad de Georgetown realizó doce experimentos para convertir la política de beneficios en código funcional con inteligencia artificial. Su conclusión no fue que sea imposible, sino que, ante una lógica de política realmente compleja, los modelos siguen necesitando conocimiento externo y una persona que revise el resultado. Un modelo de lenguaje tiene la fluidez suficiente para equivocarse de forma convincente, y las reglas de beneficios son justo donde ese error le cuesta dinero a alguien. Por eso Demeter cita la regulación detrás de cada afirmación y la enlaza. No tienes que confiar en la respuesta: puedes leer de dónde salió.",
   evidenceQuote: "todavía requieren conocimiento externo y supervisión humana",
   evidenceAttrib:
-    "Beeck Center for Social Impact + Innovation, Georgetown University — AI-Powered Rules as Code, febrero de 2025",
+    "Beeck Center for Social Impact + Innovation, Georgetown University: AI-Powered Rules as Code, febrero de 2025",
   evidenceReport: "Leer el informe",
   evidenceDemoDay: "Los doce experimentos de Policy2Code",
   decidesH2: "Qué decide realmente si calificas",
   decidesBody:
-    "No solo tus ingresos — esa es la razón más común por la que gente que sí califica nunca solicita. La elegibilidad depende de lo que queda después de las deducciones a las que tienes derecho, y de una lista corta de reglas por categoría.",
+    "No solo tus ingresos. Esa es la razón más común por la que gente que sí califica nunca solicita. La elegibilidad depende de lo que queda después de las deducciones a las que tienes derecho, y de una lista corta de reglas por categoría.",
   defs: [
     {
       t: "Tamaño del hogar",
@@ -678,7 +678,7 @@ const es: PageCopy = {
     },
     {
       t: "Ingresos, después de deducciones",
-      d: "La renta, los servicios, el cuidado infantil, la manutención que pagas y — para personas de 60+ o con discapacidad — los gastos médicos por encima de un mínimo se restan antes de aplicar el límite.",
+      d: "La renta, los servicios, el cuidado infantil, la manutención que pagas y, para personas de 60+ o con discapacidad, los gastos médicos por encima de un mínimo se restan antes de aplicar el límite.",
     },
     {
       t: "Reglas por categoría",
@@ -712,7 +712,7 @@ const es: PageCopy = {
   steps: [
     {
       t: "Cada afirmación trae su regla",
-      d: "Las respuestas citan la regulación federal y, en los estados verificados, el manual de ese estado — con enlace, para que leas la regla tú mismo o se la muestres a quien no esté de acuerdo.",
+      d: "Las respuestas citan la regulación federal y, en los estados verificados, el manual de ese estado. Con enlace, para que leas la regla tú mismo o se la muestres a quien no esté de acuerdo.",
     },
     {
       t: "Dice cuándo no está seguro",
@@ -725,7 +725,7 @@ const es: PageCopy = {
   ],
   faqH2: "Qué está preguntando realmente la solicitud",
   faqBody:
-    "Estas son las preguntas donde la gente se atora — la redacción es legal, no conversacional. Esto es lo que significa cada una y la regla detrás.",
+    "Estas son las preguntas donde la gente se atora. La redacción es legal, no conversacional. Esto es lo que significa cada una y la regla detrás.",
   faqHeading: (p) => `¿Qué significa "${p}" en una solicitud de SNAP?`,
   questionsLink: "Lo que la solicitud realmente pregunta",
   questionsIntro:
@@ -757,15 +757,15 @@ const es: PageCopy = {
   foodNow211: "Llama o visita el 211",
   fearsH2: "Por qu\u00e9 la gente no solicita",
   fearsBody:
-    "Estas son las preocupaciones que detienen a personas que s\u00ed calificar\u00edan. Esto es lo que realmente ocurre \u2014 incluida la \u00fanica sobre la que no podemos darte una respuesta rotunda.",
+    "Estas son las preocupaciones que detienen a personas que s\u00ed calificar\u00edan. Esto es lo que realmente ocurre. Incluida la \u00fanica sobre la que no podemos darte una respuesta rotunda.",
   fears: [
     {
       q: "\u00bfEsto afecta mi estatus migratorio?",
-      a: "Esta est\u00e1 cambiando, as\u00ed que no te daremos una respuesta rotunda. Las reglas federales de carga p\u00fablica no cuentan SNAP desde 2022, pero el DHS derog\u00f3 esa norma con efecto el 18 de septiembre de 2026, y a partir de esa fecha los oficiales pueden considerar los beneficios caso por caso. Si alguien en tu hogar no es ciudadano estadounidense, consulta con ayuda legal migratoria gratuita antes de solicitar \u2014 no con nosotros, ni con un trabajador del condado.",
+      a: "Esta est\u00e1 cambiando, as\u00ed que no te daremos una respuesta rotunda. Las reglas federales de carga p\u00fablica no cuentan SNAP desde 2022, pero el DHS derog\u00f3 esa norma con efecto el 18 de septiembre de 2026, y a partir de esa fecha los oficiales pueden considerar los beneficios caso por caso. Si alguien en tu hogar no es ciudadano estadounidense, consulta con ayuda legal migratoria gratuita antes de solicitar. No con nosotros, ni con un trabajador del condado.",
     },
     {
       q: "\u00bfTendr\u00e9 que devolverlo?",
-      a: "No, si lo que reportaste era correcto. Los beneficios no son un pr\u00e9stamo. Si la agencia descubre despu\u00e9s que pag\u00f3 m\u00e1s de lo que te correspond\u00eda \u2014 casi siempre un error de reporte, de cualquiera de las dos partes \u2014 puede pedirte ese pago de m\u00e1s.",
+      a: "No, si lo que reportaste era correcto. Los beneficios no son un pr\u00e9stamo. Si la agencia descubre despu\u00e9s que pag\u00f3 m\u00e1s de lo que te correspond\u00eda. Casi siempre un error de reporte, de cualquiera de las dos partes. Puede pedirte ese pago de m\u00e1s.",
     },
     {
       q: "\u00bfLe estoy quitando a alguien que lo necesita m\u00e1s?",
@@ -777,7 +777,7 @@ const es: PageCopy = {
     },
     {
       q: "\u00bfTengo que estar desempleado?",
-      a: "No. En la mayor\u00eda de los hogares con SNAP que tienen un adulto en edad de trabajar, alguien trabaja. Trabajar no te descalifica \u2014 los ingresos se cuentan despu\u00e9s de las deducciones a las que tienes derecho, por eso el l\u00edmite es m\u00e1s alto de lo que la gente supone.",
+      a: "No. En la mayor\u00eda de los hogares con SNAP que tienen un adulto en edad de trabajar, alguien trabaja. Trabajar no te descalifica. Los ingresos se cuentan despu\u00e9s de las deducciones a las que tienes derecho, por eso el l\u00edmite es m\u00e1s alto de lo que la gente supone.",
     },
     {
       q: "\u00bfMe van a investigar?",
@@ -797,15 +797,15 @@ const es: PageCopy = {
       img: "1-file",
     },
     {
-      when: "Sin plazo fijo — 7 días si es urgente",
+      when: "Sin plazo fijo: 7 días si es urgente",
       t: "La entrevista",
-      d: "Suele ser una llamada, y nadie es aprobado sin ella. Las reglas federales no le ponen plazo, así que esperar semanas es normal — a menos que casi no tengas ingresos. Dilo al presentar la solicitud: la entrevista y tus beneficios llegan en 7 días, y si la pierdes, solo tienes que reprogramarla.",
+      d: "Suele ser una llamada, y nadie es aprobado sin ella. Las reglas federales no le ponen plazo, así que esperar semanas es normal. A menos que casi no tengas ingresos. Dilo al presentar la solicitud: la entrevista y tus beneficios llegan en 7 días, y si la pierdes, solo tienes que reprogramarla.",
       img: "3-proof",
     },
     {
       when: "Antes del día 30",
       t: "La decisión",
-      d: "A los treinta días, la agencia debe aprobar o denegar — y decir por qué si deniega.",
+      d: "A los treinta días, la agencia debe aprobar o denegar, y decir por qué si deniega.",
       img: "4-decision",
     },
     {
@@ -816,7 +816,7 @@ const es: PageCopy = {
     },
   ],
   timelineNote:
-    "Apelar una denegación es gratis. Perder el plazo de recertificación es una de las formas más comunes de perder beneficios a los que todavía tienes derecho. Base federal, del 7 CFR 273.2. Tu estado puede añadir pasos propios — pregúntale a Demeter por el tuyo y la respuesta citará el manual de ese estado cuando lo hayamos verificado.",
+    "Apelar una denegación es gratis. Perder el plazo de recertificación es una de las formas más comunes de perder beneficios a los que todavía tienes derecho. Base federal, del 7 CFR 273.2. Tu estado puede añadir pasos propios. Pregúntale a Demeter por el tuyo y la respuesta citará el manual de ese estado cuando lo hayamos verificado.",
   brandSubtitle: "Asistencia de inscripción y elegibilidad de SNAP",
   navAsk: "Pregúntale a Demeter",
   navQuestions: "Preguntas de la solicitud",
@@ -836,7 +836,7 @@ const es: PageCopy = {
       "Los estados sin paquete verificado se responden con las reglas federales. El mapa muestra dónde además revisamos el manual del propio estado.",
     verified: "Verificado",
   },
-  agenciesH2: "Tu estado administra el programa — estas son las agencias",
+  agenciesH2: "Tu estado administra el programa. Estas son las agencias",
   agenciesBody:
     "Demeter nunca decide tu caso. Lo hace la agencia de tu estado. Estas son las agencias cuyas reglas publicadas sustentan las respuestas verificadas, y donde realmente se solicita.",
   agenciesNote:
@@ -875,7 +875,7 @@ const es: PageCopy = {
 const vi: PageCopy = {
   h1: "Hỏi về SNAP và nhận đúng điều luật.",
   productLede:
-    "Demeter trả lời bằng ngôn ngữ dễ hiểu và trích dẫn quy định liên bang đứng sau mỗi khẳng định — cùng với sổ tay của tiểu bang bạn, nơi chúng tôi đã xác minh.",
+    "Demeter trả lời bằng ngôn ngữ dễ hiểu và trích dẫn quy định liên bang đứng sau mỗi khẳng định. Cùng với sổ tay của tiểu bang bạn, nơi chúng tôi đã xác minh.",
   snapLine:
     "SNAP là tiền mua thực phẩm hằng tháng, nạp vào thẻ EBT. Trước đây gọi là tem phiếu thực phẩm. Nộp đơn miễn phí.",
   skipToContent: "Bỏ qua đến nội dung",
@@ -889,7 +889,7 @@ const vi: PageCopy = {
       },
       {
         q: "Sau khi nộp đơn thì bao lâu tôi nhận được SNAP?",
-        a: "Theo quy định liên bang, cơ quan phụ trách phải xử lý đơn của bạn trong vòng tối đa 30 ngày kể từ ngày nộp đơn (7 CFR 273.2(a)). Nếu hộ gia đình bạn có thu nhập và tài sản rất thấp, bạn có thể được xét vào diện xử lý khẩn cấp (expedited service) — khi đó trợ cấp phải được cấp trong vòng 7 ngày.",
+        a: "Theo quy định liên bang, cơ quan phụ trách phải xử lý đơn của bạn trong vòng tối đa 30 ngày kể từ ngày nộp đơn (7 CFR 273.2(a)). Nếu hộ gia đình bạn có thu nhập và tài sản rất thấp, bạn có thể được xét vào diện xử lý khẩn cấp (expedited service). Khi đó trợ cấp phải được cấp trong vòng 7 ngày.",
         verdict: "✓ CHẮC CHẮN: mọi quy định được trích dẫn đều lấy từ văn bản quy định được truy xuất cho câu hỏi này.",
       },
       {
@@ -940,7 +940,7 @@ const vi: PageCopy = {
     },
     {
       t: "Mua được những gì",
-      d: "Thực phẩm mang về nhà nấu, cùng hạt giống và cây trồng ra thực phẩm. Không mua rượu bia, đồ gia dụng, hay thức ăn nóng làm sẵn để ăn ngay — dù một số tiểu bang cho phép vài nhóm hộ mua bữa ăn tại nhà hàng.",
+      d: "Thực phẩm mang về nhà nấu, cùng hạt giống và cây trồng ra thực phẩm. Không mua rượu bia, đồ gia dụng, hay thức ăn nóng làm sẵn để ăn ngay. Dù một số tiểu bang cho phép vài nhóm hộ mua bữa ăn tại nhà hàng.",
     },
     {
       t: "Nộp đơn tốn bao nhiêu",
@@ -950,19 +950,19 @@ const vi: PageCopy = {
   officialH3: "Thông tin chính thức về chương trình",
   officialNote:
     "Demeter không phải cơ quan chính phủ, không trực thuộc và không được Bộ Nông nghiệp Hoa Kỳ chứng thực. Để xem thông tin chính thức và tìm cơ quan tiểu bang của bạn:",
-  officialFns: "Cơ quan Thực phẩm và Dinh dưỡng USDA — SNAP",
-  officialDirectory: "Danh bạ SNAP theo tiểu bang — tìm cơ quan của bạn",
+  officialFns: "Cơ quan Thực phẩm và Dinh dưỡng USDA: SNAP",
+  officialDirectory: "Danh bạ SNAP theo tiểu bang. Tìm cơ quan của bạn",
   evidenceH2: "Vì sao chúng tôi đưa ra điều luật thay vì chỉ trả lời",
   evidenceBody:
-    "Beeck Center thuộc Đại học Georgetown đã thực hiện mười hai thử nghiệm chuyển chính sách phúc lợi thành mã hoạt động bằng trí tuệ nhân tạo. Kết luận của họ không phải là điều đó bất khả thi, mà là khi xử lý logic chính sách thực sự phức tạp, các mô hình vẫn cần kiến thức bên ngoài và cần người kiểm tra kết quả. Mô hình ngôn ngữ đủ trôi chảy để sai một cách thuyết phục, và quy định phúc lợi đúng là nơi cái sai đó khiến người ta mất tiền. Vì vậy Demeter trích dẫn quy định đằng sau mỗi khẳng định và kèm liên kết. Bạn không cần tin câu trả lời — bạn có thể đọc nguồn của nó.",
+    "Beeck Center thuộc Đại học Georgetown đã thực hiện mười hai thử nghiệm chuyển chính sách phúc lợi thành mã hoạt động bằng trí tuệ nhân tạo. Kết luận của họ không phải là điều đó bất khả thi, mà là khi xử lý logic chính sách thực sự phức tạp, các mô hình vẫn cần kiến thức bên ngoài và cần người kiểm tra kết quả. Mô hình ngôn ngữ đủ trôi chảy để sai một cách thuyết phục, và quy định phúc lợi đúng là nơi cái sai đó khiến người ta mất tiền. Vì vậy Demeter trích dẫn quy định đằng sau mỗi khẳng định và kèm liên kết. Bạn không cần tin câu trả lời. Bạn có thể đọc nguồn của nó.",
   evidenceQuote: "vẫn cần kiến thức bên ngoài và sự giám sát của con người",
   evidenceAttrib:
-    "Beeck Center for Social Impact + Innovation, Georgetown University — AI-Powered Rules as Code, tháng 2 năm 2025",
+    "Beeck Center for Social Impact + Innovation, Georgetown University: AI-Powered Rules as Code, tháng 2 năm 2025",
   evidenceReport: "Đọc báo cáo",
   evidenceDemoDay: "Mười hai thử nghiệm Policy2Code",
   decidesH2: "Điều gì thực sự quyết định bạn có đủ điều kiện",
   decidesBody:
-    "Không chỉ là thu nhập — đó là lý do phổ biến nhất khiến những người đủ điều kiện không bao giờ nộp đơn. Điều kiện phụ thuộc vào phần còn lại sau các khoản khấu trừ bạn được hưởng, và một danh sách ngắn các quy định theo nhóm.",
+    "Không chỉ là thu nhập: đó là lý do phổ biến nhất khiến những người đủ điều kiện không bao giờ nộp đơn. Điều kiện phụ thuộc vào phần còn lại sau các khoản khấu trừ bạn được hưởng, và một danh sách ngắn các quy định theo nhóm.",
   defs: [
     {
       t: "Quy mô hộ gia đình",
@@ -970,7 +970,7 @@ const vi: PageCopy = {
     },
     {
       t: "Thu nhập, sau khấu trừ",
-      d: "Tiền thuê nhà, điện nước, giữ trẻ, tiền cấp dưỡng bạn trả và — với thành viên từ 60 tuổi trở lên hoặc khuyết tật — chi phí y tế vượt một mức nhất định đều được trừ trước khi áp dụng giới hạn.",
+      d: "Tiền thuê nhà, điện nước, giữ trẻ, tiền cấp dưỡng bạn trả và, với thành viên từ 60 tuổi trở lên hoặc khuyết tật, chi phí y tế vượt một mức nhất định đều được trừ trước khi áp dụng giới hạn.",
     },
     {
       t: "Quy định theo nhóm",
@@ -1004,7 +1004,7 @@ const vi: PageCopy = {
   steps: [
     {
       t: "Mỗi khẳng định đều kèm quy định",
-      d: "Câu trả lời trích quy định liên bang và, ở các tiểu bang đã xác minh, cẩm nang của chính tiểu bang đó — có liên kết, để bạn tự đọc hoặc đưa cho nhân viên xét duyệt nếu họ không đồng ý.",
+      d: "Câu trả lời trích quy định liên bang và, ở các tiểu bang đã xác minh, cẩm nang của chính tiểu bang đó. Có liên kết, để bạn tự đọc hoặc đưa cho nhân viên xét duyệt nếu họ không đồng ý.",
     },
     {
       t: "Nó nói rõ khi không chắc",
@@ -1017,7 +1017,7 @@ const vi: PageCopy = {
   ],
   faqH2: "Đơn xin thực sự đang hỏi điều gì",
   faqBody:
-    "Đây là những câu khiến người ta mắc kẹt — cách diễn đạt mang tính pháp lý, không phải đời thường. Sau đây là ý nghĩa của từng câu và quy định đằng sau nó.",
+    "Đây là những câu khiến người ta mắc kẹt. Cách diễn đạt mang tính pháp lý, không phải đời thường. Sau đây là ý nghĩa của từng câu và quy định đằng sau nó.",
   faqHeading: (p) => `"${p}" trên đơn SNAP nghĩa là gì?`,
   questionsLink: "Đơn xin thực sự đang hỏi điều gì",
   questionsIntro:
@@ -1031,16 +1031,16 @@ const vi: PageCopy = {
   retailSearchGo: "Tìm cửa hàng",
   retailSearchCount: "{n} cửa hàng ở {zip} chấp nhận EBT",
   retailSearchNone:
-    "Không có cửa hàng nào được ghi nhận ở {zip}. Danh sách của USDA dựa theo địa chỉ cửa hàng, nên hãy thử mã ZIP lân cận — cửa hàng bạn hay đi có thể được đăng ký ở mã khác.",
+    "Không có cửa hàng nào được ghi nhận ở {zip}. Danh sách của USDA dựa theo địa chỉ cửa hàng, nên hãy thử mã ZIP lân cận. Cửa hàng bạn hay đi có thể được đăng ký ở mã khác.",
   retailSearchError:
-    "Lượt tra cứu không phản hồi. Điều đó không có nghĩa là quanh bạn không có cửa hàng — hãy thử lại, hoặc xem công cụ tra cứu của USDA.",
+    "Lượt tra cứu không phản hồi. Điều đó không có nghĩa là quanh bạn không có cửa hàng. Hãy thử lại, hoặc xem công cụ tra cứu của USDA.",
   retailSearchMore: "Đang hiển thị {n} kết quả đầu. Còn nữa.",
   retailSearchOpenMap: "Mở trong bản đồ",
   retailMoreLabel: "Không thấy cửa hàng của bạn?",
   retailMoreLink: "Xem công cụ tra cứu cửa hàng SNAP của USDA",
   retailersH3: "Bạn có thể dùng thẻ EBT ở đâu",
   retailersBody:
-    "{n} cửa hàng trên khắp các tiểu bang và vùng lãnh thổ chấp nhận EBT — siêu thị, cửa hàng tạp hóa, nhiều chợ nông sản, và mua trực tuyến ở một số nơi.",
+    "{n} cửa hàng trên khắp các tiểu bang và vùng lãnh thổ chấp nhận EBT. Siêu thị, cửa hàng tạp hóa, nhiều chợ nông sản, và mua trực tuyến ở một số nơi.",
   retailersNote: "Số liệu cửa hàng do Bộ Nông nghiệp Hoa Kỳ công bố, tính đến {date}.",
   foodNowLabel: "Cần thực phẩm ngay tuần này?",
   foodNowBody:
@@ -1049,15 +1049,15 @@ const vi: PageCopy = {
   foodNow211: "Gọi hoặc truy cập 211",
   fearsH2: "Vì sao người ta không nộp đơn",
   fearsBody:
-    "Đây là những lo lắng khiến những người vốn đủ điều kiện không nộp đơn. Đây là sự thật — kể cả điều duy nhất mà chúng tôi không thể trả lời dứt khoát.",
+    "Đây là những lo lắng khiến những người vốn đủ điều kiện không nộp đơn. Đây là sự thật. Kể cả điều duy nhất mà chúng tôi không thể trả lời dứt khoát.",
   fears: [
     {
       q: "Điều này có ảnh hưởng đến tình trạng di trú của tôi không?",
-      a: "Điều này đang thay đổi, nên chúng tôi sẽ không trả lời dứt khoát. Từ năm 2022, quy định liên bang về “gánh nặng xã hội” không tính SNAP — nhưng Bộ Nội an đã bãi bỏ quy định đó, có hiệu lực từ ngày 18 tháng 9 năm 2026, và sau ngày đó viên chức có thể xét từng trường hợp. Nếu trong nhà bạn có người không phải công dân Hoa Kỳ, hãy hỏi trợ giúp pháp lý di trú miễn phí trước khi nộp đơn — không phải hỏi chúng tôi, cũng không phải hỏi nhân viên xét hồ sơ.",
+      a: "Điều này đang thay đổi, nên chúng tôi sẽ không trả lời dứt khoát. Từ năm 2022, quy định liên bang về “gánh nặng xã hội” không tính SNAP. Nhưng Bộ Nội an đã bãi bỏ quy định đó, có hiệu lực từ ngày 18 tháng 9 năm 2026, và sau ngày đó viên chức có thể xét từng trường hợp. Nếu trong nhà bạn có người không phải công dân Hoa Kỳ, hãy hỏi trợ giúp pháp lý di trú miễn phí trước khi nộp đơn. Không phải hỏi chúng tôi, cũng không phải hỏi nhân viên xét hồ sơ.",
     },
     {
       q: "Tôi có phải trả lại không?",
-      a: "Không, nếu những gì bạn khai là đúng. Trợ cấp không phải là khoản vay. Nếu sau này cơ quan phát hiện đã trả nhiều hơn mức bạn được hưởng — thường là do sai sót khi khai báo, từ bất kỳ bên nào — họ có thể yêu cầu bạn hoàn lại phần thừa.",
+      a: "Không, nếu những gì bạn khai là đúng. Trợ cấp không phải là khoản vay. Nếu sau này cơ quan phát hiện đã trả nhiều hơn mức bạn được hưởng. Thường là do sai sót khi khai báo, từ bất kỳ bên nào. Họ có thể yêu cầu bạn hoàn lại phần thừa.",
     },
     {
       q: "Tôi có đang lấy mất phần của người khác không?",
@@ -1069,7 +1069,7 @@ const vi: PageCopy = {
     },
     {
       q: "Tôi có bắt buộc phải thất nghiệp không?",
-      a: "Không. Trong phần lớn hộ nhận SNAP có người lớn trong độ tuổi lao động, vẫn có người đi làm. Đi làm không khiến bạn mất quyền — thu nhập được tính sau khi trừ các khoản bạn được hưởng, vì vậy mức giới hạn cao hơn nhiều người nghĩ.",
+      a: "Không. Trong phần lớn hộ nhận SNAP có người lớn trong độ tuổi lao động, vẫn có người đi làm. Đi làm không khiến bạn mất quyền. Thu nhập được tính sau khi trừ các khoản bạn được hưởng, vì vậy mức giới hạn cao hơn nhiều người nghĩ.",
     },
     {
       q: "Họ có điều tra tôi không?",
@@ -1090,15 +1090,15 @@ const vi: PageCopy = {
       img: "1-file",
     },
     {
-      when: "Không có hạn — 7 ngày nếu khẩn",
+      when: "Không có hạn: 7 ngày nếu khẩn",
       t: "Phỏng vấn",
-      d: "Thường là một cuộc gọi, và không ai được duyệt mà bỏ bước này. Quy định liên bang không đặt hạn cho việc này, nên chờ vài tuần là bình thường — trừ khi bạn gần như không có thu nhập. Hãy nói rõ khi nộp đơn: cả buổi phỏng vấn lẫn trợ cấp đều đến trong 7 ngày, và nếu lỡ hẹn thì chỉ cần hẹn lại.",
+      d: "Thường là một cuộc gọi, và không ai được duyệt mà bỏ bước này. Quy định liên bang không đặt hạn cho việc này, nên chờ vài tuần là bình thường. Trừ khi bạn gần như không có thu nhập. Hãy nói rõ khi nộp đơn: cả buổi phỏng vấn lẫn trợ cấp đều đến trong 7 ngày, và nếu lỡ hẹn thì chỉ cần hẹn lại.",
       img: "3-proof",
     },
     {
       when: "Trước ngày thứ 30",
       t: "Quyết định",
-      d: "Ba mươi ngày kể từ khi nộp, cơ quan phải duyệt hoặc từ chối — và nêu rõ lý do.",
+      d: "Ba mươi ngày kể từ khi nộp, cơ quan phải duyệt hoặc từ chối, và nêu rõ lý do.",
       img: "4-decision",
     },
     {
@@ -1109,7 +1109,7 @@ const vi: PageCopy = {
     },
   ],
   timelineNote:
-    "Khiếu nại khi bị từ chối là miễn phí. Bỏ lỡ hạn tái chứng nhận là một trong những lý do phổ biến nhất khiến người ta mất trợ cấp mà vẫn còn đủ điều kiện. Mức sàn liên bang, theo 7 CFR 273.2. Tiểu bang của bạn có thể có thêm bước riêng — hãy hỏi Demeter về tiểu bang đó, câu trả lời sẽ trích dẫn cẩm nang của bang khi chúng tôi đã xác minh.",
+    "Khiếu nại khi bị từ chối là miễn phí. Bỏ lỡ hạn tái chứng nhận là một trong những lý do phổ biến nhất khiến người ta mất trợ cấp mà vẫn còn đủ điều kiện. Mức sàn liên bang, theo 7 CFR 273.2. Tiểu bang của bạn có thể có thêm bước riêng. Hãy hỏi Demeter về tiểu bang đó, câu trả lời sẽ trích dẫn cẩm nang của bang khi chúng tôi đã xác minh.",
   brandSubtitle: "Hỗ trợ ghi danh và điều kiện SNAP",
   navAsk: "Hỏi Demeter",
   navQuestions: "Câu hỏi trên đơn",
@@ -1129,7 +1129,7 @@ const vi: PageCopy = {
       "Các tiểu bang chưa có gói đã xác minh vẫn được trả lời theo quy định liên bang. Bản đồ cho thấy nơi chúng tôi đã kiểm tra thêm sổ tay của chính tiểu bang đó.",
     verified: "Đã xác minh",
   },
-  agenciesH2: "Tiểu bang của bạn điều hành chương trình — đây là các cơ quan",
+  agenciesH2: "Tiểu bang của bạn điều hành chương trình: đây là các cơ quan",
   agenciesBody:
     "Demeter không bao giờ quyết định hồ sơ của bạn. Cơ quan tiểu bang mới quyết định. Đây là những cơ quan có quy định công bố làm nền cho các câu trả lời đã xác minh, và cũng là nơi bạn thực sự nộp đơn.",
   agenciesNote:
@@ -1172,7 +1172,7 @@ const zh: PageCopy = {
     // a noun (贵公司 = your company) but 贵州 collides head-on with the province
     // name, so a Chinese reader saw "the Guizhou manual" on a page whose whole
     // claim is that it knows which state's rules apply to you.
-    "Demeter 用通俗语言回答，并为每一条结论引用相应的联邦法规——以及您所在州的手册，只要我们已核实。",
+    "Demeter 用通俗语言回答，并为每一条结论引用相应的联邦法规，以及您所在州的手册，只要我们已核实。",
   snapLine: "SNAP 是每月打入 EBT 卡的食品补助，旧称食品券。申请免费。",
   skipToContent: "跳到内容",
   example: {
@@ -1233,7 +1233,7 @@ const zh: PageCopy = {
     },
     {
       t: "可以买什么",
-      d: "可买回家烹调的食品，以及能长出食物的种子和幼苗。不可买酒类、家居用品，或现做现吃的热食——不过部分州允许特定家庭购买餐馆餐食。",
+      d: "可买回家烹调的食品，以及能长出食物的种子和幼苗。不可买酒类、家居用品，或现做现吃的热食，不过部分州允许特定家庭购买餐馆餐食。",
     },
     {
       t: "申请要花多少钱",
@@ -1243,19 +1243,19 @@ const zh: PageCopy = {
   officialH3: "官方项目信息",
   officialNote:
     "Demeter 不是政府机构，与美国农业部（USDA）无隶属关系，也未获其背书。查看官方项目信息并找到您所在州的机构：",
-  officialFns: "美国农业部食品与营养服务局 — SNAP",
-  officialDirectory: "SNAP 各州机构目录 — 找到您的机构",
+  officialFns: "美国农业部食品与营养服务局: SNAP",
+  officialDirectory: "SNAP 各州机构目录: 找到您的机构",
   evidenceH2: "我们为什么把条文摆出来，而不是只给答案",
   evidenceBody:
-    "乔治城大学 Beeck 中心做了十二项实验，尝试用人工智能把福利政策转成可运行的代码。他们的结论不是这件事做不到，而是面对真正复杂的政策逻辑时，模型仍然需要外部知识，也需要有人复核结果。语言模型足够流畅，因此出错时同样很有说服力，而福利规则恰恰是出错就要让人损失金钱的地方。所以 Demeter 会引用每一条说法背后的法规并附上链接。您不必相信答案本身——您可以读它的出处。",
+    "乔治城大学 Beeck 中心做了十二项实验，尝试用人工智能把福利政策转成可运行的代码。他们的结论不是这件事做不到，而是面对真正复杂的政策逻辑时，模型仍然需要外部知识，也需要有人复核结果。语言模型足够流畅，因此出错时同样很有说服力，而福利规则恰恰是出错就要让人损失金钱的地方。所以 Demeter 会引用每一条说法背后的法规并附上链接。您不必相信答案本身，您可以读它的出处。",
   evidenceQuote: "仍然需要外部知识和人工监督",
   evidenceAttrib:
-    "Beeck Center for Social Impact + Innovation, Georgetown University — AI-Powered Rules as Code，2025 年 2 月",
+    "Beeck Center for Social Impact + Innovation, Georgetown University: AI-Powered Rules as Code，2025 年 2 月",
   evidenceReport: "阅读报告",
   evidenceDemoDay: "十二项 Policy2Code 实验",
   decidesH2: "真正决定您是否符合条件的是什么",
   decidesBody:
-    "不只是收入——这正是许多本可获得补助的人从未申请的最常见原因。资格取决于扣除您应享有的各项之后还剩多少，以及一小组分类规定。",
+    "不只是收入，这正是许多本可获得补助的人从未申请的最常见原因。资格取决于扣除您应享有的各项之后还剩多少，以及一小组分类规定。",
   defs: [
     {
       t: "家庭人数",
@@ -1267,7 +1267,7 @@ const zh: PageCopy = {
     },
     {
       t: "分类规定",
-      d: "学生、非公民、无受抚养人的成年人各有各的规定，而且大多都有豁免情形——这些豁免被忽略的次数远多于被适用的次数。",
+      d: "学生、非公民、无受抚养人的成年人各有各的规定，而且大多都有豁免情形，这些豁免被忽略的次数远多于被适用的次数。",
     },
     {
       t: "您所在的州",
@@ -1297,7 +1297,7 @@ const zh: PageCopy = {
   steps: [
     {
       t: "每条结论都带着它的规定",
-      d: "回答会引用联邦法规，在已核实的州还会引用该州自己的手册——附带链接，您可以自己读，也可以拿给有异议的工作人员看。",
+      d: "回答会引用联邦法规，在已核实的州还会引用该州自己的手册，附带链接，您可以自己读，也可以拿给有异议的工作人员看。",
     },
     {
       t: "不确定时会明说",
@@ -1310,7 +1310,7 @@ const zh: PageCopy = {
   ],
   faqH2: "申请表真正在问什么",
   faqBody:
-    "这些是最容易卡住人的问题——它们的措辞是法律语言，不是日常说法。下面是每一条的含义，以及背后的规定。",
+    "这些是最容易卡住人的问题，它们的措辞是法律语言，不是日常说法。下面是每一条的含义，以及背后的规定。",
   faqHeading: (p) => `SNAP 申请表上的“${p}”是什么意思？`,
   questionsLink: "申请表到底在问什么",
   questionsIntro:
@@ -1324,16 +1324,16 @@ const zh: PageCopy = {
   retailSearchGo: "查找商店",
   retailSearchCount: "{zip} 有 {n} 家商店接受 EBT",
   retailSearchNone:
-    "{zip} 没有登记在册的商店。美国农业部的名单按商店地址归类，可以试试相邻的邮编——您常去的那家可能登记在别的邮编下。",
+    "{zip} 没有登记在册的商店。美国农业部的名单按商店地址归类，可以试试相邻的邮编，您常去的那家可能登记在别的邮编下。",
   retailSearchError:
-    "这次查询没有返回结果。这并不代表您附近没有商店——请再试一次，或查看美国农业部自己的查询工具。",
+    "这次查询没有返回结果。这并不代表您附近没有商店，请再试一次，或查看美国农业部自己的查询工具。",
   retailSearchMore: "仅显示前 {n} 家，还有更多。",
   retailSearchOpenMap: "在地图中打开",
   retailMoreLabel: "没看到您常去的商店？",
   retailMoreLink: "查看美国农业部的 SNAP 商店查询工具",
   retailersH3: "您可以在哪里使用 EBT 卡",
   retailersBody:
-    "全美各州和各领地共有 {n} 家商店接受 EBT——超市、街角小店、许多农夫市集，部分商家还支持网上购买。",
+    "全美各州和各领地共有 {n} 家商店接受 EBT，超市、街角小店、许多农夫市集，部分商家还支持网上购买。",
   retailersNote: "商店数量由美国农业部公布，截至 {date}。",
   foodNowLabel: "这周就需要食物？",
   foodNowBody:
@@ -1342,15 +1342,15 @@ const zh: PageCopy = {
   foodNow211: "致电或访问 211",
   fearsH2: "人们不申请的原因",
   fearsBody:
-    "以下是让本来符合条件的人望而却步的担心。这是实际情况——包括唯一一个我们无法给出肯定答案的问题。",
+    "以下是让本来符合条件的人望而却步的担心。这是实际情况，包括唯一一个我们无法给出肯定答案的问题。",
   fears: [
     {
       q: "这会影响我的移民身份吗？",
-      a: "这一条正在变化，所以我们不会给您肯定的答案。自 2022 年起，联邦“公共负担”规则不将 SNAP 计入——但国土安全部已废除该规则，自 2026 年 9 月 18 日起生效；此后官员可逐案考量福利领取情况。如果您家中有人不是美国公民，请在申请前咨询免费的移民法律援助——不要问我们，也不要问个案工作人员。",
+      a: "这一条正在变化，所以我们不会给您肯定的答案。自 2022 年起，联邦“公共负担”规则不将 SNAP 计入，但国土安全部已废除该规则，自 2026 年 9 月 18 日起生效；此后官员可逐案考量福利领取情况。如果您家中有人不是美国公民，请在申请前咨询免费的移民法律援助，不要问我们，也不要问个案工作人员。",
     },
     {
       q: "我以后需要还钱吗？",
-      a: "只要您如实申报，就不需要。补助不是贷款。如果机构事后发现多发了——通常是双方某一方的申报失误——可以要求您退回多发的部分。",
+      a: "只要您如实申报，就不需要。补助不是贷款。如果机构事后发现多发了，通常是双方某一方的申报失误，可以要求您退回多发的部分。",
     },
     {
       q: "我是不是抢了更需要的人的份额？",
@@ -1362,7 +1362,7 @@ const zh: PageCopy = {
     },
     {
       q: "我必须失业才行吗？",
-      a: "不是。在有劳动年龄成年人的 SNAP 家庭中，大多数都有人在工作。工作并不会让您失去资格——收入是在扣除您应得的项目后才计算的，所以实际上限比大多数人以为的高。",
+      a: "不是。在有劳动年龄成年人的 SNAP 家庭中，大多数都有人在工作。工作并不会让您失去资格，收入是在扣除您应得的项目后才计算的，所以实际上限比大多数人以为的高。",
     },
     {
       q: "他们会调查我吗？",
@@ -1382,15 +1382,15 @@ const zh: PageCopy = {
       img: "1-file",
     },
     {
-      when: "没有固定期限——紧急则 7 天内",
+      when: "没有固定期限，紧急则 7 天内",
       t: "面谈",
-      d: "通常只是一通电话，没有面谈就不会获批。联邦规定并未给面谈设期限，等上几周是常事——除非您几乎没有任何进项。递交时说明情况：面谈和补助都会在 7 天内到位，错过了重新预约就行。",
+      d: "通常只是一通电话，没有面谈就不会获批。联邦规定并未给面谈设期限，等上几周是常事，除非您几乎没有任何进项。递交时说明情况：面谈和补助都会在 7 天内到位，错过了重新预约就行。",
       img: "3-proof",
     },
     {
       when: "第 30 天之前",
       t: "作出决定",
-      d: "自递交起三十天内，机构必须批准或拒绝——拒绝时必须说明理由。",
+      d: "自递交起三十天内，机构必须批准或拒绝，拒绝时必须说明理由。",
       img: "4-decision",
     },
     {
@@ -1401,7 +1401,7 @@ const zh: PageCopy = {
     },
   ],
   timelineNote:
-    "申诉被拒决定是免费的。错过复审期限，是人们明明仍符合条件却失去补助的最常见原因之一。联邦底线，出自 7 CFR 273.2。您所在的州可能另有步骤——就该州询问 Demeter，凡我们已核实的，回答都会引用该州手册。",
+    "申诉被拒决定是免费的。错过复审期限，是人们明明仍符合条件却失去补助的最常见原因之一。联邦底线，出自 7 CFR 273.2。您所在的州可能另有步骤，就该州询问 Demeter，凡我们已核实的，回答都会引用该州手册。",
   brandSubtitle: "SNAP 申请与资格协助",
   navAsk: "询问 Demeter",
   navQuestions: "申请表问题",
@@ -1421,7 +1421,7 @@ const zh: PageCopy = {
       "尚无已核实政策包的州仍会依据联邦规定作答。地图显示的是我们另外核对过该州自身手册的地区。",
     verified: "核实于",
   },
-  agenciesH2: "项目由您所在的州执行——以下是相关机构",
+  agenciesH2: "项目由您所在的州执行，以下是相关机构",
   agenciesBody:
     "Demeter 从不决定您的个案，作出决定的是您所在州的机构。以下这些机构自己公布的规定，正是已核实答案的依据，也是您实际递交申请的地方。",
   agenciesNote:

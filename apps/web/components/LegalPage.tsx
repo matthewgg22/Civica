@@ -80,12 +80,11 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
 
           {/* THE DRAFT BANNER WAS REMOVED HERE (owner decision, 2026-08-26).
               It said the document had not been reviewed by counsel, which is
-              still true — `status` is unchanged and every document is still
+              still true: `status` is unchanged and every document is still
               "draft". Recorded rather than deleted quietly, because the page
               no longer discloses something the data still says, and #1013
               tracks the review that would make it moot. To restore it, render
               on `doc.status === "draft"`. */}
-
           {/* NOT A SEGMENTED CONTROL. Filled pills implied three views of one
               document; these are three separate agreements. The current one is
               plain text rather than a link — you are on it, so it is the one

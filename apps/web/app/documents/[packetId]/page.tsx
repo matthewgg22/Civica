@@ -144,7 +144,7 @@ export default function DocumentUploadPage({
               {d.original_filename ?? "document"}
             </span>
             <span className="docs-page__row-kind">
-              {d.document_kind ? t(`kind_${kindToKey(d.document_kind)}` as SnapStringKey) : "—"}
+              {d.document_kind ? t(`kind_${kindToKey(d.document_kind)}` as SnapStringKey) : ", "}
             </span>
             <span
               className="docs-page__row-status"

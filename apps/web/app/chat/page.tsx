@@ -34,7 +34,7 @@ import type { WorksheetSnapshot } from "../../lib/chat-session";
 export const viewport = { themeColor: "#FFFFFF" };
 
 export const metadata: Metadata = {
-  title: "Ask Demeter — SNAP answers with the rule attached",
+  title: "Ask Demeter: SNAP answers with the rule attached",
   description:
     "Ask anything about SNAP and get an answer grounded in the actual rules, every claim cited.",
   // The tool, not the document. Keeping it out of the index means /screen/ask

@@ -129,7 +129,7 @@ export function buildOutline(input: OutlineInput): OutlineSection[] {
           if (m.disability) bits.push("has a disability");
           if (m.elderly) bits.push("60 or over");
           const who = memberLabel(m.role, i);
-          return bits.length ? `${who} — ${bits.join(", ")}` : who;
+          return bits.length ? `${who}: ${bits.join(", ")}` : who;
         }),
       ],
     });

@@ -213,9 +213,16 @@ function SignInForm() {
             {forConversation ? dt.continueGoogle : snapT(locale, "signin_continue_google")}
           </a>
 
-          <p className="signin-disclosure">
-            {forConversation ? dt.googleDisclosure : snapT(locale, "signin_google_disclosure")}
-          </p>
+          {/* DEMETER DROPS THIS LINE (owner, 2026-08-26): "We only use your
+              Google account to sign you in and save your conversation" is the
+              obvious reading of a Google sign-in button, and one more hedge on
+              a page that is mostly hedges. The Civica apply flow keeps its own
+              wording, which names an APPLICATION rather than a conversation. */}
+          {!forConversation && (
+            <p className="signin-disclosure">
+              {snapT(locale, "signin_google_disclosure")}
+            </p>
+          )}
 
           <div className="signin-divider" role="separator">
             <span>{forConversation ? dt.or : snapT(locale, "signin_or")}</span>
