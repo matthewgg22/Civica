@@ -1322,6 +1322,30 @@ export function DemeterChat({
    *  rather than a form, which is the honest order — you cannot be sent
    *  something until we know where.
    */
+  /** What the conversation raised that no outline field holds.
+   *
+   *  The outline is built from structured facts, so a caveat that changes how
+   *  a FIELD SHOULD BE READ has nowhere to live. The Uber case is the one that
+   *  prompted this: "self-employment income requires a caseworker calculation"
+   *  is not a number, but someone copying their income figure onto the real
+   *  form needs it beside that figure or they will enter gross earnings.
+   *
+   *  Sourced from what is already structured — the classification's own caveat
+   *  and the portal's annotation — rather than from the transcript. Free prose
+   *  said in chat is not here yet; that needs an extractor, and a transcript
+   *  pasted under an outline buries the outline. */
+  const outlineNotes = useCallback((): string[] => {
+    const notes: string[] = [];
+    const c = classification;
+    // Only where the summary is a caveat rather than a restatement of the
+    // verdict — "not enough information" adds nothing to a document whose
+    // "Still to work out" section already lists what is missing.
+    if (c && c.outcome !== "not_enough_information" && c.summary) notes.push(c.summary);
+    const note = states.find((x) => x.code === state)?.portal?.note;
+    if (note) notes.push(note);
+    return notes;
+  }, [classification, state, states]);
+
   const emailOutline = useCallback(async () => {
     setEmailState("sending");
     setEmailDetail(null);
@@ -1341,6 +1365,7 @@ export function DemeterChat({
           // is the last thing that should be lost on the way out.
           portalNote: pack?.portal?.note ?? null,
           portalUrl: pack?.portal?.url ?? null,
+          notes: outlineNotes(),
         }),
       });
       if (res.status === 401) return setEmailState("signin");
@@ -1355,7 +1380,7 @@ export function DemeterChat({
       setEmailDetail("network");
       setEmailState("error");
     }
-  }, [state, states, classification, t]);
+  }, [state, states, classification, t, outlineNotes]);
 
   /** Download the outline as a PDF.
    *
@@ -1383,6 +1408,7 @@ export function DemeterChat({
           // is the last thing that should be lost on the way out.
           portalNote: pack?.portal?.note ?? null,
           portalUrl: pack?.portal?.url ?? null,
+          notes: outlineNotes(),
         }),
       });
       if (!res.ok) return setPdfState("error");
@@ -1407,7 +1433,7 @@ export function DemeterChat({
     } catch {
       setPdfState("error");
     }
-  }, [state, states, classification, t]);
+  }, [state, states, classification, t, outlineNotes]);
 
   const restoreConversation = useCallback(
     (
@@ -1838,6 +1864,32 @@ export function DemeterChat({
    *  real feedback the same day was that it fired too soon (felt like
    *  turn 4-5 of an ordinary conversation, not yet "long enough to lose"),
    *  so raised to 8. */
+
+  /** OFFERED WHEN THERE IS SOMETHING TO CARRY (owner, 2026-08-27: "nearing
+   *  end of completion of chat never recommended downloading pdf of answers").
+   *
+   *  The download button lives in the rail, which is the same place the Save
+   *  button lived when a real 15-turn conversation never once found it (#833).
+   *  So this is the inline twin, on the same conditions the rail's own button
+   *  has: estimate mode, and enough gathered to be worth printing.
+   *
+   *  NOT ON TURN COUNT. A long conversation with nothing extracted has nothing
+   *  to put in a document; a short one that named a household and an income
+   *  does. The outline's own contents are the honest trigger. */
+  const [pdfNudgeDismissed, setPdfNudgeDismissed] = useState(false);
+  const PDF_NUDGE_MIN_FACTS = 2;
+  const gatheredCount =
+    (factsView.household?.length ? 1 : 0) +
+    (factsView.income?.length ? 1 : 0) +
+    (factsView.shelter ? 1 : 0) +
+    (factsView.deductions ? 1 : 0);
+  const showPdfNudge =
+    !busy &&
+    worksheetMode === "estimate" &&
+    !pdfNudgeDismissed &&
+    pdfState !== "working" &&
+    gatheredCount >= PDF_NUDGE_MIN_FACTS;
+
   const SAVE_NUDGE_AFTER_TURNS = 8;
   const showSaveNudge =
     !busy && !conversationSaved && !saveNudgeDismissed && answeredCount >= SAVE_NUDGE_AFTER_TURNS;
@@ -2232,6 +2284,34 @@ export function DemeterChat({
           exact gap a real 15-turn, never-saved conversation exposed (#833
           audit, 2026-08-15). Dismissing it only retires the PROMPT, not the
           button — there is no cost to waving it off. */}
+      {/* The rail's download button is the same action; this is the inline
+          way to it, for the person who never notices a rail while reading a
+          reply. Dismissing retires the PROMPT, never the button. */}
+      {showPdfNudge && (
+        <div className="demeter__modeoffer" role="group" aria-label={t.pdfNudge}>
+          <span className="demeter__modeoffer-text">{t.pdfNudge}</span>
+          <span className="demeter__modeoffer-actions">
+            <button
+              type="button"
+              className="demeter__modeoffer-no"
+              onClick={() => setPdfNudgeDismissed(true)}
+            >
+              {t.pdfNudgeNo}
+            </button>
+            <button
+              type="button"
+              className="demeter__modeoffer-yes"
+              onClick={() => {
+                setPdfNudgeDismissed(true);
+                void downloadOutline();
+              }}
+            >
+              {t.pdfNudgeYes}
+            </button>
+          </span>
+        </div>
+      )}
+
       {showSaveNudge && (
         <div className="demeter__modeoffer" role="group" aria-label={t.saveNudge}>
           <span className="demeter__modeoffer-text">{t.saveNudge}</span>

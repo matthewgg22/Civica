@@ -62,6 +62,15 @@ export async function POST(request: NextRequest) {
           .slice(0, MAX_STILL_NEEDED)
           .map((x) => x.slice(0, MAX_FIELD_CHARS))
       : [],
+    // Finished sentences only — see OutlineInput.notes on why this is not the
+    // transcript. Bounded the same way stillNeeded is: this comes from a
+    // client, so it gets the same count and length caps rather than new ones.
+    notes: Array.isArray((body as { notes?: unknown }).notes)
+      ? ((body as { notes: unknown[] }).notes)
+          .filter((x): x is string => typeof x === "string")
+          .slice(0, MAX_STILL_NEEDED)
+          .map((x) => x.slice(0, MAX_FIELD_CHARS))
+      : [],
     generatedAt: new Date(),
   };
 

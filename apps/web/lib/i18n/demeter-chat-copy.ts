@@ -85,6 +85,11 @@ export const T = {
     saveNudge: "This is a long conversation to lose if you close the tab. Save it so you can come back to it?",
     saveNudgeYes: "Save it",
     saveNudgeNo: "Not now",
+    /* Offered once the outline has enough in it to be worth carrying, and
+       only in estimate mode — there is nothing to download in ask mode. */
+    pdfNudge: "You have enough here to work from. Want it as a PDF to keep beside the application?",
+    pdfNudgeYes: "Download it",
+    pdfNudgeNo: "Not now",
     // Shown in the transcript when a state is picked. The portal is where the
     // application actually goes; this is the one moment we know exactly which
     // link that is, so it should not be something they have to ask for.
@@ -398,6 +403,9 @@ export const T = {
     saveNudge: "Esta es una conversación larga para perderla si cierras la pestaña. ¿La guardo para que puedas volver a ella?",
     saveNudgeYes: "Guardarla",
     saveNudgeNo: "Ahora no",
+    pdfNudge: "Ya tienes suficiente para trabajar. ¿Lo quieres en PDF para tenerlo junto a la solicitud?",
+    pdfNudgeYes: "Descargarlo",
+    pdfNudgeNo: "Ahora no",
     portalLead: "{state}, entonces. Allí la solicitud se hace a través de {agency}.",
     portalTwo: "{state} tiene dos, según dónde vivas. ¿Cuál te toca?",
     portalCta: "Solicitar en {portal}",
@@ -613,6 +621,9 @@ export const T = {
     saveNudge: "Đây là một cuộc trò chuyện dài, sẽ mất nếu bạn đóng tab. Lưu lại để bạn có thể quay lại sau?",
     saveNudgeYes: "Lưu lại",
     saveNudgeNo: "Để sau",
+    pdfNudge: "Bạn đã có đủ thông tin để làm việc. Bạn có muốn tải PDF để giữ bên cạnh đơn xin không?",
+    pdfNudgeYes: "Tải xuống",
+    pdfNudgeNo: "Để sau",
     portalLead: "{state} nhé. Ở đó bạn nộp đơn qua {agency}.",
     portalTwo: "{state} có hai nơi, tùy bạn sống ở đâu. Bạn thuộc nơi nào?",
     portalCta: "Nộp đơn tại {portal}",
@@ -826,6 +837,9 @@ export const T = {
     saveNudge: "这段对话很长，关闭标签页就会丢失。要保存下来，方便以后继续吗？",
     saveNudgeYes: "保存",
     saveNudgeNo: "暂不",
+    pdfNudge: "这里的内容已经够用了。要下载成 PDF，填申请时放在手边吗？",
+    pdfNudgeYes: "下载",
+    pdfNudgeNo: "暂不",
     portalLead: "好，{state}。那里的申请通过{agency}办理。",
     portalTwo: "{state}有两个入口，取决于您住在哪里。您属于哪一个？",
     portalCta: "前往 {portal} 申请",

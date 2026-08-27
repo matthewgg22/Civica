@@ -26,6 +26,18 @@ export interface OutlineInput {
   portalUrl: string | null;
   /** Items assessCompleteness says are still outstanding, already in English. */
   stillNeeded: string[];
+  /** WHAT THE CONVERSATION RAISED THAT NO FIELD HOLDS (owner, 2026-08-27).
+   *
+   *  The outline is built from structured facts, so a caveat that changes how
+   *  a field should be READ has nowhere to live — "self-employment income
+   *  requires a caseworker calculation" is not a number, but someone filling
+   *  the real form from this document needs it beside the income figure or
+   *  they will enter their gross Uber earnings.
+   *
+   *  Deliberately a list of finished sentences rather than a transcript: this
+   *  is the page someone works from, and a conversation pasted underneath an
+   *  outline buries the outline. */
+  notes?: string[];
   generatedAt: Date;
 }
 
@@ -188,6 +200,14 @@ export function buildOutline(input: OutlineInput): OutlineSection[] {
       lines: stillNeeded,
       kind: "checklist",
     });
+  }
+
+  // LAST, and not a checklist. These are things to KNOW while filling the
+  // form, not things to go and do — and putting them above the open items
+  // would push the actionable list off the first page of a phone screen.
+  const notes = (input.notes ?? []).map((n) => n.trim()).filter(Boolean);
+  if (notes.length) {
+    sections.push({ heading: "Worth knowing when you fill this in", lines: [...new Set(notes)] });
   }
 
   return sections;
