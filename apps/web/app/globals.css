@@ -7435,6 +7435,12 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    wheat, with ink on it, so it reads as the thing to press. Never terracotta:
    that is the composer's Send, and two primary actions on one screen is how
    someone presses the wrong one. */
+/* The closing question, when it fits on one line. The system prompt keeps the
+   ask last and alone; this gives a SHORT one the weight the owner asked for
+   without letting a long one become a two-line block of bold, which is what
+   the prompt's "do not bold it" was defending against. */
+.demeter__para--ask { font-weight: 700; font-style: italic; }
+
 .demeter__gocta {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   align-self: flex-start;
