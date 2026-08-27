@@ -5029,27 +5029,35 @@ html {
    1080 still sits inside the nav's own 1180 max. */
 .vpage--states { color: #000000; max-width: 1080px; }
 
-/* The only way back, on any page that carries no site nav — /states and the
-   three legal documents. Left-aligned above the title and sized like a control
-   rather than a link: it is the one piece of navigation on the page and should
-   not read as body text. */
+/* The only way back, on any page that carries no site nav — /states, the three
+   legal documents, /questions and /feedback. Left-aligned above the title.
+   A wheat pill (owner, 2026-08-27), which makes it read as a control rather
+   than a line of body text.
+
+   CONTRAST, MEASURED: white on wheat is 1.68:1, against the 4.5 AA asks for
+   normal text. Ink on the same wheat is 9.47:1, and is what every other wheat
+   control here uses (.vstates__askcta, the nav's own Ask Demeter pill). White
+   is the owner's call and is set below; switching is the one line marked. */
 .vback {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.86rem; font-weight: 600; color: var(--demeter-terracotta-deep);
+  font-size: 0.86rem; font-weight: 700;
+  /* ← the one line. var(--demeter-ink) is 9.47:1. */
+  color: #FFFFFF;
+  background: var(--demeter-wheat);
+  border-radius: var(--demeter-radius-pill);
   text-decoration: none;
   display: inline-flex; align-items: center; gap: 0.4rem;
-  min-height: 44px; margin-bottom: 0.5rem;
+  min-height: 44px; padding: 0 1.1rem; margin-bottom: 0.9rem;
 }
-/* The underline goes on the WORDS, never on the whole link. Underlining the
-   flex container drew a second rule under the arrow, separated from the text
-   by the gap — two stubby lines instead of one, which is what "off" looked
-   like. */
-.vback:hover .vback__label,
-.vback:focus-visible .vback__label { text-decoration: underline; }
+/* A pill does not underline. Same darkening the other wheat CTA uses, so the
+   two behave alike. */
+.vback:hover { filter: brightness(0.94); }
+.vback:focus-visible {
+  outline: 2px solid var(--demeter-terracotta); outline-offset: 2px;
+}
 /* Sized above the label: the arrow is what the eye finds, the words confirm it. */
 .vback__arrow { font-size: 1.15rem; line-height: 1; transition: transform 120ms ease-out; }
-/* The arrow moves the way the link goes. Motion as the affordance, so the
-   hover state is not carried by a decoration alone. */
+/* The arrow moves the way the link goes. */
 .vback:hover .vback__arrow { transform: translateX(-3px); }
 @media (prefers-reduced-motion: reduce) {
   .vback__arrow { transition: none; }
