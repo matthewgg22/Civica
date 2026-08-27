@@ -35,6 +35,26 @@ describe("the two offer bars agree", () => {
   });
 });
 
+describe("one bar at a time", () => {
+  it("stands the mode offer down while the state offer is up", () => {
+    // Both were independent, so both could sit under the same answer — a
+    // two-row stack of questions beneath a reply that already carried a
+    // certainty banner, three follow-up chips and a feedback row.
+    const i = src.indexOf("const showModeOffer =");
+    expect(i, "showModeOffer").toBeGreaterThan(-1);
+    const gate = src.slice(i, src.indexOf("MODE_REOFFER_AFTER_TURNS", i));
+    expect(gate, "both bars can still stack").toContain("!stateOffer");
+  });
+
+  it("keeps the state offer unconditional — it is the one that rescopes", () => {
+    // The state offer must NOT defer to the mode offer in return, or the two
+    // would just take turns hiding each other.
+    const i = src.indexOf("{stateOffer && !busy && (");
+    expect(i, "the state offer's own gate").toBeGreaterThan(-1);
+    expect(src.slice(i, i + 40)).not.toContain("showModeOffer");
+  });
+});
+
 describe("the estimate says it once", () => {
   it("drops the summary when it only restates the label", () => {
     // With nothing to work from the label reads "Not enough information" and

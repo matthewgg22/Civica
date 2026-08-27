@@ -133,6 +133,27 @@ describe("staff system prompt — persona-specific", () => {
     expect(PUBLIC_SYSTEM_PROMPT).toMatch(/One question, not three/i);
   });
 
+  it("refuses to raise a complication that turns on a fact it has not got", () => {
+    // A live first answer spent sixty words on California's ABAWD time limit,
+    // opened them with "if you're an adult without a child under 14", closed
+    // them with "so this may not affect you at all" — and then asked whether
+    // the reader had children. Every word was contingent on the next line.
+    // The reader could not act on any of it and had just been handed a time
+    // limit to worry about on their first turn.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(
+      /DO NOT RAISE A COMPLICATION THAT TURNS ON A FACT YOU HAVE NOT GOT/,
+    );
+    // The instruction, not just the heading: ask, then raise it when it bites.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/Ask the question\./);
+  });
+
+  it("keeps the first answer the shortest", () => {
+    // "for a first prompt this was very overwelming" — someone who has just
+    // said they lost their job is not reading four paragraphs.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/THE FIRST ANSWER IS THE SHORTEST/);
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/ask the one thing that unblocks the most/i);
+  });
+
   it("gives the figure the reader came for its own sentence", () => {
     // "$5,358" — the limit someone came to find — sat inside parentheses
     // inside a longer sentence, weighted the same as the words around it.
