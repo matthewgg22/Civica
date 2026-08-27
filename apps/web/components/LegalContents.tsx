@@ -44,11 +44,18 @@ export function LegalContents({
       .filter((n): n is HTMLElement => n !== null);
     if (nodes.length === 0) return;
 
-    const inBand = new Map<string, number>();
+    // WHICH sections are in the band — not where they were when we were told.
+    // An entry's boundingClientRect is captured when that record is created,
+    // and records for two sections routinely arrive in different callbacks
+    // during one scroll. Storing those tops meant comparing a stale position
+    // against a current one, and the stale one could win: the marker sat on
+    // the previous section the whole way down. Positions are read at decision
+    // time instead, so they are always from the same moment.
+    const inBand = new Set<string>();
     const observer = new IntersectionObserver(
       (records) => {
         for (const r of records) {
-          if (r.isIntersecting) inBand.set(r.target.id, r.boundingClientRect.top);
+          if (r.isIntersecting) inBand.add(r.target.id);
           else inBand.delete(r.target.id);
         }
         // Nothing in the band happens constantly — between two sections, in a
@@ -64,7 +71,10 @@ export function LegalContents({
         // lagging a heading behind the whole way down.
         let best: string | null = null;
         let bestTop = -Infinity;
-        for (const [id, top] of inBand) {
+        for (const id of inBand) {
+          const el = document.getElementById(id);
+          if (!el) continue;
+          const top = el.getBoundingClientRect().top;
           if (top > bestTop) {
             bestTop = top;
             best = id;

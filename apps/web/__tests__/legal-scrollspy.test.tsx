@@ -41,15 +41,24 @@ function stubObserver() {
   return state;
 }
 
-/** Sections must exist in the document — the component observes by id. */
-function mount(entries = ENTRIES) {
+/** Sections must exist in the document — the component observes them by id and
+ *  reads their CURRENT position when it decides, rather than trusting the
+ *  position captured in an observer record (see the component: those are
+ *  captured at different moments and comparing them marked the wrong section).
+ *  So the test has to place them, which jsdom will not do on its own. */
+function mount(entries = ENTRIES, tops: Record<string, number> = {}) {
   for (const e of entries) {
-    const s = document.createElement("section");
-    s.id = e.id;
-    document.body.appendChild(s);
+    const el = document.createElement("section");
+    el.id = e.id;
+    el.getBoundingClientRect = () =>
+      ({ top: tops[e.id] ?? 0, height: 100, bottom: (tops[e.id] ?? 0) + 100 }) as DOMRect;
+    document.body.appendChild(el);
   }
   return render(<LegalContents entries={entries} label="Contents" />);
 }
+
+/** An observer record. Only the id and the flag matter now. */
+const rec = (id: string, isIntersecting = true) => ({ target: { id }, isIntersecting });
 
 const marked = (c: HTMLElement) =>
   c.querySelector("a[aria-current]")?.getAttribute("href");
@@ -89,7 +98,7 @@ describe("the marker follows the reader", () => {
     const io = stubObserver();
     const { container } = mount();
     act(() => {
-      io.cb!([{ target: { id: "who" }, isIntersecting: true, boundingClientRect: { top: 40 } }]);
+      io.cb!([rec("who")]);
     });
     expect(marked(container)).toBe("#who");
   });
@@ -105,12 +114,12 @@ describe("the marker follows the reader", () => {
     // only the real-browser test caught it (e2e/legal-scrollspy.spec.ts) —
     // this assertion had been written to match the bug.
     const io = stubObserver();
-    const { container } = mount();
+    // "who" is on its way out (top above the band), "contact" has just
+    // arrived. Deliberately reported in the order that would trip a
+    // first-wins rule.
+    const { container } = mount(ENTRIES, { who: -40, contact: 90 });
     act(() => {
-      io.cb!([
-        { target: { id: "who" }, isIntersecting: true, boundingClientRect: { top: -40 } },
-        { target: { id: "contact" }, isIntersecting: true, boundingClientRect: { top: 90 } },
-      ]);
+      io.cb!([rec("who"), rec("contact")]);
     });
     expect(marked(container)).toBe("#contact");
   });
@@ -121,10 +130,10 @@ describe("the marker follows the reader", () => {
     const io = stubObserver();
     const { container } = mount();
     act(() => {
-      io.cb!([{ target: { id: "who" }, isIntersecting: true, boundingClientRect: { top: 40 } }]);
+      io.cb!([rec("who")]);
     });
     act(() => {
-      io.cb!([{ target: { id: "who" }, isIntersecting: false, boundingClientRect: { top: -10 } }]);
+      io.cb!([rec("who", false)]);
     });
     expect(marked(container)).toBe("#who");
   });
@@ -135,7 +144,7 @@ describe("the marker follows the reader", () => {
     const io = stubObserver();
     const { container } = mount();
     act(() => {
-      io.cb!([{ target: { id: "agreement" }, isIntersecting: true, boundingClientRect: { top: 20 } }]);
+      io.cb!([rec("agreement")]);
     });
     Object.defineProperty(document.documentElement, "scrollHeight", {
       value: 2000,
@@ -155,7 +164,7 @@ describe("the marker follows the reader", () => {
     const io = stubObserver();
     const { container } = mount();
     act(() => {
-      io.cb!([{ target: { id: "who" }, isIntersecting: true, boundingClientRect: { top: 40 } }]);
+      io.cb!([rec("who")]);
     });
     expect(container.querySelector("a[aria-current]")!.getAttribute("aria-current")).toBe(
       "location",
@@ -164,12 +173,9 @@ describe("the marker follows the reader", () => {
 
   it("marks exactly one entry", () => {
     const io = stubObserver();
-    const { container } = mount();
+    const { container } = mount(ENTRIES, { who: 30, contact: 90 });
     act(() => {
-      io.cb!([
-        { target: { id: "who" }, isIntersecting: true, boundingClientRect: { top: 30 } },
-        { target: { id: "contact" }, isIntersecting: true, boundingClientRect: { top: 90 } },
-      ]);
+      io.cb!([rec("who"), rec("contact")]);
     });
     expect(container.querySelectorAll("a[aria-current]")).toHaveLength(1);
     expect(container.querySelectorAll("a.is-current")).toHaveLength(1);
@@ -180,5 +186,34 @@ describe("the marker follows the reader", () => {
     const { unmount } = mount();
     unmount();
     expect(io.disconnected).toBe(true);
+  });
+});
+
+describe("positions are read at decision time, not taken from the record", () => {
+  it("ignores where a section WAS when its record was made", () => {
+    // THE BUG THIS EXISTS FOR. An observer record carries the rect from the
+    // moment it was created, and records for two sections routinely arrive in
+    // different callbacks during one scroll. Comparing those captured tops
+    // meant a stale position could beat a current one, and the marker sat one
+    // section behind the reader the whole way down a document.
+    //
+    // Here "who" is reported first, while it is still low on the screen, and
+    // has since moved above the band. A rule trusting the record would keep
+    // it; reading the element says "contact".
+    const io = stubObserver();
+    const { container } = mount(ENTRIES, { who: 300, contact: 120 });
+    act(() => {
+      io.cb!([rec("who")]);
+    });
+    expect(marked(container)).toBe("#who");
+
+    // The page scrolls; "who" is now above the band, "contact" is in it. Only
+    // "contact" produces a new record.
+    const el = document.getElementById("who")!;
+    el.getBoundingClientRect = () => ({ top: -200, height: 100, bottom: -100 }) as DOMRect;
+    act(() => {
+      io.cb!([rec("contact")]);
+    });
+    expect(marked(container)).toBe("#contact");
   });
 });
