@@ -6929,63 +6929,124 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    Uses the Demeter tokens rather than the Civica applicant ones: this page is
    reached from the chat and returns to the chat, so it should read as the same
    product rather than as the enrollment portal wearing a different hat. */
+/* ── Your conversations ───────────────────────────────────────────────────
+   REBUILT (owner, 2026-08-26: "very poor designed conversation tab that is
+   very AI"). Three things made it read that way, and each is a rule this
+   product already had:
+
+   1. NO CHROME. A bare heading on white, reached from a rail that carries the
+      brand and every control, offering no route back to the one thing the
+      page is about. Landing here was landing nowhere.
+   2. THE WRONG FACE. `.saved` set the SANS at the root, so the intro and the
+      empty state — body copy — rendered in the label face.
+      DEMETER-DESIGN §4: "Answers, headings, page titles, body copy → the
+      serif. Buttons, inputs, eyebrows, badges → the sans."
+   3. A CENTRED CARD IN AN EMPTY VIEWPORT. Centred text, a bordered box and a
+      rounded-rect button floating in white space is the house style of a
+      generated empty state.
+
+   The greys went with them: intro and empty body are the ink now. What stays
+   on --demeter-muted is what is genuinely a label — the row's state-and-date
+   line — which is the distinction the token exists for. */
 .saved {
   min-height: 100dvh;
   background: var(--demeter-paper);
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  /* The SERIF is the page's voice; the sans is opted into per label below. */
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   color: var(--demeter-ink);
 }
-.saved__inner { max-width: 44rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
-.saved__heading {
-  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1.6rem; font-weight: 700; margin: 0 0 0.5rem;
+.saved__inner { max-width: 44rem; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+
+/* The way back, and whose page this is. */
+.saved__top {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap;
+  padding-bottom: 1.5rem;
 }
-.saved__intro { font-size: 0.9rem; color: var(--demeter-muted); line-height: 1.55; margin: 0 0 2rem; }
+.saved__brand { display: inline-flex; align-items: center; gap: 0.45rem; text-decoration: none; }
+.saved__brandword {
+  font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; color: var(--demeter-ink);
+}
+.saved__brandword em { font-style: normal; color: var(--demeter-terracotta-deep); }
+.saved__brand:hover .saved__brandword { color: var(--demeter-terracotta-deep); }
+.saved__back {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--demeter-body); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.35rem; min-height: 32px;
+}
+.saved__back:hover { color: var(--demeter-terracotta-deep); }
+.saved__brand:focus-visible,
+.saved__back:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 3px; border-radius: 4px; }
+
+.saved__heading { font-size: 1.75rem; font-weight: 700; margin: 0 0 0.4rem; letter-spacing: -0.015em; text-wrap: balance; }
+.saved__intro { font-size: 1rem; color: var(--demeter-ink); line-height: 1.6; margin: 0 0 2rem; max-width: 34rem; text-wrap: pretty; }
 
 .saved__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
 .saved__item {
   display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
-  background: var(--demeter-card); border: 1px solid var(--demeter-rule-strong);
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
   border-radius: var(--demeter-radius-card); padding: 0.9rem 1rem;
 }
+.saved__item:hover { border-color: var(--demeter-rule-strong); }
 .saved__main { min-width: 0; flex: 1; }
+/* The title is the person's OWN WORDS — their question, verbatim. It is
+   speech, so it sets in the serif with the rest of the page. */
 .saved__title {
-  font-size: 0.98rem; font-weight: 600; color: var(--demeter-ink); text-decoration: none;
+  font-size: 1.02rem; font-weight: 600; color: var(--demeter-ink); text-decoration: none;
   display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .saved__title:hover { text-decoration: underline; }
-.saved__meta { font-size: 0.78rem; color: var(--demeter-muted); margin: 0.3rem 0 0; }
-.saved__scope { font-weight: 500; }
-.saved__error { font-size: 0.78rem; color: var(--demeter-terracotta-deep); margin: 0.4rem 0 0; }
+/* A LABEL, so it keeps the sans and the muted — that is what the token is
+   for, and the distinction is the whole reason the greys came off the prose. */
+.saved__meta {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.74rem; color: var(--demeter-muted); margin: 0.35rem 0 0;
+  letter-spacing: 0.01em;
+}
+.saved__scope { font-weight: 600; }
+.saved__error {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; color: var(--demeter-terracotta-deep); margin: 0.4rem 0 0;
+}
 
 .saved__actions { display: flex; align-items: center; gap: 0.5rem; flex: none; }
 .saved__open {
-  display: inline-flex; align-items: center; min-height: 44px; padding: 0.4rem 0.9rem;
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0.4rem 1rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.82rem; font-weight: 600; text-decoration: none;
-  color: #fff; background: var(--demeter-terracotta); border-radius: var(--demeter-radius-inner);
+  color: var(--demeter-paper); background: var(--demeter-terracotta);
+  border-radius: var(--demeter-radius-pill);
 }
 .saved__open:hover { background: var(--demeter-terracotta-deep); }
 /* Deliberately not red. A destructive-red button on every row turns the page
    into a field of alarms; the confirm dialog is what makes this safe. */
 .saved__delete {
-  min-height: 44px; padding: 0.4rem 0.75rem; cursor: pointer;
-  font-size: 0.82rem; color: var(--demeter-muted);
-  background: transparent; border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-inner);
+  min-height: 44px; padding: 0.4rem 0.85rem; cursor: pointer;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; color: var(--demeter-body);
+  background: transparent; border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-pill);
 }
-.saved__delete:hover:not(:disabled) { border-color: var(--demeter-terracotta); color: var(--demeter-ink); }
+.saved__delete:hover:not(:disabled) { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
 .saved__delete:disabled { opacity: 0.6; cursor: default; }
+.saved__open:focus-visible,
+.saved__delete:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
 
-.saved__empty {
-  background: var(--demeter-card); border: 1px solid var(--demeter-rule-strong);
-  border-radius: var(--demeter-radius-card); padding: 1.5rem; text-align: center;
-}
-.saved__empty-title { font-weight: 600; margin: 0 0 0.4rem; }
-.saved__empty-body { font-size: 0.87rem; color: var(--demeter-muted); line-height: 1.55; margin: 0 0 1rem; }
+/* An empty list is not an event. No box, no centring — it reads left, in the
+   page's own voice, in the same column as everything else. */
+.saved__empty { padding: 0; max-width: 34rem; }
+.saved__empty-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 0.4rem; letter-spacing: -0.01em; }
+.saved__empty-body { font-size: 1rem; color: var(--demeter-ink); line-height: 1.6; margin: 0 0 1.25rem; text-wrap: pretty; }
 .saved__empty-cta {
-  display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1.1rem;
-  background: var(--demeter-terracotta); color: #fff; border-radius: var(--demeter-radius-inner);
-  font-size: 0.87rem; font-weight: 600; text-decoration: none;
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1.2rem;
+  background: var(--demeter-terracotta); color: var(--demeter-paper);
+  border-radius: var(--demeter-radius-pill);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; font-weight: 600; letter-spacing: 0.02em; text-decoration: none;
 }
+.saved__empty-cta:hover { background: var(--demeter-terracotta-deep); }
+.saved__empty-cta:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
 
 @media (max-width: 30rem) {
   .saved__item { flex-direction: column; align-items: stretch; }
