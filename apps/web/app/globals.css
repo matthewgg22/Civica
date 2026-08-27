@@ -6710,7 +6710,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    same kind of thing: standing context about this conversation. */
 .dmw {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: var(--demeter-radius-card); padding: 1.1rem; display: flex; flex-direction: column; gap: 1rem;
+  border-radius: var(--demeter-radius-card); padding: 0.9rem; display: flex; flex-direction: column; gap: 0.8rem;
   position: sticky; top: 1rem;
 }
 .dmw__head { display: flex; flex-direction: column; gap: 0.15rem; }
@@ -8021,8 +8021,11 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
      pruned 16 -> 10 on purpose (DEMETER-DESIGN decisions log) and one
      surface's shade is not a system value. */
   background: #FAF9F7; border-right: 1px solid var(--demeter-rule);
-  padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
-  display: flex; flex-direction: column; gap: 1rem;
+  padding: 0.85rem 1rem calc(0.85rem + env(safe-area-inset-bottom));
+  /* TIGHTER (owner, 2026-08-27). 1rem between every block plus 1.1rem inside
+     the estimate card put ~34px of nothing between things that belong
+     together, and the rail is the column with the least room to spend. */
+  display: flex; flex-direction: column; gap: 0.7rem;
   overflow-y: auto;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   transform: translateX(-100%); visibility: hidden;

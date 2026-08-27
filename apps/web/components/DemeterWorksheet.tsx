@@ -294,7 +294,16 @@ export function DemeterWorksheet({
         <section className={`dmw__result dmw__result--${outcomeCopy.tone}`}>
           <p className="dmw__result-label">{copy.result}</p>
           <p className="dmw__result-value">{outcomeCopy.label}</p>
-          <p className="dmw__result-summary">{classification!.summary}</p>
+          {/* SAID ONCE (owner, 2026-08-27). With nothing to work from, the
+              label reads "Not enough information" and the summary read "Not
+              enough yet to work out an estimate." — the same sentence twice,
+              stacked, in a panel whose whole job is to be scanned. The list of
+              what is still needed sits directly below and is the part that
+              actually helps, so the restatement goes. Every other outcome's
+              summary ADDS to its label, and keeps it. */}
+          {classification!.outcome !== "not_enough_information" && (
+            <p className="dmw__result-summary">{classification!.summary}</p>
+          )}
           {calc && classification!.outcome !== "not_enough_information" && (
             <>
               <p className="dmw__result-benefit">

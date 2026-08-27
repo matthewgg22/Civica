@@ -583,6 +583,44 @@ describe("layperson citation presentation (#898 P1-4)", () => {
     expect(textOf(nodes)).toContain("7 CFR 273.9");
   });
 
+  it("keeps the cited rule VISIBLE, not behind the disclosure", () => {
+    // Owner, 2026-08-27: "the citation also failed to show me the formal
+    // source to check it". The verdict line promises "check it yourself
+    // below" and everything below it was collapsed, so the promise pointed at
+    // nothing the reader could see. For a product whose whole claim is that
+    // every answer quotes the rule it came from, the rule is not the part to
+    // hide. The breakdown still collapses; only the citation is hoisted.
+    const nodes = renderAnswer(
+      "The answer.\n\n---\n✓ **CERTAIN** — checked.\n\n**Citation:** ✓ [7 CFR 273.9](https://www.ecfr.gov/current/title-7/part-273/section-273.9)\n\n*Based on federal SNAP rules.*",
+    );
+    let details: React.ReactElement | null = null;
+    walk(nodes, (n) => {
+      if (isValidElement(n) && n.type === "details") details = n as React.ReactElement;
+    });
+    expect(details, "the disclosure is still there").not.toBeNull();
+    expect(textOf([details!]), "the citation is still collapsed").not.toContain("7 CFR 273.9");
+
+    // And it is on screen, with its link intact.
+    const outside = nodes.filter((n) => n !== details);
+    expect(textOf(outside)).toContain("7 CFR 273.9");
+    let a: React.ReactElement | null = null;
+    walk(outside, (n) => {
+      if (isValidElement(n) && n.type === "a") a = n as React.ReactElement;
+    });
+    expect(a, "the hoisted citation lost its link").not.toBeNull();
+  });
+
+  it("still collapses the reference lines that really are reference", () => {
+    const nodes = renderAnswer(
+      "The answer.\n\n---\n✓ **CERTAIN** — checked.\n\n**Citation:** ✓ 7 CFR 273.9\n\n*Based on federal SNAP rules. FY2026 figures.*",
+    );
+    let details: React.ReactElement | null = null;
+    walk(nodes, (n) => {
+      if (isValidElement(n) && n.type === "details") details = n as React.ReactElement;
+    });
+    expect(textOf([details!]), "the freshness line should stay tucked away").toContain("FY2026");
+  });
+
   it("keeps the citations inside the footnote details", () => {
     const text = textOf(renderAnswer(BODY_WITH_CITES + TRAILER));
     expect(text).toContain("7 CFR 273.9(d)(4)"); // still present overall (in the details)

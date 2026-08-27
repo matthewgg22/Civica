@@ -557,6 +557,18 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   //
   // Split at the rule the engine already emits, so nothing here has to know
   // what the trailer contains.
+  // The "Citation:" heading in each language the chat ships (citation-verifier
+  // TRAILER_STRINGS). Matched on the heading, not on position, because the
+  // trailer's shape varies: formatCitationTrailer returns "" when there is
+  // nothing to cite, so index 1 is not reliably the citation.
+  const CITATION_HEADS = ["Citation:", "Citas:", "Trích dẫn:", "引用："];
+  const nodeText = (n: unknown): string => {
+    if (n === null || n === undefined || typeof n === "boolean") return "";
+    if (typeof n === "string" || typeof n === "number") return String(n);
+    if (Array.isArray(n)) return n.map(nodeText).join("");
+    const el = n as React.ReactElement<{ children?: unknown }>;
+    return el?.props ? nodeText(el.props.children) : "";
+  };
   const cut = out.findIndex(
     (n) => (n as React.ReactElement<{ className?: string }>)?.props?.className === "demeter__rule",
   );
@@ -565,12 +577,29 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   // full citation breakdown and source line sit one tap away. <details> is
   // native — keyboard and screen-reader accessible with no JS.
   const trailer = out.slice(cut + 1);
+  // THE CITED RULE STAYS VISIBLE (owner, 2026-08-27: "the citation also failed
+  // to show me the formal source to check it"). The verdict line promises
+  // "check it yourself below" and everything below it was collapsed, so the
+  // promise pointed at nothing a reader could see. For a product whose whole
+  // claim is that every answer quotes the rule it came from, the rule is not
+  // the part to hide.
+  //
+  // The breakdown still collapses — that was the point of #898 P1-4, and the
+  // freshness and source lines really are reference. Only the citation itself
+  // is hoisted, and it is hoisted rather than copied into the <summary>
+  // because it carries a link, and a link inside a summary both follows and
+  // toggles on one click.
+  const isCitation = (n: unknown) =>
+    CITATION_HEADS.some((h) => nodeText(n).trim().startsWith(h));
+  const citation = trailer.slice(1).find(isCitation);
+  const rest = trailer.slice(1).filter((n) => n !== citation);
   return [
     ...out.slice(0, cut),
     <details className="demeter__footnote" key="footnote">
       <summary className="demeter__footnote-summary">{trailer[0]}</summary>
-      {trailer.slice(1)}
+      {rest}
     </details>,
+    ...(citation ? [<div className="demeter__cite" key="cite">{citation}</div>] : []),
   ];
 }
 
@@ -2195,6 +2224,19 @@ export function DemeterChat({
               .replace("{state}", stateOffer.name)}
           </span>
           <span className="demeter__stateoffer-actions">
+            {/* DECLINE FIRST, ACCEPT LAST — the same order as the mode bar
+                directly above it. These two bars can appear stacked, and they
+                read as one control when they agree and as a trick when they
+                do not: the filled button was on the right in one and the left
+                in the other, so the same tap position meant "yes" in one row
+                and "no" in the next. */}
+            <button
+              type="button"
+              className="demeter__stateoffer-no"
+              onClick={() => setStateOffer(null)}
+            >
+              {t.stateOfferNo}
+            </button>
             <button
               type="button"
               className="demeter__stateoffer-yes"
@@ -2204,13 +2246,6 @@ export function DemeterChat({
               }}
             >
               {t.stateOfferYes.replace("{state}", stateOffer.name)}
-            </button>
-            <button
-              type="button"
-              className="demeter__stateoffer-no"
-              onClick={() => setStateOffer(null)}
-            >
-              {t.stateOfferNo}
             </button>
           </span>
         </div>
