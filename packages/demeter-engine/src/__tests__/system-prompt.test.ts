@@ -120,8 +120,16 @@ describe("staff system prompt — persona-specific", () => {
     // A live read: the citizenship question sat mid-paragraph behind a two-line
     // run of bold. Bold across that many words reads as shouting, and the
     // reader still had to dig the question out of the prose around it.
+    // The rule USED to end "do not bold it into visibility". That reasoning
+    // was about LENGTH, not weight — and the owner asked (2026-08-27) for a
+    // short closing question to carry emphasis, which their own portal
+    // message already does. The client now decides by measure; the model is
+    // told not to mark it up, so there is one decision in one place.
     expect(PUBLIC_SYSTEM_PROMPT).toMatch(/END ON THE QUESTION, ON ITS OWN LINE/);
-    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/do not bold it into visibility/i);
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/do not mark it up yourself/i);
+    expect(PUBLIC_SYSTEM_PROMPT, "the length reasoning must survive").toMatch(
+      /two-line run of bold reads as shouting/i,
+    );
     expect(PUBLIC_SYSTEM_PROMPT).toMatch(/One question, not three/i);
   });
 

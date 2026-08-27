@@ -583,6 +583,47 @@ describe("layperson citation presentation (#898 P1-4)", () => {
     expect(textOf(nodes)).toContain("7 CFR 273.9");
   });
 
+  it("gives a SHORT closing question weight, and a long one none", () => {
+    // Owner, 2026-08-27. The prompt keeps the ask last and alone and used to
+    // forbid bolding it — but that reasoning was about LENGTH ("a two-line
+    // run of bold reads as shouting"), and the owner's own portal message
+    // already sets its question in bold italic. So the client decides by
+    // measure, in one place, and the model is told not to mark it up.
+    const marked = (answer: string) => {
+      const nodes = renderAnswer(answer);
+      let hit = false;
+      walk(nodes, (n) => {
+        if (
+          isValidElement(n) &&
+          String(
+            (n as React.ReactElement<{ className?: string }>).props?.className ?? "",
+          ).includes("demeter__para--ask")
+        ) {
+          hit = true;
+        }
+      });
+      return hit;
+    };
+    const trailer = "\n\n---\n✓ **CERTAIN** — checked.\n\n**Citation:** ✓ 7 CFR 273.9";
+
+    expect(marked("Some prose.\n\nDo you rent or own?" + trailer), "short ask").toBe(true);
+    // Too long to carry bold without becoming the shouting the rule warns of.
+    expect(
+      marked(
+        "Some prose.\n\nDo you and the people you live with buy your groceries and cook your meals together, or does everyone handle their own food separately?" +
+          trailer,
+      ),
+      "long ask",
+    ).toBe(false);
+    // Not a question at all.
+    expect(marked("Some prose.\n\nThat is the whole rule." + trailer), "statement").toBe(false);
+    // A paragraph that merely contains a question is not the ask.
+    expect(
+      marked("Some prose.\n\nIs it? Maybe. What now?" + trailer),
+      "multi-sentence",
+    ).toBe(false);
+  });
+
   it("keeps the cited rule VISIBLE, not behind the disclosure", () => {
     // Owner, 2026-08-27: "the citation also failed to show me the formal
     // source to check it". The verdict line promises "check it yourself
