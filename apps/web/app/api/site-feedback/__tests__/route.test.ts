@@ -72,7 +72,7 @@ describe("POST /api/site-feedback", () => {
     expect(mockInsert).not.toHaveBeenCalled();
   });
 
-  // THE BUG THIS GUARDS AGAINST: same shape as /api/supporters — the
+  // THE BUG THIS GUARDS AGAINST: the
   // honeypot field is capped at length 0 in the schema itself, so a bot that
   // actually fills it fails validation before the route's own honeypot
   // branch ever runs. Confirmed real behavior, not the "silent 200" the

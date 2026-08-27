@@ -31,9 +31,8 @@ const LINK_PATHS = {
  *  /verify was on this list, because there was no app/[lang]/verify route and
  *  its link 404'd from every Spanish, Vietnamese and Chinese page — the same
  *  defect supporters had in #837. It is off the list again now that the page
- *  is /states and app/[lang]/states EXISTS. That is the rule: a path belongs
- *  here only while it has no localized route, and comes off the day it gets
- *  one. */
+ *  is /states and app/[lang]/states EXISTS: a path belongs here only while it
+ *  has no localized route, and comes off the day it gets one. */
 const UNLOCALIZED: readonly string[] = [
   LINK_PATHS.privacy,
   LINK_PATHS.terms,
@@ -41,13 +40,16 @@ const UNLOCALIZED: readonly string[] = [
   LINK_PATHS.feedback,
 ];
 
-/** English is un-prefixed; everything else lives under /es|/vi|/zh. Privacy,
- *  feedback and supporters are exceptions — none has a localized route, so
- *  all three always point at the canonical page rather than a URL that would
- *  404. Supporters joined the list when #837 was picked up: the prefixed link
- *  had been 404ing from every localized page. If a localized supporters page
- *  ever ships, remove it from this list and add the [lang] route in the same
- *  change. */
+/** English is un-prefixed; everything else lives under /es|/vi|/zh. The three
+ *  legal documents and feedback are the exceptions — none has a localized
+ *  route, so each points at the canonical page rather than a URL that would
+ *  404.
+ *
+ *  The rule was learned twice, from two links that are both gone now:
+ *  supporters (#837) and verify, each prefixed by language into a route that
+ *  had never existed. Keep the list honest in BOTH directions — a path goes on
+ *  it the day it loses its localized route and comes off the day it gets
+ *  one. */
 function href(path: string, lang: AnswerLang): string {
   if (UNLOCALIZED.includes(path)) return path;
   return lang === "en" ? path : `/${lang}${path}`;

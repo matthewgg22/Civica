@@ -5,7 +5,7 @@
 // migration comment for why it's a separate table rather than a reuse of
 // mae_feedback's per-answer shape.
 //
-// Same shape as /api/supporters: strict validation, a honeypot field, rate
+// Strict validation, a honeypot field, rate
 // limited, and a failure never reads as rejection to the person reporting —
 // someone who bothered to write in should not be told "sorry, try again" and
 // give up.

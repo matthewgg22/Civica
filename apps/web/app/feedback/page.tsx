@@ -1,5 +1,5 @@
 // /feedback — general product/site feedback. Reachable from every Demeter
-// surface's footer, same as /verify and /supporters.
+// surface's footer, and the destination /supporters now redirects to.
 //
 // THE GAP THIS CLOSES: the only feedback mechanism anywhere on the product
 // was a thumbs up/down on one specific chat answer, buried inside an active
