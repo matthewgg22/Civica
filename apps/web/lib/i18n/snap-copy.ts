@@ -564,7 +564,7 @@ export const welcomeStrings = {
     home_faq_a4: "No. SNAP isn't a loan. You've already paid into it through your taxes. This is help you've earned, not a debt.",
     home_faq_q5: "Will it affect my immigration status?",
     home_faq_a5:
-      "This is changing, so we won't give you a flat answer. Federal public charge rules haven't counted SNAP since 2022. But DHS has rescinded that rule effective 18 September 2026, and after that date officers can weigh benefits case by case. If anyone in your household is not a US citizen, talk to a free immigration legal aid before you apply. Not to us, and not to a caseworker.",
+      "This is changing, so we won't give you a flat answer. Federal public charge rules haven't counted SNAP since 2022. But DHS has rescinded that rule effective 18 September 2026, and after that date officers can weigh benefits case by case. If anyone in your household is not a US citizen, talk to a free immigration legal aid before you apply, not to us, and not to a caseworker.",
 
     // ─── App island ───
     home_app_cta: "Get the app →",
@@ -788,7 +788,7 @@ export const welcomeStrings = {
     home_income_col_amount: "Buwanang kita (humigit-kumulang)",
     home_income_person: "tao",
     home_income_people: "tao",
-    home_income_benefit: "Kung maaprubahan, ang benepisyo ay umaabot hanggang mga {max} kada buwan para sa isang tao. At mas mataas para sa mas malaking sambahayan.",
+    home_income_benefit: "Kung maaprubahan, ang benepisyo ay umaabot hanggang mga {max} kada buwan para sa isang tao, at mas mataas para sa mas malaking sambahayan.",
     home_income_note: "Gabay ito, hindi hangganan. Maraming nag-aakalang masyadong malaki ang kita nila ay kwalipikado pala kapag isinama na ang upa, pag-aalaga ng bata, at gastusing medikal. Ang tanging paraan para malaman ay mag-apply. At kukwentahin ng Civica ang totoong limitasyon ng iyong estado para sa iyo.",
 
     home_faq_title: "Mga tanong ng mga tao",

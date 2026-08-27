@@ -19,14 +19,18 @@ import { askUrl } from "../../../lib/i18n/routes";
 // structured data is exactly the duplicate-content problem the localized routes
 // exist to solve. Non-English pages carry the (fully translated) form-question
 // set instead, which is the larger and more quotable half anyway.
-const EN_GENERAL_FAQ = [
+// EXPORTED so the copy guard can read it. It was module-private, and the
+// "Are applied before your income is compared to the limit" fragment #1007
+// left here sat inside it where no test could reach — the same blind spot the
+// root layout's metadata had.
+export const EN_GENERAL_FAQ = [
   {
     q: "What is SNAP?",
     a: "SNAP, the Supplemental Nutrition Assistance Program and formerly called food stamps, is a federal program administered by each state that provides monthly money for groceries on an EBT card. Applying is free.",
   },
   {
     q: "What decides whether I qualify for SNAP?",
-    a: "Household size, your income after the deductions you are entitled to, and a short list of category rules. Deductions. Rent, utilities, childcare, child support paid, and medical costs for members who are 60 or older or disabled. Are applied before your income is compared to the limit, which is why gross income alone does not determine eligibility.",
+    a: "Household size, your income after the deductions you are entitled to, and a short list of category rules. Deductions (rent, utilities, childcare, child support paid, and medical costs for members who are 60 or older or disabled) are applied before your income is compared to the limit, which is why gross income alone does not determine eligibility.",
   },
   {
     q: "Do SNAP rules differ by state?",
