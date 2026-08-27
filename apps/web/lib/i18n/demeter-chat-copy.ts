@@ -168,6 +168,8 @@ export const T = {
     sidebarSigninNote: "Sign in to keep your conversations.",
     signin: "Sign in",
     sidebarSignedIn: "Signed in as",
+    sidebarSignOut: "Sign out",
+    sidebarAutosaved: "Saved automatically while you are signed in.",
     // The rail's settings bar (owner rec 2026-08-22): with the site nav gone
     // from /chat, these are the ONLY route to the standing pages, so they
     // live with the account controls rather than in a footer this surface
@@ -418,6 +420,8 @@ export const T = {
     sidebarSigninNote: "Inicia sesión para conservar tus conversaciones.",
     signin: "Iniciar sesión",
     sidebarSignedIn: "Sesión iniciada:",
+    sidebarSignOut: "Cerrar sesión",
+    sidebarAutosaved: "Se guarda sola mientras tu sesión esté iniciada.",
     skipToComposer: "Saltar al cuadro de mensaje",
     sidebarSavedSignin: "Inicia sesión para ver tus conversaciones",
     settingsLabel: "Ajustes",
@@ -620,6 +624,8 @@ export const T = {
     sidebarSigninNote: "Đăng nhập để giữ các cuộc trò chuyện của bạn.",
     signin: "Đăng nhập",
     sidebarSignedIn: "Đã đăng nhập:",
+    sidebarSignOut: "Đăng xuất",
+    sidebarAutosaved: "Tự động lưu khi bạn đã đăng nhập.",
     skipToComposer: "Bỏ qua đến ô nhập tin nhắn",
     sidebarSavedSignin: "Đăng nhập để xem cuộc trò chuyện đã lưu",
     settingsLabel: "Cài đặt",
@@ -817,6 +823,8 @@ export const T = {
     sidebarSigninNote: "登录即可保留您的对话。",
     signin: "登录",
     sidebarSignedIn: "已登录：",
+    sidebarSignOut: "退出登录",
+    sidebarAutosaved: "登录后会自动保存。",
     skipToComposer: "跳到输入框",
     sidebarSavedSignin: "登录以查看已保存的对话",
     settingsLabel: "设置",

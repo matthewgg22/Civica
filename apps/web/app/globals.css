@@ -9056,6 +9056,25 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    Quiet: it is not what the rail is for, it is what you do when you are
    finished. Full width, so it reads as a row of the rail rather than a chip
    floating beside the language codes. */
+/* The exit, with the identity it ends. Quiet — leaving is not a thing to
+   encourage — but a real, full-width target rather than a link buried in a
+   sentence. */
+.demeter__signout {
+  align-self: flex-start;
+  margin-top: 0.35rem;
+  padding: 0.3rem 0.6rem;
+  min-height: 32px;
+  background: none;
+  border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-pill);
+  cursor: pointer;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--demeter-body);
+}
+.demeter__signout:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
+.demeter__signout:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
+
 .demeter__railnew {
   margin-top: auto;
   display: flex; align-items: center; justify-content: center; gap: 0.4rem;
