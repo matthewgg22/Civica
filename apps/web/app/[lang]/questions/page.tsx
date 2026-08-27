@@ -84,8 +84,10 @@ export default async function LocalizedQuestionsPage({
 
   return (
     <main className="dmpage">
-      <BackToChat lang={l} />
       <div className="dmpage__inner">
+        {/* INSIDE .dmpage__inner, which carries the width — outside it,
+            this sat at the document edge, 130px adrift of the content. */}
+        <BackToChat lang={l} />
         <section className="dmo" aria-labelledby="questions-h1">
           <p className="dmo__eyebrow">{c.eyebrow}</p>
           <h1 id="questions-h1" className="dmo__h1">
