@@ -26,13 +26,19 @@ const src = readFileSync(join(__dirname, "..", "DemeterChat.tsx"), "utf8");
 const css = readFileSync(join(__dirname, "..", "..", "app", "globals.css"), "utf8");
 
 describe("the button shows a name, not an annotation", () => {
-  it("builds the label from `short`", () => {
+  it("builds the label from `short`, and never touches `name`", () => {
     const i = src.indexOf("const cta = (label: string, url: string) =>");
     expect(i, "the cta builder").toBeGreaterThan(-1);
     expect(src).toContain("cta(pack.portal.short, pack.portal.url)");
-    expect(src, "the model-facing field is back in the button").not.toContain(
-      '.replace("{portal}", pack.portal.name)',
-    );
+    // THE REAL INVARIANT, and the first version of this test missed it: the
+    // component must not reference `portal.name` AT ALL. Asserting only that
+    // one call site uses `short` passed happily while the other went back to
+    // `name`, because the string it looked for still existed elsewhere.
+    // `name` is model-facing; nothing on screen may come from it.
+    expect(
+      /portal\??\.name/.test(src),
+      "portal.name is referenced — it is model-facing, show `short`",
+    ).toBe(false);
   });
 
   it("still renders the annotation, just not inside the button", () => {

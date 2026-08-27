@@ -1268,7 +1268,11 @@ export function DemeterChat({
           stillNeeded: classification?.completeness?.stillNeeded ?? [],
           stateName: state ? stateName(state) : null,
           agency: pack?.agencyShort ?? null,
-          portalName: pack?.portal?.name ?? null,
+          portalName: pack?.portal?.short ?? null,
+          // Carried SEPARATELY, not glued to the name. This is the document
+          // someone applies from, so "New York's portal does not cover NYC"
+          // is the last thing that should be lost on the way out.
+          portalNote: pack?.portal?.note ?? null,
           portalUrl: pack?.portal?.url ?? null,
         }),
       });
@@ -1306,7 +1310,11 @@ export function DemeterChat({
           stillNeeded: classification?.completeness?.stillNeeded ?? [],
           stateName: state ? stateName(state) : null,
           agency: pack?.agencyShort ?? null,
-          portalName: pack?.portal?.name ?? null,
+          portalName: pack?.portal?.short ?? null,
+          // Carried SEPARATELY, not glued to the name. This is the document
+          // someone applies from, so "New York's portal does not cover NYC"
+          // is the last thing that should be lost on the way out.
+          portalNote: pack?.portal?.note ?? null,
           portalUrl: pack?.portal?.url ?? null,
         }),
       });
@@ -2442,7 +2450,10 @@ export function DemeterChat({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {t.picker.scopeApply} {selectedPack.portal.name} ↗
+                  {/* `short`, not `name` — same reason as the answer's own
+                      button. This line is narrow, so the annotation wrapped
+                      it worst of all. */}
+                  {t.picker.scopeApply} {selectedPack.portal.short} ↗
                 </a>
               )}
             </>

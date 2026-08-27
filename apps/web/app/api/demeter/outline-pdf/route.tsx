@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
     stateName: str("stateName"),
     agency: str("agency"),
     portalName: str("portalName"),
+    portalNote: str("portalNote"),
     portalUrl: str("portalUrl"),
     stillNeeded: Array.isArray(body.stillNeeded)
       ? (body.stillNeeded as unknown[])
