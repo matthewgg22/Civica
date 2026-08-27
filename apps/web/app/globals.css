@@ -5034,15 +5034,15 @@ html {
    A wheat pill (owner, 2026-08-27), which makes it read as a control rather
    than a line of body text.
 
-   CONTRAST, MEASURED: white on wheat is 1.68:1, against the 4.5 AA asks for
-   normal text. Ink on the same wheat is 9.47:1, and is what every other wheat
-   control here uses (.vstates__askcta, the nav's own Ask Demeter pill). White
-   is the owner's call and is set below; switching is the one line marked. */
+   CONTRAST: ink on wheat is 9.47:1. It shipped white for one commit at
+   1.68:1, against the 4.5 AA asks for normal text, and was flipped — this is
+   also what every other wheat control here uses (.vstates__askcta, the nav's
+   own Ask Demeter pill), and what DEMETER-DESIGN.md means by "wheat is never
+   text". A test now enforces it rather than a comment asking nicely. */
 .vback {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.86rem; font-weight: 700;
-  /* ← the one line. var(--demeter-ink) is 9.47:1. */
-  color: #FFFFFF;
+  color: var(--demeter-ink);
   background: var(--demeter-wheat);
   border-radius: var(--demeter-radius-pill);
   text-decoration: none;
