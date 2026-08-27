@@ -89,6 +89,10 @@ export const T = {
     // application actually goes; this is the one moment we know exactly which
     // link that is, so it should not be something they have to ask for.
     portalLead: "In {state}, you apply through {agency}.",
+    /* Only where a state runs MORE THAN ONE portal. It asks rather than
+       asserting: handing someone the wrong form with the caveat buried in
+       the button label is how the New York one used to read. */
+    portalTwo: "{state} runs two, depending on where you live. Which one is yours?",
     portalCta: "Apply at {portal}",
     portalStay:
       "That is where the application is formally submitted, and the link is on your outlined application too, so you will not have to find it again.\n\n**_Shall we start working through what it asks for?_**",
@@ -389,6 +393,7 @@ export const T = {
     saveNudgeYes: "Guardarla",
     saveNudgeNo: "Ahora no",
     portalLead: "En {state}, la solicitud se hace a través de {agency}.",
+    portalTwo: "{state} tiene dos, según dónde vivas. ¿Cuál te toca?",
     portalCta: "Solicitar en {portal}",
     portalStay:
       "Ahí es donde se presenta formalmente la solicitud, y el enlace también está en tu solicitud esbozada, así que no tendrás que buscarlo otra vez.\n\n**_¿Empezamos a repasar lo que te pide?_**",
@@ -603,6 +608,7 @@ export const T = {
     saveNudgeYes: "Lưu lại",
     saveNudgeNo: "Để sau",
     portalLead: "Ở {state}, bạn nộp đơn qua {agency}.",
+    portalTwo: "{state} có hai nơi, tùy bạn sống ở đâu. Bạn thuộc nơi nào?",
     portalCta: "Nộp đơn tại {portal}",
     portalStay:
       "Đó là nơi nộp đơn chính thức, và đường dẫn cũng có trong bản phác thảo đơn của bạn, nên bạn sẽ không phải tìm lại.\n\n**_Chúng ta bắt đầu xem đơn yêu cầu những gì nhé?_**",
@@ -815,6 +821,7 @@ export const T = {
     saveNudgeYes: "保存",
     saveNudgeNo: "暂不",
     portalLead: "在{state}，申请通过{agency}办理。",
+    portalTwo: "{state}有两个入口，取决于您住在哪里。您属于哪一个？",
     portalCta: "前往 {portal} 申请",
     portalStay:
       "那里是正式提交申请的地方，这个链接也在您的申请提纲里，您不用再去找一遍。\n\n**_我们现在开始逐项看看表格会问什么，好吗？_**",

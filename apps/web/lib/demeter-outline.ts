@@ -20,6 +20,9 @@ export interface OutlineInput {
   stateName: string | null;
   agency: string | null;
   portalName: string | null;
+  /** The portal's annotation, where it has one — New York's does not cover
+   *  NYC. Its own line, because this is the document someone applies from. */
+  portalNote?: string | null;
   portalUrl: string | null;
   /** Items assessCompleteness says are still outstanding, already in English. */
   stillNeeded: string[];
@@ -112,6 +115,7 @@ export function buildOutline(input: OutlineInput): OutlineSection[] {
   if (agency) where.push(`Agency: ${agency}`);
   if (portalName || input.portalUrl) {
     where.push(`Apply at: ${portalName ?? "your state's portal"}`);
+    if (input.portalNote) where.push(`  Note: ${input.portalNote}`);
     if (input.portalUrl) where.push(input.portalUrl);
   }
   if (where.length) sections.push({ heading: "Where this application goes", lines: where });
