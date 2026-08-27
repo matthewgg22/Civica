@@ -559,6 +559,30 @@ describe("layperson citation presentation (#898 P1-4)", () => {
     expect(body).toContain("covers babysitting,");
   });
 
+  it("makes the cited rule something the reader can actually open", () => {
+    // "check it yourself below" was a promise the trailer did not keep: the
+    // citation under it was unclickable text (owner, 2026-08-26). The engine
+    // emits the citation as a markdown link now; this pins that the chat
+    // turns it into a real anchor rather than printing the brackets.
+    const nodes = renderAnswer(
+      "The answer.\n\n---\n**Citation:** ✓ [7 CFR 273.9](https://www.ecfr.gov/current/title-7/part-273/section-273.9)",
+    );
+    let a: React.ReactElement | null = null;
+    walk(nodes, (n) => {
+      if (isValidElement(n) && n.type === "a") a = n as React.ReactElement;
+    });
+    expect(a, "the citation did not become a link").not.toBeNull();
+    const props = (a as unknown as React.ReactElement<Record<string, unknown>>).props;
+    expect(props.href).toBe(
+      "https://www.ecfr.gov/current/title-7/part-273/section-273.9",
+    );
+    expect(props.target, "an outbound rule opens away from the conversation").toBe("_blank");
+    expect(String(props.rel)).toContain("noopener");
+    // The brackets must not survive as text.
+    expect(textOf(nodes)).not.toContain("](");
+    expect(textOf(nodes)).toContain("7 CFR 273.9");
+  });
+
   it("keeps the citations inside the footnote details", () => {
     const text = textOf(renderAnswer(BODY_WITH_CITES + TRAILER));
     expect(text).toContain("7 CFR 273.9(d)(4)"); // still present overall (in the details)
