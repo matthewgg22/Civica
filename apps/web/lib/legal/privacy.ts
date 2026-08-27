@@ -40,7 +40,24 @@ export const PRIVACY_POLICY: LegalDocument = {
         {
           kind: "callout",
           tone: "promise",
-          text: "We are not the government. We do not report you to anyone, and we never volunteer what you tell us to immigration authorities. If we were ever legally forced to hand something over, there is almost nothing to hand: we do not store your name or your status, and the chat is anonymous by design.",
+          // TWO CLAUSES REMOVED (owner, 2026-08-27), for different reasons.
+          //
+          // "If we were ever legally forced to hand something over…" was
+          // speculative: it walked a reader through a scenario that has never
+          // happened, on a page they are already reading nervously.
+          //
+          // "we do not store your name… the chat is anonymous by design" was
+          // NOT ACCURATE, which is the more serious of the two. Section
+          // "What the filter does not catch" in this same document says
+          // plainly that the filter does not remove names — so the policy
+          // contradicted itself two sections apart, and the earlier of the
+          // two was the overstatement. An inaccurate privacy representation
+          // is the one thing on this page that is genuinely a liability.
+          //
+          // What survives is the part that is both true and load-bearing:
+          // fear of immigration consequences is documented in our own copy as
+          // a reason eligible families do not apply.
+          text: "We are not the government. We do not report you to anyone, and we never volunteer what you tell us to immigration authorities.",
         },
         {
           kind: "callout",
