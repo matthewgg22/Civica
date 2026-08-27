@@ -1,0 +1,35 @@
+-- Retire the Demeter supporter wall (owner, 2026-08-27).
+--
+-- The page, its sign-on form and its API route were deleted in #1023, and
+-- /supporters now 301s to /feedback. This removes the table they wrote to,
+-- which is the last thing left of the feature.
+--
+-- WHY A DROP AND NOT A DELETE. The ask was "delete the supporter rows".
+-- Checked against production first, and the table has NEVER HELD ONE:
+--
+--     select count(*) from snap_enrollment.demeter_supporters;  ->  0
+--     24 kB, RLS on, 0 policies (service-role grant only)
+--
+-- So a DELETE would have been a no-op dressed up as data hygiene. Nobody ever
+-- signed on, no organization's name is being erased, no contact_email is being
+-- destroyed, and no `founding` row — the paying CBO tier — exists to lose. The
+-- honest cleanup is to drop the table, and it is only safe to do that casually
+-- BECAUSE it is empty.
+--
+-- If that count is not 0 when you paste this, STOP: something signed on
+-- between 2026-08-27 and now, and this migration would destroy it. Re-check
+-- before running.
+--
+--     select count(*) from snap_enrollment.demeter_supporters;
+--
+-- Reversible in the sense that matters: the full schema, its RLS grants, its
+-- index and its comment are all in 20260611_demeter_supporters.sql, so the
+-- table can be recreated exactly. What could not be recovered is rows, and
+-- there are none.
+--
+-- Applies via the dashboard SQL editor (NOT `db push --linked`).
+
+-- The index and the RLS configuration are attached to the table and go with
+-- it; naming them separately would fail on a clean replay, where the DROP has
+-- already removed them.
+DROP TABLE IF EXISTS snap_enrollment.demeter_supporters;
