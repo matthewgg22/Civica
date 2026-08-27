@@ -161,3 +161,109 @@ describe("snap_packets is only ever compared to real enum labels (#679)", () => 
     ).toEqual([]);
   });
 });
+
+// ── The audit sink writes columns that exist (#1049) ──────────────────────
+//
+// snap_enrollment.mae_query_log recorded NOTHING for twelve days and nobody
+// noticed. Three things had to line up:
+//
+//   1. 20260618_mae_query_log_tokens.sql adds input_tokens / output_tokens,
+//      and was never pasted into prod.
+//   2. The sink that writes those columns shipped in the SAME commit
+//      (a4eb5b0f, #778) — file written, code live, SQL never run.
+//   3. The sink is best-effort and logs the rejection at console.info, which
+//      is correct for not breaking someone's answer and useless as an alarm.
+//
+// BE CLEAR ABOUT WHAT THIS DOES AND DOES NOT CATCH. The column guard below
+// would NOT have caught #1049: the migration IS in this repo, so the code and
+// the tree agree perfectly. Only the live database disagreed. No static check
+// can see prod drift while migrations are pasted by hand.
+//
+// What it does catch is the neighbouring mistake, which is easy to make in the
+// same file: a sink that writes a column no migration anywhere declares. That
+// one is real and this is where it would surface.
+//
+// The guard that actually shortens #1049 is the last one — the swallowed
+// rejection has to reach Sentry, because that is the only signal that crosses
+// the repo/prod gap.
+describe("the audit sink only writes columns the migrations declare (#1049)", () => {
+  const SINK = join(__dirname, "..", "lib", "demeter-audit-sink.ts");
+  const TABLE = "mae_query_log";
+
+  /** The keys of the object literal passed to .insert({ ... }). */
+  const insertedColumns = (): string[] => {
+    const src = readFileSync(SINK, "utf8");
+    const at = src.indexOf(".insert({");
+    expect(at, "the sink's insert call").toBeGreaterThan(-1);
+    // Balance braces so a nested object cannot truncate the scan.
+    let depth = 0;
+    let end = at + ".insert(".length;
+    for (let i = end; i < src.length; i++) {
+      if (src[i] === "{") depth++;
+      else if (src[i] === "}") {
+        depth--;
+        if (depth === 0) {
+          end = i;
+          break;
+        }
+      }
+    }
+    const body = src.slice(at, end);
+    return [...body.matchAll(/^\s{6,8}([a-z_][a-z0-9_]*):/gm)].map((m) => m[1]!);
+  };
+
+  /** Every column the migrations ever give that table. */
+  const declaredColumns = (): Set<string> => {
+    const cols = new Set<string>();
+    for (const f of readdirSync(MIGRATIONS).filter((n) => n.endsWith(".sql"))) {
+      const sql = readFileSync(join(MIGRATIONS, f), "utf8");
+      if (!sql.includes(TABLE)) continue;
+      // create table … ( … )
+      const created = sql.match(
+        new RegExp(`create\\s+table[^;]*?${TABLE}\\s*\\(([\\s\\S]*?)\\n\\s*\\);`, "i"),
+      );
+      if (created) {
+        for (const line of created[1]!.split("\n")) {
+          const m = /^\s*([a-z_][a-z0-9_]*)\s+[a-z]/i.exec(line);
+          if (m && !/^(constraint|primary|unique|foreign|check)$/i.test(m[1]!)) cols.add(m[1]!);
+        }
+      }
+      // alter table … add column [if not exists] x type
+      for (const m of sql.matchAll(
+        /add\s+column\s+(?:if\s+not\s+exists\s+)?([a-z_][a-z0-9_]*)/gi,
+      )) {
+        if (new RegExp(`alter\\s+table[^;]*${TABLE}`, "i").test(sql)) cols.add(m[1]!);
+      }
+    }
+    return cols;
+  };
+
+  it("finds the sink's insert and the table's declared columns", () => {
+    // A guard that silently matched nothing would pass forever.
+    expect(insertedColumns().length, "no columns parsed from the insert").toBeGreaterThan(10);
+    expect(declaredColumns().size, "no columns parsed from the migrations").toBeGreaterThan(10);
+  });
+
+  it("declares every column it inserts", () => {
+    const declared = declaredColumns();
+    const missing = insertedColumns().filter((c) => !declared.has(c));
+    expect(
+      missing,
+      `the sink writes ${missing.join(", ")}, which no migration in this repo ` +
+        `declares. Postgres will reject the insert and the sink will swallow it, ` +
+        `so the row is lost silently — the shape of #1049, though not its cause ` +
+        `(there the migration existed and was simply never applied to prod).`,
+    ).toEqual([]);
+  });
+
+  it("raises the swallowed error loudly enough to reach Sentry", () => {
+    // Best-effort is right: an audit failure must never break someone's
+    // answer. But console.info is not an alarm, and a TOTAL logging outage
+    // looked like nothing at all for twelve days.
+    const src = readFileSync(SINK, "utf8");
+    expect(src, "the sink still swallows at console.info").not.toMatch(
+      /console\.info\(\s*\n?\s*"\[demeter-audit\]/,
+    );
+    expect(src).toMatch(/console\.error\(/);
+  });
+});
