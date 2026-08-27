@@ -15,6 +15,7 @@
 
 import type { Metadata } from "next";
 import { LanguageLinks } from "../../../../components/LanguageLinks";
+import { LandingWelcome } from "../../../../components/LandingWelcome";
 import { notFound, redirect } from "next/navigation";
 import { VERIFIED_STATES, VERIFIED_STATE_CODES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
 import { geoHint } from "../../../../lib/geo-hint";
@@ -108,6 +109,8 @@ export default async function LocalizedAskPage({
 
   return (
     <main className="dmpage" lang={LANG_TAG[l]}>
+      {/* Same card, same seen-key, in this reader's language. */}
+      <LandingWelcome lang={l} />
       <LanguageLinks lang={l} />
       
       <div className="dmpage__inner">

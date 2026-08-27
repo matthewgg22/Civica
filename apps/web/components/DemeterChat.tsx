@@ -41,6 +41,7 @@ import { stateName } from "../lib/state-names";
 import { detectState, detectUncoveredPlace, type StateMention } from "../lib/detect-state";
 import type { SavedMsg } from "../lib/demeter-conversations";
 import { shieldCitations } from "../lib/no-translate";
+import { welcomeSeen, markWelcomeSeen } from "../lib/welcome-seen";
 
 import {
   saveChatSession,
@@ -587,10 +588,7 @@ export { T };
 const STREAM_TICK_MS = 34;
 const STREAM_MAX_STEP = 2;
 
-/** Remembers that the first-visit card has been seen. Deliberately its own
- *  key rather than a field on the saved session: clearing a conversation must
- *  not make the product introduce itself again. */
-const WELCOME_SEEN_KEY = "demeter.welcome.seen";
+
 
 /** Wrap the two mode labels wherever they appear in a sentence.
  *
@@ -993,23 +991,12 @@ export function DemeterChat({
     });
   }, [messages, state, lang, busy, worksheetMode, classification]);
 
+  // The gate lives in lib/welcome-seen so the landing page asks the SAME
+  // question of the SAME key — being introduced twice, once per door, is the
+  // one thing a first-visit card must not do.
   useEffect(() => {
     if (initialMessages.length > 0) return;
-    let seen = false;
-    try {
-      seen = Boolean(window.localStorage.getItem(WELCOME_SEEN_KEY));
-    } catch {
-      // STORAGE BLOCKED (private mode, blocked cookies) — SHOW IT ANYWAY
-      // (owner, 2026-08-26, reversing the original call). We cannot remember a
-      // dismissal here, so we cannot know they have seen it. The two failure
-      // modes are not equal: a card shown again is a second of mild
-      // annoyance, while a card never shown means someone who does not know
-      // what SNAP is never finds out, and never learns this is not the
-      // government. Dismissing still works for the session; it just does not
-      // persist past a reload.
-      seen = false;
-    }
-    if (!seen) setShowWelcome(true);
+    if (!welcomeSeen()) setShowWelcome(true);
   }, [initialMessages.length]);
 
   const dismissWelcome = useCallback(() => {
@@ -1018,11 +1005,7 @@ export function DemeterChat({
     // a question; landing them at the top of the document to go find the
     // composer is a step for no reason.
     requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
-    try {
-      window.localStorage.setItem(WELCOME_SEEN_KEY, "1");
-    } catch {
-      /* nothing to remember it with; it simply shows again next time */
-    }
+    markWelcomeSeen();
   }, []);
 
   useEffect(() => () => clearTimeout(rafRef.current), []);
@@ -2695,43 +2678,48 @@ export function DemeterChat({
               above (two auto margins SPLIT the free space, which is why the
               controls floated in the middle instead of sitting on the floor). */}
           {authEmail !== null && (
-          <div className="demeter__sidebarauth">
-            {/* No sign-in button here any more (owner rec 2026-08-22): the
-                saved-conversations entry above IS the invitation while
-                signed out, and the chrome row carries the standing one.
-                Settings moved to the chrome row's gear. Signed-in identity
-                stays — it belongs with the account, not with an action. */}
-            <p className="demeter__sidebarnote">
-              {t.sidebarSignedIn} <span translate="no">{authEmail}</span>
+          <div
+            className="demeter__sidebarauth"
+            role="group"
+            aria-label={`${t.sidebarSignedIn} ${authEmail}`}
+          >
+            {/* WHAT IS HAPPENING, then WHO IT IS HAPPENING TO with the way out
+                beside them — two lines where there were four (owner,
+                2026-08-26). "Signed in as" is gone from the visible row: an
+                address with an exit next to it already says that, and the
+                phrase was spending a line to repeat what the row beneath it
+                meant. It stays as this group's accessible name. */}
+            <p className="demeter__authnote">
+              <span className="demeter__authtick" aria-hidden>
+                ✓
+              </span>
+              {t.sidebarAutosaved}
             </p>
-            {/* WHY IT IS SAVING (owner, 2026-08-26). The conversation now
-                keeps itself while signed in, and a product that stores
-                something has to say it is storing it — in the same place it
-                names the account doing the storing. */}
-            <p className="demeter__sidebarnote">{t.sidebarAutosaved}</p>
-            {/* A WAY BACK OUT (owner, 2026-08-26). Signing in had no matching
-                exit anywhere in the product: the route existed
-                (POST /api/auth/sign-out) and only /status ever called it. On a
-                shared or borrowed device — which this product's readers use —
-                an account you cannot leave is worse than no account. It sits
-                with the identity it ends, and a full reload follows so no
-                signed-in state survives in memory. */}
-            <button
-              type="button"
-              className="demeter__signout"
-              onClick={async () => {
-                try {
-                  await fetch("/api/auth/sign-out", { method: "POST" });
-                } catch {
-                  /* Signed out locally regardless: reloading re-probes the
-                     session, and a failed POST leaves the cookie in place
-                     rather than pretending it is gone. */
-                }
-                window.location.assign(lang === "en" ? "/chat" : `/${lang}/chat`);
-              }}
-            >
-              {t.sidebarSignOut}
-            </button>
+            <div className="demeter__authrow">
+              <span className="demeter__authmail" translate="no" title={authEmail}>
+                {authEmail}
+              </span>
+              {/* A WAY BACK OUT. Signing in had no matching exit anywhere in
+                  the product: the route existed and only /status called it. On
+                  a shared or borrowed device an account you cannot leave is
+                  worse than no account. A full navigation follows, so no
+                  signed-in state survives in memory. */}
+              <button
+                type="button"
+                className="demeter__signout"
+                onClick={async () => {
+                  try {
+                    await fetch("/api/auth/sign-out", { method: "POST" });
+                  } catch {
+                    /* Reloading re-probes the session either way; pretending
+                       the cookie is gone when it is not would be worse. */
+                  }
+                  window.location.assign(lang === "en" ? "/chat" : `/${lang}/chat`);
+                }}
+              >
+                {t.sidebarSignOut}
+              </button>
+            </div>
           </div>
           )}
         </aside>
