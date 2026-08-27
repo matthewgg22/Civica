@@ -94,8 +94,14 @@ def test_occ_banks_carry_a_hand_verification_note():
         if b.get("regulator") != "OCC" or b.get("target_status") != "target":
             continue
         note = b.get("pe_verified_current_against", "")
-        assert "OCC archive probed" in note, \
-            f"{key}: OCC bank with no hand staleness check on record"
+        # Until 2026-08-26 the only way to check an OCC bank was a month-by-month
+        # archive probe, because the OCC was believed to publish nothing
+        # searchable. It does -- apps.occ.gov/crasearch, whose own rating="all"
+        # default returns zero rows and made it look absent. Either route is a
+        # real check now; what is still forbidden is treating absence from the
+        # FDIC/Fed exam index as evidence.
+        assert ("OCC archive probed" in note) or ("OCC CRA API" in note), \
+            f"{key}: OCC bank with neither an archive probe nor an API check on record"
 
 
 def test_no_publication_month_is_stored_as_an_exam_date():
