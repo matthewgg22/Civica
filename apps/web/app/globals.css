@@ -7429,10 +7429,21 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    someone presses the wrong one. */
 .demeter__gocta {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  align-self: flex-start; display: inline-flex; align-items: center; gap: 0.15rem;
+  align-self: flex-start;
+  /* INLINE-BLOCK, NOT INLINE-FLEX. As a flex row the label and the arrow were
+     two ITEMS, so a label that wrapped left the arrow centred against the
+     whole two-line block — out at the right edge, level with neither line
+     (owner, 2026-08-27, on New York). Inline-block lets the arrow flow with
+     the text and sit after the last word, wherever that lands.
+     Padding rather than min-height for the 44px target: at 0.9rem/1.35 a
+     one-line label comes to ~45px on its own, and a two-line one simply
+     grows instead of pressing against the edges. */
+  display: inline-block;
   background: var(--demeter-wheat); color: var(--demeter-ink);
   font-weight: 700; font-size: 0.9rem; text-decoration: none;
-  border-radius: var(--demeter-radius-pill); padding: 0 1.05rem; min-height: 44px;
+  border-radius: var(--demeter-radius-pill);
+  padding: 0.72rem 1.05rem;
+  max-width: 100%; line-height: 1.35;
   margin: 0.35rem 0;
 }
 .demeter__gocta:hover { filter: brightness(0.94); }

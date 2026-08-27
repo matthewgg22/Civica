@@ -95,6 +95,28 @@ export interface PackMeta {
          *  York's portal does not cover NYC. Never drop it. */
         note?: string | undefined;
         url: string;
+        /** A SECOND destination covering part of the jurisdiction, where the
+         *  state runs more than one. Only New York does today: myBenefits
+         *  covers the state EXCEPT New York City, which uses ACCESS HRA.
+         *
+         *  Structured rather than left in `note`, because the two cases call
+         *  for different behaviour. A note is something to READ. A second
+         *  portal is something to CHOOSE, and the product should ask which
+         *  applies rather than hand someone the wrong form with the caveat
+         *  buried in the button's own label. */
+        alternate?:
+          | {
+              /** The other portal, branded. */
+              short: string;
+              url: string;
+              /** Who it is for, as a reader would recognise themselves:
+               *  "if you live in New York City". */
+              when: string;
+              /** Who the PRIMARY is for, once there is a choice to make:
+               *  "everywhere else in New York". */
+              otherwise: string;
+            }
+          | undefined;
       }
     | undefined;
   /** Why there is no portal, where that is a fact about the jurisdiction
@@ -112,7 +134,15 @@ const meta = (p: {
   agency: string;
   agency_short: string;
   admin_model: string;
-  portal?: { name: string; short: string; note?: string; url: string } | undefined;
+  portal?:
+    | {
+        name: string;
+        short: string;
+        note?: string;
+        url: string;
+        alternate?: { short: string; url: string; when: string; otherwise: string } | undefined;
+      }
+    | undefined;
   apply_note?: string | undefined;
   verification: PackVerification;
 }): PackMeta => ({

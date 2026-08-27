@@ -11,7 +11,13 @@
     "name": "myBenefits.ny.gov (statewide EXCEPT NYC; NYC uses ACCESS HRA)",
     "short": "myBenefits.ny.gov",
     "note": "statewide EXCEPT NYC; NYC uses ACCESS HRA",
-    "url": "https://mybenefits.ny.gov"
+    "url": "https://mybenefits.ny.gov",
+    "alternate": {
+      "short": "ACCESS HRA",
+      "url": "https://a069-access.nyc.gov/accesshra/",
+      "when": "if you live in New York City",
+      "otherwise": "everywhere else in New York"
+    }
   },
   "update_channels": [
     {

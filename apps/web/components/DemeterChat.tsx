@@ -1150,13 +1150,40 @@ export function DemeterChat({
       // link to a government form and going quiet is the point at which most
       // people stop; the useful thing this can do is let them find out what
       // they will be asked before they are sitting in front of it.
+      // SHOW `short`, NOT `name`. The pack's own contract says so — `name` is
+      // model-facing and "may carry a trailing annotation", `short` is the
+      // portal as it is branded. Using `name` put the annotation INSIDE the
+      // button, so New York's read "Apply at myBenefits.ny.gov (statewide
+      // EXCEPT NYC; NYC uses ACCESS HRA)" — a two-line label in a pill, and
+      // the most important word in it was a warning nobody reads in a button.
+      //
+      // The annotation is never dropped, which the pack also says: it just
+      // gets its own line, where it can be read as the caveat it is.
+      const cta = (label: string, url: string) =>
+        t.portalCta.replace("{portal}", label).replace(/^(.*)$/, `[$1](${url})`);
+      // A paragraph that is EXACTLY a link becomes the wheat button (see
+      // SOLE_LINK); anything sharing its paragraph would demote it to an
+      // inline link. So each condition gets its own line above its button.
+      const alt = pack?.portal?.alternate;
       const portal =
         pack?.portal && name
           ? [
               t.portalLead.replace("{state}", name).replace("{agency}", pack.agencyShort),
-              t.portalCta
-                .replace("{portal}", pack.portal.name)
-                .replace(/^(.*)$/, `[$1](${pack.portal.url})`),
+              // TWO PORTALS ARE A QUESTION, NOT A FOOTNOTE. Where a state runs
+              // more than one, asserting the statewide one and burying "except
+              // NYC" hands roughly eight million people the wrong form.
+              ...(alt
+                ? [
+                    t.portalTwo.replace("{state}", name),
+                    `**${alt.when}**`,
+                    cta(alt.short, alt.url),
+                    `**${alt.otherwise}**`,
+                    cta(pack.portal.short, pack.portal.url),
+                  ]
+                : [
+                    cta(pack.portal.short, pack.portal.url),
+                    ...(pack.portal.note ? [`_${pack.portal.note}_`] : []),
+                  ]),
               t.portalStay,
             ].join("\n\n")
           : null;
