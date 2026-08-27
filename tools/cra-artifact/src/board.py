@@ -418,7 +418,7 @@ footer {{ margin-top:56px; padding-top:18px; border-top:1px solid var(--rule);
     <div><span class="n">{len(send)}</span><span class="l">banks ready</span></div>
     <div><span class="n">{money(total)}</span><span class="l">prepared asks</span></div>
     <div><span class="n">{n_read}</span><span class="l">evaluations read</span></div>
-    <div><span class="n">1,781</span><span class="l">addressable universe</span></div>
+    <div><span class="n">2,185</span><span class="l">addressable universe</span></div>
     <div><span class="n">${reg_total}</span><span class="l">total registration cost</span></div>
   </div>
 
@@ -555,20 +555,38 @@ footer {{ margin-top:56px; padding-top:18px; border-top:1px solid var(--rule);
   </details>
 
   <details>
-    <summary>What is still not covered <span class="smeta">named and sized, not vague</span></summary>
+    <summary>Coverage, and the four gaps now closed <span class="smeta">2,185 addressable across three regulators</span></summary>
     <div class="dbody">
-      <p><strong>FDIC — 2,662 institutions:</strong> complete. <strong>Federal Reserve — 699:</strong>
-      complete. <strong>OCC — 878:</strong> a permanent blind spot. The OCC publishes no searchable
-      component ratings, so 200 large-bank-sized institutions can only be checked one at a time once
-      a name is already known — which is exactly how Woodforest and Northfield had to enter.</p>
-      <p><strong>Massachusetts has no "Low Satisfactory."</strong> Its Division of Banks collapses
-      the two middle federal grades into one, so every MA bank scored clean off a "Satisfactory" was
-      misclassified. New York, Connecticut and Rhode Island are unverified for the same defect.</p>
-      <p><strong>The 2022–23 CRAPES vintage is defective</strong> — 25.1% Substantial Noncompliance
-      against 0.1% in every other year. Any component rating from that window needs the PDF.</p>
-      <p><strong>Never screened at all:</strong> credit unions, and ~70 New York lenders — check that
-      NYDFS actually publishes evaluations first, since Illinois cost a full workstream because IDFPR
-      publishes none.</p>
+      <p><strong>FDIC — 2,662:</strong> complete. <strong>Federal Reserve — 699:</strong>
+      complete. <strong>OCC — 878:</strong> complete as of 26 August 2026. The board called
+      the OCC a permanent blind spot and that was wrong — it runs a real searchable database
+      at <code>apps.occ.gov/crasearch</code> whose own default, <code>rating="all"</code>,
+      returns zero rows, so every probe came back empty and I read that as absence rather
+      than a wrong parameter. It holds <strong>24,283 evaluations across 6,542 charters</strong>,
+      of which <strong>404</strong> are currently active and addressable — and it was hiding
+      JPMorgan Chase, Bank of America, Citibank, Wells Fargo, U.S. Bank, Capital One, PNC, TD
+      and Fifth Third, every one rated Outstanding and every one a peer candidate. The API
+      exposes only the overall rating, so Service-Test screening still needs the PDF.</p>
+      <p><strong>Massachusetts has no "Low Satisfactory,"</strong> and it is systematic
+      rather than one bank's quirk — Rockland Trust and Salem Five carry the identical
+      sentence. Any MA institution showing a bare "Satisfactory" component is ambiguous.
+      <strong>New York, Connecticut and Rhode Island are clean</strong> — six sampled
+      evaluations all use Low Satisfactory normally. But NYDFS's <em>own</em> state
+      evaluations rate 1–4 with <strong>no component tests at all</strong>, so they cannot
+      support a Service-gap screen even in principle.</p>
+      <p><strong>The 2022–23 CRAPES vintage is 100% corrupt, not partly.</strong> Of the
+      eleven addressable banks whose record carries a Substantial Noncompliance component,
+      <strong>all eleven</strong> pair it with a <em>Satisfactory</em> overall — an impossible
+      combination. Six are on this roster and every one already carries the value read from
+      the PDF, so the read rule caught every instance. Three tests now enforce it.</p>
+      <p><strong>Credit unions have no federal CRA obligation</strong> — that would take an
+      act of Congress — but six jurisdictions impose one by state law: Massachusetts, New York,
+      Connecticut, Rhode Island, Illinois and DC. Connecticut and Rhode Island reach only those
+      with a geographic field of membership. None has been enumerated.</p>
+      <p><strong>New York lenders are workable, unlike Illinois.</strong> NYDFS does publish
+      evaluations, where IDFPR publishes none — but there is no searchable index, direct
+      fetches are blocked, and the scale carries no component ratings, so NY is a
+      capacity-only channel like the Intermediate Small Banks.</p>
     </div>
   </details>
 
