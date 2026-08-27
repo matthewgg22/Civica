@@ -78,13 +78,22 @@ def money(n) -> str:
 def load():
     banks = json.loads((TOOL / "inputs/assessment_areas.json").read_text())["banks"]
 
+    # ONE method for every county: the USDA FNS state eligible-unenrolled total
+    # allocated by each county's share of the under-130%-FPL population. The old
+    # source mixed MODELED and survey-weighted figures across counties, and the
+    # ACS household metric it replaced floored 1,010 counties to zero by
+    # comparing SNAP households against households under 100% FPL when SNAP
+    # reaches 130%. See data-ops/analysis/national-snap-coverage/build_county_gap.py
     unenrolled, county_meta = {}, {}
-    src = ANALYSIS / "bank-pe-mining/county_pressure_coverage_2026.csv"
+    src = ANALYSIS / "national-snap-coverage/county_eligible_unenrolled_2026.csv"
     for r in csv.DictReader(src.open()):
-        key = (r["county"], r["state"])
+        name = (r.get("county") or "").rsplit(" County", 1)[0].split(",")[0].strip()
+        if not name or not r.get("state"):
+            continue
+        key = (name, r["state"])
         try:
-            unenrolled[key] = int(r["unenrolled_persons"])
-        except (ValueError, KeyError):
+            unenrolled[key] = int(r["eligible_unenrolled"])
+        except (ValueError, TypeError):
             continue
         county_meta[key] = r.get("method", "")
 
@@ -148,7 +157,9 @@ def roster_section(send, unenrolled, county_meta, contacts) -> str:
         # Fresno and Kern carry no estimate because their measured SNAP
         # households exceed their poor households -- coverage at or above 1.
         # That is a finding, not a hole, and the card should say which it is.
-        un_txt = f"{un:,}" if un else "no measured gap"
+        # A county in a state with no published FNS total gets an em dash, not a
+        # zero: we do not know the figure there rather than knowing it is nil.
+        un_txt = f"{un:,}" if un else "—"
         meth = county_meta.get((county, st), "")
         bank_rows = []
         for key, b, arch in rows:
@@ -171,7 +182,7 @@ def roster_section(send, unenrolled, county_meta, contacts) -> str:
       <header class="ch">
         <h3>{esc(county)}<span class="st">{esc(st)}</span></h3>
         <div class="figs">
-          <div><span class="n">{un_txt}</span><span class="l">{'unenrolled' if un else 'coverage at or above 1'}{' · modeled' if meth=='MODELED' and un else ''}</span></div>
+          <div><span class="n">{un_txt}</span><span class="l">{'eligible-unenrolled · allocated' if un else 'no state total on file'}</span></div>
           <div><span class="n">{money(total)}</span><span class="l">prepared · {len(rows)} bank{"s" if len(rows)!=1 else ""}</span></div>
         </div>
       </header>
@@ -423,7 +434,7 @@ footer {{ margin-top:56px; padding-top:18px; border-top:1px solid var(--rule);
     <div><span class="n">{len(send)}</span><span class="l">banks ready</span></div>
     <div><span class="n">{money(total)}</span><span class="l">prepared asks</span></div>
     <div><span class="n">{n_read}</span><span class="l">evaluations read</span></div>
-    <div><span class="n">2,185</span><span class="l">addressable universe</span></div>
+    <div><span class="n">2,085</span><span class="l">institutions, all reachable</span></div>
     <div><span class="n">${reg_total}</span><span class="l">total registration cost</span></div>
   </div>
 
@@ -450,6 +461,30 @@ footer {{ margin-top:56px; padding-top:18px; border-top:1px solid var(--rule);
       <tbody>{depth_section(depth, send)}</tbody>
     </table>
   </div>
+
+  <h2>The full universe, every one reachable</h2>
+  <p class="sub">Every addressable institution across all three federal regulators, with a
+  first-contact route. Nothing is a person's name unless it actually is one.</p>
+  <div class="panel">
+    <table class="dt">
+      <thead><tr><th>Route</th><th class="num">Institutions</th><th>What it is</th></tr></thead>
+      <tbody>
+        <tr><td class="cty">Named officer</td><td class="num on">5</td>
+            <td class="muted">A person, with a channel — harvested from a regulator filing or the bank's own CRA page</td></tr>
+        <tr><td class="cty">CRA channel</td><td class="num">5</td>
+            <td class="muted">A CRA mailbox, switchboard or public-file page; the role without a name</td></tr>
+        <tr><td class="cty">Role route</td><td class="num">2,075</td>
+            <td class="muted">"CRA Officer" at the FDIC-verified main office. Every covered bank must
+            designate this role (12 CFR §__.43), so it reaches a real desk</td></tr>
+        <tr><td class="cty">No route</td><td class="num">0</td><td class="muted">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note"><strong>The honest limit.</strong> Ten of 2,085 have a name or a CRA-specific
+  channel. The rest are a verified address and a designated role — a real starting place, and not
+  the same thing as knowing who to call. Naming officers is manual work per bank, and no public
+  source does it at scale: performance evaluations do not name them and BankFind carries no phone
+  field. Full register: <code>universe_first_contact_2026.csv</code>.</div>
 
   <h2>Charitable registration</h2>
   <p class="sub">A cost, not a wall. Arizona and Texas require nothing at all, and most states
