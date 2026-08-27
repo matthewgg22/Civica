@@ -29,13 +29,13 @@ afterEach(cleanup);
 // every render (same stub as the other DemeterChat suites).
 Element.prototype.scrollTo = vi.fn() as unknown as typeof Element.prototype.scrollTo;
 
-function mountChat() {
+function mountChat(initialMessages: Array<{ role: "user" | "assistant"; content: string }> = []) {
   return render(
     <DemeterChat
       states={VERIFIED_STATES}
       initialState={null}
       initialQuestion={null}
-      initialMessages={[]}
+      initialMessages={initialMessages}
       initialWorksheet={null}
       savedConversationId={null}
       pendingSave={false}
@@ -316,15 +316,42 @@ describe("boxless messages (CSS contract)", () => {
     expect(container.querySelector(".demeter__headright a.demeter__navlink")).toBeNull();
   });
 
-  it("the rail's bottom line holds new-conversation, language and settings", () => {
+  it("the rail's bottom line holds language and settings, and new-conversation says what it does", () => {
     // Owner rec (2026-08-22): the rail's two full-width buttons are retired
-    // and these three share one row at its foot — the body tracks, the row
-    // acts. /chat still has no nav and no footer, so the gear remains the
-    // only route to the standing pages from inside the tool.
+    // and the row at its foot acts while the body tracks. /chat still has no
+    // nav and no footer, so the gear remains the only route to the standing
+    // pages from inside the tool.
+    //
+    // NEW-CONVERSATION LEFT THAT ROW (owner, 2026-08-26). It was a bare "+"
+    // immediately left of "EN / ES / VI / 中文", so the rail's one unlabelled
+    // glyph sat inside the language picker and read as part of it — and on a
+    // first visit it rendered DISABLED, a greyed borderless plus beside four
+    // language codes. It carries its own words now, above the foot, and only
+    // once there is something to end.
     const { container } = mountChat();
     const row = container.querySelector("#demeter-sidebar .demeter__railfoot")!;
     expect(row).toBeTruthy();
-    expect(row.querySelector("button.demeter__railicon")?.getAttribute("aria-label")).toBe(T.en.clear);
+    expect(row.querySelector("button.demeter__railicon"), "the bare + is gone").toBeNull();
+    expect(
+      container.querySelector(".demeter__railnew"),
+      "nothing to end yet, so nothing offers to end it",
+    ).toBeNull();
+
+    // With a conversation, it appears — labelled, and above the foot.
+    cleanup();
+    const withChat = mountChat([
+      { role: "user", content: "Do I qualify?" },
+      { role: "assistant", content: "It depends on your household size." },
+    ]).container;
+    const nw = withChat.querySelector("button.demeter__railnew")!;
+    expect(nw, "the control is there once there is a conversation").toBeTruthy();
+    expect(nw.getAttribute("aria-label")).toBe(T.en.clear);
+    // Its words are VISIBLE, not only announced — that was the whole defect.
+    expect(nw.textContent).toContain(T.en.clear);
+    expect(
+      nw.nextElementSibling?.classList.contains("demeter__railfoot"),
+      "it sits directly above the foot",
+    ).toBe(true);
     expect(row.querySelector(".demeter__langrow")).toBeTruthy();
     const gear = row.querySelector("details.demeter__gear")!;
     expect(gear.querySelector("a[href='/privacy']")).toBeTruthy();
@@ -335,6 +362,48 @@ describe("boxless messages (CSS contract)", () => {
     // in the chrome row as a second copy.
     expect(container.querySelector(".demeter__sidebtns")).toBeNull();
     expect(container.querySelector(".demeter__head details.demeter__gear")).toBeNull();
+  });
+
+  it("puts the rail on the page's own white, with the cards held by hairlines", () => {
+    // The rail was the last surface still on the old grey ground: #F6F5F3
+    // across 366px of a 1280px window, a third of the screen reading darker
+    // than the product it frames. The white-ground decision (2026-08-21)
+    // moved card separation to hairlines, and every card in this rail already
+    // carries one — so the tint was no longer doing the job it was kept for.
+    const css = readFileSync(join(__dirname, "..", "..", "app", "globals.css"), "utf8");
+    const rail = css.match(/^\.demeter__sidebar\s*\{[^}]*\}/m)?.[0] ?? "";
+    expect(rail, "the rail rule is declared").not.toBe("");
+    expect(rail).toMatch(/background:\s*var\(--demeter-paper\)/);
+    expect(rail, "the right edge is what separates rail from thread now").toMatch(
+      /border-right:\s*1px solid var\(--demeter-rule\)/,
+    );
+    // The cards that sit on it must each carry their own edge, or whitening
+    // the ground would dissolve them into it.
+    for (const sel of [".demeter__sidebarlink", ".demeter__railicon", ".demeter__railnew"]) {
+      const rule = css.match(new RegExp(`^\\${sel}\\s*\\{[^}]*\\}`, "m"))?.[0] ?? "";
+      expect(rule, `${sel} is declared`).not.toBe("");
+      expect(rule, `${sel} needs a hairline on a white ground`).toMatch(/border:\s*1px solid/);
+    }
+  });
+
+  it("lets the layout space the rail's tagline instead of six negative margins", () => {
+    // `.demeter__sbtag` had SIX rule blocks, each a later session pulling the
+    // label further up (-0.75 -> -0.85 -> -1.15 -> -1.4rem) because it was
+    // rendered outside `.demeter__sbident` — the flex column built to hold it,
+    // sitting empty. It is back inside that column, so the 0.1rem gap does the
+    // spacing and no negative margin is needed at all.
+    const css = readFileSync(join(__dirname, "..", "..", "app", "globals.css"), "utf8");
+    const blocks = css.match(/^\.demeter__sbtag\s*\{[^}]*\}/gm) ?? [];
+    expect(blocks.length, "one rule, not six").toBe(1);
+    expect(blocks[0], "the layout spaces it now").not.toMatch(/margin-top:\s*-/);
+
+    const { container } = mountChat();
+    const tag = container.querySelector(".demeter__sbtag")!;
+    expect(tag, "the tagline renders").toBeTruthy();
+    expect(
+      tag.parentElement?.classList.contains("demeter__sbident"),
+      "it sits in the column built for it",
+    ).toBe(true);
   });
 
   it("Save is still MOUNTED with its button hidden — not deleted", () => {
