@@ -233,13 +233,31 @@ test.describe("chat surface", () => {
     });
   }
 
-  test("the language links keep you on the page you were reading", async ({ page }) => {
-    // The old <select> lived in the chat, so switching language could only ever
-    // mean "switch the chat". From /questions, Español must go to
-    // /es/questions — not back to the chat.
+  test("the language links live on the front door, and nowhere else", async ({ page }) => {
+    // NARROWED when the site nav was removed (owner, 2026-08-27). The links
+    // used to ride the nav on every page; they now sit on /screen/ask alone,
+    // which is where the failure they were built for actually happens — `/`
+    // redirects there in English, so first contact is the one moment a reader
+    // has no other route to their language.
+    //
+    // Everywhere else the language is carried rather than chosen: the back
+    // link, the footer and every in-page link are built from the lang the
+    // reader is already on, so a Spanish reader stays in Spanish.
     await page.goto("/questions");
-    await page.getByRole("link", { name: "Español", exact: true }).click();
-    await expect(page).toHaveURL(/\/es\/questions$/);
+    await expect(page.getByRole("link", { name: "Español", exact: true })).toHaveCount(0);
+
+    await page.goto("/es/screen/ask");
+    await expect(page.getByRole("link", { name: "Español", exact: true })).toHaveAttribute(
+      "aria-current",
+      "true",
+    );
+  });
+
+  test("no page carries the site nav any more", async ({ page }) => {
+    for (const path of ["/screen/ask", "/questions", "/states", "/terms", "/feedback"]) {
+      await page.goto(path);
+      await expect(page.locator(".dmnav"), path).toHaveCount(0);
+    }
   });
 });
 
@@ -299,14 +317,13 @@ test.describe("growth surfaces", () => {
     expect(res?.status()).toBe(404);
   });
 
-  test("/supporters renders the wall, definition, and sign-on form", async ({ page }) => {
+  test("/supporters redirects to /feedback", async ({ page }) => {
+    // Retired from the footer (owner, 2026-08-27). Redirected rather than
+    // deleted: the supporter wall is a moderated Supabase table of approved
+    // organizations, not a duplicate of the feedback form, so the rows and the
+    // page component both still exist.
     await page.goto("/supporters");
-    await expect(page.getByRole("heading", { name: "Demeter Supporters" })).toBeVisible();
-    await expect(page.getByText(/endorses free, accurate SNAP guidance/)).toBeVisible();
-    // Binding reimbursement wording — the counsel-safe conditional form.
-    await expect(page.getByText(/may qualify as an allowable outreach cost/)).toBeVisible();
-    await expect(page.getByLabel(/Organization name/)).toBeVisible();
-    await expect(page.getByRole("button", { name: "Sign on" })).toBeVisible();
+    await expect(page).toHaveURL(/\/feedback$/);
   });
 
   // THE GAP THIS PINS: until this page existed, the only feedback mechanism
