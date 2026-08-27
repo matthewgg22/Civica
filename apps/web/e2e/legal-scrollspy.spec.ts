@@ -10,8 +10,29 @@ import { test, expect } from "@playwright/test";
 
 type Page = import("@playwright/test").Page;
 
-const current = async (page: Page) =>
-  page.locator(".lgl__toc-list a[aria-current]").first().textContent();
+/** Never throws: returns "" when nothing is marked yet, so a poll retries
+ *  instead of failing on the first look. On a cold production server the page
+ *  can be scrolled before React has hydrated and attached the observer. */
+const current = (page: Page) =>
+  page.evaluate(
+    () => document.querySelector(".lgl__toc-list a[aria-current]")?.textContent ?? "",
+  );
+
+/** Scroll, then poll — RE-SCROLLING each time. Scrolling once before hydration
+ *  and then waiting is the flake this fixes: the observer attaches after the
+ *  scroll and never sees it. Re-applying the same position is idempotent, and
+ *  the first iteration after hydration lands it. */
+async function expectCurrent(page: Page, id: string, text: string) {
+  await expect
+    .poll(
+      async () => {
+        await scrollIntoBand(page, id);
+        return current(page);
+      },
+      { timeout: 10_000 },
+    )
+    .toContain(text);
+}
 
 /** Put a section's top INSIDE the band that decides "current".
  *
@@ -36,25 +57,26 @@ test.describe("legal contents scrollspy", () => {
   test("follows the reader down the document", async ({ page }) => {
     await page.goto("/terms");
 
-    await scrollIntoBand(page, "disputes");
-    await expect
-      .poll(async () => await current(page), { timeout: 5000 })
-      .toContain("Dispute resolution");
-
+    await expectCurrent(page, "disputes", "Dispute resolution");
     // And back up again — the marker has to move in both directions, which a
     // one-way test would not catch if the band only ever grew downwards.
-    await scrollIntoBand(page, "who");
-    await expect
-      .poll(async () => await current(page), { timeout: 5000 })
-      .toContain("Who can use Demeter");
+    await expectCurrent(page, "who", "Who can use Demeter");
   });
 
   test("reaches the last section at the bottom", async ({ page }) => {
     // The tail sections are short enough that they may never cross the band.
     await page.goto("/terms");
-    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await expect
-      .poll(async () => await current(page), { timeout: 5000 })
+      .poll(
+        async () => {
+          await page.evaluate(() =>
+            window.scrollTo(0, document.documentElement.scrollHeight),
+          );
+          await page.waitForTimeout(120);
+          return current(page);
+        },
+        { timeout: 10_000 },
+      )
       .toContain("Contact");
   });
 
