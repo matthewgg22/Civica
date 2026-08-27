@@ -30,6 +30,7 @@ import {
   estimateTokensFromChars,
 } from "../../../lib/demeter-usage";
 import { publicAuditSink } from "../../../lib/demeter-audit-sink";
+import { recordDemeterEvent } from "../../../lib/demeter-events";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -46,6 +47,17 @@ function clientIp(req: NextRequest): string {
 export async function POST(req: NextRequest) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
+    // EVERY REFUSAL IS RECORDED FROM HERE DOWN (#1049 follow-on). These
+    // returns all happen before the audit sink exists, so someone who hit a
+    // wall and left used to be invisible — and "how often does a real person
+    // hit a wall" could not be asked at all.
+    //
+    // NO session_id ON THE GATE FAILURES, deliberately. The body has not been
+    // parsed yet, and parsing it before the abuse gate would mean doing work
+    // for exactly the traffic the gate exists to refuse. The COUNT is the
+    // number that matters here; session linkage resumes below, once the body
+    // is in hand.
+    after(() => recordDemeterEvent({ kind: "failure", event: "unconfigured", status: 503 }));
     return NextResponse.json(
       { error: "Demeter is not configured yet.", reason: "unconfigured" },
       { status: 503 },
@@ -57,6 +69,7 @@ export async function POST(req: NextRequest) {
   const gate = await checkUsageGate(ip);
   if (!gate.allowed) {
     if (gate.reason === "rate_limited") {
+      after(() => recordDemeterEvent({ kind: "failure", event: "rate_limited", status: 429 }));
       return NextResponse.json(
         { error: "Too many questions at once, try again in a minute.", reason: "rate_limited" },
         { status: 429, headers: { "Retry-After": "60" } },
@@ -68,6 +81,7 @@ export async function POST(req: NextRequest) {
       // telling someone the service is down when it isn't would send a real
       // applicant away for no reason. Names 211 either way so the message is
       // never a dead end.
+      after(() => recordDemeterEvent({ kind: "failure", event: "ip_daily_cap", status: 429 }));
       return NextResponse.json(
         {
           error:
@@ -78,6 +92,7 @@ export async function POST(req: NextRequest) {
         { status: 429, headers: { "Retry-After": "3600" } },
       );
     }
+    after(() => recordDemeterEvent({ kind: "failure", event: "at_capacity", status: 503 }));
     return NextResponse.json(
       {
         error:
@@ -94,10 +109,21 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
+    after(() => recordDemeterEvent({ kind: "failure", event: "bad_request", status: 400, detail: { cause: "invalid_json" } }));
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
   const parsed = parseMessages(body);
   if ("error" in parsed) {
+    // The reason CODE, never the message — parseMessages echoes limits, not
+    // content, but this table takes no free text on principle.
+    after(() =>
+      recordDemeterEvent({
+        kind: "failure",
+        event: "bad_request",
+        status: 400,
+        detail: { cause: "invalid_messages" },
+      }),
+    );
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
   const b = body as Record<string, unknown>;

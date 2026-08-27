@@ -53,6 +53,18 @@ export interface MaeAuditRecord {
    *  rather than guessed at — the v1 patterns deliberately leave ambiguous
    *  phrasing out, and this is the evidence that would justify adding it. */
   crisis?: string | null | undefined;
+  /** The reader's language (en/es/vi/zh). mae_feedback has always carried it;
+   *  the answer log did not, so per-language quality could not be reviewed. */
+  lang?: string | null | undefined;
+  /** ask | estimate. Distinct from `mode`, which is public/case: one is who
+   *  is asking, the other is what they are doing. */
+  worksheetMode?: string | null | undefined;
+  /** Milliseconds to first streamed token, and to the last one. */
+  ttftMs?: number | null | undefined;
+  totalMs?: number | null | undefined;
+  /** The reader pressed Stop. NOT a failure — counting it as one would
+   *  flatter nothing and mislead everything. */
+  stopped?: boolean | undefined;
   /** TOKENS, so spend can be attributed to something.
    *
    *  Reported: fewer than 30 short prompts cost about a dollar. That could not
