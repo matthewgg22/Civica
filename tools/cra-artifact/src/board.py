@@ -182,7 +182,7 @@ def roster_section(send, unenrolled, county_meta, contacts) -> str:
       <header class="ch">
         <h3>{esc(county)}<span class="st">{esc(st)}</span></h3>
         <div class="figs">
-          <div><span class="n">{un_txt}</span><span class="l">{'eligible-unenrolled · allocated' if un else 'no state total on file'}</span></div>
+          <div><span class="n">{un_txt}</span><span class="l">{'eligible-unenrolled · allocated' if un else 'capped 100% — no measurable federal gap'}</span></div>
           <div><span class="n">{money(total)}</span><span class="l">prepared · {len(rows)} bank{"s" if len(rows)!=1 else ""}</span></div>
         </div>
       </header>
@@ -469,22 +469,25 @@ footer {{ margin-top:56px; padding-top:18px; border-top:1px solid var(--rule);
     <table class="dt">
       <thead><tr><th>Route</th><th class="num">Institutions</th><th>What it is</th></tr></thead>
       <tbody>
-        <tr><td class="cty">Named officer</td><td class="num on">5</td>
-            <td class="muted">A person, with a channel — harvested from a regulator filing or the bank's own CRA page</td></tr>
+        <tr><td class="cty">Named officer</td><td class="num on">70</td>
+            <td class="muted">A person and their title — most from the Consumer Bankers Association's
+            Community Reinvestment Committee roster, which names the CRA function at member banks</td></tr>
         <tr><td class="cty">CRA channel</td><td class="num">5</td>
             <td class="muted">A CRA mailbox, switchboard or public-file page; the role without a name</td></tr>
-        <tr><td class="cty">Role route</td><td class="num">2,075</td>
+        <tr><td class="cty">Role route</td><td class="num">2,010</td>
             <td class="muted">"CRA Officer" at the FDIC-verified main office. Every covered bank must
             designate this role (12 CFR §__.43), so it reaches a real desk</td></tr>
         <tr><td class="cty">No route</td><td class="num">0</td><td class="muted">—</td></tr>
       </tbody>
     </table>
   </div>
-  <div class="note"><strong>The honest limit.</strong> Ten of 2,085 have a name or a CRA-specific
+  <div class="note"><strong>The honest limit.</strong> Seventy-five of 2,085 have a name or a CRA-specific
   channel. The rest are a verified address and a designated role — a real starting place, and not
-  the same thing as knowing who to call. Naming officers is manual work per bank, and no public
-  source does it at scale: performance evaluations do not name them and BankFind carries no phone
-  field. Full register: <code>universe_first_contact_2026.csv</code>.</div>
+  the same thing as knowing who to call. Matching is by EXACT bank-name token set, never substring: a looser
+  match put Citizens Financial Group's head of community development against both First-Citizens
+  Bank &amp; Trust and Citizens Business Bank, three unrelated institutions, and a wrong name on a
+  letter is worse than no name. Eight banks whose names are shared by unrelated institutions are
+  held back entirely. Full register: <code>universe_first_contact_2026.csv</code>.</div>
 
   <h2>Charitable registration</h2>
   <p class="sub">A cost, not a wall. Arizona and Texas require nothing at all, and most states

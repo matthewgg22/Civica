@@ -28,6 +28,20 @@ TOOL = Path(__file__).resolve().parents[1]
 ANALYSIS = TOOL.parents[1] / "data-ops/analysis/bank-pe-mining"
 
 
+def load_cba_officers() -> dict:
+    """CRA officers named on the Consumer Bankers Association's Community
+    Reinvestment Committee roster, matched to roster records by EXACT token set.
+
+    Substring matching put Citizens Financial Group's head of community
+    development against both First-Citizens Bank & Trust and Citizens Business
+    Bank -- three unrelated institutions. A wrong name on a letter is worse than
+    no name, so only an exact match counts and eight banks whose names are shared
+    by unrelated institutions are held back entirely.
+    """
+    p = ANALYSIS / "roster_officer_matches.json"
+    return json.loads(p.read_text()) if p.exists() else {}
+
+
 def load_named() -> dict:
     p = ANALYSIS / "bank_contacts_2026.csv"
     if not p.exists():
@@ -56,6 +70,15 @@ def route_for(bank_key: str, bank: dict, named: dict, addr: dict) -> dict:
     n = named.get(bank_key) or {}
     person = (n.get("contact_name") or "").strip()
     channel = (n.get("contact_channel") or "").strip()
+
+    # A CRA officer named on the CBA committee roster outranks a harvested guess.
+    cba = load_cba_officers().get(bank_key)
+    if cba:
+        return {"kind": "named", "name": cba["name"], "title": cba["title"],
+                "channel": channel, "address": n.get("address", ""),
+                "confidence": "HIGH",
+                "source": "Consumer Bankers Association, Community Reinvestment "
+                          "Committee roster, retrieved 2026-08-26"}
 
     if person:
         return {"kind": "named", "name": person, "title": n.get("contact_title", ""),

@@ -1,0 +1,326 @@
+[
+ {
+  "name": "Doug Schaeffer",
+  "title": "Executive Director, CRA & Community Development",
+  "bank": "Woodforest National Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Camino Smith",
+  "title": "SVP, Manager - Community Reinvestment",
+  "bank": "Banner Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Reza Aghamirzadeh",
+  "title": "EVP, Head of Community Development",
+  "bank": "Citizens",
+  "ambiguous": false
+ },
+ {
+  "name": "Steven Akerlow",
+  "title": "CRA Officer",
+  "bank": "American Express",
+  "ambiguous": false
+ },
+ {
+  "name": "Ryan Demarco Anderson",
+  "title": "Director, Bank Community Reinvestment",
+  "bank": "Ameriprise Bank, FSB",
+  "ambiguous": false
+ },
+ {
+  "name": "Nathalia Artus",
+  "title": "Head of Community Impact",
+  "bank": "Atlantic Union Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Jan Bergeson",
+  "title": "Executive Compliance Director and CRA Officer",
+  "bank": "Ally Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Melissa Borino",
+  "title": "Director, CRA Governance",
+  "bank": "BMO",
+  "ambiguous": false
+ },
+ {
+  "name": "Stephanie Cameron",
+  "title": "SVP, CRA Director",
+  "bank": "KeyBank",
+  "ambiguous": false
+ },
+ {
+  "name": "Michele Collie",
+  "title": "SVP, Director CRA Officer",
+  "bank": "City National Bank of Florida",
+  "ambiguous": true
+ },
+ {
+  "name": "Kristen Comstock",
+  "title": "CRA Strategic Planning & Governance Director",
+  "bank": "JPMorgan Chase",
+  "ambiguous": false
+ },
+ {
+  "name": "Isabel Cruz",
+  "title": "CRA & Community Development Reporting Officer",
+  "bank": "Rockland Trust Company",
+  "ambiguous": false
+ },
+ {
+  "name": "Glenn Davis",
+  "title": "First VP / CRA Officer",
+  "bank": "Liberty Bank",
+  "ambiguous": true
+ },
+ {
+  "name": "Melinda DesJardins",
+  "title": "SVP, Director CRA Program Office",
+  "bank": "U.S. Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Bradley Dossinger",
+  "title": "EVP, Manager - CRA",
+  "bank": "M&T Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Justin Dunn",
+  "title": "SVP, Chief Community Impact Officer",
+  "bank": "WSFS Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Kevin Girvin",
+  "title": "Managing Director, CRA Program Management",
+  "bank": "Webster Bank, N.A.",
+  "ambiguous": false
+ },
+ {
+  "name": "Staci Glenn Short",
+  "title": "SVP, Community Development Program Director",
+  "bank": "Huntington Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Cathryn Gonzalez",
+  "title": "Senior Compliance Manager & CRA Officer",
+  "bank": "Five Star Bank",
+  "ambiguous": true
+ },
+ {
+  "name": "Jada Grandy-Mock",
+  "title": "Head of CRA Strategy and Program Management",
+  "bank": "Wells Fargo",
+  "ambiguous": false
+ },
+ {
+  "name": "Irene Guzman",
+  "title": "First VP - Corporate CRA Officer",
+  "bank": "International Bank of Commerce",
+  "ambiguous": false
+ },
+ {
+  "name": "Angie Hadley",
+  "title": "SVP, CRA Officer",
+  "bank": "First Financial Bankshares",
+  "ambiguous": true
+ },
+ {
+  "name": "Wayne Hilliard",
+  "title": "Vice President, CRA",
+  "bank": "Texas Capital Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Michael Innis-Thompson",
+  "title": "SVP, Head of Community Development",
+  "bank": "TD Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Rhonda Jones",
+  "title": "Community Development Officer",
+  "bank": "First Interstate Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Kristin Kraska",
+  "title": "Managing Director",
+  "bank": "Citi",
+  "ambiguous": false
+ },
+ {
+  "name": "Charles Lee",
+  "title": "1st VP, Director of Regulatory Affairs, CRA Officer",
+  "bank": "MidFirst Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Chelsey Lombardi",
+  "title": "Community Reinvestment Act Manager",
+  "bank": "Northwest Bank",
+  "ambiguous": true
+ },
+ {
+  "name": "LaReta Lowther",
+  "title": "Director of Community Development",
+  "bank": "WesBanco",
+  "ambiguous": false
+ },
+ {
+  "name": "Lasha Marshall",
+  "title": "Director of Compliance - CRA",
+  "bank": "Bank OZK",
+  "ambiguous": false
+ },
+ {
+  "name": "Jim Matthews",
+  "title": "Senior VP, CRA Strategy",
+  "bank": "Capital One",
+  "ambiguous": false
+ },
+ {
+  "name": "Roddell McCullough",
+  "title": "Chief Corporate Responsibility Officer",
+  "bank": "First Financial Bank",
+  "ambiguous": true
+ },
+ {
+  "name": "Beverly Meek",
+  "title": "CRA Director",
+  "bank": "Flagstar Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Liza Mistry",
+  "title": "Sr. Director of Fair Lending & CRA Compliance",
+  "bank": "Fifth Third Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Bernadette Mueller",
+  "title": "EVP and Chief CSR-CRA Officer",
+  "bank": "Valley National Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Amanda Peters",
+  "title": "VP, Compliance Manager",
+  "bank": "Zions Bancorp",
+  "ambiguous": false
+ },
+ {
+  "name": "Chandra Rodgers",
+  "title": "Risk and Compliance Director",
+  "bank": "Associated Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Angie Smedley",
+  "title": "CRA Officer",
+  "bank": "SoFi Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Cheri Smith",
+  "title": "SVP, Director of Corporate Responsibility",
+  "bank": "S&T Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Oscar Solis",
+  "title": "SVP, Director of Consumer Compliance",
+  "bank": "Bank of Hawaii",
+  "ambiguous": false
+ },
+ {
+  "name": "Danny Spears",
+  "title": "Director, CRA Performance Management",
+  "bank": "PNC Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Ginny Stroud",
+  "title": "Community Development Manager",
+  "bank": "United Bank",
+  "ambiguous": true
+ },
+ {
+  "name": "Cade Stubblefield",
+  "title": "Director, Compliance Risk Management - CRA",
+  "bank": "USAA Federal Savings Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Adey Tesfaye",
+  "title": "CRA Officer",
+  "bank": "City National Bank",
+  "ambiguous": true
+ },
+ {
+  "name": "Kimberly Topping Morris",
+  "title": "SVP, Head of CRA",
+  "bank": "EverBank",
+  "ambiguous": false
+ },
+ {
+  "name": "Beth Trotter Broussard",
+  "title": "EVP, CRA Officer",
+  "bank": "First Horizon",
+  "ambiguous": false
+ },
+ {
+  "name": "Alan Urie",
+  "title": "SVP & CRA Officer",
+  "bank": "Synchrony",
+  "ambiguous": false
+ },
+ {
+  "name": "Alicia Vela",
+  "title": "SVP, CRA Senior Manager",
+  "bank": "Bank of America",
+  "ambiguous": false
+ },
+ {
+  "name": "Anthony Weekly",
+  "title": "Chief EVP, Chief CRA Officer",
+  "bank": "Truist",
+  "ambiguous": false
+ },
+ {
+  "name": "Stephanie White",
+  "title": "CRA Officer",
+  "bank": "Bread Financial",
+  "ambiguous": false
+ },
+ {
+  "name": "Cecil Williams",
+  "title": "EVP, Fair Banking Director",
+  "bank": "Regions Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Sawyer Williams",
+  "title": "Senior VP, CRA Officer",
+  "bank": "Frost Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Courtney Williams",
+  "title": "EVP, Director of CRA Strategy",
+  "bank": "Mechanics Bank",
+  "ambiguous": false
+ },
+ {
+  "name": "Evan Zuverink",
+  "title": "Vice President, CRA Officer",
+  "bank": "First Commonwealth Bank",
+  "ambiguous": false
+ }
+]

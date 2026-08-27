@@ -27,10 +27,20 @@ import csv, json, re
 # USDA FNS / Mathematica, Reaching Those in Need, FY2022 (published Feb 2025).
 # Only states whose ABSOLUTE eligible-unenrolled is on file here. A state absent
 # from this map gets no allocated figure rather than a guessed one.
-FNS_ELIGIBLE_UNENROLLED = {
-    "TX": 1_000_000, "CA": 877_000, "FL": 556_000, "NY": 230_000, "AZ": 189_000,
-    "AR": 186_000, "SC": 176_000, "KY": 158_000, "MS": 142_000, "TN": 139_000,
-}
+# USDA FNS / Mathematica, "Reaching Those in Need", FY2022 (Cunnyngham, Feb 2025).
+# All 51 jurisdictions, parsed from the report's own eligible-people chart and
+# validated against every figure the project had previously published by hand:
+# CA 877,420 vs ~877,000, TX 999,960 vs ~1,000,000, FL, NY, AZ, AR, SC, KY, MS,
+# TN all inside 6%. Total 4,703,000 against the report's national ~4.6M.
+#
+# Illinois, Massachusetts and New Mexico sit at a CAPPED 100% -- the report is
+# explicit that 100% is a capped estimate, not literal full enrollment. Their
+# eligible-unenrolled is therefore 0 under FEDERAL eligibility rules, which is a
+# finding rather than missing data: those states are the coverage-mode case, to
+# be ranked on relative coverage with no absolute claim attached.
+FNS = json.load(open("fns_state_2022.json"))
+FNS_ELIGIBLE_UNENROLLED = {k: v["eligible_unenrolled"] for k, v in FNS.items()}
+CAPPED = {k for k, v in FNS.items() if v.get("capped") or v["rate"] >= 100}
 
 d = json.load(open("c17002.json"))["data"]
 cov = {r["geoid"]: r for r in csv.DictReader(
@@ -65,13 +75,19 @@ allocated = 0
 for r in rows:
     tot = FNS_ELIGIBLE_UNENROLLED.get(r["state"])
     denom = by_state.get(r["state"], 0)
-    if tot and denom:
+    if r["state"] in CAPPED:
+        r["eligible_unenrolled"] = 0
+        r["method"] = ("state at a capped 100% participation rate — no measurable gap "
+                       "under federal eligibility rules")
+    elif tot and denom:
         r["eligible_unenrolled"] = round(tot * r["pop_under_130_fpl"] / denom)
         r["method"] = "FNS state total allocated by share of under-130% FPL population"
         allocated += 1
     else:
         r["eligible_unenrolled"] = ""
-        r["method"] = "no FNS state total on file"
+        r["method"] = ("state at a capped 100% participation rate — no measurable gap "
+                       "under federal eligibility rules" if r["state"] in CAPPED
+                       else "no FNS state total on file")
 
 rows.sort(key=lambda r: -(r["eligible_unenrolled"] or 0))
 with open("county_eligible_unenrolled_2026.csv", "w", newline="") as f:
