@@ -11,6 +11,8 @@
 // a government service.
 import { describe, it, expect, afterEach, afterAll, vi } from "vitest";
 import { render, cleanup, fireEvent, screen } from "@testing-library/react";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 import { DemeterWelcome, SNAP_SERVICE_MARK } from "../DemeterWelcome";
 import { DemeterChat } from "../DemeterChat";
@@ -19,11 +21,12 @@ import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 
 Element.prototype.scrollTo = vi.fn() as unknown as typeof Element.prototype.scrollTo;
 
-// THIS jsdom HAS sessionStorage BUT NOT localStorage. The component treats a
-// missing localStorage as "never show the card" — deliberately, since showing
-// it every visit is worse than never — so without this stub the tests below
-// would exercise that fallback and silently prove nothing about first-visit
-// behaviour. Stubbing the ENVIRONMENT, not the component.
+// THIS jsdom HAS sessionStorage BUT NOT localStorage. Without the stub below
+// every test here would exercise the blocked-storage path — which since
+// 2026-08-26 SHOWS the card unconditionally, because a dismissal that cannot
+// be remembered cannot be assumed. That path proves nothing about whether a
+// dismissal sticks, which is what most of this file is about. Stubbing the
+// ENVIRONMENT, not the component.
 const store = new Map<string, string>();
 // Captured so it can be PUT BACK. Without this the stub leaks into every test
 // file that shares the worker: the card starts rendering in their mounts, and
@@ -209,5 +212,113 @@ describe("when it shows", () => {
       <DemeterChat states={VERIFIED_STATES} initialMessages={[]} />,
     ).container;
     expect(again.querySelector(".dmwel")).toBeNull();
+  });
+});
+
+// ── The card's second pass (owner, 2026-08-26) ────────────────────────────
+//
+// These are REGRESSION guards, and each one names the thing that actually went
+// wrong. Two greys had already been removed from this card once, under a CSS
+// comment explaining why; they came back a session later because the fix was
+// appended to the end of globals.css rather than made where the rule lived, so
+// the file ended up carrying four `font-size` declarations for one selector and
+// the three dead ones still carried the reasoning. Whatever a future session
+// changes here, these say what must not quietly revert.
+describe("the welcome card's second pass", () => {
+  const css = () =>
+    readFileSync(join(__dirname, "..", "..", "app", "globals.css"), "utf8");
+  const rule = (sel: string) => {
+    const hit = css().match(
+      new RegExp(`^${sel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*\\{[^}]*\\}`, "m"),
+    );
+    return hit?.[0] ?? "";
+  };
+
+  it("keeps the card's ink on the two lines that had been greyed out", () => {
+    // The caveat is the one sentence that limits what this product claims, and
+    // it had been the faintest thing on the card. It recedes by SIZE now.
+    const quiet = rule(".dmwel__body--quiet");
+    expect(quiet, "the caveat is declared").not.toBe("");
+    expect(quiet).not.toMatch(/color:\s*var\(--demeter-muted\)/);
+    expect(quiet).toMatch(/font-size/);
+    expect(rule(".dmwel__secondary")).not.toMatch(
+      /color:\s*var\(--demeter-muted\)/,
+    );
+  });
+
+  it("declares each of the card's properties exactly once", () => {
+    // THE ACTUAL BUG BEHIND THE GREYS. Four `.dmwel__mark` font-sizes shipped
+    // at once — 0.7rem, then 0.62rem under a comment explaining why it had to
+    // be small, then 0.78rem, LARGER than it started. Only the last did
+    // anything. A count is the only thing that catches an append.
+    const sheet = css();
+    for (const [sel, prop] of [
+      [".dmwel__mark", "font-size"],
+      [".dmwel__body--quiet", "color"],
+      [".dmwel__logo img", "max-width"],
+      [".dmwel__brandword", "font-size"],
+    ] as const) {
+      const blocks =
+        sheet.match(
+          new RegExp(
+            `${sel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[^{}]*\\{[^}]*\\}`,
+            "g",
+          ),
+        ) ?? [];
+      const declaring = blocks.filter((b) =>
+        new RegExp(`(^|[;{\\s])${prop}\\s*:`).test(b),
+      );
+      // AT MOST once. Zero is fine and sometimes the point — `--quiet` lost
+      // its `color` outright when the grey came off it. What must never
+      // return is TWO, where the later one silently wins and the earlier one
+      // keeps the comment that explains the decision.
+      expect(
+        declaring.length,
+        `${sel} declares ${prop} ${declaring.length}x — edit the rule, do not append a new one`,
+      ).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it("sets the card's prose left while the title stays centred", () => {
+    expect(rule(".dmwel__what,\n.dmwel__body")).toMatch(/text-align:\s*left/);
+    expect(rule(".dmwel__title")).not.toMatch(/text-align/);
+  });
+
+  it("reproduces the SNAP logo unaltered, at a size the Demeter mark can meet", () => {
+    // "The logo cannot be altered" is a CONDITION of being allowed to use it,
+    // so the box has to keep the mark's true 663:460 ratio. And it may not
+    // dwarf the product's own mark: a card that opens on the government's logo
+    // as its largest object is the confusion the notice below exists to stop.
+    const src = readFileSync(join(__dirname, "..", "DemeterWelcome.tsx"), "utf8");
+    const w = Number(src.match(/snap-logo\.png[^/]*width=\{(\d+)\}/)?.[1]);
+    const h = Number(src.match(/snap-logo\.png[^/]*height=\{(\d+)\}/)?.[1]);
+    expect(Math.abs(w / h - 663 / 460), `${w}x${h} is not the true ratio`).toBeLessThan(0.01);
+    const markSize = Number(src.match(/DemeterMark size=\{(\d+)\}/)?.[1]);
+    // The lockup is the mark PLUS the word beneath it, so parity is not a
+    // pixel identity — but the programme's mark must not run away with the
+    // card the way 150x104 against 40px did.
+    expect(w * h).toBeLessThan(markSize * markSize * 4);
+  });
+
+  it("has no divider left to strand when the marks wrap", () => {
+    const src = readFileSync(join(__dirname, "..", "DemeterWelcome.tsx"), "utf8");
+    expect(src).not.toContain("dmwel__marksep");
+    expect(css()).not.toContain(".dmwel__marksep");
+    // Wrap stays: it is the graceful failure for a long translation.
+    expect(rule(".dmwel__marks")).toMatch(/flex-wrap:\s*wrap/);
+  });
+
+  it("puts the required notice after the action, not between it and the reader", () => {
+    const c = card();
+    const kids = [...c.querySelector(".dmwel__card")!.children].map(
+      (e) => e.className,
+    );
+    const cls = (k: string) => String(k).split(/\s+/);
+    const notice = kids.findIndex((k) => cls(k).includes("dmwel__mark"));
+    const cta = kids.findIndex((k) => cls(k).includes("dmwel__cta"));
+    expect(notice, "the notice is rendered").toBeGreaterThan(-1);
+    expect(notice, "the notice follows the call to action").toBeGreaterThan(cta);
+    // It is still THERE, verbatim, which is the condition of using the mark.
+    expect(c.textContent).toContain(SNAP_SERVICE_MARK);
   });
 });
