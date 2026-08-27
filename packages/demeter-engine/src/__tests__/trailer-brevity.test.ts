@@ -35,7 +35,9 @@ describe("all clear is one line", () => {
   it("collapses the heading and the single citation together", () => {
     const lines = bodyLines(formatCitationTrailer([inSources("7 CFR 273.5")]));
     expect(lines).toHaveLength(1);
-    expect(lines[0]).toBe("**Citation:** ✓ 7 CFR 273.5");
+    // The citation is a LINK now (#item-5): the banner above promises "check
+    // it yourself below", and what followed used to be unclickable text.
+    expect(lines[0]).toBe("**Citation:** ✓ [7 CFR 273.5](https://www.ecfr.gov/current/title-7/part-273/section-273.5)");
   });
 
   it("stays one line with several verified citations", () => {
@@ -43,7 +45,7 @@ describe("all clear is one line", () => {
       formatCitationTrailer([inSources("7 CFR 273.5"), inSources("7 CFR 273.9")]),
     );
     expect(lines).toHaveLength(1);
-    expect(lines[0]).toContain("7 CFR 273.5, 7 CFR 273.9");
+    expect(lines[0]).toContain("[7 CFR 273.5](https://www.ecfr.gov/current/title-7/part-273/section-273.5), [7 CFR 273.9](https://www.ecfr.gov/current/title-7/part-273/section-273.9)");
   });
 
   it("never restates what the certainty banner already said", () => {
@@ -57,7 +59,7 @@ describe("all clear is one line", () => {
     for (const lang of ANSWER_LANGS) {
       const lines = bodyLines(formatCitationTrailer([inSources("7 CFR 273.5")], lang));
       expect(lines, lang).toHaveLength(1);
-      expect(lines[0], lang).toContain("✓ 7 CFR 273.5");
+      expect(lines[0], lang).toContain("✓ [7 CFR 273.5](https://www.ecfr.gov/current/title-7/part-273/section-273.5)");
     }
   });
 });
@@ -84,7 +86,11 @@ describe("warnings are never compressed away", () => {
     const lines = bodyLines(trailer);
     expect(lines[0]).toBe("**Citation:**");
     expect(trailer).toMatch(/NOT recognized/i);
-    expect(trailer).toContain("✓ 7 CFR 273.5");
+    expect(trailer).toContain("✓ [7 CFR 273.5](https://www.ecfr.gov/current/title-7/part-273/section-273.5)");
+    // The INVENTED one stays plain: linking a citation we have just called
+    // "likely an error" would lend it authority and land the reader on a 404.
+    expect(trailer).toContain("7 CFR 999.9");
+    expect(trailer).not.toContain("part-999");
   });
 
   it("warnings survive in every language", () => {

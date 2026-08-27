@@ -16,6 +16,7 @@
 //   unrecognized — neither. Likely invented or mistyped → flag loudly.
 
 import corpusJson from "./corpus/ecfr-snap.json";
+import { citationMarkdown } from "./citation-url";
 import type { AnswerLang } from "./lang";
 import { getStatePack, type CompiledAuthorityPattern } from "./states";
 
@@ -197,8 +198,20 @@ const TRAILER_STRINGS = {
 export function formatCitationTrailer(checks: CitationCheck[], lang: AnswerLang = "en"): string {
   if (checks.length === 0) return "";
   const t = TRAILER_STRINGS[lang];
-  const inSrc = checks.filter((c) => c.status === "in_sources").map((c) => c.citation);
-  const known = checks.filter((c) => c.status === "known").map((c) => c.citation);
+  // LINKED, so "check it yourself" is an instruction the reader can follow
+  // rather than a suggestion they go looking. Anything citationMarkdown does
+  // not recognize comes back as plain text — see citation-url.ts on why a
+  // wrong link is worse than no link.
+  //
+  // BUT NOT THE UNRECOGNIZED ONES. "7 CFR 999.9" is well-formed enough to
+  // build a URL from, and that URL is a 404 — so linking the tier we have
+  // just called "likely an error" would hand an invented citation the one
+  // thing that makes a citation look real, and send the reader to a dead
+  // eCFR page to find out. They stay plain text: the ⚠️ says do not rely on
+  // this, and a link would say the opposite in the same breath.
+  const link = (c: CitationCheck) => citationMarkdown(c.citation);
+  const inSrc = checks.filter((c) => c.status === "in_sources").map(link);
+  const known = checks.filter((c) => c.status === "known").map(link);
   const bad = checks.filter((c) => c.status === "unrecognized").map((c) => c.citation);
 
   // ALL CLEAR → ONE LINE. Every citation checked out, and the certainty banner
