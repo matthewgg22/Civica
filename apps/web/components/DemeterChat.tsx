@@ -816,6 +816,37 @@ export function DemeterChat({
   /** Bumped to tell DemeterSave "save now" from outside itself — see
    *  DemeterSave's triggerSave prop. Mirrors openPicker below. */
   const [saveSignal, setSaveSignal] = useState(0);
+  /* AUTO-SAVE WHILE SIGNED IN (owner, 2026-08-26). Saving was a button in a
+     side rail, and the report was simply "there is no way to save the
+     conversation" — which is what a control nobody finds amounts to.
+     Signed in, the conversation now keeps itself.
+
+     It reuses DemeterSave's own save() through triggerSave rather than
+     posting again from here: the upsert, the pending-save handoff, the 401
+     and the 409-at-the-cap all live there, and a second copy of that logic is
+     a second thing to get wrong.
+
+     SIGNED OUT IT MUST NOT FIRE. A save attempt without a session opens the
+     sign-in invitation panel, so bumping this on every answer would put a
+     login in front of a product whose whole promise is that you never need
+     one. authEmail is null until the probe returns, and null is also its
+     failure value, so this errs toward not saving.
+
+     AT THE CAP IT STOPS, and says so (owner's call, 2026-08-26): the API
+     answers 409 with the limit, DemeterSave renders copy.limit(n), and
+     nothing of theirs is deleted to make room. */
+  const autoSavedCount = useRef(0);
+  useEffect(() => {
+    if (authEmail === null) return;
+    if (busy) return;
+    if (messages.length === 0) return;
+    // Only once a turn has actually COMPLETED — the last message is the
+    // assistant's, and it is no longer streaming.
+    if (messages[messages.length - 1]?.role !== "assistant") return;
+    if (autoSavedCount.current === messages.length) return;
+    autoSavedCount.current = messages.length;
+    setSaveSignal((n) => n + 1);
+  }, [authEmail, busy, messages]);
   // Anonymous funnel key. Random, per-tab, dies with the tab, never sent to
   // the model — it exists only so the log can tell "asked once and left" from
   // "stayed and got somewhere", which nothing could distinguish before.
@@ -2673,6 +2704,34 @@ export function DemeterChat({
             <p className="demeter__sidebarnote">
               {t.sidebarSignedIn} <span translate="no">{authEmail}</span>
             </p>
+            {/* WHY IT IS SAVING (owner, 2026-08-26). The conversation now
+                keeps itself while signed in, and a product that stores
+                something has to say it is storing it — in the same place it
+                names the account doing the storing. */}
+            <p className="demeter__sidebarnote">{t.sidebarAutosaved}</p>
+            {/* A WAY BACK OUT (owner, 2026-08-26). Signing in had no matching
+                exit anywhere in the product: the route existed
+                (POST /api/auth/sign-out) and only /status ever called it. On a
+                shared or borrowed device — which this product's readers use —
+                an account you cannot leave is worse than no account. It sits
+                with the identity it ends, and a full reload follows so no
+                signed-in state survives in memory. */}
+            <button
+              type="button"
+              className="demeter__signout"
+              onClick={async () => {
+                try {
+                  await fetch("/api/auth/sign-out", { method: "POST" });
+                } catch {
+                  /* Signed out locally regardless: reloading re-probes the
+                     session, and a failed POST leaves the cookie in place
+                     rather than pretending it is gone. */
+                }
+                window.location.assign(lang === "en" ? "/chat" : `/${lang}/chat`);
+              }}
+            >
+              {t.sidebarSignOut}
+            </button>
           </div>
           )}
         </aside>
