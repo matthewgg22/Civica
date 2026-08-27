@@ -126,24 +126,26 @@ export function DemeterWelcome({
             logo reads as the government's card — which is the confusion the
             service mark below exists to prevent, so the fix belongs here too,
             not only in the notice. */}
-        {/* SIDE BY SIDE, not stacked. On its own line the wordmark left a band
-            of empty rail either side of it and read as a header the card did
-            not need. Beside the programme's mark it does the job it is here
-            for: says whose card this is, next to whose programme this is. */}
+        {/* THE WORDMARK SITS UNDER ITS OWN MARK (owner, 2026-08-26), which is
+            what lets both marks grow. Set side by side the lockup was 140px
+            wide, and the pair no longer fitted one row on a phone: the SNAP
+            logo wrapped to its own line, stranding the divider in mid-air, and
+            the marks cost 160px of a card that had 43px of headroom. Stacked,
+            the lockup is as wide as the word, the pair fits with room to
+            spare, and the divider has nothing left to divide. */}
         <div className="dmwel__marks">
           <span className="dmwel__brand">
-            <DemeterMark size={40} />
+            <DemeterMark size={56} />
             <span className="dmwel__brandword" translate="no">
               Demeter <em>AI</em>
             </span>
           </span>
-          <span className="dmwel__marksep" aria-hidden />
         {/* Unaltered, at its true 663:460 ratio — "the logo cannot be altered"
             is a condition of being allowed to use it; only its box is ours to
             set. Decorative: the heading beside it names the program, so alt
             text would announce the same thing twice. */}
           <span className="dmwel__logo">
-            <Image src="/snap-logo.png" alt="" aria-hidden width={150} height={104} priority />
+            <Image src="/snap-logo.png" alt="" aria-hidden width={124} height={86} priority />
           </span>
         </div>
 
@@ -155,24 +157,6 @@ export function DemeterWelcome({
             to mine both for the fact that matters. */}
         <p className="dmwel__body">{copy.body}</p>
         <p className="dmwel__body dmwel__body--quiet">{copy.bodyTwo}</p>
-
-        {/* English on every language, by requirement. VERIFIED VERBATIM against
-            fns.usda.gov/snap/logo-guidance on 2026-08-26, including the space
-            in "U. S." — that is FNS's own spacing, not a typo of ours.
-            The link is additive: it points at the programme the mark belongs
-            to and changes not one character of the required sentence. */}
-        <p className="dmwel__mark" lang="en">
-          The SNAP logo is a service mark of the{" "}
-          <a
-            className="dmwel__marklink"
-            href="https://www.fns.usda.gov/snap"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            U. S. Department of Agriculture
-          </a>
-          . USDA does not endorse any goods, services, or enterprises.
-        </p>
 
         {/* SIGN IN LEADS, CONTINUING IS THE QUIET ONE (owner, 2026-08-26).
             Saving a conversation is the thing someone regrets not doing, and
@@ -204,6 +188,27 @@ export function DemeterWelcome({
             </span>
           </button>
         )}
+
+        {/* AT THE FOOT, not between the reader and the button. FNS requires the
+            notice appear wherever the mark is used; it does not require it
+            interrupt the path to the action, and it was doing exactly that.
+            English on every language, by requirement. VERIFIED VERBATIM against
+            fns.usda.gov/snap/logo-guidance on 2026-08-26, including the space
+            in "U. S." — that is FNS's own spacing, not a typo of ours.
+            The link is additive: it points at the programme the mark belongs
+            to and changes not one character of the required sentence. */}
+        <p className="dmwel__mark" lang="en">
+          The SNAP logo is a service mark of the{" "}
+          <a
+            className="dmwel__marklink"
+            href="https://www.fns.usda.gov/snap"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            U. S. Department of Agriculture
+          </a>
+          . USDA does not endorse any goods, services, or enterprises.
+        </p>
       </div>
     </div>
   );
