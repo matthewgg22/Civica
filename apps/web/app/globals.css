@@ -9286,3 +9286,16 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 .dmwel__secondary:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 4px; }
 /* The primary is a link now, so it needs the button's own box back. */
 a.dmwel__cta { display: inline-flex; text-decoration: none; }
+
+/* ── The rail's head tightens up ─────────────────────────────────────────── */
+/* Shorter descriptor, so it can sit closer under the wordmark instead of
+   floating a line below it. */
+.demeter__sbtag { margin-top: -1.4rem; }
+
+/* THE TOGGLE'S ICON GOES WHITE ON THE WHEAT. Closed, the control is a solid
+   --demeter-wheat square, and ink linework on it reads as a caution label for
+   the same reason ink-on-yellow did in the CTA. White is what the mark itself
+   uses on that ground.
+   OPEN, it stays ink: inside the rail the button is transparent on a light
+   tint, and a white icon there would be invisible. */
+.dmchat .demeter__sidebartoggle--closed { color: var(--demeter-paper); }
