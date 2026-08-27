@@ -140,11 +140,21 @@ export const T = {
       // SNAP mark invites), it just does not go first.
       body: "Every answer quotes the rule it came from, so you can check it.",
       bodyTwo: "Demeter is not the government and cannot decide your case.",
+      /* THE CARD OWNS THE FULL DEFINITION (owner, 2026-08-26). It used
+         to borrow emptyWhatIsSnap, so dismissing the card handed the reader
+         the same 29 words again in the empty state directly behind it — the
+         first thing the product did after introducing itself was repeat
+         itself. */
+      whatIsSnap:
+        "SNAP (formerly known as food stamps) provides food benefits to low-income families to supplement their grocery budget so they can afford the nutritious food essential to health and well-being.",
       cta: "Start asking",
       close: "Close",
     },
+    /* A GLOSS, NOT THE DEFINITION. The card carries the full one, at both
+       doors. This only has to stop the letters "SNAP" being meaningless to
+       someone who dismissed the card without reading it. */
     emptyWhatIsSnap:
-      "SNAP (formerly known as food stamps) provides food benefits to low-income families to supplement their grocery budget so they can afford the nutritious food essential to health and well-being.",
+      "SNAP is the food-benefits program, once called food stamps.",
     // SAYS WHAT IT DOES, and stops short of what it does not (owner, 2026-08-22).
     // "likely to qualify", never "find out if you are eligible": this produces
     // an ESTIMATE, and the panel two inches away says "an estimate, not a
@@ -404,11 +414,21 @@ export const T = {
       continueWithout: "Continuar sin iniciar sesión",
       body: "Cada respuesta cita la regla de la que salió, para que puedas comprobarla.",
       bodyTwo: "Demeter no es el gobierno y no puede decidir tu caso.",
+      /* THE CARD OWNS THE FULL DEFINITION (owner, 2026-08-26). It used
+         to borrow emptyWhatIsSnap, so dismissing the card handed the reader
+         the same 29 words again in the empty state directly behind it — the
+         first thing the product did after introducing itself was repeat
+         itself. */
+      whatIsSnap:
+        "SNAP (antes conocido como cupones de alimentos) ofrece beneficios de alimentos a familias de bajos ingresos para complementar su presupuesto de comida, de modo que puedan pagar los alimentos nutritivos esenciales para la salud y el bienestar.",
       cta: "Empezar a preguntar",
       close: "Cerrar",
     },
+    /* A GLOSS, NOT THE DEFINITION. The card carries the full one, at both
+       doors. This only has to stop the letters "SNAP" being meaningless to
+       someone who dismissed the card without reading it. */
     emptyWhatIsSnap:
-      "SNAP (antes conocido como cupones de alimentos) ofrece beneficios de alimentos a familias de bajos ingresos para complementar su presupuesto de comida, de modo que puedan pagar los alimentos nutritivos esenciales para la salud y el bienestar.",
+      "SNAP es el programa de beneficios de alimentos, antes llamado cupones de alimentos.",
     emptyLede:
       "Puedo ayudarte a ver si es probable que califiques e ir armando tu solicitud sobre la marcha, citando la regla detrás de cada respuesta, para que puedas comprobarla.",
     emptyModes:
@@ -608,11 +628,21 @@ export const T = {
       continueWithout: "Tiếp tục mà không đăng nhập",
       body: "Mỗi câu trả lời đều trích dẫn quy định mà nó dựa vào, để bạn tự kiểm chứng.",
       bodyTwo: "Demeter không phải là chính phủ và không thể quyết định hồ sơ của bạn.",
+      /* THE CARD OWNS THE FULL DEFINITION (owner, 2026-08-26). It used
+         to borrow emptyWhatIsSnap, so dismissing the card handed the reader
+         the same 29 words again in the empty state directly behind it — the
+         first thing the product did after introducing itself was repeat
+         itself. */
+      whatIsSnap:
+        "SNAP (trước đây gọi là tem phiếu thực phẩm) cung cấp trợ cấp thực phẩm cho các gia đình thu nhập thấp để bổ sung vào ngân sách đi chợ, giúp họ mua được thực phẩm dinh dưỡng thiết yếu cho sức khỏe và đời sống.",
       cta: "Bắt đầu hỏi",
       close: "Đóng",
     },
+    /* A GLOSS, NOT THE DEFINITION. The card carries the full one, at both
+       doors. This only has to stop the letters "SNAP" being meaningless to
+       someone who dismissed the card without reading it. */
     emptyWhatIsSnap:
-      "SNAP (trước đây gọi là tem phiếu thực phẩm) cung cấp trợ cấp thực phẩm cho các gia đình thu nhập thấp để bổ sung vào ngân sách đi chợ, giúp họ mua được thực phẩm dinh dưỡng thiết yếu cho sức khỏe và đời sống.",
+      "SNAP là chương trình trợ cấp thực phẩm, trước đây gọi là tem phiếu thực phẩm.",
     emptyLede:
       "Tôi có thể giúp bạn xem mình có khả năng đủ điều kiện hay không và dần dựng nên đơn xin, kèm trích dẫn điều luật cho mỗi câu trả lời, để bạn tự kiểm chứng.",
     emptyModes:
@@ -808,11 +838,21 @@ export const T = {
       continueWithout: "不登录，继续使用",
       body: "每条回答都会附上依据的法规，方便您自行核对。",
       bodyTwo: "Demeter 不是政府机构，无法决定您的案件。",
+      /* THE CARD OWNS THE FULL DEFINITION (owner, 2026-08-26). It used
+         to borrow emptyWhatIsSnap, so dismissing the card handed the reader
+         the same 29 words again in the empty state directly behind it — the
+         first thing the product did after introducing itself was repeat
+         itself. */
+      whatIsSnap:
+        "SNAP（旧称食品券）为低收入家庭提供食品补助，补贴他们的买菜开支，使其能够负担对健康和生活至关重要的营养食品。",
       cta: "开始提问",
       close: "关闭",
     },
+    /* A GLOSS, NOT THE DEFINITION. The card carries the full one, at both
+       doors. This only has to stop the letters "SNAP" being meaningless to
+       someone who dismissed the card without reading it. */
     emptyWhatIsSnap:
-      "SNAP（旧称食品券）为低收入家庭提供食品补助，补贴他们的买菜开支，使其能够负担对健康和生活至关重要的营养食品。",
+      "SNAP 是食品补助项目，旧称食品券。",
     emptyLede:
       "我可以帮您看看是否可能符合资格，并一步步整理出您的申请内容，每条回答都会附上依据的条文，方便您自行核对。",
     emptyModes:

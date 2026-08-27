@@ -40,7 +40,7 @@ export function LandingWelcome({ lang }: { lang: AnswerLang }) {
   if (!show) return null;
   return (
     <DemeterWelcome
-      copy={{ ...t.welcome, whatIsSnap: t.emptyWhatIsSnap }}
+      copy={t.welcome}
       onDismiss={dismiss}
       signInHref={`/sign-in?next=${encodeURIComponent(askPath(lang))}&lang=${lang}`}
     />
