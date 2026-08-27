@@ -8925,29 +8925,36 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 .dmwel__x:hover { background: var(--demeter-tint); color: var(--demeter-ink); }
 .dmwel__x:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
 
-/* The two marks share a row: whose card this is, beside whose programme. */
+/* THE TWO MARKS STAND AS EQUALS. Whose card this is, beside whose programme
+   — and neither one louder. The SNAP logo was 150x104 against a 140x40
+   lockup, near three times the area, which on a phone made the government's
+   mark the largest object on a card whose whole job is to say this is not the
+   government. That is the confusion the notice below exists to prevent, so it
+   is fixed here too, not only in the notice.
+
+   Stacking the wordmark under its own mark is what pays for it: the lockup
+   narrows to the width of the word, so both marks can GROW and still share
+   one row on a 375px phone (~105 + 16 + 124 = 245 of 295 available). Wrap is
+   kept as the graceful failure for a long translation or a large text size —
+   with the divider gone, wrapping now just stacks them. */
 .dmwel__marks {
   display: flex; align-items: center; justify-content: center;
-  gap: 0.85rem; flex-wrap: wrap; margin-bottom: 1rem;
+  gap: 1.1rem; flex-wrap: wrap; margin-bottom: 1rem;
 }
 .dmwel__brand {
-  display: inline-flex; align-items: center; justify-content: center;
-  gap: 0.4rem; margin-bottom: 0.9rem;
+  display: inline-flex; flex-direction: column; align-items: center;
+  gap: 0.35rem; margin: 0;
 }
 .dmwel__brandword {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em;
+  font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em;
   color: var(--demeter-ink);
 }
 .dmwel__brandword em { font-style: normal; color: var(--demeter-terracotta-deep); }
-.dmwel__marksep {
-  width: 1px; align-self: stretch; min-height: 2.4rem;
-  background: var(--demeter-rule);
-}
 /* The mark is reproduced UNALTERED at its true 663:460 ratio — a condition of
    being allowed to use it at all. Only the box is ours. */
 .dmwel__logo { display: inline-flex; justify-content: center; margin: 0; }
-.dmwel__logo img { height: auto; max-width: 150px; }
+.dmwel__logo img { height: auto; max-width: 124px; }
 
 /* ONE VOICE, ONE COLOUR. Card copy had been split across the display serif and
    the sans at three different greys, which read as three registers on a card
@@ -8963,11 +8970,19 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: 0.98rem; line-height: 1.62; margin: 0 0 0.7rem;
   color: var(--demeter-ink);
+  /* LEFT, while the title and the marks stay centred. Set centred, the five
+     lines of the definition each began at a different x and the reader had to
+     find the left edge again on every one. The required notice was already
+     left-aligned, so the fine print was the only thing on the card set for
+     reading — backwards. */
+  text-align: left;
   text-wrap: pretty;
 }
-/* The card's second line is the caveat, so it sits a step back from the first
-   without leaving the ink. */
-.dmwel__body--quiet { color: var(--demeter-muted); font-size: 0.9rem; }
+/* The caveat sits a step back from the line above it — by SIZE, not by grey.
+   It had been put on --demeter-muted, which made the one sentence that says
+   Demeter cannot decide anyone's case the faintest thing on the card. If a
+   line has to recede, it recedes smaller and stays on the ink. */
+.dmwel__body--quiet { font-size: 0.9rem; }
 
 /* The required notice. Legible, not prominent: it keeps its own rule above it
    so it reads as a different KIND of sentence without being a different
@@ -8975,7 +8990,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 .dmwel__mark {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: 0.78rem; line-height: 1.5; color: var(--demeter-ink);
-  margin: 0 0 1.1rem; padding-top: 0.7rem;
+  margin: 1.2rem 0 0; padding-top: 0.8rem;
   border-top: 1px solid var(--demeter-rule);
   text-align: left;
 }
@@ -9002,12 +9017,26 @@ a.dmwel__cta { text-decoration: none; }
   padding: 0.55rem 1rem; min-height: 40px;
   border: 0; background: none; cursor: pointer;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.82rem; color: var(--demeter-muted);
+  font-size: 0.82rem; color: var(--demeter-ink);
   text-decoration: underline; text-decoration-color: var(--demeter-rule-strong);
   text-underline-offset: 3px;
 }
 .dmwel__secondary:hover { color: var(--demeter-ink); text-decoration-color: currentColor; }
 .dmwel__secondary:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 4px; }
+
+/* THE NARROWEST PHONE STILL GETS ONE ROW. At 320px the pair came to 244 of
+   240 available and wrapped by four pixels, which costs 74px of height on the
+   screen that can least afford it. A slimmer gutter at this width buys the
+   row back; wrap stays as the failure mode below it. */
+@media (max-width: 22rem) {
+  .dmwel__card { padding-left: 1.15rem; padding-right: 1.15rem; }
+  /* Clear of the corner dismiss. Once the pair holds one row at this width the
+     logo's right edge runs to within a few pixels of the card's content box,
+     and the X — absolutely positioned in that corner — sat ON the government's
+     mark. Obscuring the logo is the one thing the permission to use it does
+     not allow, so the row starts below the button here. */
+  .dmwel__marks { gap: 0.8rem; margin-top: 0.9rem; }
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .dmwel__card { animation: dmwelin 160ms ease-out; }
