@@ -1162,8 +1162,7 @@ export function DemeterChat({
           : null;
 
       const hasSaidSomething = messages.some((m) => m.role !== "divider");
-      setMessages((m) => [
-        ...m,
+      const inserts = [
         ...(hasSaidSomething
           ? [
               {
@@ -1173,7 +1172,20 @@ export function DemeterChat({
             ]
           : []),
         ...(portal ? [{ role: "assistant" as const, content: portal }] : []),
-      ]);
+      ];
+      // A STREAM IN FLIGHT OWNS THE LAST SLOT. Every streaming write targets
+      // messages[length - 1] if it is an assistant, so appending behind a
+      // half-written answer hands the stream this portal message to overwrite
+      // — and strands the empty placeholder in the middle of the transcript,
+      // where it becomes an invalid turn on the next request (a 400 that
+      // sticks). Going in FRONT of the placeholder keeps the answer landing
+      // where it was meant to and the divider where it belongs: before it.
+      setMessages((m) => {
+        if (!inserts.length) return m;
+        const tail = m[m.length - 1];
+        const streaming = tail?.role === "assistant" && tail.content === "";
+        return streaming ? [...m.slice(0, -1), ...inserts, tail] : [...m, ...inserts];
+      });
     }
   };
 
@@ -1386,8 +1398,19 @@ export function DemeterChat({
     setInput("");
     resetInputHeight();
 
+    // EMPTY TURNS ARE DROPPED, not just dividers. An assistant message with
+    // no content is rejected by the server ("message.content must be a
+    // non-empty string"), which returns a 400 carrying no `reason` — so the
+    // reader sees "Demeter couldn't read that (http_400)" and the chat is
+    // stuck: every retry resends the same invalid history.
+    //
+    // One can be left behind by changing state WHILE AN ANSWER IS STREAMING,
+    // which is exactly what "flickering through states" does. changeState has
+    // always filtered `Boolean(x.content)` when it builds its own window; this
+    // path did not, and the two disagreeing is the whole bug.
     const chatTurns = messages.filter(
-      (m): m is { role: "user" | "assistant"; content: string } => m.role !== "divider",
+      (m): m is { role: "user" | "assistant"; content: string } =>
+        m.role !== "divider" && Boolean(m.content),
     );
     // Tail-window to the server's MAX_MESSAGES (20). A strictly alternating,
     // user-first history is ALWAYS odd length once the new question is
@@ -2223,8 +2246,13 @@ export function DemeterChat({
               });
             }}
           >
+            {/* CENTRED. The old path ran y=1 to y=15 in an 18-high box — one
+                pixel of air above, three below — so the hexagon sat visibly
+                high in a round button, which is where it shows most. Its
+                centre was (9, 8) against a viewBox centre of (9, 9). Same
+                shape, moved down one. */}
             <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden fill="currentColor">
-              <path d="M6.2 1h5.6L16 5.2v5.6L11.8 15H6.2L2 10.8V5.2z" />
+              <path d="M6.2 2h5.6L16 6.2v5.6L11.8 16H6.2L2 11.8V6.2z" />
             </svg>
           </button>
         ) : (

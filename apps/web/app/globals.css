@@ -4868,7 +4868,14 @@ html {
 /* #B5B1A9: one step darker than --demeter-rule-strong — at rule-strong the
    idle circle read as a watermark. Disabled control; contrast rules do not
    bind it, legibility taste does. */
-.dmchat .demeter__send--stop { background: var(--demeter-terracotta-deep); }
+.dmchat .demeter__send--stop {
+  /* SAME TERRACOTTA AS SEND. This was --demeter-terracotta-deep, which is
+     the send button's HOVER colour — so the control someone is looking at
+     mid-answer read as a send button stuck in a hover state, darker for no
+     reason they could act on. The hexagon already says it is a different
+     control; the colour does not need to say it twice. */
+  background: var(--demeter-terracotta);
+}
 .demeter__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: 1; resize: none; border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-card); background: var(--demeter-card);
@@ -4901,7 +4908,14 @@ html {
   background: var(--demeter-terracotta); color: #fff; font-weight: 700; font-size: 0.95rem; padding: 0 1.2rem;
 }
 .demeter__send:disabled { opacity: 0.5; }
-.demeter__send--stop { background: var(--demeter-terracotta-deep); }
+.demeter__send--stop {
+  /* SAME TERRACOTTA AS SEND. This was --demeter-terracotta-deep, which is
+     the send button's HOVER colour — so the control someone is looking at
+     mid-answer read as a send button stuck in a hover state, darker for no
+     reason they could act on. The hexagon already says it is a different
+     control; the colour does not need to say it twice. */
+  background: var(--demeter-terracotta);
+}
 /* Tight to the line above it: the two belong together as one footnote, and a
    half-rem gap made them read as two separate warnings. */
 .demeter__disclaimer { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; font-size: 0.72rem; color: var(--demeter-muted); text-align: center; padding: 0.15rem 1rem 0; }
