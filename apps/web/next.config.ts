@@ -56,9 +56,9 @@ const nextConfig: NextConfig = {
       // if the page comes back. Restoring it would mean a new URL, or a long
       // tail of people who never see it.
       //
-      // WHAT IS NOT DELETED: the demeter_supporters table and its approved
-      // rows. Removing the page does not destroy what organizations submitted;
-      // that is a separate, irreversible decision and needs its own migration.
+      // The table went too (20260827_drop_demeter_supporters.sql), once
+      // production confirmed it had never held a row — nobody ever signed on,
+      // so there was nothing of anyone's to destroy.
       { source: "/supporters", destination: "/feedback", permanent: true },
     ];
   },
