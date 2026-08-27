@@ -8832,6 +8832,19 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   background: var(--demeter-tint); color: var(--demeter-terracotta-deep);
   text-decoration: none;
 }
+/* THE SECTION YOU ARE READING. Distinct from hover on purpose — hover is
+   "about to", this is "here" — so it carries a bar as well as a tint, and
+   hover cannot be mistaken for it. The bar is drawn with a border on the
+   list item so it does not shift the text by a pixel when it appears. */
+.lgl__toc-list a.is-current {
+  color: var(--demeter-terracotta-deep); font-weight: 600;
+  background: var(--demeter-tint);
+  box-shadow: inset 2px 0 0 var(--demeter-terracotta);
+}
+.lgl__toc-list a { transition: background-color 120ms ease-out, color 120ms ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .lgl__toc-list a { transition: none; }
+}
 .lgl__toc-list a:focus-visible {
   outline: 2px solid var(--demeter-terracotta); outline-offset: 1px;
 }

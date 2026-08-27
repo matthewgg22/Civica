@@ -12,6 +12,7 @@
 import Link from "next/link";
 import { DemeterFooter } from "./DemeterFooter";
 import { DOC_NAV, type Block, type LegalDocument } from "../lib/legal";
+import { LegalContents } from "./LegalContents";
 
 function BlockView({ block }: { block: Block }) {
   switch (block.kind) {
@@ -117,20 +118,10 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
             reachable in reading order and lands above the text on a phone.
             Grid places it in the second column on desktop. */}
         <div className="lgl__grid">
-          <nav className="lgl__toc" aria-label="Contents">
-            <p className="lgl__toc-label">Contents</p>
-            {/* No list marker: every heading already carries its own number,
-                and the numbers are cross-referenced in the body ("Section
-                13.10"), so they belong in the text rather than in a marker
-                that would print "1. 1. This agreement". */}
-            <ol className="lgl__toc-list">
-              {doc.sections.map((s) => (
-                <li key={s.id}>
-                  <a href={`#${s.id}`}>{s.heading}</a>
-                </li>
-              ))}
-            </ol>
-          </nav>
+          <LegalContents
+            label="Contents"
+            entries={doc.sections.map((s) => ({ id: s.id, heading: s.heading }))}
+          />
 
           <div className="lgl__body">
             {doc.sections.map((section) => (
