@@ -35,7 +35,19 @@ const nextConfig: NextConfig = {
   // ever built for "/". Query strings carry through automatically, which keeps
   // campaign links like /?state=CA&q=… working.
   async redirects() {
-    return [{ source: "/", destination: "/screen/ask", permanent: false }];
+    return [
+      { source: "/", destination: "/screen/ask", permanent: false },
+      // /verify → /states. The page stopped being about our verification
+      // pipeline and became the jurisdiction directory, so the URL followed
+      // the content. PERMANENT here, unlike "/" above: this one is not
+      // provisional — /verify is not coming back, it is indexed, and it is
+      // linked from the chat, the landing page, the guides and the footer, so
+      // passing the ranking on is the point. The localized forms redirect too,
+      // even though /es/verify never existed — anyone who followed the footer
+      // link that shipped broken should land on the page rather than a 404.
+      { source: "/verify", destination: "/states", permanent: true },
+      { source: "/:lang(es|vi|zh)/verify", destination: "/:lang/states", permanent: true },
+    ];
   },
   webpack(config, { isServer }) {
     // serverExternalPackages does NOT externalize imports made from inside a

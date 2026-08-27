@@ -1,12 +1,15 @@
 {
   "code": "AL",
   "program": "SNAP — no distinctive local nickname; DHR calls it \"Food Assistance\" (see PROVENANCE.md)",
+  "program_short": "SNAP",
   "agency": "Alabama Department of Human Resources (DHR), Food Assistance Division",
+  "agency_short": "Alabama Department of Human Resources (DHR)",
   "admin_model": "state",
   "admin_note": "Alabama is a STATE-ADMINISTERED SNAP program: DHR is a single statewide agency, and its ~67 county DHR offices are DHR's own local arms (state employees operating under statewide DHR policy), not independently-governed county welfare boards. This matches this roster's Georgia/Indiana/Tennessee/Missouri/Maryland/South Carolina state-agency-with-local-offices archetype, NOT the independently-governed-county archetype documented for Virginia/North Carolina/Colorado. DHR's own SNAP Points of Eligibility (POE) manual consistently instructs \"the county department shall...\" as an execution of statewide policy, not local discretion. Confirm current operative practice (local processing times, specific outreach materials) with the applicant's own county DHR office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC.",
   "system": "DHR's Food Assistance Division processes SNAP through county DHR offices; applicants can apply online via the MyDHR portal, in person, by mail, or by fax at a county DHR office. DHR separately operates \"Family Assistance\" (Alabama's TANF cash-assistance program, its own division and its own name) — a SEPARATE program from \"Food Assistance\" (SNAP), though the two names are easily confused (see PROVENANCE.md).",
   "portal": {
     "name": "MyDHR",
+    "short": "MyDHR",
     "url": "https://mydhr.alabama.gov/"
   },
   "update_channels": [

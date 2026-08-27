@@ -4,6 +4,7 @@ import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/re
 import type { PackMeta } from "@civica/demeter-engine/packs";
 import { DemeterChat } from "../DemeterChat";
 import { T } from "../../lib/i18n/demeter-chat-copy";
+import { makePack, makePortal } from "../../__tests__/fixtures/pack";
 
 // State-switch spec (T12 / T-C): switching scope mid-conversation must
 // (1) insert a visible divider — earlier answers may no longer apply — and
@@ -13,31 +14,19 @@ import { T } from "../../lib/i18n/demeter-chat-copy";
 // (2026-08-09) — the CONTRACT under test is unchanged, so these assertions are
 // the same; only the two lines that pick a state were rewritten.
 
-const verification = {
-  verified_on: "2026-08-05",
-  method: "test fixture",
-  gates: "n/a",
-  sources: [],
-};
 const STATES: PackMeta[] = [
-  {
+  makePack({
     code: "CA",
     program: "CalFresh",
     agency: "California Department of Social Services",
     adminModel: "county",
-    portal: { name: "BenefitsCal", url: "https://benefitscal.com" },
-    verified: true,
-    verification,
-  },
-  {
+    portal: makePortal({ name: "BenefitsCal", url: "https://benefitscal.com" }),
+  }),
+  makePack({
     code: "TX",
     program: "Texas SNAP",
     agency: "Texas Health and Human Services Commission",
-    adminModel: "state",
-    portal: undefined,
-    verified: true,
-    verification,
-  },
+  }),
 ];
 
 function streamedResponse(text: string): Response {
@@ -228,17 +217,20 @@ describe("an annotated pack never reaches the transcript (#931)", () => {
   // issue this pack found: Iowa HHS is the current, consistent name used
   // throughout the Employees' Manual…", so an Iowa reader was told about
   // this pack's research inside an answer.
+  // The model-facing fields keep their annexe; the reader-facing ones do not.
+  // That split now lives in the PACK rather than in a render-time cut, so this
+  // suite asserts the same thing it always did: what reaches a reader is the
+  // short form, and no surface prints the raw field.
   const ANNOTATED: PackMeta[] = [
-    {
+    makePack({
       code: "IA",
       program: "Food Assistance — Iowa's own public-facing name; see PROVENANCE.md Finding 3",
+      programShort: "Food Assistance",
       agency:
         "Iowa Department of Health and Human Services (Iowa HHS) — no rebrand-lag issue this pack found: Iowa HHS is the current name used throughout the Employees' Manual",
-      adminModel: "state",
-      portal: { name: "Iowa HHS Services Portal", url: "https://hhs.iowa.gov" },
-      verified: true,
-      verification,
-    },
+      agencyShort: "Iowa Department of Health and Human Services (Iowa HHS)",
+      portal: makePortal({ name: "Iowa HHS Services Portal", url: "https://hhs.iowa.gov" }),
+    }),
   ];
 
   it("the portal hand-off carries the agency's NAME, not its annexe", async () => {

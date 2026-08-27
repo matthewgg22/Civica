@@ -120,7 +120,7 @@ describe("stylesheet pins (findings 4, 5, 7)", () => {
         copy={T.en.worksheet}
         mode="ask"
         onModeChange={() => {}}
-        footLinks={<a className="demeter__how" href="/verify">{T.en.howWeVerify}</a>}
+        footLinks={<a className="demeter__how" href="/states">{T.en.statesLink}</a>}
       />,
     );
     expect(container.querySelector(".dmw__footlinks .demeter__how")).toBeTruthy();

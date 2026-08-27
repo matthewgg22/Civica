@@ -1,12 +1,15 @@
 {
   "code": "FL",
   "program": "Supplemental Nutrition Assistance Program (SNAP) — Florida's manual still uses the older \"Food Stamps (FS)\" name internally",
+  "program_short": "Supplemental Nutrition Assistance Program (SNAP)",
   "agency": "Florida Department of Children and Families (DCF)",
+  "agency_short": "Florida Department of Children and Families (DCF)",
   "admin_model": "state",
   "admin_note": "State-administered: DCF runs SNAP directly; there are no independent county eligibility agencies. Policy lives in the ACCESS Florida Program Policy Manual (CFOP 165-22), organized by 4-digit chapter number where the middle two digits identify the program — any chapter ending in \"10\" (0210, 0610, 1610, 1810, 2410, 2610, 3210...) is the Food Stamps program section of that chapter. Chapters are amended in place (no numbered bulletin/release series analogous to Illinois' MR or Michigan's BPB was found in this pass — see PROVENANCE.md).",
   "system": "MyACCESS (public application/case-management portal); FloridaCommerce/CareerSource administers SNAP Employment & Training referrals",
   "portal": {
     "name": "MyACCESS Florida",
+    "short": "MyACCESS Florida",
     "url": "https://www.myaccessflorida.com"
   },
   "update_channels": [

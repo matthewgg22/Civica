@@ -1,12 +1,15 @@
 {
   "code": "WI",
   "program": "FoodShare (Wisconsin's name for SNAP)",
+  "program_short": "FoodShare",
   "agency": "Wisconsin Department of Health Services (DHS), Division of Medicaid Services",
+  "agency_short": "Wisconsin Department of Health Services (DHS)",
   "admin_model": "county",
   "admin_note": "County-administered, with a distinctive two-track structure: 71 of Wisconsin's 72 counties are required to form multi-county Income Maintenance (IM) consortia — there are 11 consortia statewide — to determine eligibility and issue benefits, while Milwaukee County alone is served by Milwaukee Enrollment Services (MilES), a DIRECTLY STATE-STAFFED unit (not a consortium). Practice can vary by consortium the same way it varies by county in California or New York, and Milwaukee's state-run model is itself a genuinely distinct administrative layer from the rest of the state — worth flagging separately from a garden-variety county note.",
   "system": "ForwardHealth (the shared eligibility portal for FoodShare, BadgerCare Plus/Medicaid, and Wisconsin Shares)",
   "portal": {
     "name": "ACCESS.wi.gov",
+    "short": "ACCESS.wi.gov",
     "url": "https://access.wisconsin.gov"
   },
   "update_channels": [

@@ -1,12 +1,15 @@
 {
   "code": "VA",
   "program": "SNAP — Virginia uses the plain federal program name throughout its own SNAP Manual and DSS public materials; NOTE that Virginia's manual glossary defines \"FNS\" as the FEDERAL USDA Food and Nutrition Service, the same convention this roster's New Jersey pack documents and the OPPOSITE of North Carolina's pack, where \"FNS\" means the state's own manual/program",
+  "program_short": "SNAP",
   "agency": "Virginia Department of Social Services (VDSS)",
+  "agency_short": "Virginia Department of Social Services (VDSS)",
   "admin_model": "county",
   "admin_note": "Virginia runs a state-supervised, LOCALLY-administered system: VDSS writes the statewide SNAP Manual (Volume V) and Title 63.2 of the Code of Virginia sets the governing statute, but day-to-day eligibility determination is handled by each Local Department of Social Services (LDSS) — one per city/county — staffed by caseworkers the manual itself calls \"Benefit Programs Specialists\" (BPS). Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own LDSS, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ.",
   "system": "Virginia's eligibility caseworkers use the state's benefits system; applicants apply through the CommonHelp self-service portal or in person/by mail/fax at their LDSS",
   "portal": {
     "name": "CommonHelp",
+    "short": "CommonHelp",
     "url": "https://commonhelp.virginia.gov"
   },
   "update_channels": [

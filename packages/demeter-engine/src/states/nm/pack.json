@@ -1,12 +1,15 @@
 {
   "code": "NM",
   "program": "SNAP — New Mexico has no distinctive local program nickname and no distinctive branded EBT card name; consumer pages use plain \"SNAP\" and \"EBT Card\" throughout (see PROVENANCE.md Finding 6)",
+  "program_short": "SNAP",
   "agency": "New Mexico Health Care Authority (HCA), Income Support Division (ISD) — renamed from the New Mexico Human Services Department (HSD) effective July 1, 2024, per 2023 Senate Bill 16",
+  "agency_short": "New Mexico Health Care Authority (HCA)",
   "admin_model": "state",
   "admin_note": "New Mexico is a STATE-ADMINISTERED SNAP program — HCA's Income Support Division (ISD) processes SNAP centrally through statewide field offices, not independent county agencies like CA/NY/MN/WI/VA. GENUINE STRUCTURAL FINDING this pack found: New Mexico's operative SNAP regulation, NMAC Title 8, Chapter 139 (\"Food Stamp Program\"), IS a dedicated, SNAP-only chapter (unlike Connecticut's shared multi-program UPM) — but this pack found a live, disclosed side effect of New Mexico's July 2024 HSD-to-HCA agency rename: individual NMAC 8.139 sections carry INCONSISTENT issuing-agency vintages depending on which host serves them. Sections re-published on the state's official records host (srca.nm.gov), such as 8.139.520 (amended 7/1/2024) and 8.139.420 (amended 7/16/2024, further amended 3/1/2025), correctly read \"Issuing Agency: New Mexico Health Care Authority.\" But some individual-section PDFs still hosted at hsd.state.nm.us — the legacy HSD domain, e.g. 8.139.410 and 8.139.400 — still read \"Issuing Agency: New Mexico Human Services Department\" with no post-2024 amendment stamp, even though the department itself has not existed under that name since July 1, 2024. This pack cites the srca.nm.gov versions wherever a section exists on both hosts, and flags the hsd.state.nm.us legacy PDFs as a live staleness risk distinct from CT's Program-tag-checking caution — here the risk is host provenance, not program scope. Confirm current operative practice with the applicant's own local HCA/ISD field office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA/KY/OK/CT/UT/IA/AR.",
   "system": "HCA's Income Support Division (ISD) processes SNAP centrally (no county offices with independent policy authority); applicants apply online through the YesNM self-service portal (yes.state.nm.us), by phone or in person at a local HCA/ISD field office, or by mailing a printed application. The customer service center can be reached at 1-800-283-4465. Most households recertify every 12 months with a 6-month Interim Report at the midpoint; households where every adult member is 60+ or disabled with no earned income were extended from 12-month to 36-month certification periods effective October 1, 2024.",
   "portal": {
     "name": "YesNM",
+    "short": "YesNM",
     "url": "https://www.yes.state.nm.us/yesnm/home/index"
   },
   "update_channels": [

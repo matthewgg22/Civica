@@ -1,12 +1,15 @@
 {
   "code": "TN",
   "program": "SNAP — Tennessee uses the plain federal program name throughout TDHS materials and its own codified rules; TDHS's own SNAP Policy 24.24 glossary does not define \"FNS\" at all, but its Authority lines cite \"7 C.F.R.\" directly, consistent with the FEDERAL-agency convention this roster's Virginia and New Jersey packs document and the OPPOSITE of North Carolina's pack, where \"FNS\" means the state's own manual/program",
+  "program_short": "SNAP",
   "agency": "Tennessee Department of Human Services (TDHS)",
+  "agency_short": "Tennessee Department of Human Services (TDHS)",
   "admin_model": "state",
   "admin_note": "Tennessee is STATE-administered: TDHS writes the codified Rules of the Tennessee Department of Human Services (Tenn. Comp. R. & Regs. ch. 1240-01, filed with the Secretary of State) and a parallel series of numbered TDHS SNAP Policy documents (24.01-24.31+), and TDHS's own county offices — described in Policy 24.03 as making SNAP determinations — are the state agency's field arm, not independently governed county welfare departments the way Virginia's LDSS or North Carolina's county DSS are. Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own TDHS county office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA.",
   "system": "Tennessee's eligibility caseworkers use the state's ACCENT case-management system; applicants apply through the One DHS Customer Portal or in person/by mail/fax at a TDHS county office",
   "portal": {
     "name": "One DHS Customer Portal",
+    "short": "One DHS Customer Portal",
     "url": "https://onedhs.tn.gov"
   },
   "update_channels": [

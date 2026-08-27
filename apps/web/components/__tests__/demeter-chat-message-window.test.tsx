@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
 import type { PackMeta } from "@civica/demeter-engine/packs";
 import { DemeterChat } from "../DemeterChat";
+import { makePack } from "../../__tests__/fixtures/pack";
 
 // Regression for #833: a real production conversation got a permanent 400
 // ("Conversation must start with a user message") once it passed ~10
@@ -18,22 +19,8 @@ import { DemeterChat } from "../DemeterChat";
 // on every turn from the first time the conversation crosses this length
 // onward, not as an occasional edge case.
 
-const verification = {
-  verified_on: "2026-08-05",
-  method: "test fixture",
-  gates: "n/a",
-  sources: [],
-};
 const STATES: PackMeta[] = [
-  {
-    code: "FL",
-    program: "Florida SNAP",
-    agency: "Florida Department of Children and Families",
-    adminModel: "state",
-    portal: undefined,
-    verified: true,
-    verification,
-  },
+  makePack({ code: "FL", program: "Florida SNAP", agency: "Florida Department of Children and Families" }),
 ];
 
 function streamedResponse(text: string): Response {

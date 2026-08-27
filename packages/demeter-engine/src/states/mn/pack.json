@@ -1,12 +1,15 @@
 {
   "code": "MN",
   "program": "Supplemental Nutrition Assistance Program (SNAP) — formerly called \"Food Support\" or \"Food Stamps\" in Minnesota's own manual glossary",
+  "program_short": "Supplemental Nutrition Assistance Program (SNAP)",
   "agency": "Minnesota Department of Children, Youth, and Families (DCYF) — but the Combined Manual itself is still hosted on the LEGACY Department of Human Services (DHS) domain",
+  "agency_short": "Minnesota Department of Children, Youth, and Families (DCYF)",
   "admin_model": "county",
   "admin_note": "County-administered by 87 county agencies plus 11 Tribal Nations — a different structure from Wisconsin's multi-county-consortium model (each Minnesota county runs its own office; there is no consortium layer). A genuine agency-name migration is in progress: Minnesota moved food/family-program functions from DHS to a newly created Department of Children, Youth, and Families (DCYF), but the authoritative eligibility policy — the Combined Manual — is STILL hosted on the legacy dhs.state.mn.us domain and content-management system as of this pack's build date, and several individual manual sections carry issue-date stamps ranging from 2014 to 2025, confirming real, uneven staleness across the manual (see PROVENANCE.md).",
   "system": "MAXIS (the county eligibility system); applicants apply through MNbenefits.mn.gov",
   "portal": {
     "name": "MNbenefits",
+    "short": "MNbenefits",
     "url": "https://mnbenefits.mn.gov"
   },
   "update_channels": [

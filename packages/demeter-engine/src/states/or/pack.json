@@ -1,12 +1,15 @@
 {
   "code": "OR",
   "program": "Supplemental Nutrition Assistance Program (SNAP)",
+  "program_short": "Supplemental Nutrition Assistance Program (SNAP)",
   "agency": "Oregon Department of Human Services (ODHS), Self-Sufficiency Programs",
+  "agency_short": "Oregon Department of Human Services (ODHS)",
   "admin_model": "state",
   "admin_note": "State-administered: ODHS runs SNAP directly through the ONE (Oregon eligibility) system; there is no independent county eligibility agency layer. Policy lives in OAR (Oregon Administrative Rules) Chapter 461, cited here as 'OAR 461-DDD-DDDD'. ODHS republishes rules as unofficial HTML/PDF at oregon.public.law and ch461rules.odhs.oregon.gov, alongside the official Secretary of State Administrative Rules database — this pack cites both a rule number and the ch461rules.odhs.oregon.gov PDF where fetched directly, since oregon.public.law's rendering was found stale relative to the live PDF for at least one dollar-figure rule during this pack's build (see PROVENANCE.md).",
   "system": "ONE (Oregon eligibility system) — a single application covers SNAP, OHP, ERDC, and TANF",
   "portal": {
     "name": "ONE Online",
+    "short": "ONE Online",
     "url": "https://one.oregon.gov"
   },
   "update_channels": [

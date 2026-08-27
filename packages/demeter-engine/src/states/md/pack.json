@@ -1,12 +1,15 @@
 {
   "code": "MD",
   "program": "SNAP — no distinctive local nickname; Maryland's own statute subtitle is still headed \"Food Stamps,\" a naming artifact predating SNAP's 2008 federal rename (see PROVENANCE.md Finding 8)",
+  "program_short": "SNAP",
   "agency": "Maryland Department of Human Services (DHS), Family Investment Administration (FIA)",
+  "agency_short": "Maryland Department of Human Services (DHS)",
   "admin_model": "state",
   "admin_note": "Maryland is STATE-supervised: SNAP is administered through 24 Local Departments of Social Services (LDSS) — one per county plus Baltimore City — but each LDSS executive director reports to the Secretary of Human Services, and Md. Code, Human Services § 5-501(c) requires every local department to administer SNAP \"under the supervision and control of the Department\" and \"in accordance with the regulations of the Department and federal law.\" This matches this roster's Georgia/Indiana/Tennessee/Missouri administrative archetype (a state agency operating through its own local offices), not Virginia's/North Carolina's independently governed county-welfare-department archetype — even though each county also has a local Social Services Board that advises the local director on the local application of state policy, a narrower role than an independently governing county board. Confirm current operative practice (exact local office procedures, wait times) with the applicant's own LDSS, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO.",
   "system": "Maryland's eligibility caseworkers use the Eligibility and Enrollment (E&E) system (part of the myMDTHINK platform), referenced throughout the manual by its own screen names (e.g. the Individual Details screen, the Shelter Expenses screen, the ABAWD screen); WORKS is the separate system used to track ABAWD/SNAP Employment and Training (E&T) work-activity compliance. Applicants apply online through MarylandBenefits.gov, or in person, by mail, or by fax at a Local Department of Social Services (LDSS).",
   "portal": {
     "name": "MarylandBenefits",
+    "short": "MarylandBenefits",
     "url": "https://marylandbenefits.gov/home/#/"
   },
   "update_channels": [

@@ -1,12 +1,15 @@
 {
   "code": "OH",
   "program": "Supplemental Nutrition Assistance Program (SNAP) — no distinctive local nickname; ODJFS's own rules and the Ohio Benefits portal use the federal name throughout, sometimes shortened to \"Food Assistance\"",
+  "program_short": "Supplemental Nutrition Assistance Program (SNAP)",
   "agency": "Ohio Department of Job and Family Services (ODJFS), administered locally by County Departments of Job and Family Services (CDJFS)",
+  "agency_short": "Ohio Department of Job and Family Services (ODJFS)",
   "admin_model": "county",
   "admin_note": "Ohio runs a state-supervised, COUNTY-administered system: ODJFS writes the Ohio Administrative Code 5101:4 rules and issues Food Assistance Change Transmittals, but each County Department of Job and Family Services (CDJFS) — a county government agency funded by federal, state, AND local dollars, not a state field office — determines eligibility. Confirm current operative practice (processing times, local outreach materials, whether a household actually received the Ohio Careline notice) with the applicant's own county CDJFS, the same caution this roster already carries for CA/NY/MN/WI.",
   "system": "Ohio Benefits (the state's integrated eligibility system; applicants and caseworkers both call the online front end \"Ohio Benefits Self Service Portal\")",
   "portal": {
     "name": "Ohio Benefits Self Service Portal",
+    "short": "Ohio Benefits Self Service Portal",
     "url": "https://ssp.benefits.ohio.gov"
   },
   "update_channels": [

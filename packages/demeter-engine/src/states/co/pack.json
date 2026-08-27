@@ -1,12 +1,15 @@
 {
   "code": "CO",
   "program": "SNAP — no distinctive local nickname; CDHS calls it \"Food Assistance\" (see PROVENANCE.md)",
+  "program_short": "SNAP",
   "agency": "Colorado Department of Human Services (CDHS), Division of Food and Energy Assistance",
+  "agency_short": "Colorado Department of Human Services (CDHS)",
   "admin_model": "county",
   "admin_note": "Colorado is STATE-SUPERVISED, COUNTY-ADMINISTERED: CDHS's own description states Colorado \"operates as a state supervised, county administered human services system,\" and each of Colorado's 64 counties' human services department is directly responsible for determining eligibility and authorizing SNAP benefits (SNAP Dispute Resolution Conferences happen at the county level; only Fair Hearings escalate to a state SNAP Hearings Unit). This matches this roster's Virginia/North Carolina independently-governed-county archetype, not Georgia/Indiana/Tennessee/Missouri/Maryland's state-agency-with-local-offices archetype. Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own county human services department, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD.",
   "system": "Colorado's eligibility technicians use the Colorado Benefits Management System (CBMS); applicants apply online through the Colorado PEAK portal, by the MyCOBenefits mobile app, in person, by mail, or by fax at a county human services office. Colorado Works is a SEPARATE, distinctly-named program (Colorado's TANF cash-assistance program) — not another name for SNAP.",
   "portal": {
     "name": "Colorado PEAK",
+    "short": "Colorado PEAK",
     "url": "https://peak.colorado.gov/"
   },
   "update_channels": [

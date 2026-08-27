@@ -25,7 +25,7 @@ import type { AnswerLang } from "@civica/demeter-engine/packs";
 import Image from "next/image";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { COUNT_FLOOR } from "../lib/live-counts";
-import { programDisplayName, agencyDisplayName } from "../lib/program-name";
+
 import { StateFlag } from "./StateFlag";
 import { UsCoverageMap } from "./UsCoverageMap";
 import { SnapRetailerMap } from "./SnapRetailerMap";
@@ -394,12 +394,12 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
         <ul className="dmx__sronly" translate="no">
           {states.map((s) => (
             <li key={s.code}>
-              {s.code}: {programDisplayName(s.program)}, {agencyDisplayName(s.agency)}
+              {s.code}: {s.programShort}, {s.agencyShort}
               {/* Portal names drift too — Wyoming's is "…(paper application
                   only — no online portal found)". Same cleaning rule as the
                   program name: its trailing-paren-prose cut is exactly this
                   shape. */}
-              {s.portal ? `, ${programDisplayName(s.portal.name)} (${s.portal.url})` : ""}
+              {s.portal ? `, ${s.portal.short} (${s.portal.url})` : ""}
             </li>
           ))}
         </ul>
@@ -437,8 +437,8 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
                 <p className="dmx__body">
                   {step.d}{" "}
                   {i === c.steps.length - 1 ? (
-                    <a className="dmx__link" href={lang === "en" ? "/verify" : `/${lang}/verify`}>
-                      {c.verifyLink}
+                    <a className="dmx__link" href={lang === "en" ? "/states" : `/${lang}/states`}>
+                      {c.statesLink}
                     </a>
                   ) : null}
                 </p>

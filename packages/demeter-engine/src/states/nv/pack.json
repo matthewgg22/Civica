@@ -1,12 +1,15 @@
 {
   "code": "NV",
   "program": "Supplemental Nutrition Assistance Program (SNAP)",
+  "program_short": "Supplemental Nutrition Assistance Program (SNAP)",
   "agency": "Nevada Division of Social Services (DSS) — renamed from the Division of Welfare and Supportive Services (DWSS); legacy \"dwss.nv.gov\" paths still appear throughout the agency's own site assets",
+  "agency_short": "Nevada Division of Social Services (DSS)",
   "admin_model": "state",
   "admin_note": "State-administered: DSS runs SNAP directly through DSS district offices; there is no independent county eligibility agency layer. SNAP, TANF, and related programs share ONE combined manual — the Eligibility and Payments (E&P) Manual — organized into Part A (Determining Eligibility, chapters 100–2600), Part B (Case Management, chapters 100–1400), and Part C (Charts/dollar tables, chapters 100–300), amended by numbered Manual Transmittal Letters (MTLs, e.g. \"MTL 21/25\"). Because Parts A/B/C are shared with TANF, most sections print a two-column TANF/SNAP layout — this pack only draws from the SNAP column or SNAP-only sections.",
   "system": "AMPS (worker-facing eligibility system, referenced in manual text); EBT is simply branded \"EBT card\", accessed at ebtedge.com",
   "portal": {
     "name": "Access Nevada",
+    "short": "Access Nevada",
     "url": "https://accessnevada.nv.gov"
   },
   "update_channels": [

@@ -1,12 +1,15 @@
 {
   "code": "KY",
   "program": "SNAP — Kentucky has no distinctive local program nickname; benefits are issued through the \"kynect benefits\" self-service portal (see PROVENANCE.md)",
+  "program_short": "SNAP",
   "agency": "Kentucky Cabinet for Health and Family Services (CHFS), Department for Community Based Services (DCBS), Division of Family Support (DFS), Nutrition Assistance Branch (NAB)",
+  "agency_short": "Kentucky Cabinet for Health and Family Services (CHFS)",
   "admin_model": "state",
   "admin_note": "Kentucky is a STATE-ADMINISTERED SNAP program (no county option-in like CA/NY/MN/WI/VA), run through a four-layer hierarchy — CHFS (Cabinet) → DCBS (Department) → DFS (Division) → NAB (Branch) — with delivery through roughly 120 county-level Family Support offices, one per county. GENUINE STRUCTURAL CORRECTION this pack found: Kentucky's SNAP policy manual is DIVISION OF FAMILY SUPPORT OPERATION MANUAL VOLUME 2 (\"Volume II\"), not \"Volume III\" as commonly assumed — this pack independently verified Volume III is actually the Kentucky Transitional Assistance Program (KTAP) manual, Kentucky's TANF cash-assistance program, an entirely different program with its own eligibility rules (see PROVENANCE.md Finding 1). ABAWD/work-requirement policy lives in a separate companion volume, Volume IIA (\"SNAP Work Requirements\"). This pack also found the state's own current SNAP consumer page (chfs.ky.gov) still states resource limits ($2,250/$3,500) that are stale by roughly one federal COLA cycle relative to the current policy manual's figures ($3,000/$4,500, matching FFY2026) — see PROVENANCE.md Finding 2 — and that Kentucky's application portal was rebranded from \"benefind\" to \"kynect benefits\" without CHFS's own SNAP page updating its displayed link text. Confirm current operative practice with the applicant's own local DCBS Family Support office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA.",
   "system": "DCBS's Division of Family Support processes SNAP; applicants apply online through the kynect benefits self-service portal (hosted at benefind.ky.gov), by calling the statewide DCBS Family Support toll-free line to start an application, in person at any local Family Support office, or by mailing in a printed application (which still requires a follow-up interview). The head of household or an authorized representative must complete an interview before the application can be processed, except for households in the state's two simplified elderly tracks — SAFE (Simplified Assistance for the Elderly, for one/two-person SSI-recipient households age 60+) and ESAP (Elderly Simplified Application Project, for broader no-earned-income elderly/disabled households) — both of which waive the interview and use 36-month certification periods.",
   "portal": {
     "name": "kynect benefits (benefind.ky.gov)",
+    "short": "kynect benefits (benefind.ky.gov)",
     "url": "https://benefind.ky.gov/"
   },
   "update_channels": [

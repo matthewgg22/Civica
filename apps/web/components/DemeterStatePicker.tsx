@@ -205,7 +205,7 @@ export function DemeterStatePicker({
       {selected && !open && (
         <div className="dmst__scope">
           <span className="dmst__scope-agency">
-            {copy.scopeAgency}: {agencyDisplayName(selected.agency)}
+            {copy.scopeAgency}: {selected.agencyShort}
           </span>
         </div>
       )}
@@ -302,7 +302,7 @@ export function DemeterStatePicker({
                         written for the MODEL and carries a research annexe
                         behind an em-dash, so it ran to four lines here. */}
                     <span className="dmst__opt-name">{stateName(s.code)}</span>
-                    <span className="dmst__opt-sub">{programDisplayName(s.program)}</span>
+                    <span className="dmst__opt-sub">{s.programShort}</span>
                   </span>
                 </button>
               </li>

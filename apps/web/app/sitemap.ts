@@ -38,7 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // is content that was deleted, as far as discovery is concerned.
     { url: absoluteUrl("/questions"), lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: absoluteUrl("/screen"), lastModified: now, changeFrequency: "daily", priority: 0.7 },
-    { url: absoluteUrl("/verify"), lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: absoluteUrl("/states"), lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: absoluteUrl("/supporters"), lastModified: now, changeFrequency: "weekly", priority: 0.6 },
   ];
 
@@ -61,6 +61,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.9,
+    },
+    // The localized directory is the MOST translated page on the site: almost
+    // all of it is agency and portal names, which are proper nouns and read
+    // the same in every language. A Spanish reader gets essentially the whole
+    // page, not an English one with a translated heading.
+    {
+      url: absoluteUrl(`/${lang}/states`),
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
     },
   ]);
 

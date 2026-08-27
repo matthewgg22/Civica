@@ -9,11 +9,18 @@
 // time someone edits one and not the other, and a privacy policy that disagrees
 // with itself is worse than one that is merely late.
 //
-// WHY `status` IS LOAD-BEARING. A document with status "draft" renders a visible
-// banner saying so. An unreviewed policy that silently reads as live policy is
-// the specific failure this guards against: these are written against the code
-// but they are not yet counsel-approved, and a reader cannot tell the difference
-// from the prose alone. Flip to "published" only after sign-off.
+// WHY `status` IS LOAD-BEARING. It gates the checks in legal-claims.test.ts:
+// a document may only claim a retention window it can enforce, and a
+// "published" document may contain no unfilled placeholders. Terms §13.2 still
+// carries [MAILING ADDRESS], so flipping these would fail that test — which is
+// the mechanical proof that they are not finished. Flip to "published" only
+// after sign-off.
+//
+// IT NO LONGER RENDERS A BANNER. Until 2026-08-26 a "draft" document showed a
+// visible notice saying it had not been reviewed by counsel; that was removed
+// by owner decision. The status here is unchanged and still says draft, so the
+// page and the data now disagree about what a reader is told. #1013 tracks the
+// counsel review that resolves it.
 
 /** A block of document content. Deliberately small — these documents need
  *  paragraphs, lists, tables and emphasis, and nothing else. */

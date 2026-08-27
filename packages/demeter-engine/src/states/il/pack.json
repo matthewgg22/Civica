@@ -1,12 +1,16 @@
 {
   "code": "IL",
   "program": "Supplemental Nutrition Assistance Program (SNAP) — Illinois still calls it \"Food Stamps\"/\"FS\" in some worker-facing manual sections",
+  "program_short": "Supplemental Nutrition Assistance Program (SNAP)",
   "agency": "Illinois Department of Human Services (IDHS), Family Community Resource Centers (FCRCs)",
+  "agency_short": "Illinois Department of Human Services (IDHS)",
   "admin_model": "state",
   "admin_note": "State-administered: IDHS runs SNAP directly through Family Community Resource Centers (FCRCs); there are no independent county eligibility agencies. Policy lives in the Cash, SNAP, and Medical Manual as a PAIRED Policy Manual (PM, narrative rule) + Workers' Action Guide (WAG, operational detail and dollar tables) for every numbered section — amended by numbered Manual Releases (MR) and interim Policy Memoranda. The eligibility system is IES (Integrated Eligibility System); the public application/case-management portal is ABE (Application for Benefits Eligibility).",
   "system": "IES (Integrated Eligibility System, worker-facing); Illinois Link is the EBT card brand",
   "portal": {
     "name": "ABE (Application for Benefits Eligibility)",
+    "short": "ABE",
+    "note": "Application for Benefits Eligibility",
     "url": "https://abe.illinois.gov"
   },
   "update_channels": [

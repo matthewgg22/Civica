@@ -93,7 +93,7 @@ export default async function SupportersPage() {
 
       <footer className="spage__foot">
         <p>
-          See <Link href="/verify">how Demeter verifies its answers</Link> or{" "}
+          See <Link href="/states">who runs SNAP in your state</Link> or{" "}
           <Link href="/screen/ask">try the chat</Link>. Questions? Email{" "}
           <a href="mailto:supporters@civica.app">supporters@civica.app</a>.
         </p>

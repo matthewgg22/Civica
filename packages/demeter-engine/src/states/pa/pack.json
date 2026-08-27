@@ -1,11 +1,14 @@
 {
   "code": "PA",
   "program": "Supplemental Nutrition Assistance Program (SNAP) — no distinctive local nickname; Pennsylvania's own SNAP Handbook glossary uses the federal name throughout",
+  "program_short": "Supplemental Nutrition Assistance Program (SNAP)",
   "agency": "Pennsylvania Department of Human Services (DHS)",
+  "agency_short": "Pennsylvania Department of Human Services (DHS)",
   "admin_model": "state",
   "system": "eCIS (DHS's internal Client Information System, called \"CIS\" in older handbook text); applicants apply through COMPASS (Commonwealth of Pennsylvania Application for Social Services)",
   "portal": {
     "name": "COMPASS",
+    "short": "COMPASS",
     "url": "https://www.compass.state.pa.us"
   },
   "update_channels": [

@@ -1,12 +1,15 @@
 {
   "code": "LA",
   "program": "SNAP — Louisiana has no distinctive local nickname; the EBT card itself is called the \"Louisiana Purchase Card\" (see PROVENANCE.md)",
+  "program_short": "SNAP",
   "agency": "Louisiana Department of Health (LDH), Office of Economic Stability",
+  "agency_short": "Louisiana Department of Health (LDH)",
   "admin_model": "state",
   "admin_note": "Louisiana is a STATE-ADMINISTERED SNAP program, but the administering AGENCY itself changed on October 1, 2025: under \"Project One Door\" legislation (2025 Regular Session Acts 477 and 478), SNAP moved from the Department of Children and Family Services (DCFS) to the Louisiana Department of Health (LDH), which now runs it through its Office of Economic Stability so nutrition assistance sits alongside Medicaid. DCFS's own website (dcfs.louisiana.gov) still hosts a large amount of legacy SNAP content and still ranks first in an ordinary search for \"Louisiana SNAP\" — a genuine access-artifact risk this pack discloses explicitly (see PROVENANCE.md Finding 1). The underlying policy MANUAL is still hosted on DCFS's PowerDMS instance (public.powerdms.com/LADCFS) and its own internal chapter header is ALSO mid-rename, independently, from \"Economic Stability (ES)\" to \"Economic Independence (EI)\" (see PROVENANCE.md Finding 2) — two overlapping, incompletely-finished renames at once. Confirm current operative practice with the applicant's own local DCFS/LDH office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL.",
   "system": "LDH's Office of Economic Stability processes SNAP; applicants apply online through the CAFÉ Self-Service Portal, in person, by mail, or by fax at a local DCFS/LDH office (the same ~64-parish office network DCFS built, now administered under LDH). LDH ALSO acquired Louisiana's TANF cash-assistance program — the Family Independence Temporary Assistance Program (FITAP) — plus KCSP, DDS, eHIP, and SUN Bucks in the same October 1, 2025 transfer (see PROVENANCE.md).",
   "portal": {
     "name": "CAFÉ Self-Service Portal",
+    "short": "CAFÉ Self-Service Portal",
     "url": "https://cafe-cp.dcfs.la.gov/selfservice/"
   },
   "update_channels": [

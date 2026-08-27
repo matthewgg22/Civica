@@ -27,7 +27,7 @@ export interface EntryCopy {
   send: string;
   suggestions: string[];
   picker: StatePickerCopy;
-  howWeVerify: string;
+  statesLink: string;
 }
 
 export function DemeterEntry({
@@ -68,8 +68,8 @@ export function DemeterEntry({
           copy={copy.picker}
           hint={hint}
         />
-        <a className="dment__verify" href={lang === "en" ? "/verify" : `/${lang}/verify`}>
-          {copy.howWeVerify}
+        <a className="dment__verify" href={lang === "en" ? "/states" : `/${lang}/states`}>
+          {copy.statesLink}
         </a>
       </div>
 
