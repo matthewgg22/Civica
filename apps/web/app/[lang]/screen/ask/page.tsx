@@ -14,10 +14,10 @@
 // /screen/ask, which is the already-indexed URL.
 
 import type { Metadata } from "next";
+import { LanguageLinks } from "../../../../components/LanguageLinks";
 import { notFound, redirect } from "next/navigation";
 import { VERIFIED_STATES, VERIFIED_STATE_CODES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
 import { geoHint } from "../../../../lib/geo-hint";
-import { DemeterNav } from "../../../../components/DemeterNav";
 import { DemeterFooter } from "../../../../components/DemeterFooter";
 import {
   SnapOrientation,
@@ -108,7 +108,8 @@ export default async function LocalizedAskPage({
 
   return (
     <main className="dmpage" lang={LANG_TAG[l]}>
-      <DemeterNav lang={l} path="/screen/ask" />
+      <LanguageLinks lang={l} />
+      
       <div className="dmpage__inner">
         <SnapOrientation
           lang={l}

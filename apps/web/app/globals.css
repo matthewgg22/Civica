@@ -5043,6 +5043,13 @@ html {
 }
 .vpage--states .vpage__title { color: #000000; }
 .vpage--states .vpage__lede { color: #141414; }
+/* The differentiator. Set apart from the two lines above it with a rule
+   rather than a box: it is a different KIND of statement — those describe the
+   list, this describes the product — and a card would make it an ad. */
+.vpage--states .vpage__lede--how {
+  border-left: 2px solid var(--demeter-wheat);
+  padding-left: 0.9rem; margin-top: 1.25rem;
+}
 
 /* SEARCH, not an A–Z row. The letter jump only answered "where does W start",
    and cost three lines of phone screen before a single state appeared. Typing
@@ -7418,7 +7425,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   /* Brand, then three link groups. Two columns left the middle of the footer
      empty and turned the right into a tall menu; the brand only ever needs
      about a third, and the links want to sit side by side. */
-  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
   align-items: start;
 }
 .dmft__brand { display: flex; align-items: flex-start; gap: 0.85rem; }
@@ -7433,15 +7440,10 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
      paper tone at reduced opacity, which keeps the warm cast. */
   color: rgba(242, 239, 234, 0.72);
 }
-.dmft__nav { display: contents; }
-.dmft__group { display: flex; flex-direction: column; gap: 0.15rem; }
-/* A quiet label. It names the group without competing with the links under
-   it — the heading is wayfinding, the links are the content. */
-.dmft__grouphead {
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
-  color: rgba(242, 239, 234, 0.5); margin: 0 0 0.35rem;
-}
+/* Five links, laid out across the row rather than stacked down it. At seven
+   links with mixed registers this wanted named groups; at five short nouns the
+   headings were more chrome than content. */
+.dmft__nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0 1.75rem; }
 .dmft__link {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.92rem; font-weight: 500; color: #F2EFEA; text-decoration: none;
@@ -7472,10 +7474,6 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 
 /* Two-up before one-up: three link groups side by side need more room than a
    tablet has, but stacking all four at 720px wastes half the width. */
-@media (max-width: 1000px) {
-  .dmft__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .dmft__brand { grid-column: 1 / -1; }
-}
 @media (max-width: 720px) {
   .dmft__inner { grid-template-columns: 1fr; }
   .dmft__nav { flex-direction: row; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
@@ -9535,3 +9533,22 @@ a.dmwel__cta { display: inline-flex; text-decoration: none; }
    OPEN, it stays ink: inside the rail the button is transparent on a light
    tint, and a white icon there would be invisible. */
 .dmchat .demeter__sidebartoggle--closed { color: var(--demeter-paper); }
+
+
+/* ── Language links, front door only ────────────────────────────────────────
+   What survived the removal of the site nav. Set as a quiet row above the
+   page rather than a bar: it is one control, not a site map. */
+.dmlangs {
+  display: flex; flex-wrap: wrap; gap: 0 1.1rem;
+  max-width: 1180px; margin: 0 auto; padding: 0.5rem clamp(1rem, 4vw, 3.5rem) 0;
+}
+.dmlangs__link {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.86rem; font-weight: 500; color: var(--demeter-muted);
+  text-decoration: none; min-height: 44px; display: inline-flex; align-items: center;
+}
+.dmlangs__link:hover { color: var(--demeter-terracotta-deep); }
+.dmlangs__link[aria-current] { color: var(--demeter-ink); font-weight: 700; }
+.dmlangs__link:focus-visible {
+  outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 4px;
+}

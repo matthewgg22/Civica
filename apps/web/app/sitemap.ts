@@ -39,7 +39,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl("/questions"), lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: absoluteUrl("/screen"), lastModified: now, changeFrequency: "daily", priority: 0.7 },
     { url: absoluteUrl("/states"), lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: absoluteUrl("/supporters"), lastModified: now, changeFrequency: "weekly", priority: 0.6 },
   ];
 
   // The localized entry pages. Listed at the same priority as the canonical

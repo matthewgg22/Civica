@@ -34,6 +34,9 @@ export interface StateDirectoryCopy {
   lede: string;
   /** Contains the literal "{rule}". */
   sources: string;
+  /** WHAT MAKES THIS DIFFERENT, in one short paragraph. Every other tool in
+   *  this category returns an estimate; this one hands you the regulation. */
+  howItWorks: string;
   /** Rendered as a VISIBLE <label>, not just an accessible name. */
   searchLabel: string;
   searchPlaceholder: string;
@@ -233,7 +236,6 @@ export interface PageCopy {
   footerPrivacy: string;
   footerTerms: string;
   footerSafety: string;
-  footerSupporters: string;
   /** /feedback — general product/site feedback, distinct from the per-answer
    *  thumbs in the chat. Added 2026-08-15: there was no footer link, and no
    *  page, for anything other than rating one specific answer. */
@@ -254,16 +256,9 @@ export interface PageCopy {
   /** Link to /verify, which is now the state directory rather than a page
    *  about our pipeline — so the label names the states, not the checking. */
   statesLink: string;
-  /** SHORT footer labels. The in-page links above are sentences because they
-   *  are the call to action where they sit; a footer wants nouns, and mixing
-   *  the two registers in one list is what made it read as ragged. */
+  /** SHORT footer label. The in-page link above is a sentence because it is
+   *  the call to action where it sits; a footer wants nouns. */
   footerStates: string;
-  footerQuestions: string;
-  /** Column headings. Seven links in one flat column is a menu; three named
-   *  groups is a footer. */
-  footerGroupReference: string;
-  footerGroupLegal: string;
-  footerGroupAbout: string;
   /** One line, not the product lede again. The lede runs to three lines of
    *  serif, which is what left a tall brand block with a void beneath it. */
   footerMission: string;
@@ -531,7 +526,6 @@ const en: PageCopy = {
   footerPrivacy: "Privacy",
   footerTerms: "Terms",
   footerSafety: "Safety",
-  footerSupporters: "Supporters",
   footerFeedback: "Feedback",
   footerDisclaimer:
     "Demeter gives information, not legal advice, and does not decide your case. Your state agency does. Always confirm before acting on an answer.",
@@ -551,16 +545,14 @@ const en: PageCopy = {
     "Not listed? Demeter still answers at the federal floor, and points you to your own state agency for figures that vary by state.",
   statesLink: "See the states we have checked",
   footerStates: "SNAP by state",
-  footerQuestions: "Application questions",
-  footerGroupReference: "Reference",
-  footerGroupLegal: "Legal",
-  footerGroupAbout: "About",
   footerMission: "Free, anonymous SNAP answers with the rule attached.",
   directory: {
     back: "Back to Demeter",
     h1: "SNAP in your state",
     lede: "SNAP is one federal program, but every state runs it under its own name, through its own agency, with its own application.",
     sources: "Each row is built from that state's own published rules, and from {rule}.",
+    howItWorks:
+      "Demeter does not guess from training data. It looks the rule up in the regulation itself, and quotes it back with the answer, so you can check what it told you against the source it came from.",
     searchLabel: "Find your state",
     searchPlaceholder: "Search by state, agency, or portal",
     clear: "Clear",
@@ -823,7 +815,6 @@ const es: PageCopy = {
   footerPrivacy: "Privacidad",
   footerTerms: "Términos",
   footerSafety: "Seguridad",
-  footerSupporters: "Patrocinadores",
   footerFeedback: "Comentarios",
   footerDisclaimer:
     "Demeter da información, no asesoría legal, y no decide tu caso. Lo decide la agencia de tu estado. Confirma siempre antes de actuar según una respuesta.",
@@ -843,16 +834,14 @@ const es: PageCopy = {
     "¿No aparece el tuyo? Demeter igual responde con la base federal, y te remite a tu propia agencia estatal para las cifras que varían por estado.",
   statesLink: "Mira los estados que hemos verificado",
   footerStates: "SNAP por estado",
-  footerQuestions: "Preguntas de la solicitud",
-  footerGroupReference: "Referencia",
-  footerGroupLegal: "Legal",
-  footerGroupAbout: "Acerca de",
   footerMission: "Respuestas gratuitas y anónimas sobre SNAP, con la regla incluida.",
   directory: {
     back: "Volver a Demeter",
     h1: "SNAP en tu estado",
     lede: "SNAP es un solo programa federal, pero cada estado lo administra con su propio nombre, a través de su propia agencia y con su propia solicitud.",
     sources: "Cada fila se basa en las reglas publicadas por ese estado y en {rule}.",
+    howItWorks:
+      "Demeter no adivina a partir de datos de entrenamiento. Busca la regla en el reglamento mismo y la cita junto con la respuesta, para que puedas comprobar lo que te dijo con la fuente de la que salió.",
     searchLabel: "Encuentra tu estado",
     searchPlaceholder: "Busca por estado, agencia o portal",
     clear: "Borrar",
@@ -1116,7 +1105,6 @@ const vi: PageCopy = {
   footerPrivacy: "Quyền riêng tư",
   footerTerms: "Điều khoản",
   footerSafety: "An toàn",
-  footerSupporters: "Nhà tài trợ",
   footerFeedback: "Phản hồi",
   footerDisclaimer:
     "Demeter cung cấp thông tin, không phải tư vấn pháp lý, và không quyết định hồ sơ của bạn. Cơ quan tiểu bang của bạn quyết định. Hãy luôn xác nhận trước khi hành động theo một câu trả lời.",
@@ -1136,16 +1124,14 @@ const vi: PageCopy = {
     "Không thấy tiểu bang của bạn? Demeter vẫn trả lời theo mức nền liên bang, và chỉ bạn tới cơ quan tiểu bang của mình cho những con số thay đổi theo từng nơi.",
   statesLink: "Xem các tiểu bang chúng tôi đã kiểm chứng",
   footerStates: "SNAP theo tiểu bang",
-  footerQuestions: "Câu hỏi trong đơn",
-  footerGroupReference: "Tra cứu",
-  footerGroupLegal: "Pháp lý",
-  footerGroupAbout: "Giới thiệu",
   footerMission: "Giải đáp SNAP miễn phí, ẩn danh, kèm theo điều luật.",
   directory: {
     back: "Quay lại Demeter",
     h1: "SNAP tại tiểu bang của bạn",
     lede: "SNAP là một chương trình liên bang duy nhất, nhưng mỗi tiểu bang điều hành nó dưới tên riêng, qua cơ quan riêng, với đơn xin riêng.",
     sources: "Mỗi dòng được dựng từ chính các quy định do tiểu bang đó công bố và từ {rule}.",
+    howItWorks:
+      "Demeter không đoán từ dữ liệu huấn luyện. Nó tra chính điều luật trong văn bản quy định và trích dẫn kèm theo câu trả lời, để bạn đối chiếu được điều nó nói với nguồn gốc của nó.",
     searchLabel: "Tìm tiểu bang của bạn",
     searchPlaceholder: "Tìm theo tiểu bang, cơ quan hoặc cổng nộp đơn",
     clear: "Xóa",
@@ -1408,7 +1394,6 @@ const zh: PageCopy = {
   footerPrivacy: "隐私政策",
   footerTerms: "服务条款",
   footerSafety: "安全",
-  footerSupporters: "支持者",
   footerFeedback: "反馈",
   footerDisclaimer:
     "Demeter 提供信息，不提供法律建议，也不会决定您的申请结果。决定权在您所在州的机构。根据答案采取行动前请务必核实。",
@@ -1428,16 +1413,14 @@ const zh: PageCopy = {
     "没看到您所在的州？Demeter 仍会按联邦底线回答，并把各州不同的具体金额指引到您自己的州机构。",
   statesLink: "查看我们已核实的州",
   footerStates: "各州 SNAP",
-  footerQuestions: "申请表问题",
-  footerGroupReference: "参考",
-  footerGroupLegal: "法律",
-  footerGroupAbout: "关于",
   footerMission: "免费、匿名的 SNAP 解答，附上依据条文。",
   directory: {
     back: "返回 Demeter",
     h1: "您所在州的 SNAP",
     lede: "SNAP 是一项联邦计划，但每个州都以自己的名称、通过自己的机构、用自己的申请表来实施。",
     sources: "每一行都依据该州自己公布的规则以及 {rule} 编制。",
+    howItWorks:
+      "Demeter 不是凭训练数据猜测。它在法规原文中查出条文，并把条文与答案一起给出，让您可以拿它告诉您的内容与出处逐一核对。",
     searchLabel: "查找您所在的州",
     searchPlaceholder: "按州、机构或申请门户搜索",
     clear: "清除",

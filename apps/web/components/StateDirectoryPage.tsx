@@ -13,6 +13,7 @@ import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { hasLocalProgramName } from "../lib/program-name";
 import { stateName } from "../lib/state-names";
 import { StateDirectory, type DirectoryCopy, type DirectoryRow } from "./StateDirectory";
+import { BackToChat } from "./BackToChat";
 import { DemeterFooter } from "./DemeterFooter";
 
 /** Alphabetical by the state's NAME, not its code — someone scanning for
@@ -93,16 +94,7 @@ export function StateDirectoryPage({ lang = "en" }: { lang?: AnswerLang }) {
           no skip link: there is nothing to skip. */}
       <main className="vpage vpage--states" id="main-content">
         <header className="vpage__head">
-          {/* The label is its own span so the hover underline lands on the
-              WORDS only. Underlining the whole link drew a second rule under
-              the arrow, separated from the text by the flex gap — two stubby
-              lines rather than one. */}
-          <Link className="vback" href={chatHref}>
-            <span className="vback__arrow" aria-hidden>
-              ←
-            </span>
-            <span className="vback__label">{c.back}</span>
-          </Link>
+          <BackToChat lang={lang} />
           <h1 className="vpage__title">{c.h1}</h1>
           {/* ONE SENTENCE, then the sources line. The reader is here to find a
               row, not to read a page — every sentence above the list is a
@@ -121,6 +113,11 @@ export function StateDirectoryPage({ lang = "en" }: { lang?: AnswerLang }) {
             </a>
             {afterRule}
           </p>
+          {/* WHAT MAKES THIS DIFFERENT, and the only thing on the page that is
+              about the product rather than about the states. One paragraph:
+              every other tool in this category returns an estimate, and this
+              one hands you the regulation. */}
+          <p className="vpage__lede vpage__lede--how">{c.howItWorks}</p>
         </header>
 
         <StateDirectory rows={rows} copy={directoryCopy(lang)} chatHref={chatHref} />
