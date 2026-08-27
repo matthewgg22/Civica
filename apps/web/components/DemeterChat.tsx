@@ -1848,8 +1848,15 @@ export function DemeterChat({
   // (owner, 2026-08-27), once per turn, taking the layout with it. It is
   // still not TAPPABLE mid-answer (switching mode would set the rail
   // extracting from a half-written turn); it just holds its place.
+  // ONE BAR AT A TIME. The state offer and this one are independent, so both
+  // could sit under the same answer — a two-row stack of questions beneath a
+  // reply that already carried a certainty banner, three follow-up chips and a
+  // feedback row (owner, 2026-08-27: "for a first prompt this was very
+  // overwelming"). The state offer wins: it is about the answer just given and
+  // it rescopes everything after it, while switching mode can wait a turn.
   const showModeOffer =
     answeredOnce &&
+    !stateOffer &&
     worksheetMode === "ask" &&
     (!modeAsked ||
       (!modeReoffered &&
