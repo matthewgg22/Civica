@@ -17,7 +17,7 @@
 import { describe, expect, it } from "vitest";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { T as CHAT_COPY } from "../lib/i18n/demeter-chat-copy";
-import { snapStrings, welcomeStrings } from "../lib/i18n/snap-copy";
+import { welcomeStrings } from "../lib/i18n/snap-copy";
 
 const HAN = "一-鿿";
 
@@ -34,10 +34,13 @@ function strings(value: unknown, out: string[] = []): string[] {
   return out;
 }
 
+// snapStrings is NOT here, and that is a fact about the product rather than
+// an omission: it carries the Civica application flow and exists in en/es
+// only. The Chinese home_* strings live in welcomeStrings, which has
+// en/es/zh/vi/tl. TypeScript is what caught me indexing the wrong one.
 const ZH: string[] = [
   ...strings(PAGE_COPY.zh),
   ...strings(CHAT_COPY.zh),
-  ...strings(snapStrings.zh),
   ...strings(welcomeStrings.zh),
 ].filter((s) => new RegExp(`[${HAN}]`).test(s));
 
