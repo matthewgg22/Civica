@@ -10,7 +10,7 @@
 //  - EN/ES toggle (answers only — citations stay verbatim);
 //  - 429 / at-capacity / unconfigured states render honest, warm errors.
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { cloneElement, useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 /** useLayoutEffect warns when React renders this on the server; useEffect
  *  would let a layout land a frame late. Pick per environment. */
@@ -569,6 +569,29 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
     const el = n as React.ReactElement<{ children?: unknown }>;
     return el?.props ? nodeText(el.props.children) : "";
   };
+  // THE CLOSING QUESTION CARRIES WEIGHT, WHEN IT FITS ON ONE LINE (owner,
+  // 2026-08-27). The system prompt has always said the ask goes last and goes
+  // alone, and explicitly NOT to bold it — "a two-line run of bold reads as
+  // shouting". That reasoning is about LENGTH, not about weight, and the
+  // owner's own portal message already sets its question in bold italic. So
+  // the client decides, by measure: a single short question gets the
+  // emphasis, a long one keeps the separation the rule was defending.
+  //
+  // Done at render rather than by asking the model, because it has to be the
+  // same every time — and the model is told not to bold it, so there is one
+  // decision in one place and no double emphasis.
+  const ASK_MAX_CHARS = 90;
+  const isShortAsk = (text: string) => {
+    const t = text.trim();
+    return (
+      t.length > 0 &&
+      t.length <= ASK_MAX_CHARS &&
+      /[?？]$/.test(t) &&
+      // One question, not a paragraph that happens to end in one.
+      (t.match(/[?？]/g) ?? []).length === 1 &&
+      !t.includes("\n")
+    );
+  };
   const cut = out.findIndex(
     (n) => (n as React.ReactElement<{ className?: string }>)?.props?.className === "demeter__rule",
   );
@@ -576,6 +599,21 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   // Collapsed by default (#898 P1-4): the verdict line is the summary, the
   // full citation breakdown and source line sit one tap away. <details> is
   // native — keyboard and screen-reader accessible with no JS.
+  // Mark the last prose paragraph BEFORE the trailer — the trailer's own
+  // paragraphs are reference, and one of them ends in a question mark often
+  // enough to matter.
+  const body = out.slice(0, cut);
+  for (let i = body.length - 1; i >= 0; i--) {
+    const el = body[i] as React.ReactElement<{ className?: string; children?: unknown }>;
+    if (el?.props?.className !== "demeter__para") continue;
+    if (isShortAsk(nodeText(el))) {
+      body[i] = cloneElement(el, {
+        className: "demeter__para demeter__para--ask",
+      });
+    }
+    break;
+  }
+
   const trailer = out.slice(cut + 1);
   // THE CITED RULE STAYS VISIBLE (owner, 2026-08-27: "the citation also failed
   // to show me the formal source to check it"). The verdict line promises
@@ -594,7 +632,7 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   const citation = trailer.slice(1).find(isCitation);
   const rest = trailer.slice(1).filter((n) => n !== citation);
   return [
-    ...out.slice(0, cut),
+    ...body,
     <details className="demeter__footnote" key="footnote">
       <summary className="demeter__footnote-summary">{trailer[0]}</summary>
       {rest}
