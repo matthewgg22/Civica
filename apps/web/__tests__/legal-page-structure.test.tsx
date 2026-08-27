@@ -126,11 +126,24 @@ describe("the capitalised blocks", () => {
 });
 
 describe("the reading column", () => {
-  it("never widens past its measure, however wide the page gets", () => {
-    // The empty half of a wide screen is an argument for putting something in
-    // it, not for longer lines.
-    expect(CSS).toMatch(/\.lgl\s*\{[^}]*max-width:\s*680px/);
-    expect(CSS).toMatch(/grid-template-columns:\s*minmax\(0,\s*680px\)/);
+  it("is bounded in px, not stretched to whatever the page is", () => {
+    // Asserted as a RANGE rather than a magic number, because the number has
+    // legitimately moved (680 → 750) and will again. What must not change is
+    // that the column has a px ceiling at all: the empty half of a wide screen
+    // is an argument for putting something in it, not for longer lines.
+    const m = CSS.match(/grid-template-columns:\s*minmax\(0,\s*(\d+)px\)/);
+    expect(m, "the reading column lost its px ceiling").toBeTruthy();
+    const px = Number(m![1]);
+    expect(px).toBeGreaterThanOrEqual(600);
+    // The root font is 17px, so this column runs ~74 characters. Much past 800
+    // and it leaves the band where a line is easy to track back to.
+    expect(px).toBeLessThanOrEqual(800);
+  });
+
+  it("keeps the all-caps blocks off the body's type scale", () => {
+    // They carry their own smaller size deliberately; scaling them with the
+    // prose would set an arbitration waiver in 19px capitals.
+    expect(CSS).not.toMatch(/\.lgl__p,\s*\.lgl__ul li,\s*\.lgl__callout\s*\{/);
   });
 });
 
