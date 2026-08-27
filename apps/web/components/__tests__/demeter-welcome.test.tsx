@@ -58,7 +58,7 @@ afterAll(() => {
   }
 });
 
-const copy = { ...T.en.welcome, whatIsSnap: T.en.emptyWhatIsSnap };
+const copy = T.en.welcome;
 
 function card(onDismiss = () => {}) {
   return render(<DemeterWelcome copy={copy} onDismiss={onDismiss} />).container;
@@ -88,7 +88,7 @@ describe("the conditions attached to using the SNAP logo", () => {
     // "Must include the statement" does not survive translation drift, so the
     // string is deliberately absent from the localized copy table.
     for (const lang of ["en", "es", "vi", "zh"] as const) {
-      const c = { ...T[lang].welcome, whatIsSnap: T[lang].emptyWhatIsSnap };
+      const c = T[lang].welcome;
       cleanup();
       const el = render(<DemeterWelcome copy={c} onDismiss={() => {}} />).container;
       expect(el.querySelector(".dmwel__mark")?.textContent, lang).toBe(SNAP_SERVICE_MARK);
@@ -224,6 +224,55 @@ describe("when it shows", () => {
 // the file ended up carrying four `font-size` declarations for one selector and
 // the three dead ones still carried the reasoning. Whatever a future session
 // changes here, these say what must not quietly revert.
+describe("the definition is said once, not twice", () => {
+  // THE BUG: the card borrowed `emptyWhatIsSnap`, so dismissing it handed the
+  // reader the same 29 words again in the empty state directly behind it —
+  // the first thing the product did after introducing itself was repeat
+  // itself.
+  //
+  // They have different jobs now. The card carries USDA's full definition,
+  // because it IS the introduction and it shows at both doors. The empty
+  // state carries a gloss: enough that the letters "SNAP" are not meaningless
+  // to someone who dismissed the card without reading it, and no more.
+  const LANGS = ["en", "es", "vi", "zh"] as const;
+
+  it("gives the card and the empty state different words, in every language", () => {
+    for (const lang of LANGS) {
+      const card = T[lang].welcome.whatIsSnap;
+      const empty = T[lang].emptyWhatIsSnap;
+      expect(card?.trim(), `${lang} card definition`).toBeTruthy();
+      expect(empty?.trim(), `${lang} empty gloss`).toBeTruthy();
+      expect(card, `${lang}: the same sentence twice`).not.toBe(empty);
+      // Not merely different — neither may CONTAIN the other, which is how
+      // "just shortening one" would quietly reintroduce the repeat.
+      expect(card.includes(empty), `${lang}: the gloss sits inside the definition`).toBe(false);
+      expect(empty.includes(card), `${lang}: the definition sits inside the gloss`).toBe(false);
+    }
+  });
+
+  it("keeps the gloss genuinely shorter than the definition", () => {
+    for (const lang of LANGS) {
+      expect(
+        T[lang].emptyWhatIsSnap.length,
+        `${lang}: the gloss is not shorter than the definition it stands in for`,
+      ).toBeLessThan(T[lang].welcome.whatIsSnap.length);
+    }
+  });
+
+  it("still names the program in both places", () => {
+    for (const lang of LANGS) {
+      expect(T[lang].welcome.whatIsSnap, lang).toContain("SNAP");
+      expect(T[lang].emptyWhatIsSnap, lang).toContain("SNAP");
+    }
+  });
+
+  it("renders the card's own definition, not the empty state's gloss", () => {
+    const c = card();
+    expect(c.textContent).toContain(T.en.welcome.whatIsSnap);
+    expect(c.textContent, "the card is showing the gloss").not.toContain(T.en.emptyWhatIsSnap);
+  });
+});
+
 describe("the welcome card's second pass", () => {
   const css = () =>
     readFileSync(join(__dirname, "..", "..", "app", "globals.css"), "utf8");
