@@ -68,7 +68,17 @@ export function SiteFeedbackForm() {
 
   return (
     <form className="fbform" onSubmit={submit}>
+      {/* THE REQUIRED FIELD FIRST. The category select used to open the
+          form, so the first thing anyone met was an OPTIONAL decision, in
+          front of the task they came to do. */}
       <label className="fbform__field">
+        <span className="fbform__label">Your message *</span>
+        <textarea name="message" required minLength={1} maxLength={2000} rows={5} />
+      </label>
+      {/* Sized to what they hold, not to the column. An email box as wide as a
+          message box is a promise about the expected input, and the wrong
+          one. */}
+      <label className="fbform__field fbform__field--narrow">
         <span className="fbform__label">What&apos;s this about?</span>
         <select name="category" defaultValue="">
           {CATEGORIES.map((c) => (
@@ -78,11 +88,7 @@ export function SiteFeedbackForm() {
           ))}
         </select>
       </label>
-      <label className="fbform__field">
-        <span className="fbform__label">Your message *</span>
-        <textarea name="message" required minLength={1} maxLength={2000} rows={5} />
-      </label>
-      <label className="fbform__field">
+      <label className="fbform__field fbform__field--narrow">
         <span className="fbform__label">Email (optional, if you want a reply)</span>
         <input name="contact_email" type="email" maxLength={200} autoComplete="email" />
       </label>
