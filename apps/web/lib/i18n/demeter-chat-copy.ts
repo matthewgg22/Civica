@@ -88,7 +88,13 @@ export const T = {
     // Shown in the transcript when a state is picked. The portal is where the
     // application actually goes; this is the one moment we know exactly which
     // link that is, so it should not be something they have to ask for.
-    portalLead: "In {state}, you apply through {agency}.",
+    /* ANSWERS THE CHOICE THEY JUST MADE. This opened "In California, you
+       apply through CDSS" — which, arriving one tap after "Yes, use
+       California", reads as being sent somewhere else rather than as the
+       conversation carrying on (owner, 2026-08-27: "seems like i am being
+       booted to go their instead of actually continuing"). The fact is the
+       same; it now follows an acknowledgement instead of replacing one. */
+    portalLead: "{state} it is. Applications there go through {agency}.",
     /* Only where a state runs MORE THAN ONE portal. It asks rather than
        asserting: handing someone the wrong form with the caveat buried in
        the button label is how the New York one used to read. */
@@ -392,7 +398,7 @@ export const T = {
     saveNudge: "Esta es una conversación larga para perderla si cierras la pestaña. ¿La guardo para que puedas volver a ella?",
     saveNudgeYes: "Guardarla",
     saveNudgeNo: "Ahora no",
-    portalLead: "En {state}, la solicitud se hace a través de {agency}.",
+    portalLead: "{state}, entonces. Allí la solicitud se hace a través de {agency}.",
     portalTwo: "{state} tiene dos, según dónde vivas. ¿Cuál te toca?",
     portalCta: "Solicitar en {portal}",
     portalStay:
@@ -607,7 +613,7 @@ export const T = {
     saveNudge: "Đây là một cuộc trò chuyện dài, sẽ mất nếu bạn đóng tab. Lưu lại để bạn có thể quay lại sau?",
     saveNudgeYes: "Lưu lại",
     saveNudgeNo: "Để sau",
-    portalLead: "Ở {state}, bạn nộp đơn qua {agency}.",
+    portalLead: "{state} nhé. Ở đó bạn nộp đơn qua {agency}.",
     portalTwo: "{state} có hai nơi, tùy bạn sống ở đâu. Bạn thuộc nơi nào?",
     portalCta: "Nộp đơn tại {portal}",
     portalStay:
@@ -820,7 +826,7 @@ export const T = {
     saveNudge: "这段对话很长，关闭标签页就会丢失。要保存下来，方便以后继续吗？",
     saveNudgeYes: "保存",
     saveNudgeNo: "暂不",
-    portalLead: "在{state}，申请通过{agency}办理。",
+    portalLead: "好，{state}。那里的申请通过{agency}办理。",
     portalTwo: "{state}有两个入口，取决于您住在哪里。您属于哪一个？",
     portalCta: "前往 {portal} 申请",
     portalStay:

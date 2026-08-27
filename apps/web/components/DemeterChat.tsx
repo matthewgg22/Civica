@@ -1778,9 +1778,14 @@ export function DemeterChat({
    *  transcript that found this gap ran fifteen turns deep with a full income
    *  and household established and was never asked a second time. */
   const MODE_REOFFER_AFTER_TURNS = 6;
+  // STAYS PUT WHILE AN ANSWER STREAMS. This was gated on `!busy`, so the bar
+  // unmounted the moment a question was sent and remounted when the answer
+  // landed — "those top question bars disappeared and immediately reappeared"
+  // (owner, 2026-08-27), once per turn, taking the layout with it. It is
+  // still not TAPPABLE mid-answer (switching mode would set the rail
+  // extracting from a half-written turn); it just holds its place.
   const showModeOffer =
     answeredOnce &&
-    !busy &&
     worksheetMode === "ask" &&
     (!modeAsked ||
       (!modeReoffered &&
@@ -2147,6 +2152,7 @@ export function DemeterChat({
             <button
               type="button"
               className="demeter__modeoffer-no"
+              disabled={busy}
               onClick={() => {
                 if (modeAsked) {
                   // This IS the re-offer — dismissing it retires it for good.
@@ -2162,6 +2168,7 @@ export function DemeterChat({
             <button
               type="button"
               className="demeter__modeoffer-yes"
+              disabled={busy}
               onClick={() => {
                 setWorksheetMode("estimate");
                 setModeAsked(true);
