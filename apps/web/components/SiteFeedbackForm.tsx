@@ -6,7 +6,7 @@
 // a bug, a suggestion, a missing state, a compliment. There was no path for
 // that at all until this page existed.
 //
-// Same shape as SupporterSignOn: idle/busy/done/error states, a hidden
+// idle/busy/done/error states, a hidden
 // honeypot field bots fill and real users never see.
 
 import { useState } from "react";

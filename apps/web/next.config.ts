@@ -47,13 +47,19 @@ const nextConfig: NextConfig = {
       // link that shipped broken should land on the page rather than a 404.
       { source: "/verify", destination: "/states", permanent: true },
       { source: "/:lang(es|vi|zh)/verify", destination: "/:lang/states", permanent: true },
-      // /supporters retired from the footer (owner, 2026-08-27). TEMPORARY
-      // (307), unlike the /verify move: the supporter wall is a moderated
-      // Supabase table of approved organizations and a sign-on form, not a
-      // duplicate of the feedback page, so this is a decision that may be
-      // reversed. Redirected rather than deleted for the same reason — the
-      // rows and the page component are both untouched.
-      { source: "/supporters", destination: "/feedback", permanent: false },
+      // /supporters retired (owner, 2026-08-27). PERMANENT now, and the page,
+      // its sign-on form and its API route are deleted — confirmed after the
+      // reversible version shipped first.
+      //
+      // 301 is effectively one-way: browsers cache permanent redirects hard,
+      // so a visitor who lands here once will not re-request /supporters even
+      // if the page comes back. Restoring it would mean a new URL, or a long
+      // tail of people who never see it.
+      //
+      // WHAT IS NOT DELETED: the demeter_supporters table and its approved
+      // rows. Removing the page does not destroy what organizations submitted;
+      // that is a separate, irreversible decision and needs its own migration.
+      { source: "/supporters", destination: "/feedback", permanent: true },
     ];
   },
   webpack(config, { isServer }) {
