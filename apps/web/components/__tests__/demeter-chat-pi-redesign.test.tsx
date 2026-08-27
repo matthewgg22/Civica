@@ -364,16 +364,19 @@ describe("boxless messages (CSS contract)", () => {
     expect(container.querySelector(".demeter__head details.demeter__gear")).toBeNull();
   });
 
-  it("puts the rail on the page's own white, with the cards held by hairlines", () => {
-    // The rail was the last surface still on the old grey ground: #F6F5F3
-    // across 366px of a 1280px window, a third of the screen reading darker
-    // than the product it frames. The white-ground decision (2026-08-21)
-    // moved card separation to hairlines, and every card in this rail already
-    // carries one — so the tint was no longer doing the job it was kept for.
+  it("keeps the rail a shade off white, with the cards held by hairlines", () => {
+    // TWO CORRECTIONS, and this pins where they landed. The rail was
+    // --demeter-tint (#F6F5F3): too dark, a third of a 1280px window reading
+    // grey against the product it frames. Pure white overshot — with only a
+    // hairline at its edge it stopped reading as a panel at all. #FAF9F7 sits
+    // between, nearer the white end.
     const css = readFileSync(join(__dirname, "..", "..", "app", "globals.css"), "utf8");
     const rail = css.match(/^\.demeter__sidebar\s*\{[^}]*\}/m)?.[0] ?? "";
     expect(rail, "the rail rule is declared").not.toBe("");
-    expect(rail).toMatch(/background:\s*var\(--demeter-paper\)/);
+    expect(rail, "the old grey ground must not come back").not.toMatch(
+      /background:\s*var\(--demeter-tint\)/,
+    );
+    expect(rail).toMatch(/background:\s*#FAF9F7/i);
     expect(rail, "the right edge is what separates rail from thread now").toMatch(
       /border-right:\s*1px solid var\(--demeter-rule\)/,
     );
