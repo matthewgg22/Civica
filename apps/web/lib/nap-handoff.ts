@@ -25,7 +25,7 @@ const COPY = {
     why: "That matters for your question: the territory sets its own income limits, benefit amounts and rules, so the federal SNAP figures this tool works from do not apply where you live.",
     who: (agency: string) => `Apply and ask questions through ${agency}.`,
     banner: "✓ **CERTAIN**. This is a scope limit, not an estimate.",
-    source: "Source: USDA Food and Nutrition Service: Nutrition Assistance Program block grants.",
+    source: "Source: USDA Food and Nutrition Service, Nutrition Assistance Program block grants.",
   },
   es: {
     lead: (name: string, program: string) =>
@@ -34,7 +34,7 @@ const COPY = {
     who: (agency: string) => `Solicita y haz tus preguntas a través de ${agency}.`,
     banner: "✓ **SEGURO**. Es un límite de alcance, no un estimado.",
     source:
-      "Fuente: USDA Food and Nutrition Service. Subvenciones en bloque del Programa de Asistencia Nutricional.",
+      "Fuente: USDA Food and Nutrition Service, subvenciones en bloque del Programa de Asistencia Nutricional.",
   },
 } as const;
 

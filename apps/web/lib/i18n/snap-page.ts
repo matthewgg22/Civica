@@ -260,7 +260,13 @@ export interface PageCopy {
    *  the call to action where it sits; a footer wants nouns. */
   footerStates: string;
   /** One line, not the product lede again. The lede runs to three lines of
-   *  serif, which is what left a tall brand block with a void beneath it. */
+   *  serif, which is what left a tall brand block with a void beneath it.
+   *
+   *  IT NO LONGER SAYS "ANONYMOUS" (owner, 2026-08-27). The chat needs no
+   *  account, but redactPii deliberately does not attempt NAMES, and the
+   *  privacy policy says so — a footer on every page calling the service
+   *  anonymous claimed more than the product delivers. Understating what is
+   *  stored is the safe direction; this was overstating it. */
   footerMission: string;
   directory: StateDirectoryCopy;
 }
@@ -545,7 +551,7 @@ const en: PageCopy = {
     "Not listed? Demeter still answers at the federal floor, and points you to your own state agency for figures that vary by state.",
   statesLink: "See the states we have checked",
   footerStates: "SNAP by state",
-  footerMission: "Free, anonymous SNAP answers with the rule attached.",
+  footerMission: "Free SNAP answers with the rule attached.",
   directory: {
     back: "Back to Demeter",
     h1: "SNAP in your state",
@@ -834,7 +840,7 @@ const es: PageCopy = {
     "¿No aparece el tuyo? Demeter igual responde con la base federal, y te remite a tu propia agencia estatal para las cifras que varían por estado.",
   statesLink: "Mira los estados que hemos verificado",
   footerStates: "SNAP por estado",
-  footerMission: "Respuestas gratuitas y anónimas sobre SNAP, con la regla incluida.",
+  footerMission: "Respuestas gratuitas sobre SNAP, con la regla incluida.",
   directory: {
     back: "Volver a Demeter",
     h1: "SNAP en tu estado",
@@ -1124,7 +1130,7 @@ const vi: PageCopy = {
     "Không thấy tiểu bang của bạn? Demeter vẫn trả lời theo mức nền liên bang, và chỉ bạn tới cơ quan tiểu bang của mình cho những con số thay đổi theo từng nơi.",
   statesLink: "Xem các tiểu bang chúng tôi đã kiểm chứng",
   footerStates: "SNAP theo tiểu bang",
-  footerMission: "Giải đáp SNAP miễn phí, ẩn danh, kèm theo điều luật.",
+  footerMission: "Giải đáp SNAP miễn phí, kèm theo điều luật.",
   directory: {
     back: "Quay lại Demeter",
     h1: "SNAP tại tiểu bang của bạn",
@@ -1413,7 +1419,7 @@ const zh: PageCopy = {
     "没看到您所在的州？Demeter 仍会按联邦底线回答，并把各州不同的具体金额指引到您自己的州机构。",
   statesLink: "查看我们已核实的州",
   footerStates: "各州 SNAP",
-  footerMission: "免费、匿名的 SNAP 解答，附上依据条文。",
+  footerMission: "免费的 SNAP 解答，附上依据条文。",
   directory: {
     back: "返回 Demeter",
     h1: "您所在州的 SNAP",
