@@ -21,7 +21,7 @@ from pathlib import Path
 
 TOOL_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOL_ROOT))
-from src import archetype, coverage, liveness, mapsvg, report, score, states  # noqa: E402
+from src import archetype, coverage, prorata, liveness, mapsvg, report, score, states  # noqa: E402
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
@@ -230,6 +230,10 @@ def build_values(bank, assumptions, org, metrics, meta):
         "method_short": meta["method_short"],
         "method_bullet": meta["method_bullet"],
         "data_gaps_note": gaps,
+        "prorata_block": prorata.prorata_block(
+            bank["ask_usd"], fun["low"]["approved_households"],
+            fun["mid"]["approved_households"], aa_label),
+        "timetable_block": prorata.timetable_block(fmt_int(bank["ask_usd"])),
         "rationale_block": archetype.rationale_block(bank),
         "pitch_headline": archetype.headline(bank),
         "ask_fmt": fmt_int(bank["ask_usd"]),

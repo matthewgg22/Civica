@@ -71,6 +71,9 @@
   .measure li, .method li { font-size:10pt; line-height:1.55; margin:7px 0 7px 16px; }
   .method h3, .measure h3 { font-family:'Source Serif 4',serif; font-size:12.5pt; font-weight:600; margin-top:16px; }
   .disclose { border-left:3px solid var(--accent); background:var(--tint); padding:10px 14px; font-size:9.5pt; line-height:1.55; margin-top:14px; }
+  .report.prorata td:first-child, .report.timetable td:first-child { text-align:left; }
+  .report.timetable td { text-align:left; font-size:8.5pt; }
+  .report .fine { color:var(--muted); font-weight:400; }
 </style></head><body>
 
 <!-- PAGE 1 — the need -->
@@ -156,6 +159,15 @@
     <div class="repnote">A funded report replaces every projection above with measured values, reports <em>submitted</em> applications as the primary outcome, and states the measured mid-funnel rates alongside these assumptions. Where measured performance lands at the conservative end, the report says so plainly.</div>
   </div>
   <div class="pagefoot">All figures on this page are projections labeled as such; none represent measured performance. Assumption set: version [[assumptions_version]], page 4.</div>
+</div>
+
+<!-- PAGE — pro rata impact, schedule and the closing report -->
+<div class="page">
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
+  <h2 class="pagehead">Your share, your schedule, your closing report</h2>
+[[prorata_block]]
+[[timetable_block]]
+  <div class="pagefoot">Projections derive from the assumption set on the following page. [[org_name]] accepts no per-enrollment compensation, and payment is never tied to enrollment counts.</div>
 </div>
 
 <!-- PAGE 4 — how measurement works -->

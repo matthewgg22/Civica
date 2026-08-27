@@ -30,7 +30,7 @@ from pathlib import Path
 TOOL = Path(__file__).resolve().parents[1]
 REPO = TOOL.parents[1]
 sys.path.insert(0, str(TOOL))
-from src import archetype  # noqa: E402
+from src import archetype, contacts as contactmod  # noqa: E402
 
 ANALYSIS = REPO / "data-ops/analysis"
 
@@ -91,11 +91,9 @@ def load():
     depth_path = ANALYSIS / "cra-universe-2026/county_depth.json"
     depth = json.loads(depth_path.read_text()) if depth_path.exists() else {}
 
-    contacts = {}
-    cpath = ANALYSIS / "bank-pe-mining/bank_contacts_2026.csv"
-    if cpath.exists():
-        for r in csv.DictReader(cpath.open()):
-            contacts[r["bank_key"]] = r
+    # Three tiers, never a blank: a named officer, a CRA-specific channel, or the
+    # designated-role route at the verified main office. See src/contacts.py.
+    contacts = contactmod.build(banks)
     return banks, unenrolled, county_meta, depth, contacts
 
 
@@ -154,9 +152,12 @@ def roster_section(send, unenrolled, county_meta, contacts) -> str:
         meth = county_meta.get((county, st), "")
         bank_rows = []
         for key, b, arch in rows:
-            c = contacts.get(key)
-            who = (f'{esc(c["contact_name"])} · <span class="muted">{esc(c["contact_title"])}</span>'
-                   if c and c.get("contact_name") else '<span class="nocontact">no named contact</span>')
+            c = contacts.get(key) or {}
+            kind = c.get("kind", "none")
+            line = c.get("channel") or c.get("address") or ""
+            who = (f'<span class="rt-{kind}">{esc(c.get("name",""))}</span>'
+                   f'<span class="rtline">{esc(line[:58])}</span>'
+                   if kind != "none" else '<span class="nocontact">no route</span>')
             bank_rows.append(f"""
         <tr>
           <td class="bk"><span class="bn">{esc(b['name'])}</span>
@@ -175,7 +176,7 @@ def roster_section(send, unenrolled, county_meta, contacts) -> str:
         </div>
       </header>
       <div class="scroll"><table class="banks-t">
-        <thead><tr><th>Bank</th><th>Investment · Service</th><th class="num">Ask</th><th>Contact</th></tr></thead>
+        <thead><tr><th>Bank</th><th>Investment · Service</th><th class="num">Ask</th><th>First contact</th></tr></thead>
         <tbody>{''.join(bank_rows)}
         </tbody>
       </table></div>
@@ -347,6 +348,10 @@ table {{ width:100%; border-collapse:collapse; }}
 .who {{ font-size:12.5px; }}
 .muted {{ color:var(--soft); }}
 .nocontact {{ color:var(--faint); font-style:italic; }}
+.rt-named {{ font-weight:600; display:block; }}
+.rt-channel {{ font-weight:600; display:block; color:var(--r-low); }}
+.rt-role {{ font-weight:500; display:block; color:var(--soft); }}
+.rtline {{ display:block; font-size:11px; color:var(--faint); font-family:var(--mono); }}
 
 .chip {{ display:inline-block; font-family:var(--mono); font-size:10px; letter-spacing:.03em;
   padding:2px 7px; border-radius:2px; margin-right:5px; white-space:nowrap;
