@@ -2321,6 +2321,16 @@ export function DemeterChat({
                   Demeter
                 </span>
               </a>
+              {/* BACK INSIDE THE IDENT COLUMN, which was built for it — a flex
+                  column with a 0.1rem gap, sitting empty while the tagline was
+                  rendered as a sibling of the whole head row and dragged back
+                  up by a negative margin. Six of them accumulated, each a
+                  later session tightening the gap the previous one had left.
+                  It was moved out when the label read "SNAP ENROLLMENT AND
+                  ELIGIBILITY ASSISTANCE" and wrapped beside the toggle; at
+                  ~195px the shorter label clears the ~289px the column has,
+                  so the reason is gone and the layout can do the spacing. */}
+              <p className="demeter__sbtag">{t.tagline}</p>
             </div>
             <button
               type="button"
@@ -2336,11 +2346,6 @@ export function DemeterChat({
               </svg>
             </button>
           </div>
-          {/* OUT of the brand column and under the whole head row (owner,
-              2026-08-26). Inside it, the tagline shared its width with the
-              toggle button and wrapped to two lines. Full-width it fits on
-              one, which is what a label ought to do. */}
-          <p className="demeter__sbtag">{t.tagline}</p>
           <div className="demeter__side">
           {/* Yields to the in-column instance on narrow viewports — exactly
               one picker in the DOM at any width (see narrowViewport). */}
@@ -2542,6 +2547,30 @@ export function DemeterChat({
           {/* ONE BOTTOM LINE (owner rec 2026-08-22): new conversation,
               language, settings — everything you DO to the conversation, at
               a size that says so. The rail's body above it only tracks. */}
+          {/* SAYS WHAT IT DOES, AND ONLY WHEN IT CAN (owner, 2026-08-26).
+              This was a bare "+" in the foot's icon row, immediately left of
+              "EN / ES / VI / 中文" — so the one unlabelled glyph on the rail
+              sat inside the language picker and read as part of it. Worse, it
+              was rendered DISABLED whenever there was no conversation yet,
+              which is most first visits: a greyed, borderless plus next to
+              four language codes is not a control, it is lint.
+
+              Now it carries its own words and appears only once there is a
+              conversation to end. The accessible name is unchanged, which is
+              what the clear-behaviour tests key on. */}
+          {hasChat && !confirmClear && (
+            <button
+              type="button"
+              className="demeter__railnew"
+              onClick={() => setConfirmClear(true)}
+              aria-label={t.clear}
+            >
+              <svg width="15" height="15" viewBox="0 0 20 20" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10 4.5v11M4.5 10h11" />
+              </svg>
+              {t.clear}
+            </button>
+          )}
           <div className="demeter__railfoot">
             {confirmClear ? (
               <span className="demeter__clearconfirm" role="group" aria-label={t.clear}>
@@ -2559,22 +2588,6 @@ export function DemeterChat({
               </span>
             ) : (
               <>
-                {/* An icon, but the accessible name stays the whole sentence:
-                    "Start a new conversation" is what it does, and that is
-                    what a screen reader (and the clear-behaviour tests) go
-                    by. Disabled until there is a conversation to end. */}
-                <button
-                  type="button"
-                  className="demeter__railicon"
-                  onClick={() => setConfirmClear(true)}
-                  aria-label={t.clear}
-                  title={t.clear}
-                  disabled={!hasChat}
-                >
-                  <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M10 4.5v11M4.5 10h11" />
-                  </svg>
-                </button>
                 {/* ALL FOUR, VISIBLE, NO DISCLOSURE (owner, 2026-08-26).
                     This was a globe and the current code behind a popover, and
                     before that a native <select>. Both hid three of the four

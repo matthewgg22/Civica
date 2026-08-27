@@ -7899,7 +7899,15 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   position: fixed; top: 0; bottom: 0; left: 0; z-index: 30;
   /* top:0 — the site nav this used to clear is gone from /chat. */
   width: min(21.5rem, 85vw);
-  background: var(--demeter-tint); border-right: 1px solid var(--demeter-rule);
+  /* WHITE, like the rest of the page (owner, 2026-08-26). The rail was the
+     last surface still on the old grey ground: #F6F5F3 across 366px of a
+     1280px window, a third of the screen reading darker than the product it
+     frames. The white-ground decision of 2026-08-21 moved card separation to
+     hairlines, and every card in this rail already carries one — state
+     picker, outline card, links, the foot's buttons — so the tint was no
+     longer doing the job it was kept for. The right border stays: that is
+     what separates the rail from the thread now. */
+  background: var(--demeter-paper); border-right: 1px solid var(--demeter-rule);
   padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
   display: flex; flex-direction: column; gap: 1rem;
   overflow-y: auto;
@@ -9009,12 +9017,25 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    to be a safe way to layer anything. */
 .demeter__sbident { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
 .demeter__sbtag {
+  /* ONE RULE. This selector had six, each a later session pulling the label
+     up by a bigger negative margin (-0.75 -> -0.85 -> -1.15 -> -1.4rem)
+     because it was rendered outside the column meant to hold it. It is back
+     inside that column now, so the 0.1rem flex gap sets the spacing and no
+     negative margin is needed at all.
+     padding-left keeps it under the WORD rather than under the mark.
+     clamp() shrinks rather than clips: below ~400px the rail becomes 85vw,
+     and on a 320px phone nowrap at a fixed size would overflow. Above that
+     width the vw term is far past the ceiling and this is a flat 0.6rem. */
   margin: 0;
+  padding-left: calc(34px + 0.5rem);
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.72rem;
-  line-height: 1.35;
+  font-size: clamp(0.5rem, 2.2vw, 0.6rem);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.4;
   color: var(--demeter-muted);
-  text-wrap: pretty;
+  white-space: nowrap;
 }
 /* The head is a row again now that the left side is a column of its own. */
 .demeter__sbhead { align-items: flex-start; }
@@ -9033,7 +9054,29 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    past the tracking panel to the floor rather than leaving it to follow
    whatever the panel's height happens to be — which moved between the two
    worksheet modes, so the controls shifted when the mode changed. */
+/* The new-conversation control, out of the icon row and given its words.
+   Quiet: it is not what the rail is for, it is what you do when you are
+   finished. Full width, so it reads as a row of the rail rather than a chip
+   floating beside the language codes. */
+.demeter__railnew {
+  margin-top: auto;
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  width: 100%; min-height: 40px; padding: 0.5rem 0.75rem;
+  background: var(--demeter-card);
+  border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-pill);
+  cursor: pointer;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--demeter-body);
+}
+.demeter__railnew:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
+.demeter__railnew:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
+
+/* The foot takes the slack only when nothing sits above it; otherwise both
+   would claim it and the pair would drift apart. */
 .demeter__railfoot { margin-top: auto; justify-content: center; }
+.demeter__railnew + .demeter__railfoot { margin-top: 0.5rem; }
 
 /* ── The empty state speaks in ONE voice (owner, 2026-08-22) ──────────────
    It had four paragraphs in THREE type families, three sizes and three
@@ -9058,14 +9101,6 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 /* The rail's descriptor is a LABEL, not a sentence — so it wears the sans in
    caps, matching "YOUR STATE" and "YOUR OUTLINED APPLICATION" directly below
    it, rather than sitting in the serif as a second, quieter headline. */
-.demeter__sbtag {
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  line-height: 1.4;
-  color: var(--demeter-muted);
-}
 
 /* The rail's floor. .demeter__sidebarauth ALSO carried margin-top:auto, and
    two auto margins in one flex column SPLIT the free space between them —
@@ -9287,12 +9322,6 @@ a.dmwel__cta { text-decoration: none; }
    Tracking eased from 0.09em so it still fits at the narrowest rail (85vw on
    a small phone), and the whole rail is a flex column so this needs its own
    negative margin-top to sit tight under the wordmark. */
-.demeter__sbtag {
-  margin-top: -0.75rem;
-  white-space: nowrap;
-  letter-spacing: 0.055em;
-  font-size: 0.6rem;
-}
 
 /* The rail's descriptor on ONE line (owner, 2026-08-26). It used to sit inside
    the brand column, sharing its width with the toggle button, and wrapped.
@@ -9300,18 +9329,6 @@ a.dmwel__cta { text-decoration: none; }
    Tracking eased from 0.09em so it still fits at the narrowest rail — min(21.5rem,
    85vw), which on a 360px phone is ~306px of content. The rail is a flex column
    with a 1rem gap, so it takes a negative margin to sit tight under the wordmark. */
-.demeter__sbtag {
-  margin-top: -0.85rem;
-  white-space: nowrap;
-  letter-spacing: 0.05em;
-  /* SHRINKS RATHER THAN CLIPS. nowrap at a fixed size is only safe while the
-     rail is 21.5rem; below ~400px the rail becomes 85vw, and on a 320px phone
-     that leaves ~240px of content against ~270px of text — which nowrap turns
-     into an overflow instead of a wrap. The vw term only bites there: at any
-     width where the rail is its full 21.5rem, 2.2vw is far past the ceiling
-     and this resolves to the flat 0.6rem. */
-  font-size: clamp(0.5rem, 2.2vw, 0.6rem);
-}
 
 /* …AND WRAPS RATHER THAN CLIPS ON A VERY SMALL PHONE. Measured: the label is
    331px at its full size in a 366px rail. Below ~400px the rail is 85vw, and
@@ -9494,7 +9511,6 @@ a.dmwel__cta { text-decoration: none; }
    wordmark with no relationship to the mark beside it. Pulled up to sit
    directly under "Demeter", with its left edge on the wordmark's, so the mark,
    the name and the descriptor read as one block. */
-.demeter__sbtag { margin-top: -1.15rem; padding-left: calc(34px + 0.5rem); }
 
 /* ── Yellow ground takes white text ──────────────────────────────────────── */
 /* --demeter-wheat is a strong mid-yellow; ink on it reads as a caution label.
@@ -9513,7 +9529,6 @@ a.dmwel__cta { text-decoration: none; }
 /* ── The rail's head tightens up ─────────────────────────────────────────── */
 /* Shorter descriptor, so it can sit closer under the wordmark instead of
    floating a line below it. */
-.demeter__sbtag { margin-top: -1.4rem; }
 
 /* THE TOGGLE'S ICON GOES WHITE ON THE WHEAT. Closed, the control is a solid
    --demeter-wheat square, and ink linework on it reads as a caution label for
