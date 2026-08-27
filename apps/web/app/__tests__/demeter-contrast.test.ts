@@ -112,3 +112,35 @@ describe("Demeter palette contrast (WCAG AA)", () => {
     }
   });
 });
+
+describe("anything set on a wheat fill is readable on it", () => {
+  // Wheat is the loudest surface in the palette and the darkest text still
+  // clears it easily — ink is 9.47:1 — so a failure here means someone
+  // reached for white, which is 1.68:1. That shipped for exactly one commit
+  // on the back pill.
+  //
+  // The token rules above could not catch it: they check token-on-token
+  // pairs, and #FFFFFF is not a token. This one reads the actual rules
+  // instead, so it holds whatever colour someone writes.
+  const WHEAT = token("demeter-wheat");
+
+  /** Every rule body that paints a wheat background. */
+  const wheatRules = [...css.matchAll(/\{([^}]*background:\s*var\(--demeter-wheat\)[^}]*)\}/g)].map(
+    (m) => m[1],
+  );
+
+  it("finds the wheat controls at all", () => {
+    // Without this the assertion below passes by finding nothing.
+    expect(wheatRules.length).toBeGreaterThan(0);
+  });
+
+  it.each(wheatRules.map((r, i) => [i, r] as const))("wheat rule %i", (_i, rule) => {
+    const m = rule.match(/(?<!-)color:\s*(#[0-9A-Fa-f]{6}|var\(--([\w-]+)\))/);
+    if (!m) return; // inherits its colour; nothing asserted here
+    const fg = m[2] ? token(m[2]) : m[1];
+    expect(
+      ratio(fg, WHEAT),
+      `${fg} on wheat is ${ratio(fg, WHEAT).toFixed(2)}:1 — AA needs 4.5`,
+    ).toBeGreaterThanOrEqual(4.5);
+  });
+});
