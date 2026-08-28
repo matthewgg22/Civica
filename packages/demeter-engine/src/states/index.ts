@@ -275,6 +275,10 @@ export interface PackFreshnessEntry {
   kind: "expires" | "not-yet-effective";
   date: string;
   warning: string;
+  /** Opt-in: render this entry to READERS (capped). Absent/false — the
+   *  default, and every entry today — keeps it operator-only: pack freshness
+   *  notes are research provenance, and #958 was them leaking into answers. */
+  reader_facing?: boolean;
 }
 
 export interface StatePack {
