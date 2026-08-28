@@ -173,6 +173,10 @@ export interface AnswerRequest {
     /** Anonymous per-tab grouping key + turn number, for the drop-off curve. */
     sessionId?: string | null;
     turnIndex?: number | null;
+    /** ask | estimate — what the reader was DOING, distinct from mode (who is
+     *  asking). Client-reported; a label, never trusted for anything but
+     *  aggregation. */
+    worksheetMode?: string | null;
   };
 }
 
@@ -284,6 +288,11 @@ function degradedAnswer(
 /** The single answer pipeline. Yields frames; the caller adapts them to its
  *  transport (SSE, plain text stream, buffered JSON). */
 export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<AnswerFrame> {
+  // Wall-clock for the audit row (#1051 shipped the columns; nothing set
+  // them). Stamped here, not in the route, so every consumer gets timing.
+  const startedAt = Date.now();
+  let firstTokenAt: number | null = null;
+
   const { apiKey, signal, events, meta, audience } = req;
   const state = req.state; // undefined = legacy CA default; null = federal floor
   const lang = req.lang ?? "en";
@@ -462,6 +471,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
             }
             // Only text that has passed a checkpoint is released downstream.
             emittedAny = true;
+            if (firstTokenAt === null) firstTokenAt = Date.now();
             yield { type: "delta", text: buffered };
             buffered = "";
           }
@@ -481,6 +491,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
         } else {
           if (buffered) {
             emittedAny = true;
+            if (firstTokenAt === null) firstTokenAt = Date.now();
             yield { type: "delta", text: buffered };
           }
           if (!emittedAny) {
@@ -556,6 +567,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     finalChecks = verifyCitations(retryText, retrievedCitations, state, retrievedText);
     if (retryText && !hasUnrecognized(finalChecks) && numbersOk(retryText)) {
       answerText = retryText;
+      if (firstTokenAt === null) firstTokenAt = Date.now();
       yield { type: "delta", text: retryText };
     } else {
       outcome = "degraded";
@@ -577,6 +589,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
         ).length,
       );
       finalChecks = verifyCitations(answerText, retrievedCitations, state, retrievedText);
+      if (firstTokenAt === null) firstTokenAt = Date.now();
       yield { type: "delta", text: answerText };
     }
   }
@@ -666,6 +679,19 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     // path, or the separate extraction call.
     inputTokens: usageIn,
     outputTokens: usageOut,
+    // #1051 shipped these columns and the sink mapping; nothing populated
+    // them, so every row carried nulls — caught by the launch audit's live
+    // probe. lang and worksheetMode are labels for aggregation; the two
+    // clocks are wall time from generator entry.
+    lang,
+    worksheetMode: meta?.worksheetMode ?? null,
+    ttftMs: firstTokenAt === null ? null : firstTokenAt - startedAt,
+    totalMs: Date.now() - startedAt,
+    // NOT populated, deliberately: a reader pressing Stop aborts the request,
+    // which tears this generator down before the audit runs — the row for a
+    // stopped answer does not exist at all. Making `stopped` real needs the
+    // route to catch the abort and write a partial row; until then false is
+    // the honest default the column already has.
   };
   try {
     await audit(record);
