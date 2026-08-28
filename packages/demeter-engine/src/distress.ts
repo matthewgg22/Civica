@@ -1,7 +1,7 @@
 // Distress gate (CEO review F2/D3.2; closes OBBBA-audit item Q5).
 //
 // A public benefits chatbot WILL receive messages like "I have no food for my
-// kids tonight." This keyword gate (v1 — EN + ES) detects crisis phrasing so
+// kids tonight." This keyword gate (v2 — EN/ES/VI/ZH) detects crisis phrasing so
 // the answer LEADS with immediate help (expedited 7-day SNAP rights, 211,
 // local food banks) before any policy content. Detection is deliberately
 // high-recall/low-precision: a false positive costs one extra helpful
@@ -19,6 +19,20 @@ const DISTRESS_PATTERNS: RegExp[] = [
   /ni[ñn]os? (tienen|con) hambre|sin comer|pasando hambre/i,
   /emergencia de comida|me robaron (los beneficios|la ebt|las estampillas)/i,
   /sin hogar|desalojad[oa]|durmiendo en (el|mi) (carro|auto)/i,
+  // Vietnamese (launch audit 2026-08-28: the crisis gate covered vi/zh, this
+  // one did not — so a reader in acute food crisis in the two languages most
+  // likely to belong to LEP households got a normal policy answer. Same
+  // high-recall stance as above; drafted from the crisis.ts precedent and
+  // worth a native read, which is already a standing launch item.)
+  /không có (gì để )?ăn|hết (đồ ăn|thức ăn|gạo)|không có tiền mua (đồ ăn|thức ăn)/i,
+  /con (tôi |em )?(bị )?đói|nhịn đói|đang đói|chết đói/i,
+  /bị đuổi khỏi nhà|không có nhà|vô gia cư|ngủ (ngoài đường|trong xe)/i,
+  /trợ cấp bị (cắt|mất|trộm)|thẻ ebt bị (mất|trộm|quẹt trộm)/i,
+  // Chinese (no /i needed; kept for uniformity)
+  /没有?(东西|饭|食物)吃|吃不上饭|买不起(吃的|食物|菜)|没钱买(吃的|食物|菜)/i,
+  /孩子(们)?(在)?挨饿|饿肚子|挨饿|断粮/i,
+  /无家可归|被赶出|流浪|睡在车里|没地方住/i,
+  /(福利|补助)被(停|取消|偷)|ebt.{0,4}被(偷|盗刷)/i,
 ];
 
 /** True when the message shows acute food/shelter crisis phrasing. */
