@@ -353,9 +353,31 @@ describe("boxless messages (CSS contract)", () => {
       "it sits directly above the foot",
     ).toBe(true);
     expect(row.querySelector(".demeter__langrow")).toBeTruthy();
+    // THE GEAR'S LINKS SURVIVE A LANGUAGE (launch audit 2026-08-28). The
+    // feedback link was `/${lang}/feedback` — a route that does not exist, so
+    // every non-English reader who tapped "Enviar comentarios" got a 404; and
+    // states was hardcoded English although /[lang]/states exists. The rule
+    // is the footer's: prefix only what has a localized route.
     const gear = row.querySelector("details.demeter__gear")!;
     expect(gear.querySelector("a[href='/privacy']")).toBeTruthy();
-    expect(gear.querySelector("a[href*='/feedback']")).toBeTruthy();
+    expect(
+      gear.querySelector("a[href='/feedback']"),
+      "feedback must link canonically — /[lang]/feedback does not exist",
+    ).toBeTruthy();
+    expect(gear.querySelector("a[href='/es/feedback'], a[href='/vi/feedback'], a[href='/zh/feedback']")).toBeNull();
+
+    // And in SPANISH — the language the 404 actually shipped to. Switch via
+    // the rail's own picker, then: states localizes (the route exists),
+    // feedback stays canonical (it does not).
+    // NOTE: `container` was cleaned up above when the with-conversation mount
+    // replaced it — `withChat` is the live tree here.
+    const esBtn = withChat.querySelector('button[title="Español"]');
+    expect(esBtn, "the Spanish picker button").not.toBeNull();
+    fireEvent.click(esBtn!);
+    const gearEs = withChat.querySelector("#demeter-sidebar details.demeter__gear")!;
+    expect(gearEs.querySelector("a[href='/es/states']"), "states should localize").toBeTruthy();
+    expect(gearEs.querySelector("a[href='/feedback']"), "feedback must stay canonical").toBeTruthy();
+    expect(gearEs.querySelector("a[href='/es/feedback']"), "the 404 is back").toBeNull();
     // A native disclosure, so Escape and outside-click need no JS.
     expect(gear.querySelector("summary")).toBeTruthy();
     // The retired buttons are really gone, and the gear is not left behind

@@ -2891,7 +2891,18 @@ export function DemeterChat({
               </svg>
             </summary>
             <div className="demeter__gearmenu">
-              <a className="demeter__settingslink" href="/states">
+              {/* THE FOOTER'S RULE, RE-LEARNED HERE (launch audit 2026-08-28;
+                  the #837-class defect a third time). A path is language-
+                  prefixed only while a localized route EXISTS: /[lang]/states
+                  exists, so states localizes; /[lang]/feedback does not, so
+                  feedback links canonically — the prefixed form 404'd for
+                  every es/vi/zh reader, from the one menu non-English chat
+                  users actually open. Terms and privacy are English-only by
+                  documented decision (#1013) and stay canonical. */}
+              <a
+                className="demeter__settingslink"
+                href={lang === "en" ? "/states" : `/${lang}/states`}
+              >
                 {t.statesLink}
               </a>
               <a className="demeter__settingslink" href="/terms">
@@ -2900,10 +2911,7 @@ export function DemeterChat({
               <a className="demeter__settingslink" href="/privacy">
                 {t.privacyLink}
               </a>
-              <a
-                className="demeter__settingslink"
-                href={lang === "en" ? "/feedback" : `/${lang}/feedback`}
-              >
+              <a className="demeter__settingslink" href="/feedback">
                 {t.feedbackLink}
               </a>
               {/* The safety hint lived here too. Removed (owner, 2026-08-26):
