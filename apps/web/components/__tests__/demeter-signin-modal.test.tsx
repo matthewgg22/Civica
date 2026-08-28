@@ -6,6 +6,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
 import { DemeterSignInModal } from "../DemeterSignInModal";
 import { SIGNIN_T } from "../../lib/i18n/demeter-signin-copy";
+import { EMAIL_SIGNIN_ENABLED } from "../../lib/magic-link";
 
 afterEach(() => {
   cleanup();
@@ -18,7 +19,10 @@ function open(lang: "en" | "es" | "vi" | "zh" = "en") {
   return render(<DemeterSignInModal next="/chat" lang={lang} onClose={() => {}} />);
 }
 
-describe("the sent state offers a way back", () => {
+// SKIPPED WHILE EMAIL SIGN-IN IS OFF (#699). These drive the email field,
+// which EMAIL_SIGNIN_ENABLED hides until SMTP is wired; they reactivate the
+// day the flag flips, which is the point of skipIf over deletion.
+describe.skipIf(!EMAIL_SIGNIN_ENABLED)("the sent state offers a way back", () => {
   it("shows the address it wrote to, and a retry that returns to the form", async () => {
     ok();
     const { container } = open();
@@ -37,7 +41,7 @@ describe("the sent state offers a way back", () => {
   });
 });
 
-describe("failures name only what the person can act on", () => {
+describe.skipIf(!EMAIL_SIGNIN_ENABLED)("failures name only what the person can act on", () => {
   it("a rate limit says so and returns focus to the field", async () => {
     vi.stubGlobal("fetch", vi.fn<typeof fetch>(async () => new Response(null, { status: 429 })));
     open();
