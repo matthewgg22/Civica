@@ -2,11 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock @supabase/supabase-js BEFORE importing the route.
 const insertMock = vi.fn();
+const durableRateLimit = vi.hoisted(() => vi.fn());
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({
     from: () => ({ insert: insertMock }),
   }),
 }));
+vi.mock("../../../../lib/durable-rate-limit", () => ({ durableRateLimit }));
 
 // next/server is a thin wrapper around the global Response — we just need
 // NextResponse.json available in the node test env. Use the real module.
@@ -38,6 +40,7 @@ function studentLead(overrides: Record<string, unknown> = {}) {
 describe("POST /api/lead-capture", () => {
   beforeEach(() => {
     insertMock.mockReset();
+    durableRateLimit.mockReset().mockResolvedValue(true);
     __resetRateLimitForTests();
     process.env.NEXT_PUBLIC_SUPABASE_URL = "https://stub.supabase.co";
     process.env.SUPABASE_SERVICE_ROLE_KEY = "stub-service-role";
@@ -119,5 +122,18 @@ describe("POST /api/lead-capture", () => {
       makeReq(studentLead({ email: "s5@cccd.edu" }), ip),
     );
     expect(blocked.status).toBe(429);
+  });
+
+  // Regression (launch audit 2026-08-28): the in-memory limiter above resets on
+  // cold start and is per-serverless-instance, so on its own it barely bounds a
+  // distributed flood of the leads table. The durable counter is the ceiling
+  // that holds across instances — a fresh IP that clears the in-memory line is
+  // still blocked when the durable counter trips.
+  it("blocks when the durable cross-instance limiter trips", async () => {
+    insertMock.mockResolvedValue({ error: null });
+    durableRateLimit.mockResolvedValue(false);
+    const res = await POST(makeReq(studentLead(), "5.5.5.5"));
+    expect(res.status).toBe(429);
+    expect(insertMock).not.toHaveBeenCalled();
   });
 });

@@ -12,6 +12,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const insert = vi.hoisted(() => vi.fn());
 const upsert = vi.hoisted(() => vi.fn());
 const rateLimit = vi.hoisted(() => vi.fn());
+const durableRateLimit = vi.hoisted(() => vi.fn());
 
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({ schema: () => ({ from: () => ({ insert, upsert }) }) }),
@@ -25,7 +26,11 @@ vi.mock("@civica/demeter-engine/packs", () => ({
   isAnswerLang: (v: unknown) => ["en", "es", "vi", "zh"].includes(v as string),
   VERIFIED_STATE_CODES: ["CA", "TX"],
 }));
-vi.mock("../../../lead-capture/rate-limit", () => ({ rateLimit }));
+vi.mock("../../../lead-capture/rate-limit", () => ({
+  rateLimit,
+  RATE_LIMIT: { max: 5, windowMs: 3_600_000 },
+}));
+vi.mock("../../../../../lib/durable-rate-limit", () => ({ durableRateLimit }));
 
 import { POST } from "../route";
 
@@ -42,6 +47,7 @@ const REPORT_ID = "3f2504e0-4f89-41d3-9a0c-0305e82c3301";
 beforeEach(() => {
   vi.clearAllMocks();
   rateLimit.mockReturnValue(true);
+  durableRateLimit.mockResolvedValue(true);
   insert.mockResolvedValue({ error: null });
   upsert.mockResolvedValue({ error: null });
   process.env.NEXT_PUBLIC_SUPABASE_URL = "https://x.supabase.co";
@@ -128,6 +134,17 @@ describe("POST /api/demeter/feedback", () => {
 
   it("rate-limits, so an unauthenticated write endpoint is not an open door", async () => {
     rateLimit.mockReturnValue(false);
+    const res = await POST(req({ rating: "up" }) as never);
+    expect(res.status).toBe(429);
+    expect(insert).not.toHaveBeenCalled();
+  });
+
+  // Regression (launch audit 2026-08-28): the in-memory limiter resets on cold
+  // start and is per-instance, so the DURABLE cross-instance counter is the real
+  // ceiling. Even when the fast-path allows, a tripped durable counter blocks.
+  it("blocks when the durable cross-instance limiter trips, even if in-memory allows", async () => {
+    rateLimit.mockReturnValue(true);
+    durableRateLimit.mockResolvedValue(false);
     const res = await POST(req({ rating: "up" }) as never);
     expect(res.status).toBe(429);
     expect(insert).not.toHaveBeenCalled();
