@@ -18,7 +18,34 @@
 // here should need tombstoning, and a jsonb blob is where PII hides.
 
 import * as Sentry from "@sentry/nextjs";
+import { VERIFIED_STATE_CODES, isAnswerLang } from "@civica/demeter-engine/packs";
 import { supabaseAdmin } from "./supabase-server";
+
+// The three client-echoed fields are validated to their real domain HERE, at
+// the sink, so no caller can pollute the funnel this table exists to measure.
+// The chat route already did this inline (UUID_RE + VERIFIED_STATE_CODES); the
+// conversion routes (pdf / email-outline / conversations) passed a bare
+// `typeof x === "string"` value straight through, so a crafted or oversized
+// sessionId/state landed verbatim in an unbounded text column, and one route
+// even stored a state NAME ("California") in a column the rest of the app keys
+// on as a 2-letter CODE (launch audit 2026-08-28). Enforcing it once is the
+// file's own stated rule — "NO FREE TEXT EVER" — made true for every caller.
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** A session id only if it is UUID-shaped (all sessions are), else null. */
+function cleanSessionId(v: string | null | undefined): string | null {
+  return typeof v === "string" && UUID_RE.test(v) ? v : null;
+}
+/** A verified 2-letter state code (uppercased), else null — never a name. */
+function cleanStateCode(v: string | null | undefined): string | null {
+  if (typeof v !== "string") return null;
+  const up = v.toUpperCase();
+  return VERIFIED_STATE_CODES.includes(up) ? up : null;
+}
+/** One of the four answer languages, else null. */
+function cleanLang(v: string | null | undefined): string | null {
+  return typeof v === "string" && isAnswerLang(v) ? v : null;
+}
 
 export type DemeterEventKind = "failure" | "conversion";
 
@@ -57,10 +84,10 @@ export async function recordDemeterEvent(e: DemeterEvent): Promise<void> {
         kind: e.kind,
         event: e.event,
         status: e.status ?? null,
-        session_id: e.sessionId ?? null,
+        session_id: cleanSessionId(e.sessionId),
         turn_index: e.turnIndex ?? null,
-        scope_state: e.scopeState ?? null,
-        lang: e.lang ?? null,
+        scope_state: cleanStateCode(e.scopeState),
+        lang: cleanLang(e.lang),
         detail: e.detail ?? {},
       });
     if (error) throw error;
