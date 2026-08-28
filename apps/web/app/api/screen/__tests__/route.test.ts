@@ -143,6 +143,23 @@ describe("POST /api/screen", () => {
     expect(mockSettle.mock.calls[0]![0]).toBeGreaterThan(0);
   });
 
+  // Regression (launch audit 2026-08-28): screen spend must accrue to the
+  // per-IP daily bucket, not only the global one. Missing the ip arg let an
+  // abuser burn the whole budget through /api/screen without ever tripping
+  // the per-visitor cap.
+  it("attributes settled spend to the caller's IP", async () => {
+    const withIp = new NextRequest("http://localhost/api/screen", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-forwarded-for": "198.51.100.4, 10.0.0.9" },
+      body: JSON.stringify({ message: "She's 62.", state: "CA" }),
+    });
+    const res = await POST(withIp);
+    await res.text();
+    await afterCallbacks[0]!();
+    // 3rd positional arg is the client IP (first hop of x-forwarded-for).
+    expect(mockSettle.mock.calls[0]![2]).toBe("198.51.100.4");
+  });
+
   it("returns an honest 503 when the API key is absent", async () => {
     vi.stubEnv("ANTHROPIC_API_KEY", "");
     const res = await POST(makeReq({ message: "hi", state: "CA" }));

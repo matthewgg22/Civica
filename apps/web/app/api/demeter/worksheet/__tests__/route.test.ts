@@ -61,6 +61,27 @@ describe("POST /api/demeter/worksheet", () => {
     expect(body.facts.gross_monthly_income).toBe(2000);
   });
 
+  // Regression (launch audit 2026-08-28): worksheet spend must be attributed to
+  // the caller's IP, not just the global bucket. Without the ip arg the per-IP
+  // daily cap never accrues here and an abuser can drain the budget through the
+  // worksheet endpoint while every real applicant sees "at capacity".
+  it("attributes spend to the caller's IP", async () => {
+    screenHousehold.mockResolvedValue({
+      facts: { household_size: 2, gross_monthly_income: 1000 },
+      classification: { outcome: "likely_eligible" },
+      usage: { inputTokens: 100, outputTokens: 20 },
+    });
+    const withIp = new Request("http://localhost/api/demeter/worksheet", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-forwarded-for": "203.0.113.7, 10.0.0.1" },
+      body: JSON.stringify({ messages: [{ role: "user", content: "2 of us" }], facts: FACTS, state: "CA" }),
+    });
+    await POST(withIp as never);
+    expect(settleSpend).toHaveBeenCalledTimes(1);
+    // 3rd positional arg is the client IP (first hop of x-forwarded-for).
+    expect(settleSpend.mock.calls[0][2]).toBe("203.0.113.7");
+  });
+
   it.each([
     [
       "the engine throws",
