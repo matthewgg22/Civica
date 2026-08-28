@@ -1654,6 +1654,10 @@ export function DemeterChat({
           state,
           lang,
           sessionId: sessionIdRef.current || undefined,
+          // What the reader is DOING (ask vs estimate) — a label for the
+          // audit row, so per-mode quality is aggregable. Distinct from the
+          // server's mode field, which is who is asking (public/case).
+          worksheetMode,
           // Counts ANSWERS, not attempts, because an audit row is written per
           // answer, so this has to agree with what actually lands in the log.
           //

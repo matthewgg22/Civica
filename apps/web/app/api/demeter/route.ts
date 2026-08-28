@@ -193,7 +193,22 @@ export async function POST(req: NextRequest) {
         usageOut = o;
       },
     },
-    meta: { staffUserId: null, mode: "public", scopeRef: rawRef, sessionId, turnIndex },
+    meta: {
+      staffUserId: null,
+      mode: "public",
+      scopeRef: rawRef,
+      sessionId,
+      turnIndex,
+      // ask | estimate. Clamped to the two labels — this is client input
+      // headed for an analytics column, and the events table's no-free-text
+      // rule applies in spirit here too.
+      worksheetMode:
+        (body as { worksheetMode?: unknown }).worksheetMode === "estimate"
+          ? "estimate"
+          : (body as { worksheetMode?: unknown }).worksheetMode === "ask"
+            ? "ask"
+            : null,
+    },
   });
 
   const stream = new ReadableStream<Uint8Array>({
