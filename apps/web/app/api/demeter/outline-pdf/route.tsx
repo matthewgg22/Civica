@@ -12,7 +12,8 @@
 // The emailed copy is different and does require sign-in: sending needs an
 // address, and an address has to come from a session rather than a body.
 
-import { NextResponse, type NextRequest } from "next/server";
+import { after, NextResponse, type NextRequest } from "next/server";
+import { recordDemeterEvent } from "../../../../lib/demeter-events";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { OutlinePdf } from "../../../../lib/outline-pdf";
 import type { OutlineInput } from "../../../../lib/demeter-outline";
@@ -81,6 +82,17 @@ export async function POST(request: NextRequest) {
   const slug = input.stateName ? input.stateName.toLowerCase().replace(/[^a-z]+/g, "-") : "snap";
   const filename = `outlined-application-${slug}-${input.generatedAt.toISOString().slice(0, 10)}.pdf`;
 
+  // Recorded on the response actually being produced, not on the click:
+  // an intent that 500s is not a conversion.
+  after(() =>
+    recordDemeterEvent({
+      kind: "conversion",
+      event: "pdf_downloaded",
+      status: 200,
+      sessionId: typeof body.sessionId === "string" ? body.sessionId : null,
+      scopeState: typeof body.stateName === "string" ? body.stateName : null,
+    }),
+  );
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
