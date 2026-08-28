@@ -56,8 +56,7 @@ describe("email sign-in is disabled at launch", () => {
     expect(page).toContain('href="/privacy"');
     // The assent block is gated on forConversation, never on the email flag.
     const assent = page.indexOf('href="/terms"');
-    const gateClose = page.lastIndexOf("EMAIL_SIGNIN_ENABLED &&");
-    // assent sits after the email gate's content but is its own forConversation block
+    // The assent sits inside its own forConversation block, not the email gate.
     expect(page.slice(0, assent)).toContain("forConversation && (");
   });
 });
