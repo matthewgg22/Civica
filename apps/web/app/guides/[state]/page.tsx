@@ -117,8 +117,9 @@ export default async function GuidePage({
       <section className="gpage__ask">
         <h2>Ask about SNAP in {pack.code}</h2>
         <p>
-          Demeter answers with citations from {pack.code}&apos;s own policy sources , 
-          free, in English or Spanish, no account needed.
+          Demeter answers with citations from {pack.code}&apos;s own policy
+          sources, free, in English, Spanish, Vietnamese, or Chinese, no
+          account needed.
         </p>
         <ul className="gpage__questions">
           {questions.map((q) => (

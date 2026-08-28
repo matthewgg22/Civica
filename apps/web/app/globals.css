@@ -4986,6 +4986,59 @@ html {
 }
 .vpage__foot a { color: var(--demeter-terracotta-deep); }
 
+/* ── /guides/[state] joins the product it links to (launch audit 2026-08-28) —
+   the last governed surface still wearing Civica's palette. Three faults, one
+   block: the h1 was sans weight-800 against "serif speaks"; the CTA was
+   pine — a colour a Demeter reader has never seen — ending every guide in a
+   button from a different product; and in OS dark mode the Civica token flip
+   turned the question links near-white on their hardcoded white cards
+   (~1.09:1), on indexed acquisition pages whose whole purpose is those
+   links. Demeter is light-only by decision, so pinning the ink/ground to the
+   Demeter tokens also ends the half-dark flip. */
+.gpage { color: var(--demeter-ink); }
+.gpage__title {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: clamp(1.9rem, 4vw, 2.4rem); font-weight: 600; letter-spacing: -0.02em;
+  line-height: 1.12;
+}
+.gpage__lede, .gpage .vpage__lede {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  color: var(--demeter-body);
+}
+.gpage__crumb {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  color: var(--demeter-muted);
+}
+.gpage__badge { color: var(--demeter-terracotta-deep); }
+.gpage__facts {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+}
+.gpage__facts dt { color: var(--demeter-muted); }
+.gpage__facts dd { color: var(--demeter-body); }
+.gpage__ask h2 {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-weight: 600;
+}
+.gpage__questions { list-style: none; padding-left: 0; }
+.gpage__questions a {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  color: var(--demeter-ink);
+}
+.gpage__questions a:hover { border-color: var(--demeter-terracotta); background: var(--demeter-tint); }
+/* The wheat pill is Demeter's own standing entry — the same control the rail
+   and BackToChat use — where pine was another product's primary. */
+.gpage__cta {
+  background: var(--demeter-wheat); color: var(--demeter-ink);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+}
+.gpage__cta:hover { filter: brightness(0.94); }
+.gpage__cta:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
+.gpage__foot {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  color: var(--demeter-muted); border-top: 1px solid var(--demeter-rule);
+}
+.gpage__foot a { color: var(--demeter-terracotta-deep); }
+
 /* ── /verify, the pass ──────────────────────────────────────────────────────
    Many of this page's conventions had drifted from the rest of the surface:
    headings at page-title weight, and labels set in the serif that is reserved
@@ -5647,6 +5700,7 @@ html:has(.screening), body:has(.screening),
 html:has(.screen-landing), body:has(.screen-landing),
 html:has(.screen-auth), body:has(.screen-auth),
 html:has(.vpage), body:has(.vpage),
+html:has(.gpage), body:has(.gpage),
 html:has(.saved), body:has(.saved),
 html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surface="demeter"]) {
   background: var(--demeter-paper);
