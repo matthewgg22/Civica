@@ -13,7 +13,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { supabaseAdmin } from "../../../lib/supabase-server";
-import { rateLimit } from "../lead-capture/rate-limit";
+import { rateLimit, RATE_LIMIT } from "../lead-capture/rate-limit";
+import { durableRateLimit } from "../../../lib/durable-rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -33,9 +34,15 @@ function clientIp(req: NextRequest): string {
 }
 
 export async function POST(req: NextRequest) {
-  // Namespaced so this shares no budget with lead-capture or the per-answer
-  // feedback route — three different forms, three independent allowances.
-  if (!rateLimit(`sfb:${clientIp(req)}`)) {
+  // Cross-instance ceiling + cheap in-memory fast-path (launch audit
+  // 2026-08-28): the in-memory map is per-instance and resets on cold start,
+  // so durableRateLimit is the real limit. Namespaced ("sfb") — three forms,
+  // three independent allowances.
+  const ip = clientIp(req);
+  if (
+    !rateLimit(`sfb:${ip}`) ||
+    !(await durableRateLimit("sfb", ip, RATE_LIMIT.max, RATE_LIMIT.windowMs))
+  ) {
     return NextResponse.json(
       { error: "Too many submissions, try again in a bit." },
       { status: 429 },

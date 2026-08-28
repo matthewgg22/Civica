@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
-import { rateLimit } from "./rate-limit";
+import { rateLimit, RATE_LIMIT } from "./rate-limit";
+import { durableRateLimit } from "../../../lib/durable-rate-limit";
 
 export const runtime = "nodejs";
 
@@ -21,7 +22,14 @@ function clientIp(req: Request): string {
 
 export async function POST(req: Request) {
   const ip = clientIp(req);
-  if (!rateLimit(ip)) {
+  // Durable cross-instance ceiling + the in-memory fast-path (launch audit
+  // 2026-08-28). The in-memory map is per-serverless-instance and resets on
+  // cold start, so on its own it barely bounds a distributed flood of the
+  // leads table; durableRateLimit shares one counter across instances.
+  if (
+    !rateLimit(ip) ||
+    !(await durableRateLimit("lead", ip, RATE_LIMIT.max, RATE_LIMIT.windowMs))
+  ) {
     return NextResponse.json(
       { message: "Too many requests" },
       { status: 429 },

@@ -25,7 +25,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { redactPii } from "@civica/demeter-engine";
 import { isAnswerLang, VERIFIED_STATE_CODES } from "@civica/demeter-engine/packs";
-import { rateLimit } from "../../lead-capture/rate-limit";
+import { rateLimit, RATE_LIMIT } from "../../lead-capture/rate-limit";
+import { durableRateLimit } from "../../../../lib/durable-rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,9 +43,16 @@ function clientIp(req: NextRequest): string {
 }
 
 export async function POST(req: NextRequest) {
-  // Namespaced so submitting feedback does not consume someone's
-  // lead-capture allowance (the limiter is a shared in-memory map).
-  if (!rateLimit(`fb:${clientIp(req)}`)) {
+  // Two lines of defense (launch audit 2026-08-28): rateLimit is a cheap
+  // per-instance fast-path, but it resets on cold start and each serverless
+  // instance keeps its own map — so its real allowance is (max × instances).
+  // durableRateLimit shares one atomic counter across every instance.
+  // Namespaced ("fb") so this shares no budget with the other forms.
+  const ip = clientIp(req);
+  if (
+    !rateLimit(`fb:${ip}`) ||
+    !(await durableRateLimit("fb", ip, RATE_LIMIT.max, RATE_LIMIT.windowMs))
+  ) {
     return NextResponse.json({ error: "Too many reports, try again later." }, { status: 429 });
   }
 
