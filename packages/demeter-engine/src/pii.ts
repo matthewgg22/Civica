@@ -5,8 +5,9 @@
 // a policy question, so redacting structured identifiers preserves the question
 // while keeping PII off the wire.
 //
-// Scope: HIGH-CONFIDENCE structured identifiers only (SSN, phone, email, slash-
-// date, long account/EBT/case numbers). Names are intentionally NOT redacted —
+// Scope: HIGH-CONFIDENCE structured identifiers only (SSN incl. spaced/dotted,
+// phone, email, slash-date, grouped 16-digit card/EBT PANs, long account/EBT/
+// case numbers). Names are intentionally NOT redacted —
 // name detection is error-prone (false positives would mangle real questions),
 // and the system prompt already forbids Mae from echoing names. This is a
 // privacy control, not a guarantee; pair it with the "don't paste PII" prompt.
@@ -20,7 +21,16 @@ interface Rule {
 // correctly (e.g. an email before its digits, a dashed SSN before a phone).
 const RULES: Rule[] = [
   { tag: "[EMAIL]", re: /\b[\w.+-]+@[\w-]+\.[\w.-]+\b/g },
-  { tag: "[SSN]", re: /\b\d{3}-\d{2}-\d{4}\b/g }, // 123-45-6789
+  // Grouped 16-digit card / EBT PAN: "1234 5678 9012 3456" or dashed. Must run
+  // BEFORE the SSN/phone/ID rules so the whole number is consumed as one tag
+  // rather than nibbled. Space/dash only (not dot) keeps it card-shaped; the
+  // bare-run [ID] rule below still covers unspaced 16-19 digit PANs. A SNAP
+  // applicant pasting an EBT card number is exactly the leak this closes.
+  { tag: "[CARD]", re: /\b\d{4}[ -]\d{4}[ -]\d{4}[ -]\d{4}\b/g },
+  // SSN in the classic 3-2-4 grouping. Separator broadened from dash-only to
+  // dash / dot / single space, so "123-45-6789", "123 45 6789" and
+  // "123.45.6789" all scrub. (3-2-4 can't collide with a 3-3-4 phone.)
+  { tag: "[SSN]", re: /\b\d{3}[-. ]\d{2}[-. ]\d{4}\b/g },
   { tag: "[PHONE]", re: /\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g }, // 10-digit
   { tag: "[SSN]", re: /\b\d{9}\b/g }, // bare 9-digit (very likely an SSN in this context)
   { tag: "[DATE]", re: /\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/g }, // DOB-style MM/DD/YYYY
