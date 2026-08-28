@@ -28,7 +28,7 @@ import {
 } from "./citation-verifier";
 import { redactPii } from "./pii";
 import { retrieve, formatRetrievedSources, CORPUS_EFFECTIVE_DATE } from "./retrieval";
-import { formatFreshnessFooter } from "./freshness";
+import { assessFreshness, formatFreshnessFooter } from "./freshness";
 import { assessCertainty, formatCertaintyBanner } from "./certainty";
 import { isVerifiedState } from "./packs";
 import { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audit";
@@ -614,6 +614,17 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     ? ""
     : formatCitationTrailer(finalChecks, lang).replace(/^\n\n---\n/, "");
   const freshness = formatFreshnessFooter(new Date(), CORPUS_EFFECTIVE_DATE, state, lang);
+  // OPERATOR warnings go to the server log, not the answer (#958). This is
+  // the channel for "re-verify this source" and "re-run the corpus build" —
+  // the reader can act on neither, and rendering them under answers put 809
+  // characters of Vermont research provenance in front of someone in crisis.
+  const { operatorWarnings } = assessFreshness(new Date(), CORPUS_EFFECTIVE_DATE, state);
+  if (operatorWarnings.length) {
+    console.warn(
+      `[demeter-freshness] ${operatorWarnings.length} operator warning(s) for ${state ?? "federal"}:`,
+      operatorWarnings.map((w) => w.slice(0, 140)).join(" | "),
+    );
+  }
   const trailerText = [banner, trailer ? `\n\n${trailer}` : "", freshness].filter(Boolean).join("");
   if (trailerText) yield { type: "trailer", text: trailerText };
 
