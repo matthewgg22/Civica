@@ -5,6 +5,7 @@
 // enforced by the retention job, not here. Best-effort: never throws.
 
 import { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "@civica/demeter-engine";
+import * as Sentry from "@sentry/nextjs";
 import { supabaseAdmin } from "./supabase-server";
 
 export const publicAuditSink: MaeAuditSink = async (rec: MaeAuditRecord) => {
@@ -72,5 +73,15 @@ export const publicAuditSink: MaeAuditSink = async (rec: MaeAuditRecord) => {
       "[demeter-audit] public sink error:",
       err instanceof Error ? err.message : String(err),
     );
+    // AND IT PAGES (launch audit 2026-08-28). #1050 promoted this to
+    // console.error and its commit claimed that "reaches Sentry" — it did
+    // not: nothing captures console output, and this catch swallows the
+    // exception, so Sentry's unhandled-error hook never sees it either. The
+    // twelve-day outage this guards against would have been exactly as
+    // invisible after #1050 as before it. captureException is the only call
+    // here that actually rings.
+    Sentry.captureException(err instanceof Error ? err : new Error(String(err)), {
+      tags: { sink: "mae_query_log" },
+    });
   }
 };

@@ -17,6 +17,7 @@
 // belongs in mae_query_log, where the retention job can reach it; nothing
 // here should need tombstoning, and a jsonb blob is where PII hides.
 
+import * as Sentry from "@sentry/nextjs";
 import { supabaseAdmin } from "./supabase-server";
 
 export type DemeterEventKind = "failure" | "conversion";
@@ -71,5 +72,11 @@ export async function recordDemeterEvent(e: DemeterEvent): Promise<void> {
       e.event,
       err instanceof Error ? err.message : String(err),
     );
+    // Same lesson as the audit sink: a swallowed catch never reaches Sentry
+    // on its own, and this table is how refusals are counted — losing it
+    // silently means the funnel lies.
+    Sentry.captureException(err instanceof Error ? err : new Error(String(err)), {
+      tags: { sink: "demeter_events", event: e.event },
+    });
   }
 }

@@ -34,6 +34,30 @@ const nextConfig: NextConfig = {
   // so a 308 would strand every prior visitor if a distinct marketing page is
   // ever built for "/". Query strings carry through automatically, which keeps
   // campaign links like /?state=CA&q=… working.
+  // SECURITY HEADERS (launch audit 2026-08-28). Verified live: nothing but
+  // Vercel's HSTS was set. On this surface the gaps are not academic — the
+  // Supabase auth cookies are httpOnly:false by SDK design, so any future
+  // XSS is session theft with no backstop, and an unframeable page is the
+  // cheap half of not being a clickjacking target for people typing income
+  // figures. frame-ancestors 'none' rather than X-Frame-Options: it is the
+  // successor header, and nothing on this product is meant to be embedded.
+  //
+  // NO full CSP yet, deliberately: Next inlines scripts and a wrong CSP
+  // silently breaks hydration. That is its own change with its own testing,
+  // not a line in this block.
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       { source: "/", destination: "/screen/ask", permanent: false },

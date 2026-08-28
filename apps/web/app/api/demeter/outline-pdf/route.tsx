@@ -13,6 +13,7 @@
 // address, and an address has to come from a session rather than a body.
 
 import { after, NextResponse, type NextRequest } from "next/server";
+import { durableRateLimit } from "../../../../lib/durable-rate-limit";
 import { recordDemeterEvent } from "../../../../lib/demeter-events";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { OutlinePdf } from "../../../../lib/outline-pdf";
@@ -26,8 +27,28 @@ export const runtime = "nodejs";
  *  renderer chew through an arbitrary payload. */
 const MAX_STILL_NEEDED = 20;
 const MAX_FIELD_CHARS = 200;
+/** Array bounds (launch audit 2026-08-28). Strings were capped; array LENGTHS
+ *  were not, so a scripted client could loop multi-MB fact arrays through
+ *  CPU-heavy PDF layout on the Node runtime at zero cost to itself. 30
+ *  members and 60 income lines is beyond any real household. */
+const MAX_HOUSEHOLD = 30;
+const MAX_INCOME_LINES = 60;
+const RATE_LIMIT_PER_MIN = 6;
 
 export async function POST(request: NextRequest) {
+  // Anonymous + CPU-heavy was the only unlimited combination left on the API
+  // surface. Same durable limiter as the chat, tighter window: a person
+  // regenerates a PDF a handful of times, a script does not.
+  const fwd = request.headers.get("x-forwarded-for");
+  const ip = (fwd ? fwd.split(",")[0]?.trim() : null) || request.headers.get("x-real-ip") || "unknown";
+  const allowed = await durableRateLimit("pdf", ip, RATE_LIMIT_PER_MIN, 60_000);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many downloads at once, try again in a minute." },
+      { status: 429, headers: { "Retry-After": "60" } },
+    );
+  }
+
   let body: Record<string, unknown>;
   try {
     body = (await request.json()) as Record<string, unknown>;
@@ -35,7 +56,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Body must be JSON" }, { status: 400 });
   }
 
-  const facts = (body.facts ?? {}) as PartialFacts;
+  const rawFacts = (body.facts ?? {}) as PartialFacts;
+  // Bound the arrays BEFORE the renderer maps over them; everything else in
+  // the input is already string-capped below.
+  const facts: PartialFacts = {
+    ...rawFacts,
+    ...(Array.isArray(rawFacts.household)
+      ? { household: rawFacts.household.slice(0, MAX_HOUSEHOLD) }
+      : {}),
+    ...(Array.isArray(rawFacts.income)
+      ? { income: rawFacts.income.slice(0, MAX_INCOME_LINES) }
+      : {}),
+  };
   const empty =
     !facts.household?.length &&
     !facts.income?.length &&
