@@ -34,7 +34,7 @@ import { isVerifiedState } from "./packs";
 import { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audit";
 import { retrievalMode } from "./embeddings";
 import { detectDistress, DISTRESS_SYSTEM_ADDENDUM } from "./distress";
-import { detectCrisis, CRISIS_SYSTEM_ADDENDUM } from "./crisis";
+import { detectCrisis, CRISIS_SYSTEM_ADDENDUM, crisisResourcePresent, crisisSafetyNet } from "./crisis";
 import { verifyNumericEquivalence } from "./numeric-check";
 import { answerInstruction, degradeWrapper, degradeLeads, type AnswerLang } from "./lang";
 import { classifyQuestionTopic } from "./form-questions";
@@ -592,6 +592,25 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
       if (firstTokenAt === null) firstTokenAt = Date.now();
       yield { type: "delta", text: answerText };
     }
+  }
+
+  // --- Crisis safety net (launch audit 2026-08-28) --------------------------
+  // The crisis addendum ASKS the model to open with 988 / the DV hotline; it
+  // does not guarantee it. Under this product's stated asymmetry — a person in
+  // a self-harm crisis answered with paperwork is the failure that matters — the
+  // resource reaching them cannot ride on the model complying. If the finished
+  // answer does not detectably carry the number, append it deterministically.
+  // Runs even for a degraded answer: the hotline matters whether or not we could
+  // verify any SNAP policy. Placed before the trailer furniture so it reads as
+  // part of the reply, not as a citation.
+  if (crisis && !crisisResourcePresent(crisis, answerText)) {
+    const net = `\n\n${crisisSafetyNet(crisis, lang)}`;
+    answerText += net;
+    if (firstTokenAt === null) firstTokenAt = Date.now();
+    yield { type: "delta", text: net };
+    // Operator signal: how often the model drops the resource is worth knowing
+    // without reading transcripts. Goes to the log, never the reader.
+    console.warn(`[demeter-crisis] ${crisis} resource missing from answer — safety net appended`);
   }
 
   // --- Trailer: citation verdicts + freshness -------------------------------

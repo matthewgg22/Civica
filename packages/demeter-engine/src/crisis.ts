@@ -26,6 +26,8 @@
 //
 // NOT A DIAGNOSIS, and not a gate on the answer: see the addendum.
 
+import type { AnswerLang } from "./lang";
+
 export type CrisisKind = "self_harm" | "abuse";
 
 const SELF_HARM: RegExp[] = [
@@ -109,4 +111,50 @@ export function CRISIS_SYSTEM_ADDENDUM(kind: CrisisKind): string {
     "sources you were given actually support. " +
     shared
   );
+}
+
+// ---------------------------------------------------------------------------
+// Deterministic safety net (launch audit 2026-08-28).
+//
+// The addendum above is an INSTRUCTION to the model, not a guarantee. Under the
+// asymmetry this whole file is built on — "someone saying they want to die is
+// answered with paperwork" — the resource actually reaching the reader cannot
+// depend on the model complying. A truncated stream, an adversarial turn, or
+// plain non-compliance would drop the number silently.
+//
+// So the orchestrator checks the FINISHED answer: if the crisis resource is not
+// detectably in it, append this deterministic line. Bias is one-directional on
+// purpose — when unsure, append. A duplicated hotline number is a far smaller
+// harm than a missing one, and the detection below is strict enough that a real
+// compliant answer (which always writes the number) suppresses the net.
+
+/** True when the answer already carries this crisis's resource number, so the
+ *  net must NOT be appended. Digit-stripped for the DV number so any separator
+ *  formatting still counts; 988 is a bounded token to avoid an unrelated "988"
+ *  in the body reading as compliance. */
+export function crisisResourcePresent(kind: CrisisKind, answer: string): boolean {
+  if (kind === "self_harm") return /(?<!\d)988(?!\d)/.test(answer);
+  const digits = answer.replace(/\D/g, "");
+  return digits.includes("7997233") || digits.includes("88788");
+}
+
+const SAFETY_NET: Record<CrisisKind, Record<AnswerLang, string>> = {
+  self_harm: {
+    en: "**If you're thinking about suicide or self-harm, you're not alone.** The 988 Suicide & Crisis Lifeline is free, confidential, and open 24/7 — call or text **988** (press 2 for Spanish).",
+    es: "**Si estás pensando en el suicidio o en hacerte daño, no estás solo.** La Línea 988 de Prevención del Suicidio y Crisis es gratuita, confidencial y está disponible las 24 horas — llama o envía un mensaje de texto al **988** (presiona 2 para español).",
+    vi: "**Nếu bạn đang nghĩ đến việc tự tử hoặc tự làm hại bản thân, bạn không đơn độc.** Đường dây 988 miễn phí, bảo mật và hoạt động 24/7 — hãy gọi hoặc nhắn tin **988** (có hỗ trợ tiếng Việt).",
+    zh: "**如果你有自杀或自残的念头，你并不孤单。** 988 生命热线免费、保密，全天候 24/7 — 可拨打或发短信至 **988**（提供中文服务）。",
+  },
+  abuse: {
+    en: "**If you're not safe at home, help is available.** The National Domestic Violence Hotline is free, confidential, and open 24/7 — call **1-800-799-7233** or text **START to 88788** (interpretation in many languages).",
+    es: "**Si no estás seguro/a en casa, hay ayuda disponible.** La Línea Nacional contra la Violencia Doméstica es gratuita, confidencial y está disponible las 24 horas — llama al **1-800-799-7233** o envía **START al 88788** (interpretación en muchos idiomas).",
+    vi: "**Nếu bạn không an toàn ở nhà, luôn có sự trợ giúp.** Đường dây nóng Quốc gia về Bạo lực Gia đình miễn phí, bảo mật và hoạt động 24/7 — gọi **1-800-799-7233** hoặc nhắn **START đến 88788** (hỗ trợ thông dịch nhiều ngôn ngữ).",
+    zh: "**如果你在家中不安全，可以获得帮助。** 全国家庭暴力热线免费、保密，全天候 24/7 — 请拨打 **1-800-799-7233**，或发送 **START 至 88788**（提供多种语言口译）。",
+  },
+};
+
+/** The deterministic line the orchestrator appends when the model's answer
+ *  omitted the crisis resource. Its own paragraph; safe to render as markdown. */
+export function crisisSafetyNet(kind: CrisisKind, lang: AnswerLang = "en"): string {
+  return SAFETY_NET[kind][lang];
 }
