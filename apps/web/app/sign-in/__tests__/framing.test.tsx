@@ -23,6 +23,7 @@ vi.mock("next/navigation", () => ({
 
 import SignInPage from "../page";
 import { SIGNIN_T } from "../../../lib/i18n/demeter-signin-copy";
+import { EMAIL_SIGNIN_ENABLED } from "../../../lib/magic-link";
 
 function renderAt(query: string) {
   searchParams.value = new URLSearchParams(query);
@@ -144,8 +145,12 @@ describe("the Demeter branch speaks all four languages (#694)", () => {
 
   it("?lang=vi renders the card in Vietnamese", async () => {
     renderAt("next=%2Fvi%2Fscreen%2Fask&lang=vi");
+    // The title always renders; the email CTA only while email sign-in is on
+    // (#699 — it is gated off until SMTP is wired).
     expect(await screen.findByText(SIGNIN_T.vi.title)).toBeTruthy();
-    expect(screen.getByText(SIGNIN_T.vi.emailCta)).toBeTruthy();
+    if (EMAIL_SIGNIN_ENABLED) {
+      expect(screen.getByText(SIGNIN_T.vi.emailCta)).toBeTruthy();
+    }
   });
 
   it("a localized next path implies the language when ?lang is absent", async () => {
@@ -203,7 +208,9 @@ describe("tab title matches the product (#698)", () => {
 // Vercel-guidelines finding 8: errors announced but never focused, and the
 // email field spellchecked. On a failed submit the person should land back in
 // the field that needs fixing.
-describe("sign-in error focus + email attributes (vercel finding 8)", () => {
+// SKIPPED WHILE EMAIL SIGN-IN IS OFF (#699): the input these assert on is
+// hidden by EMAIL_SIGNIN_ENABLED. They reactivate when the flag flips.
+describe.skipIf(!EMAIL_SIGNIN_ENABLED)("sign-in error focus + email attributes (vercel finding 8)", () => {
   beforeEach(() => {
     searchParams.value = new URLSearchParams("next=%2Fscreen%2Fask");
   });

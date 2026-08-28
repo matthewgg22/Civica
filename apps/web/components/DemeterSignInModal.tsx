@@ -20,7 +20,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { SIGNIN_T } from "../lib/i18n/demeter-signin-copy";
 import type { AnswerLang } from "@civica/demeter-engine/packs";
-import { googleHref, sendMagicLink } from "../lib/magic-link";
+import { googleHref, sendMagicLink, EMAIL_SIGNIN_ENABLED } from "../lib/magic-link";
 
 export function DemeterSignInModal({
   next,
@@ -146,6 +146,8 @@ export function DemeterSignInModal({
               </svg>
               {dt.continueGoogle}
             </a>
+            {EMAIL_SIGNIN_ENABLED && (
+              <>
             <div className="signin-divider" role="separator">
               <span>{dt.or}</span>
             </div>
@@ -186,6 +188,8 @@ export function DemeterSignInModal({
               </button>
             </form>
             <p className="signin-disclosure">{dt.emailDisclosure}</p>
+              </>
+            )}
           </>
         )}
       </div>

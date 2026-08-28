@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState, type FormEvent } from "react";
+import { EMAIL_SIGNIN_ENABLED } from "../../lib/magic-link";
 import { useSearchParams } from "next/navigation";
 import { STORAGE_KEY, type Locale } from "../i18n";
 import { snapT } from "../../lib/i18n/snap-copy";
@@ -224,6 +225,8 @@ function SignInForm() {
             </p>
           )}
 
+{EMAIL_SIGNIN_ENABLED && (
+            <>
           <div className="signin-divider" role="separator">
             <span>{forConversation ? dt.or : snapT(locale, "signin_or")}</span>
           </div>
@@ -264,6 +267,8 @@ function SignInForm() {
           <p className="signin-disclosure">
             {forConversation ? dt.emailDisclosure : snapT(locale, "signin_email_disclosure")}
           </p>
+            </>
+          )}
 
           {/* Sign-in-wrap. Adjacent to the button that creates the account,
               because notice buried elsewhere is not assent. Demeter branch only:
