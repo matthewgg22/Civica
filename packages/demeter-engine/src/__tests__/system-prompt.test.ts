@@ -163,6 +163,22 @@ describe("staff system prompt — persona-specific", () => {
     expect(PUBLIC_SYSTEM_PROMPT).toMatch(/No callout box and no card/i);
   });
 
+  it("states mixed-status income counting as the regulation does, not the worst case", () => {
+    // The prompt flatly said the ineligible member's "own income still counts
+    // toward the household's total". 7 CFR 273.11(c)(3), verbatim in the
+    // corpus, says the state counts all OR all but a pro-rata share, at its
+    // discretion. Stating the worst case as universal overstates counted
+    // income to exactly the households most easily deterred from applying
+    // for their citizen children (launch audit 2026-08-28).
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/all but a pro-rata share/i);
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/273\.11\(c\)/);
+    expect(PUBLIC_SYSTEM_PROMPT).not.toMatch(/own income still counts toward the household/);
+    // And the two safe reassurances exist: exclusion is individual, and the
+    // SSN requirement reaches only members participating or applying.
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/excluded as an individual, not the household/i);
+    expect(PUBLIC_SYSTEM_PROMPT).toMatch(/273\.6\(a\)/);
+  });
+
   it("requires facts to be said back as they are heard", () => {
     // Facts are recorded silently and then govern every number after them. A
     // household of one heard as two changes every threshold, and the reader
