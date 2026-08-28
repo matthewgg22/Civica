@@ -29,6 +29,38 @@ describe("Mae PII redaction", () => {
   });
 });
 
+// GROUPED / SPACED IDENTIFIERS. The original rules only matched unspaced runs,
+// so the exact shapes people actually type — a card in four groups, an SSN with
+// spaces — sailed through to the model and the audit log. These pin the closure
+// (launch audit 2026-08-28) and, as always here, pin that income/household talk
+// with several 4-digit numbers is NOT mistaken for a card.
+describe("grouped and spaced identifiers", () => {
+  it("scrubs a 16-digit card/EBT number typed in four groups", () => {
+    for (const s of ["my card is 1234 5678 9012 3456", "EBT 1234-5678-9012-3456"]) {
+      const r = redactPii(s);
+      expect(r.redacted).toContain("[CARD]");
+      expect(r.redacted).not.toMatch(/\d{4}[ -]\d{4}/);
+      expect(r.found).toBe(1);
+    }
+  });
+
+  it("scrubs an SSN written with spaces or dots, not just dashes", () => {
+    for (const s of ["ssn 123 45 6789", "it's 123.45.6789"]) {
+      const r = redactPii(s);
+      expect(r.redacted).toContain("[SSN]");
+      expect(r.redacted).not.toMatch(/123[ .]45[ .]6789/);
+    }
+  });
+
+  it("does not mistake several spaced 4-digit incomes for a card", () => {
+    // A card is consumed as ONE tag; a list of amounts must survive verbatim.
+    const r = redactPii("last four months I made 1000 then 2000 then 3000");
+    expect(r.found).toBe(0);
+    expect(r.redacted).toContain("1000");
+    expect(r.redacted).toContain("3000");
+  });
+});
+
 // SSN FRAGMENTS. The policy promises no part of a Social Security number is
 // stored; four bare digits matched none of the original rules, so "my last four
 // are 6789" was being written to the audit log. These pin the fix — and, just as
