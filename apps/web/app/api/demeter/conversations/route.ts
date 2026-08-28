@@ -15,7 +15,8 @@
 // SAFE. That is why `user_id` is still written explicitly on insert — the
 // WITH CHECK policy rejects the row outright if it disagrees with auth.uid().
 
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
+import { recordDemeterEvent } from "../../../../lib/demeter-events";
 import { createSupabaseServerClient } from "../../../../lib/supabase-server";
 import {
   deriveTitle,
@@ -176,5 +177,19 @@ export async function POST(request: Request) {
     console.error("[demeter-conversations] insert failed:", error);
     return NextResponse.json({ error: "save_failed" }, { status: 500 });
   }
+  // ONLY THE INSERT. Auto-save re-posts after every answered turn once a
+  // conversation is saved, so recording the UPDATE path too would count one
+  // decision dozens of times and make the funnel meaningless. The conversion
+  // is deciding to keep it, which happens exactly once.
+  after(() =>
+    recordDemeterEvent({
+      kind: "conversion",
+      event: "saved",
+      status: 201,
+      sessionId: typeof body.sessionId === "string" ? body.sessionId : null,
+      scopeState: typeof body.state === "string" ? body.state : null,
+      lang: typeof body.lang === "string" ? body.lang : null,
+    }),
+  );
   return NextResponse.json({ conversation: data }, { status: 201 });
 }

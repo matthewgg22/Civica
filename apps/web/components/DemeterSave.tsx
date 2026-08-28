@@ -112,6 +112,7 @@ export function DemeterSave({
   onSavedChange,
   triggerSave,
   worksheet,
+  sessionId,
   copy,
 }: {
   messages: SavedMsg[];
@@ -140,6 +141,10 @@ export function DemeterSave({
    *  Mirrors openPicker's signal-number pattern: any CHANGE triggers a
    *  save, the value itself is meaningless. Undefined/unset never fires. */
   triggerSave?: number;
+  /** The chat's browser-generated session id. Sent with the save so the
+   *  conversion recorded server-side can be joined to the turns that led to
+   *  it — a count with nothing to tie it to is a much weaker fact. */
+  sessionId?: string;
   /** Render the button, or only the status region (2026-08-22). The rail's
    *  own Save button was retired, but this component still has to be mounted:
    *  it owns the pendingSave restore after a sign-in round trip AND the save
@@ -193,7 +198,7 @@ export function DemeterSave({
         const res = await fetch("/api/demeter/conversations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...payload, id: id ?? undefined }),
+          body: JSON.stringify({ ...payload, id: id ?? undefined, sessionId }),
         });
         if (res.status === 401) return "signin";
         if (res.status === 409) {
@@ -222,7 +227,9 @@ export function DemeterSave({
         return "error";
       }
     },
-    [],
+    // post() closes over sessionId now, so it has to invalidate with it —
+    // otherwise a save could carry a stale id and join to the wrong turns.
+    [sessionId],
   );
 
   const save = useCallback(async () => {

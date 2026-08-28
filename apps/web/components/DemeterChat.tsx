@@ -1366,6 +1366,10 @@ export function DemeterChat({
           portalNote: pack?.portal?.note ?? null,
           portalUrl: pack?.portal?.url ?? null,
           notes: outlineNotes(),
+          // SO THE FUNNEL JOINS. The conversion is recorded server-side on
+          // actual success; without this it would be a count with nothing to
+          // tie it to the conversation that produced it.
+          sessionId: sessionIdRef.current || undefined,
         }),
       });
       if (res.status === 401) return setEmailState("signin");
@@ -1409,6 +1413,10 @@ export function DemeterChat({
           portalNote: pack?.portal?.note ?? null,
           portalUrl: pack?.portal?.url ?? null,
           notes: outlineNotes(),
+          // SO THE FUNNEL JOINS. The conversion is recorded server-side on
+          // actual success; without this it would be a count with nothing to
+          // tie it to the conversation that produced it.
+          sessionId: sessionIdRef.current || undefined,
         }),
       });
       if (!res.ok) return setPdfState("error");
@@ -2705,6 +2713,7 @@ export function DemeterChat({
             onRestore={restoreConversation}
             onSavedChange={setConversationSaved}
             triggerSave={saveSignal}
+            sessionId={sessionIdRef.current || undefined}
             worksheet={snapshotWorksheet}
             copy={t.save}
           />

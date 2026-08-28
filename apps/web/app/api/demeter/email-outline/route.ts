@@ -11,7 +11,8 @@
 // mail someone else's situation anywhere. The address comes from the session
 // and nowhere else, which also means there is no address field to get wrong.
 
-import { NextResponse, type NextRequest } from "next/server";
+import { after, NextResponse, type NextRequest } from "next/server";
+import { recordDemeterEvent } from "../../../../lib/demeter-events";
 import { createSupabaseServerClient } from "../../../../lib/supabase-server";
 import { mailConfigured, sendMail } from "../../../../lib/mail";
 import { outlineToText, type OutlineInput } from "../../../../lib/demeter-outline";
@@ -97,5 +98,16 @@ export async function POST(request: NextRequest) {
 
   // The address is echoed so the confirmation can name it — someone with more
   // than one account needs to know WHICH inbox to look in.
+  // Recorded on the response actually being produced, not on the click:
+  // an intent that 500s is not a conversion.
+  after(() =>
+    recordDemeterEvent({
+      kind: "conversion",
+      event: "outline_emailed",
+      status: 200,
+      sessionId: typeof body.sessionId === "string" ? body.sessionId : null,
+      scopeState: typeof body.stateName === "string" ? body.stateName : null,
+    }),
+  );
   return NextResponse.json({ sent: true, to: user.email });
 }

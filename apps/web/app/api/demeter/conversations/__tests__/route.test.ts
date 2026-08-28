@@ -34,6 +34,16 @@ vi.mock("../../../../../lib/supabase-server", () => ({
   })),
 }));
 
+// `after()` throws outside a request scope, and the save route now uses it to
+// record the "saved" conversion without making anyone wait. Same shape as the
+// /api/demeter suite's mock: collect the callbacks, run none of them — this
+// file is about worksheet handling, not telemetry.
+const afterCallbacks: Array<() => Promise<void>> = [];
+vi.mock("next/server", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("next/server")>();
+  return { ...actual, after: (fn: () => Promise<void>) => afterCallbacks.push(fn) };
+});
+
 import { POST } from "../route";
 
 const WORKSHEET = {
