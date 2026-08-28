@@ -42,6 +42,17 @@ export const publicAuditSink: MaeAuditSink = async (rec: MaeAuditRecord) => {
         // generation) shows as one expensive row rather than vanishing.
         input_tokens: rec.inputTokens ?? null,
         output_tokens: rec.outputTokens ?? null,
+        // WHAT THE LOG COULD NOT ANSWER. mae_feedback has carried `lang`
+        // since the start and this table never did, so "are the Spanish
+        // answers worse" was unanswerable for a product shipping in four
+        // languages. `mode` is public/case — who is asking; worksheet_mode is
+        // ask/estimate — what they are doing. And an answer that took thirty
+        // seconds was indistinguishable from one that took three.
+        lang: rec.lang ?? null,
+        worksheet_mode: rec.worksheetMode ?? null,
+        ttft_ms: rec.ttftMs ?? null,
+        total_ms: rec.totalMs ?? null,
+        stopped: rec.stopped ?? false,
       });
     if (error) throw error;
   } catch (err) {
