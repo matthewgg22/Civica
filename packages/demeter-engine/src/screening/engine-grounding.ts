@@ -37,15 +37,34 @@ import { classifyScreening } from "./classify";
 const MONEYISH_RE =
   /\$\s?\d|\b\d[\d,]*(?:\.\d+)?\s*(?:k|thousand)\b|\b\d[\d,]*(?:\.\d+)?\s*(?:a|per|each|every)\s+(?:hour|day|week|month|year|shift|paycheck)/i;
 
+/** The other money fact: stated ABSENCE. "I have no income" carries not one
+ *  digit, so MONEYISH_RE alone kept the gate shut for the no-income cohort —
+ *  the most desperate readers, and the case the engine is MOST certain about
+ *  (benefit = the household maximum, exactly). Their figures came from the
+ *  model reading the COLA table instead of from the verified engine, and the
+ *  prose could disagree with the worksheet two inches away (#1055, reopening
+ *  #969; the enabling half of #960).
+ *
+ *  Four languages, because the product ships four and "no income" is the one
+ *  phrase guaranteed to appear in all of them. Loose on purpose, same trade
+ *  as MONEYISH_RE: a false positive costs one extraction call, a false
+ *  negative silently keeps a computable household on freehand math. */
+const NO_MONEY_RE =
+  /\b(?:no|zero|without)\s+(?:income|money|job|earnings|savings|assets|pay)\b|\bdon'?t have (?:any )?(?:income|money|savings|a job)\b|\blost (?:my|his|her|our|the) job\b|\bnot working\b|\bunemployed\b|\bnothing coming in\b|sin (?:ingresos|trabajo|dinero|ahorros)|no teng[oa] (?:ingresos|trabajo|dinero|ahorros)|desemplead[oa]|perd[íi] (?:mi|el) trabajo|không có (?:thu nhập|việc làm|việc|tiền|tiết kiệm)|mất việc|thất nghiệp|没有?(?:收入|工作|钱|存款|积蓄)|失业/i;
+
 /** Cheap gate for whether the (paid) extraction step is worth attempting.
  *  Requires a state — the engine computes nothing on the federal floor — and
- *  at least one user turn carrying a money-like figure. */
+ *  at least one user turn carrying a money-like figure OR an explicit
+ *  statement that there is none. Absence is a computable fact, not a missing
+ *  one. */
 export function shouldAttemptEngineGrounding(
   messages: Array<{ role: "user" | "assistant"; content: string }>,
   state: string | null | undefined,
 ): boolean {
   if (!state) return false;
-  return messages.some((m) => m.role === "user" && MONEYISH_RE.test(m.content));
+  return messages.some(
+    (m) => m.role === "user" && (MONEYISH_RE.test(m.content) || NO_MONEY_RE.test(m.content)),
+  );
 }
 
 export interface EngineGroundingResult {
@@ -133,6 +152,21 @@ export async function buildEngineGroundingBlock(
       ? `\nFacts used (as stated by the user):\n${factLines.join("\n")}`
       : "";
 
+    // AT ZERO COUNTABLE INCOME NO DEDUCTION CAN RAISE THE BENEFIT, by
+    // arithmetic: benefit = max allotment minus 30% of net income, and net
+    // cannot exceed a gross of $0. Offering deductions as useful advice to a
+    // $0-income household is #960 — a real transcript walked one through the
+    // homeless shelter deduction, where it changes nothing.
+    const statedIncome = facts.income ?? [];
+    const zeroIncome =
+      statedIncome.length === 0 ||
+      statedIncome.every((i) => !(typeof i.amount === "number" && i.amount > 0));
+    const zeroIncomeNote =
+      "\nWith no countable income the benefit is the MAXIMUM for the household " +
+      "size — deductions (shelter, homeless, medical, childcare) cannot raise " +
+      "it. Do not offer deductions as a way to increase the amount; mention " +
+      "them, if at all, only as things worth reporting for the record.";
+
     let resultSection: string;
     switch (classification.outcome) {
       case "not_enough_information":
@@ -160,9 +194,13 @@ export async function buildEngineGroundingBlock(
           "sub-state administrative layer, so never attribute the calculation to one.)";
         break;
       case "expedited":
+        // THE #960 CASE LANDS HERE, not in the eligible branch: a $0-income
+        // household with shelter costs is the expedited case by definition,
+        // so this branch is where the deduction advice has to be stopped.
         resultSection =
           `\nEngine result: LIKELY ELIGIBLE, EXPEDITED SERVICE (7 CFR 273.2(i)) — ${classification.summary}\n` +
-          "Lead with the 7-day expedited timeline and filing today.";
+          "Lead with the 7-day expedited timeline and filing today." +
+          (zeroIncome ? zeroIncomeNote : "");
         break;
       case "categorically_eligible":
       case "likely_eligible": {
@@ -176,7 +214,8 @@ export async function buildEngineGroundingBlock(
           `\nEngine result: ${classification.outcome === "categorically_eligible" ? "CATEGORICALLY ELIGIBLE" : "LIKELY ELIGIBLE"} — ${classification.summary}` +
           (typeof benefit === "number"
             ? `\nEstimated monthly benefit: $${benefit}` +
-              (suaDefaulted
+              (zeroIncome ? zeroIncomeNote : "") +
+              (suaDefaulted && !zeroIncome
                 ? "\n(Computed without a utility allowance — if the household pays " +
                   "utilities separately from rent, the actual benefit is likely HIGHER " +
                   "than this. Say so, and ask about utilities if it hasn't come up.)"
