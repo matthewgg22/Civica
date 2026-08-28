@@ -8,7 +8,7 @@
 // on every render.
 
 import Link from "next/link";
-import { VERIFIED_STATES, type AnswerLang } from "@civica/demeter-engine/packs";
+import { VERIFIED_STATES, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { hasLocalProgramName } from "../lib/program-name";
 import { stateName } from "../lib/state-names";
@@ -92,7 +92,11 @@ export function StateDirectoryPage({ lang = "en" }: { lang?: AnswerLang }) {
 
           It is also the FIRST focusable element, which is why this page needs
           no skip link: there is nothing to skip. */}
-      <main className="vpage vpage--states" id="main-content">
+      {/* lang on the content root so a screen reader announces this page in the
+          reader's language — the root <html> is fixed at "en". English renders
+          lang="en" (harmless, matches <html>); the localized routes get their
+          own tag. Matches [lang]/chat and [lang]/screen/ask. */}
+      <main className="vpage vpage--states" id="main-content" lang={LANG_TAG[lang]}>
         <header className="vpage__head">
           <BackToChat lang={lang} />
           <h1 className="vpage__title">{c.h1}</h1>

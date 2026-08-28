@@ -83,7 +83,12 @@ export default async function LocalizedQuestionsPage({
   const c = PAGE_COPY[l];
 
   return (
-    <main className="dmpage">
+    // lang on the content root so a screen reader announces this page in the
+    // reader's own language — the root <html> is fixed at "en" (App Router owns
+    // the single <html>), and the nearest ancestor lang wins. Matches the
+    // pattern already on [lang]/chat and [lang]/screen/ask (launch audit
+    // 2026-08-28: those two set it; questions and states did not).
+    <main className="dmpage" lang={LANG_TAG[l]}>
       <div className="dmpage__inner">
         {/* INSIDE .dmpage__inner, which carries the width — outside it,
             this sat at the document edge, 130px adrift of the content. */}
