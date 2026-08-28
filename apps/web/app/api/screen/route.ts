@@ -130,10 +130,14 @@ export async function POST(req: NextRequest) {
       outcome: result.classification.outcome,
     });
 
+    // Per-IP attribution (launch audit 2026-08-28): screen spend was landing
+    // only in the global bucket, so the ip_daily_cap never saw it — an abuser
+    // could run the budget dry through /api/screen alone.
+    const spendIp = clientIp(req);
     after(async () => {
       const inTok = usageIn || estimateTokensFromChars(JSON.stringify(messages).length);
       const outTok = usageOut || estimateTokensFromChars(JSON.stringify(result.classification).length);
-      await settleSpend(costUsd(inTok, outTok));
+      await settleSpend(costUsd(inTok, outTok), new Date(), spendIp);
     });
 
     return NextResponse.json({
@@ -155,7 +159,7 @@ export async function POST(req: NextRequest) {
     console.error("[screen] turn failed:", err instanceof Error ? err.message : String(err));
     after(async () => {
       const inTok = estimateTokensFromChars(JSON.stringify(messages).length);
-      await settleSpend(costUsd(inTok, 0));
+      await settleSpend(costUsd(inTok, 0), new Date(), clientIp(req));
     });
     return NextResponse.json(
       { error: "Screening is temporarily unavailable. Please try again." },

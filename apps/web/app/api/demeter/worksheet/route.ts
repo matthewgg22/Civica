@@ -97,6 +97,12 @@ export async function POST(req: NextRequest) {
       // completeness however it was labelled.
       windowComplete: b.windowComplete === true && rawMessages.length <= 20,
     });
+    // ATTRIBUTED TO THE VISITOR, like the chat route. Without the ip arg this
+    // spend lands only in the GLOBAL bucket, so an abuser driving cost through
+    // worksheet calls never trips the per-IP daily cap — they just exhaust the
+    // shared monthly budget and every real applicant sees "at capacity"
+    // (launch audit 2026-08-28).
+    const spendIp = clientIp(req);
     after(async () => {
       await settleSpend(
         costUsd(
@@ -104,6 +110,8 @@ export async function POST(req: NextRequest) {
             estimateTokensFromChars(JSON.stringify(messages).length),
           result.usage.outputTokens,
         ),
+        new Date(),
+        spendIp,
       );
     });
     return NextResponse.json({
