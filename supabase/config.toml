@@ -253,6 +253,20 @@ otp_expiry = 3600
 # subject = "You have been invited"
 # content_path = "./supabase/templates/invite.html"
 
+# The two templates the product's only email flow actually sends
+# (signInWithOtp, shouldCreateUser: true → new address gets confirmation,
+# returning address gets magic_link). SOURCE OF TRUTH for the prod dashboard
+# paste — Authentication → Email Templates — same convention as migrations:
+# the repo carries the content, an operator applies it by hand, and the two
+# must not drift.
+[auth.email.template.magic_link]
+subject = "Your Demeter sign-in link"
+content_path = "./supabase/templates/magic-link.html"
+
+[auth.email.template.confirmation]
+subject = "Confirm your email to save conversations: Demeter"
+content_path = "./supabase/templates/confirm-signup.html"
+
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
 # enabled = true
