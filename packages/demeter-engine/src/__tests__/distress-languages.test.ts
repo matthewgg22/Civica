@@ -21,6 +21,21 @@ describe("detectDistress across languages", () => {
     }
   });
 
+  // Common real phrasings the v1 set missed (launch audit 2026-08-28).
+  it("catches everyday ways people describe running out of food or losing benefits", () => {
+    for (const msg of [
+      "my kids are gonna go to bed hungry tonight",
+      "going to bed hungry again",
+      "I have zero dollars for groceries this week",
+      "no cash to buy food till friday",
+      "my snap got cut off and I have nothing",
+      "my benefits were denied",
+      "food stamps got stopped",
+    ]) {
+      expect(detectDistress(msg), msg).toBe(true);
+    }
+  });
+
   it("Vietnamese food crisis fires", () => {
     for (const msg of [
       "nhà tôi không có gì để ăn",
