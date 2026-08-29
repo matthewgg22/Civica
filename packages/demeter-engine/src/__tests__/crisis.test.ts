@@ -96,6 +96,39 @@ describe("abuse and domestic violence", () => {
     expect(detectCrisis("chồng tôi đánh tôi")).toBe("abuse");
     expect(detectCrisis("家庭暴力")).toBe("abuse");
   });
+
+  // COERCIVE CONTROL — abuse without a named physical hit (issue #1083).
+  it("catches confinement, financial control, surveillance and isolation", () => {
+    for (const text of [
+      "he won't let me leave the house",
+      "I'm not allowed to have any money of my own",
+      "he takes my ebt card every month",
+      "she controls all the money",
+      "my partner controls where I go and who I see",
+      "he tracks my location on my phone",
+      "he isolates me from my family",
+      "my boyfriend won't let me see my friends",
+      "he took my passport so I can't leave",
+    ]) {
+      expect(detectCrisis(text), text).toBe("abuse");
+    }
+  });
+
+  // The false positives that would make a coercive-control gate untrustworthy
+  // on a benefits site — all must stay null.
+  it("does NOT fire on ordinary benefits phrasing that resembles control", () => {
+    for (const text of [
+      "my disability won't let me work",
+      "my back won't let me lift anything",
+      "the caseworker won't let me apply without proof",
+      "am I not allowed to have a car and still get SNAP?",
+      "who controls the SNAP program",
+      "how do I track my application status",
+      "does the state monitor my bank account",
+    ]) {
+      expect(detectCrisis(text), text).toBeNull();
+    }
+  });
 });
 
 describe("what it leaves to the existing distress gate", () => {
