@@ -27,6 +27,15 @@ const TITLES: Record<string, string> = {
   zh: "询问 Demeter: 附上依据的 SNAP 答案",
 };
 
+// Short visually-hidden H1 per language: the page has no visible title bar by
+// design, but a screen reader needs one heading to orient (launch audit
+// 2026-08-28). Kept shorter than the <title> — a heading is spoken on landing.
+const H1S: Record<string, string> = {
+  es: "Pregúntale a Demeter sobre SNAP",
+  vi: "Hỏi Demeter về SNAP",
+  zh: "向 Demeter 询问 SNAP",
+};
+
 export async function generateMetadata({
   params,
 }: {
@@ -58,6 +67,7 @@ export default async function LocalizedChatPage({
   return (
     <div className="dmchat" lang={LANG_TAG[l]}>
       <main className="dmchat__body">
+        <h1 className="sr-only">{H1S[l] ?? "Demeter"}</h1>
         <DemeterChat
           states={VERIFIED_STATES}
           initialState={resumed ? resumed.state_code : initialState}

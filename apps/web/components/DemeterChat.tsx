@@ -832,6 +832,32 @@ export function DemeterChat({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [sidebarOpen]);
+
+  // Gear menu: Escape and outside-click close it (launch audit 2026-08-28). A
+  // native <details> does NOT do either on its own — only <dialog> and popovers
+  // do — so an old comment here was wrong and the menu stayed open until you
+  // clicked the gear again. Guarded on `.open`, so both listeners are no-ops
+  // while it is closed. Escape returns focus to the summary, per menu-a11y.
+  const gearRef = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const el = gearRef.current;
+    if (!el) return;
+    const onPointer = (e: PointerEvent) => {
+      if (el.open && !el.contains(e.target as Node)) el.open = false;
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (el.open && e.key === "Escape") {
+        el.open = false;
+        el.querySelector("summary")?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, []);
   const signInHref = `/sign-in?next=${encodeURIComponent(lang === "en" ? "/chat" : `/${lang}/chat`)}`;
   /** Narrow-viewport flag for the in-column picker instance. STATE, not
    *  CSS-only: two picker instances in the DOM read as two controls to the
@@ -2884,10 +2910,12 @@ export function DemeterChat({
                   ))}
                 </div>
           {/* SETTINGS, on the same line as sign-in (owner rec): a gear that
-              discloses the standing pages. <details> rather than custom
-              popover state — Escape and outside-click come free, and it
-              works with no JavaScript. */}
-          <details className="demeter__gear">
+              discloses the standing pages. <details> rather than custom popover
+              state — it works with no JavaScript and is keyboard/SR-correct.
+              Escape and outside-click do NOT come free with <details> (only
+              <dialog>/popover do), so a small effect above adds them; without
+              JS the menu still opens and closes on the gear itself. */}
+          <details className="demeter__gear" ref={gearRef}>
             <summary className="demeter__gearbtn" aria-label={t.settingsLabel}>
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="3" />

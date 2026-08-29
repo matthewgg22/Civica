@@ -60,6 +60,11 @@ export default async function ChatPage({
   return (
     <div className="dmchat">
       <main className="dmchat__body" id="main-content">
+        {/* The page's visual design carries no title bar by decision (the chat's
+            own chrome is the top bar). A screen reader still needs one H1 to
+            orient the heading hierarchy, so it is present but visually hidden
+            (launch audit 2026-08-28). */}
+        <h1 className="sr-only">Ask Demeter about SNAP</h1>
         <DemeterChat
           states={VERIFIED_STATES}
           initialState={resumed ? resumed.state_code : initialState}
