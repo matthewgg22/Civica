@@ -837,7 +837,7 @@ export const T = {
     saveNudge: "这段对话很长，关闭标签页就会丢失。要保存下来，方便以后继续吗？",
     saveNudgeYes: "保存",
     saveNudgeNo: "暂不",
-    pdfNudge: "这里的内容已经够用了。要下载成 PDF，填申请时放在手边吗？",
+    pdfNudge: "这里的内容已经够用了。要下载成 PDF 吗？填申请时可以放在手边。",
     pdfNudgeYes: "下载",
     pdfNudgeNo: "暂不",
     portalLead: "好，{state}。那里的申请通过{agency}办理。",
@@ -871,7 +871,7 @@ export const T = {
          first thing the product did after introducing itself was repeat
          itself. */
       whatIsSnap:
-        "SNAP（旧称食品券）为低收入家庭提供食品补助，补贴他们的买菜开支，使其能够负担对健康和生活至关重要的营养食品。",
+        "SNAP（旧称食品券）为低收入家庭提供食品补助，补贴他们的买菜开支，让他们买得起对健康和生活至关重要的营养食品。",
       cta: "开始提问",
       close: "关闭",
     },
@@ -881,9 +881,9 @@ export const T = {
     emptyWhatIsSnap:
       "SNAP 是食品补助项目，旧称食品券。",
     emptyLede:
-      "我可以帮您看看是否可能符合资格，并一步步整理出您的申请内容，每条回答都会附上依据的条文，方便您自行核对。",
+      "我可以帮您看看是否可能符合资格，并一步步整理出您的申请内容，每条回答都会附上依据的法规，方便您自行核对。",
     emptyModes:
-      "“只是问问”讲解这个项目如何运作。“帮我算估算”会把您说的内容逐步整理成一份申请提纲。",
+      "“只是问问”讲解这个项目如何运作。“帮我估算”会把您说的内容逐步整理成一份申请提纲。",
     emptyAskState: "您在哪个州？请在上方选择。在那之前，回答使用联邦规定。",
     sidebarLabel: "菜单",
     sidebarSaved: "已保存的对话",
@@ -945,15 +945,15 @@ export const T = {
       save: "保存这次对话",
       saving: "正在保存…",
       saved: "已保存",
-      viewSaved: "你的对话",
+      viewSaved: "您的对话",
       panelTitle: "保存这次对话",
       panelBody:
         "注册一个免费账号，下次回来时这次对话还在。继续提问不需要账号，账号只用于保存。",
       panelStored:
-        "我们会原样保留你输入的内容，一字不改，这样你回来时看到的和现在一样。只有你能看到，也可以随时删除。",
+        "我们会原样保留您输入的内容，一字不改，这样您回来时看到的和现在一样。只有您能看到，也可以随时删除。",
       panelCta: "登录以保存",
       panelDismiss: "暂不",
-      limit: (n: number) => `你已保存 ${n} 次对话。请先删除一次，再保存新的。`,
+      limit: (n: number) => `您已保存 ${n} 次对话。请先删除一次，再保存新的。`,
       error: "保存失败，请再试一次。",
     },
     worksheet: {
@@ -966,7 +966,7 @@ export const T = {
       askFor: {
         "Household size": "还有谁和您一起买菜做饭？",
         "Rent or shelter cost": "您每月的房租或住房费用是多少？",
-        "Countable assets, if any": "您有存款或银行里的钱吗？",
+        "Countable assets, if any": "您有积蓄或银行存款吗？",
         "Whether the household receives SSI or TANF": "家里有人领取 SSI 或 TANF 吗？",
         "Citizenship or qualified status": "您的公民身份或移民身份是什么？",
       } as Record<string, string>,
@@ -996,7 +996,7 @@ export const T = {
       pickStateCta: "选择您所在的州",
       modeLabel: "您希望在这里得到什么？",
       modeAsk: "只是问问",
-      modeEstimate: "帮我算估算",
+      modeEstimate: "帮我估算",
       modeAskNote: "这里说的内容不会进入估算，可以问假设情况，或替别人问。",
       templateTitle: "将要填写的部分",
       template: ["您的家庭成员", "您的每月收入", "房租、水电及其他开支", "您的预计每月补助"],
