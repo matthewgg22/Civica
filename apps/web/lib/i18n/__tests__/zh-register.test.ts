@@ -36,6 +36,7 @@ const FORMAL = [
   "lib/i18n/demeter-chat-copy.ts",
   "lib/i18n/demeter-signin-copy.ts",
   "lib/i18n/snap-page.ts",
+  "lib/i18n/feedback-copy.ts",
   "app/screen/saved/page.tsx",
   "app/[lang]/chat/page.tsx",
   "app/[lang]/questions/page.tsx",
