@@ -36,6 +36,7 @@ vi.mock("@civica/demeter-engine", () => ({
 }));
 vi.mock("@civica/demeter-engine/packs", () => ({
   VERIFIED_STATE_CODES: ["CA", "WA", "TX", "NY"],
+  isAnswerLang: (v: unknown) => v === "en" || v === "es" || v === "vi" || v === "zh",
   // Real shape, small fixture. Puerto Rico is the case that matters: it does
   // NOT run SNAP, so the route must answer without going near the model.
   napJurisdiction: (code: string | null) =>
@@ -114,6 +115,20 @@ describe("POST /api/demeter (public wrapper)", () => {
     expect(capturedReq().state).toBeNull();
     await (await POST(makeReq({ messages: MSGS }))).text();
     expect(capturedReq().state).toBeNull();
+  });
+
+  // Regression (launch audit 2026-08-28): the route clamped lang to en|es, a
+  // narrowing that predated vi/zh and silently answered every Vietnamese and
+  // Chinese reader in English despite the localized UI sending their language.
+  // All four ANSWER_LANGS must reach the engine; anything else is the floor.
+  it("threads every answer language through to the engine, not just en|es", async () => {
+    for (const lang of ["en", "es", "vi", "zh"] as const) {
+      await (await POST(makeReq({ messages: MSGS, lang }))).text();
+      expect(capturedReq().lang, lang).toBe(lang);
+    }
+    // An unrecognized value falls back to English, never through raw.
+    await (await POST(makeReq({ messages: MSGS, lang: "fr" }))).text();
+    expect(capturedReq().lang).toBe("en");
   });
 
   it("adapts engine frames to plain text with the recompose marker inline", async () => {

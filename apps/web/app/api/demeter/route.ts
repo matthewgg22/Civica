@@ -21,7 +21,7 @@ import {
   warmupEmbeddings,
   STREAM_RECOMPOSE_MARKER,
 } from "@civica/demeter-engine";
-import { VERIFIED_STATE_CODES, napJurisdiction } from "@civica/demeter-engine/packs";
+import { VERIFIED_STATE_CODES, napJurisdiction, isAnswerLang, type AnswerLang } from "@civica/demeter-engine/packs";
 import { napHandoff } from "../../../lib/nap-handoff";
 import {
   checkUsageGate,
@@ -130,7 +130,13 @@ export async function POST(req: NextRequest) {
   // Explicit verified state or the federal floor — never a default state.
   const rawState = typeof b.state === "string" ? b.state.toUpperCase() : null;
   const state = rawState && VERIFIED_STATE_CODES.includes(rawState) ? rawState : null;
-  const lang: "en" | "es" = b.lang === "es" ? "es" : "en";
+  // All four answer languages, not en|es. This clamp predated Vietnamese and
+  // Simplified Chinese (added to the engine "end to end" the day after #603
+  // shipped this line) and silently narrowed every vi/zh reader's answer to
+  // English — the localized UI sent lang:"vi"/"zh", the model got "en". The
+  // engine answers in all of ANSWER_LANGS; validate against that set instead
+  // (launch audit 2026-08-28).
+  const lang: AnswerLang = isAnswerLang(b.lang) ? b.lang : "en";
 
   // NAP TERRITORIES SHORT-CIRCUIT, BEFORE THE MODEL.
   //
@@ -155,7 +161,10 @@ export async function POST(req: NextRequest) {
   // rather than a fake row in this one. Filed separately.
   const nap = napJurisdiction(rawState);
   if (nap) {
-    return new Response(napHandoff(nap, lang), {
+    // napHandoff is en|es only (the three NAP territories are a tiny,
+    // non-SNAP population); a vi/zh reader there gets the English handoff until
+    // that message is translated. Narrow here rather than widen napHandoff.
+    return new Response(napHandoff(nap, lang === "es" ? "es" : "en"), {
       status: 200,
       headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
     });
