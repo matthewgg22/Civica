@@ -2,12 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 const mockInsert = vi.hoisted(() => vi.fn());
+const durableRateLimit = vi.hoisted(() => vi.fn());
 
 vi.mock("../../../../lib/supabase-server", () => ({
   supabaseAdmin: vi.fn(() => ({
     schema: () => ({ from: () => ({ insert: mockInsert }) }),
   })),
 }));
+vi.mock("../../../../lib/durable-rate-limit", () => ({ durableRateLimit }));
 
 import { POST } from "../route";
 import { __resetRateLimitForTests } from "../../lead-capture/rate-limit";
@@ -31,6 +33,7 @@ const VALID = {
 describe("POST /api/site-feedback", () => {
   beforeEach(() => {
     mockInsert.mockReset().mockResolvedValue({ error: null });
+    durableRateLimit.mockReset().mockResolvedValue(true);
     __resetRateLimitForTests();
   });
 
@@ -90,6 +93,17 @@ describe("POST /api/site-feedback", () => {
     expect((await POST(makeReq(VALID, "9.9.9.9"))).status).toBe(429);
     // A different IP is unaffected.
     expect((await POST(makeReq(VALID, "1.1.1.1"))).status).toBe(200);
+  });
+
+  // Regression (launch audit 2026-08-28): the in-memory limiter above is
+  // per-instance and resets on cold start; the durable counter is the ceiling
+  // that actually holds on serverless. A first request from a fresh IP passes
+  // the in-memory line but must still be blocked when the durable counter trips.
+  it("blocks when the durable cross-instance limiter trips", async () => {
+    durableRateLimit.mockResolvedValue(false);
+    const res = await POST(makeReq(VALID, "5.5.5.5"));
+    expect(res.status).toBe(429);
+    expect(mockInsert).not.toHaveBeenCalled();
   });
 
   it("returns a graceful 503 when the store is down — never reads as the message being rejected", async () => {
