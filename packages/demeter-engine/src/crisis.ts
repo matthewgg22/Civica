@@ -35,8 +35,20 @@ const SELF_HARM: RegExp[] = [
   /\b(kill|killing|hurt|harm|hurting|harming|cut|cutting)\s+(myself|my ?self)\b/i,
   /\bend(ing)?\s+(my|it)\s+(life|all)\b|\btake\s+my\s+own\s+life\b/i,
   /\bbetter\s+off\s+dead\b|\bwant\s+to\s+(die|be\s+dead)\b|\bwanna\s+die\b/i,
-  /\bdon'?t\s+want\s+to\s+(be\s+here|live)\s*(anymore|any\s+more)?\b/i,
+  /\bdon'?t\s+want\s+to\s+(be\s+here|be\s+alive|live)\s*(anymore|any\s+more)?\b/i,
   /\bsuicid(e|al)\b/i,
+  // HOW PEOPLE ACTUALLY SAY IT (launch audit 2026-08-28). The set above missed
+  // the most common real phrasings, and a miss here is the exact failure this
+  // file exists to prevent — plus it silently disables the deterministic safety
+  // net (#1069), which only fires when this returns non-null. Each added phrase
+  // is high-signal and checked against the idiom non-matches below.
+  /\bkms\b/i, // near-universal abbreviation for "kill myself"
+  /\bunali(ve|fe)\b/i, // the euphemism coined to evade suicide-word moderation
+  /\bwish(ed)?\s+i\s+(was|were|wasn'?t|weren'?t)\s+(dead|alive|here|born)\b/i,
+  /\b(i'?d\s+)?rather\s+be\s+dead\b/i,
+  /\bend\s+(it|things|everything)\s+(tonight|today|tonite|now|soon|for\s+good)\b/i,
+  /\bno\s+(point|reason)\s+(in\s+|to\s+)?(living|go(ing)?\s+on|keep\s+going|be(ing)?\s+(here|alive))\b/i,
+  /\bbetter\s+(off\s+)?without\s+me\b/i,
   // Spanish
   /\b(matarme|suicidarme|quitarme\s+la\s+vida|hacerme\s+da[ñn]o|lastimarme)\b/i,
   /\bquiero\s+morir(me)?\b|\bmejor\s+muert[oa]\b|\bno\s+quiero\s+vivir\b/i,
