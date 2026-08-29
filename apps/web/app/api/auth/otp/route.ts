@@ -65,11 +65,13 @@ export async function POST(request: Request) {
   });
 
   if (!res.ok) {
+    // Do NOT relay the provider's raw response to the client (launch audit
+    // 2026-08-28). GoTrue error text can carry internal config or identifier
+    // detail the caller has no need for; the client only needs "the send
+    // failed." Keep the detail server-side for diagnosis.
     const text = await res.text();
-    return NextResponse.json(
-      { error: "upstream_failed", detail: text.slice(0, 500) },
-      { status: 502 },
-    );
+    console.warn("[auth/otp] upstream OTP send failed:", res.status, text.slice(0, 500));
+    return NextResponse.json({ error: "upstream_failed" }, { status: 502 });
   }
 
   return NextResponse.json({ phone });
