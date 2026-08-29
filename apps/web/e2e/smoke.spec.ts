@@ -369,13 +369,15 @@ test.describe("growth surfaces", () => {
     await expect(page.getByRole("heading", { name: "Thank you" })).toBeVisible();
   });
 
-  // A non-English page must still be able to reach the form — the link just
-  // isn't itself translated to a /es/feedback URL yet (no localized route;
-  // same treatment as /privacy, see DemeterFooter's own comment on why).
-  test("the feedback link works from a localized page too, unprefixed", async ({ page }) => {
+  // A non-English page reaches the LOCALIZED form. #1076 added
+  // app/[lang]/feedback, so the footer prefixes this link the way it does the
+  // other localized routes — unlike /privacy, which still has no [lang] page.
+  test("the feedback link points at the localized form from a localized page", async ({
+    page,
+  }) => {
     await page.goto("/es/screen/ask");
     const link = page.locator(".dmft").getByRole("link", { name: "Comentarios" });
-    await expect(link).toHaveAttribute("href", "/feedback");
+    await expect(link).toHaveAttribute("href", "/es/feedback");
   });
 });
 
