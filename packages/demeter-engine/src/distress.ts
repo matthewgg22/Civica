@@ -14,6 +14,10 @@ const DISTRESS_PATTERNS: RegExp[] = [
   /starving|going hungry|food emergency|empty fridge|no money for (food|groceries)/i,
   /benefits (were|got) (cut|stopped|stolen)|ebt (was|got) (stolen|skimmed|emptied)/i,
   /homeless|evicted|sleeping in (my|the) car|shelter tonight/i,
+  // Common real phrasings the set above missed (launch audit 2026-08-28).
+  /go(ing|nna)?\s+to\s+bed\s+hungry/i,
+  /(no|zero|0)\s+(money|dollars|cash)\s+(for|to buy|to get)\s+(food|groceries|to eat)/i,
+  /(snap|ebt|food ?stamps|calfresh|my benefits)\s+(got|was|were|been|are|is|just)?\s*(cut off|cut|stopped|denied|terminated|taken away)/i,
   // Spanish
   /no (tengo|tenemos|hay) (comida|nada que comer|dinero para comida)/i,
   /ni[ñn]os? (tienen|con) hambre|sin comer|pasando hambre/i,

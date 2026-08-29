@@ -31,6 +31,26 @@ describe("self-harm and suicidal ideation", () => {
     }
   });
 
+  // The most common real phrasings, which the v1 set missed (launch audit
+  // 2026-08-28). A miss here is the exact "answered with paperwork" failure
+  // this gate exists to prevent, and it silently disables the safety net
+  // (#1069), which only fires when detectCrisis returns non-null.
+  it("catches the abbreviations, euphemisms and indirect phrasings people use", () => {
+    for (const text of [
+      "i want to kms",
+      "i want to unalive myself",
+      "i don't want to be alive anymore",
+      "i'm going to end it tonight",
+      "there's no point in living",
+      "no reason to go on",
+      "everyone would be better off without me",
+      "i'd rather be dead",
+      "i wish i wasn't here",
+    ]) {
+      expect(detectCrisis(text), text).toBe("self_harm");
+    }
+  });
+
   it("catches it in the other three answer languages", () => {
     expect(detectCrisis("quiero matarme")).toBe("self_harm");
     expect(detectCrisis("estaría mejor muerta")).toBe("self_harm");
