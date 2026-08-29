@@ -129,4 +129,38 @@ describe("the outlined application", () => {
     const income = buildOutline(solo).find((s) => s.heading === "Income, before tax")!;
     expect(income.lines[0]).not.toContain("(");
   });
+
+  // Regression (launch audit 2026-08-28): a client can send facts straight into
+  // this builder (the email-outline route does), so the two open-ended arrays
+  // must be bounded HERE — the document, and any email built from it, cannot be
+  // made to grow without limit. 30 members / 60 income lines is beyond any real
+  // household.
+  it("caps a client-supplied household and income", () => {
+    const many: OutlineInput = {
+      ...base,
+      facts: {
+        household: Array.from({ length: 50 }, (_, i) => ({
+          member_id: `m${i}`,
+          age: 30,
+          role: i === 0 ? "head" : "child",
+          immigration: "citizen",
+        })),
+        income: Array.from({ length: 100 }, (_, i) => ({
+          member: `m${i % 50}`,
+          type: "wages",
+          amount: 100,
+          freq: "monthly",
+        })),
+      },
+    };
+    const sections = buildOutline(many);
+    const hh = sections.find((s) => s.heading === "Who is in the household")!;
+    const inc = sections.find((s) => s.heading === "Income, before tax")!;
+    // 30 members + one summary line; 60 income lines + one trailing note.
+    expect(hh.lines.length).toBeLessThanOrEqual(31);
+    expect(inc.lines.length).toBeLessThanOrEqual(61);
+    // And it genuinely truncated — the input was well over both caps.
+    expect(hh.lines.length).toBeGreaterThan(2);
+    expect(inc.lines.length).toBeGreaterThan(2);
+  });
 });

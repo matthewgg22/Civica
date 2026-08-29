@@ -113,6 +113,15 @@ function incomeLabel(type: string | undefined): string {
  *  of "not provided" reads as a form someone failed to fill in; the point of
  *  the "still to work out" section at the end is to carry that honestly, once,
  *  in one place. */
+// Bound the two unbounded arrays a client can send (launch audit 2026-08-28).
+// The PDF route already capped these at the route; the email route did not, so
+// the caps belong in the shared builder — every consumer, present and future,
+// gets them at one place. 30 members and 60 income lines are beyond any real
+// household; the point is a client cannot make an outline (or the email built
+// from it) grow without limit.
+const MAX_HOUSEHOLD = 30;
+const MAX_INCOME_LINES = 60;
+
 export function buildOutline(input: OutlineInput): OutlineSection[] {
   const { facts, stateName, agency, portalName, stillNeeded } = input;
   const sections: OutlineSection[] = [];
@@ -132,7 +141,7 @@ export function buildOutline(input: OutlineInput): OutlineSection[] {
   }
   if (where.length) sections.push({ heading: "Where this application goes", lines: where });
 
-  const household = facts.household ?? [];
+  const household = (facts.household ?? []).slice(0, MAX_HOUSEHOLD);
   if (household.length) {
     sections.push({
       heading: "Who is in the household",
@@ -151,7 +160,7 @@ export function buildOutline(input: OutlineInput): OutlineSection[] {
     });
   }
 
-  const income = facts.income ?? [];
+  const income = (facts.income ?? []).slice(0, MAX_INCOME_LINES);
   if (income.length) {
     sections.push({
       heading: "Income, before tax",
