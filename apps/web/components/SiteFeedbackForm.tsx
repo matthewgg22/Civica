@@ -8,18 +8,26 @@
 //
 // idle/busy/done/error states, a hidden
 // honeypot field bots fill and real users never see.
+//
+// Localized (launch audit 2026-08-28): all copy comes from FEEDBACK_COPY, so a
+// Spanish/Vietnamese/Chinese reader who reached /[lang]/feedback fills in a form
+// they can read. The category `value`s stay the English enum the API stores;
+// only the labels translate.
 
 import { useState } from "react";
+import type { AnswerLang } from "@civica/demeter-engine/packs";
+import { FEEDBACK_COPY } from "../lib/i18n/feedback-copy";
 
-const CATEGORIES = [
-  { value: "", label: "Choose one (optional)" },
-  { value: "bug", label: "Something's broken" },
-  { value: "suggestion", label: "A suggestion" },
-  { value: "question", label: "A question" },
-  { value: "other", label: "Something else" },
-] as const;
+export function SiteFeedbackForm({ lang = "en" }: { lang?: AnswerLang }) {
+  const c = FEEDBACK_COPY[lang];
+  const categories = [
+    { value: "", label: c.categoryChoose },
+    { value: "bug", label: c.catBug },
+    { value: "suggestion", label: c.catSuggestion },
+    { value: "question", label: c.catQuestion },
+    { value: "other", label: c.catOther },
+  ] as const;
 
-export function SiteFeedbackForm() {
   const [state, setState] = useState<"idle" | "busy" | "done" | "error">("idle");
   const [errMsg, setErrMsg] = useState("");
 
@@ -42,14 +50,15 @@ export function SiteFeedbackForm() {
         body: JSON.stringify({ ...body, page_url: pageUrl }),
       });
       if (!res.ok) {
-        const j = (await res.json().catch(() => ({}))) as { error?: string };
-        setErrMsg(j.error ?? "Something went wrong, please try again.");
+        // The server's error text is English; show the localized generic so a
+        // non-English reader never gets an English string mid-form.
+        setErrMsg(c.errorGeneric);
         setState("error");
         return;
       }
       setState("done");
     } catch {
-      setErrMsg("Network error, please try again.");
+      setErrMsg(c.errorNetwork);
       setState("error");
     }
   }
@@ -57,11 +66,8 @@ export function SiteFeedbackForm() {
   if (state === "done") {
     return (
       <section className="fbform" aria-live="polite">
-        <h2 className="fbform__title">Thank you</h2>
-        <p className="fbform__body">
-          We read every message. If you left an email, we&apos;ll follow up if there&apos;s
-          something to say back.
-        </p>
+        <h2 className="fbform__title">{c.thankYouTitle}</h2>
+        <p className="fbform__body">{c.thankYouBody}</p>
       </section>
     );
   }
@@ -72,24 +78,24 @@ export function SiteFeedbackForm() {
           form, so the first thing anyone met was an OPTIONAL decision, in
           front of the task they came to do. */}
       <label className="fbform__field">
-        <span className="fbform__label">Your message *</span>
+        <span className="fbform__label">{c.messageLabel}</span>
         <textarea name="message" required minLength={1} maxLength={2000} rows={5} />
       </label>
       {/* Sized to what they hold, not to the column. An email box as wide as a
           message box is a promise about the expected input, and the wrong
           one. */}
       <label className="fbform__field fbform__field--narrow">
-        <span className="fbform__label">What&apos;s this about?</span>
+        <span className="fbform__label">{c.categoryLabel}</span>
         <select name="category" defaultValue="">
-          {CATEGORIES.map((c) => (
-            <option key={c.value} value={c.value}>
-              {c.label}
+          {categories.map((cat) => (
+            <option key={cat.value} value={cat.value}>
+              {cat.label}
             </option>
           ))}
         </select>
       </label>
       <label className="fbform__field fbform__field--narrow">
-        <span className="fbform__label">Email (optional, if you want a reply)</span>
+        <span className="fbform__label">{c.emailLabel}</span>
         <input name="contact_email" type="email" maxLength={200} autoComplete="email" />
       </label>
       {/* Honeypot — hidden from real users, filled only by bots. */}
@@ -103,7 +109,7 @@ export function SiteFeedbackForm() {
         </p>
       )}
       <button className="fbform__submit" type="submit" disabled={state === "busy"}>
-        {state === "busy" ? "Sending…" : "Send feedback"}
+        {state === "busy" ? c.sending : c.send}
       </button>
     </form>
   );

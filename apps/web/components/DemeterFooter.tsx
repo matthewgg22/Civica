@@ -32,24 +32,24 @@ const LINK_PATHS = {
  *  its link 404'd from every Spanish, Vietnamese and Chinese page — the same
  *  defect supporters had in #837. It is off the list again now that the page
  *  is /states and app/[lang]/states EXISTS: a path belongs here only while it
- *  has no localized route, and comes off the day it gets one. */
+ *  has no localized route, and comes off the day it gets one. FEEDBACK came off
+ *  the same way (launch audit 2026-08-28): app/[lang]/feedback now exists, so
+ *  the prefixed link resolves in every language. */
 const UNLOCALIZED: readonly string[] = [
   LINK_PATHS.privacy,
   LINK_PATHS.terms,
   LINK_PATHS.safety,
-  LINK_PATHS.feedback,
 ];
 
 /** English is un-prefixed; everything else lives under /es|/vi|/zh. The three
- *  legal documents and feedback are the exceptions — none has a localized
- *  route, so each points at the canonical page rather than a URL that would
- *  404.
+ *  legal documents are the exceptions — none has a localized route, so each
+ *  points at the canonical page rather than a URL that would 404.
  *
- *  The rule was learned twice, from two links that are both gone now:
- *  supporters (#837) and verify, each prefixed by language into a route that
- *  had never existed. Keep the list honest in BOTH directions — a path goes on
- *  it the day it loses its localized route and comes off the day it gets
- *  one. */
+ *  The rule was learned three times, from links that are all handled now:
+ *  supporters (#837), verify, and feedback — each was once prefixed into a
+ *  route that did not exist, or held canonical after its route shipped. Keep
+ *  the list honest in BOTH directions — a path goes on it the day it loses its
+ *  localized route and comes off the day it gets one. */
 function href(path: string, lang: AnswerLang): string {
   if (UNLOCALIZED.includes(path)) return path;
   return lang === "en" ? path : `/${lang}${path}`;
