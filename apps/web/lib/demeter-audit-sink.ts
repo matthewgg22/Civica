@@ -57,7 +57,17 @@ export const publicAuditSink: MaeAuditSink = async (rec: MaeAuditRecord) => {
       });
     if (error) throw error;
   } catch (err) {
-    consoleAuditSink({ ...rec, answer: rec.answer.slice(0, 2000) });
+    // Diagnostic fallback: the STRUCTURED shape of the failed row, never its
+    // content (launch audit 2026-08-28). answer + questionRedacted live in
+    // mae_query_log behind RLS and the pg_cron retention sweep; server logs
+    // (Vercel/Sentry) have neither. Dumping the answer text here — as this did
+    // — routes content around the very controls the table applies to it. Length
+    // markers keep "was it empty / how long" answerable without the content.
+    consoleAuditSink({
+      ...rec,
+      answer: `[${rec.answer.length} chars omitted]`,
+      questionRedacted: `[${rec.questionRedacted.length} chars omitted]`,
+    });
     // console.ERROR, not info (#1049). Best-effort is right — an audit failure
     // must never break someone's answer — but this was info, and info is not
     // an alarm. mae_query_log recorded NOTHING for twelve days: every insert
