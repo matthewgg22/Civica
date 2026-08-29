@@ -67,6 +67,20 @@ const ABUSE: RegExp[] = [
   /\b(scared|afraid|terrified)\s+of\s+my\s+(husband|wife|partner|boyfriend|girlfriend|ex)\b/i,
   /\bdomestic\s+violence\b|\brestraining\s+order\b/i,
   /\bnot\s+safe\s+(at\s+home|here)\b|\bthreatened?\s+to\s+kill\s+me\b|\bthreatens\s+me\b/i,
+  // COERCIVE CONTROL — abuse without a named physical hit (issue #1083). The
+  // physical-violence patterns above miss confinement, financial control,
+  // surveillance and isolation, which are core DV patterns a benefits chat
+  // will hear ("he won't let me leave", "he takes my EBT card"). High-signal
+  // only, and test-pinned NOT to fire on ordinary benefits talk ("my disability
+  // won't let me work", "who controls the SNAP program"). A DV advocate should
+  // still review these — see #1083.
+  /\b(won'?t|will not|does\s?n'?t|do\s?n'?t)\s+let\s+me\s+leave\b/i,
+  /\bnot\s+allowed\s+to\s+(leave|have\s+(any\s+)?money|see\s+(my\s+)?(friends|family|anyone)|have\s+friends|go\s+out)\b/i,
+  /\b(takes?|took|taking|controls?|controlling|keeps?|hides?)\s+(all\s+)?(my|the)\s+(money|paycheck|pay|benefits|ebt|snap\s+card|card|phone|passport|documents|keys)\b/i,
+  /\bcontrols?\s+(everything|where\s+i\s+(go|can\s+go)|what\s+i\s+(do|can\s+do|buy|eat)|who\s+i\s+(see|talk\s+to))\b/i,
+  /\b(tracks?|tracking|monitors?|monitoring|watches?)\s+(my|all\s+my)\s+(location|phone|messages|texts|calls|every\s+move|whereabouts)\b/i,
+  /\bisolat(es?|ing|ed)\s+me\b|\bcut\s+me\s+off\s+from\s+(my\s+)?(family|friends|everyone|everybody)\b/i,
+  /\b(won'?t|does\s?n'?t)\s+let\s+me\s+(see\s+(my\s+)?(family|friends|kids)|have\s+(a\s+)?(phone|money)|go\s+anywhere)\b/i,
   // Spanish
   /\bme\s+(pega|golpea|maltrata|amenaza)\b|\bviolencia\s+dom[ée]stica\b/i,
   /\babusa\s+de\s+m[ií]\b|\borden\s+de\s+restricci[óo]n\b/i,
