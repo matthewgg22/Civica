@@ -74,8 +74,8 @@ const T = {
     updated: (when: string) => `Cập nhật ${when}`,
   },
   zh: {
-    heading: "你的对话",
-    intro: "从你与 Demeter 的对话中保存。只有你能看到，也可以随时删除任意一条。",
+    heading: "您的对话",
+    intro: "从您与 Demeter 的对话中保存。只有您能看到，也可以随时删除任意一条。",
     empty: "还没有对话。",
     emptyBody: "关于 SNAP，什么都可以问 Demeter。登录期间，您问过的内容都会保存在这里，方便以后接着看。",
     emptyCta: "提一个问题",
