@@ -5,7 +5,9 @@
 // Questions — but no app/[lang]/supporters route exists, so the footer's
 // "Patrocinadores"/"Nhà tài trợ"/"支持者" link 404'd from every localized
 // page. Until a localized route exists, supporters gets the same
-// always-canonical treatment as privacy and feedback.
+// always-canonical treatment as the legal documents. (Feedback was on that
+// list until the launch-audit follow-up gave it app/[lang]/feedback — it is
+// prefixed now, asserted below.)
 //
 // Verify turned out to have exactly the same defect, missed at the time
 // because the fix looked at supporters alone: /es/verify, /vi/verify and
@@ -44,10 +46,12 @@ describe("footer links from localized pages (#837)", () => {
     }
   });
 
-  it("feedback stays canonical too", () => {
+  it("feedback IS prefixed now, because app/[lang]/feedback exists", () => {
+    // It used to be canonical (no localized route); the launch-audit follow-up
+    // shipped /[lang]/feedback, so it came off UNLOCALIZED in the same change.
     for (const lang of ["es", "vi", "zh"] as const) {
       const { container } = render(<DemeterFooter lang={lang} />);
-      expect(hrefFor(container, "feedback"), lang).toBe("/feedback");
+      expect(hrefFor(container, "feedback"), lang).toBe(`/${lang}/feedback`);
       cleanup();
     }
   });

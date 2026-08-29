@@ -353,22 +353,19 @@ describe("boxless messages (CSS contract)", () => {
       "it sits directly above the foot",
     ).toBe(true);
     expect(row.querySelector(".demeter__langrow")).toBeTruthy();
-    // THE GEAR'S LINKS SURVIVE A LANGUAGE (launch audit 2026-08-28). The
-    // feedback link was `/${lang}/feedback` — a route that does not exist, so
-    // every non-English reader who tapped "Enviar comentarios" got a 404; and
-    // states was hardcoded English although /[lang]/states exists. The rule
-    // is the footer's: prefix only what has a localized route.
+    // THE GEAR'S LINKS SURVIVE A LANGUAGE. The footer's rule: prefix only what
+    // has a localized route. In English everything is un-prefixed; states and
+    // feedback both localize now that /[lang]/states and /[lang]/feedback exist
+    // (feedback's route shipped in the launch-audit follow-up); terms and
+    // privacy stay canonical (English-only by decision #1013).
     const gear = row.querySelector("details.demeter__gear")!;
     expect(gear.querySelector("a[href='/privacy']")).toBeTruthy();
-    expect(
-      gear.querySelector("a[href='/feedback']"),
-      "feedback must link canonically — /[lang]/feedback does not exist",
-    ).toBeTruthy();
+    expect(gear.querySelector("a[href='/feedback']"), "English feedback is un-prefixed").toBeTruthy();
     expect(gear.querySelector("a[href='/es/feedback'], a[href='/vi/feedback'], a[href='/zh/feedback']")).toBeNull();
 
-    // And in SPANISH — the language the 404 actually shipped to. Switch via
-    // the rail's own picker, then: states localizes (the route exists),
-    // feedback stays canonical (it does not).
+    // And in SPANISH: both states and feedback now localize (their routes
+    // exist), so the gear links /es/states and /es/feedback — not the English
+    // canonical forms.
     // NOTE: `container` was cleaned up above when the with-conversation mount
     // replaced it — `withChat` is the live tree here.
     const esBtn = withChat.querySelector('button[title="Español"]');
@@ -376,8 +373,8 @@ describe("boxless messages (CSS contract)", () => {
     fireEvent.click(esBtn!);
     const gearEs = withChat.querySelector("#demeter-sidebar details.demeter__gear")!;
     expect(gearEs.querySelector("a[href='/es/states']"), "states should localize").toBeTruthy();
-    expect(gearEs.querySelector("a[href='/feedback']"), "feedback must stay canonical").toBeTruthy();
-    expect(gearEs.querySelector("a[href='/es/feedback']"), "the 404 is back").toBeNull();
+    expect(gearEs.querySelector("a[href='/es/feedback']"), "feedback should localize").toBeTruthy();
+    expect(gearEs.querySelector("a[href='/feedback']"), "no canonical fallback in Spanish").toBeNull();
     // A native disclosure, so Escape and outside-click need no JS.
     expect(gear.querySelector("summary")).toBeTruthy();
     // The retired buttons are really gone, and the gear is not left behind

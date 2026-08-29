@@ -13,6 +13,7 @@ import { StateDirectoryPage } from "../components/StateDirectoryPage";
 import LocalizedQuestionsPage from "../app/[lang]/questions/page";
 import ChatPage from "../app/chat/page";
 import LocalizedChatPage from "../app/[lang]/chat/page";
+import LocalizedFeedbackPage from "../app/[lang]/feedback/page";
 import { LANG_TAG } from "@civica/demeter-engine/packs";
 
 // The chat pages SSR the real DemeterChat; these two side inputs would reach
@@ -78,5 +79,17 @@ describe("chat pages expose exactly one visually-hidden H1", () => {
     const h1 = firstH1(renderToStaticMarkup(el));
     expect(h1?.cls).toBe("sr-only");
     expect(h1?.text.length ?? 0).toBeGreaterThan(0);
+  });
+});
+
+// The feedback surface was English-only; /[lang]/feedback shipped in the
+// launch-audit follow-up so es/vi/zh readers reach a form they can read. Pin
+// that its content root announces the reader's language, same contract as the
+// other localized routes.
+describe("localized feedback page carries the reader's language", () => {
+  it.each(PREFIXED)("renders <main lang> for /%s/feedback", async (lang, tag) => {
+    const el = await LocalizedFeedbackPage({ params: Promise.resolve({ lang }) });
+    const html = renderToStaticMarkup(el);
+    expect(mainLang(html)).toBe(tag);
   });
 });
