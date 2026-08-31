@@ -1,0 +1,23 @@
+cert,name,state,assets_k,outcome,pe_lending,pe_investment,pe_service,note
+57053,Signature Bank,NY,115966803,DEAD,failed 2023-03-12,-,-,CRAPES lists it INST_FIN_ACTV_FLG=Y; BankFind ACTIVE=0
+23621,Berkshire Bank,MA,11656860,DEAD,ended 2025-09-02,-,-,merged; CRAPES still returns it as active
+12054,Emigrant Bank,NY,6467421,DEAD,ended 2023-10-01,-,-,CRAPES still returns it as active
+8663,FirstBank,TN,12236574,TARGET — AA UNREAD,Low Satisfactory,High Satisfactory,Low Satisfactory,132 offices; TN Williamson/Rutherford/Hamilton/Davidson + AL Jefferson. Service Test gap is real. Complex full+limited-scope AA structure — needs a PE read before use
+18983,River City Bank,CA,4041345,TARGET — LOADED,Low Satisfactory,Low Satisfactory,High Satisfactory,"Sacramento AA = Sacramento, Yolo, Placer, El Dorado; $1.4M AA giving; ask $25,000"
+15118,Gateway First Bank,OK,1877908,TARGET — MARGINAL,Low Satisfactory,High Satisfactory,Low Satisfactory,"16 offices scattered across OK/TN/WA/LA/AZ, only 4 in Tulsa. Service gap real but footprint too dispersed to anchor a county campaign"
+18213,Fairfield County Bank,CT,1923978,NO TARGET,Low Satisfactory,High Satisfactory,High Satisfactory,gap is on Lending only — no test our activity feeds
+16450,Busey Bank,IL,12453067,TARGET — LOADED,Low Satisfactory,High Satisfactory,Low Satisfactory,"resolved earlier; Cook primary at $20,000"
+1768,Mechanics Bank,CA,18616778,TARGET — LOADED,Low Satisfactory,Outstanding,Low Satisfactory,"resolved earlier; Fresno + Kern, unsized (limited-scope AAs)"
+19416,CTBC Bank Corp. (USA),CA,4816873,TARGET — LOADED,High Satisfactory,Low Satisfactory,Low Satisfactory,"2022-vintage re-screen: API said BOTH components Substantial Noncompliance; PE says both Low Satisfactory. LA+Orange AA, $490,000 AA giving, ask $25,000"
+57777,Meridian Bank,PA,2517179,TARGET — BLOCKED,High Satisfactory,Low Satisfactory,Low Satisfactory,"real double gap but PA is refused by the state registry (FNS divergence); no artifact can be generated"
+26484,TruNorth Bank (fka North Shore Bank),MA,1500000,NO TARGET,High Satisfactory,Satisfactory,Satisfactory,"API said SN/SN; PE says Satisfactory/Satisfactory. Also renamed since the PE"
+803,WesBanco Bank,WV,16752817,NO TARGET,Outstanding,High Satisfactory,Outstanding,2022-vintage missing-components suspect; PE is clean
+17308,Central Pacific Bank,HI,7286591,NO TARGET,Outstanding,Outstanding,High Satisfactory,2022-vintage missing-components suspect; PE is clean
+9889,Mid Penn Bank,PA,4665007,NO TARGET,High Satisfactory,High Satisfactory,High Satisfactory,2022-vintage missing-components suspect; PE is clean
+57997,Bryant Bank,AL,2517179,NO TARGET,High Satisfactory,High Satisfactory,High Satisfactory,2022-vintage missing-components suspect; PE is clean
+11868,The Fidelity Deposit and Discount Bank,PA,2420862,NO TARGET,High Satisfactory,High Satisfactory,High Satisfactory,2022-vintage missing-components suspect; PE is clean
+32489,HomeStreet Bank,WA,9335429,DEAD,-,-,-,ended 2025-09-02
+58458,HTLF Bank,CO,9178296,DEAD,-,-,-,ended 2025-02-01
+33440,Citizens First Bank,FL,4013943,DEAD,-,-,-,ended 2025-10-01
+16835,Prosperity Bank,TX,38274790,VERIFIED — API CORRECT,High Satisfactory,High Satisfactory,Low Satisfactory,"2022-vintage spot-check: PE confirms the API. Harris candidate stands"
+3076,Independent Bank,TX,18252788,VERIFIED — API CORRECT,High Satisfactory,Low Satisfactory,Low Satisfactory,"2022-vintage spot-check: PE confirms the API. Harris candidate stands"

@@ -1,0 +1,18 @@
+bank_key,bank,ask_prior,ask_new,verdict,basis
+bank_irvine,Bank Irvine,5000,5000,unsized,no per-AA giving in PE
+hanmi_bank,Hanmi Bank,25000,25000,unsized,no Inv/Svc gap recorded
+five_star_bank,Five Star Bank,25000,25000,unsized,no Inv/Svc gap recorded
+bank_of_marin,Bank of Marin,10000,10000,unsized,no Inv/Svc gap recorded
+american_business_bank,American Business Bank,25000,25000,unsized,no Inv/Svc gap recorded
+helm_bank,Helm Bank USA,5000,5000,unsized,no Inv/Svc gap recorded
+banco_do_brasil_americas,Banco do Brasil Americas,10000,5000,pool,"31,657/yr x1.00"
+ocean_bank,Ocean Bank,25000,25000,earmark,"164,000/yr x1.00"
+city_national,City National Bank,75000,7500,pool,"47,333/yr x1.00"
+mega_bank,Mega Bank,5000,5000,unsized,no Inv/Svc gap recorded
+western_alliance,Western Alliance Bank,25000,25000,earmark,"591,776/yr x1.00"
+texas_first_bank,Texas First Bank,15000,12500,earmark,"86,000/yr x1.00"
+third_coast_bank,Third Coast Bank,10000,7500,pool,"33,854/yr x1.25"
+lakeside_bank,Lakeside Bank,10000,5000,pool,"24,000/yr x1.25"
+first_american_bank,First American Bank,15000,25000,earmark,"146,667/yr x1.25"
+habib_american_bank,Habib American Bank,15000,15000,earmark,"68,333/yr x1.55"
+busey_bank,Busey Bank,15000,20000,earmark,"132,667/yr x1.00"

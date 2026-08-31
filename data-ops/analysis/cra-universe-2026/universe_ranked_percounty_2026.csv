@@ -1,0 +1,376 @@
+cert,name,state,city,method,pe_date,overall,assets_k,inv,svc,file_id,svc_gap,in_old_universe,branches_all_topneed,top_county,branches_in_top_county,exposure_top_county,n_counties
+16835,Prosperity Bank,TX,EL CAMPO,Large Bank Evaluation,11/01/2023,Satisfactory,38274790.0,High Satisfactory,Low Satisfactory,2022/16835_220718.PDF,True,True,169,"Harris,TX",60,1641360,10
+9846,Truist Bank,NC,CHARLOTTE,Large Bank Evaluation,01/01/2025,Outstanding,546228000.0,Outstanding,Outstanding,2023/9846_230410.PDF,False,False,351,"Dallas,TX",25,575750,31
+28088,WaFd Bank,WA,SEATTLE,Large Bank Evaluation,03/01/2026,Satisfactory,22637277.0,High Satisfactory,High Satisfactory,2024/28088_240326.PDF,False,False,35,"Maricopa,AZ",10,299590,7
+258,Stock Yards Bank & Trust Company,KY,LOUISVILLE,Large Bank Evaluation,08/01/2024,Outstanding,7901513.0,Outstanding,High Satisfactory,2024/258_240124.PDF,False,False,40,"Jefferson,KY",29,285563,4
+35583,Pinnacle Bank,TN,NASHVILLE,Large Bank Evaluation,01/01/2024,Satisfactory,41842515.0,Outstanding,High Satisfactory,2023/35583_230510.PDF,False,False,110,"Davidson,TN",16,239152,19
+17393,German American Bank,IN,JASPER,Large Bank Evaluation,10/01/2024,Satisfactory,6144423.0,Low Satisfactory,Low Satisfactory,2024/17393_240422.PDF,True,True,22,"Franklin,OH",15,198795,4
+110,Bank OZK,AR,LITTLE ROCK,Large Bank Evaluation,06/01/2026,Satisfactory,41606548.0,Outstanding,Low Satisfactory,2025/110_251201.PDF,True,True,76,"Harris,TX",7,191492,18
+19629,International Bank of Commerce,TX,LAREDO,Large Bank Evaluation,01/01/2025,Satisfactory,9161809.0,Outstanding,High Satisfactory,2024/19629_240604.PDF,False,False,14,"Harris,TX",7,191492,3
+19401,Capital Bank,TX,JACINTO CITY,Intermediate Small Bank Evaluation,02/01/2025,Satisfactory,620198.0,,,2024/19401_241015.PDF,False,False,7,"Harris,TX",7,191492,1
+27237,Enterprise Bank & Trust,MO,CLAYTON,Large Bank Evaluation,12/01/2023,Satisfactory,13300684.0,Outstanding,Outstanding,2023/27237_230605.PDF,False,False,24,"Maricopa,AZ",6,179754,6
+9123,Western State Bank,ND,DEVILS LAKE,Large Bank Evaluation,05/01/2024,Satisfactory,2072686.0,Low Satisfactory,High Satisfactory,2023/9123_231127.PDF,False,True,6,"Maricopa,AZ",6,179754,1
+24045,Pacific Western Bank,CA,BEVERLY HILLS,Large Bank Evaluation,07/01/2021,Outstanding,29454911.0,Outstanding,Outstanding,2021/24045_210125.PDF,False,False,14,"Orange,CA",13,175201,2
+23627,Republic Bank & Trust Company,KY,LOUISVILLE,Large Bank Evaluation,07/01/2026,Outstanding,7038402.0,Outstanding,Outstanding,2026/23627_260202.PDF,False,False,31,"Jefferson,KY",17,167399,6
+21716,Citizens Business Bank,CA,ONTARIO,Large Bank Evaluation,08/01/2023,Satisfactory,16758546.0,High Satisfactory,Outstanding,2023/21716_230227.PDF,False,False,12,"Orange,CA",12,161724,1
+17266,Umpqua Bank,OR,ROSEBURG,Large Bank Evaluation,07/01/2024,Satisfactory,51974259.0,Outstanding,High Satisfactory,2023/17266_231218.PDF,False,False,21,"Maricopa,AZ",5,149795,6
+953,Bankers Trust Company,IA,DES MOINES,Large Bank Evaluation,02/01/2026,Outstanding,7542729.0,Outstanding,Outstanding,2025/953_250922.PDF,False,False,5,"Maricopa,AZ",5,149795,1
+13303,Bank of England,AR,ENGLAND,Intermediate Small Bank Evaluation,06/01/2025,Satisfactory,412782.0,,,2024/13303_240401.PDF,False,False,45,"Maricopa,AZ",5,149795,22
+11063,First-Citizens Bank & Trust Company,NC,RALEIGH,Large Bank Evaluation,08/01/2023,Satisfactory,107542088.0,High Satisfactory,High Satisfactory,2022/11063_220719.PDF,False,False,92,"Wake,NC",18,148950,26
+4789,Emprise Bank,KS,WICHITA,Large Bank Evaluation,03/01/2024,Satisfactory,2415653.0,High Satisfactory,High Satisfactory,2023/4789_230828.PDF,False,False,19,"Sedgwick,KS",18,148698,2
+57922,Harmony Bank,TX,DALLAS,Intermediate Small Bank Evaluation,07/01/2025,Satisfactory,784501.0,,,2025/57922_250303.PDF,False,False,6,"Dallas,TX",6,138180,1
+16068,Apple Bank for Savings,NY,NEW YORK,Large Bank Evaluation,01/01/2024,Satisfactory,16888361.0,Low Satisfactory,High Satisfactory,2023/16068_230622.PDF,False,True,16,"New York,NY",14,132916,3
+30076,"Spencer Savings Bank, SLA",NJ,ELMWOOD PARK,Large Bank Evaluation,04/01/2026,Outstanding,3982331.0,Outstanding,Outstanding,2025/30076_250915.PDF,False,False,16,"Bergen,NJ",16,130896,1
+5633,First Security Bank,AR,SEARCY,Large Bank Evaluation,01/01/2021,Satisfactory,6736235.0,High Satisfactory,High Satisfactory,2020/05633_200817.PDF,False,False,24,"Pulaski,AR",12,128700,2
+4705,Security Bank of Kansas City,KS,KANSAS CITY,Large Bank Evaluation,04/01/2024,Satisfactory,3613944.0,Low Satisfactory,High Satisfactory,2023/4705_231128.PDF,False,True,19,"Johnson,KS",13,125060,2
+12010,Provident Bank,NJ,JERSEY CITY,Large Bank Evaluation,01/01/2026,Satisfactory,24052216.0,Outstanding,High Satisfactory,2024/12010_241007.PDF,False,False,22,"Bergen,NJ",15,122715,2
+19581,Bell Bank,ND,FARGO,Large Bank Evaluation,12/01/2024,Satisfactory,14010713.0,High Satisfactory,High Satisfactory,2024/19581_240429.PDF,False,False,9,"Maricopa,AZ",4,119836,3
+10248,First International Bank & Trust,ND,WATFORD CITY,Large Bank Evaluation,12/01/2023,Satisfactory,4876751.0,Low Satisfactory,Low Satisfactory,2023/10248_230717.PDF,True,True,5,"Maricopa,AZ",4,119836,2
+19008,Parkway Bank and Trust Company,IL,HARWOOD HEIGHTS,Large Bank Evaluation,08/01/2024,Satisfactory,3435859.0,Low Satisfactory,Low Satisfactory,2024/19008_240401.PDF,True,True,4,"Maricopa,AZ",4,119836,1
+17514,Banterra Bank,IL,MARION,Large Bank Evaluation,12/01/2023,Satisfactory,2726883.0,Low Satisfactory,Low Satisfactory,2023/17514_230213.PDF,True,True,6,"Maricopa,AZ",4,119836,3
+4365,First Merchants Bank,IN,MUNCIE,Large Bank Evaluation,10/01/2025,Satisfactory,18335693.0,Outstanding,High Satisfactory,2024/4365_241209.PDF,False,False,24,"Franklin,OH",9,119277,4
+9204,Central Bank,UT,PROVO,Large Bank Evaluation,11/01/2023,Satisfactory,2014180.0,Low Satisfactory,High Satisfactory,2023/9204_230710.PDF,False,True,12,"Utah,UT",12,117912,1
+12441,Hancock Whitney Bank,MS,GULFPORT,Large Bank Evaluation,07/01/2025,Outstanding,35392436.0,Outstanding,Outstanding,2024/12441_241007.PDF,False,False,22,"Harris,TX",4,109424,10
+58228,b1BANK,LA,BATON ROUGE,Large Bank Evaluation,10/01/2023,Satisfactory,5531431.0,Low Satisfactory,Low Satisfactory,2023/58228_230410.PDF,True,True,12,"Harris,TX",4,109424,4
+20845,Wallis Bank,TX,WALLIS,Intermediate Small Bank Evaluation,02/01/2025,Satisfactory,1295536.0,,,2024/20845_240903.PDF,False,False,7,"Harris,TX",4,109424,3
+30788,Glacier Bank,MT,KALISPELL,Large Bank Evaluation,03/01/2026,Satisfactory,28986503.0,High Satisfactory,High Satisfactory,2025/30788_250819.PDF,False,False,45,"Utah,UT",11,108086,14
+58716,"Third Coast Bank, SSB",TX,HUMBLE,Intermediate Small Bank Evaluation,03/01/2019,Satisfactory,811340.0,High Satisfactory,High Satisfactory,2018/58716_181105.PDF,False,False,12,"Travis,TX",4,108060,6
+11507,The Fidelity Bank,NC,FUQUAY VARINA,Large Bank Evaluation,03/01/2026,Satisfactory,4263695.0,Low Satisfactory,Low Satisfactory,2025/11507_250902.PDF,True,True,15,"Wake,NC",13,107575,3
+803,"WesBanco Bank, Inc.",WV,WHEELING,Large Bank Evaluation,07/01/2023,Outstanding,16752817.0,,Outstanding,2022/803_221114.PDF,False,False,15,"Franklin,OH",8,106024,4
+20231,Pinnacle Bank,TX,FORT WORTH,Large Bank Evaluation,03/01/2025,Outstanding,2747997.0,High Satisfactory,High Satisfactory,2024/20231_240819.PDF,False,False,13,"Tarrant,TX",12,105276,2
+8663,FirstBank,TN,NASHVILLE,Large Bank Evaluation,07/01/2023,Satisfactory,12236574.0,,Substantial Non Complianc,2022/8663_220606.PDF,True,False,14,"Davidson,TN",7,104629,4
+15815,Central Bank & Trust Co.,KY,LEXINGTON,Large Bank Evaluation,07/01/2025,Satisfactory,3643067.0,Outstanding,Outstanding,2025/15815_250210.PDF,False,False,16,"Fayette,KY",12,103140,2
+17933,Blue Ridge Bank and Trust Co.,MO,INDEPENDENCE,Intermediate Small Bank Evaluation,04/01/2026,Satisfactory,828253.0,,,2025/17933_251117.PDF,False,False,8,"Jackson,MO",8,93880,1
+20504,Ameris Bank,GA,ATLANTA,Large Bank Evaluation,05/01/2024,Satisfactory,23591556.0,High Satisfactory,Low Satisfactory,2022/20504_221031.PDF,True,True,34,"Alachua,FL",7,92799,7
+27074,State Bank of Texas,TX,DALLAS,Intermediate Small Bank Evaluation,10/01/2023,Satisfactory,2054921.0,,,2023/27074_230320.PDF,False,False,5,"Dallas,TX",4,92120,2
+18355,North Dallas Bank & Trust Co.,TX,DALLAS,Large Bank Evaluation,03/01/2024,Satisfactory,1684358.0,High Satisfactory,High Satisfactory,2023/18355_230905.PDF,False,False,6,"Dallas,TX",4,92120,2
+57425,Sanibel Captiva Community Bank,FL,SANIBEL,Intermediate Small Bank Evaluation,01/01/2025,Satisfactory,886730.0,,,2024/57425_240610.PDF,False,False,8,"Lee,FL",8,90320,1
+18198,Ion Bank,CT,NAUGATUCK,Large Bank Evaluation,08/01/2024,Satisfactory,2083933.0,Low Satisfactory,High Satisfactory,2023/18198_230530.PDF,False,True,11,"Bergen,NJ",11,89991,1
+12437,Renasant Bank,MS,TUPELO,Large Bank Evaluation,12/01/2024,Satisfactory,17224614.0,High Satisfactory,High Satisfactory,2023/12437_230918.PDF,False,False,25,"Davidson,TN",6,89682,7
+29546,Great Southern Bank,MO,REEDS SPRING,Large Bank Evaluation,09/01/2024,Satisfactory,5723662.0,High Satisfactory,Low Satisfactory,2023/29546_230905.PDF,True,True,22,"St. Louis,MO",11,89243,6
+32296,Union Savings Bank,OH,CINCINNATI,Large Bank Evaluation,05/01/2024,Satisfactory,3391585.0,High Satisfactory,Low Satisfactory,2023/32296_230613.PDF,True,True,17,"Hamilton,OH",9,88992,4
+18297,Southside Bank,TX,TYLER,Large Bank Evaluation,04/01/2025,Satisfactory,8353301.0,Outstanding,High Satisfactory,2024/18297_240930.PDF,False,False,17,"Tarrant,TX",10,87730,6
+9923,Anderson Brothers Bank,SC,MULLINS,Intermediate Small Bank Evaluation,10/01/2024,Satisfactory,1752391.0,,,2024/9923_240226.PDF,False,False,11,"Horry,SC",11,87593,1
+16450,Busey Bank,IL,CHAMPAIGN,Large Bank Evaluation,12/01/2022,Satisfactory,12453067.0,,Substantial Non Complianc,2022/16450_220325.PDF,True,False,29,"Champaign,IL",9,86157,13
+16849,First Arkansas Bank and Trust,AR,JACKSONVILLE,Intermediate Small Bank Evaluation,10/01/2023,Satisfactory,1000423.0,,,2023/16849_230612.PDF,False,False,9,"Pulaski,AR",8,85800,2
+58210,Bridgewater Bank,MN,SAINT LOUIS PARK,Large Bank Evaluation,07/01/2026,Outstanding,5398413.0,High Satisfactory,High Satisfactory,2026/58210_260223.PDF,False,False,8,"Hennepin,MN",8,85176,1
+16389,Bank of Travelers Rest,SC,TRAVELERS REST,Intermediate Small Bank Evaluation,12/01/2023,Satisfactory,1317464.0,,,2023/16389_230814.PDF,False,False,11,"Greenville,SC",11,84469,1
+4239,First United Bank and Trust Company,OK,DURANT,Large Bank Evaluation,06/01/2024,Satisfactory,15970712.0,High Satisfactory,High Satisfactory,2023/4239_231106.PDF,False,False,19,"Collin,TX",6,82320,6
+17739,Plains State Bank,TX,HUMBLE,Intermediate Small Bank Evaluation,10/01/2024,Satisfactory,824545.0,,,2024/17739_240513.PDF,False,False,5,"Harris,TX",3,82068,2
+19512,Royal Banks of Missouri,MO,UNIVERSITY CITY,Intermediate Small Bank Evaluation,12/01/2024,Satisfactory,1019214.0,,,2024/19512_240506.PDF,False,False,10,"St. Louis,MO",10,81130,1
+3256,"Horizon Bank, SSB",TX,AUSTIN,Large Bank Evaluation,02/01/2024,Satisfactory,2583927.0,Outstanding,High Satisfactory,2023/3256_231023.PDF,False,False,3,"Travis,TX",3,81045,1
+15809,Security State Bank & Trust,TX,FREDERICKSBURG,Large Bank Evaluation,05/01/2026,Satisfactory,1984577.0,Low Satisfactory,High Satisfactory,2025/15809_251117.PDF,False,True,6,"Travis,TX",3,81045,3
+18609,American Bank of Commerce,TX,WOLFFORTH,Intermediate Small Bank Evaluation,07/01/2025,Satisfactory,1464340.0,,,2024/18609_241212.PDF,False,False,10,"Travis,TX",3,81045,4
+12299,"SouthStar Bank, S.S.B.",TX,MOULTON,Intermediate Small Bank Evaluation,02/01/2026,Satisfactory,1264496.0,,,2025/12299_250818.PDF,False,False,3,"Travis,TX",3,81045,1
+19215,Benchmark Bank,TX,PLANO,Intermediate Small Bank Evaluation,05/01/2024,Satisfactory,1224531.0,,,2023/19215_230515.PDF,False,False,8,"Travis,TX",3,81045,5
+58509,Frontier Bank of Texas,TX,ELGIN,Intermediate Small Bank Evaluation,04/01/2025,Satisfactory,867668.0,,,2024/58509_241125.PDF,False,False,3,"Travis,TX",3,81045,1
+18503,Cathay Bank,CA,LOS ANGELES,Large Bank Evaluation,02/01/2026,Satisfactory,23709143.0,Outstanding,High Satisfactory,2025/18503_250818.PDF,False,False,11,"Orange,CA",6,80862,4
+26610,Bank of Hope,CA,LOS ANGELES,Large Bank Evaluation,01/01/2025,Satisfactory,18082905.0,High Satisfactory,Low Satisfactory,2024/26610_240708.PDF,True,True,14,"Orange,CA",6,80862,6
+22738,First Utah Bank,UT,SALT LAKE CITY,Intermediate Small Bank Evaluation,08/01/2024,Satisfactory,717616.0,,,2024/22738_240422.PDF,False,False,7,"Salt Lake,UT",6,80622,2
+25103,City Bank,TX,LUBBOCK,Large Bank Evaluation,04/01/2024,Satisfactory,4184122.0,Low Satisfactory,Low Satisfactory,2023/25103_240301.PDF,True,True,19,"Lubbock,TX",9,75843,6
+28765,Kearny Bank,NJ,KEARNY,Large Bank Evaluation,10/01/2025,Satisfactory,7720773.0,Outstanding,Outstanding,2025/28765_250519.PDF,False,False,13,"Bergen,NJ",9,73629,2
+16889,United Community Bank,GA,BLAIRSVILLE,Large Bank Evaluation,03/01/2021,Satisfactory,17126721.0,High Satisfactory,High Satisfactory,2020/16889_200803.PDF,False,False,36,"Greenville,SC",9,69111,12
+23498,"TBK BANK, SSB",TX,DALLAS,Large Bank Evaluation,07/01/2026,Satisfactory,6351153.0,High Satisfactory,Outstanding,2026/23498_260120.PDF,False,False,4,"Dallas,TX",3,69090,2
+58739,Texas Security Bank,TX,DALLAS,Intermediate Small Bank Evaluation,07/01/2025,Satisfactory,1165137.0,,,2025/58739_250224.PDF,False,False,4,"Dallas,TX",3,69090,2
+58483,Pegasus Bank,TX,DALLAS,Intermediate Small Bank Evaluation,02/01/2021,Satisfactory,776213.0,High Satisfactory,Outstanding,2020/58483_200803.PDF,False,False,3,"Dallas,TX",3,69090,1
+17676,Legacy Bank,KS,COLWICH,Intermediate Small Bank Evaluation,04/01/2024,Satisfactory,683664.0,,,2023/17676_231204.PDF,False,False,8,"Sedgwick,KS",8,66088,1
+14650,Hills Bank and Trust Company,IA,HILLS,Large Bank Evaluation,07/01/2023,Outstanding,3936897.0,Outstanding,Outstanding,2023/14650_230316.PDF,False,False,10,"Johnson,IA",10,62870,1
+14113,The Peoples State Bank,IN,ELLETTSVILLE,Intermediate Small Bank Evaluation,06/01/2023,Satisfactory,421038.0,,,2023/14113_230126.PDF,False,False,7,"Monroe,IN",7,60620,1
+16980,Bank of Colorado,CO,FORT COLLINS,Large Bank Evaluation,03/01/2025,Satisfactory,7572545.0,Low Satisfactory,High Satisfactory,2024/16980_240819.PDF,False,True,15,"Maricopa,AZ",2,59918,4
+57607,First Western Trust Bank,CO,DENVER,Large Bank Evaluation,03/01/2026,Satisfactory,3021751.0,High Satisfactory,High Satisfactory,2025/57607_250929.PDF,False,False,7,"Maricopa,AZ",2,59918,4
+26962,Wilson Bank and Trust,TN,LEBANON,Large Bank Evaluation,03/01/2026,Satisfactory,5630161.0,High Satisfactory,High Satisfactory,2025/26962_250908.PDF,False,False,4,"Davidson,TN",4,59788,1
+22451,Volunteer Bank,TN,NASHVILLE,Intermediate Small Bank Evaluation,04/01/2025,Satisfactory,1597861.0,,,2024/22451_241104.PDF,False,False,4,"Davidson,TN",4,59788,1
+7468,First Commonwealth Bank,PA,INDIANA,Large Bank Evaluation,09/01/2023,Satisfactory,9616830.0,High Satisfactory,High Satisfactory,2023/7468_230322.PDF,False,False,9,"Hamilton,OH",6,59328,2
+26703,"River City Bank, Inc.",KY,LOUISVILLE,Intermediate Small Bank Evaluation,06/01/2025,Satisfactory,492254.0,,,2025/26703_250212.PDF,False,False,6,"Jefferson,KY",6,59082,1
+33823,Capital Community Bank,UT,PROVO,Strategic Plan Evaluation,06/01/2023,Satisfactory,615323.0,,,2023/33823_230109.PDF,False,False,7,"Utah,UT",6,58956,2
+11666,D. L. Evans Bank,ID,BURLEY,Large Bank Evaluation,03/01/2024,Satisfactory,3071088.0,Low Satisfactory,High Satisfactory,2023/11666_230918.PDF,False,True,10,"Ada,ID",8,56560,3
+21074,Texas Bank,TX,HENDERSON,Intermediate Small Bank Evaluation,08/01/2024,Satisfactory,820747.0,,,2024/21074_240304.PDF,False,False,4,"Collin,TX",4,54880,1
+34383,Texas Capital Bank,TX,DALLAS,Large Bank Evaluation,02/01/2024,Satisfactory,28591507.0,High Satisfactory,Outstanding,2023/34383_230724.PDF,False,False,9,"Harris,TX",2,54712,5
+24170,Hanmi Bank,CA,LOS ANGELES,Large Bank Evaluation,01/01/2024,Satisfactory,7407990.0,Low Satisfactory,High Satisfactory,2023/24170_230606.PDF,False,True,11,"Harris,TX",2,54712,7
+58309,American Momentum Bank,TX,COLLEGE STATION,Large Bank Evaluation,04/01/2024,Satisfactory,2579369.0,High Satisfactory,Low Satisfactory,2023/58309_231127.PDF,True,True,13,"Brazos,TX",4,54572,7
+57903,Poppy Bank,CA,SANTA ROSA,Large Bank Evaluation,01/01/2026,Satisfactory,6791228.0,High Satisfactory,High Satisfactory,2025/57903_250714.PDF,False,False,4,"Orange,CA",4,53908,1
+57463,PCB Bank,CA,LOS ANGELES,Large Bank Evaluation,02/01/2025,Satisfactory,2854271.0,Low Satisfactory,High Satisfactory,2024/57463_240729.PDF,False,True,9,"Orange,CA",4,53908,4
+17159,Bank of Utah,UT,OGDEN,Large Bank Evaluation,11/01/2023,Satisfactory,2406732.0,High Satisfactory,High Satisfactory,2023/17159_230425.PDF,False,False,8,"Salt Lake,UT",4,53748,2
+27998,Guardian Savings Bank,OH,WEST CHESTER,Intermediate Small Bank Evaluation,02/01/2026,Satisfactory,1347887.0,,,2025/27998_250922.PDF,False,False,8,"Hamilton,OH",5,49440,3
+57919,ConnectOne Bank,NJ,ENGLEWOOD CLIFFS,Large Bank Evaluation,07/01/2026,Satisfactory,14013611.0,Outstanding,Low Satisfactory,2025/57919_251230.PDF,True,True,8,"Bergen,NJ",6,49086,3
+15932,The Citizens Bank,SC,OLANTA,Intermediate Small Bank Evaluation,10/01/2025,Satisfactory,1027511.0,,,2025/15932_250331.PDF,False,False,6,"Horry,SC",6,47778,1
+12854,Centier Bank,IN,WHITING,Large Bank Evaluation,01/01/2024,Satisfactory,7774511.0,High Satisfactory,High Satisfactory,2023/12854_230821.PDF,False,False,8,"Tippecanoe,IN",5,46970,2
+29047,First Federal Bank of Kansas City,MO,LEES SUMMIT,Strategic Plan Evaluation,08/01/2024,Outstanding,960134.0,,,2024/29047_240304.PDF,False,False,6,"Jackson,MO",4,46940,2
+34120,Bank of Ann Arbor,MI,ANN ARBOR,Large Bank Evaluation,05/01/2025,Satisfactory,3150538.0,Low Satisfactory,High Satisfactory,2024/34120_241112.PDF,False,True,6,"Washtenaw,MI",6,46590,1
+29209,NexBank,TX,DALLAS,Large Bank Evaluation,09/01/2025,Satisfactory,13943020.0,High Satisfactory,Low Satisfactory,2025/29209_250331.PDF,True,True,2,"Dallas,TX",2,46060,1
+58181,Metro City Bank,GA,DORAVILLE,Large Bank Evaluation,01/01/2026,Satisfactory,3644728.0,High Satisfactory,High Satisfactory,2025/58181_250630.PDF,False,False,15,"Dallas,TX",2,46060,8
+57522,Tolleson Private Bank,TX,DALLAS,Strategic Plan Evaluation,04/01/2025,Satisfactory,964399.0,,,2024/57522_240916.PDF,False,False,2,"Dallas,TX",2,46060,1
+26627,Bank of the West,TX,GRAPEVINE,Intermediate Small Bank Evaluation,08/01/2025,Satisfactory,802927.0,,,2025/26627_250331.PDF,False,False,7,"Dallas,TX",2,46060,3
+2711,"Traditional Bank, Inc.",KY,MOUNT STERLING,Large Bank Evaluation,11/01/2023,Satisfactory,2190086.0,Low Satisfactory,High Satisfactory,2023/2711_230717.PDF,False,True,6,"Fayette,KY",5,42975,2
+15324,Security Bank & Trust Company,MN,GLENCOE,Intermediate Small Bank Evaluation,03/01/2024,Satisfactory,708993.0,,,2023/15324_231116.PDF,False,False,4,"Hennepin,MN",4,42588,1
+59106,Beacon Community Bank,SC,MOUNT PLEASANT,Intermediate Small Bank Evaluation,05/01/2026,Satisfactory,957482.0,,,2025/59106_251201.PDF,False,False,5,"Charleston,SC",5,42480,1
+26912,The Bank of South Carolina,SC,CHARLESTON,Intermediate Small Bank Evaluation,11/01/2023,Satisfactory,646413.0,,,2023/26912_230605.PDF,False,False,5,"Charleston,SC",5,42480,1
+12769,First United Bank,TX,DIMMITT,Large Bank Evaluation,09/01/2024,Satisfactory,2195446.0,High Satisfactory,Low Satisfactory,2024/12769_240408.PDF,True,True,5,"Lubbock,TX",5,42135,1
+35095,TowneBank,VA,PORTSMOUTH,Large Bank Evaluation,02/01/2026,Outstanding,17511883.0,Outstanding,Outstanding,2025/35095_250707.PDF,False,False,7,"Wake,NC",5,41375,3
+34047,First Community Bank,SC,LEXINGTON,Large Bank Evaluation,11/01/2023,Satisfactory,1735147.0,Low Satisfactory,Low Satisfactory,2023/34047_230626.PDF,True,True,7,"Richland,SC",4,41228,2
+29941,Bogota Savings Bank,NJ,TEANECK,Intermediate Small Bank Evaluation,08/01/2023,Satisfactory,850711.0,,,2023/29941_230313.PDF,False,False,5,"Bergen,NJ",5,40905,1
+57417,Commercial Bank of California,CA,IRVINE,Large Bank Evaluation,06/01/2026,Satisfactory,3846280.0,Low Satisfactory,High Satisfactory,2026/57417_260112.PDF,False,True,3,"Orange,CA",3,40431,1
+24920,Woori America Bank,NY,NEW YORK,Large Bank Evaluation,11/01/2023,Satisfactory,3104798.0,High Satisfactory,High Satisfactory,2023/24920_230509.PDF,False,False,10,"Orange,CA",3,40431,5
+20164,Sunwest Bank,UT,SANDY,Large Bank Evaluation,03/01/2025,Satisfactory,2974047.0,Low Satisfactory,High Satisfactory,2024/20164_240401.PDF,False,True,7,"Orange,CA",3,40431,5
+58310,US Metro Bank,CA,GARDEN GROVE,Intermediate Small Bank Evaluation,05/01/2026,Satisfactory,1566784.0,,,2026/58310_260120.PDF,False,False,5,"Orange,CA",3,40431,3
+13876,CNB Bank,PA,CLEARFIELD,Large Bank Evaluation,03/01/2025,Satisfactory,5865071.0,High Satisfactory,High Satisfactory,2024/13876_240903.PDF,False,False,4,"Franklin,OH",3,39759,2
+21031,The Bank of Tampa,FL,TAMPA,Large Bank Evaluation,12/01/2025,Satisfactory,3024877.0,Low Satisfactory,High Satisfactory,2025/21031_250527.PDF,False,True,4,"Pinellas,FL",3,38811,2
+1874,Bank of Labor,KS,OVERLAND PARK,Strategic Plan Evaluation,11/01/2025,Satisfactory,1034136.0,,,2025/1874_250630.PDF,False,False,4,"Johnson,KS",4,38480,1
+57348,SouthEast Bank,TN,FARRAGUT,Strategic Plan Evaluation,10/01/2025,Satisfactory,3294195.0,,,2025/57348_250901.PDF,False,False,5,"Knox,TN",5,38435,1
+9155,Countybank,SC,GREENWOOD,Intermediate Small Bank Evaluation,05/01/2026,Satisfactory,736413.0,,,2025/9155_251117.PDF,False,False,5,"Greenville,SC",5,38395,1
+4360,Horizon Bank,IN,MICHIGAN CITY,Large Bank Evaluation,04/01/2026,Satisfactory,7621571.0,Low Satisfactory,High Satisfactory,2025/4360_251006.PDF,False,True,5,"Tippecanoe,IN",4,37576,2
+30470,Manasquan Bank,NJ,MANASQUAN,Large Bank Evaluation,02/01/2024,Satisfactory,2795423.0,Outstanding,High Satisfactory,2023/30470_230911.PDF,False,False,5,"Ocean,NJ",5,36040,1
+13109,Jackson County Bank,IN,SEYMOUR,Intermediate Small Bank Evaluation,06/01/2025,Satisfactory,1011206.0,,,2025/13109_250122.PDF,False,False,4,"Monroe,IN",4,34640,1
+19772,IncredibleBank,WI,WAUSAU,Large Bank Evaluation,10/01/2025,Satisfactory,2004363.0,Outstanding,Outstanding,2025/19772_250421.PDF,False,False,3,"Lee,FL",3,33870,1
+1720,Western Bank,TX,LUBBOCK,Intermediate Small Bank Evaluation,12/01/2025,Satisfactory,811134.0,,,2025/1720_250804.PDF,False,False,4,"Lubbock,TX",4,33708,1
+58712,Freedom Bank,NJ,MAYWOOD,Intermediate Small Bank Evaluation,07/01/2025,Satisfactory,768667.0,,,2025/58712_250218.PDF,False,False,4,"Bergen,NJ",4,32724,1
+35151,New Millennium Bank,NJ,FORT LEE,Intermediate Small Bank Evaluation,02/01/2025,Satisfactory,766925.0,,,2023/35151_231106.PDF,False,False,6,"Bergen,NJ",4,32724,3
+8889,Midwest Regional Bank,MO,CLAYTON,Intermediate Small Bank Evaluation,10/01/2025,Satisfactory,1104470.0,,,2025/8889_250623.PDF,False,False,4,"St. Louis,MO",4,32452,1
+4549,CNB St Louis Bank,MO,MAPLEWOOD,Intermediate Small Bank Evaluation,12/01/2024,Satisfactory,766648.0,,,2024/4549_240812.PDF,False,False,4,"St. Louis,MO",4,32452,1
+9751,21st Century Bank,MN,LORETTO,Intermediate Small Bank Evaluation,03/01/2026,Satisfactory,864569.0,,,2025/9751_251117.PDF,False,False,3,"Hennepin,MN",3,31941,1
+16111,Highland Bank,MN,SAINT PAUL,Intermediate Small Bank Evaluation,04/01/2025,Satisfactory,759078.0,,,2024/16111_240903.PDF,False,False,3,"Hennepin,MN",3,31941,1
+58689,South Atlantic Bank,SC,MYRTLE BEACH,Intermediate Small Bank Evaluation,12/01/2024,Satisfactory,1666789.0,,,2024/58689_240520.PDF,False,False,6,"Horry,SC",4,31852,2
+28396,First Palmetto Bank,SC,CAMDEN,Intermediate Small Bank Evaluation,06/01/2026,Satisfactory,1041246.0,,,2025/28396_251201.PDF,False,False,9,"Horry,SC",4,31852,4
+16858,First American Bank and Trust Company,GA,ATHENS,Intermediate Small Bank Evaluation,10/01/2025,Satisfactory,879178.0,,,2025/16858_250428.PDF,False,False,5,"Clarke,GA",4,31544,2
+31100,Security Federal Bank,SC,AIKEN,Intermediate Small Bank Evaluation,01/01/2026,Satisfactory,1519347.0,,,2025/31100_250623.PDF,False,False,3,"Richland,SC",3,30921,1
+15085,Arthur State Bank,SC,UNION,Intermediate Small Bank Evaluation,10/01/2023,Satisfactory,745082.0,,,2023/15085_230508.PDF,False,False,6,"Richland,SC",3,30921,2
+1700,First Century Bank,TN,TAZEWELL,Intermediate Small Bank Evaluation,11/01/2023,Satisfactory,579519.0,,,2023/1700_230620.PDF,False,False,4,"Knox,TN",4,30748,1
+35295,Southern First Bank,SC,GREENVILLE,Large Bank Evaluation,05/01/2025,Satisfactory,4056256.0,High Satisfactory,High Satisfactory,2024/35295_240415.PDF,False,False,7,"Greenville,SC",4,30716,3
+57833,Beal Bank USA,NV,LAS VEGAS,Wholesale Bank Evaluation,06/01/2023,Satisfactory,9168938.0,,,2022/57833_220718.PDF,False,False,3,"Maricopa,AZ",1,29959,3
+34607,First Internet Bank of Indiana,IN,FISHERS,Strategic Plan Evaluation,11/01/2024,Satisfactory,5320616.0,,,2024/34607_240528.PDF,False,False,1,"Maricopa,AZ",1,29959,1
+32974,Gulf Coast Bank and Trust Company,LA,NEW ORLEANS,Large Bank Evaluation,08/01/2023,Satisfactory,2927905.0,Low Satisfactory,Low Satisfactory,2023/32974_230313.PDF,True,True,7,"Maricopa,AZ",1,29959,7
+58057,Tradition Capital Bank,MN,WAYZATA,Large Bank Evaluation,12/01/2024,Satisfactory,2522965.0,High Satisfactory,High Satisfactory,2024/58057_240625.PDF,False,False,3,"Maricopa,AZ",1,29959,2
+19899,KS StateBank,KS,MANHATTAN,Large Bank Evaluation,11/01/2023,Satisfactory,2437059.0,Low Satisfactory,High Satisfactory,2023/19899_230612.PDF,False,True,2,"Maricopa,AZ",1,29959,2
+19396,Unison Bank,ND,JAMESTOWN,Intermediate Small Bank Evaluation,05/01/2024,Satisfactory,580594.0,,,2023/19396_231106.PDF,False,False,1,"Maricopa,AZ",1,29959,1
+58049,"Eclipse Bank, Inc.",KY,LOUISVILLE,Intermediate Small Bank Evaluation,12/01/2025,Satisfactory,488274.0,,,2025/58049_250804.PDF,False,False,3,"Jefferson,KY",3,29541,1
+20369,Heartland Bank and Trust Company,IL,BLOOMINGTON,Large Bank Evaluation,05/01/2024,Satisfactory,4988192.0,High Satisfactory,High Satisfactory,2023/20369_231113.PDF,False,False,5,"Champaign,IL",3,28719,3
+5768,The Fountain Trust Company,IN,COVINGTON,Intermediate Small Bank Evaluation,08/01/2025,Satisfactory,670246.0,,,2025/5768_250414.PDF,False,False,6,"Champaign,IL",3,28719,2
+27503,The Berkshire Bank,NY,NEW YORK,Intermediate Small Bank Evaluation,08/01/2026,Needs to Improve,542277.0,,,2026/27503_260504.PDF,False,False,3,"New York,NY",3,28482,1
+1281,Washington Trust Bank,WA,SPOKANE,Large Bank Evaluation,01/01/2026,Satisfactory,10702785.0,High Satisfactory,High Satisfactory,2025/1281_250707.PDF,False,False,4,"Ada,ID",4,28280,1
+17842,Texas Bank and Trust Company,TX,LONGVIEW,Large Bank Evaluation,01/01/2026,Satisfactory,4342372.0,High Satisfactory,High Satisfactory,2025/17842_250804.PDF,False,False,4,"Collin,TX",2,27440,3
+11569,Alliance Bank,TX,SULPHUR SPRINGS,Intermediate Small Bank Evaluation,09/01/2023,Satisfactory,1340354.0,,,2023/11569_230306.PDF,False,False,2,"Collin,TX",2,27440,1
+3121,First Bank,TX,BURKBURNETT,Intermediate Small Bank Evaluation,09/01/2023,Satisfactory,617324.0,,,2023/3121_230227.PDF,False,False,3,"Collin,TX",2,27440,2
+11934,Dominion Bank,TX,DALLAS,Intermediate Small Bank Evaluation,12/01/2023,Satisfactory,501239.0,,,2023/11934_230622.PDF,False,False,3,"Collin,TX",2,27440,2
+32574,Beal Bank,TX,PLANO,Wholesale Bank Evaluation,06/01/2023,Satisfactory,3076875.0,,,2022/32574_220718.PDF,False,False,3,"Harris,TX",1,27356,3
+58316,Investar Bank,LA,BATON ROUGE,Intermediate Small Bank Evaluation,09/01/2018,Satisfactory,1642254.0,High Satisfactory,Outstanding,2018/58316_180312.PDF,False,False,4,"Harris,TX",1,27356,3
+20856,Liberty Bank and Trust Company,LA,NEW ORLEANS,Intermediate Small Bank Evaluation,03/01/2024,Satisfactory,1077834.0,,,2023/20856_230905.PDF,False,False,2,"Harris,TX",1,27356,2
+58657,PromiseOne Bank,GA,DULUTH,Intermediate Small Bank Evaluation,02/01/2026,Satisfactory,814694.0,,,2025/58657_250825.PDF,False,False,4,"Harris,TX",1,27356,2
+59185,Gulf Capital Bank,TX,HOUSTON,Intermediate Small Bank Evaluation,03/01/2025,Satisfactory,544422.0,,,2024/59185_241118.PDF,False,False,1,"Harris,TX",1,27356,1
+16817,Citizens Bank,TX,KILGORE,Intermediate Small Bank Evaluation,09/01/2023,Satisfactory,492153.0,,,2023/16817_230410.PDF,False,False,3,"Harris,TX",1,27356,3
+22065,Grand Bank,OK,TULSA,Intermediate Small Bank Evaluation,12/01/2021,Satisfactory,470973.0,High Satisfactory,Outstanding,2021/22065_210816.PDF,False,False,2,"Harris,TX",1,27356,2
+16470,Jefferson Bank,TX,SAN ANTONIO,Large Bank Evaluation,03/01/2026,Satisfactory,2802550.0,Low Satisfactory,Outstanding,2025/16470_251014.PDF,False,True,1,"Travis,TX",1,27015,1
+26856,Falcon International Bank,TX,LAREDO,Large Bank Evaluation,02/01/2024,Satisfactory,1975494.0,High Satisfactory,Low Satisfactory,2023/26856_231016.PDF,True,True,2,"Travis,TX",1,27015,2
+3387,FirstBank Southwest,TX,AMARILLO,Large Bank Evaluation,04/01/2026,Satisfactory,1859619.0,Outstanding,High Satisfactory,2025/3387_251117.PDF,False,False,2,"Travis,TX",1,27015,2
+11935,First Texas Bank,TX,GEORGETOWN,Intermediate Small Bank Evaluation,06/01/2025,Satisfactory,1281115.0,,,2025/11935_250218.PDF,False,False,1,"Travis,TX",1,27015,1
+58935,R Bank,TX,ROUND ROCK,Intermediate Small Bank Evaluation,03/01/2024,Satisfactory,981671.0,,,2023/58935_230905.PDF,False,False,2,"Travis,TX",1,27015,2
+1768,Mechanics Bank,CA,WALNUT CREEK,Large Bank Evaluation,11/01/2022,Satisfactory,18616778.0,Outstanding,Substantial Non Complianc,2022/1768_220418.PDF,True,False,4,"Orange,CA",2,26954,3
+33539,Preferred Bank,CA,LOS ANGELES,Large Bank Evaluation,07/01/2026,Satisfactory,7601679.0,High Satisfactory,Outstanding,2026/33539_260309.PDF,False,False,3,"Orange,CA",2,26954,2
+19416,CTBC Bank Corp. (USA),CA,LOS ANGELES,Large Bank Evaluation,07/01/2023,Satisfactory,4816873.0,Substantial Non Complianc,Substantial Non Complianc,2023/19416_230206.PDF,True,True,2,"Orange,CA",2,26954,1
+34788,American Business Bank,CA,LOS ANGELES,Large Bank Evaluation,06/01/2024,Satisfactory,3874161.0,High Satisfactory,High Satisfactory,2024/34788_240129.PDF,False,False,2,"Orange,CA",2,26954,1
+57944,Open Bank,CA,LOS ANGELES,Large Bank Evaluation,01/01/2025,Outstanding,2234400.0,Outstanding,High Satisfactory,2024/57944_240604.PDF,False,False,4,"Orange,CA",2,26954,3
+33188,Shinhan Bank America,NY,NEW YORK,Large Bank Evaluation,02/01/2025,Satisfactory,1841066.0,Low Satisfactory,Low Satisfactory,2024/33188_240729.PDF,True,True,8,"Orange,CA",2,26954,5
+34401,Fortis Private Bank,CO,DENVER,Intermediate Small Bank Evaluation,08/01/2023,Satisfactory,1183143.0,,,2023/34401_230403.PDF,False,False,3,"Salt Lake,UT",2,26874,2
+35323,FinWise Bank,UT,MURRAY,Strategic Plan Evaluation,10/01/2023,Satisfactory,373830.0,,,2022/35323_221128.PDF,False,False,2,"Salt Lake,UT",2,26874,1
+59144,Ohio State Bank,OH,BEXLEY,Intermediate Small Bank Evaluation,08/01/2026,Needs to Improve,482811.0,,,2026/59144_260420.PDF,False,False,2,"Franklin,OH",2,26506,1
+19559,TexasBank,TX,BROWNWOOD,Intermediate Small Bank Evaluation,04/01/2024,Satisfactory,2094068.0,,,2023/19559_231016.PDF,False,False,4,"Tarrant,TX",3,26319,2
+21329,NBT Financial Bank,TX,FORT WORTH,Intermediate Small Bank Evaluation,09/01/2024,Satisfactory,451922.0,,,2024/21329_240513.PDF,False,False,3,"Tarrant,TX",3,26319,1
+27235,STAR Financial Bank,IN,FORT WAYNE,Large Bank Evaluation,08/01/2023,Satisfactory,2925303.0,High Satisfactory,High Satisfactory,2023/27235_230417.PDF,False,False,3,"Marion,IN",3,24849,1
+1365,Peoples Bank and Trust Company,KS,MCPHERSON,Intermediate Small Bank Evaluation,02/01/2025,Satisfactory,1185096.0,,,2024/1365_241007.PDF,False,False,3,"Sedgwick,KS",3,24783,1
+35541,BCB Community Bank,NJ,BAYONNE,Large Bank Evaluation,01/01/2025,Satisfactory,3847694.0,High Satisfactory,Outstanding,2024/35541_240625.PDF,False,False,3,"Bergen,NJ",3,24543,1
+58054,First Commerce Bank,NJ,LAKEWOOD,Intermediate Small Bank Evaluation,03/01/2025,Outstanding,1452486.0,,,2024/58054_240806.PDF,False,False,6,"Bergen,NJ",3,24543,2
+58203,NewBank,NY,FLUSHING,Intermediate Small Bank Evaluation,06/01/2024,Satisfactory,649281.0,,,2024/58203_240116.PDF,False,False,4,"Bergen,NJ",3,24543,2
+12383,Carrollton Bank,IL,CARROLLTON,Large Bank Evaluation,06/01/2025,Outstanding,3444964.0,Outstanding,Outstanding,2024/12383_241212.PDF,False,False,3,"St. Louis,MO",3,24339,1
+1617,The Bank of Missouri,MO,PERRYVILLE,Large Bank Evaluation,04/01/2025,Satisfactory,2963315.0,Low Satisfactory,High Satisfactory,2024/1617_240715.PDF,False,True,5,"St. Louis,MO",3,24339,2
+33005,FCB Banks,IL,COLLINSVILLE,Large Bank Evaluation,05/01/2025,Satisfactory,2384266.0,Low Satisfactory,High Satisfactory,2024/33005_241007.PDF,False,True,3,"St. Louis,MO",3,24339,1
+5615,Chambers Bank,AR,DANVILLE,Intermediate Small Bank Evaluation,12/01/2022,Satisfactory,1239937.0,,,2022/5615_220621.PDF,False,False,4,"Washington,AR",3,23931,2
+32084,Grand Savings Bank,OK,GROVE,Intermediate Small Bank Evaluation,06/01/2023,Satisfactory,789748.0,,,2023/32084_230130.PDF,False,False,3,"Washington,AR",3,23931,1
+89,Signature Bank of Arkansas,AR,FAYETTEVILLE,Intermediate Small Bank Evaluation,06/01/2021,Satisfactory,749590.0,High Satisfactory,High Satisfactory,2021/89_210111.PDF,False,False,3,"Washington,AR",3,23931,1
+10619,Hawthorn Bank,MO,JEFFERSON CITY,Large Bank Evaluation,11/01/2024,Satisfactory,1825851.0,High Satisfactory,Low Satisfactory,2024/10619_240429.PDF,True,True,5,"Jackson,MO",2,23470,3
+8283,Lead Bank,MO,KANSAS CITY,Strategic Plan Evaluation,09/01/2023,Satisfactory,778855.0,,,2023/8283_230103.PDF,False,False,2,"Jackson,MO",2,23470,1
+14851,Citizens Bank,TN,ELIZABETHTON,Intermediate Small Bank Evaluation,12/01/2025,Satisfactory,1324247.0,,,2025/14851_250804.PDF,False,False,3,"Knox,TN",3,23061,1
+9176,Apex Bank,TN,CAMDEN,Intermediate Small Bank Evaluation,10/01/2025,Satisfactory,1262637.0,,,2025/9176_250303.PDF,False,False,3,"Knox,TN",3,23061,1
+14028,First Guaranty Bank,LA,HAMMOND,Large Bank Evaluation,07/01/2026,Satisfactory,3794968.0,Low Satisfactory,Low Satisfactory,2026/14028_260127.PDF,True,True,4,"Dallas,TX",1,23030,4
+34728,Independent Bank,TN,MEMPHIS,Intermediate Small Bank Evaluation,05/01/2026,Satisfactory,1728890.0,,,2025/34728_251103.PDF,False,False,1,"Dallas,TX",1,23030,1
+59093,International Bank of Commerce,OK,OKLAHOMA CITY,Large Bank Evaluation,01/01/2025,Satisfactory,1548823.0,Outstanding,Low Satisfactory,2024/59093_240624.PDF,True,True,1,"Dallas,TX",1,23030,1
+3182,MapleMark Bank,TX,DALLAS,Intermediate Small Bank Evaluation,12/01/2024,Satisfactory,1168141.0,,,2024/3182_240708.PDF,False,False,1,"Dallas,TX",1,23030,1
+14029,First Liberty Bank,OK,OKLAHOMA CITY,Intermediate Small Bank Evaluation,11/01/2023,Satisfactory,595576.0,,,2023/14029_230717.PDF,False,False,2,"Dallas,TX",1,23030,2
+12285,Cattlemens Bank,OK,ALTUS,Intermediate Small Bank Evaluation,12/01/2025,Satisfactory,543271.0,,,2025/12285_250721.PDF,False,False,2,"Dallas,TX",1,23030,2
+58852,Liberty Capital Bank,TX,ADDISON,Intermediate Small Bank Evaluation,12/01/2025,Satisfactory,505291.0,,,2025/58852_250818.PDF,False,False,1,"Dallas,TX",1,23030,1
+8021,Wauchula State Bank,FL,WAUCHULA,Intermediate Small Bank Evaluation,07/01/2023,Satisfactory,959786.0,,,2023/8021_230130.PDF,False,False,4,"Sarasota,FL",3,22656,2
+58255,River Bank & Trust,AL,PRATTVILLE,Large Bank Evaluation,10/01/2023,Satisfactory,2833353.0,High Satisfactory,High Satisfactory,2023/58255_230427.PDF,False,False,3,"Lee,AL",3,21666,1
+34533,First Community Bank,AR,BATESVILLE,Large Bank Evaluation,09/01/2024,Satisfactory,2757543.0,High Satisfactory,Low Satisfactory,2024/34533_240318.PDF,True,True,3,"Pulaski,AR",2,21450,2
+18519,First Service Bank,AR,GREENBRIER,Intermediate Small Bank Evaluation,03/01/2026,Satisfactory,836370.0,,,2025/18519_251006.PDF,False,False,2,"Pulaski,AR",2,21450,1
+1756,Central Bank,AR,LITTLE ROCK,Intermediate Small Bank Evaluation,04/01/2025,Satisfactory,673988.0,,,2024/1756_241104.PDF,False,False,2,"Pulaski,AR",2,21450,1
+9423,Choice Financial Group,ND,FARGO,Large Bank Evaluation,06/01/2025,Satisfactory,5271199.0,High Satisfactory,High Satisfactory,2024/9423_241202.PDF,False,False,2,"Hennepin,MN",2,21294,1
+16958,Minnwest Bank,MN,REDWOOD FALLS,Large Bank Evaluation,07/01/2025,Satisfactory,3161280.0,High Satisfactory,High Satisfactory,2025/16958_250210.PDF,False,False,2,"Hennepin,MN",2,21294,1
+20179,First Independence Bank,MI,DETROIT,Intermediate Small Bank Evaluation,11/01/2023,Satisfactory,545679.0,,,2023/20179_230523.PDF,False,False,2,"Hennepin,MN",2,21294,1
+28489,Banner Bank,WA,WALLA WALLA,Large Bank Evaluation,07/01/2025,Outstanding,16199722.0,Outstanding,Outstanding,2024/28489_241217.PDF,False,False,3,"Ada,ID",3,21210,1
+17323,First State Community Bank,MO,FARMINGTON,Large Bank Evaluation,06/01/2023,Outstanding,3830509.0,Outstanding,Outstanding,2022/17323_221107.PDF,False,False,3,"Boone,MO",3,20703,1
+35241,OPTUS Bank,SC,COLUMBIA,Intermediate Small Bank Evaluation,10/01/2025,Satisfactory,615384.0,,,2024/35241_241104.PDF,False,False,2,"Richland,SC",2,20614,1
+23091,Alpine Bank,CO,GLENWOOD SPRINGS,Large Bank Evaluation,01/01/2024,Satisfactory,6500313.0,Outstanding,High Satisfactory,2023/23091_230807.PDF,False,False,5,"Denver,CO",3,20310,3
+18100,CoreFirst Bank & Trust,KS,TOPEKA,Intermediate Small Bank Evaluation,04/01/2026,Satisfactory,1302409.0,,,2025/18100_251103.PDF,False,False,2,"Johnson,KS",2,19240,1
+35014,nbkc bank,KS,LEAWOOD,Strategic Plan Evaluation,08/01/2026,Satisfactory,1134324.0,,,2025/35014_250519.PDF,False,False,3,"Johnson,KS",2,19240,2
+17614,Farmers Bank & Trust,KS,GREAT BEND,Intermediate Small Bank Evaluation,08/01/2024,Needs to Improve,985167.0,,,2024/17614_240212.PDF,False,False,2,"Johnson,KS",2,19240,1
+12219,"First State Bank of St. Charles, Missouri",MO,ST. CHARLES,Intermediate Small Bank Evaluation,01/01/2025,Satisfactory,549922.0,,,2024/12219_240722.PDF,False,False,4,"Johnson,KS",2,19240,3
+11729,CIBM Bank,IL,CHAMPAIGN,Intermediate Small Bank Evaluation,06/01/2025,Satisfactory,880452.0,,,2025/11729_250121.PDF,False,False,3,"Champaign,IL",2,19146,2
+3722,Prospect Bank,IL,PARIS,Intermediate Small Bank Evaluation,03/01/2024,Satisfactory,736375.0,,,2023/3722_231016.PDF,False,False,2,"Champaign,IL",2,19146,1
+622,Amalgamated Bank,NY,NEW YORK,Large Bank Evaluation,10/01/2024,Satisfactory,8006087.0,High Satisfactory,Low Satisfactory,2024/622_240325.PDF,True,True,2,"New York,NY",2,18988,1
+16026,Ridgewood Savings Bank,NY,RIDGEWOOD,Large Bank Evaluation,06/01/2026,Satisfactory,7379699.0,High Satisfactory,High Satisfactory,2026/16026_260127.PDF,False,False,2,"New York,NY",2,18988,1
+58675,Hanover Community Bank,NY,GARDEN CITY PARK,Intermediate Small Bank Evaluation,03/01/2024,Satisfactory,2121181.0,,,2023/58675_230926.PDF,False,False,2,"New York,NY",2,18988,1
+29147,NorthEast Community Bank,NY,WHITE PLAINS,Intermediate Small Bank Evaluation,11/01/2024,Outstanding,1851203.0,,,2024/29147_240506.PDF,False,False,2,"New York,NY",2,18988,1
+58596,Carter Bank & Trust,VA,MARTINSVILLE,Large Bank Evaluation,05/01/2024,Satisfactory,4446729.0,Low Satisfactory,High Satisfactory,2023/58596_231023.PDF,False,True,4,"Montgomery,VA",3,18855,2
+3031,Points West Community Bank,CO,WINDSOR,Intermediate Small Bank Evaluation,05/01/2024,Satisfactory,773310.0,,,2024/3031_240122.PDF,False,False,3,"Larimer,CO",3,18813,1
+20099,Texas Exchange Bank,TX,CROWLEY,Wholesale Bank Evaluation,11/01/2023,Satisfactory,2666616.0,,,2023/20099_230605.PDF,False,False,2,"Tarrant,TX",2,17546,1
+35214,First Reliance Bank,SC,FLORENCE,Intermediate Small Bank Evaluation,09/01/2024,Satisfactory,971957.0,,,2024/35214_240304.PDF,False,False,7,"Charleston,SC",2,16992,4
+16652,Southwest Bank,TX,ODESSA,Intermediate Small Bank Evaluation,07/01/2024,Satisfactory,664203.0,,,2024/16652_240226.PDF,False,False,2,"Lubbock,TX",2,16854,1
+35530,First Carolina Bank,NC,ROCKY MOUNT,Intermediate Small Bank Evaluation,06/01/2025,Satisfactory,2890968.0,,,2024/35530_240715.PDF,False,False,4,"Wake,NC",2,16550,3
+29771,"KS Bank, Inc.",NC,SMITHFIELD,Intermediate Small Bank Evaluation,02/01/2024,Satisfactory,586583.0,,,2023/29771_230918.PDF,False,False,2,"Wake,NC",2,16550,1
+12266,Mechanics & Farmers Bank,NC,DURHAM,Intermediate Small Bank Evaluation,01/01/2025,Satisfactory,427985.0,,,2024/12266_240625.PDF,False,False,2,"Wake,NC",2,16550,1
+33503,Unity Bank,NJ,CLINTON,Large Bank Evaluation,11/01/2023,Satisfactory,2431532.0,Low Satisfactory,High Satisfactory,2023/33503_230424.PDF,False,True,3,"Bergen,NJ",2,16362,2
+58513,The Bank of Princeton,NJ,PRINCETON,Large Bank Evaluation,11/01/2024,Satisfactory,1916497.0,High Satisfactory,Low Satisfactory,2024/58513_240422.PDF,True,True,4,"Bergen,NJ",2,16362,2
+58424,Alma Bank,NY,ASTORIA,Intermediate Small Bank Evaluation,03/01/2025,Satisfactory,1411813.0,,,2024/58424_241021.PDF,False,False,3,"Bergen,NJ",2,16362,2
+57813,Sterling Bank,MO,POPLAR BLUFF,Intermediate Small Bank Evaluation,06/01/2024,Satisfactory,1364621.0,,,2023/57813_231113.PDF,False,False,5,"St. Louis,MO",2,16226,4
+15423,American Bank Of Freedom,MO,WELLSVILLE,Intermediate Small Bank Evaluation,03/01/2024,Satisfactory,779764.0,,,2023/15423_231010.PDF,False,False,3,"St. Louis,MO",2,16226,2
+58121,Triad Bank,MO,FRONTENAC,Intermediate Small Bank Evaluation,10/01/2023,Satisfactory,747942.0,,,2023/58121_230710.PDF,False,False,2,"St. Louis,MO",2,16226,1
+21292,PeoplesSouth Bank,GA,COLQUITT,Intermediate Small Bank Evaluation,09/01/2023,Satisfactory,1046629.0,,,2023/21292_230331.PDF,False,False,2,"Leon,FL",2,16048,1
+2777,MidSouth Bank,AL,DOTHAN,Intermediate Small Bank Evaluation,11/01/2024,Satisfactory,642893.0,,,2024/2777_240507.PDF,False,False,3,"Leon,FL",2,16048,2
+88,Generations Bank,AR,ROGERS,Intermediate Small Bank Evaluation,06/01/2023,Satisfactory,743472.0,,,2022/88_221205.PDF,False,False,2,"Washington,AR",2,15954,1
+14587,University Bank,MI,ANN ARBOR,Strategic Plan Evaluation,02/01/2025,Satisfactory,940473.0,,,2024/14587_240819.PDF,False,False,2,"Washtenaw,MI",2,15530,1
+17077,First US Bank,AL,BIRMINGHAM,Intermediate Small Bank Evaluation,04/01/2024,Satisfactory,1067674.0,,,2023/17077_230919.PDF,False,False,2,"Knox,TN",2,15374,1
+57993,ServisFirst Bank,AL,BIRMINGHAM,Large Bank Evaluation,07/01/2026,Satisfactory,17582987.0,High Satisfactory,High Satisfactory,2025/57993_251201.PDF,False,False,7,"Sarasota,FL",2,15104,6
+21573,Bank of Tennessee,TN,KINGSPORT,Large Bank Evaluation,11/01/2024,Satisfactory,1875869.0,Low Satisfactory,Low Satisfactory,2024/21573_240520.PDF,True,True,2,"Davidson,TN",1,14947,2
+59112,Studio Bank,TN,NASHVILLE,Intermediate Small Bank Evaluation,11/01/2023,Satisfactory,843458.0,,,2023/59112_230605.PDF,False,False,1,"Davidson,TN",1,14947,1
+34936,Legends Bank,TN,CLARKSVILLE,Intermediate Small Bank Evaluation,06/01/2023,Satisfactory,829056.0,,,2022/34936_221110.PDF,False,False,1,"Davidson,TN",1,14947,1
+57071,Georgia Banking Company,GA,ATLANTA,Strategic Plan Evaluation,03/01/2024,Satisfactory,1580422.0,,,2023/57071_231030.PDF,False,False,3,"Gwinnett,GA",2,14528,2
+5598,Troy Bank & Trust Company,AL,TROY,Intermediate Small Bank Evaluation,09/01/2024,Satisfactory,1533267.0,,,2024/5598_240220.PDF,False,False,2,"Lee,AL",2,14444,1
+58095,Idaho First Bank,ID,MCCALL,Intermediate Small Bank Evaluation,10/01/2023,Satisfactory,579738.0,,,2023/58095_230508.PDF,False,False,2,"Ada,ID",2,14140,1
+19212,First Midwest Bank of the Ozarks,MO,POPLAR BLUFF,Intermediate Small Bank Evaluation,06/01/2023,Satisfactory,648776.0,,,2023/19212_230206.PDF,False,False,2,"Boone,MO",2,13802,1
+57841,Valliance Bank,OK,OKLAHOMA CITY,Intermediate Small Bank Evaluation,11/01/2024,Satisfactory,644637.0,,,2024/57841_240603.PDF,False,False,2,"Collin,TX",1,13720,2
+18344,UBank,TX,HUNTINGTON,Intermediate Small Bank Evaluation,08/01/2024,Satisfactory,631527.0,,,2024/18344_240129.PDF,False,False,1,"Collin,TX",1,13720,1
+21943,Tri Counties Bank,CA,CHICO,Large Bank Evaluation,07/01/2025,Outstanding,9811273.0,Outstanding,Outstanding,2024/21943_240506.PDF,False,False,1,"Orange,CA",1,13477,1
+20624,Byline Bank,IL,CHICAGO,Large Bank Evaluation,11/01/2025,Satisfactory,9566291.0,High Satisfactory,High Satisfactory,2025/20624_250527.PDF,False,False,1,"Orange,CA",1,13477,1
+18618,Manufacturers Bank,CA,LOS ANGELES,Large Bank Evaluation,08/01/2023,Satisfactory,4906144.0,High Satisfactory,High Satisfactory,2023/18618_230403.PDF,False,False,1,"Orange,CA",1,13477,1
+58816,Royal Business Bank,CA,LOS ANGELES,Large Bank Evaluation,10/01/2023,Satisfactory,4106226.0,High Satisfactory,High Satisfactory,2023/58816_230515.PDF,False,False,2,"Orange,CA",1,13477,2
+23030,Community West Bank,CA,FRESNO,Large Bank Evaluation,08/01/2025,Satisfactory,3518255.0,High Satisfactory,High Satisfactory,2025/23030_250218.PDF,False,False,1,"Orange,CA",1,13477,1
+58291,CalPrivate Bank,CA,LA JOLLA,Large Bank Evaluation,08/01/2024,Satisfactory,2152083.0,High Satisfactory,High Satisfactory,2024/58291_240318.PDF,False,False,1,"Orange,CA",1,13477,1
+58060,First General Bank,CA,ROWLAND HEIGHTS,Intermediate Small Bank Evaluation,04/01/2024,Outstanding,1162607.0,,,2023/58060_231204.PDF,False,False,1,"Orange,CA",1,13477,1
+34010,EverTrust Bank,CA,CITY OF INDUSTRY,Intermediate Small Bank Evaluation,09/01/2025,Satisfactory,946458.0,,,2025/34010_250303.PDF,False,False,1,"Orange,CA",1,13477,1
+34496,First Commercial Bank (USA),CA,ALHAMBRA,Intermediate Small Bank Evaluation,01/01/2024,Satisfactory,855612.0,,,2023/34496_230918.PDF,False,False,1,"Orange,CA",1,13477,1
+22366,GBC International Bank,CA,LOS ANGELES,Intermediate Small Bank Evaluation,01/01/2026,Satisfactory,655141.0,,,2025/22366_250616.PDF,False,False,1,"Orange,CA",1,13477,1
+58401,Mega Bank,CA,SAN GABRIEL,Intermediate Small Bank Evaluation,05/01/2025,Needs to Improve,517535.0,,,2025/58401_250121.PDF,False,False,1,"Orange,CA",1,13477,1
+58588,Partners Bank of California,CA,MISSION VIEJO,Intermediate Small Bank Evaluation,05/01/2025,Satisfactory,472887.0,,,2024/58588_241211.PDF,False,False,1,"Orange,CA",1,13477,1
+8120,"Magnolia Bank, Incorporated",KY,ELIZABETHTOWN,Intermediate Small Bank Evaluation,02/01/2024,Satisfactory,452507.0,,,2022/8120_221011.PDF,False,False,2,"Orange,CA",1,13477,2
+57565,UBS Bank USA,UT,SALT LAKE CITY,Strategic Plan Evaluation,07/01/2024,Outstanding,114351610.0,,,2024/57565_240108.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+58177,Sallie Mae Bank,UT,SALT LAKE CITY,Strategic Plan Evaluation,03/01/2024,Outstanding,27667921.0,,,2023/58177_230808.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+57408,"Optum Bank, Inc.",UT,DRAPER,Strategic Plan Evaluation,06/01/2026,Outstanding,20824000.0,,,2026/57408_260126.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+57570,Comenity Capital Bank,UT,DRAPER,Strategic Plan Evaluation,05/01/2026,Outstanding,12908706.0,,,2025/57570_251006.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+35141,BMW Bank of North America,UT,SALT LAKE CITY,Strategic Plan Evaluation,06/01/2026,Satisfactory,12814515.0,,,2026/35141_260217.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+34519,Merrick Bank,UT,SOUTH JORDAN,Strategic Plan Evaluation,05/01/2026,Outstanding,9112904.0,,,2025/34519_251201.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+34697,WEX Bank,UT,SANDY,Large Bank Evaluation,10/01/2025,Satisfactory,7597943.0,Low Satisfactory,Low Satisfactory,2024/34697_241016.PDF,True,True,1,"Salt Lake,UT",1,13437,1
+22134,Cache Valley Bank,UT,LOGAN,Large Bank Evaluation,08/01/2025,Satisfactory,3281738.0,High Satisfactory,Low Satisfactory,2025/22134_250210.PDF,True,True,2,"Salt Lake,UT",1,13437,2
+34404,WebBank,UT,SALT LAKE CITY,Strategic Plan Evaluation,05/01/2021,Outstanding,2782223.0,,,2020/34404_201130.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+57056,Celtic Bank,UT,SALT LAKE CITY,Strategic Plan Evaluation,01/01/2024,Satisfactory,2392860.0,,,2023/57056_230710.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+57449,Medallion Bank,UT,SALT LAKE CITY,Strategic Plan Evaluation,06/01/2024,Outstanding,2262139.0,,,2023/57449_231127.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+59205,Nelnet Bank,UT,DRAPER,Strategic Plan Evaluation,03/01/2026,Outstanding,1767193.0,,,2025/59205_251020.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+58752,Northwest Bank,ID,BOISE,Intermediate Small Bank Evaluation,12/01/2025,Satisfactory,1495006.0,,,2025/58752_250707.PDF,False,False,2,"Salt Lake,UT",1,13437,2
+34599,"The Pitney Bowes Bank, Inc.",UT,SALT LAKE CITY,Strategic Plan Evaluation,07/01/2025,Outstanding,851731.0,,,2025/34599_250303.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+58148,Milestone Bank,UT,SALT LAKE CITY,Wholesale Bank Evaluation,01/01/2026,Satisfactory,391045.0,,,2025/58148_250825.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+59177,"Square Financial Services, Inc.",UT,SALT LAKE CITY,Strategic Plan Evaluation,08/01/2023,Outstanding,327975.0,,,2023/59177_230314.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+57571,Continental Bank,UT,SALT LAKE CITY,Strategic Plan Evaluation,07/01/2025,Satisfactory,171418.0,,,2024/57571_241202.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+35533,First Electronic Bank,UT,SALT LAKE CITY,Strategic Plan Evaluation,02/01/2024,Satisfactory,131170.0,,,2022/35533_221031.PDF,False,False,1,"Salt Lake,UT",1,13437,1
+22205,Barwick Banking Company,GA,BARWICK,Intermediate Small Bank Evaluation,12/01/2025,Satisfactory,603254.0,,,2025/22205_250527.PDF,False,False,1,"Alachua,FL",1,13257,1
+35138,Millennium Bank,TN,OOLTEWAH,Intermediate Small Bank Evaluation,02/01/2024,Satisfactory,531367.0,,,2023/35138_231016.PDF,False,False,1,"Alachua,FL",1,13257,1
+28178,Northwest Bank,PA,WARREN,Large Bank Evaluation,03/01/2024,Outstanding,14270252.0,High Satisfactory,High Satisfactory,2023/28178_230710.PDF,False,False,2,"Franklin,OH",1,13253,2
+11124,S&T Bank,PA,INDIANA,Large Bank Evaluation,03/01/2025,Satisfactory,9628986.0,High Satisfactory,High Satisfactory,2024/11124_241007.PDF,False,False,1,"Franklin,OH",1,13253,1
+28533,First Bank Richmond,IN,RICHMOND,Intermediate Small Bank Evaluation,06/01/2025,Satisfactory,1500367.0,,,2025/28533_250130.PDF,False,False,1,"Franklin,OH",1,13253,1
+34908,Cogent Bank,FL,ORLANDO,Intermediate Small Bank Evaluation,12/01/2023,Satisfactory,1538946.0,,,2023/34908_230710.PDF,False,False,3,"Pinellas,FL",1,12937,3
+10634,Pinnacle Bank,NE,LINCOLN,Large Bank Evaluation,03/01/2025,Satisfactory,8610829.0,High Satisfactory,High Satisfactory,2024/10634_240819.PDF,False,False,1,"Jackson,MO",1,11735,1
+9803,Bank of Odessa,MO,ODESSA,Intermediate Small Bank Evaluation,02/01/2026,Satisfactory,627755.0,,,2025/9803_250819.PDF,False,False,1,"Jackson,MO",1,11735,1
+57777,Meridian Bank,PA,PAOLI,Large Bank Evaluation,07/01/2023,Satisfactory,1831464.0,Substantial Non Complianc,Substantial Non Complianc,2022/57777_221129.PDF,True,True,1,"Lee,FL",1,11290,1
+9620,First Bank,FL,CLEWISTON,Intermediate Small Bank Evaluation,07/01/2025,Satisfactory,739517.0,,,2025/9620_250218.PDF,False,False,3,"Lee,FL",1,11290,3
+17431,Stone Bank,AR,MOUNTAIN VIEW,Intermediate Small Bank Evaluation,02/01/2021,Satisfactory,560085.0,High Satisfactory,High Satisfactory,2020/17431_200928.PDF,False,False,1,"Pulaski,AR",1,10725,1
+3973,First Bank & Trust,SD,BROOKINGS,Large Bank Evaluation,05/01/2026,Outstanding,4735956.0,Outstanding,High Satisfactory,2025/3973_251117.PDF,False,False,1,"Hennepin,MN",1,10647,1
+8851,Park State Bank,MN,DULUTH,Intermediate Small Bank Evaluation,11/01/2024,Satisfactory,1334792.0,,,2024/8851_240708.PDF,False,False,1,"Hennepin,MN",1,10647,1
+21714,Premier Bank,MN,MAPLEWOOD,Intermediate Small Bank Evaluation,02/01/2024,Satisfactory,1022306.0,,,2023/21714_230918.PDF,False,False,1,"Hennepin,MN",1,10647,1
+16659,Northeast Bank,MN,MINNEAPOLIS,Intermediate Small Bank Evaluation,10/01/2023,Outstanding,712829.0,,,2023/16659_230628.PDF,False,False,1,"Hennepin,MN",1,10647,1
+58039,First Resource Bank,MN,LINO LAKES,Intermediate Small Bank Evaluation,09/01/2025,Satisfactory,689425.0,,,2025/58039_250527.PDF,False,False,1,"Hennepin,MN",1,10647,1
+8714,Unity Bank,WI,AUGUSTA,Intermediate Small Bank Evaluation,12/01/2024,Satisfactory,620653.0,,,2024/8714_240603.PDF,False,False,1,"Hennepin,MN",1,10647,1
+18361,Coulee Bank,WI,LA CROSSE,Intermediate Small Bank Evaluation,08/01/2025,Satisfactory,553149.0,,,2025/18361_250310.PDF,False,False,1,"Hennepin,MN",1,10647,1
+20268,Scale Bank,MN,EDINA,Strategic Plan Evaluation,05/01/2025,Satisfactory,545668.0,,,2025/20268_250113.PDF,False,False,1,"Hennepin,MN",1,10647,1
+58511,Platinum Bank,MN,OAKDALE,Intermediate Small Bank Evaluation,06/01/2023,Satisfactory,479568.0,,,2023/58511_230214.PDF,False,False,1,"Hennepin,MN",1,10647,1
+33119,"Heritage Bank, Inc.",KY,ERLANGER,Intermediate Small Bank Evaluation,04/01/2024,Satisfactory,1594809.0,,,2023/33119_231128.PDF,False,False,1,"Hamilton,OH",1,9888,1
+5854,"South Central Bank,  Inc.",KY,GLASGOW,Large Bank Evaluation,08/01/2025,Satisfactory,1845172.0,Low Satisfactory,Low Satisfactory,2024/5854_241028.PDF,True,True,2,"Jefferson,KY",1,9847,2
+17040,Wilson & Muir Bank & Trust Company,KY,BARDSTOWN,Intermediate Small Bank Evaluation,05/01/2023,Satisfactory,683049.0,,,2023/17040_230123.PDF,False,False,1,"Jefferson,KY",1,9847,1
+13421,Union Bank and Trust Company,NE,LINCOLN,Large Bank Evaluation,07/01/2025,Satisfactory,8799880.0,Low Satisfactory,Outstanding,2025/13421_250127.PDF,False,True,2,"Johnson,KS",1,9620,2
+15229,First Business Bank,WI,MADISON,Large Bank Evaluation,07/01/2026,Satisfactory,4082035.0,Outstanding,Low Satisfactory,2026/15229_260317.PDF,True,True,2,"Johnson,KS",1,9620,2
+34363,Core Bank,NE,OMAHA,Intermediate Small Bank Evaluation,09/01/2023,Satisfactory,1035351.0,,,2023/34363_230515.PDF,False,False,1,"Johnson,KS",1,9620,1
+17685,Outdoor Bank,KS,MANHATTAN,Intermediate Small Bank Evaluation,04/01/2026,Satisfactory,619429.0,,,2025/17685_251027.PDF,False,False,1,"Johnson,KS",1,9620,1
+15323,Silver Lake Bank,KS,TOPEKA,Intermediate Small Bank Evaluation,11/01/2024,Satisfactory,460473.0,,,2024/15323_240715.PDF,False,False,1,"Johnson,KS",1,9620,1
+18429,Morton Community Bank,IL,MORTON,Large Bank Evaluation,08/01/2024,Satisfactory,5467281.0,High Satisfactory,Low Satisfactory,2024/18429_240205.PDF,True,True,1,"Champaign,IL",1,9573,1
+19506,Bank of Springfield,IL,SPRINGFIELD,Intermediate Small Bank Evaluation,10/01/2024,Satisfactory,1569936.0,,,2024/19506_240408.PDF,False,False,2,"Champaign,IL",1,9573,2
+15752,First State Bank,IL,MENDOTA,Intermediate Small Bank Evaluation,08/01/2024,Satisfactory,1550854.0,,,2024/15752_240325.PDF,False,False,1,"Champaign,IL",1,9573,1
+22874,Hickory Point Bank and Trust,IL,DECATUR,Intermediate Small Bank Evaluation,11/01/2024,Satisfactory,776806.0,,,2024/22874_240506.PDF,False,False,1,"Champaign,IL",1,9573,1
+27362,Prairie State Bank and Trust,IL,SPRINGFIELD,Intermediate Small Bank Evaluation,01/01/2025,Satisfactory,770382.0,,,2024/27362_240729.PDF,False,False,1,"Champaign,IL",1,9573,1
+16332,First State Bank and Trust,IL,MONTICELLO,Intermediate Small Bank Evaluation,02/01/2026,Satisfactory,513967.0,,,2025/16332_250929.PDF,False,False,1,"Champaign,IL",1,9573,1
+33682,State Bank of India,NY,NEW YORK,Wholesale Bank Evaluation,10/01/2024,Satisfactory,17619486.0,,,2024/33682_240617.PDF,False,False,1,"New York,NY",1,9494,1
+19977,Israel Discount Bank of New York,NY,NEW YORK,Wholesale Bank Evaluation,02/01/2024,Outstanding,12224444.0,,,2023/19977_230801.PDF,False,False,1,"New York,NY",1,9494,1
+33686,Bank Hapoalim B.M.,NY,NEW YORK,Wholesale Bank Evaluation,04/01/2025,Outstanding,9276847.0,,,2024/33686_241202.PDF,False,False,1,"New York,NY",1,9494,1
+33681,Bank of Baroda,NY,NEW YORK,Wholesale Bank Evaluation,04/01/2024,Satisfactory,9084593.0,,,2023/33681_231129.PDF,False,False,1,"New York,NY",1,9494,1
+33648,Bank of India,NY,NEW YORK,Wholesale Bank Evaluation,08/01/2026,Satisfactory,7724252.0,,,2026/33648_260504.PDF,False,False,1,"New York,NY",1,9494,1
+25093,Habib American Bank,NY,NEW YORK,Large Bank Evaluation,12/01/2025,Satisfactory,2856490.0,Low Satisfactory,Low Satisfactory,2025/25093_250714.PDF,True,True,1,"New York,NY",1,9494,1
+24516,Interaudi Bank,NY,NEW YORK,Wholesale Bank Evaluation,08/01/2025,Satisfactory,2464704.0,,,2025/24516_250401.PDF,False,False,1,"New York,NY",1,9494,1
+24823,International Finance Bank,FL,MIAMI,Intermediate Small Bank Evaluation,07/01/2026,Satisfactory,1360753.0,,,2025/24823_250728.PDF,False,False,1,"New York,NY",1,9494,1
+14679,Industrial Bank,DC,WASHINGTON,Large Bank Evaluation,08/01/2026,Satisfactory,754310.0,Outstanding,Outstanding,2025/14679_250714.PDF,False,False,1,"New York,NY",1,9494,1
+59154,Piermont Bank,NY,NEW YORK,Intermediate Small Bank Evaluation,11/01/2025,Satisfactory,488742.0,,,2025/59154_250505.PDF,False,False,1,"New York,NY",1,9494,1
+1833,State Bank,IN,BROWNSBURG,Intermediate Small Bank Evaluation,07/01/2024,Satisfactory,826123.0,,,2024/1833_240213.PDF,False,False,1,"Tippecanoe,IN",1,9394,1
+3230,Grandview Bank,TX,GRANDVIEW,Intermediate Small Bank Evaluation,01/01/2024,Satisfactory,498088.0,,,2023/3230_230821.PDF,False,False,1,"Tarrant,TX",1,8773,1
+8056,Merchants Bank of Indiana,IN,CARMEL,Strategic Plan Evaluation,07/01/2026,Satisfactory,19296676.0,,,2026/8056_260105.PDF,False,False,2,"Monroe,IN",1,8660,2
+8785,Peoples Exchange Bank,KY,WINCHESTER,Intermediate Small Bank Evaluation,08/01/2024,Satisfactory,544878.0,,,2024/8785_240311.PDF,False,False,1,"Fayette,KY",1,8595,1
+16970,"Peoples Bank of  Kentucky, Inc.",KY,FLEMINGSBURG,Intermediate Small Bank Evaluation,02/01/2025,Satisfactory,492192.0,,,2024/16970_240805.PDF,False,False,1,"Fayette,KY",1,8595,1
+11539,Enterprise Bank of South Carolina,SC,EHRHARDT,Intermediate Small Bank Evaluation,06/01/2025,Satisfactory,459189.0,,,2025/11539_250106.PDF,False,False,1,"Charleston,SC",1,8496,1
+9366,Peoples Bank,MS,MENDENHALL,Intermediate Small Bank Evaluation,04/01/2024,Satisfactory,457208.0,,,2023/9366_230821.PDF,False,False,1,"Charleston,SC",1,8496,1
+15632,Greenfield Banking Company,IN,GREENFIELD,Intermediate Small Bank Evaluation,10/01/2024,Satisfactory,866848.0,,,2024/15632_240513.PDF,False,False,1,"Marion,IN",1,8283,1
+9647,Citizens Bank,IN,MOORESVILLE,Intermediate Small Bank Evaluation,01/01/2026,Satisfactory,663281.0,,,2025/9647_250728.PDF,False,False,1,"Marion,IN",1,8283,1
+15359,Southern Bank and Trust Company,NC,MOUNT OLIVE,Large Bank Evaluation,10/01/2024,Satisfactory,4758607.0,High Satisfactory,Low Satisfactory,2024/15359_240409.PDF,True,True,1,"Wake,NC",1,8275,1
+58239,Providence Bank,NC,ROCKY MOUNT,Intermediate Small Bank Evaluation,10/01/2025,Satisfactory,1354984.0,,,2025/58239_250505.PDF,False,False,1,"Wake,NC",1,8275,1
+2036,Farmers & Merchants Bank,NC,GRANITE QUARRY,Intermediate Small Bank Evaluation,10/01/2023,Satisfactory,978850.0,,,2023/2036_230404.PDF,False,False,1,"Wake,NC",1,8275,1
+16402,The Bennington State Bank,KS,SALINA,Intermediate Small Bank Evaluation,07/01/2024,Satisfactory,987146.0,,,2023/16402_230807.PDF,False,False,1,"Sedgwick,KS",1,8261,1
+58410,Cross River Bank,NJ,FORT LEE,Large Bank Evaluation,10/01/2025,Outstanding,8725705.0,Outstanding,High Satisfactory,2024/58410_240308.PDF,False,False,1,"Bergen,NJ",1,8181,1
+30039,Haven Savings Bank,NJ,HOBOKEN,Intermediate Small Bank Evaluation,04/01/2025,Satisfactory,1112722.0,,,2024/30039_240117.PDF,False,False,1,"Bergen,NJ",1,8181,1
+33306,CIBC Bank USA,IL,CHICAGO,Large Bank Evaluation,02/01/2022,Outstanding,45859037.0,Outstanding,Outstanding,2021/33306_210823.PDF,False,False,2,"St. Louis,MO",1,8113,2
+8892,SULLIVAN BANK,MO,SULLIVAN,Intermediate Small Bank Evaluation,07/01/2025,Satisfactory,1167708.0,,,2025/8892_250310.PDF,False,False,1,"St. Louis,MO",1,8113,1
+58796,Parkside Financial Bank & Trust,MO,CLAYTON,Intermediate Small Bank Evaluation,04/01/2026,Satisfactory,1116387.0,,,2025/58796_251209.PDF,False,False,2,"St. Louis,MO",1,8113,2
+12627,Bank of Washington,MO,WASHINGTON,Intermediate Small Bank Evaluation,10/01/2023,Satisfactory,1063156.0,,,2023/12627_230501.PDF,False,False,1,"St. Louis,MO",1,8113,1
+58018,St. Louis Bank,MO,SAINT LOUIS,Intermediate Small Bank Evaluation,05/01/2023,Satisfactory,712349.0,,,2023/58018_230117.PDF,False,False,1,"St. Louis,MO",1,8113,1
+15264,Peoples Savings Bank of Rhineland,MO,RHINELAND,Intermediate Small Bank Evaluation,10/01/2025,Satisfactory,663279.0,,,2025/15264_250421.PDF,False,False,1,"St. Louis,MO",1,8113,1
+22257,Colony Bank,GA,FITZGERALD,Large Bank Evaluation,01/01/2024,Satisfactory,3091464.0,Low Satisfactory,High Satisfactory,2023/22257_230731.PDF,False,True,1,"Leon,FL",1,8024,1
+58694,Prime Meridian Bank,FL,TALLAHASSEE,Intermediate Small Bank Evaluation,04/01/2025,Satisfactory,893283.0,,,2024/58694_250301.PDF,False,False,1,"Leon,FL",1,8024,1
+2315,Armstrong Bank,OK,MUSKOGEE,Large Bank Evaluation,07/01/2024,Satisfactory,2446898.0,High Satisfactory,Low Satisfactory,2024/2315_240108.PDF,True,True,1,"Washington,AR",1,7977,1
+19288,Firstar Bank,OK,SALLISAW,Intermediate Small Bank Evaluation,08/01/2023,Satisfactory,952630.0,,,2023/19288_230501.PDF,False,False,1,"Washington,AR",1,7977,1
+16723,Carolina Bank & Trust Co.,SC,LAMAR,Intermediate Small Bank Evaluation,04/01/2023,Satisfactory,790549.0,,,2022/16723_220926.PDF,False,False,1,"Horry,SC",1,7963,1
+14065,Pinnacle Bank,GA,ELBERTON,Large Bank Evaluation,10/01/2025,Satisfactory,2130759.0,Low Satisfactory,High Satisfactory,2025/14065_250127.PDF,False,True,2,"Clarke,GA",1,7886,2
+18143,Oconee State Bank,GA,WATKINSVILLE,Intermediate Small Bank Evaluation,09/01/2025,Satisfactory,639898.0,,,2025/18143_250317.PDF,False,False,2,"Clarke,GA",1,7886,2
+175,The Commercial Bank,GA,CRAWFORD,Intermediate Small Bank Evaluation,11/01/2024,Satisfactory,445201.0,,,2024/175_240520.PDF,False,False,1,"Clarke,GA",1,7886,1
+25886,Rio Bank,TX,MCALLEN,Intermediate Small Bank Evaluation,03/01/2025,Satisfactory,936408.0,,,2024/25886_241104.PDF,False,False,1,"Hays,TX",1,7865,1
+10344,Schertz Bank & Trust,TX,SCHERTZ,Intermediate Small Bank Evaluation,08/01/2025,Satisfactory,880647.0,,,2025/10344_250421.PDF,False,False,1,"Hays,TX",1,7865,1
+25621,"Sage Capital Bank,",TX,GONZALES,Intermediate Small Bank Evaluation,06/01/2023,Satisfactory,668961.0,,,2022/25621_221128.PDF,False,False,1,"Hays,TX",1,7865,1
+11492,InBank,NM,RATON,Intermediate Small Bank Evaluation,05/01/2025,Satisfactory,1352859.0,,,2024/11492_241202.PDF,False,False,2,"Boulder,CO",1,7753,2
+17478,FirsTier Bank,NE,KIMBALL,Intermediate Small Bank Evaluation,08/01/2024,Satisfactory,937215.0,,,2024/17478_240318.PDF,False,False,2,"Boulder,CO",1,7753,2
+12594,The Pueblo Bank and Trust Company,CO,PUEBLO,Intermediate Small Bank Evaluation,07/01/2024,Satisfactory,624971.0,,,2024/12594_240601.PDF,False,False,2,"Boulder,CO",1,7753,2
+10307,Builtwell Bank,TN,CHATTANOOGA,Intermediate Small Bank Evaluation,08/01/2024,Satisfactory,1796911.0,,,2024/10307_240311.PDF,False,False,1,"Knox,TN",1,7687,1
+31236,Hearthside Bank Corporation,KY,MIDDLESBORO,Intermediate Small Bank Evaluation,10/01/2024,Satisfactory,519818.0,,,2024/31236_240603.PDF,False,False,1,"Knox,TN",1,7687,1
+1373,BOM Bank,LA,NATCHITOCHES,Intermediate Small Bank Evaluation,11/01/2023,Satisfactory,884021.0,,,2023/1373_230501.PDF,False,False,1,"Montgomery,TX",1,7531,1
+25795,Peoples Bank & Trust,GA,BUFORD,Intermediate Small Bank Evaluation,10/01/2023,Satisfactory,530321.0,,,2023/25795_230501.PDF,False,False,1,"Gwinnett,GA",1,7264,1
+15310,"CB&S Bank, Inc.",AL,RUSSELLVILLE,Large Bank Evaluation,10/01/2024,Satisfactory,2487343.0,High Satisfactory,High Satisfactory,2023/15310_231127.PDF,False,False,1,"Lee,AL",1,7222,1
+34259,Crown Bank,NJ,ELIZABETH,Intermediate Small Bank Evaluation,06/01/2023,Outstanding,569908.0,,,2023/34259_230124.PDF,False,False,1,"Ocean,NJ",1,7208,1
+29012,Heritage Bank,WA,OLYMPIA,Large Bank Evaluation,01/01/2024,Satisfactory,7233406.0,High Satisfactory,Low Satisfactory,2023/29012_230705.PDF,True,True,1,"Ada,ID",1,7070,1
+19459,United Community Bank,IL,CHATHAM,Large Bank Evaluation,10/01/2025,Satisfactory,3859236.0,High Satisfactory,High Satisfactory,2025/19459_250324.PDF,False,False,1,"Collier,FL",1,7003,1
+24156,Ocean Bank,FL,MIAMI,Large Bank Evaluation,12/01/2023,Satisfactory,5986172.0,Low Satisfactory,Low Satisfactory,2023/24156_230606.PDF,True,True,1,"Palm Beach,FL",1,7002,1
+58481,First Bank,NJ,HAMILTON,Large Bank Evaluation,09/01/2024,Satisfactory,3609326.0,High Satisfactory,High Satisfactory,2024/58481_240221.PDF,False,False,1,"Palm Beach,FL",1,7002,1
+11459,Mid America Bank,MO,JEFFERSON CITY,Intermediate Small Bank Evaluation,04/01/2024,Satisfactory,866969.0,,,2023/11459_231211.PDF,False,False,1,"Boone,MO",1,6901,1
+14492,HomeBank,MO,PALMYRA,Intermediate Small Bank Evaluation,04/01/2024,Satisfactory,520412.0,,,2023/14492_230320.PDF,False,False,1,"Boone,MO",1,6901,1
+57756,CoastalStates Bank,SC,HILTON HEAD ISLAND,Intermediate Small Bank Evaluation,11/01/2022,Satisfactory,1711718.0,,,2022/57756_220628.PDF,False,False,1,"Cobb,GA",1,6796,1
+15614,West Bank,IA,WEST DES MOINES,Large Bank Evaluation,01/01/2024,Outstanding,3676875.0,High Satisfactory,High Satisfactory,2023/15614_230911.PDF,False,False,1,"Johnson,IA",1,6287,1
+14209,Farmers State Bank,IA,MARION,Intermediate Small Bank Evaluation,09/01/2023,Satisfactory,1040259.0,,,2023/14209_230418.PDF,False,False,1,"Johnson,IA",1,6287,1
+11578,Burke & Herbert Bank & Trust Company,VA,ALEXANDRIA,Large Bank Evaluation,11/01/2023,Satisfactory,3563307.0,Low Satisfactory,High Satisfactory,2023/11578_230501.PDF,False,True,1,"Montgomery,VA",1,6285,1
+15118,Gateway First Bank,OK,JENKS,Large Bank Evaluation,06/01/2023,Satisfactory,1877908.0,,Substantial Non Complianc,2023/15118_230130.PDF,True,False,1,"Larimer,CO",1,6271,1
