@@ -80,8 +80,13 @@ export default function OpengraphImage() {
 
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{ width: 120, height: 4, background: "#C0553B", borderRadius: 999 }} />
+          {/* Demeter now answers in four languages. English names for
+              Vietnamese and Chinese on purpose: this route uses only the system
+              font stack (no bundled/fetched font, by design — see top), which
+              cannot render CJK, so native "中文" here would be tofu boxes.
+              Español stays native. */}
           <div style={{ fontSize: 24, color: "#8A7666", letterSpacing: "0.06em" }}>
-            English · Español
+            English · Español · Vietnamese · Chinese
           </div>
         </div>
       </div>
