@@ -115,3 +115,23 @@ describe.each(Object.entries(SOURCES))("%s", (_name, source) => {
     expect(bad, `sentences opening on a bare verb:\n${bad.join("\n")}`).toEqual([]);
   });
 });
+
+// The bare-domain share card is the top of the whole distribution funnel — a
+// CBO's Slack, a funder's inbox, a text to someone who needs SNAP. Its metadata
+// used to describe the parked Civica apply wizard ("Apply for SNAP food
+// benefits" / "walks you through the application"), which contradicted the
+// Demeter OG image and over-promised an application flow (launch audit
+// 2026-08-29).
+describe("root share-card metadata describes the Demeter answers product", () => {
+  const rootStrings = strings(ROOT_METADATA);
+
+  it("leads with Demeter, not an application flow", () => {
+    expect(ROOT_METADATA.ROOT_TITLE).toMatch(/Demeter/);
+    expect(ROOT_METADATA.ROOT_TITLE, "title must not promise an apply flow").not.toMatch(/appl(y|ication)/i);
+  });
+
+  it("does not California-center a for-any-state product", () => {
+    const calfresh = rootStrings.filter((s) => /calfresh/i.test(s));
+    expect(calfresh, `CalFresh in root metadata:\n${calfresh.join("\n")}`).toEqual([]);
+  });
+});
