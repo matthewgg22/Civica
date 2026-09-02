@@ -1,114 +1,119 @@
-// Link preview card.
+// Link preview card — the cheapest credibility surface there is (a shared link
+// in a CBO's Slack, a funder's inbox, a text to someone who needs SNAP).
 //
-// The cheapest credibility surface there is — a shared link in a CBO's Slack, a
-// funder's inbox, a text to someone who needs SNAP. It should say, at a glance,
-// what you DO here (start a conversation, find out about SNAP) and why to trust
-// it (every answer cites the actual rule).
-//
-// Palette is from the Demeter design spec: parchment #FCF8F1, ink #2A211C,
-// terracotta #C0553B, wheat gold #EFB544 (mark only). Built with the system
-// font stack rather than fetching a webfont, because an OG route that depends
-// on a network font fetch fails silently at the worst possible moment — which
-// is also why the language line uses English names (this stack cannot render
-// CJK; native "中文" would be tofu boxes).
+// BRAND-ACCURATE per apps/web/DEMETER-DESIGN.md — an earlier version drifted
+// into generic parchment-and-terracotta with an invented disc, which is exactly
+// the retired palette (§3: the ground is TRUE WHITE, the parchment family is
+// gone) and the wrong mark. This uses the real assets:
+//   - the real wheat mark (public/demeter-wheat-mark.png), the same file the nav
+//     and favicon use, so the OG card can't drift from them (see DemeterMark);
+//   - the real faces (§4): Newsreader SPEAKS (wordmark, headline, body),
+//     Be Vietnam Pro LABELS (the language line), loaded as TTF from the same
+//     public/fonts/demeter dir the PDF generators read — no network fetch, and
+//     Satori cannot use the app's woff2;
+//   - the ten real tokens (§3): white paper, ink, body, muted, terracotta for
+//     the mark accent, terracotta-deep for the wordmark "AI", wheat for a 2px
+//     rule and nothing else.
 
 import { ImageResponse } from "next/og";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 export const runtime = "nodejs";
 export const alt = "Demeter AI — see if you qualify for SNAP, with verified answers for any state";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+const FONT_DIR = join(process.cwd(), "public", "fonts", "demeter");
+const NEWSREADER_600 = readFileSync(join(FONT_DIR, "Newsreader-SemiBold.ttf"));
+const NEWSREADER_400 = readFileSync(join(FONT_DIR, "Newsreader-Regular.ttf"));
+const BEVIETNAM_500 = readFileSync(join(FONT_DIR, "BeVietnamPro-Medium.ttf"));
+const MARK = `data:image/png;base64,${readFileSync(
+  join(process.cwd(), "public", "demeter-wheat-mark.png"),
+).toString("base64")}`;
+
+// DEMETER-DESIGN.md §3 — the real tokens, not eyeballed hexes.
+const PAPER = "#FFFFFF";
+const INK = "#232220";
+const BODY = "#4B4A46";
+const MUTED = "#6C6A64";
+const TERRA_DEEP = "#8E3A26"; // wordmark "AI"
+const WHEAT = "#E8C547"; // a 2px rule, and nothing else here
+
 export default function OpengraphImage() {
   return new ImageResponse(
     (
       <div
         style={{
-          position: "relative",
-          overflow: "hidden",
           width: "100%",
           height: "100%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          backgroundColor: "#FCF8F1",
-          backgroundImage:
-            "linear-gradient(135deg, #FDFAF4 0%, #FBF4E9 55%, #F6ECDA 100%)",
-          padding: "70px 80px",
-          fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+          backgroundColor: PAPER,
+          padding: "78px 84px",
+          fontFamily: "Be Vietnam Pro",
         }}
       >
-        {/* A large, faint sun low in the corner — depth and brand, never louder
-            than the words. Two concentric discs evoke the mark's rings. */}
-        <div
-          style={{
-            position: "absolute",
-            right: -170,
-            bottom: -190,
-            width: 560,
-            height: 560,
-            borderRadius: 999,
-            backgroundColor: "#F3E7D0",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div style={{ width: 380, height: 380, borderRadius: 999, backgroundColor: "#F7EEDD", display: "flex" }} />
-        </div>
-
-        {/* Wordmark — "Demeter AI", the canonical name (matches every title and
-            the schema). Demeter carries the weight; AI is a terracotta accent. */}
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 999,
-              backgroundColor: "#C0553B",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div style={{ width: 22, height: 22, borderRadius: 999, backgroundColor: "#EFB544", display: "flex" }} />
-          </div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 9 }}>
-            <div style={{ fontSize: 32, fontWeight: 600, color: "#2A211C", letterSpacing: "-0.02em" }}>Demeter</div>
-            <div style={{ fontSize: 26, fontWeight: 600, color: "#C0553B", letterSpacing: "0.02em" }}>AI</div>
+        {/* Wordmark: the real mark + "Demeter" (Newsreader, ink) + "AI"
+            (terracotta-deep) — the treatment the design tokens name. */}
+        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <img src={MARK} width={62} height={62} alt="" style={{ borderRadius: 999 }} />
+          <div style={{ display: "flex", alignItems: "baseline", gap: 9, fontFamily: "Newsreader", fontWeight: 600 }}>
+            <div style={{ fontSize: 37, color: INK, letterSpacing: "-0.01em" }}>Demeter</div>
+            <div style={{ fontSize: 37, color: TERRA_DEEP }}>AI</div>
           </div>
         </div>
 
-        {/* The thesis: what you do here, then why to trust it. */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        {/* The thesis, in the serif that speaks. */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
           <div
             style={{
               display: "flex",
-              fontSize: 78,
-              fontWeight: 700,
-              color: "#2A211C",
-              letterSpacing: "-0.043em",
-              lineHeight: 1.02,
-              maxWidth: 940,
+              fontFamily: "Newsreader",
+              fontWeight: 600,
+              fontSize: 82,
+              color: INK,
+              letterSpacing: "-0.025em",
+              lineHeight: 1.05,
+              maxWidth: 900,
             }}
           >
             See if you qualify for SNAP.
           </div>
-          <div style={{ display: "flex", fontSize: 31, color: "#5E4F45", lineHeight: 1.4, maxWidth: 860 }}>
+          <div
+            style={{
+              display: "flex",
+              fontFamily: "Newsreader",
+              fontWeight: 400,
+              fontSize: 34,
+              color: BODY,
+              lineHeight: 1.48,
+              maxWidth: 830,
+            }}
+          >
             Start a conversation and get answers grounded in the actual rules — every claim cites its
             source, so you can check it yourself. Free, no account.
           </div>
         </div>
 
-        {/* Reach: the accent rule, then the four languages. */}
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ width: 120, height: 5, borderRadius: 999, backgroundColor: "#C0553B", display: "flex" }} />
-          <div style={{ display: "flex", fontSize: 24, color: "#8A7666", letterSpacing: "0.05em" }}>
+        {/* Reach — a 2px wheat rule (the one on-brand use of wheat here), then
+            the four languages in the sans that labels. */}
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+          <div style={{ width: 68, height: 3, borderRadius: 999, backgroundColor: WHEAT, display: "flex" }} />
+          <div style={{ display: "flex", fontFamily: "Be Vietnam Pro", fontWeight: 500, fontSize: 23, color: MUTED, letterSpacing: "0.01em" }}>
             English · Español · Vietnamese · Chinese
           </div>
         </div>
       </div>
     ),
-    size,
+    {
+      ...size,
+      fonts: [
+        { name: "Newsreader", data: NEWSREADER_600, weight: 600, style: "normal" },
+        { name: "Newsreader", data: NEWSREADER_400, weight: 400, style: "normal" },
+        { name: "Be Vietnam Pro", data: BEVIETNAM_500, weight: 500, style: "normal" },
+      ],
+    },
   );
 }

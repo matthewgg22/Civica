@@ -15,8 +15,10 @@ describe("/screen/ask carries the link-preview image", () => {
   });
 
   it("asks for the large-image twitter card, not the small summary", () => {
-    expect(metadata.twitter?.card).toBe("summary_large_image");
-    expect(JSON.stringify(metadata.twitter?.images)).toContain(OG_IMAGE.url);
+    // Next's Twitter metadata type is a union; card lives on the summary member.
+    const twitter = metadata.twitter as { card?: string; images?: unknown };
+    expect(twitter?.card).toBe("summary_large_image");
+    expect(JSON.stringify(twitter?.images)).toContain(OG_IMAGE.url);
   });
 });
 
