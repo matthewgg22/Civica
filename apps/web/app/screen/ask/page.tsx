@@ -45,6 +45,7 @@ import {
 } from "../../../components/SnapOverview";
 import { DemeterFooter } from "../../../components/DemeterFooter";
 import { alternateLanguages, askUrl } from "../../../lib/i18n/routes";
+import { OG_IMAGE } from "../../../lib/og-image";
 import { publicQuestionCount } from "../../../lib/live-counts";
 import { askStructuredData, EN_TITLE, EN_DESCRIPTION } from "./structured-data";
 
@@ -55,7 +56,11 @@ export const metadata: Metadata = {
   title: EN_TITLE,
   description: EN_DESCRIPTION,
   alternates: { canonical: askUrl("en"), languages: alternateLanguages() },
-  openGraph: { title: EN_TITLE, description: EN_DESCRIPTION, type: "website", locale: "en" },
+  // images + the large-image twitter card here, not just on "/": the bare
+  // domain 301s here, so this is the page a shared link actually resolves to,
+  // and without these it fell back to the small no-image card (#launch audit).
+  openGraph: { title: EN_TITLE, description: EN_DESCRIPTION, type: "website", locale: "en", images: [OG_IMAGE] },
+  twitter: { card: "summary_large_image", title: EN_TITLE, description: EN_DESCRIPTION, images: [OG_IMAGE.url] },
 };
 
 export default async function ScreenAskPage({
