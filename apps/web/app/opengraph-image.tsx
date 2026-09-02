@@ -44,8 +44,12 @@ const HEADWORDS: Array<[string, string]> = [
   ["you", INK],
   ["qualify", INK],
   ["for", INK],
-  ["SNAP.", TERRA],
+  ["SNAP", TERRA],
 ];
+
+// The brand row and the language row sit inset from the flush-left headline —
+// the headline is the hero, these bracket it.
+const INSET = 30;
 
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -56,14 +60,15 @@ export default function OpengraphImage() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
+          justifyContent: "center",
+          gap: 58,
           backgroundColor: PAPER,
-          padding: "76px 80px",
+          padding: "78px 80px",
           fontFamily: "Be Vietnam Pro",
         }}
       >
-        {/* Wordmark: real mark + "Demeter" (ink) + "AI" (terracotta). */}
-        <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
+        {/* Wordmark: real mark + "Demeter" (ink) + "AI" (terracotta) — inset. */}
+        <div style={{ display: "flex", alignItems: "center", gap: 22, marginLeft: INSET }}>
           <img src={MARK} width={82} height={82} alt="" style={{ borderRadius: 999 }} />
           <div style={{ display: "flex", alignItems: "baseline", gap: 11, fontFamily: "Newsreader", fontWeight: 600 }}>
             <div style={{ fontSize: 46, color: INK, letterSpacing: "-0.01em" }}>Demeter</div>
@@ -71,20 +76,20 @@ export default function OpengraphImage() {
           </div>
         </div>
 
-        {/* Headline (serif speaks; the word it is about carries the accent),
-            sized to run the full width, then the descriptor across the width. */}
+        {/* Headline (serif speaks; the word it is about carries the accent) on
+            one line, then the descriptor across the width. */}
         <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
           <div
             style={{
               display: "flex",
               flexWrap: "wrap",
               alignItems: "baseline",
-              columnGap: 22,
+              columnGap: 20,
               fontFamily: "Newsreader",
               fontWeight: 600,
-              fontSize: 92,
-              letterSpacing: "-0.028em",
-              lineHeight: 1.02,
+              fontSize: 80,
+              letterSpacing: "-0.025em",
+              lineHeight: 1.04,
             }}
           >
             {HEADWORDS.map(([word, color], i) => (
@@ -109,10 +114,10 @@ export default function OpengraphImage() {
           </div>
         </div>
 
-        {/* A 2px wheat rule (the one on-brand use of wheat here), then the
-            four languages in the sans that labels. */}
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <div style={{ width: 64, height: 3, borderRadius: 999, backgroundColor: WHEAT, display: "flex" }} />
+        {/* A wheat rule (the one on-brand use of wheat here), then the four
+            languages in the sans that labels — inset to match the wordmark. */}
+        <div style={{ display: "flex", alignItems: "center", gap: 18, marginLeft: INSET }}>
+          <div style={{ width: 70, height: 5, borderRadius: 999, backgroundColor: WHEAT, display: "flex" }} />
           <div style={{ display: "flex", fontFamily: "Be Vietnam Pro", fontWeight: 500, fontSize: 24, color: MUTED, letterSpacing: "0.01em" }}>
             English · Español · Vietnamese · Chinese
           </div>
