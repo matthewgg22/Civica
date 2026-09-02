@@ -11,5 +11,5 @@ export const OG_IMAGE = {
   url: "/opengraph-image",
   width: 1200,
   height: 630,
-  alt: "Demeter AI — see if you qualify for SNAP, with verified answers for any state",
+  alt: "Demeter AI. See if you qualify for SNAP food benefits, with verified answers for any state",
 } as const;

@@ -20,7 +20,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 export const runtime = "nodejs";
-export const alt = "Demeter AI — see if you qualify for SNAP, with verified answers for any state";
+export const alt = "Demeter AI. See if you qualify for SNAP food benefits, with verified answers for any state";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -37,6 +37,7 @@ const PAPER = "#FFFFFF";
 const INK = "#232220";
 const BODY = "#4B4A46";
 const MUTED = "#6C6A64";
+const TERRA = "#C0553B"; // the accent — emphasis on "SNAP"
 const TERRA_DEEP = "#8E3A26"; // wordmark "AI"
 const WHEAT = "#E8C547"; // a 2px rule, and nothing else here
 
@@ -70,16 +71,17 @@ export default function OpengraphImage() {
           <div
             style={{
               display: "flex",
+              flexDirection: "column",
               fontFamily: "Newsreader",
               fontWeight: 600,
               fontSize: 82,
-              color: INK,
               letterSpacing: "-0.025em",
               lineHeight: 1.05,
-              maxWidth: 900,
+              maxWidth: 940,
             }}
           >
-            See if you qualify for SNAP.
+            <div style={{ display: "flex", color: INK }}>See if you qualify for</div>
+            <div style={{ display: "flex", color: TERRA }}>SNAP.</div>
           </div>
           <div
             style={{
@@ -92,8 +94,8 @@ export default function OpengraphImage() {
               maxWidth: 830,
             }}
           >
-            Start a conversation and get answers grounded in the actual rules — every claim cites its
-            source, so you can check it yourself. Free, no account.
+            Start a conversation about food benefits and get answers grounded in the actual rules.
+            Every claim cites its source, so you can check it yourself. Free, no account.
           </div>
         </div>
 
