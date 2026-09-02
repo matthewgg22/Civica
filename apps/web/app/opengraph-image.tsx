@@ -68,11 +68,11 @@ export default function OpengraphImage() {
         }}
       >
         {/* Wordmark: real mark + "Demeter" (ink) + "AI" (terracotta) — inset. */}
-        <div style={{ display: "flex", alignItems: "center", gap: 22, marginLeft: INSET }}>
-          <img src={MARK} width={82} height={82} alt="" style={{ borderRadius: 999 }} />
-          <div style={{ display: "flex", alignItems: "baseline", gap: 11, fontFamily: "Newsreader", fontWeight: 600 }}>
-            <div style={{ fontSize: 46, color: INK, letterSpacing: "-0.01em" }}>Demeter</div>
-            <div style={{ fontSize: 46, color: TERRA }}>AI</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 28, marginLeft: INSET }}>
+          <img src={MARK} width={109} height={109} alt="" style={{ borderRadius: 999 }} />
+          <div style={{ display: "flex", alignItems: "baseline", gap: 14, fontFamily: "Newsreader", fontWeight: 600 }}>
+            <div style={{ fontSize: 61, color: INK, letterSpacing: "-0.01em" }}>Demeter</div>
+            <div style={{ fontSize: 61, color: TERRA }}>AI</div>
           </div>
         </div>
 
@@ -109,8 +109,8 @@ export default function OpengraphImage() {
               maxWidth: 1010,
             }}
           >
-            Start a conversation about food benefits and get answers grounded in the actual rules.
-            Every claim cites its source, so you can check it yourself. Free, no account.
+            Start a conversation about food benefits and get answers grounded in the actual rules,
+            cited so you can check them yourself. Free, no account.
           </div>
         </div>
 
