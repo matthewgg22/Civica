@@ -55,84 +55,67 @@ export default function OpengraphImage() {
           width: "100%",
           height: "100%",
           display: "flex",
-          alignItems: "stretch",
+          flexDirection: "column",
+          justifyContent: "space-between",
           backgroundColor: PAPER,
-          padding: "74px 82px",
+          padding: "76px 80px",
           fontFamily: "Be Vietnam Pro",
         }}
       >
-        {/* The message. */}
-        <div
-          style={{
-            flex: 1,
-            minWidth: 0,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            paddingRight: 40,
-          }}
-        >
-          {/* Wordmark: real mark + "Demeter" (ink) + "AI" (terracotta). */}
-          <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
-            <img src={MARK} width={82} height={82} alt="" style={{ borderRadius: 999 }} />
-            <div style={{ display: "flex", alignItems: "baseline", gap: 11, fontFamily: "Newsreader", fontWeight: 600 }}>
-              <div style={{ fontSize: 46, color: INK, letterSpacing: "-0.01em" }}>Demeter</div>
-              <div style={{ fontSize: 46, color: TERRA }}>AI</div>
-            </div>
-          </div>
-
-          {/* Headline (serif speaks; the word it is about carries the accent) +
-              the descriptor. */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "baseline",
-                columnGap: 19,
-                fontFamily: "Newsreader",
-                fontWeight: 600,
-                fontSize: 72,
-                letterSpacing: "-0.025em",
-                lineHeight: 1.05,
-              }}
-            >
-              {HEADWORDS.map(([word, color], i) => (
-                <div key={i} style={{ display: "flex", color }}>
-                  {word}
-                </div>
-              ))}
-            </div>
-            <div
-              style={{
-                display: "flex",
-                fontFamily: "Newsreader",
-                fontWeight: 400,
-                fontSize: 30,
-                color: BODY,
-                lineHeight: 1.46,
-                maxWidth: 560,
-              }}
-            >
-              Start a conversation about food benefits and get answers grounded in the actual rules.
-              Every claim cites its source, so you can check it yourself. Free, no account.
-            </div>
-          </div>
-
-          {/* A 2px wheat rule (the one on-brand use of wheat here), then the
-              four languages in the sans that labels. */}
-          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            <div style={{ width: 64, height: 3, borderRadius: 999, backgroundColor: WHEAT, display: "flex" }} />
-            <div style={{ display: "flex", fontFamily: "Be Vietnam Pro", fontWeight: 500, fontSize: 23, color: MUTED, letterSpacing: "0.01em" }}>
-              English · Español · Vietnamese · Chinese
-            </div>
+        {/* Wordmark: real mark + "Demeter" (ink) + "AI" (terracotta). */}
+        <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
+          <img src={MARK} width={82} height={82} alt="" style={{ borderRadius: 999 }} />
+          <div style={{ display: "flex", alignItems: "baseline", gap: 11, fontFamily: "Newsreader", fontWeight: 600 }}>
+            <div style={{ fontSize: 46, color: INK, letterSpacing: "-0.01em" }}>Demeter</div>
+            <div style={{ fontSize: 46, color: TERRA }}>AI</div>
           </div>
         </div>
 
-        {/* The mark, large, anchoring the right so the composition is not
-            left-heavy. Crisp — the source is 538px. */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
-          <img src={MARK} width={356} height={356} alt="" style={{ borderRadius: 999 }} />
+        {/* Headline (serif speaks; the word it is about carries the accent),
+            sized to run the full width, then the descriptor across the width. */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "baseline",
+              columnGap: 22,
+              fontFamily: "Newsreader",
+              fontWeight: 600,
+              fontSize: 92,
+              letterSpacing: "-0.028em",
+              lineHeight: 1.02,
+            }}
+          >
+            {HEADWORDS.map(([word, color], i) => (
+              <div key={i} style={{ display: "flex", color }}>
+                {word}
+              </div>
+            ))}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              fontFamily: "Newsreader",
+              fontWeight: 400,
+              fontSize: 37,
+              color: BODY,
+              lineHeight: 1.44,
+              maxWidth: 1010,
+            }}
+          >
+            Start a conversation about food benefits and get answers grounded in the actual rules.
+            Every claim cites its source, so you can check it yourself. Free, no account.
+          </div>
+        </div>
+
+        {/* A 2px wheat rule (the one on-brand use of wheat here), then the
+            four languages in the sans that labels. */}
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+          <div style={{ width: 64, height: 3, borderRadius: 999, backgroundColor: WHEAT, display: "flex" }} />
+          <div style={{ display: "flex", fontFamily: "Be Vietnam Pro", fontWeight: 500, fontSize: 24, color: MUTED, letterSpacing: "0.01em" }}>
+            English · Español · Vietnamese · Chinese
+          </div>
         </div>
       </div>
     ),
