@@ -29,6 +29,7 @@ import {
 } from "../../../../components/SnapOverview";
 import { PAGE_COPY } from "../../../../lib/i18n/snap-page";
 import { alternateLanguages, askUrl, PREFIXED_LANGS } from "../../../../lib/i18n/routes";
+import { OG_IMAGE } from "../../../../lib/og-image";
 import { publicQuestionCount } from "../../../../lib/live-counts";
 import { askStructuredData } from "../../../screen/ask/structured-data";
 
@@ -69,7 +70,16 @@ export async function generateMetadata({
     description: m.description,
     // Reciprocal across all four languages, plus x-default → English.
     alternates: { canonical: askUrl(lang as AnswerLang), languages: alternateLanguages() },
-    openGraph: { title: m.title, description: m.description, type: "website", locale: LANG_TAG[lang as AnswerLang] },
+    // Same English image the English route uses — a localized card is a later
+    // enhancement, and an English image beats the small no-image fallback.
+    openGraph: {
+      title: m.title,
+      description: m.description,
+      type: "website",
+      locale: LANG_TAG[lang as AnswerLang],
+      images: [OG_IMAGE],
+    },
+    twitter: { card: "summary_large_image", title: m.title, description: m.description, images: [OG_IMAGE.url] },
   };
 }
 

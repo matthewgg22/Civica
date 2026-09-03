@@ -18,6 +18,12 @@ const nextConfig: NextConfig = {
   // include must be explicit or the lambda ships without the weights.
   outputFileTracingIncludes: {
     "/api/demeter": ["../../packages/demeter-engine/models/**"],
+    // The OG card reads the real Newsreader/Be Vietnam Pro TTFs and the wheat
+    // mark from public/ via fs at render time (Satori can't use woff2, and a
+    // brand-accurate card must use the real faces + logo). Same reason as the
+    // models above: fs reads are invisible to tracing, so name them explicitly
+    // or the lambda ships without them and the image 500s.
+    "/opengraph-image": ["./public/fonts/demeter/*.ttf", "./public/demeter-wheat-mark.png"],
   },
   // The root URL is Demeter's front door. Since the 2026-08 pivot the chat IS
   // the product, so "/" must land on it rather than the applicant-portal
