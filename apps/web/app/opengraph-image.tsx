@@ -109,8 +109,8 @@ export default function OpengraphImage() {
               maxWidth: 1010,
             }}
           >
-            Start a conversation about food benefits and get answers grounded in the actual rules,
-            cited so you can check them yourself. Free, no account.
+            Start a free conversation about food benefits and get answers grounded in the actual
+            rules, cited so you can apply with confidence.
           </div>
         </div>
 
