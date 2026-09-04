@@ -147,6 +147,23 @@ describe("the reading column", () => {
   });
 });
 
+describe("the English-only notice (#1013)", () => {
+  it("tells the reader, on every legal page and in each supported language, that the document is English-only", () => {
+    for (const doc of DOCS) {
+      const { container } = render(<LegalPage doc={doc} />);
+      const note = container.querySelector(".lgl__langnote");
+      expect(note, `${doc.slug} has no English-only notice`).toBeTruthy();
+      expect(note!.textContent).toContain("available in English only");
+      // Each non-English line carries its own lang, so a screen reader switches
+      // voices rather than reading it as mangled English.
+      expect(note!.querySelector('[lang="es"]')?.textContent).toMatch(/inglés/);
+      expect(note!.querySelector('[lang="vi"]')?.textContent).toMatch(/tiếng Anh/);
+      expect(note!.querySelector('[lang="zh"]')?.textContent).toMatch(/英文/);
+      cleanup();
+    }
+  });
+});
+
 describe("all three documents render", () => {
   it.each(DOCS.map((d) => [d.slug, d] as const))("%s", (_slug, doc) => {
     render(<LegalPage doc={doc} />);
