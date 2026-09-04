@@ -30,9 +30,9 @@
     },
     {
       "key": "nd-food-restriction-waiver-not-yet-effective",
-      "kind": "expires",
+      "kind": "gap",
       "date": "2026-09-01",
-      "warning": "North Dakota's USDA-approved candy/soft-drink/energy-drink SNAP purchase restriction is NOT YET IN EFFECT as of this pack's research date (2026-08-12) — it takes effect 9/1/2026. This pack's food-restriction-waiver supplement is written to disclose the current (unrestricted) state alongside the upcoming date explicitly. After 9/1/2026, this pack's framing should be updated to describe the restriction as CURRENTLY ACTIVE, and the underlying Terms and Conditions PDF (not independently fetched by this pack) should be fetched directly for exact product-category definitions (e.g., the flour-content threshold distinguishing 'candy' from other confections, and the 'Supplement Facts' labeling test for energy drinks)."
+      "warning": "North Dakota’s USDA-approved candy / soft-drink / energy-drink SNAP purchase restriction took effect 9/1/2026 and is now ACTIVE (a 2-year pilot; approval letter dated 12/10/2025). The supplement text was updated to describe it as active rather than upcoming. Remaining gap: the exact product-category boundaries (the flour-content threshold distinguishing “candy,” the “Supplement Facts” test for energy drinks) were not fetched from the underlying Terms and Conditions PDF — fetch it directly before answering product-boundary questions."
     },
     {
       "key": "nd-drug-felony-statute-secondary-sourced-text",
