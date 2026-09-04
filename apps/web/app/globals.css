@@ -8970,6 +8970,23 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   font-size: 0.78rem; color: var(--demeter-muted); text-transform: uppercase; letter-spacing: 0.04em;
 }
 
+/* #1013: the English-only notice. Sans and muted — it labels the document's
+   language, it does not speak as the document — and set off with a hairline so a
+   reader scanning in another language finds it without it competing with the
+   title. Each line is one language; lang= on the markup handles pronunciation. */
+.lgl__langnote {
+  margin-top: 1rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--demeter-rule);
+  border-radius: 8px;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--demeter-muted);
+}
+.lgl__langnote p { margin: 0; }
+.lgl__langnote p + p { margin-top: 0.15rem; }
+
 /* Deliberately loud. A draft that reads like live policy is the thing this
    whole status flag exists to prevent. */
 
