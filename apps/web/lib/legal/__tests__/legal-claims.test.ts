@@ -58,10 +58,15 @@ describe("publish gate", () => {
     }
   });
 
-  it("published documents contain no unfilled placeholders", () => {
-    for (const doc of DOCUMENTS.filter((d) => d.status === "published")) {
+  // NOT just published (#1056). Every document renders publicly regardless of
+  // status — there is no draft gate on the page — so an unfilled placeholder in
+  // ANY of them reaches a reader. Terms §13.2's "[MAILING ADDRESS]" rendered on
+  // the live /terms page while the document sat "draft", which is exactly what
+  // the old published-only filter could not catch.
+  it("no document renders an unfilled placeholder (they are all public)", () => {
+    for (const doc of DOCUMENTS) {
       const placeholders = allText(doc).match(/\[[A-Z][A-Z ]{3,}\]/g) ?? [];
-      expect(placeholders, `${doc.slug} still has placeholders`).toEqual([]);
+      expect(placeholders, `${doc.slug} renders an unfilled placeholder`).toEqual([]);
     }
   });
 });
