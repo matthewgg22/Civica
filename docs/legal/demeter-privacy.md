@@ -16,7 +16,7 @@
 
 > We do not sell your information, and we do not share it for advertising.
 
-> We are not the government. We do not report you to anyone, and we never volunteer what you tell us to immigration authorities. If we were ever legally forced to hand something over, there is almost nothing to hand: we do not store your name or your status, and the chat is anonymous by design.
+> We are not the government. We do not report you to anyone, and we never volunteer what you tell us to immigration authorities.
 
 > We do not use your conversations to train AI models.
 
@@ -26,7 +26,7 @@ Those four sentences are the ones that matter most, so they are first. The rest 
 
 ## What this policy covers
 
-This policy covers Demeter, the free SNAP question-and-answer service operated by Civica Technologies LLC — the chat, the application-questions pages, conversations you save to an account, the outline you can email yourself, and the feedback form.
+This policy covers Demeter, the free SNAP question-and-answer service operated by Civica Technologies LLC: the chat, the application-questions pages, conversations you save to an account, the outline you can email yourself, and the feedback form.
 
 It does not cover the separate Civica application tool, which collects documents and sends an application packet to a state agency. That tool has its own terms, and this policy does not describe it.
 
@@ -38,7 +38,7 @@ Some of what people mention while asking about SNAP is sensitive by any measure,
 
 > We do not use sensitive information to infer characteristics about you, to build a profile, to target anything at you, or for any purpose other than answering the question in front of us.
 
-We do not ask for any of it. The structured-identifier filter runs on everything before it is stored. And the record we keep is not connected to your identity, because for anonymous chat we never had one.
+We do not ask for any of it. The structured-identifier filter runs on everything before it is stored, and the record we keep is not connected to your identity, because for anonymous chat we never had one.
 
 ## What we collect, and why
 
@@ -65,7 +65,7 @@ The filtered question is then sent to Anthropic, the company whose AI model writ
 
 Anthropic keeps its own short-term copy for abuse prevention, on its own schedule and under its own terms. We tell you this because our deletion schedule below applies to our systems, and it would be misleading to describe it as if it reached everyone's.
 
-We keep the filtered question and the answer because we make a specific promise about accuracy — that answers are grounded in real, cited regulations — and a promise nobody checks is just a slogan. The record lets us find wrong answers and fix them. It is not linked to your name, and unless you have made an account, it is not linked to you at all.
+We keep the filtered question and the answer because we make a specific promise about accuracy: that answers are grounded in real, cited regulations. A promise nobody checks is just a slogan. The record lets us find wrong answers and fix them. It is not linked to your name, and unless you have made an account, it is not linked to you at all.
 
 ## What we collect automatically
 
@@ -79,13 +79,13 @@ We do not use advertising cookies, and we do not embed advertising or analytics 
 
 ## Accounts are optional
 
-The chat is free and anonymous, and it stays that way — you are never made to sign in to ask a question. An account does exactly one thing: it lets you come back to a conversation you already had.
+The chat is free and anonymous, and it stays that way. You are never made to sign in to ask a question. An account does exactly one thing: it lets you come back to a conversation you already had.
 
 If you make one, we collect your email address and nothing else. You sign in with a link we email you, so there is no password for us to store or for anyone to steal.
 
 Saved conversations are protected at the database level, not just by our code: the database itself refuses to return a conversation to anyone but the account that saved it.
 
-The working estimate Demeter builds up as you talk — your household, income and rent figures — is deliberately never saved to our servers, even when you save the conversation. It lives in your browser, and it is rebuilt from the conversation if you come back.
+The working estimate Demeter builds up as you talk (your household, income and rent figures) is deliberately never saved to our servers, even when you save the conversation. It lives in your browser, and it is rebuilt from the conversation if you come back.
 
 ## The outline we email you
 
@@ -95,7 +95,7 @@ The email is delivered by Resend, our email provider.
 
 ## Immigration status
 
-Fear of immigration consequences keeps eligible families — especially families where some members are citizens and some are not — from applying for food assistance they are legally entitled to. So we want to be direct about this.
+Fear of immigration consequences keeps eligible families, especially families where some members are citizens and some are not, from applying for food assistance they are legally entitled to. So we want to be direct about this.
 
 > We are not a government agency. We are not part of the Department of Homeland Security, USCIS, or any immigration authority, and we never voluntarily share information with them.
 
@@ -103,25 +103,25 @@ Demeter does not ask for your immigration status and does not store it. If you m
 
 Asking Demeter a question is not an application, is not reported to anyone, and creates no record with any government agency.
 
-We will not promise you something we could be forced to break. Any company can be served with a valid court order. What we can promise is that we have built this so there is little to take: no name, no immigration status, no reversible IP address, and — for anyone using the chat without an account — nothing tying a question to a person at all. We would require valid legal process, give only what it actually compels, and challenge anything overbroad. See the next section.
+We will not promise you something we could be forced to break. Any company can be served with a valid court order. What we can promise is that we have built this so there is little to take: no name, no immigration status, no reversible IP address, and, for anyone using the chat without an account, nothing tying a question to a person at all. We would require valid legal process, give only what it actually compels, and challenge anything overbroad. See the next section.
 
 ## Who else sees this
 
 We share information with the companies that run the service for us, and with nobody else. Each is bound by contract to use it only to provide their service to us:
 
-- Anthropic — the AI model that writes the answers
-- Supabase — our database and sign-in system
-- Vercel — hosting for the website
-- Resend — sending the outline email
-- Sentry — error monitoring
+- Anthropic: the AI model that writes the answers
+- Supabase: our database and sign-in system
+- Vercel: hosting for the website
+- Resend: sending the outline email
+- Sentry: error monitoring
 
 We do not sell personal information. We do not share it for advertising or for cross-context behavioral advertising, as those terms are defined by California law. We have no advertisers, and we do not license user data to anyone.
 
-We may publish aggregate figures — for example, how many questions were asked about a given topic, or how often answers cited a verified state source. These are counts, and they cannot be traced back to any person.
+We may publish aggregate figures: for example, how many questions were asked about a given topic, or how often answers cited a verified state source. These are counts, and they cannot be traced back to any person.
 
 ## Government and legal requests
 
-We have never received a government request for user information. If we receive one, we will require valid legal process, disclose only what that process actually compels, and — unless a court forbids it or there is a risk to someone's safety — tell the affected person.
+We have never received a government request for user information. If we receive one, we will require valid legal process, disclose only what that process actually compels, and, unless a court forbids it or there is a risk to someone's safety, tell the affected person.
 
 The strongest protection here is not a promise, it is the design: the chat is anonymous, the IP address is never stored in a form we can reverse, and the questions we hold have had identifiers stripped out. For most conversations there is simply no identity for us to hand over.
 
@@ -131,11 +131,11 @@ Federal law separately protects the confidentiality of SNAP applicant informatio
 
 Three different rules, depending on what it is.
 
-- Deleted automatically: the text of questions and answers in our accuracy record, after 7 days. If an answer was flagged for review — for example, because it cited something we could not verify — the row is kept for 30 days so a person can look at it.
+- Deleted automatically: the text of questions and answers in our accuracy record, after 7 days. If an answer was flagged for review, for example because it cited something we could not verify, the row is kept for 30 days so a person can look at it.
 - Kept until you delete it: your account, and any conversation you chose to save. Delete either one and it is gone from our systems within 30 days.
 - Kept longer, for narrow reasons: records we need to keep to meet a legal obligation, to resolve a dispute, or to deal with abuse of the service. We keep only what the reason requires, and only while it applies.
 
-Counts and measurements that identify nobody — how many questions were asked, how often citations verified — are kept indefinitely, because they are how we show the service works. We keep that data in de-identified form, we do not attempt to re-identify it, and we require anyone we share it with to do the same.
+Counts and measurements that identify nobody (how many questions were asked, how often citations verified) are kept indefinitely, because they are how we show the service works. We keep that data in de-identified form, we do not attempt to re-identify it, and we require anyone we share it with to do the same.
 
 ## Security, and what happens if we get it wrong
 
@@ -145,7 +145,7 @@ No system is perfectly secure, and we will not claim otherwise. If personal info
 
 ## Your choices and your rights
 
-In the chat, you can start a new conversation at any time. That clears the conversation from your browser. It does not erase the accuracy record, which expires on its own schedule above — we say so plainly rather than letting a button imply more than it does.
+In the chat, you can start a new conversation at any time. That clears the conversation from your browser. It does not erase the accuracy record, which expires on its own schedule above. We say so plainly rather than letting a button imply more than it does.
 
 If you have an account, you can delete any saved conversation, or delete the account entirely, from your account page.
 
@@ -165,7 +165,7 @@ If you believe otherwise, tell us at privacy@civica.app and we will look into it
 
 ## Children and teenagers
 
-Demeter answers questions about a household benefit, and teenagers are part of households — some of them are the person in the family who reads the mail and figures out the forms. So we do not bar anyone from asking a question.
+Demeter answers questions about a household benefit, and teenagers are part of households. Some of them are the person in the family who reads the mail and figures out the forms. So we do not bar anyone from asking a question.
 
 Demeter is a general-audience service about a household benefit program. It is not designed for or directed to children, it carries no advertising, and it has no features meant to appeal to them.
 
