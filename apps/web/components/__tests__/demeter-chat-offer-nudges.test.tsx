@@ -5,6 +5,7 @@ import type { PackMeta } from "@civica/demeter-engine/packs";
 import { DemeterChat } from "../DemeterChat";
 import { T } from "../../lib/i18n/demeter-chat-copy";
 import { makePack } from "../../__tests__/fixtures/pack";
+import { WELCOME_SEEN_KEY } from "../../lib/welcome-seen";
 
 // Regression for the #833 audit (2026-08-15): a real 15-turn conversation,
 // with real content in it, never once saw either offer a second time.
@@ -44,7 +45,33 @@ const fetchMock = vi.fn();
 
 Element.prototype.scrollTo = vi.fn() as unknown as typeof Element.prototype.scrollTo;
 
+// #1020: this jsdom has sessionStorage but not localStorage, and since #1015 the
+// welcome card shows whenever it cannot positively read that it has been seen —
+// so with no localStorage it renders over these mounts and intercepts the Send
+// click, timing out sendQuestion's waitFor. A sibling (demeter-welcome.test)
+// installs its OWN localStorage stub at module load, so whether the card appears
+// here at all depended on vitest worker scheduling: intermittent, ~1 in 6. Own a
+// seeded localStorage for the duration of each test — the card is then always
+// already-seen, independent of any sibling's stub.
+let savedLocalStorage: PropertyDescriptor | undefined;
+
 beforeEach(() => {
+  savedLocalStorage = Object.getOwnPropertyDescriptor(window, "localStorage");
+  const store = new Map<string, string>([[WELCOME_SEEN_KEY, "1"]]);
+  Object.defineProperty(window, "localStorage", {
+    configurable: true,
+    value: {
+      getItem: (k: string) => store.get(k) ?? null,
+      setItem: (k: string, v: string) => void store.set(k, String(v)),
+      removeItem: (k: string) => void store.delete(k),
+      clear: () => store.clear(),
+      key: (i: number) => Array.from(store.keys())[i] ?? null,
+      get length() {
+        return store.size;
+      },
+    },
+  });
+
   let turn = 0;
   fetchMock.mockReset().mockImplementation(async (input: RequestInfo | URL) => {
     const url = typeof input === "string" ? input : input.toString();
@@ -63,6 +90,10 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  // Restore whatever localStorage descriptor was there before (often nothing),
+  // so this suite's seeded stub never leaks into a sibling the way #1020's did.
+  if (savedLocalStorage) Object.defineProperty(window, "localStorage", savedLocalStorage);
+  else delete (window as unknown as Record<string, unknown>).localStorage;
 });
 
 async function sendQuestion(text: string, expectAnswer: string) {
