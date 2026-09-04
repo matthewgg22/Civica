@@ -17,9 +17,14 @@
 //    own. Recorded here so the decision is legible later, not to relitigate it.
 //    The 30-day opt-out in §13.10 is the mitigation and must stay workable.
 //
-// PLACEHOLDERS: [MAILING ADDRESS] appears where a physical address is legally
-// required (arbitration notice). The claims test fails the build if a document
-// with status "published" still contains a bracketed placeholder.
+// PLACEHOLDERS: none, deliberately. §13.2's arbitration notice once offered a
+// certified-mail alternative to a "[MAILING ADDRESS]"; with no verified address
+// that placeholder rendered on the PUBLIC /terms page (documents render
+// regardless of status), which arguably voided the informal-resolution gate it
+// sat in. The certified-mail option is dropped and notice goes to CONTACT.legal
+// until counsel supplies a real address (#1056). The claims test now fails the
+// build if ANY document renders a bracketed placeholder, not only a "published"
+// one — because every document is already public.
 
 import { CONTACT, ENTITY, type LegalDocument } from "./types";
 
@@ -262,7 +267,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
         },
         {
           kind: "p",
-          text: "13.2 Informal resolution first. Before starting arbitration, the party with the Claim must send the other a written notice describing the Claim, the date it arose, the facts it rests on, and the relief sought, signed personally by the person bringing it (not only by their lawyer) and including their name, address, email, and phone number. Both parties will then try in good faith to resolve it for 45 days. You send your notice to " + CONTACT.legal + " or by certified mail to " + ENTITY + ", Attn: Legal, [MAILING ADDRESS]. We will send ours to the contact information we have for you. No arbitration may be filed before this 45-day period ends, and the limitations period is paused while it runs.",
+          text: "13.2 Informal resolution first. Before starting arbitration, the party with the Claim must send the other a written notice describing the Claim, the date it arose, the facts it rests on, and the relief sought, signed personally by the person bringing it (not only by their lawyer) and including their name, address, email, and phone number. Both parties will then try in good faith to resolve it for 45 days. You send your notice to " + CONTACT.legal + ". We will send ours to the contact information we have for you. No arbitration may be filed before this 45-day period ends, and the limitations period is paused while it runs.",
         },
         {
           kind: "p",

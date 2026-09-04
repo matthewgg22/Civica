@@ -9,12 +9,12 @@
 // time someone edits one and not the other, and a privacy policy that disagrees
 // with itself is worse than one that is merely late.
 //
-// WHY `status` IS LOAD-BEARING. It gates the checks in legal-claims.test.ts:
-// a document may only claim a retention window it can enforce, and a
-// "published" document may contain no unfilled placeholders. Terms §13.2 still
-// carries [MAILING ADDRESS], so flipping these would fail that test — which is
-// the mechanical proof that they are not finished. Flip to "published" only
-// after sign-off.
+// WHY `status` IS LOAD-BEARING. It gates the retention-window check in
+// legal-claims.test.ts: a document may only claim a retention window it can
+// enforce. The placeholder check no longer keys off status (#1056) — every
+// document renders publicly regardless of it, so NO document may render an
+// unfilled [PLACEHOLDER], draft or not. `status` stays "draft" as the
+// not-finished signal until counsel sign-off; flip to "published" only after.
 //
 // IT NO LONGER RENDERS A BANNER. Until 2026-08-26 a "draft" document showed a
 // visible notice saying it had not been reviewed by counsel; that was removed
