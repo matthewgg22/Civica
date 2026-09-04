@@ -16,7 +16,7 @@
 
 These Terms of Service ("Terms") govern your use of Demeter, a free service operated by Civica Technologies LLC ("Civica", "we", "us") that answers questions about the Supplemental Nutrition Assistance Program ("SNAP").
 
-You agree to these Terms when you send Demeter a message or create an account. We tell you so at both of those moments, with a link to this page, rather than burying it in a footer and calling that agreement. If you do not agree, please do not use Demeter — and you can still get the same information from your state SNAP agency or by calling 211.
+You agree to these Terms when you send Demeter a message or create an account. We tell you so at both of those moments, with a link to this page, rather than burying it in a footer and calling that agreement. If you do not agree, please do not use Demeter. And you can still get the same information from your state SNAP agency or by calling 211.
 
 Our Privacy Policy is part of these Terms and describes what we collect and what we do not.
 
@@ -28,7 +28,7 @@ Our Privacy Policy is part of these Terms and describes what we collect and what
 
 Demeter is an information service. It explains the rules, cites where they come from, and can help you organize what you will need. It does not submit an application, does not communicate with any agency on your behalf, and does not create any record with any agency.
 
-Demeter uses artificial intelligence and can be wrong. It can misread a rule, miss a rule your state applies, or be out of date. Do not decide whether to apply based only on what Demeter tells you. If Demeter suggests you may not qualify, you are still entitled to apply and to receive a decision from your agency — applying is free, and the agency decides, not us.
+Demeter uses artificial intelligence and can be wrong. It can misread a rule, miss a rule your state applies, or be out of date. Do not decide whether to apply based only on what Demeter tells you. If Demeter suggests you may not qualify, you are still entitled to apply and to receive a decision from your agency. Applying is free, and the agency decides, not us.
 
 Demeter does not give legal advice and using it does not create an attorney-client relationship. For advice about your specific case, contact your state SNAP agency, a local legal aid organization, or a community organization that helps with benefits.
 
@@ -50,7 +50,7 @@ Because the service costs us money to run, we limit how many questions can be as
 
 What you type stays yours. You give us a limited, non-exclusive license to use it for three narrow purposes and nothing else:
 
-- To produce an answer for you — which means sending your question, with identifiers stripped out, to the AI model that writes the answer.
+- To produce an answer for you, which means sending your question, with identifiers stripped out, to the AI model that writes the answer.
 - To check and improve the accuracy of Demeter's answers, by keeping a short-lived record of the question and answer as described in the Privacy Policy.
 - To produce aggregate statistics that identify nobody, such as how many questions were asked about a topic.
 
@@ -74,7 +74,7 @@ Use Demeter to get information about SNAP. Do not:
 
 ## 7. Accounts
 
-You do not need an account to use Demeter. If you make one, keep access to the email address you signed up with — anyone who can read your email can sign in as you. Tell us at privacy@civica.app if you believe someone else has access to your account.
+You do not need an account to use Demeter. If you make one, keep access to the email address you signed up with. Anyone who can read your email can sign in as you. Tell us at privacy@civica.app if you believe someone else has access to your account.
 
 You can delete your account at any time from your account page.
 
@@ -88,7 +88,7 @@ You are welcome to read an answer, print it, save it, and take it with you to yo
 
 We may suspend or end access if these Terms are violated, if it is necessary to protect the service or other people, or if we are required to by law. We may also change or discontinue Demeter, in whole or in part, at any time.
 
-You may stop using Demeter at any time, and delete your account if you have one. The sections that by their nature should survive — disclaimers, limitation of liability, the license in Section 5, dispute resolution, and governing law — survive termination.
+You may stop using Demeter at any time, and delete your account if you have one. The sections that by their nature should survive (disclaimers, limitation of liability, the license in Section 5, dispute resolution, and governing law) survive termination.
 
 ## 10. Disclaimer of warranties
 
@@ -104,7 +104,7 @@ These limits do not apply to liability that cannot be limited under applicable l
 
 ## 12. Indemnification
 
-If you misuse Demeter — by breaking the rules in Section 6, by violating the law, or by infringing someone else's rights — and a third party brings a claim against us because of it, you agree to defend and indemnify us against that claim and its reasonable costs, to the extent permitted by law.
+If you misuse Demeter (by breaking the rules in Section 6, by violating the law, or by infringing someone else's rights) and a third party brings a claim against us because of it, you agree to defend and indemnify us against that claim and its reasonable costs, to the extent permitted by law.
 
 This does not apply to ordinary use of Demeter. Asking questions, saving a conversation, emailing yourself an outline, or relying on an answer that turned out to be wrong are not things you owe us anything for. It also does not apply to claims arising from our own conduct.
 
@@ -114,7 +114,7 @@ This does not apply to ordinary use of Demeter. Asking questions, saving a conve
 
 13.1 Claims covered. A "Claim" is any dispute, claim, or controversy between you and Civica arising from or relating to these Terms or the service, on any legal theory, including privacy and data security claims and claims about whether this section is enforceable. Section 13.3 lists the exceptions.
 
-13.2 Informal resolution first. Before starting arbitration, the party with the Claim must send the other a written notice describing the Claim, the date it arose, the facts it rests on, and the relief sought, signed personally by the person bringing it (not only by their lawyer) and including their name, address, email, and phone number. Both parties will then try in good faith to resolve it for 45 days. You send your notice to legal@civica.app or by certified mail to Civica Technologies LLC, Attn: Legal, [MAILING ADDRESS]. We will send ours to the contact information we have for you. No arbitration may be filed before this 45-day period ends, and the limitations period is paused while it runs.
+13.2 Informal resolution first. Before starting arbitration, the party with the Claim must send the other a written notice describing the Claim, the date it arose, the facts it rests on, and the relief sought, signed personally by the person bringing it (not only by their lawyer) and including their name, address, email, and phone number. Both parties will then try in good faith to resolve it for 45 days. You send your notice to legal@civica.app. We will send ours to the contact information we have for you. No arbitration may be filed before this 45-day period ends, and the limitations period is paused while it runs.
 
 13.3 Exceptions. Either party may bring an individual claim in small claims court if it qualifies, and either party may go to court for claims about intellectual property, including for an injunction. Nothing here prevents you from reporting a concern to a government agency.
 
@@ -128,13 +128,13 @@ This does not apply to ordinary use of Demeter. Asking questions, saving a conve
 
 13.8 Confidentiality. If confidential, proprietary, or sensitive information may be exchanged in an arbitration, both parties will ask the arbitrator for protection of that information before it is exchanged.
 
-13.9 Mass disputes. If 25 or more notices raising similar Claims and brought by the same or coordinated counsel are received, they are a "Mass Dispute" and the AAA Mass Arbitration Supplementary Rules apply, as modified here. The parties will first select 20 notices — 10 chosen by each side — to proceed as initial arbitrations, each before its own arbitrator. No other demand may be filed, and no related fees assessed, until those conclude. The parties will then mediate all remaining notices once. If more than 100 notices remain unresolved after mediation, either side may elect, in writing within 30 days, to remove all remaining notices from arbitration, in which case they proceed in court under Section 14. Otherwise the AAA will randomly select up to 30 more to proceed, and the process repeats until all are resolved.
+13.9 Mass disputes. If 25 or more notices raising similar Claims and brought by the same or coordinated counsel are received, they are a "Mass Dispute" and the AAA Mass Arbitration Supplementary Rules apply, as modified here. The parties will first select 20 notices, 10 chosen by each side, to proceed as initial arbitrations, each before its own arbitrator. No other demand may be filed, and no related fees assessed, until those conclude. The parties will then mediate all remaining notices once. If more than 100 notices remain unresolved after mediation, either side may elect, in writing within 30 days, to remove all remaining notices from arbitration, in which case they proceed in court under Section 14. Otherwise the AAA will randomly select up to 30 more to proceed, and the process repeats until all are resolved.
 
 13.10 How to opt out of arbitration. You may opt out of this Section 13 within 30 days of first accepting these Terms by emailing legal@civica.app with your full name, mailing address, email address, and a clear statement that you are opting out of arbitration. Opting out costs you nothing and does not affect your use of Demeter in any way. If you opt out, disputes are resolved under Section 14.
 
 13.11 Rejecting future changes. If we change this Section 13, you may reject the change as to you by emailing legal@civica.app within 30 days of the change, with your name, mailing address, and email address. The most recent version you have not rejected will continue to apply. Changes to notice addresses are excluded.
 
-13.12 Severability. If any part of this Section 13 is found unenforceable, that part is severed and the rest remains in effect — except that if the class-action waiver is found unenforceable as to some claims, those claims proceed in court rather than in arbitration, and the litigation of them is stayed until any individual arbitration concludes. If a part of this section would bar a claim for public injunctive relief, that part has no effect as to that claim.
+13.12 Severability. If any part of this Section 13 is found unenforceable, that part is severed and the rest remains in effect, except that if the class-action waiver is found unenforceable as to some claims, those claims proceed in court rather than in arbitration, and the litigation of them is stayed until any individual arbitration concludes. If a part of this section would bar a claim for public injunctive relief, that part has no effect as to that claim.
 
 ## 14. Governing law and venue
 
@@ -151,7 +151,7 @@ Nothing in these Terms takes away a right you have under the mandatory consumer-
 - Entire agreement. These Terms and the Privacy Policy are the entire agreement between you and Civica about Demeter.
 - Notices. We may give you notice by posting on the site or, if you have an account, by email. You give us notice at legal@civica.app.
 - No third-party beneficiaries. These Terms are between you and Civica. They do not give anyone else rights to enforce them.
-- Email. We send only the messages the service needs to work — your sign-in link, and an outline if you ask for one. We do not send marketing email. If that ever changes, it will be something you opt into, with a working unsubscribe link.
+- Email. We send only the messages the service needs to work: your sign-in link, and an outline if you ask for one. We do not send marketing email. If that ever changes, it will be something you opt into, with a working unsubscribe link.
 - No agency relationship. Nothing here makes you and Civica partners, employer and employee, or agents of one another.
 
 ## 16. Contact
