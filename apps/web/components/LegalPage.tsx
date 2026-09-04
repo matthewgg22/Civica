@@ -71,6 +71,23 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
           <p className="lgl__lede">{doc.lede}</p>
           <p className="lgl__updated">Last updated {doc.lastUpdated}</p>
 
+          {/* #1013: these documents exist in English only, and a non-English
+              reader reaches them from a localized footer (the Privacy/Terms/
+              Safety links are UNLOCALIZED). A neutral, factual line in each
+              supported language — it makes no legal claim, it only tells the
+              reader what they are looking at. lang= on each so a screen reader
+              switches voices instead of reading it all in English. The
+              substantive questions — publish translations, whether a
+              translation is authoritative, whether the assent itself must be in
+              the reader's language — are counsel-gated and stay in #1013; this
+              is the one slice that is not blocked. */}
+          <div className="lgl__langnote" role="note">
+            <p>This document is available in English only.</p>
+            <p lang="es">Este documento está disponible únicamente en inglés.</p>
+            <p lang="vi">Tài liệu này chỉ có bằng tiếng Anh.</p>
+            <p lang="zh">本文件仅提供英文版本。</p>
+          </div>
+
           {/* THE DRAFT BANNER WAS REMOVED HERE (owner decision, 2026-08-26).
               It said the document had not been reviewed by counsel, which is
               still true: `status` is unchanged and every document is still
