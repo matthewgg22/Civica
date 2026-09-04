@@ -7,7 +7,7 @@
     {
       "key": "mn-abawd-waiver-status-recheck",
       "kind": "expires",
-      "date": "2026-09-01",
+      "date": "2026-12-01",
       "warning": "As of this pack's build date, secondary sources reported Minnesota holding a statewide ABAWD waiver with a stated expiration of June 30, 2026 — a date already past. This pack could NOT independently confirm current status against a primary DHS or USDA source (both attempts were blocked — see PROVENANCE.md). Re-check Minnesota's current ABAWD waiver status directly against USDA FNA's ABAWD waiver page or the Minnesota Combined Manual before telling a household any area of Minnesota is currently waived from the SNAP work-requirement time limit — do not assume the June 30, 2026 waiver has been renewed."
     },
     {

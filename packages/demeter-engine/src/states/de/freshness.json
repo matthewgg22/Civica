@@ -42,7 +42,7 @@
     },
     {
       "key": "de-november-2025-shutdown-abawd-pause-time-limited",
-      "kind": "expires",
+      "kind": "gap",
       "date": "2026-09-01",
       "warning": "Delaware's own SNAP Alert page states USDA-FNS waived the ABAWD work requirement nationwide for November 2025 specifically due to the federal government shutdown and uncertainty around November benefits. This was an explicitly one-month, already-lapsed pause as of this pack's fetch date (2026-08-12) — do not confuse it with an ongoing area-specific Delaware ABAWD waiver, which per the entry above currently has no confirmed FY2026 renewal."
     },

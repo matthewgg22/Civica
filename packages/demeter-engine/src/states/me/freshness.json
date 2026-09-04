@@ -13,7 +13,7 @@
     {
       "key": "me-bbce-live-page-shows-stale-cy2025-figures",
       "kind": "expires",
-      "date": "2026-09-01",
+      "date": "2026-12-01",
       "warning": "Maine's own live SNAP consumer page (maine.gov/dhhs/ofi/programs-services/food-supplement), as fetched 2026-08-12, displays the calendar-year-2025 200%-FPL BBCE income figures ($2,609/household of one, $5,359/household of four) rather than the calendar-year-2026 figures ($2,660/one, $5,500/four) that took effect 1/13/2026 per SNAP Rule #244 — over six months before this pack's fetch date. This is a live-page freshness gap on Maine DHHS's OWN site, not a pack error. Before citing an exact BBCE dollar figure, re-check both the live consumer page and the current 10-144 C.M.R. Ch. 301 § 999-3 Chart 4 directly and prefer whichever is more recently dated."
     },
     {

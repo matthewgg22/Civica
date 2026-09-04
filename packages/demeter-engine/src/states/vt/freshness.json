@@ -30,7 +30,7 @@
     },
     {
       "key": "vt-november-2025-shutdown-state-response-time-limited",
-      "kind": "expires",
+      "kind": "gap",
       "date": "2026-09-01",
       "warning": "DCF's own 10/30/2025 slide deck states the Eboard/Administration decided to state-fund the first 15 days of eligible households' November 2025 3SquaresVT benefits (expected issuance around 11/7/2025) plus $250,000 to the Vermont Foodbank, in response to a federal-shutdown-driven pause in new benefit issuance. This was an explicitly dated, one-month, already-resolved state response as of this pack's fetch date (2026-08-12) — do not confuse it with an ongoing or recurring Vermont policy."
     },

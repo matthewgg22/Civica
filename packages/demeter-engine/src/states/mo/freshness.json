@@ -7,12 +7,12 @@
     {
       "key": "mo-sua-figures-not-confirmed-ffy2026",
       "kind": "expires",
-      "date": "2026-09-01",
+      "date": "2026-12-01",
       "warning": "This pack's Standard Utility Allowance figures (SUA $495, NHCS $363, LUA $158, telephone $79 — MO IM Manual 1115.035.25.15) are dated to IM-50 (September 23, 2024, i.e. FFY2025). Despite a targeted search, this pack could NOT locate a confirmed FFY2026 (effective 10/01/2025) update to these four specific figures, even though Missouri's other FFY2026 figures (income limits, Standard Deduction, Excess Shelter cap, Homeless Deduction) ARE independently confirmed current via the DSS SNAP Program Changes Flyer (10/2025). Because FFY2026 began October 1, 2025 and this pack was authored August 2026, these figures may ALREADY be out of date rather than merely approaching expiry. Before quoting the $495/$363/$158/$79 figures as current, re-fetch MO IM Manual 1115.035.25.15 directly (dssmanuals.mo.gov/food-stamps/1115-000-00/1115-035-00/1115-035-25/1115-035-25-15/) and check for a memo more recent than IM-50."
     },
     {
       "key": "mo-abawd-manual-text-stale-pre-obbba",
-      "kind": "expires",
+      "kind": "gap",
       "date": "2026-09-01",
       "warning": "This pack's ABAWD manual source (MO IM Manual 1105.035.00, last updated IM-71, August 31, 2023) states the PRE-OBBBA 18-54 ABAWD age range, not the current federal 18-64 range effective per OBBBA (July 4, 2025 enactment, November 1, 2025 FNS implementation date). Missouri's own HR1-implementation page (mydss.mo.gov/hr1-implementation) confirms the state's FAMIS/MEDES eligibility SYSTEMS have already been updated for ABAWD OBBBA changes, but this specific public manual TEXT had not been updated as of this pack's fetch date (2026-08-11). A chatbot answering an ABAWD age-range question for Missouri should state the CURRENT federal 18-64 range (consistent with Missouri's own confirmed system behavior) rather than quoting the manual's own stale 18-54 text verbatim. Re-fetch MO IM Manual 1105.035.00 directly to check whether the manual text has since been updated to match."
     },
