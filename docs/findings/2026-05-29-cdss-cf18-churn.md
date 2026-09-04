@@ -9,7 +9,7 @@ superseded_by: []
 evidence:
   - kind: dataset
     ref: "CDSS CalFresh Churn Monthly Report (CF 18), FY2023-24 / FY2024-25 / FY2025-26"
-    note: "https://www.cdss.ca.gov/.../DSSDS/Tables/CF18FY24-25.xlsx (+ FY23-24, FY25-26). Public CA state data. Statewide rows extracted; rates computed from cells 1/2/15/16."
+    note: "https://www.cdss.ca.gov/Portals/9/Additional-Resources/Research-and-Data/DSSDS/Tables/CF18FY24-25.xlsx (+ FY23-24, FY25-26). Public CA state data. Statewide rows extracted; rates computed from cells 1/2/15/16."
   - kind: file
     ref: tools/cdss-cf18/src/ingest_cf18.py
     note: "Reproducible ingest — parses Data_Internal, filters Statewide, computes late-with-loss / scheduled."

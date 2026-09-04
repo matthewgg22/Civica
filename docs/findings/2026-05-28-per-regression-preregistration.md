@@ -61,7 +61,7 @@ on payment error). The artifact is watermarked synthetic and carries each
 planted value next to its estimate, so a reviewer can confirm the estimator
 recovers what was planted — the 95% CI covers the truth on all five outcomes.
 
-Live panel: [/findings/regression](/findings/regression).
+Live panel: `/findings/regression` (local Datasette; run `make datasette`).
 
 ## Sample target & power (added 2026-05-30)
 
