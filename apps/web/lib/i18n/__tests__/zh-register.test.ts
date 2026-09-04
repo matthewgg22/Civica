@@ -58,6 +58,9 @@ const NO_PROSE = [
   "app/sign-in/signin-form.tsx",
   "components/LanguagePicker.tsx",
   "components/DemeterChat.tsx",
+  // The English-only notice (#1013): a fixed factual line per language, no
+  // second-person pronoun to carry a register.
+  "components/LegalPage.tsx",
 ];
 
 const CJK = /[一-鿿]/;
