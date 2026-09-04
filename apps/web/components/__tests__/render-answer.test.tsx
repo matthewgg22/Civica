@@ -163,6 +163,22 @@ describe("a trailer the model wrote alongside ours", () => {
     expect(body).toContain("CERTAIN");
     expect(body.match(/Check it yourself/g) ?? []).toHaveLength(1);
   });
+
+  // #959: the model improvised a "✓ CERTAIN — … check it yourself below" but the
+  // pipeline appended NO trailer (a not_applicable verdict — the answer made no
+  // citable claim), so no `---` rule and no citation list ever followed. The
+  // banner rendered orphaned, promising a "below" that was never there.
+  it("drops a model certainty banner the pipeline never backed with citations (#959)", () => {
+    const orphaned = [
+      "Here is a general answer that makes no citable rule claim.",
+      "",
+      "✓ **CERTAIN** — Every rule cited here comes from regulation text pulled for your question — check it yourself below.",
+    ].join("\n");
+    const { body } = splitFollowups(orphaned);
+    expect(body).not.toContain("CERTAIN");
+    expect(body).not.toContain("check it yourself below");
+    expect(body).toContain("general answer");
+  });
 });
 
 describe("the question the composer echoes", () => {

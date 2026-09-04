@@ -168,17 +168,33 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
  *  does anyway — seen in production, the same answer carrying the line twice —
  *  and an instruction a model can ignore is not a guarantee. Ours is appended
  *  last, in the trailer frame, so every occurrence but the final one goes. */
-/** Drops trailer lines the MODEL wrote, keeping the ones Civica appends.
+/** Drops certainty/"check it yourself" lines the MODEL wrote, keeping only the
+ *  one Civica appends.
  *
- *  Seen in production: an answer carrying TWO certainty banners — its own
- *  "⚠ UNCERTAIN — do not treat as settled; confirm with your county caseworker"
- *  and ours immediately under it — plus two "Check it yourself" lines. The
- *  reader is told the same caveat twice in two different wordings, which reads
- *  less like care and more like the page arguing with itself.
+ *  Civica's authoritative trailer is appended LAST and always opens with a `---`
+ *  rule (formatCertaintyBanner / formatCitationTrailer). So any banner or "check
+ *  it yourself" line BEFORE that rule is the model imitating the format — and
+ *  when the pipeline appends no trailer at all (a not_applicable verdict: a
+ *  refusal, a PII deflection, a distress reply that leads with a phone number),
+ *  there IS no rule and EVERY such line is the model's. Both get dropped; only a
+ *  line inside the real trailer block survives.
  *
- *  Ours is appended LAST, in the trailer frame, so for each of these the final
- *  occurrence is the one that survives. Same rule as the source footer below,
- *  applied to the two other lines the model imitates. */
+ *  This is what stops a "✓ CERTAIN — check it yourself below" the model
+ *  improvised from rendering with nothing beneath it (#959). A real CERTAIN
+ *  banner is unreachable without a citation to show — assessCertainty grades
+ *  CERTAIN only when a citation was retrieved for the question, and the pipeline
+ *  renders that citation on the line right after the banner — so an orphaned one
+ *  can only be the model's. The old rule (drop all but the last of ≥2) could not
+ *  see this case: the model's banner was the ONLY one, so nothing was dropped.
+ *
+ *  Seen in production before the rule existed: an answer carrying two certainty
+ *  banners (its own "⚠ UNCERTAIN — confirm with your county caseworker" and ours
+ *  under it) plus two "Check it yourself" lines — the page arguing with itself.
+ *
+ *  Residual: if the model writes its OWN `---` and then an orphaned banner while
+ *  the pipeline appends nothing, that banner is kept — rare, and not the
+ *  observed failure. The server already strips these markers from history
+ *  (stripAppendedTrailer) so the model stops being trained on its own copy. */
 function dropDuplicateTrailerLines(text: string): string {
   const MARKERS = [
     // Certainty banner: keyed off the MARK, which certainty.ts does not
@@ -187,15 +203,21 @@ function dropDuplicateTrailerLines(text: string): string {
     // "Check it yourself:" and its translations, with or without emphasis.
     /^\s*[*_]?(Check it yourself|Compruébalo tú mismo|Tự kiểm tra|自己核对)/i,
   ];
-  let out = text;
-  for (const marker of MARKERS) {
-    const lines = out.split("\n");
-    const hits = lines.map((l, i) => (marker.test(l) ? i : -1)).filter((i) => i >= 0);
-    if (hits.length < 2) continue;
-    const keep = hits[hits.length - 1];
-    out = lines.filter((_, i) => !hits.includes(i) || i === keep).join("\n");
+  const lines = text.split("\n");
+  // The last horizontal rule opens Civica's appended trailer; everything from it
+  // on is authoritative, everything before it is body — where the model's
+  // imitations live. No rule means the pipeline appended nothing, so every
+  // marker line is the model's (trailerStart past the end drops them all).
+  let trailerStart = lines.length;
+  for (let i = lines.length - 1; i >= 0; i--) {
+    if (/^\s*-{3,}\s*$/.test(lines[i]!)) {
+      trailerStart = i;
+      break;
+    }
   }
-  return out;
+  return lines
+    .filter((line, i) => i >= trailerStart || !MARKERS.some((re) => re.test(line)))
+    .join("\n");
 }
 
 function dropDuplicateFooter(text: string): string {
