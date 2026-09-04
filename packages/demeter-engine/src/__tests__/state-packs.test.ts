@@ -127,6 +127,32 @@ describe("pack verification metadata (public /verify + guide pages)", () => {
   });
 });
 
+// #761: the raw `program`/`agency` fields are model-facing and deliberately
+// carry corpus annotation behind an em-dash (see packs.ts) — 25 packs run past
+// 130 chars. What broke reflow in the issue was the UI rendering those raw;
+// SnapOverview's agency list, the state picker and the guide pages render
+// programShort/agencyShort now, which is what resolved it. So the durable guard
+// belongs on the fields that actually reach a 320px card: a future pack author
+// pasting a naming essay into program_short — the exact drift that happened to
+// `program` — fails here, the fast direct signal the issue asked for instead of
+// only the slow e2e reflow spec noticing an overflow.
+describe("display names stay short enough for the agency card (#761)", () => {
+  it("every pack's programShort/agencyShort is a display name, not research prose", () => {
+    for (const s of VERIFIED_STATES) {
+      expect(s.programShort.length, `${s.code} programShort is empty`).toBeGreaterThan(0);
+      expect(
+        s.programShort.length,
+        `${s.code} programShort too long for the card (${s.programShort.length}): ${JSON.stringify(s.programShort)} — put the annotation in program/PROVENANCE, not the display name`,
+      ).toBeLessThanOrEqual(60);
+      expect(s.agencyShort.length, `${s.code} agencyShort is empty`).toBeGreaterThan(0);
+      expect(
+        s.agencyShort.length,
+        `${s.code} agencyShort too long for the card (${s.agencyShort.length}): ${JSON.stringify(s.agencyShort)}`,
+      ).toBeLessThanOrEqual(80);
+    }
+  });
+});
+
 
 describe("recompose marker", () => {
   it("the client-safe copy is byte-identical to what the stream emits", async () => {
