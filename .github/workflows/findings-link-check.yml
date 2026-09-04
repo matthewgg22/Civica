@@ -59,7 +59,6 @@ jobs:
             --retry-wait-time 5
             --max-retries 3
             --accept 200,206,403,429
-            --exclude-mail
             --exclude-loopback
             docs/findings/**/*.md
           fail: true
@@ -74,15 +73,31 @@ jobs:
           path: lychee-report.md
           retention-days: 30
 
-      - name: Open issue on scheduled-run failure
-        # Weekly runs that find rot file an issue so the next engineer in
-        # the ledger sees it. PR-run failures already block the PR, so
-        # they do not also file an issue.
+      - name: Find the existing open link-rot issue
+        id: existing
+        # So the weekly run UPDATES one canonical issue instead of filing a new
+        # duplicate every Monday — the old step called create-issue-from-file
+        # unconditionally and piled up ~13 identical issues. Newest open
+        # link-rot issue wins; empty when there is none.
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          num=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --label link-rot \
+            --json number --jq 'max_by(.number).number // empty')
+          echo "number=$num" >> "$GITHUB_OUTPUT"
+
+      - name: Open or update the link-rot issue
+        # Weekly runs that find rot surface it for the next engineer in the
+        # ledger. PR-run failures already block the PR, so they do not file.
+        # issue-number set → the action updates that issue; empty → it creates
+        # the first one.
         if: failure() && github.event_name == 'schedule'
         uses: peter-evans/create-issue-from-file@v5
         with:
           title: 'Findings link check: dead URLs detected (weekly run)'
           content-filepath: lychee-report.md
+          issue-number: ${{ steps.existing.outputs.number }}
           labels: |
             findings
             link-rot
