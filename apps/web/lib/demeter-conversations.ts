@@ -19,6 +19,10 @@ import { isAnswerLang, VERIFIED_STATE_CODES, type AnswerLang } from "@civica/dem
 export type SavedMsg = {
   role: "user" | "assistant" | "divider";
   content: string;
+  /** The answer language an assistant bubble was produced in, so each message
+   *  carries its own lang for screen readers (WCAG 3.1.2) and survives a
+   *  save/resume. Absent on user turns and legacy rows. */
+  lang?: AnswerLang;
 };
 
 const ROLES = new Set(["user", "assistant", "divider"]);
@@ -65,7 +69,7 @@ export function normalizeMessages(raw: unknown): { messages: SavedMsg[] } | { er
     if (typeof entry !== "object" || entry === null) {
       return { error: "each message must be an object" };
     }
-    const { role, content } = entry as { role?: unknown; content?: unknown };
+    const { role, content, lang } = entry as { role?: unknown; content?: unknown; lang?: unknown };
     if (typeof role !== "string" || !ROLES.has(role)) {
       return { error: "each message needs role user|assistant|divider" };
     }
@@ -75,7 +79,7 @@ export function normalizeMessages(raw: unknown): { messages: SavedMsg[] } | { er
     // never completes. The UI only offers Save after an answer finishes, so this
     // is belt and braces — but it is the exact shape a mid-stream save produces.
     if (role === "assistant" && content === "") continue;
-    clean.push({ role: role as SavedMsg["role"], content });
+    clean.push({ role: role as SavedMsg["role"], content, ...(isAnswerLang(lang) ? { lang } : {}) });
   }
 
   if (clean.length === 0) return { error: "nothing to save yet" };

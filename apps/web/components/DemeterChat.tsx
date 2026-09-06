@@ -1051,7 +1051,7 @@ export function DemeterChat({
     setMessages((m) => {
       const copy = m.slice();
       const last = copy[copy.length - 1];
-      if (last && last.role === "assistant") copy[copy.length - 1] = { role: "assistant", content: text };
+      if (last && last.role === "assistant") copy[copy.length - 1] = { ...last, content: text };
       return copy;
     });
     // Resolve in the SAME tick as the final render rather than on the next
@@ -1638,7 +1638,7 @@ export function DemeterChat({
       ...(uncovered && !alreadySaid
         ? [{ role: "divider" as const, content: t.dividerUncovered(uncovered) }]
         : []),
-      { role: "assistant", content: "" },
+      { role: "assistant", content: "", lang },
     ]);
 
     // The rail updates ALONGSIDE the answer, not after it: a second round trip
@@ -1797,7 +1797,7 @@ export function DemeterChat({
             setMessages((m) => {
               const copy = m.slice();
               const last = copy[copy.length - 1];
-              if (last && last.role === "assistant") copy[copy.length - 1] = { role: "assistant", content: next };
+              if (last && last.role === "assistant") copy[copy.length - 1] = { ...last, content: next };
               return copy;
             });
           } else if (!rafRef.current) {
@@ -1846,7 +1846,7 @@ export function DemeterChat({
         setMessages((m) => {
           const copy = m.slice();
           const last = copy[copy.length - 1];
-          if (last && last.role === "assistant") copy[copy.length - 1] = { role: "assistant", content: finalText };
+          if (last && last.role === "assistant") copy[copy.length - 1] = { ...last, content: finalText };
           return copy;
         });
       }
@@ -1871,6 +1871,21 @@ export function DemeterChat({
     // matching: give refreshWorksheet one dependency send does not have, and
     // send would silently hold a stale copy with no warning.
   }, [input, busy, messages, state, lang, t, refreshWorksheet, resetInputHeight, worksheetMode, drawStream]);
+
+  // When a stream ends, the Send/Stop button swap unmounts whatever the keyboard
+  // user activated, dropping focus to <body>. Re-home it to the composer — but
+  // ONLY when focus was actually lost, so a reader who moved into the transcript
+  // to read the answer is left where they are (never steal focus back).
+  const wasBusyRef = useRef(false);
+  useEffect(() => {
+    if (wasBusyRef.current && !busy) {
+      const active = document.activeElement;
+      if (!active || active === document.body) {
+        inputRef.current?.focus({ preventScroll: true });
+      }
+    }
+    wasBusyRef.current = busy;
+  }, [busy]);
 
   /** The pack for whichever state is selected, or null on the federal floor.
    *  agencyHref (the disclaimer's link) and the "Apply at {portal}" link
@@ -2151,7 +2166,7 @@ export function DemeterChat({
             // and every message rendered left-aligned at its full 68ch max.
             // Measured: "whats snap?" came out 635px wide, on the left.
             <div key={i} className={`demeter__turn demeter__turn--${m.role}`}>
-              <div className={`demeter__msg demeter__msg--${m.role}`}>
+              <div className={`demeter__msg demeter__msg--${m.role}`} lang={m.lang ?? lang}>
                 {m.content ? (
                   m.role === "assistant" ? (
                     renderAnswer(
@@ -2502,7 +2517,7 @@ export function DemeterChat({
                 const copy = m.slice();
                 const last = copy[copy.length - 1];
                 if (last && last.role === "assistant") {
-                  copy[copy.length - 1] = { role: "assistant", content: fullRef.current };
+                  copy[copy.length - 1] = { ...last, content: fullRef.current };
                 }
                 return copy;
               });
