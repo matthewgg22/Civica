@@ -1,9 +1,10 @@
 import * as Sentry from "@sentry/nextjs";
+import { scrubEvent, scrubBreadcrumb } from "./lib/sentry-scrub";
 
-// Browser-side Sentry for the Civica marketing site.
-// Mirrors apps/dashboard/sentry.client.config.ts so the PII discipline is
-// identical across the two Next surfaces. No session replay — replay
-// captures user interactions and can record PII on a SNAP intake page.
+// Browser-side Sentry for the Civica marketing site. PII scrubbing lives in
+// lib/sentry-scrub, shared with the server + edge configs. No session replay —
+// replay records user interactions and can capture PII on a SNAP intake page.
+// Was mirrored from apps/dashboard; that copy is PARKED, so this drifts.
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
@@ -11,18 +12,8 @@ Sentry.init({
   tracesSampleRate: 0.05,
   replaysSessionSampleRate: 0,
   replaysOnErrorSampleRate: 0,
-  beforeSend(event) {
-    if (event.request) {
-      event.request = {
-        ...event.request,
-        data: undefined,
-        cookies: undefined,
-        headers: { "content-type": event.request.headers?.["content-type"] ?? "" },
-      };
-    }
-    if (event.user) {
-      event.user = { id: event.user.id };
-    }
-    return event;
-  },
+  sendDefaultPii: false,
+  beforeSend: scrubEvent,
+  beforeSendTransaction: scrubEvent,
+  beforeBreadcrumb: scrubBreadcrumb,
 });

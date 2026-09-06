@@ -1,24 +1,18 @@
 import * as Sentry from "@sentry/nextjs";
+import { scrubEvent, scrubBreadcrumb } from "./lib/sentry-scrub";
 
-// Node-runtime Sentry for the marketing site server. Mirrors
-// apps/dashboard/sentry.server.config.ts.
+// Node-runtime Sentry for the marketing site server. PII scrubbing lives in
+// lib/sentry-scrub, shared with the edge + client configs — a SNAP intake
+// surface leaks via query strings, breadcrumbs and transactions, not just the
+// request body. Was mirrored from apps/dashboard; that copy is PARKED, so this
+// intentionally drifts (re-sync when it unparks).
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   environment: process.env.NODE_ENV,
   tracesSampleRate: 0.05,
-  beforeSend(event) {
-    if (event.request) {
-      event.request = {
-        ...event.request,
-        data: undefined,
-        cookies: undefined,
-        headers: { "content-type": event.request.headers?.["content-type"] ?? "" },
-      };
-    }
-    if (event.user) {
-      event.user = { id: event.user.id };
-    }
-    return event;
-  },
+  sendDefaultPii: false,
+  beforeSend: scrubEvent,
+  beforeSendTransaction: scrubEvent,
+  beforeBreadcrumb: scrubBreadcrumb,
 });
