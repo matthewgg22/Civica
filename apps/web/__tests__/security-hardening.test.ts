@@ -66,6 +66,22 @@ describe("the sink alarms actually ring", () => {
   });
 });
 
+describe("Sentry scrubs PII on every event path", () => {
+  // The old configs only scrubbed the request body on beforeSend. With tracing
+  // on, transactions bypassed it, and breadcrumbs/query strings were never
+  // touched — real leaks on a SNAP intake surface. All three configs now route
+  // through lib/sentry-scrub on error, transaction, AND breadcrumb.
+  for (const cfg of ["sentry.server.config.ts", "sentry.edge.config.ts", "sentry.client.config.ts"]) {
+    it(`${cfg} scrubs errors, transactions, and breadcrumbs`, () => {
+      const src = read(cfg);
+      expect(src).toContain("sendDefaultPii: false");
+      expect(src).toContain("beforeSend: scrubEvent");
+      expect(src).toContain("beforeSendTransaction: scrubEvent");
+      expect(src).toContain("beforeBreadcrumb: scrubBreadcrumb");
+    });
+  }
+});
+
 describe("the pilot_leads lockdown ships as a migration", () => {
   const sql = readFileSync(
     join(__dirname, "..", "..", "..", "supabase", "migrations", "20260829_pilot_leads_lockdown.sql"),
