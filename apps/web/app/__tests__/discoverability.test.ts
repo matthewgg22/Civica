@@ -112,6 +112,30 @@ describe("robots", () => {
     expect(r.sitemap).toBe("https://demeter.ai/sitemap.xml");
   });
 
+  it("keeps the parked applicant portal out of the crawl, Demeter surfaces in", async () => {
+    // The parked "CalFresh for CA college students" portal (/welcome, /apply,
+    // /why-civica, /status, /documents) is the wrong product on the launch
+    // domain; disallow it so Google indexes only the Demeter surfaces. Also
+    // block Sentry's /monitoring tunnel.
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://demeter.ai");
+    const { default: robots } = await fresh<{ default: () => { rules: unknown } }>("../robots");
+    const r = robots();
+    const rule = (Array.isArray(r.rules) ? (r.rules as unknown[])[0] : r.rules) as {
+      disallow?: string | string[];
+    };
+    const disallow = ([] as string[]).concat(rule.disallow ?? []);
+    for (const p of ["/api/", "/monitoring", "/welcome", "/why-civica", "/apply", "/status", "/documents/"]) {
+      expect(disallow, `parked ${p}`).toContain(p);
+    }
+    // The Demeter surfaces must NOT be disallowed.
+    for (const p of ["/screen", "/questions", "/states", "/guides"]) {
+      expect(
+        disallow.some((d) => d === p || d.startsWith(`${p}/`) || d.startsWith(p)),
+        `demeter ${p} stays crawlable`,
+      ).toBe(false);
+    }
+  });
+
   it("blocks indexing entirely until a canonical domain is configured", async () => {
     // Indexing a preview hostname leaves stale results outliving the mistake
     // by months. Silence is the safer default.

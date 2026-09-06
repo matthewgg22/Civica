@@ -22,7 +22,26 @@ export default function robots(): MetadataRoute.Robots {
     return { rules: [{ userAgent: "*", disallow: "/" }] };
   }
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/"] }],
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: [
+          // Metered answer endpoints — a crawler here burns the spend ceiling.
+          "/api/",
+          // Sentry's same-origin envelope tunnel (withSentryConfig tunnelRoute).
+          "/monitoring",
+          // Parked Civica applicant portal (the "CalFresh for CA college
+          // students" enrollment flow). Not the Demeter product; kept out of
+          // the index. Each route also carries a noindex meta as a backstop.
+          "/welcome",
+          "/why-civica",
+          "/apply",
+          "/status",
+          "/documents/",
+        ],
+      },
+    ],
     sitemap: absoluteUrl("/sitemap.xml"),
   };
 }
