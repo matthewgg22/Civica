@@ -57,6 +57,32 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: [
           { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+          // A FULL CSP in Report-Only first (launch audit). Report-Only NEVER
+          // blocks — it cannot break Next's inline hydration scripts — so this
+          // is the safe "observe before enforce" step the enforcing-CSP comment
+          // above asked for. It surfaces anything loading off-origin (an
+          // unexpected third-party script, an exfiltration connect target)
+          // without risk. Fonts are self-hosted (next/font/local + @fontsource)
+          // and Sentry tunnels same-origin via /monitoring, so the only
+          // off-'self' need is the browser Supabase client (auth/realtime).
+          // BEFORE ENFORCING: add a report endpoint (report-to) so violations
+          // are collected rather than only logged to each visitor's console,
+          // and replace script 'unsafe-inline' with per-request nonces.
+          {
+            key: "Content-Security-Policy-Report-Only",
+            value: [
+              "default-src 'self'",
+              "base-uri 'self'",
+              "object-src 'none'",
+              "frame-ancestors 'none'",
+              "img-src 'self' data: blob:",
+              "font-src 'self' data:",
+              "style-src 'self' 'unsafe-inline'",
+              "script-src 'self' 'unsafe-inline'",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+              "form-action 'self'",
+            ].join("; "),
+          },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
