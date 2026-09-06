@@ -28,6 +28,21 @@ describe("normalizeMessages", () => {
     expect(unwrap(normalizeMessages(input))).toEqual(input);
   });
 
+  it("preserves a per-message answer lang through resume, and only a real one", () => {
+    // Each assistant bubble carries the language it was answered in (WCAG 3.1.2)
+    // and must survive save/resume; a bogus lang is dropped rather than trusted.
+    const result = normalizeMessages([
+      { role: "user", content: "¿Califico para SNAP?" },
+      { role: "assistant", content: "Sí, es posible.", lang: "es" },
+      { role: "assistant", content: "some answer", lang: "xx" },
+    ]);
+    expect(unwrap(result)).toEqual([
+      { role: "user", content: "¿Califico para SNAP?" },
+      { role: "assistant", content: "Sí, es posible.", lang: "es" },
+      { role: "assistant", content: "some answer" },
+    ]);
+  });
+
   it("drops the empty assistant bubble a mid-stream save would capture", () => {
     // The chat appends an empty assistant message as a streaming placeholder
     // and fills it chunk by chunk. Saving one resumes into a blank answer that
