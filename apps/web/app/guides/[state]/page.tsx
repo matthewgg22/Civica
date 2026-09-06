@@ -8,6 +8,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { QUESTIONS } from "../../../lib/guide-questions";
 import { absoluteUrl } from "../../../lib/site-url";
+import { OG_IMAGE } from "../../../lib/og-image";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { DemeterFooter } from "../../../components/DemeterFooter";
 
@@ -29,10 +30,17 @@ export async function generateMetadata({
   const { state } = await params;
   const pack = packFor(state);
   if (!pack) return {};
+  const title = `SNAP in ${pack.code}: ${pack.programShort} | verified ${pack.verification.verified_on}`;
+  const description = `How SNAP works in ${pack.code}: ${pack.programShort}, run by ${pack.agencyShort}. Verified from primary sources ${pack.verification.verified_on}. Ask Demeter anything about it.`;
   return {
     alternates: { canonical: absoluteUrl(`/guides/${pack.code.toLowerCase()}`) },
-    title: `SNAP in ${pack.code}: ${pack.programShort} | verified ${pack.verification.verified_on}`,
-    description: `How SNAP works in ${pack.code}: ${pack.programShort}, run by ${pack.agencyShort}. Verified from primary sources ${pack.verification.verified_on}. Ask Demeter anything about it.`,
+    title,
+    description,
+    // The guides are the top acquisition surface; without these a shared guide
+    // link fell back to the small, no-image card. Same brand-accurate image the
+    // rest of the site uses (launch audit).
+    openGraph: { title, description, type: "article", locale: "en", images: [OG_IMAGE] },
+    twitter: { card: "summary_large_image", title, description, images: [OG_IMAGE.url] },
   };
 }
 
