@@ -91,19 +91,21 @@ export const strings = {
     languageToggleAria: "Switch language",
 
     errorStatus: "SOMETHING WENT WRONG",
-    errorTitle: "We hit an unexpected error.",
+    errorTitle: "This page didn't load.",
     errorBody:
-      "Our team has been notified. You can try again, or head back to the home page.",
+      "Something on our end went wrong, not anything you did. Try again in a moment. This doesn't affect your SNAP case or eligibility.",
     errorReferenceLabel: "Reference",
     errorRetryCta: "Try again",
-    errorHomeCta: "Back to Civica",
+    errorHomeCta: "Go to Demeter",
+    errorHelpNote:
+      "Need SNAP help right now? Contact your state SNAP agency, or dial 211 to reach a local benefits navigator.",
 
     notFoundStatus: "PAGE NOT FOUND",
-    notFoundTitle: "That page does not exist.",
+    notFoundTitle: "We couldn't find that page.",
     notFoundBody:
-      "The link may be outdated. Civica helps half-time California Community College, CSU, and UC students apply for CalFresh.",
-    notFoundHomeCta: "Go to Civica",
-    notFoundQualifyCta: "See if you qualify",
+      "The link may be old or mistyped. Demeter answers your SNAP questions using your state's own rules, and shows the rule behind every answer.",
+    notFoundHomeCta: "Go to Demeter",
+    notFoundQuestionsCta: "Browse common questions",
   },
   es: {
     eyebrow: "CalFresh para Estudiantes de California",
@@ -174,19 +176,21 @@ export const strings = {
     languageToggleAria: "Cambiar idioma",
 
     errorStatus: "ALGO SALIÓ MAL",
-    errorTitle: "Encontramos un error inesperado.",
+    errorTitle: "Esta página no se cargó.",
     errorBody:
-      "Nuestro equipo ha sido notificado. Puedes intentar de nuevo o volver al inicio.",
+      "Algo falló de nuestro lado, no fue nada que hiciste. Vuelve a intentarlo en un momento. Esto no afecta tu caso ni tu elegibilidad para SNAP.",
     errorReferenceLabel: "Referencia",
     errorRetryCta: "Intentar de nuevo",
-    errorHomeCta: "Volver a Civica",
+    errorHomeCta: "Ir a Demeter",
+    errorHelpNote:
+      "¿Necesitas ayuda con SNAP ahora? Comunícate con la agencia de SNAP de tu estado, o llama al 211 para hablar con un navegador de beneficios local.",
 
     notFoundStatus: "PÁGINA NO ENCONTRADA",
-    notFoundTitle: "Esa página no existe.",
+    notFoundTitle: "No encontramos esa página.",
     notFoundBody:
-      "El enlace puede estar desactualizado. Civica ayuda a estudiantes de medio tiempo en Community Colleges, CSU y UC de California a solicitar CalFresh.",
-    notFoundHomeCta: "Ir a Civica",
-    notFoundQualifyCta: "Ver si calificas",
+      "El enlace puede estar desactualizado o mal escrito. Demeter responde tus preguntas sobre SNAP usando las reglas de tu estado, y muestra la regla detrás de cada respuesta.",
+    notFoundHomeCta: "Ir a Demeter",
+    notFoundQuestionsCta: "Ver preguntas comunes",
   },
 } satisfies Record<LandingLocale, Record<string, string>>;
 

@@ -4,12 +4,15 @@ import { useEffect } from "react";
 import * as Sentry from "@sentry/nextjs";
 
 // Layout-level error boundary — catches errors thrown by the root layout
-// itself (next/font load failure, top-level import crash). Must own its own
-// <html> and <body> because the root layout has failed.
+// itself (next/font load failure, top-level import crash). Owns its own
+// <html>/<body> because the root layout has failed.
 //
-// Inline styles only — globals.css may not be loaded if the layout failed,
-// so CSS variables would resolve to nothing. Every color and length is a
-// literal. English only (i18n.ts may not have loaded either).
+// Inline styles only, literal values: globals.css and the --demeter-* tokens
+// may not be loaded, and the Newsreader / Be Vietnam Pro faces load via the
+// failed layout, so type falls back to Georgia / system sans. Palette is the
+// Demeter tokens spelled out: paper #FFFFFF, ink #232220, body #4B4A46, muted
+// #6C6A64, rule #E8E6E2, terracotta #C0553B / deep #8E3A26. English only
+// (i18n may not have loaded either).
 
 export default function GlobalError({
   error,
@@ -32,10 +35,10 @@ export default function GlobalError({
           minHeight: "100vh",
           margin: 0,
           padding: "1rem",
-          backgroundColor: "#F7F5EF",
-          color: "#1A1714",
+          backgroundColor: "#FFFFFF",
+          color: "#232220",
           fontFamily:
-            "'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif",
+            "'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -45,78 +48,105 @@ export default function GlobalError({
           style={{
             maxWidth: "32rem",
             width: "100%",
-            padding: "2rem",
+            padding: "2.5rem",
             backgroundColor: "#FFFFFF",
-            border: "1px solid rgba(0,0,0,0.12)",
-            borderRadius: "4px",
+            border: "1px solid #E8E6E2",
+            borderRadius: "12px",
           }}
         >
+          {/* Plain <img>, not next/image: the Next runtime this boundary
+              depends on may itself be what failed. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/demeter-wheat-mark.png"
+            alt="Demeter"
+            width={40}
+            height={40}
+            style={{ display: "block", width: 40, height: 40, borderRadius: "50%", marginBottom: "1.5rem" }}
+          />
           <p
             style={{
-              fontSize: "11px",
-              fontWeight: 700,
-              letterSpacing: "0.12em",
+              fontSize: "0.7rem",
+              fontWeight: 600,
+              letterSpacing: "0.1em",
               textTransform: "uppercase",
-              color: "#9C3A24",
-              margin: 0,
-              marginBottom: "1.25rem",
+              color: "#8E3A26",
+              margin: "0 0 0.75rem",
             }}
           >
             SOMETHING WENT WRONG
           </p>
           <h1
             style={{
-              fontSize: "1.5rem",
-              fontWeight: 700,
-              lineHeight: 1.2,
-              margin: 0,
-              marginBottom: "1.25rem",
-              letterSpacing: "-0.01em",
+              fontFamily: "'Newsreader', Georgia, 'Times New Roman', serif",
+              fontSize: "1.9rem",
+              fontWeight: 600,
+              lineHeight: 1.12,
+              letterSpacing: "-0.02em",
+              margin: "0 0 1rem",
+              color: "#232220",
             }}
           >
-            Civica could not load this page.
+            Demeter couldn&rsquo;t load this page.
           </h1>
           <p
             style={{
-              fontSize: "1rem",
-              color: "#5A544D",
+              fontFamily: "'Newsreader', Georgia, 'Times New Roman', serif",
+              fontSize: "1.05rem",
+              color: "#4B4A46",
               lineHeight: 1.6,
-              margin: 0,
-              marginBottom: "1.5rem",
+              margin: "0 0 1.5rem",
             }}
           >
-            Our team has been notified. Try reloading, or head back to the
-            home page.
+            Something on our end went wrong. Try reloading in a moment. This
+            doesn&rsquo;t affect your SNAP case or eligibility.
           </p>
-          <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: "1.25rem", alignItems: "center", flexWrap: "wrap" }}>
             <button
               type="button"
               onClick={reset}
               style={{
-                backgroundColor: "#2D5A45",
-                color: "#F7F5EF",
-                padding: "0.5rem 1.25rem",
-                borderRadius: "3px",
+                backgroundColor: "#C0553B",
+                color: "#FFFFFF",
+                padding: "0.7rem 1.4rem",
+                minHeight: 44,
+                borderRadius: "999px",
                 border: "none",
-                fontSize: "0.875rem",
+                fontSize: "0.9rem",
                 fontWeight: 600,
                 cursor: "pointer",
               }}
             >
               Try again
             </button>
+            {/* Plain <a>, not next/link: the Next runtime <Link> needs is the thing that failed here. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a
-              href="/welcome"
+              href="/"
               style={{
-                fontSize: "0.875rem",
+                fontSize: "0.9rem",
                 fontWeight: 600,
-                color: "#2D5A45",
-                textDecoration: "none",
+                color: "#C0553B",
+                textDecoration: "underline",
+                textUnderlineOffset: "2px",
               }}
             >
-              Back to Civica →
+              Go to Demeter →
             </a>
           </div>
+          <p
+            style={{
+              fontSize: "0.85rem",
+              lineHeight: 1.6,
+              color: "#6C6A64",
+              margin: "1.75rem 0 0",
+              paddingTop: "1rem",
+              borderTop: "1px solid #E8E6E2",
+            }}
+          >
+            Need SNAP help right now? Contact your state SNAP agency, or dial 211
+            to reach a local benefits navigator.
+          </p>
         </div>
       </body>
     </html>

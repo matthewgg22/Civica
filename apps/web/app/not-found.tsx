@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import * as Sentry from "@sentry/nextjs";
+import { DemeterMark } from "../components/DemeterMark";
 import { strings, STORAGE_KEY, type Locale } from "./i18n";
 
-// Root 404. Civica web is a single-route marketing surface today; most
-// not-found hits are old shared links or hand-typed URLs. Bilingual to match
-// the landing page; CTAs route back to "/" and the qualify hash anchor.
+// Root 404. Demeter-branded per apps/web/DEMETER-DESIGN.md. Most not-found hits
+// are stale links or hand-typed URLs. CTAs route to the Demeter home and to the
+// static /questions reference (which stays up even when dynamic pages fail).
 
 export default function NotFound() {
   const [locale, setLocale] = useState<Locale>("en");
@@ -21,8 +22,7 @@ export default function NotFound() {
     }
   }, []);
 
-  // Track 404 frequency as a wayfinding-gap signal. Pathname is the only
-  // tag we need to debug which dead link a user followed; no user data.
+  // Track 404 frequency as a wayfinding-gap signal; pathname only, no user data.
   useEffect(() => {
     Sentry.captureMessage("web.not_found_viewed", {
       level: "info",
@@ -36,19 +36,26 @@ export default function NotFound() {
     <main className="error-page">
       <div className="container">
         <div className="error-card">
+          <div className="error-card__mark">
+            <DemeterMark size={40} />
+          </div>
           <p className="error-card__status error-card__status--muted">
             {copy.notFoundStatus}
           </p>
           <h1 className="error-card__title">{copy.notFoundTitle}</h1>
           <p className="error-card__body">{copy.notFoundBody}</p>
           <div className="error-card__actions">
-            <a href="/welcome" className="error-card__primary-cta error-card__primary-cta--link">
+            <Link
+              href="/screen/ask"
+              className="error-card__primary-cta error-card__primary-cta--link"
+            >
               {copy.notFoundHomeCta}
-            </a>
-            <Link href="/#lead-capture" className="error-card__secondary-cta">
- →
+            </Link>
+            <Link href="/questions" className="error-card__secondary-cta">
+              {copy.notFoundQuestionsCta} →
             </Link>
           </div>
+          <p className="error-card__help">{copy.errorHelpNote}</p>
         </div>
       </div>
     </main>
