@@ -538,7 +538,7 @@ button {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--demeter-terracotta);
+  color: var(--demeter-terracotta-deep);
   text-decoration: underline;
   text-underline-offset: 2px;
   min-height: 44px;
@@ -547,7 +547,7 @@ button {
 }
 
 .error-card__secondary-cta:hover {
-  color: var(--demeter-terracotta-deep);
+  color: var(--demeter-ink);
 }
 
 .error-card__help {
