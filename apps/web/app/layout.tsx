@@ -1,5 +1,5 @@
 import { siteUrl } from "../lib/site-url";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   ROOT_DESCRIPTION,
   ROOT_OG_DESCRIPTION,
@@ -82,6 +82,15 @@ export const metadata: Metadata = {
     description: ROOT_OG_DESCRIPTION,
     type: "website",
   },
+};
+
+// Global theme colour for the mobile browser chrome / PWA status bar. White
+// matches the product's ground and the per-page viewports on /screen/ask and
+// /chat — this sets it for every other route too (guides, /states, /questions,
+// the localized pages) so the chrome is consistent when the app is added to a
+// home screen. Next merges a page-level viewport over this default.
+export const viewport: Viewport = {
+  themeColor: "#FFFFFF",
 };
 
 export default function RootLayout({
