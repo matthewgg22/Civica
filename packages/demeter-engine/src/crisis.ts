@@ -42,13 +42,26 @@ const SELF_HARM: RegExp[] = [
   // file exists to prevent — plus it silently disables the deterministic safety
   // net (#1069), which only fires when this returns non-null. Each added phrase
   // is high-signal and checked against the idiom non-matches below.
-  /\bkms\b/i, // near-universal abbreviation for "kill myself"
+  // "kms" = "kill myself", but also the plural of "km" — guarded so "20 kms
+  // away" / "5kms from the office" (kilometres) does not fire the suicide net.
+  // A preceding digit (with optional space) is the kilometre reading; the bare
+  // "i want to kms" has no digit before it and still fires.
+  /(?<!\d\s?)\bkms\b/i,
   /\bunali(ve|fe)\b/i, // the euphemism coined to evade suicide-word moderation
   /\bwish(ed)?\s+i\s+(was|were|wasn'?t|weren'?t)\s+(dead|alive|here|born)\b/i,
   /\b(i'?d\s+)?rather\s+be\s+dead\b/i,
   /\bend\s+(it|things|everything)\s+(tonight|today|tonite|now|soon|for\s+good)\b/i,
   /\bno\s+(point|reason)\s+(in\s+|to\s+)?(living|go(ing)?\s+on|keep\s+going|be(ing)?\s+(here|alive))\b/i,
   /\bbetter\s+(off\s+)?without\s+me\b/i,
+  // Passive ideation and hopelessness the set above still missed (issue #1083
+  // review). High-signal and English-only for now — the es/vi/zh equivalents
+  // are tracked in #1110, pending a native read. Each is scoped tightly enough
+  // to clear the idiom non-matches pinned in crisis.test.ts.
+  /\bnothing\s+(left\s+)?to\s+live\s+for\b/i,
+  /\b(not|isn'?t|ain'?t)\s+worth\s+living\b/i,
+  /\bwhat'?s\s+the\s+point\s+(anymore|any\s+more|of\s+(it\s+)?all)\b/i,
+  /\btired\s+of\s+(living|being\s+alive|life)\b/i,
+  /\bwant\s+to\s+disappear\b/i,
   // Spanish
   /\b(matarme|suicidarme|quitarme\s+la\s+vida|hacerme\s+da[ñn]o|lastimarme)\b/i,
   /\bquiero\s+morir(me)?\b|\bmejor\s+muert[oa]\b|\bno\s+quiero\s+vivir\b/i,
@@ -63,6 +76,12 @@ const ABUSE: RegExp[] = [
   // English. Third person acting on "me" is the shape disclosure takes.
   /\b(he|she|they|husband|wife|partner|boyfriend|girlfriend|bf|gf)\s+\w*\s*(hits?|beats?|hurts?|chokes?|strangles?)\s+me\b/i,
   /\b(hits|beats|hurts)\s+me\b|\bbeat\s+me\s+up\b/i,
+  // Wider battery-verb family with a required human/relationship subject
+  // (issue #1083 review), so "the news hit me" / "it slapped me awake" stay
+  // null. kick/push/grab are deliberately excluded — "kicked me out",
+  // "pushed me to apply", "grab me a coffee" are ordinary — pending the DV
+  // advocate's read (#1083). es/vi/zh equivalents tracked in #1110.
+  /\b(he|she|they|husband|wife|partner|boyfriend|girlfriend|bf|gf|ex)\s+\w*\s*(punch(ed|es)?|slap(ped|s)?|shov(ed|es)?)\s+me\b/i,
   /\b(is|was|being)\s+abusive\b|\babus(es|ing)\s+me\b|\bmy\s+abuser\b/i,
   /\b(scared|afraid|terrified)\s+of\s+my\s+(husband|wife|partner|boyfriend|girlfriend|ex)\b/i,
   /\bdomestic\s+violence\b|\brestraining\s+order\b/i,
