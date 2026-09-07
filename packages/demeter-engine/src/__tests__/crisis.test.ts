@@ -51,6 +51,20 @@ describe("self-harm and suicidal ideation", () => {
     }
   });
 
+  // Passive ideation and hopelessness the earlier sets still missed (issue
+  // #1083 review). English-only for now; es/vi/zh parity is tracked in #1110.
+  it("catches passive ideation and hopelessness phrasings (#1083)", () => {
+    for (const text of [
+      "there's nothing to live for",
+      "honestly it's not worth living",
+      "what's the point anymore",
+      "i'm so tired of living",
+      "i just want to disappear",
+    ]) {
+      expect(detectCrisis(text), text).toBe("self_harm");
+    }
+  });
+
   it("catches it in the other three answer languages", () => {
     expect(detectCrisis("quiero matarme")).toBe("self_harm");
     expect(detectCrisis("estaría mejor muerta")).toBe("self_harm");
@@ -68,6 +82,12 @@ describe("self-harm and suicidal ideation", () => {
       "I could kill for a decent grocery store nearby",
       "the deadline is killing my chances",
       "I'm dead broke",
+      // "kms" is also the plural of "km" — a distance must not fire the net.
+      "the pharmacy is 20 kms away",
+      "it's about 5 kms from here",
+      // The new hopelessness phrasings are scoped to not fire on form fatigue.
+      "what's the point of applying if I won't qualify",
+      "I'm tired of waiting for my benefits",
     ]) {
       expect(detectCrisis(text), text).toBeNull();
     }
@@ -114,6 +134,19 @@ describe("abuse and domestic violence", () => {
     }
   });
 
+  // Wider battery-verb family with a required human subject (issue #1083
+  // review). English-only; es/vi/zh parity tracked in #1110.
+  it("catches the wider physical-violence verb family (#1083)", () => {
+    for (const text of [
+      "my boyfriend punched me",
+      "he slapped me across the face",
+      "she shoved me into the wall",
+      "my ex punched me last night",
+    ]) {
+      expect(detectCrisis(text), text).toBe("abuse");
+    }
+  });
+
   // The false positives that would make a coercive-control gate untrustworthy
   // on a benefits site — all must stay null.
   it("does NOT fire on ordinary benefits phrasing that resembles control", () => {
@@ -125,6 +158,10 @@ describe("abuse and domestic violence", () => {
       "who controls the SNAP program",
       "how do I track my application status",
       "does the state monitor my bank account",
+      // The wider verb family must keep a human subject — these stay null.
+      "the news really hit me",
+      "he pushed me to apply on time",
+      "my landlord kicked me out last month",
     ]) {
       expect(detectCrisis(text), text).toBeNull();
     }
