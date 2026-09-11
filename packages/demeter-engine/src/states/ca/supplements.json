@@ -272,6 +272,35 @@
       "heading": "Why your first month is prorated — and why the amount changes",
       "text": "FIRST (INITIAL) MONTH IS PRORATED: benefits for the month you apply are counted from the DATE OF APPLICATION, not the whole month (7 CFR 273.10(a)(1)(ii)). Apply on the 2nd and you receive most of the month; apply on the 20th and you receive about a third. This is normal, not an error, and you do NOT get benefits for months BEFORE you applied (there is no back-pay for a gap before the application date). BUT the county has 30 days to process a normal application (7 CFR 273.2(g)) and 7 days for expedited service (7 CFR 273.2(i)); if approval comes LATE, benefits are still owed back to your APPLICATION date — a prorated first month PLUS each full month since — not merely from the approval date. A common complaint fits this exactly: applied June 2, approved July 21, but only July was paid — the household is generally owed the prorated June amount as well, and benefits lost to agency delay or error are RESTORED, up to 12 months back (7 CFR 273.17); that is an underpayment to raise with the county or on appeal. WHY THE AMOUNT CHANGES WHEN INCOME DID NOT: the benefit is computed from net income AFTER deductions, so it can swing when a DEDUCTION changes even if earnings did not. The most common cause of a sudden drop is a lost deduction — the shelter deduction, the standard utility allowance (SUA), or a medical or dependent-care deduction — frequently dropped because a verification lapsed at recertification, then restored the next period, which produces the classic 'normal, then very low, then back to normal' pattern. Other causes: income averaged or annualized differently, a change in household size, or the annual October cost-of-living adjustment. IF THE AMOUNT DROPPED SHARPLY WITH NO REAL CHANGE, ask the county WHICH deduction changed and why — an expense dropped only because it was not verified should have been budgeted, not zeroed out (see the verification-limits guidance), and the household can request a correction and a fair hearing. Do not quote a specific dollar amount or grant figure; explain the mechanism and send the person to the county for their exact numbers.",
       "source_url": "https://www.ecfr.gov/current/title-7/section-273.10"
+    },
+    {
+      "key": "sua-liheap-deduction",
+      "kind": "supplement",
+      "terms": [
+        "liheap",
+        "energy assistance",
+        "energy bill help",
+        "utility allowance",
+        "standard utility allowance",
+        "sua",
+        "hcsua",
+        "heating and cooling",
+        "heating or cooling",
+        "heating costs",
+        "cooling costs",
+        "weatherization",
+        "internet deduction",
+        "internet bill",
+        "does internet count",
+        "count my internet",
+        "wifi",
+        "broadband",
+        "utility bill help"
+      ],
+      "citation": "7 CFR 273.9(d)(6) (standard utility allowance) — as amended by OBBBA §10103 and §10104 (Pub. L. 119-21)",
+      "heading": "Utility allowance (SUA), LIHEAP and internet — what OBBBA changed",
+      "text": "The Standard Utility Allowance (SUA) is a fixed utility figure used inside the excess-shelter deduction; the largest is the Heating and Cooling SUA (HCSUA), and qualifying for it RAISES the benefit. LIHEAP / ENERGY-ASSISTANCE CHANGE (OBBBA §10103, effective 7/4/2025): receiving a LIHEAP (or similar energy-assistance) payment now automatically confers the HCSUA ONLY for a household that includes an ELDERLY (age 60 or older) or DISABLED member. A household with NO elderly or disabled member no longer gets the HCSUA automatically from a LIHEAP payment — BUT it can still get the HCSUA the ordinary way, by actually INCURRING heating or cooling costs, so those households should report their utility costs at recertification. Nothing changed for elderly/disabled households. LOOKBACK: for an elderly/disabled household a qualifying energy-assistance payment counts if it was received in the month of application OR in the prior 12 months — an older payment still helps. WEATHERIZATION: a weatherization payment counts as 'other similar energy assistance,' so the same elderly/disabled condition applies to it for the HCSUA; but a ONE-TIME weatherization or emergency energy repair/replacement payment is NOT counted as income at all — two separate rules, so do not conflate 'does it give the HCSUA' with 'is it income.' MID-CERTIFICATION PROTECTION: a State may NOT strip the HCSUA from an ONGOING non-elderly/non-disabled household in the middle of its certification period, cannot send a request-for-contact just for that, and cannot close the case for non-response — the change is applied at the next RECERTIFICATION, not immediately. SPLIT HOUSEHOLD: if a household with an elderly/disabled member splits into two SNAP households, each new household is tested SEPARATELY for an elderly/disabled member; a split-off household without one falls back to the incur-costs test. INTERNET (OBBBA §10104, effective 7/4/2025): internet, broadband or Wi-Fi costs may NO LONGER be counted in the excess-shelter deduction or in any SUA — do not advise reporting internet to raise the benefit. Internet itself can never be counted; if it is bundled with other, genuinely allowable utilities on one bill, the internet portion is excluded and the county determines how the rest of the bill is treated — have the household ask the county about a combined bill rather than assuming a split. IMPORTANT FRAMING: every rule here changes the benefit AMOUNT, not whether the household QUALIFIES — never tell someone they are ineligible over a utility or internet issue, and never quote a specific SUA dollar figure; California sets its SUA values statewide, so send the person to the county or CDSS for the current amounts.",
+      "source_url": "https://www.ecfr.gov/current/title-7/section-273.9"
     }
   ],
   "supersessions": {
