@@ -26,6 +26,18 @@
   "known": {
     "acl": [
       {
+        "value": "ACL 24-31",
+        "note": "CalFresh Student Eligibility Handbook (student exemptions; some verified by client statement)"
+      },
+      {
+        "value": "ACL 25-34",
+        "note": "Releases CF 887 (medical certification / unfitness) and CF 888 (ABAWD volunteer-hours verification)"
+      },
+      {
+        "value": "ACL 26-11",
+        "note": "Truv — optional consent-based income/employment/work-hours verification tool"
+      },
+      {
         "value": "ACL 25-68",
         "note": null
       },

@@ -158,10 +158,23 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
   it("carries the ACL/ACIN + MPP authority sets at their pre-refactor sizes", () => {
     const acl = ca.authorities.find((p) => p.key === "acl")!;
     const mpp = ca.authorities.find((p) => p.key === "mpp")!;
-    expect(acl.known.size).toBe(15);
+    // 15 originally + 3 CDSS FOIA ACLs registered so the verifier accepts them.
+    expect(acl.known.size).toBe(18);
     expect(mpp.known.size).toBe(15);
     expect(acl.known.has("ACL 20-48")).toBe(true);
     expect(mpp.known.has("MPP 63-300")).toBe(true);
+    // The mined CDSS ACLs must be registered (else the verifier flags them).
+    for (const a of ["ACL 24-31", "ACL 25-34", "ACL 26-11", "ACL 25-68"]) {
+      expect(acl.known.has(a), `${a} should be a known CA authority`).toBe(true);
+    }
+  });
+
+  it("wires the mined CDSS ACL citations into the matching supplements", () => {
+    const cite = (k: string) => ca.topics.find((t) => t.key === k)!.citation;
+    expect(cite("sua-liheap-deduction")).toContain("ACL 25-68");
+    expect(cite("household-composition")).toContain("ACL 24-31");
+    expect(cite("abawd-current-rules")).toContain("ACL 25-34");
+    expect(cite("verification-limits")).toContain("26-11");
   });
 
   it("keeps the CA ABAWD supersession addendum for 273.24", () => {
