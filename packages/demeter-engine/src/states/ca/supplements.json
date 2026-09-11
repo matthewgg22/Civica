@@ -21,6 +21,12 @@
         "police report",
         "stolen benefits",
         "replace my benefits",
+        "ebtedge",
+        "check my balance",
+        "set a pin",
+        "change my pin",
+        "safe app",
+        "which app",
         "who do i call"
       ],
       "suppress_sections": [
@@ -28,7 +34,7 @@
       ],
       "citation": "Operational — EBT customer service (issuance: 7 CFR 274)",
       "heading": "EBT card / balance problems — not a policy question",
-      "text": "EBT card issues (lost or stolen card, PIN reset, balance, transaction disputes, skimming/stolen benefits) are handled by EBT Customer Service, not by a policy citation. California EBT Customer Service: 1-888-328-2656 (24/7) — advise the client to call immediately to freeze a lost/stolen card. The general benefit-issuance rules are at 7 CFR 274. STOLEN / skimmed benefits: California does NOT require a police report to request replacement of electronically stolen benefits (confirmed in FNS's FFY2024 EBT management evaluation of CDSS) — do not tell a client to file a police report first. The replacement rules and claim window have shifted recently, so confirm the current CDSS process and deadline, but never gate the ask on a police report.",
+      "text": "EBT card issues (lost or stolen card, PIN reset, balance, transaction disputes, skimming/stolen benefits) are handled by EBT Customer Service, not by a policy citation. California EBT Customer Service: 1-888-328-2656 (24/7) — advise the client to call immediately to freeze a lost/stolen card. THE OFFICIAL self-service tools are the ebtEDGE mobile app and the ebtEDGE web portal (and California's cardholder site www.ebt.ca.gov) — use these or EBT Customer Service to check a balance, set or change a PIN, and freeze a lost or stolen card. Do card-security actions (PIN changes, freezing a card) through the official ebtEDGE app/portal or Customer Service, NOT a third-party balance app: per CDSS's FFY2024 EBT management-evaluation response, secure PIN changes are made 'by calling EBT Customer Service or by enrolling in the ebtEDGE mobile application and web portal.' The general benefit-issuance rules are at 7 CFR 274. STOLEN / skimmed benefits: California does NOT require a police report to request replacement of electronically stolen benefits (confirmed in FNS's FFY2024 EBT management evaluation of CDSS) — do not tell a client to file a police report first. The replacement rules and claim window have shifted recently, so confirm the current CDSS process and deadline, but never gate the ask on a police report.",
       "source_url": "https://www.ecfr.gov/current/title-7/part-274"
     },
     {
