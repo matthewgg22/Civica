@@ -79,6 +79,8 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
       // real-world question types the corpus lacked an answer-facing entry for.
       "household-composition",
       "benefit-amount-proration",
+      // Batch 3: the OBBBA §10103/§10104 utility-allowance + internet corner cases.
+      "sua-liheap-deduction",
     ]);
   });
 
@@ -127,6 +129,10 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
     // First-month proration + benefits restored back to the application date.
     expect(ben.text).toContain("273.10(a)(1)(ii)");
     expect(ben.text).toContain("RESTORED");
+    // Batch 3: the OBBBA §10103 LIHEAP→HCSUA elderly/disabled gate + §10104 internet ban.
+    const sua = ca.topics.find((t) => t.key === "sua-liheap-deduction")!;
+    expect(sua.text).toContain("ELDERLY (age 60 or older) or DISABLED");
+    expect(sua.text).toContain("§10104");
   });
 
   it("carries the ACL/ACIN + MPP authority sets at their pre-refactor sizes", () => {
