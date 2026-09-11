@@ -65,8 +65,9 @@ describe("state-pack registry", () => {
 describe("CA pack — Wave-0 extraction fidelity", () => {
   const ca = getStatePack("CA")!;
 
-  it("carries the seven formerly-hardcoded topics in original iteration order", () => {
+  it("carries the seven Wave-0 topics in order, plus the FOIA-batch-2 additions", () => {
     expect(ca.topics.map((t) => t.key)).toEqual([
+      // The seven originally hardcoded in retrieval.ts, in their original order.
       "ebt-operational",
       "eligible-foods",
       "abawd-current-rules",
@@ -74,6 +75,10 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
       "cf886-decoder",
       "qc-element-glossary",
       "negative-action-validity",
+      // Batch 2 (USDA FOIA 2026-FNS-04753-F integration): the two highest-volume
+      // real-world question types the corpus lacked an answer-facing entry for.
+      "household-composition",
+      "benefit-amount-proration",
     ]);
   });
 
@@ -109,6 +114,19 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
     const verif = ca.topics.find((t) => t.key === "verification-limits")!;
     expect(verif.text).toContain("273.12(a)(4)(v)");
     expect(verif.text).toContain("WITHOUT that deduction");
+  });
+
+  // Batch 2: the two highest-volume real-world question types (household
+  // composition; benefit amount / proration) — sourced from the eCFR corpus.
+  it("carries the batch-2 household-composition and proration entries", () => {
+    const hh = ca.topics.find((t) => t.key === "household-composition")!;
+    // The purchase-and-prepare test and the under-22 mandatory-household rule.
+    expect(hh.text).toContain("BUY and PREPARE");
+    expect(hh.text).toContain("UNDER 22");
+    const ben = ca.topics.find((t) => t.key === "benefit-amount-proration")!;
+    // First-month proration + benefits restored back to the application date.
+    expect(ben.text).toContain("273.10(a)(1)(ii)");
+    expect(ben.text).toContain("RESTORED");
   });
 
   it("carries the ACL/ACIN + MPP authority sets at their pre-refactor sizes", () => {
