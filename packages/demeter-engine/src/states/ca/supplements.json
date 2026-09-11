@@ -338,6 +338,35 @@
       "heading": "Noncitizen SNAP eligibility (§10108) — PROVISIONAL, confirm with a caseworker or legal aid",
       "text": "IMPORTANT — this area changed on 7/4/2025 (OBBBA §10108) AND is under active litigation (New York v. Rollins, in which California is a plaintiff), so enforcement in California is in flux. NEVER give a definitive yes/no on immigration-based eligibility; explain the general rule and route the person to their county caseworker AND a nonprofit immigration legal-aid provider for a determination on their own facts. GENERAL RULE post-7/4/2025: the immigration statuses that confer SNAP eligibility BY STATUS were narrowed to LAWFUL PERMANENT RESIDENT (green card), CUBAN/HAITIAN ENTRANT, and COFA (Freely Associated States) citizen. Refugees and asylees — including children under 18 — are no longer eligible by that status ALONE. Two things soften this and MUST be surfaced so no one wrongly self-excludes: (1) a former refugee, asylee, or trafficking survivor who has SINCE ADJUSTED to LPR (has a green card now) IS eligible, and is NOT required to serve a new 5-year wait — so always ask 'do you have a green card now?' before saying no; (2) the 5-year PRWORA waiting period for LPRs is UNCHANGED by OBBBA, and is waived for anyone under 18, blind/disabled, with 40 qualifying work quarters, a U.S. military connection, or who adjusted from a wait-exempt status. MIXED-STATUS HOUSEHOLDS (counter the chilling effect): if some members are ineligible, the ELIGIBLE members — especially U.S.-citizen or LPR children — can STILL receive SNAP. The ineligible member is a 'non-applicant': they do not have to give an SSN or immigration status, though their income may still be counted (in full or pro-rated). Applying for the eligible members does not force the ineligible member to disclose status. CALIFORNIA FALLBACK: many immigrants excluded from federal SNAP may qualify for the California Food Assistance Program (CFAP), the state-funded analog — refer them there instead of a dead end. PUBLIC CHARGE: SNAP is generally not counted for most family members for public-charge purposes, but that is a legal question — do not give a conclusion; send it to immigration legal aid. Always confirm the current litigation status (NY v. Rollins) and current CDSS guidance before stating any of this as settled.",
       "source_url": "https://www.ecfr.gov/current/title-7/section-273.4"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expenses",
+        "medical bills",
+        "medical costs",
+        "out of pocket medical",
+        "out-of-pocket medical",
+        "prescription",
+        "prescriptions",
+        "medicare premium",
+        "medicare premiums",
+        "doctor bills",
+        "standard medical deduction",
+        "smd",
+        "senior deduction",
+        "deduct medical",
+        "copay",
+        "dental costs",
+        "health insurance premium",
+        "transportation to the doctor"
+      ],
+      "citation": "7 CFR 273.9(d)(3) (medical deduction); CDSS ACL 24-59 and ACL 26-04 (CalFresh Standard Medical Deduction demonstration)",
+      "heading": "Medical-expense deduction — elderly/disabled only, and often missed",
+      "text": "The medical-expense deduction is available ONLY to a household that has an ELDERLY (age 60 or older) or DISABLED member (7 CFR 273.9(d)(3)) — a household without one cannot deduct medical costs at all. For a household that qualifies, out-of-pocket medical costs above a small monthly threshold are deductible, the deduction RAISES the benefit, and yet it is one of the most commonly MISSED deductions among seniors. Broadly deductible costs (for the elderly/disabled member): prescriptions and provider-ordered over-the-counter items, doctor / dental / vision / hearing care, Medicare and other health-insurance premiums, co-pays and deductibles, transportation and lodging to get medical care, medical supplies and equipment, and a service animal's costs. CALIFORNIA — STANDARD MEDICAL DEDUCTION (SMD): rather than documenting every expense, California runs a Standard Medical Deduction demonstration (CDSS ACL 24-59, extended through September 30, 2029 by ACL 26-04) that lets a qualifying household claim a flat STANDARD amount once it verifies medical expenses above the monthly floor, up to a state-set ceiling — far less paperwork than itemizing. A household whose actual monthly medical costs exceed that ceiling can instead verify ACTUAL expenses to get a larger deduction. Practical advice: if anyone in the household is 60 or older or disabled, ask about medical expenses and claim them — a receipt or two can raise the benefit. Never quote a specific dollar threshold or deduction amount; the SMD floor and standard amount are set by the state and change, so send the person to the county or CDSS for the current figures.",
+      "source_url": "https://www.ecfr.gov/current/title-7/section-273.9"
     }
   ],
   "supersessions": {

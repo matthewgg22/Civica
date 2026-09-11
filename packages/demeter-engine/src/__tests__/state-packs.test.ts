@@ -82,6 +82,8 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
       "benefit-amount-proration",
       // Batch 3: the OBBBA §10103/§10104 utility-allowance + internet corner cases.
       "sua-liheap-deduction",
+      // Standard Medical Deduction (CDSS ACL 24-59 / 26-04).
+      "medical-deduction",
     ]);
   });
 
@@ -158,13 +160,13 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
   it("carries the ACL/ACIN + MPP authority sets at their pre-refactor sizes", () => {
     const acl = ca.authorities.find((p) => p.key === "acl")!;
     const mpp = ca.authorities.find((p) => p.key === "mpp")!;
-    // 15 originally + 3 CDSS FOIA ACLs registered so the verifier accepts them.
-    expect(acl.known.size).toBe(18);
+    // 15 originally + 5 CDSS FOIA ACLs registered so the verifier accepts them.
+    expect(acl.known.size).toBe(20);
     expect(mpp.known.size).toBe(15);
     expect(acl.known.has("ACL 20-48")).toBe(true);
     expect(mpp.known.has("MPP 63-300")).toBe(true);
     // The mined CDSS ACLs must be registered (else the verifier flags them).
-    for (const a of ["ACL 24-31", "ACL 25-34", "ACL 26-11", "ACL 25-68"]) {
+    for (const a of ["ACL 24-31", "ACL 25-34", "ACL 26-11", "ACL 25-68", "ACL 24-59", "ACL 26-04"]) {
       expect(acl.known.has(a), `${a} should be a known CA authority`).toBe(true);
     }
   });
@@ -175,6 +177,11 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
     expect(cite("household-composition")).toContain("ACL 24-31");
     expect(cite("abawd-current-rules")).toContain("ACL 25-34");
     expect(cite("verification-limits")).toContain("26-11");
+    expect(cite("medical-deduction")).toContain("ACL 24-59");
+    // The SMD entry is elderly/disabled-gated and no hardcoded dollar figures.
+    const med = ca.topics.find((t) => t.key === "medical-deduction")!;
+    expect(med.text).toContain("ELDERLY (age 60 or older) or DISABLED");
+    expect(med.text).not.toMatch(/\$\d/);
   });
 
   it("keeps the CA ABAWD supersession addendum for 273.24", () => {
