@@ -301,6 +301,43 @@
       "heading": "Utility allowance (SUA), LIHEAP and internet — what OBBBA changed",
       "text": "The Standard Utility Allowance (SUA) is a fixed utility figure used inside the excess-shelter deduction; the largest is the Heating and Cooling SUA (HCSUA), and qualifying for it RAISES the benefit. LIHEAP / ENERGY-ASSISTANCE CHANGE (OBBBA §10103, effective 7/4/2025): receiving a LIHEAP (or similar energy-assistance) payment now automatically confers the HCSUA ONLY for a household that includes an ELDERLY (age 60 or older) or DISABLED member. A household with NO elderly or disabled member no longer gets the HCSUA automatically from a LIHEAP payment — BUT it can still get the HCSUA the ordinary way, by actually INCURRING heating or cooling costs, so those households should report their utility costs at recertification. Nothing changed for elderly/disabled households. LOOKBACK: for an elderly/disabled household a qualifying energy-assistance payment counts if it was received in the month of application OR in the prior 12 months — an older payment still helps. WEATHERIZATION: a weatherization payment counts as 'other similar energy assistance,' so the same elderly/disabled condition applies to it for the HCSUA; but a ONE-TIME weatherization or emergency energy repair/replacement payment is NOT counted as income at all — two separate rules, so do not conflate 'does it give the HCSUA' with 'is it income.' MID-CERTIFICATION PROTECTION: a State may NOT strip the HCSUA from an ONGOING non-elderly/non-disabled household in the middle of its certification period, cannot send a request-for-contact just for that, and cannot close the case for non-response — the change is applied at the next RECERTIFICATION, not immediately. SPLIT HOUSEHOLD: if a household with an elderly/disabled member splits into two SNAP households, each new household is tested SEPARATELY for an elderly/disabled member; a split-off household without one falls back to the incur-costs test. INTERNET (OBBBA §10104, effective 7/4/2025): internet, broadband or Wi-Fi costs may NO LONGER be counted in the excess-shelter deduction or in any SUA — do not advise reporting internet to raise the benefit. Internet itself can never be counted; if it is bundled with other, genuinely allowable utilities on one bill, the internet portion is excluded and the county determines how the rest of the bill is treated — have the household ask the county about a combined bill rather than assuming a split. IMPORTANT FRAMING: every rule here changes the benefit AMOUNT, not whether the household QUALIFIES — never tell someone they are ineligible over a utility or internet issue, and never quote a specific SUA dollar figure; California sets its SUA values statewide, so send the person to the county or CDSS for the current amounts.",
       "source_url": "https://www.ecfr.gov/current/title-7/section-273.9"
+    },
+    {
+      "key": "noncitizen-eligibility",
+      "kind": "supplement",
+      "disabled": true,
+      "review_note": "STAGED, NOT SERVED — pending legal/counsel sign-off. Immigration-eligibility copy carries material-misrepresentation risk and §10108 is under active litigation (NY v. Rollins; California is a plaintiff), so it must not reach a user until reviewed. Cross-ref the iOS OBBBA audit Q4 (docs/OBBBA-counsel-brief-2026-05.docx) and issue #1114. Content is fact-checked against the REVISED 12/10/2025 alien-eligibility Q&A and HB310 §822; flip `disabled` to false once approved.",
+      "terms": [
+        "noncitizen",
+        "non-citizen",
+        "immigrant",
+        "immigration status",
+        "green card",
+        "lpr",
+        "lawful permanent resident",
+        "refugee",
+        "asylee",
+        "asylum",
+        "cofa",
+        "cuban haitian",
+        "five year bar",
+        "5 year bar",
+        "qualified alien",
+        "do immigrants qualify",
+        "can immigrants get snap",
+        "undocumented",
+        "mixed status",
+        "mixed-status",
+        "citizen kids",
+        "citizen children",
+        "cfap",
+        "california food assistance",
+        "public charge"
+      ],
+      "citation": "OBBBA §10108 (Pub. L. 119-21); 7 CFR 273.4 (alien eligibility); PRWORA 5-year bar — PROVISIONAL, under active litigation (NY v. Rollins)",
+      "heading": "Noncitizen SNAP eligibility (§10108) — PROVISIONAL, confirm with a caseworker or legal aid",
+      "text": "IMPORTANT — this area changed on 7/4/2025 (OBBBA §10108) AND is under active litigation (New York v. Rollins, in which California is a plaintiff), so enforcement in California is in flux. NEVER give a definitive yes/no on immigration-based eligibility; explain the general rule and route the person to their county caseworker AND a nonprofit immigration legal-aid provider for a determination on their own facts. GENERAL RULE post-7/4/2025: the immigration statuses that confer SNAP eligibility BY STATUS were narrowed to LAWFUL PERMANENT RESIDENT (green card), CUBAN/HAITIAN ENTRANT, and COFA (Freely Associated States) citizen. Refugees and asylees — including children under 18 — are no longer eligible by that status ALONE. Two things soften this and MUST be surfaced so no one wrongly self-excludes: (1) a former refugee, asylee, or trafficking survivor who has SINCE ADJUSTED to LPR (has a green card now) IS eligible, and is NOT required to serve a new 5-year wait — so always ask 'do you have a green card now?' before saying no; (2) the 5-year PRWORA waiting period for LPRs is UNCHANGED by OBBBA, and is waived for anyone under 18, blind/disabled, with 40 qualifying work quarters, a U.S. military connection, or who adjusted from a wait-exempt status. MIXED-STATUS HOUSEHOLDS (counter the chilling effect): if some members are ineligible, the ELIGIBLE members — especially U.S.-citizen or LPR children — can STILL receive SNAP. The ineligible member is a 'non-applicant': they do not have to give an SSN or immigration status, though their income may still be counted (in full or pro-rated). Applying for the eligible members does not force the ineligible member to disclose status. CALIFORNIA FALLBACK: many immigrants excluded from federal SNAP may qualify for the California Food Assistance Program (CFAP), the state-funded analog — refer them there instead of a dead end. PUBLIC CHARGE: SNAP is generally not counted for most family members for public-charge purposes, but that is a legal question — do not give a conclusion; send it to immigration legal aid. Always confirm the current litigation status (NY v. Rollins) and current CDSS guidance before stating any of this as settled.",
+      "source_url": "https://www.ecfr.gov/current/title-7/section-273.4"
     }
   ],
   "supersessions": {

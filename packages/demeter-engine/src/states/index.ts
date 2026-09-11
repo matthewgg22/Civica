@@ -246,6 +246,14 @@ export interface PackTopic {
   heading: string;
   text: string;
   source_url: string;
+  /** Staged-but-not-served. When true, buildPack drops this topic from the live
+   *  pack so it never reaches retrieval or an answer. Used to commit copy that
+   *  still needs sign-off (e.g. counsel review of immigration-eligibility
+   *  statements) without shipping it. Flip to false (or delete the field) once
+   *  approved — the content is already fact-checked and wired. */
+  disabled?: boolean;
+  /** For a disabled topic: why it is staged and what unblocks it. */
+  review_note?: string;
 }
 
 export interface PackAuthorityPattern {
@@ -312,7 +320,9 @@ function buildPack(
 ): StatePack {
   return {
     ...pack,
-    topics: supplements.supplements,
+    // Staged-but-not-served topics (disabled: true) are dropped from the live
+    // pack — committed and reviewable, but never retrieved until approved.
+    topics: supplements.supplements.filter((t) => !t.disabled),
     ...(supplements.supersessions ? { supersessions: supplements.supersessions } : {}),
     authorities: authorities.patterns.map((p) => ({
       ...p,

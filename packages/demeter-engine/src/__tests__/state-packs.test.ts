@@ -9,6 +9,7 @@
 
 import { describe, it, expect } from "vitest";
 import { getStatePack, registeredStates, DEFAULT_STATE } from "../states";
+import caSupplementsRaw from "../states/ca/supplements.json";
 
 describe("state-pack registry", () => {
   it("registers CA and defaults to it", () => {
@@ -133,6 +134,25 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
     const sua = ca.topics.find((t) => t.key === "sua-liheap-deduction")!;
     expect(sua.text).toContain("ELDERLY (age 60 or older) or DISABLED");
     expect(sua.text).toContain("§10104");
+  });
+
+  // The counsel-gated noncitizen (§10108 + CFAP) entry is committed but STAGED:
+  // disabled: true, so buildPack drops it and it is never retrieved/served. This
+  // pins the built-but-off contract — present and ready, but not live until a
+  // reviewer flips `disabled` to false. (Cross-ref #1114.)
+  it("stages the noncitizen entry but does NOT serve it (disabled)", () => {
+    const raw = (caSupplementsRaw as { supplements: Array<{ key: string; disabled?: boolean; terms: string[]; citation: string; text: string; source_url: string }> }).supplements;
+    const nc = raw.find((s) => s.key === "noncitizen-eligibility");
+    // Committed and flagged staged-but-off...
+    expect(nc, "noncitizen entry should be committed").toBeTruthy();
+    expect(nc!.disabled, "must be disabled pending counsel").toBe(true);
+    // ...well-formed, so it is ready to flip on without more work...
+    expect(nc!.terms.length).toBeGreaterThan(0);
+    expect(nc!.citation.length).toBeGreaterThan(0);
+    expect(nc!.text.length).toBeGreaterThan(100);
+    expect(nc!.source_url).toMatch(/^https:\/\//);
+    // ...but NEVER in the live pack (not retrieved, not served).
+    expect(ca.topics.map((t) => t.key)).not.toContain("noncitizen-eligibility");
   });
 
   it("carries the ACL/ACIN + MPP authority sets at their pre-refactor sizes", () => {
