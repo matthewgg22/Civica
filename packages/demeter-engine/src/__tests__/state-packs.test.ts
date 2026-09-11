@@ -103,6 +103,8 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
     // Stolen-EBT: California requires no police report to replace stolen benefits.
     const ebt = ca.topics.find((t) => t.key === "ebt-operational")!;
     expect(ebt.text).toContain("does NOT require a police report");
+    // The official self-service portal (answers the "which app is safe?" cluster).
+    expect(ebt.text).toContain("ebtEDGE");
     // Deductible-expense denial remedy, anchored to the corpus-known federal cite.
     const verif = ca.topics.find((t) => t.key === "verification-limits")!;
     expect(verif.text).toContain("273.12(a)(4)(v)");
