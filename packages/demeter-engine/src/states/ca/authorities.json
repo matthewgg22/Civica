@@ -38,6 +38,14 @@
         "note": "Truv — optional consent-based income/employment/work-hours verification tool"
       },
       {
+        "value": "ACL 24-59",
+        "note": "CalFresh Standard Medical Deduction demonstration — increased amount"
+      },
+      {
+        "value": "ACL 26-04",
+        "note": "CalFresh Standard Medical Deduction demonstration — extended through 9/30/2029"
+      },
+      {
         "value": "ACL 25-68",
         "note": null
       },
