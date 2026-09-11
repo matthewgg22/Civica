@@ -90,6 +90,27 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
     expect(validity.text).toContain("CALIFORNIA law");
   });
 
+  // Niche corner cases integrated from the USDA FOIA 2026-FNS-04753-F audit.
+  // Each is a place a general answer goes wrong; pin the load-bearing phrase so a
+  // future edit to these long entries can't silently drop the fix.
+  it("carries the FOIA-derived niche corner cases", () => {
+    const abawd = ca.topics.find((t) => t.key === "abawd-current-rules")!;
+    // The 60-64 "triple status" tangle and the Social-Security distinction.
+    expect(abawd.text).toContain("AGE 60-64");
+    expect(abawd.text).toContain("Social Security RETIREMENT or SURVIVOR benefits alone do not");
+    // The 12-vs-14 look-alike child-age cutoff must be flagged in-entry.
+    expect(abawd.text).toContain("under 12");
+    // Stolen-EBT: California requires no police report to replace stolen benefits.
+    const ebt = ca.topics.find((t) => t.key === "ebt-operational")!;
+    expect(ebt.text).toContain("does NOT require a police report");
+    // The official self-service portal (answers the "which app is safe?" cluster).
+    expect(ebt.text).toContain("ebtEDGE");
+    // Deductible-expense denial remedy, anchored to the corpus-known federal cite.
+    const verif = ca.topics.find((t) => t.key === "verification-limits")!;
+    expect(verif.text).toContain("273.12(a)(4)(v)");
+    expect(verif.text).toContain("WITHOUT that deduction");
+  });
+
   it("carries the ACL/ACIN + MPP authority sets at their pre-refactor sizes", () => {
     const acl = ca.authorities.find((p) => p.key === "acl")!;
     const mpp = ca.authorities.find((p) => p.key === "mpp")!;
