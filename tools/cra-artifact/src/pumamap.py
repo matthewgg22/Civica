@@ -103,12 +103,38 @@ class PumaMapError(Exception):
     pass
 
 
+CONTEXT_FILL = "#F2F1ED"    # surrounding counties (neutral geographic context)
+CONTEXT_STROKE = "#DBD8D3"  # thin county hairlines in the context
+COUNTY_LINE = "#6C6A64"     # AA county boundaries, drawn over the PUMA mosaic
+
+
+def _state_counties(state):
+    """{county NAME: geometry} for the state, from the national county file."""
+    fips = STATES[state][0]
+    g = json.loads(US_COUNTIES.read_text())
+    return {f["properties"]["NAME"]: f["geometry"]
+            for f in g["features"] if f.get("id", "").startswith(fips)}
+
+
+def _bbox(geom):
+    pts = [pt for ring in _rings(geom) for pt in ring]
+    xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
 def regional_puma_svg(aa_counties, state, width=430, height=250):
-    """Choropleth of AA PUMAs shaded by eligible-but-unenrolled count."""
+    """AA PUMAs shaded by unmet need, set in surrounding-county context.
+
+    Three layers, back to front: (1) surrounding counties in a light neutral so
+    the assessment area reads in its regional/state place; (2) the AA's PUMAs
+    shaded by eligible-but-unenrolled count (low-sample gray); (3) the AA county
+    outlines on top, so county structure stays legible over the PUMA mosaic.
+    """
     cfg = STATES[state]
     geoms = {f["properties"]["puma"]: f["geometry"]
              for f in json.loads(cfg[1].read_text())["features"]}
     need = load_puma_need(state)
+    counties = _state_counties(state)
     countyfps = _county_fips(state, aa_counties)
     aa_pumas = sorted(_pumas_for_counties(state, countyfps) & set(geoms))
     if not aa_pumas:
@@ -118,37 +144,54 @@ def regional_puma_svg(aa_counties, state, width=430, height=250):
             if p in need and not need[p]["low_conf"]]
     lo, hi = (min(vals), max(vals)) if vals else (0.0, 1.0)
 
-    aa_pts = [pt for p in aa_pumas for ring in _rings(geoms[p]) for pt in ring]
+    # Frame on the AA counties, expanded so surrounding counties show as context.
+    aa_pts = [pt for c in aa_counties if c in counties
+              for ring in _rings(counties[c]) for pt in ring] \
+        or [pt for p in aa_pumas for ring in _rings(geoms[p]) for pt in ring]
     lons, lats = [q[0] for q in aa_pts], [q[1] for q in aa_pts]
     cx, cy = (min(lons) + max(lons)) / 2, (min(lats) + max(lats)) / 2
-    half_w = max((max(lons) - min(lons)) / 2, 0.05) * 1.04
-    half_h = max((max(lats) - min(lats)) / 2, 0.05) * 1.04
+    expand = 2.0 if len(aa_counties) == 1 else 1.28
+    half_w = max((max(lons) - min(lons)) / 2, 0.05) * expand
+    half_h = max((max(lats) - min(lats)) / 2, 0.05) * expand
+    fminx, fmaxx, fminy, fmaxy = cx - half_w, cx + half_w, cy - half_h, cy + half_h
     lat0 = math.radians(cy)
-    minx = (cx - half_w) * math.cos(lat0)
-    maxx = (cx + half_w) * math.cos(lat0)
-    miny, maxy = cy - half_h, cy + half_h
-    pad = 6
+    minx, maxx, miny, maxy = fminx * math.cos(lat0), fmaxx * math.cos(lat0), fminy, fmaxy
+    pad = 4
     s = min((width - 2 * pad) / (maxx - minx), (height - 2 * pad) / (maxy - miny))
     ox = (width - (maxx - minx) * s) / 2
     oy = (height - (maxy - miny) * s) / 2
 
     def project(lon, lat):
-        x = ox + (lon * math.cos(lat0) - minx) * s
-        y = oy + (maxy - lat) * s
-        return f"{x:.1f},{y:.1f}"
+        return f"{ox + (lon * math.cos(lat0) - minx) * s:.1f},{oy + (maxy - lat) * s:.1f}"
+
+    def polys(geom, attrs):
+        a = " ".join(f'{k}="{v}"' for k, v in attrs.items())
+        return "".join(f'<polygon points="{" ".join(project(x, y) for x, y in ring)}" {a}/>'
+                       for ring in _rings(geom))
 
     shapes = []
+    # (1) surrounding counties within the frame — light neutral context
+    for name, g in counties.items():
+        bx0, by0, bx1, by1 = _bbox(g)
+        if bx1 < fminx or bx0 > fmaxx or by1 < fminy or by0 > fmaxy:
+            continue
+        shapes.append(polys(g, {"fill": CONTEXT_FILL, "stroke": CONTEXT_STROKE,
+                                "stroke-width": "0.7", "class": "ctx"}))
+    # (2) AA PUMAs shaded by unmet need
     for p in aa_pumas:
         e = need.get(p)
         fill = NO_DATA if (not e or e["low_conf"]) else _ramp_color(e["unenrolled"], lo, hi)
-        cls = "nodata" if fill == NO_DATA else "puma"
-        for ring in _rings(geoms[p]):
-            path = " ".join(project(lon, lat) for lon, lat in ring)
-            shapes.append(f'<polygon class="{cls}" data-puma="{p}" points="{path}" '
-                          f'fill="{fill}" stroke="#ffffff" stroke-width="0.6"/>')
+        shapes.append(polys(geoms[p], {"fill": fill, "stroke": "#ffffff",
+                                       "stroke-width": "0.45", "data-puma": p,
+                                       "class": "nodata" if fill == NO_DATA else "puma"}))
+    # (3) AA county outlines on top for legibility
+    for c in aa_counties:
+        if c in counties:
+            shapes.append(polys(counties[c], {"fill": "none", "stroke": COUNTY_LINE,
+                                              "stroke-width": "1.3", "class": "aacounty"}))
     return (f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" '
-            f'role="img" aria-label="Eligible but unenrolled by sub-county PUMA footprint">'
-            + "".join(shapes) + "</svg>")
+            f'role="img" aria-label="Eligible but unenrolled by sub-county PUMA '
+            f'footprint, within surrounding counties">' + "".join(shapes) + "</svg>")
 
 
 def puma_visual_html(aa_counties, state, model_short):
