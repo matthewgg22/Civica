@@ -52,7 +52,7 @@ def evidence_html(aa_counties, state="CA", counties=None, max_entries=MAX_ENTRIE
     for county, e in hits:
         note = f" {html.escape(e['note'])}" if e.get("note") else ""
         items.append(
-            f'<li><b>{html.escape(county)} County</b> &mdash; '
+            f'<li><b>{html.escape(county)} County:</b> '
             f'&ldquo;{html.escape(e["quote"])}&rdquo;{note} '
             f'<span class="me-src">{html.escape(e["source"])}</span></li>'
         )
@@ -60,7 +60,7 @@ def evidence_html(aa_counties, state="CA", counties=None, max_entries=MAX_ENTRIE
         '<div class="me-evidence">'
         '<div class="me-label">Documented in your assessment area · CDSS CalFresh reviews</div>'
         f'<ul>{"".join(items)}</ul>'
-        '<div class="me-frame">The state’s own county reviews, verbatim — offered as '
+        '<div class="me-frame">The state’s own county reviews, verbatim, offered as '
         'performance context on documented need, not a representation about outcomes.</div>'
         '</div>'
     )
