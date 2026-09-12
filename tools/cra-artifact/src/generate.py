@@ -57,7 +57,11 @@ def fmt_int(x):
 def fmt_musd(x):
     if x >= 1e9:
         return f"${x/1e9:.2f}B"
-    return f"${x/1e6:.1f}M" if x >= 1e6 else f"${x/1e3:,.0f}K"
+    if x >= 1e6:
+        # Whole millions keep the range compact so it never forces a table
+        # label to wrap (e.g. "$320M–$500M", not "$320.0M–$500.0M").
+        return f"${x/1e6:.0f}M"
+    return f"${x/1e3:,.0f}K"
 
 
 def render(template: str, values: dict) -> str:

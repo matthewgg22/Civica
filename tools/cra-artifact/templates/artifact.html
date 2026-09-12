@@ -27,22 +27,26 @@
   .pagefoot { border-top:1px solid var(--rule); margin-top:auto; padding-top:8px; font-size:8pt; line-height:1.5; color:var(--muted); }
 
   /* ---------- Page 1 — the need ---------- */
-  .big { font-family:'Newsreader',serif; font-size:60pt; line-height:.95; letter-spacing:-.015em; color:var(--ink); margin-top:22px; }
+  /* body-zone fills the space between letterhead and footer and distributes the
+     three blocks (head cluster, numbers, evidence) so slack spreads evenly
+     instead of pooling at the bottom. */
+  .body-zone { flex:1; display:flex; flex-direction:column; justify-content:space-between; padding:10px 0 4px; }
+  .big { font-family:'Newsreader',serif; font-size:58pt; line-height:.95; letter-spacing:-.015em; color:var(--ink); }
   .head-sentence { font-family:'Newsreader',serif; font-size:15pt; line-height:1.34; color:var(--ink); margin-top:10px; max-width:6.7in; }
   .head-sentence em { font-style:normal; box-shadow:inset 0 -0.13em 0 var(--wheat); }
-  .qualifier { font-size:8.4pt; color:var(--muted); margin-top:8px; max-width:6.4in; }
+  .qualifier { font-size:8.4pt; color:var(--muted); margin-top:9px; max-width:6.4in; }
   .ratio-line { font-size:10pt; color:var(--accent-deep); font-weight:600; margin-top:7px; }
-  .needrow { display:flex; gap:.5in; margin-top:30px; align-items:flex-start; }
-  .needrow .coltable { flex:1.05; }
-  .needrow .colbrk { flex:1; min-width:0; }
+  .needrow { display:flex; gap:.42in; align-items:flex-start; }
+  .needrow .coltable { flex:1.2; }
+  .needrow .colbrk { flex:.9; min-width:0; }
   /* core-materials table */
   table.core { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
   table.core caption { text-align:left; }
   .core-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:6px; }
   table.core td { padding:13px 2px; border-bottom:1px solid var(--rule); vertical-align:baseline; }
   table.core tr:last-child td { border-bottom:none; }
-  table.core td.k { font-size:9.5pt; color:var(--body); }
-  table.core td.v { text-align:right; font-family:'Newsreader',serif; font-size:15pt; font-weight:600; color:var(--ink); white-space:nowrap; }
+  table.core td.k { font-size:9.5pt; color:var(--body); white-space:nowrap; }
+  table.core td.v { text-align:right; font-family:'Newsreader',serif; font-size:14pt; font-weight:600; color:var(--ink); white-space:nowrap; padding-left:8px; }
   table.core td.v small { font-family:'Be Vietnam Pro',sans-serif; font-size:8pt; font-weight:500; color:var(--muted); display:block; margin-top:1px; }
   table.core tr.ask td { border-top:2px solid var(--accent); padding-top:9px; }
   table.core tr.ask td.k { color:var(--accent-deep); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:8.4pt; }
@@ -55,7 +59,7 @@
   .brk .track { flex:1; height:9px; background:var(--tint); border-radius:2px; overflow:hidden; }
   .brk .bar { display:block; height:100%; background:var(--accent); border-radius:2px; }
   .brk .n { flex:0 0 auto; font-family:'Newsreader',serif; font-size:11pt; font-weight:600; color:var(--ink); text-align:right; min-width:.75in; }
-  .me-evidence { border-top:1.5px solid var(--accent); margin-top:26px; padding-top:8px; }
+  .me-evidence { border-top:1.5px solid var(--accent); padding-top:8px; }
   .me-evidence .me-label { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-deep); font-weight:600; }
   .me-evidence ul { list-style:none; margin-top:5px; }
   .me-evidence li { font-size:8.6pt; line-height:1.4; color:var(--body); margin-top:3px; }
@@ -116,25 +120,38 @@
 <!-- PAGE 1 — the need -->
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 1 of 3</div></div>
-  <div class="big serif">[[headline_unenrolled]]</div>
-  <div class="head-sentence">eligible residents of <em>your assessment area</em> are not receiving [[program_ref]] benefits they qualify for. That is an estimated <em>[[benefit_range]] a year</em> in unclaimed federal nutrition dollars, spent in [[aa_label]] grocery stores.</div>
-  <div class="qualifier">Estimated from 2023 ACS 1-Year PUMS ([[method_short]]); the dollar range reflects household-size assumptions, not a confidence interval. Full methodology and known biases: appendix, page 3.</div>
-  [[ratio_line]]
-  <div class="needrow">
-    <div class="coltable">
-      <div class="core-cap">The numbers, for your assessment area</div>
-      <table class="core">
-        <tr><td class="k">Eligible residents (est.)</td><td class="v">[[eligible_fmt]]</td></tr>
-        <tr><td class="k">Not receiving benefits</td><td class="v">[[headline_unenrolled]]</td></tr>
-        <tr><td class="k">Unclaimed benefits / year</td><td class="v">[[benefit_range]]</td></tr>
-        <tr><td class="k">Current enrollment</td><td class="v">[[aa_enrolled_pct]]%<small>vs. [[state_enrolled_pct]]% statewide</small></td></tr>
-        <tr><td class="k">Avg. household benefit</td><td class="v">$[[benefit_monthly]]/mo</td></tr>
-        <tr class="ask"><td class="k">Our ask (this bank)</td><td class="v">$[[ask_fmt]]</td></tr>
-      </table>
+  <div class="body-zone">
+    <div class="zone-head">
+      <div class="big serif">[[headline_unenrolled]]</div>
+      <div class="head-sentence">eligible residents of <em>your assessment area</em> are not receiving [[program_ref]] benefits they qualify for. That is an estimated <em>[[benefit_range]] a year</em> in unclaimed federal nutrition dollars, spent in [[aa_label]] grocery stores.</div>
+      <div class="qualifier">Estimated from 2023 ACS 1-Year PUMS ([[method_short]]); the dollar range reflects household-size assumptions, not a confidence interval. Full methodology and known biases: appendix, page 3.</div>
+      [[ratio_line]]
     </div>
-    <div class="colbrk">[[county_breakdown]]</div>
+    <div class="needrow">
+      <div class="coltable">
+        <div class="core-cap">The numbers, for your assessment area</div>
+        <table class="core">
+          <tr><td class="k">Eligible residents (est.)</td><td class="v">[[eligible_fmt]]</td></tr>
+          <tr><td class="k">Not receiving benefits</td><td class="v">[[headline_unenrolled]]</td></tr>
+          <tr><td class="k">Unclaimed benefits / year</td><td class="v">[[benefit_range]]</td></tr>
+          <tr><td class="k">Current enrollment</td><td class="v">[[aa_enrolled_pct]]%<small>vs. [[state_enrolled_pct]]% statewide</small></td></tr>
+          <tr><td class="k">Avg. household benefit</td><td class="v">$[[benefit_monthly]]/mo</td></tr>
+          <tr class="ask"><td class="k">Our ask (this bank)</td><td class="v">$[[ask_fmt]]</td></tr>
+        </table>
+      </div>
+      <div class="colbrk">[[county_breakdown]]</div>
+    </div>
+    <div class="research">
+      <div class="rlabel">What changes when the paperwork gets easier</div>
+      <div class="rstats">
+        <div><b class="serif">&minus;$2,436</b><span>credit-card debt by year three, a 51% reduction</span></div>
+        <div><b class="serif">&minus;10.1 pts</b><span>less likely to carry a delinquent account, off a 41% baseline</span></div>
+        <div><b class="serif">+17 pts</b><span>credit score, from a 634 average, into the subprime boundary</span></div>
+      </div>
+      <div class="rsrc">Treatment-on-the-treated among ~65,000 Los Angeles SNAP applicants, from administrative records linked to credit reports; households that fell out at recertification in San Francisco moved the other way, losing 15 to 19 points. Homonoff, Lee &amp; Meckel, NBER Working Paper 34434 (preliminary draft, November 2025; estimates subject to revision). Credit-score effects are the least precisely estimated of the three; the debt and delinquency effects are stronger. Research on SNAP access generally, not a measurement of [[org_name]]'s program.</div>
+    </div>
+    [[me_evidence_block]]
   </div>
-  [[me_evidence_block]]
   <div class="pagefoot">[[data_gaps_note]]Sources: eligibility &amp; enrollment [[model_note]]. Known biases in the gross-income proxy and ACS benefit under-reporting may overstate the eligible-unenrolled population (see appendix). Assessment area as delineated in [[bank_name]]'s [[pe_date]] CRA Performance Evaluation ([[regulator]]). Benefit figures: USDA FNS FY2024. [[org_name]], a 501(c)(3) organization.</div>
 </div>
 
@@ -146,15 +163,6 @@
   <div class="body-block">
     <h3>What the pilot does</h3>
     Factual, geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") across your assessment area drives residents to a free eligibility check and application support. We accept no per-enrollment compensation. A Google Ad Grant (up to $10,000/month of donated search advertising) stretches every grant dollar, so your funding primarily buys reach beyond the grant and the measurement itself.
-  </div>
-  <div class="research">
-    <div class="rlabel">What changes when the paperwork gets easier</div>
-    <div class="rstats">
-      <div><b class="serif">&minus;$2,436</b><span>credit-card debt by year three, a 51% reduction</span></div>
-      <div><b class="serif">&minus;10.1 pts</b><span>less likely to carry a delinquent account, off a 41% baseline</span></div>
-      <div><b class="serif">+17 pts</b><span>credit score, from a 634 average, into the subprime boundary</span></div>
-    </div>
-    <div class="rsrc">Treatment-on-the-treated among ~65,000 Los Angeles SNAP applicants, from administrative records linked to credit reports; households that fell out at recertification in San Francisco moved the other way, losing 15 to 19 points. Homonoff, Lee &amp; Meckel, NBER Working Paper 34434 (preliminary draft, November 2025; estimates subject to revision). Credit-score effects are the least precisely estimated of the three; the debt and delinquency effects are stronger. Research on SNAP access generally, not a measurement of [[org_name]]'s program.</div>
   </div>
   <div class="body-block">
     <h3>What you receive</h3>
