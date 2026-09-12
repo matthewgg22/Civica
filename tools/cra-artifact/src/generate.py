@@ -133,8 +133,31 @@ def build_values(bank, assumptions, org, metrics, meta):
         f"assessment area ({counties_plain}), so activity and reporting map to the "
         "geography your Performance Evaluation already defines."
     )
+    # Credibility line (reviewer ask): a single substantiable sentence on why
+    # the analysis here is Civica's own work, not vendor boilerplate. State-aware
+    # on two axes — CA carries a trained model (AUC) AND the CDSS ME review;
+    # every other state is a direct survey-weighted estimate with neither, so
+    # the CDSS clause must never appear off-CA (mirrors the CalFresh trap). No
+    # traction/delivery number is asserted here by design.
+    state = bank.get("state", "CA")
+    if state == "CA":
+        credibility_line = (
+            "The need and access findings here are Civica's own analysis, not "
+            "vendor boilerplate: the estimate is a reproducible model of 2023 "
+            "federal ACS microdata (cross-validated AUC 0.80), and the county "
+            "findings come from our review of 37 CalFresh Management Evaluation "
+            "reviews (36 California counties, FFY 2024–2025) obtained by "
+            "public-records request."
+        )
+    else:
+        credibility_line = (
+            "The need estimate here is Civica's own analysis, not vendor "
+            "boilerplate: a survey-weighted estimate built directly from 2023 "
+            "federal ACS microdata, reproducible from public sources."
+        )
     v = {
         "why_this_bank": why_this_bank,
+        "credibility_line": credibility_line,
         "org_name": org["org_name"],
         "program_name": org["program_name"],
         "status_line": org["status_line"],
