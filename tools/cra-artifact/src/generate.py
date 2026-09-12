@@ -126,7 +126,16 @@ def build_values(bank, assumptions, org, metrics, meta):
                 + ", ".join(need["gap_counties"])
                 + " (shown gray on the map; excluded from all figures). ")
     hh = assumptions["household_size_eligible"]
+    counties_plain = (", ".join(bank["aa_counties"])
+                      + (" Counties" if len(bank["aa_counties"]) > 1 else " County"))
+    why_this_bank = (
+        f"{bank['name']}'s CRA assessment area covers {counties_plain}. Civica "
+        "restricts all outreach and measurement to that geography, so the bank "
+        "sees exactly where its community-development dollars go and what they "
+        "produce."
+    )
     v = {
+        "why_this_bank": why_this_bank,
         "org_name": org["org_name"],
         "program_name": org["program_name"],
         "status_line": org["status_line"],
