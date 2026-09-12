@@ -197,6 +197,18 @@ size** (see [§3](#3-who-is-covered-and-who-reports-data)):
 - **Alternatives** — wholesale/limited-purpose banks use a **Community
   Development test**; any bank may elect an approved **Strategic Plan**.
 
+> **Home-mortgage lending is a major — often the largest — driver of the Lending
+> Test**, but note the split from [§3](#3-who-is-covered-and-who-reports-data):
+> CRA-specific *data collection* is small-business, small-farm, and CD loans —
+> **home mortgage is not CRA-reported; the examiner pulls it from HMDA** — yet the
+> Lending Test *evaluation* leans heavily on that home-mortgage record. So
+> "mortgage drives CRA" is true of the evaluation, not the reporting. This also
+> frames Civica's fit: a grant-funded benefits-access program **is not lending**,
+> so it never touches the mortgage-driven Lending Test — it is a
+> community-development contribution, evaluated on the Investment/Service (or CD)
+> side. See [`cra-state-laws.md`](./cra-state-laws.md) for how several states
+> extended CRA specifically to reach *nonbank mortgage lenders*.
+
 **Exam scheduling.** Each agency must publish its **quarterly CRA examination
 schedule at least 30 days before** the quarter begins; the FDIC, for example,
 issues quarterly lists of institutions up for CRA exam.

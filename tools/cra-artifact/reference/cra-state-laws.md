@@ -59,6 +59,14 @@ Two structural patterns worth carrying into the pitch:
 - **Modern, broad laws (IL 2021; NY 2021 expansion; MA 2007 expansion)** reach
   beyond banks to credit unions and/or nonbank mortgage lenders and run their own
   periodic exams — these create the most additional CRA-style demand.
+  **The mortgage-lender extension is the driver of these modern laws:**
+  independent/nonbank mortgage companies now originate the majority of
+  home-purchase loans yet are **outside the federal CRA** (which reaches only
+  insured depositories), so MA (2007), NY (2021), and IL (2021) each extended
+  their state CRA to cover them. That is why "mortgage" looms large in the state
+  regimes — it is the coverage gap they were written to close. (Practical effect
+  for outreach: in those states the pool of CRA-obligated institutions includes
+  large nonbank mortgage lenders, not just banks.)
 - **Older, federal-reliant laws (RI, WV, WA, and CT to a degree)** lean on the
   federal rating and federally-set assessment areas, and several act only when an
   institution files an expansionary application — lighter touch.
