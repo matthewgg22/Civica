@@ -1,0 +1,86 @@
+{
+ "woodforest_houston": {
+  "name": "Doug Schaeffer",
+  "title": "Executive Director, CRA & Community Development",
+  "bank": "Woodforest National Bank",
+  "ambiguous": false
+ },
+ "jpmorgan_chase_la": {
+  "name": "Kristen Comstock",
+  "title": "CRA Strategic Planning & Governance Director",
+  "bank": "JPMorgan Chase",
+  "ambiguous": false
+ },
+ "wells_fargo_la": {
+  "name": "Jada Grandy-Mock",
+  "title": "Head of CRA Strategy and Program Management",
+  "bank": "Wells Fargo",
+  "ambiguous": false
+ },
+ "wells_fargo_dallas": {
+  "name": "Jada Grandy-Mock",
+  "title": "Head of CRA Strategy and Program Management",
+  "bank": "Wells Fargo",
+  "ambiguous": false
+ },
+ "wells_fargo_phoenix": {
+  "name": "Jada Grandy-Mock",
+  "title": "Head of CRA Strategy and Program Management",
+  "bank": "Wells Fargo",
+  "ambiguous": false
+ },
+ "ibc_houston": {
+  "name": "Irene Guzman",
+  "title": "First VP - Corporate CRA Officer",
+  "bank": "International Bank of Commerce",
+  "ambiguous": false
+ },
+ "td_philadelphia": {
+  "name": "Michael Innis-Thompson",
+  "title": "SVP, Head of Community Development",
+  "bank": "TD Bank",
+  "ambiguous": false
+ },
+ "bank_ozk_houston": {
+  "name": "Lasha Marshall",
+  "title": "Director of Compliance - CRA",
+  "bank": "Bank OZK",
+  "ambiguous": false
+ },
+ "pnc_louisville": {
+  "name": "Danny Spears",
+  "title": "Director, CRA Performance Management",
+  "bank": "PNC Bank",
+  "ambiguous": false
+ },
+ "bank_of_america_la": {
+  "name": "Alicia Vela",
+  "title": "SVP, CRA Senior Manager",
+  "bank": "Bank of America",
+  "ambiguous": false
+ },
+ "truist_houston": {
+  "name": "Anthony Weekly",
+  "title": "Chief EVP, Chief CRA Officer",
+  "bank": "Truist",
+  "ambiguous": false
+ },
+ "frost_houston": {
+  "name": "Sawyer Williams",
+  "title": "Senior VP, CRA Officer",
+  "bank": "Frost Bank",
+  "ambiguous": false
+ },
+ "mechanics_bank": {
+  "name": "Courtney Williams",
+  "title": "EVP, Director of CRA Strategy",
+  "bank": "Mechanics Bank",
+  "ambiguous": false
+ },
+ "mechanics_bank_bakersfield": {
+  "name": "Courtney Williams",
+  "title": "EVP, Director of CRA Strategy",
+  "bank": "Mechanics Bank",
+  "ambiguous": false
+ }
+}

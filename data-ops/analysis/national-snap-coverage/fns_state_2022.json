@@ -1,0 +1,311 @@
+{
+ "DC": {
+  "state": "District of Columbia",
+  "eligible": 124000,
+  "rate": 100,
+  "eligible_unenrolled": 0
+ },
+ "OR": {
+  "state": "Oregon",
+  "eligible": 483000,
+  "rate": 100,
+  "eligible_unenrolled": 0
+ },
+ "WI": {
+  "state": "Wisconsin",
+  "eligible": 528000,
+  "rate": 100,
+  "eligible_unenrolled": 0
+ },
+ "PA": {
+  "state": "Pennsylvania",
+  "eligible": 1387000,
+  "rate": 100,
+  "eligible_unenrolled": 0
+ },
+ "RI": {
+  "state": "Rhode Island",
+  "eligible": 112000,
+  "rate": 100,
+  "eligible_unenrolled": 0
+ },
+ "WA": {
+  "state": "Washington",
+  "eligible": 625000,
+  "rate": 100,
+  "eligible_unenrolled": 0
+ },
+ "MI": {
+  "state": "Michigan",
+  "eligible": 1027000,
+  "rate": 100,
+  "eligible_unenrolled": 0
+ },
+ "CO": {
+  "state": "Colorado",
+  "eligible": 428000,
+  "rate": 100,
+  "eligible_unenrolled": 0
+ },
+ "LA": {
+  "state": "Louisiana",
+  "eligible": 776000,
+  "rate": 99,
+  "eligible_unenrolled": 7760
+ },
+ "VT": {
+  "state": "Vermont",
+  "eligible": 55000,
+  "rate": 99,
+  "eligible_unenrolled": 550
+ },
+ "OH": {
+  "state": "Ohio",
+  "eligible": 1307000,
+  "rate": 99,
+  "eligible_unenrolled": 13070
+ },
+ "OK": {
+  "state": "Oklahoma",
+  "eligible": 597000,
+  "rate": 98,
+  "eligible_unenrolled": 11940
+ },
+ "CT": {
+  "state": "Connecticut",
+  "eligible": 305000,
+  "rate": 98,
+  "eligible_unenrolled": 6100
+ },
+ "NV": {
+  "state": "Nevada",
+  "eligible": 350000,
+  "rate": 98,
+  "eligible_unenrolled": 7000
+ },
+ "IA": {
+  "state": "Iowa",
+  "eligible": 224000,
+  "rate": 98,
+  "eligible_unenrolled": 4480
+ },
+ "WV": {
+  "state": "West Virginia",
+  "eligible": 255000,
+  "rate": 98,
+  "eligible_unenrolled": 5100
+ },
+ "NC": {
+  "state": "North Carolina",
+  "eligible": 1273000,
+  "rate": 95,
+  "eligible_unenrolled": 63650
+ },
+ "ME": {
+  "state": "Maine",
+  "eligible": 126000,
+  "rate": 94,
+  "eligible_unenrolled": 7560
+ },
+ "MN": {
+  "state": "Minnesota",
+  "eligible": 372000,
+  "rate": 93,
+  "eligible_unenrolled": 26040
+ },
+ "NE": {
+  "state": "Nebraska",
+  "eligible": 144000,
+  "rate": 93,
+  "eligible_unenrolled": 10080
+ },
+ "GA": {
+  "state": "Georgia",
+  "eligible": 1535000,
+  "rate": 92,
+  "eligible_unenrolled": 122800
+ },
+ "MO": {
+  "state": "Missouri",
+  "eligible": 651000,
+  "rate": 92,
+  "eligible_unenrolled": 52080
+ },
+ "DE": {
+  "state": "Delaware",
+  "eligible": 92000,
+  "rate": 91,
+  "eligible_unenrolled": 8280
+ },
+ "NY": {
+  "state": "New York",
+  "eligible": 2558000,
+  "rate": 91,
+  "eligible_unenrolled": 230220
+ },
+ "NJ": {
+  "state": "New Jersey",
+  "eligible": 775000,
+  "rate": 91,
+  "eligible_unenrolled": 69750
+ },
+ "AL": {
+  "state": "Alabama",
+  "eligible": 797000,
+  "rate": 90,
+  "eligible_unenrolled": 79700
+ },
+ "IN": {
+  "state": "Indiana",
+  "eligible": 625000,
+  "rate": 89,
+  "eligible_unenrolled": 68750
+ },
+ "MD": {
+  "state": "Maryland",
+  "eligible": 543000,
+  "rate": 85,
+  "eligible_unenrolled": 81450
+ },
+ "TN": {
+  "state": "Tennessee",
+  "eligible": 869000,
+  "rate": 84,
+  "eligible_unenrolled": 139040
+ },
+ "SD": {
+  "state": "South Dakota",
+  "eligible": 80000,
+  "rate": 84,
+  "eligible_unenrolled": 12800
+ },
+ "VA": {
+  "state": "Virginia",
+  "eligible": 804000,
+  "rate": 83,
+  "eligible_unenrolled": 136680
+ },
+ "NH": {
+  "state": "New Hampshire",
+  "eligible": 68000,
+  "rate": 82,
+  "eligible_unenrolled": 12240
+ },
+ "HI": {
+  "state": "Hawaii",
+  "eligible": 161000,
+  "rate": 81,
+  "eligible_unenrolled": 30590
+ },
+ "FL": {
+  "state": "Florida",
+  "eligible": 2927000,
+  "rate": 81,
+  "eligible_unenrolled": 556130
+ },
+ "CA": {
+  "state": "California",
+  "eligible": 4618000,
+  "rate": 81,
+  "eligible_unenrolled": 877420
+ },
+ "KS": {
+  "state": "Kansas",
+  "eligible": 231000,
+  "rate": 79,
+  "eligible_unenrolled": 48510
+ },
+ "AZ": {
+  "state": "Arizona",
+  "eligible": 822000,
+  "rate": 77,
+  "eligible_unenrolled": 189060
+ },
+ "UT": {
+  "state": "Utah",
+  "eligible": 197000,
+  "rate": 76,
+  "eligible_unenrolled": 47280
+ },
+ "SC": {
+  "state": "South Carolina",
+  "eligible": 733000,
+  "rate": 76,
+  "eligible_unenrolled": 175920
+ },
+ "MT": {
+  "state": "Montana",
+  "eligible": 99000,
+  "rate": 75,
+  "eligible_unenrolled": 24750
+ },
+ "KY": {
+  "state": "Kentucky",
+  "eligible": 633000,
+  "rate": 75,
+  "eligible_unenrolled": 158250
+ },
+ "TX": {
+  "state": "Texas",
+  "eligible": 3846000,
+  "rate": 74,
+  "eligible_unenrolled": 999960
+ },
+ "MS": {
+  "state": "Mississippi",
+  "eligible": 546000,
+  "rate": 74,
+  "eligible_unenrolled": 141960
+ },
+ "ID": {
+  "state": "Idaho",
+  "eligible": 156000,
+  "rate": 73,
+  "eligible_unenrolled": 42120
+ },
+ "AK": {
+  "state": "Alaska",
+  "eligible": 70000,
+  "rate": 73,
+  "eligible_unenrolled": 18900
+ },
+ "WY": {
+  "state": "Wyoming",
+  "eligible": 47000,
+  "rate": 63,
+  "eligible_unenrolled": 17390
+ },
+ "AR": {
+  "state": "Arkansas",
+  "eligible": 454000,
+  "rate": 59,
+  "eligible_unenrolled": 186140
+ },
+ "IL": {
+  "state": "Illinois",
+  "eligible": 1540000,
+  "rate": 100,
+  "eligible_unenrolled": 0,
+  "capped": true
+ },
+ "MA": {
+  "state": "Massachusetts",
+  "eligible": 816000,
+  "rate": 100,
+  "eligible_unenrolled": 0,
+  "capped": true
+ },
+ "NM": {
+  "state": "New Mexico",
+  "eligible": 439000,
+  "rate": 100,
+  "eligible_unenrolled": 0,
+  "capped": true
+ },
+ "ND": {
+  "state": "North Dakota",
+  "eligible": 46000,
+  "rate": 75,
+  "eligible_unenrolled": 11500
+ }
+}

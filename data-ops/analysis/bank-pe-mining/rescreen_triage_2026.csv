@@ -1,0 +1,194 @@
+read_order,tier,bank,regulator,counties,branches,exposure,svc_gap,inv_gap,svc_known,top_county
+1,1,Prosperity Bank,FDIC,97,406,48579651,True,False,True,Harris
+2,1,REGIONS BANK,FED,226,597,25488177,True,False,True,Miami-Dade
+3,1,Bank of Hope,FDIC,21,78,20856033,True,False,True,Los Angeles
+4,1,FIRST BANK,FED,20,76,17010383,True,False,True,Los Angeles
+5,1,Bank OZK,FDIC,110,271,16056545,True,False,True,Harris
+6,1,CTBC Bank Corp. (USA),FDIC,7,20,10601206,True,True,True,Los Angeles
+7,1,First American Bank,FDIC,16,76,9975055,True,True,True,Cook
+8,1,CENTENNIAL BANK,FED,91,243,9326137,True,False,True,Broward
+9,1,SIMMONS BANK,FED,96,229,9312985,True,False,True,Tarrant
+10,1,PLAINSCAPITAL BANK,FED,15,57,7795354,True,False,True,Harris
+11,1,ORIGIN BANK,FED,24,59,7005691,True,True,True,Harris
+12,1,Parkway Bank and Trust Company,FDIC,5,27,6951148,True,True,True,Cook
+13,1,International Bank of Commerce,FDIC,19,81,5306239,True,False,True,Hidalgo
+14,1,Ameris Bank,FDIC,74,177,5183508,True,False,True,Fulton
+15,1,Peoples Bank,FDIC,16,63,4615920,True,True,True,Cook
+16,1,Ocean Bank,FDIC,4,25,4533083,True,True,True,Miami-Dade
+17,1,COMMONWEALTH BUSINESS BANK,FED,3,9,3765964,True,True,True,Los Angeles
+18,1,BROOKLINE BANK,FED,26,133,3614469,True,True,True,Middlesex
+19,1,ConnectOne Bank,FDIC,15,57,3600939,True,False,True,Suffolk
+20,1,FIRST FIDELITY BANK,FED,6,27,3060167,True,True,True,Maricopa
+21,1,b1BANK,FDIC,30,59,3028908,True,True,True,Harris
+22,1,Shinhan Bank America,FDIC,7,11,2805009,True,True,True,Los Angeles
+23,1,Lakeside Bank,FDIC,2,11,2797988,True,True,True,Cook
+24,1,THIRD COAST BANK,FED,14,22,2556144,True,True,True,Harris
+25,1,UNIVEST BANK AND TRUST CO.,FED,15,51,2393589,True,False,True,Philadelphia
+26,1,German American Bank,FDIC,41,96,2389405,True,True,True,Franklin
+27,1,NBH BANK,FED,54,90,2312372,True,False,True,Tarrant
+28,1,Great Southern Bank,FDIC,45,107,2295594,True,False,True,St. Louis
+29,1,Habib American Bank,FDIC,5,6,1997642,True,True,True,Los Angeles
+30,1,Union Savings Bank,FDIC,18,39,1994908,True,False,True,Franklin
+31,1,Heritage Bank,FDIC,20,68,1898076,True,False,True,King
+32,1,Gulf Coast Bank and Trust Company,FDIC,18,38,1639640,True,True,True,Maricopa
+33,1,Banterra Bank,FDIC,21,43,1607269,True,True,True,Maricopa
+34,1,The Bank of Princeton,FDIC,13,36,1545349,True,False,True,Philadelphia
+35,1,The Fidelity Bank,FDIC,30,57,1496811,True,True,True,Wake
+36,1,First International Bank & Trust,FDIC,17,28,1495515,True,True,True,Maricopa
+37,1,American Momentum Bank,FDIC,18,30,1270326,True,False,True,Hillsborough
+38,1,RCB BANK,FED,21,62,1150647,True,True,True,Oklahoma
+39,1,Firstrust Savings Bank,FDIC,6,18,1120100,True,True,True,Philadelphia
+40,1,BankPlus,FDIC,35,74,1113841,True,False,True,Hinds
+41,1,Bank of Marin,FDIC,9,29,1083080,True,True,True,Sacramento
+42,1,CHOICEONE BANK,FED,14,50,1048627,True,True,True,Genesee
+43,1,First Community Bank,FDIC,27,58,1044346,True,True,True,Richland
+44,1,ORRSTOWN BANK,FED,11,43,1006351,True,True,True,York
+45,1,MIDLAND STATES BANK,FED,23,60,991629,True,True,True,St. Louis
+46,1,"North Shore Bank, a Co-operative Bank",FDIC,6,30,975764,True,True,True,Essex
+47,1,Northern Bank & Trust Company,FDIC,1,14,904708,True,False,True,Middlesex
+48,1,EQUITY BANK,FED,48,83,883878,True,True,True,Jackson
+49,1,ENCORE BANK,FED,14,16,881877,True,True,True,Bexar
+50,1,SMARTBANK,FED,26,43,822713,True,True,True,Knox
+51,1,Macatawa Bank,FDIC,3,28,809700,True,False,True,Kent
+52,1,City Bank,FDIC,15,28,787460,True,True,True,Lubbock
+53,1,TEXAS COMMUNITY BANK,FED,5,10,782411,True,True,True,Bexar
+54,1,HOMETRUST BANK,FED,19,33,775820,True,True,True,Mecklenburg
+55,1,"WaterStone Bank, SSB",FDIC,3,16,762401,True,False,True,Milwaukee
+56,1,The Village Bank,FDIC,1,11,710842,True,True,True,Middlesex
+57,1,NEEDHAM BANK,FED,6,21,676560,True,False,True,Norfolk
+58,1,1st Security Bank of Washington,FDIC,13,31,674755,True,False,True,King
+59,1,Banco do Brasil Americas,FDIC,3,4,656540,True,False,True,Miami-Dade
+60,1,Southern Bank and Trust Company,FDIC,30,57,650970,True,False,True,Pitt
+61,1,CIVISTA BANK,FED,18,42,629762,True,False,True,Franklin
+62,1,Lake Ridge Bank,FDIC,4,20,621473,True,False,True,Dane
+63,1,Amalgamated Bank,FDIC,5,6,613414,True,False,True,New York
+64,1,UniBank for Savings,FDIC,2,15,569210,True,False,True,Worcester
+65,1,Exchange Bank,FDIC,4,21,556305,True,True,True,Sonoma
+66,1,Five Star Bank,FDIC,8,10,549840,True,False,True,Sacramento
+67,1,Falcon International Bank,FDIC,7,16,522543,True,False,True,Hidalgo
+68,1,Penn Community Bank,FDIC,3,22,518584,True,False,True,Bucks
+69,1,Armstrong Bank,FDIC,15,29,509414,True,False,True,Tulsa
+70,1,COMMERCIAL BANK,FED,17,40,508147,True,True,True,Knox
+71,1,FIRST WESTERN BANK AND TRUST,FED,9,20,505618,True,True,True,Maricopa
+72,1,Avidia Bank,FDIC,2,10,503320,True,True,True,Middlesex
+73,1,NexBank,FDIC,1,2,496888,True,False,True,Dallas
+74,1,Institution for Savings in Newburyport and Its Vicinity,FDIC,1,13,493207,True,False,True,Essex
+75,1,Timberland Bank,FDIC,6,24,467310,True,False,True,Pierce
+76,1,Morton Community Bank,FDIC,17,49,424096,True,False,True,Peoria
+77,1,ACNB Bank,FDIC,7,33,421148,True,True,True,York
+78,1,PEAPACK-GLADSTONE BANK,FED,6,19,409957,True,False,True,Morris
+79,1,Country Bank for Savings,FDIC,3,15,400727,True,False,True,Worcester
+80,1,Cache Valley Bank,FDIC,12,25,395577,True,False,True,Washington
+81,1,West Coast Community Bank,FDIC,4,11,392846,True,False,True,Santa Clara
+82,1,ONE COMMUNITY BANK,FED,6,20,383553,True,True,True,Dane
+83,1,Parke Bank,FDIC,5,8,377064,True,True,True,Philadelphia
+84,1,Bank of Tennessee,FDIC,10,25,376928,True,True,True,Washington
+85,1,Meridian Bank,FDIC,6,7,357807,True,True,True,Philadelphia
+86,1,First Guaranty Bank,FDIC,16,28,347859,True,True,True,Tangipahoa Parish
+87,1,FIRST COMMUNITY BANK,FED,36,67,326917,True,False,True,Surry
+88,1,Wayne Bank,FDIC,12,33,318428,True,False,True,Lancaster
+89,1,"South Central Bank,  Inc.",FDIC,13,27,295649,True,True,True,Jefferson
+90,1,FIRST FARMERS AND MERCHANTS BANK,FED,8,23,293816,True,True,True,Davidson
+91,1,PRIMIS BANK,FED,19,28,286540,True,True,True,Prince George's
+92,1,First Keystone Community Bank,FDIC,5,19,284262,True,True,True,Luzerne
+93,1,Hawthorn Bank,FDIC,11,18,256292,True,False,True,Jackson
+94,1,FIRST BANK AND TRUST COMPANY THE,FED,25,35,252581,True,True,True,Sullivan
+95,1,Citizens & Northern Bank,FDIC,14,35,251881,True,True,True,Bucks
+96,1,First United Bank,FDIC,12,25,241839,True,False,True,Lubbock
+97,1,INDEPENDENCE BANK OF KENTUCKY,FED,15,26,233904,True,False,True,Jefferson
+98,1,AMERISERV FINANCIAL BANK,FED,6,17,223857,True,True,True,Allegheny
+99,1,Bankwell Bank,FDIC,1,1,205264,True,False,True,Kings
+100,1,Hingham Institution for Savings,FDIC,5,9,197828,True,False,True,Plymouth
+101,1,First Business Bank,FDIC,5,5,174895,True,False,True,Marion
+102,1,Starion Bank,FDIC,7,16,169744,True,True,True,Dane
+103,1,Avidbank,FDIC,3,3,157466,True,True,True,Santa Clara
+104,1,Yakima Federal Savings and Loan Association,FDIC,4,10,150585,True,False,True,Yakima
+105,1,FARMERS BANK & TRUST COMPANY,FED,17,36,149213,True,True,True,Columbia
+106,1,Lincoln Savings Bank,FDIC,8,16,148805,True,True,True,Polk
+107,1,Blackhawk Bank & Trust,FDIC,4,19,140617,True,True,True,Rock Island
+108,1,CFG Bank,FDIC,3,3,128552,True,False,True,Baltimore
+109,1,MASCOMA BANK,FED,8,26,116311,True,False,True,Grafton
+110,1,BANK IOWA,FED,12,25,110869,True,True,True,Polk
+111,1,ADIRONDACK TRUST COMPANY THE,FED,2,13,108615,True,True,True,Saratoga
+112,1,Citizens Bank of Lafayette,FDIC,12,20,91227,True,False,True,Putnam
+113,1,WEX Bank,FDIC,1,1,82922,True,True,True,Salt Lake
+114,1,Northrim Bank,FDIC,5,8,63789,True,False,True,Matanuska-Susitna Borough
+115,1,CORNERSTONE BANK,FED,23,50,57378,True,False,True,Platte
+116,1,Bank of Guam,FDIC,1,1,48256,True,True,True,San Francisco
+117,1,Luana Savings Bank,FDIC,6,6,45261,True,True,True,Polk
+118,1,AMERICAN BANK,FED,1,1,36190,True,True,True,Lehigh
+119,1,Hamlin Bank and Trust Company,FDIC,4,10,27105,True,True,True,McKean
+120,1,First State Bank of Uvalde,FDIC,3,8,15764,True,False,True,Uvalde
+121,1,FIRST CITIZENS BANK,FED,6,7,10897,True,True,True,Cerro Gordo
+122,2,POPULAR BANK,FED,10,36,5522061,False,True,False,Miami-Dade
+123,2,CENTRAL TRUST BANK THE,FED,41,166,3793337,False,True,False,Jackson
+124,2,TEXAS REGIONAL BANK,FED,14,29,1576128,False,True,False,Hidalgo
+125,2,LAKE CITY BANK,FED,15,57,998904,False,True,False,Marion
+126,2,INTERBANK,FED,25,45,983324,False,True,False,Tarrant
+127,2,AMBOY BANK,FED,2,23,966824,False,True,False,Middlesex
+128,2,FIRST CITIZENS COMMUNITY BANK,FED,20,44,946175,False,True,False,Philadelphia
+129,2,MIDWEST BANKCENTRE,FED,4,18,824127,False,True,False,St. Louis
+130,2,ORANGE BANK & TRUST COMPANY,FED,4,16,777608,False,True,False,Westchester
+131,2,EAST CAMBRIDGE SAVINGS BANK,FED,2,12,749420,False,True,False,Middlesex
+132,2,TEXAS FIRST BANK,FED,6,22,628834,False,True,False,Galveston
+133,2,BANKFIRST FINANCIAL SERVICES,FED,27,51,428476,False,True,False,Tuscaloosa
+134,2,BANK INDEPENDENT,FED,7,34,375418,False,True,False,Madison
+135,2,CHEMUNG CANAL TRUST COMPANY,FED,14,30,332610,False,True,False,Albany
+136,2,SOUTH SHORE BANK,FED,2,13,325129,False,True,False,Norfolk
+137,2,FARMERS & MERCHANTS BANK THE,FED,9,21,318304,False,True,False,Washington
+138,2,FVCBANK,FED,6,8,287043,False,True,False,Fairfax
+139,2,BANKNEWPORT,FED,5,20,260246,False,True,False,Providence
+140,2,CENTRAL BANK,FED,10,23,254083,False,True,False,Polk
+141,2,FIRST FARMERS BANK & TRUST CO.,FED,20,37,248376,False,True,False,Hamilton
+142,2,FIRST STATE BANK,FED,6,13,233708,False,True,False,Denton
+143,2,FIVE POINTS BANK,FED,6,16,207311,False,True,False,Douglas
+144,2,BANK OF NEW HAMPSHIRE,FED,8,21,144150,False,True,False,Hillsborough
+145,2,EASTHAMPTON SAVINGS BANK,FED,2,11,125425,False,True,False,Hampshire
+146,2,FIRST PREMIER BANK,FED,6,13,80288,False,True,False,Minnehaha
+147,2,BANK OF MARION THE,FED,8,17,69750,False,True,False,Washington
+148,3,Hanmi Bank,FDIC,15,34,15739741,False,True,True,Los Angeles
+149,3,Apple Bank for Savings,FDIC,12,79,8934224,False,True,True,Kings
+150,3,PCB Bank,FDIC,5,17,8306572,False,True,True,Los Angeles
+151,3,Republic Bank of Chicago,FDIC,4,20,4622259,False,True,True,Cook
+152,3,Commercial Bank of California,FDIC,6,10,3230163,False,True,True,Los Angeles
+153,3,Western State Bank,FDIC,4,10,2067882,False,True,True,Maricopa
+154,3,Jefferson Bank,FDIC,4,13,1850061,False,True,True,Bexar
+155,3,Bank of Colorado,FDIC,26,60,1665080,False,True,True,Maricopa
+156,3,Salem Five Cents Savings Bank,FDIC,4,34,1601145,False,True,True,Middlesex
+157,3,Tompkins Community Bank,FDIC,18,59,1398175,False,True,True,Berks
+158,3,North Shore Bank,FDIC,11,44,1376820,False,True,True,Milwaukee
+159,3,Burke & Herbert Bank & Trust Company,FDIC,53,106,1202498,False,True,True,Fairfax
+160,3,The Bank of Tampa,FDIC,4,13,1201815,False,True,True,Hillsborough
+161,3,Horizon Bank,FDIC,40,79,1195024,False,True,True,Lake
+162,3,Sunwest Bank,FDIC,7,9,1097828,False,True,True,Orange
+163,3,First Bank Chicago,FDIC,2,4,1043259,False,True,True,Cook
+164,3,Community Bank of Mississippi,FDIC,27,57,893096,False,True,True,Harrison
+165,3,Bank of Stockton,FDIC,9,21,888436,False,True,True,San Joaquin
+166,3,Security Bank of Kansas City,FDIC,6,34,876181,False,True,True,Jackson
+167,3,Blue Foundry Bank,FDIC,7,21,835646,False,True,True,Bergen
+168,3,Central Bank,FDIC,2,13,686636,False,True,True,Utah
+169,3,First Northern Bank of Dixon,FDIC,6,21,685840,False,True,True,Sacramento
+170,3,Red River Bank,FDIC,12,28,657978,False,True,True,East Baton Rouge Parish
+171,3,Union Bank and Trust Company,FDIC,18,37,655678,False,True,True,Lancaster
+172,3,Carter Bank & Trust,FDIC,38,66,651962,False,True,True,Guilford
+173,3,Ion Bank,FDIC,3,15,613947,False,True,True,Bergen
+174,3,D. L. Evans Bank,FDIC,19,41,587367,False,True,True,Ada
+175,3,Unity Bank,FDIC,9,22,574839,False,True,True,Middlesex
+176,3,Somerset Trust Company,FDIC,8,49,542168,False,True,True,Westmoreland
+177,3,QNB Bank,FDIC,3,18,517990,False,True,True,Montgomery
+178,3,Bank of Ann Arbor,FDIC,4,18,473117,False,True,True,Washtenaw
+179,3,The Bank of Missouri,FDIC,16,32,453814,False,True,True,St. Louis
+180,3,Bank Five Nine,FDIC,5,19,430465,False,True,True,Milwaukee
+181,3,Colony Bank,FDIC,29,33,412221,False,True,True,Duval
+182,3,KS StateBank,FDIC,5,6,392181,False,True,True,Maricopa
+183,3,Pinnacle Bank,FDIC,20,36,386289,False,True,True,Gwinnett
+184,3,FCB Banks,FDIC,5,20,382946,False,True,True,St. Louis
+185,3,"Traditional Bank, Inc.",FDIC,8,19,309455,False,True,True,Fayette
+186,3,Farmers and Merchants Trust Company of Chambersburg,FDIC,6,25,292098,False,True,True,Franklin
+187,3,Embassy Bank for the Lehigh Valley,FDIC,2,10,275228,False,True,True,Lehigh
+188,3,Security State Bank & Trust,FDIC,9,17,138185,False,True,True,Comal
+189,3,Watertown Savings Bank,FDIC,1,10,107190,False,True,True,Jefferson
+190,3,The Bank of Commerce,FDIC,9,17,106945,False,True,True,Bonneville
+191,3,First Fed Bank,FDIC,4,14,105521,False,True,True,Clallam
+192,3,Cashmere Valley Bank,FDIC,4,12,104742,False,True,True,Chelan
+193,3,United Bank,FDIC,10,17,83459,False,True,True,Coweta

@@ -1,0 +1,435 @@
+name,rssd,location,overall,exam_date,public_date,method,assets,svc_rating,inv_rating,cd_rating
+1ST SOURCE BANK,991340,"SOUTH BEND, IN",Outstanding,"Sep 25, 2023","Jan 10, 2025",Large Bank,"$8,411,706",High Satisfactory,Needs to Improve,
+AMBOY BANK,9807,"OLD BRIDGE, NJ",Satisfactory,"Jun 10, 2024","Dec 20, 2024",Large Bank,"$2,638,667",Low Satisfactory,Low Satisfactory,
+ARVEST BANK,311845,"FAYETTEVILLE, AR",Satisfactory,"Sep 27, 2021","May 15, 2022",Large Bank,"$26,237,693",Low Satisfactory,Needs to Improve,
+BNB BANK,23504,"BRIDGEHAMPTON, NY",Satisfactory,"Jul 30, 2018","Mar 28, 2019",Large Bank,"$4,446,676",High Satisfactory,High Satisfactory,
+BOSTON PRIVATE BANK & TRUST COMPANY,964700,"BOSTON, MA",Outstanding,"Apr 23, 2018","Mar 17, 2019",Large Bank,"$8,167,632",Outstanding,Outstanding,
+CENTENNIAL BANK,456045,"CONWAY, AR",Satisfactory,"Sep 10, 2018","Sep 16, 2019",Large Bank,"$14,904,936",Low Satisfactory,Low Satisfactory,Satisfactory
+CENTRAL BANK OF BOONE COUNTY,299046,"COLUMBIA, MO",Outstanding,"Mar 26, 2018","Jul 02, 2018",Large Bank,"$1,879,308",High Satisfactory,Low Satisfactory,
+CENTRAL BANK OF ST. LOUIS,506249,"CLAYTON, MO",Satisfactory,"Jul 23, 2018","Nov 29, 2018",Large Bank,"$1,855,708",Low Satisfactory,Outstanding,
+"CENTRAL TRUST BANK, THE",853952,"JEFFERSON CITY, MO",Satisfactory,"Oct 01, 2018","Feb 25, 2019",Large Bank,"$2,333,498",High Satisfactory,Low Satisfactory,
+CHOICEONE BANK,324340,"SPARTA, MI",Satisfactory,"Oct 21, 2024","Mar 03, 2025",Large Bank,"$2,724,240",Low Satisfactory,Low Satisfactory,Satisfactory
+COMERICA BANK,60143,"DALLAS, TX",Outstanding,"Jun 23, 2025","Jan 16, 2026",Large Bank,"$77,698,000",Low Satisfactory,High Satisfactory,
+COMPASS BANK,697633,"BIRMINGHAM, AL",Outstanding,"Apr 02, 2018","Jan 22, 2019",Large Bank,"$86,504,843",Needs to Improve,Low Satisfactory,
+CORNERSTONE BANK,403151,"YORK, NE",Satisfactory,"May 02, 2022","Aug 15, 2022",Large Bank,"$2,056,362",Low Satisfactory,Outstanding,Satisfactory
+EAGLEBANK,2652092,"BETHESDA, MD",Satisfactory,"Oct 28, 2024","Jul 24, 2025",Large Bank,"$11,228,331",Low Satisfactory,Low Satisfactory,Satisfactory
+FARMERS AND MERCHANTS BANK OF LONG BEACH,871769,"LONG BEACH, CA",Satisfactory,"Sep 17, 2018","Jun 03, 2019",Large Bank,"$7,274,369",Outstanding,Low Satisfactory,
+FIRST BANK,169653,"CREVE COEUR, MO",Satisfactory,"Jan 29, 2024","Jun 23, 2024",Large Bank,"$6,554,829",Low Satisfactory,Low Satisfactory,
+"FIRST BANK AND TRUST COMPANY, THE",223322,"LEBANON, VA",Satisfactory,"Oct 19, 2020","Mar 11, 2021",Large Bank,"$2,319,799",Low Satisfactory,Low Satisfactory,Satisfactory
+FIRST COMMUNITY BANK,2353595,"BLUEFIELD, VA",Satisfactory,"Sep 10, 2018","Apr 05, 2019",Large Bank,"$2,344,033",Low Satisfactory,High Satisfactory,
+FIRST FIDELITY BANK,106359,"OKLAHOMA CITY, OK",Satisfactory,"Nov 30, 2020","Mar 11, 2021",Large Bank,"$2,082,534",Low Satisfactory,Low Satisfactory,
+FIRST FINANCIAL BANK,165628,"CINCINNATI, OH",Outstanding,"Jun 12, 2023","May 09, 2025",Large Bank,"$16,915,645",High Satisfactory,Low Satisfactory,
+FRANDSEN BANK & TRUST,751656,"LONSDALE, MN",Outstanding,"May 21, 2018","Dec 10, 2018",Large Bank,"$1,730,669",High Satisfactory,High Satisfactory,
+FRANKLIN SYNERGY BANK,3635533,"FRANKLIN, TN",Satisfactory,"Aug 13, 2018","Dec 01, 2018",Large Bank,"$4,080,827",Low Satisfactory,Outstanding,Satisfactory
+FROST BANK,682563,"SAN ANTONIO, TX",Satisfactory,"Mar 04, 2024","Nov 25, 2024",Large Bank,"$48,799,477",High Satisfactory,Outstanding,
+HERITAGE BANK OF COMMERCE,2209553,"SAN JOSE, CA",Satisfactory,"Jun 24, 2024","Dec 28, 2024",Large Bank,"$5,254,044",High Satisfactory,Low Satisfactory,
+INDEPENDENCE BANK OF KENTUCKY,648242,"OWENSBORO, KY",Satisfactory,"Oct 25, 2021","Feb 07, 2022",Large Bank,"$3,062,572",Low Satisfactory,High Satisfactory,
+INDEPENDENT BANK,636771,"GRAND RAPIDS, MI",Satisfactory,"Oct 30, 2023","Dec 30, 2024",Large Bank,"$5,195,890",Low Satisfactory,Low Satisfactory,
+JOHNSON BANK,58243,"RACINE, WI",Satisfactory,"Sep 29, 2025","Mar 16, 2026",Large Bank,"$7,045,570",High Satisfactory,Low Satisfactory,
+LIBERTYVILLE BANK & TRUST COMPANY,2339795,"LIBERTYVILLE, IL",Outstanding,"Jan 22, 2018","Nov 24, 2018",Large Bank,"$1,374,035",Low Satisfactory,Low Satisfactory,
+MARQUETTE BANK,716833,"CHICAGO, IL",Outstanding,"Sep 16, 2024","Apr 24, 2025",Large Bank,"$2,106,093",High Satisfactory,Low Satisfactory,
+MASCOMA BANK,268006,"LEBANON, NH",Outstanding,"Nov 02, 2020","Feb 25, 2021",Large Bank,"$2,154,572",Low Satisfactory,Low Satisfactory,
+NBH BANK,4210227,"GREENWOOD VILLAGE, CO",Satisfactory,"Sep 17, 2018","May 20, 2019",Large Bank,"$5,623,365",Low Satisfactory,Low Satisfactory,
+PACIFIC PREMIER BANK,431172,"IRVINE, CA",Outstanding,"May 07, 2018","Oct 12, 2018",Large Bank,"$8,022,800",High Satisfactory,High Satisfactory,Satisfactory
+PLAINSCAPITAL BANK,637451,"UNIVERSITY PARK, TX",Satisfactory,"May 17, 2021","Feb 14, 2022",Large Bank,"$13,674,043",Low Satisfactory,Needs to Improve,
+QUAD CITY BANK AND TRUST COMPANY,2142155,"BETTENDORF, IA",Satisfactory,"Nov 12, 2018","Mar 22, 2019",Large Bank,"$1,579,542",High Satisfactory,Low Satisfactory,Satisfactory
+"STATE BANK AND TRUST COMPANY, THE",614313,"DEFIANCE, OH",Satisfactory,"Jan 30, 2023","Sep 07, 2024",Large Bank,"$1,293,834",Low Satisfactory,Needs to Improve,
+TERRITORIAL SAVINGS BANK,564977,"HONOLULU, HI",Satisfactory,"Jan 27, 2020","May 11, 2020",Large Bank,"$2,085,473",High Satisfactory,Low Satisfactory,
+TOWN BANK,2693264,"HARTLAND, WI",Outstanding,"Oct 01, 2018","Oct 27, 2019",Large Bank,"$1,931,362",Low Satisfactory,Low Satisfactory,
+ATLANTIC UNION BANK,693224,"RICHMOND, VA",Satisfactory,"Oct 16, 2023","Sep 15, 2024",Large Bank,"$20,495,690",Low Satisfactory,Low Satisfactory,
+WESTAMERICA BANK,697763,"SAN RAFAEL, CA",Satisfactory,"Oct 01, 2018","Dec 25, 2020",Large Bank,"$5,537,276",High Satisfactory,Low Satisfactory,
+AMERICAN BANK,2580243,"ALLENTOWN, PA",Satisfactory,"Sep 23, 2019","Apr 27, 2020",Large Bank,"$636,580",Low Satisfactory,Low Satisfactory,
+BANKNEWPORT,546003,"NEWPORT, RI",Satisfactory,"Sep 16, 2019","Mar 09, 2020",Large Bank,"$1,703,855",High Satisfactory,Low Satisfactory,
+"BRYN MAWR TRUST COMPANY, THE",765019,"BRYN MAWR, PA",Satisfactory,"Dec 02, 2019","Jul 27, 2020",Large Bank,"$4,721,394",Low Satisfactory,Needs to Improve,Outstanding
+CAPITAL CITY BANK,876634,"TALLAHASSEE, FL",Satisfactory,"Sep 30, 2019","Jan 13, 2020",Large Bank,"$2,994,817",Low Satisfactory,Needs to Improve,
+CENTRAL BANK OF THE OZARKS,290052,"SPRINGFIELD, MO",Outstanding,"Sep 09, 2019","Dec 27, 2019",Large Bank,"$1,416,078",Outstanding,Outstanding,Outstanding
+CHEMUNG CANAL TRUST COMPANY,884303,"ELMIRA, NY",Satisfactory,"Sep 25, 2023","Jul 04, 2024",Large Bank,"$2,649,923",High Satisfactory,Low Satisfactory,Outstanding
+CIVISTA BANK,542528,"SANDUSKY, OH",Satisfactory,"May 13, 2019","Dec 23, 2019",Large Bank,"$2,133,513",Low Satisfactory,Low Satisfactory,Satisfactory
+"COMMUNITY TRUST BANK, INC.",509811,"PIKEVILLE, KY",Satisfactory,"Oct 07, 2019","Jan 07, 2021",Large Bank,"$5,000,601",Low Satisfactory,Low Satisfactory,
+COUNTRY CLUB BANK,625654,"KANSAS CITY, MO",Outstanding,"Oct 28, 2024","Apr 14, 2025",Large Bank,"$2,104,289",Outstanding,Outstanding,Satisfactory
+EQUITY BANK,139656,"ANDOVER, KS",Satisfactory,"Aug 07, 2023","Sep 12, 2024",Large Bank,"$5,152,516",Low Satisfactory,Low Satisfactory,Satisfactory
+FARMERS BANK & TRUST COMPANY,12946,"MAGNOLIA, AR",Satisfactory,"Nov 07, 2022","Apr 14, 2023",Large Bank,"$2,479,838",Low Satisfactory,Low Satisfactory,Satisfactory
+FIRST BANK,216922,"SOUTHERN PINES, NC",Satisfactory,"Nov 06, 2023","May 22, 2025",Large Bank,"$11,977,575",High Satisfactory,High Satisfactory,
+FIRST CITIZENS COMMUNITY BANK,978118,"MANSFIELD, PA",Satisfactory,"Mar 28, 2022","Oct 28, 2022",Large Bank,"$2,208,830",High Satisfactory,Needs to Improve,
+FIRST INTERSTATE BANK,659855,"BILLINGS, MT",Outstanding,"Mar 18, 2019","Oct 28, 2019",Large Bank,"$12,151,833",High Satisfactory,Low Satisfactory,
+FIRST MIDWEST BANK,1007846,"CHICAGO, IL",Outstanding,"Sep 30, 2019","Oct 15, 2020",Large Bank,"$15,430,682",High Satisfactory,Outstanding,
+FIRST PREMIER BANK,374653,"SIOUX FALLS, SD",Satisfactory,"Sep 12, 2022","Nov 30, 2023",Large Bank,"$3,503,723",High Satisfactory,Low Satisfactory,Outstanding
+FIRSTBANK,288853,"LAKEWOOD, CO",Outstanding,"Sep 15, 2025","Feb 15, 2026",Large Bank,"$26,761,023",Outstanding,High Satisfactory,Outstanding
+FIVE STAR BANK,601416,"WARSAW, NY",Satisfactory,"May 06, 2019","Jun 29, 2020",Large Bank,"$4,221,168",Needs to Improve,High Satisfactory,
+HAPPY STATE BANK,466857,"HAPPY, TX",Outstanding,"Jun 03, 2019","Oct 12, 2019",Large Bank,"$3,477,696",Outstanding,Outstanding,
+HOMETRUST BANK,212577,"ASHEVILLE, NC",Satisfactory,"Sep 13, 2021","Jul 07, 2022",Large Bank,"$3,524,452",Low Satisfactory,Low Satisfactory,
+MIDLAND STATES BANK,773247,"EFFINGHAM, IL",Satisfactory,"Jun 21, 2021","Jan 13, 2022",Large Bank,"$6,857,988",Low Satisfactory,Low Satisfactory,Satisfactory
+MIDWEST BANKCENTRE,657459,"SAINT LOUIS, MO",Outstanding,"Feb 22, 2022","Jun 10, 2022",Large Bank,"$2,374,880",Low Satisfactory,Low Satisfactory,
+ORIGIN BANK,667757,"CHOUDRANT, LA",Satisfactory,"Nov 04, 2019","May 31, 2020",Large Bank,"$5,088,357",Low Satisfactory,Low Satisfactory,
+RCB BANK,945053,"CLAREMORE, OK",Satisfactory,"Sep 08, 2025","Mar 13, 2026",Large Bank,"$3,899,432",Low Satisfactory,Low Satisfactory,
+REGIONS BANK,233031,"BIRMINGHAM, AL",Satisfactory,"Mar 04, 2019","Jan 02, 2020",Large Bank,"$123,928,444",Low Satisfactory,High Satisfactory,
+SOUTH SHORE BANK,772008,"SOUTH WEYMOUTH, MA",Satisfactory,"Oct 07, 2019","Jan 30, 2021",Large Bank,"$1,482,441",High Satisfactory,Low Satisfactory,
+SOUTHERN BANK,272272,"POPLAR BLUFF, MO",Satisfactory,"Oct 16, 2023","Mar 02, 2024",Large Bank,"$4,419,729",High Satisfactory,High Satisfactory,Satisfactory
+VERITEX COMMUNITY BANK,3221468,"DALLAS, TX",Satisfactory,"Jun 17, 2024","Dec 23, 2024",Large Bank,"$12,384,382",High Satisfactory,High Satisfactory,Satisfactory
+WESTERN ALLIANCE BANK,3138146,"PHOENIX, AZ",Satisfactory,"May 27, 2025","Aug 10, 2026",Strategic Plan,"$70,852,671",High Satisfactory,High Satisfactory,
+WHEATON BANK & TRUST COMPANY,2044811,"WHEATON, IL",Outstanding,"Apr 29, 2019","Aug 02, 2019",Large Bank,"$1,733,933",Low Satisfactory,Low Satisfactory,
+ANB BANK,828651,"DENVER, CO",Outstanding,"Sep 23, 2024","Feb 14, 2025",Large Bank,"$3,180,893",Low Satisfactory,Outstanding,
+BANCO POPULAR DE PUERTO RICO,940311,"SAN JUAN, PR",Satisfactory,"Jun 23, 2025","Jan 05, 2026",Large Bank,"$58,456,000",High Satisfactory,Low Satisfactory,
+BANK INDEPENDENT,539032,"SHEFFIELD, AL",Satisfactory,"Mar 13, 2023","Jul 30, 2023",Large Bank,"$2,229,522",Low Satisfactory,Low Satisfactory,
+"BANK OF MARION, THE",858528,"MARION, VA",Satisfactory,"Oct 19, 2020","Mar 01, 2021",Large Bank,"$449,569",Low Satisfactory,Low Satisfactory,
+BANK RHODE ISLAND,2434113,"PROVIDENCE, RI",Satisfactory,"Sep 09, 2024","Mar 08, 2025",Large Bank,"$3,378,281",Low Satisfactory,Low Satisfactory,
+BROOKLINE BANK,782306,"BROOKLINE, MA",Satisfactory,"Sep 09, 2024","Mar 08, 2025",Large Bank,"$6,353,060",Low Satisfactory,Low Satisfactory,
+CENTRAL BANK OF THE MIDWEST,704559,"LEE&#39;S SUMMIT, MO",Satisfactory,"Nov 02, 2020","Feb 15, 2021",Large Bank,"$3,577,679",Low Satisfactory,Low Satisfactory,
+COMMERCE BANK,601050,"KANSAS CITY, MO",Outstanding,"Nov 28, 2022","Jul 29, 2023",Large Bank,"$34,838,342",Outstanding,Outstanding,
+CUSTOMERS BANK,2354985,"PHOENIXVILLE, PA",Satisfactory,"Nov 02, 2020","Apr 12, 2021",Large Bank,"$17,892,526",Low Satisfactory,Low Satisfactory,Satisfactory
+DACOTAH BANK,256553,"ABERDEEN, SD",Outstanding,"Mar 27, 2023","Dec 21, 2023",Large Bank,"$3,589,007",High Satisfactory,Low Satisfactory,
+ESSEX BANK,781028,"RICHMOND, VA",Satisfactory,"Oct 05, 2020","Jan 22, 2021",Large Bank,"$1,614,861",Low Satisfactory,Low Satisfactory,Satisfactory
+FIRST FARMERS AND MERCHANTS BANK,150035,"COLUMBIA, TN",Satisfactory,"Mar 20, 2023","Jul 10, 2023",Large Bank,"$1,970,197",Low Satisfactory,Low Satisfactory,Satisfactory
+FIRST HORIZON BANK,485559,"MEMPHIS, TN",Satisfactory,"Nov 30, 2020","Mar 05, 2022",Large Bank,"$82,688,692",High Satisfactory,Outstanding,
+INTERBANK,1187001,"OKLAHOMA CITY, OK",Satisfactory,"Jul 10, 2023","Mar 04, 2024",Large Bank,"$4,193,164",Low Satisfactory,Needs to Improve,Satisfactory
+MANUFACTURERS AND TRADERS TRUST COMPANY,501105,"BUFFALO, NY",Outstanding,"Sep 07, 2020","Jun 26, 2021",Large Bank,"$142,219,684",High Satisfactory,High Satisfactory,
+NEEDHAM BANK,339773,"NEEDHAM, MA",Satisfactory,"Nov 07, 2022","Mar 26, 2023",Large Bank,"$3,279,317",Low Satisfactory,Low Satisfactory,Satisfactory
+PACIFIC MERCANTILE BANK,2717012,"COSTA MESA, CA",Satisfactory,"Feb 18, 2020","Sep 01, 2020",Large Bank,"$1,437,734",High Satisfactory,Low Satisfactory,Satisfactory
+PEOPLES BANK,577128,"MARIETTA, OH",Outstanding,"Mar 23, 2020","May 28, 2021",Large Bank,"$4,272,990",High Satisfactory,Outstanding,
+POPULAR BANK,2736291,"NEW YORK, NY",Satisfactory,"Sep 15, 2025","Feb 22, 2026",Large Bank,"$14,864,258",High Satisfactory,Low Satisfactory,
+SIMMONS BANK,663245,"PINE BLUFF, AR",Satisfactory,"Sep 06, 2022","May 15, 2023",Large Bank,"$27,171,310",Low Satisfactory,Low Satisfactory,
+TEXAS COMMUNITY BANK,528960,"LAREDO, TX",Satisfactory,"Oct 23, 2023","Feb 12, 2024",Large Bank,"$1,955,717",Needs to Improve,Low Satisfactory,Satisfactory
+UNITED BANK,365325,"FAIRFAX, VA",Satisfactory,"Oct 17, 2022","Sep 28, 2023",Large Bank,"$29,002,351",High Satisfactory,Needs to Improve,
+UNIVEST BANK AND TRUST CO.,354310,"SOUDERTON, PA",Satisfactory,"Jan 13, 2020","Nov 06, 2020",Large Bank,"$5,134,013",Low Satisfactory,Needs to Improve,
+WESTSTAR BANK,1447639,"EL PASO, TX",Outstanding,"Mar 20, 2023","Jul 10, 2023",Large Bank,"$2,790,209",High Satisfactory,Low Satisfactory,
+"WHITAKER BANK, INC",1445943,"LEXINGTON, KY",Outstanding,"Nov 27, 2023","Jan 09, 2025",Large Bank,"$1,956,886",Low Satisfactory,Needs to Improve,
+BANK OF UTAH,933975,"OGDEN, UT",Outstanding,"Jan 19, 2021","Jun 04, 2021",Large Bank,"$1,780,477",Low Satisfactory,Substantial Noncompliance,Satisfactory
+CAPSTAR BANK,3715444,"NASHVILLE, TN",Satisfactory,"May 22, 2023","Mar 23, 2024",Large Bank,"$3,231,110",Needs to Improve,High Satisfactory,Satisfactory
+CEDAR RAPIDS BANK AND TRUST COMPANY,3029589,"CEDAR RAPIDS, IA",Satisfactory,"Sep 10, 2018","Dec 22, 2018",Int Small Bank,"$1,346,942",High Satisfactory,High Satisfactory,Satisfactory
+EAST CAMBRIDGE SAVINGS BANK,738303,"CAMBRIDGE, MA",Satisfactory,"Sep 11, 2023","Jan 20, 2024",Large Bank,"$1,604,208",,Low Satisfactory,
+EAST WEST BANK,197478,"PASADENA, CA",Outstanding,"Mar 08, 2021","Oct 16, 2021",Large Bank,"$52,225,880",Low Satisfactory,Needs to Improve,
+EASTHAMPTON SAVINGS BANK,859002,"EASTHAMPTON, MA",Satisfactory,"Oct 16, 2023","Feb 25, 2024",Large Bank,"$1,903,686",High Satisfactory,Low Satisfactory,
+FIRST FARMERS BANK & TRUST CO.,139843,"CONVERSE, IN",Satisfactory,"Sep 20, 2021","Jan 24, 2022",Large Bank,"$2,298,100",High Satisfactory,Low Satisfactory,Satisfactory
+FIRST NORTHERN BANK AND TRUST COMPANY,186717,"PALMERTON, PA",Satisfactory,"Mar 08, 2021","Aug 20, 2021",Large Bank,"$835,292",Low Satisfactory,Low Satisfactory,
+ISABELLA BANK,74140,"MOUNT PLEASANT, MI",Satisfactory,"Nov 13, 2023","Jul 11, 2024",Large Bank,"$1,993,203",Low Satisfactory,Needs to Improve,Satisfactory
+LAKE CITY BANK,874845,"WARSAW, IN",Satisfactory,"Mar 01, 2021","Jun 24, 2021",Large Bank,"$5,822,227",High Satisfactory,Low Satisfactory,
+ORRSTOWN BANK,342410,"SHIPPENSBURG, PA",Satisfactory,"Jan 25, 2021","Oct 29, 2021",Large Bank,"$2,780,990",Low Satisfactory,Low Satisfactory,Satisfactory
+PEAPACK-GLADSTONE BANK,236706,"BEDMINSTER, NJ",Satisfactory,"Jun 07, 2021","Nov 27, 2021",Large Bank,"$5,892,261",Low Satisfactory,Low Satisfactory,
+PRIMIS BANK,3325759,"TAPPAHANNOCK, VA",Satisfactory,"Nov 29, 2021","May 16, 2022",Large Bank,"$3,452,990",Low Satisfactory,Low Satisfactory,Satisfactory
+SANDY SPRING BANK,506922,"OLNEY, MD",Satisfactory,"Oct 12, 2021","Apr 25, 2022",Large Bank,"$12,912,358",Low Satisfactory,Low Satisfactory,
+SMARTBANK,3532641,"PIGEON FORGE, TN",Satisfactory,"Sep 13, 2021","Jun 27, 2022",Large Bank,"$4,606,198",Low Satisfactory,Needs to Improve,Satisfactory
+SYNOVUS BANK,395238,"COLUMBUS, GA",Satisfactory,"Mar 18, 2024","Jan 17, 2025",Large Bank,"$59,629,623",Low Satisfactory,Low Satisfactory,
+AMERISERV FINANCIAL BANK,928618,"JOHNSTOWN, PA",Satisfactory,"Jun 09, 2025","Jan 19, 2026",Large Bank,"$1,426,921",Low Satisfactory,Low Satisfactory,
+BANK IOWA,187947,"WEST DES MOINES, IA",Satisfactory,"Sep 09, 2024","Mar 03, 2025",Large Bank,"$2,117,855",Low Satisfactory,Low Satisfactory,Satisfactory
+BANK OF NEW HAMPSHIRE,265407,"LACONIA, NH",Satisfactory,"Sep 12, 2022","Feb 12, 2023",Large Bank,"$2,374,786",High Satisfactory,Low Satisfactory,
+METROPOLITAN COMMERCIAL BANK,2705895,"NEW YORK, NY",Satisfactory,"Nov 03, 2025","Apr 19, 2026",Large Bank,"$7,614,929",High Satisfactory,High Satisfactory,Satisfactory
+SOUTHERN BANCORP BANK,852544,"ARKADELPHIA, AR",Outstanding,"Mar 17, 2025","Jul 19, 2025",Large Bank,"$2,739,322",Outstanding,Outstanding,Outstanding
+VANTAGE BANK TEXAS,26765,"SAN ANTONIO, TX",Satisfactory,"May 06, 2019","Aug 16, 2019",Int Small Bank,"$1,916,572",Low Satisfactory,Low Satisfactory,Satisfactory
+BANK OF HAWAII,795968,"HONOLULU, HI",Outstanding,"Mar 13, 2023","May 18, 2024",Large Bank,"$23,579,258",Outstanding,Outstanding,
+BANKFIRST FINANCIAL SERVICES,914648,"MACON, MS",Satisfactory,"Oct 30, 2023","Mar 08, 2024",Large Bank,"$2,666,230",High Satisfactory,Low Satisfactory,Satisfactory
+"FIRST BANK, THE",2385514,"HATTIESBURG, MS",Satisfactory,"Aug 28, 2023","Mar 11, 2024",Large Bank,"$6,463,617",Low Satisfactory,Low Satisfactory,
+FIRST CITIZENS BANK,186744,"MASON CITY, IA",Satisfactory,"Nov 13, 2023","Feb 19, 2024",Large Bank,"$1,624,101",Low Satisfactory,Low Satisfactory,Satisfactory
+FIRST SECURITY BANK,673440,"SEARCY, AR",Satisfactory,"Nov 03, 2025","Mar 27, 2026",Large Bank,"$8,156,223",High Satisfactory,High Satisfactory,
+FIRST STATE BANK,435750,"GAINESVILLE, TX",Outstanding,"Mar 01, 2021","Sep 09, 2021",Int Small Bank,"$1,310,944",High Satisfactory,Needs to Improve,Satisfactory
+FVCBANK,3614976,"FAIRFAX, VA",Satisfactory,"Jul 31, 2023","Jul 04, 2024",Large Bank,"$2,338,667",High Satisfactory,Needs to Improve,Satisfactory
+JOHN MARSHALL BANK,3419416,"RESTON, VA",Satisfactory,"Mar 15, 2021","Jul 17, 2021",Int Small Bank,"$1,883,780",High Satisfactory,High Satisfactory,Satisfactory
+MABREY BANK,139553,"BIXBY, OK",Satisfactory,"Oct 07, 2019","Feb 21, 2020",Int Small Bank,"$1,159,367",Outstanding,High Satisfactory,Satisfactory
+RAYMOND JAMES BANK,2193616,"SAINT PETERSBURG, FL",Satisfactory,"May 22, 2023","Sep 08, 2023",Large Bank,"$42,076,662",High Satisfactory,Outstanding,
+UNITED BUSINESS BANK,3281510,"WALNUT CREEK, CA",Satisfactory,"Sep 09, 2019","Jan 16, 2020",Int Small Bank,"$1,481,799",High Satisfactory,High Satisfactory,Satisfactory
+BANCFIRST,1386251,"OKLAHOMA CITY, OK",Satisfactory,"Jul 15, 2024","Jan 13, 2025",Large Bank,"$10,648,000",Low Satisfactory,Low Satisfactory,
+CENTRAL BANK,546544,"STORM LAKE, IA",Satisfactory,"Nov 16, 2020","Mar 05, 2021",Int Small Bank,"$1,479,440",Outstanding,Low Satisfactory,Satisfactory
+CITIZENS & NORTHERN BANK,895710,"WELLSBORO, PA",Satisfactory,"Nov 04, 2024","Aug 29, 2025",Large Bank,"$2,656,955",Low Satisfactory,High Satisfactory,
+COMMERCIAL BANK,497039,"HARROGATE, TN",Satisfactory,"Oct 06, 2025","Mar 20, 2026",Large Bank,"$2,238,247",Low Satisfactory,Needs to Improve,Satisfactory
+COMMONWEALTH BUSINESS BANK,3337097,"LOS ANGELES, CA",Satisfactory,"Sep 23, 2024","Feb 13, 2025",Large Bank,"$1,654,826",Low Satisfactory,Low Satisfactory,Needs to Improve
+FALL RIVER FIVE CENTS SAVINGS BANK,833404,"FALL RIVER, MA",Outstanding,"Mar 14, 2022","Aug 21, 2022",Int Small Bank,"$1,446,964",Outstanding,Outstanding,Outstanding
+FIRST FINANCIAL BANK,470050,"ABILENE, TX",Outstanding,"Jun 03, 2024","Jan 20, 2025",Large Bank,"$13,132,970",Outstanding,Outstanding,
+FIRST WESTERN BANK AND TRUST,687951,"MINOT, ND",Satisfactory,"Sep 23, 2024","Mar 24, 2025",Large Bank,"$2,208,449",Low Satisfactory,Low Satisfactory,Satisfactory
+ORANGE BANK & TRUST COMPANY,176101,"MIDDLETOWN, NY",Satisfactory,"Nov 05, 2018","Jan 22, 2021",Int Small Bank,"$1,061,368",High Satisfactory,Low Satisfactory,Satisfactory
+PCSB BANK,24006,"YORKTOWN HEIGHTS, NY",Satisfactory,"Jan 22, 2024","Aug 19, 2024",Large Bank,"$1,980,866",High Satisfactory,Low Satisfactory,
+TEXAS FIRST BANK,473266,"TEXAS CITY, TX",Satisfactory,"May 28, 2024","Apr 24, 2025",Large Bank,"$2,179,880",High Satisfactory,Low Satisfactory,Satisfactory
+THIRD COAST BANK,3630323,"HUMBLE, TX",Satisfactory,"Aug 12, 2024","Feb 16, 2025",Large Bank,"$4,650,798",Low Satisfactory,Low Satisfactory,Satisfactory
+"ADIRONDACK TRUST COMPANY, THE",645317,"SARATOGA SPRINGS, NY",Satisfactory,"Mar 11, 2019","Aug 23, 2019",Int Small Bank,"$1,148,332",Low Satisfactory,Low Satisfactory,Outstanding
+BANC OF CALIFORNIA,494261,"LOS ANGELES, CA",Outstanding,"Apr 14, 2025","Aug 30, 2025",Large Bank,"$33,458,298",High Satisfactory,Outstanding,
+BUSEY BANK,416245,"CHAMPAIGN, IL",Satisfactory,"Oct 14, 2025","May 30, 2026",Large Bank,"$18,866,438",High Satisfactory,Outstanding,
+CIBC BANK USA,1842065,"CHICAGO, IL",Outstanding,"Aug 04, 2025","May 31, 2026",Large Bank,"$60,355,912",Outstanding,Outstanding,
+ENCORE BANK,2594240,"LITTLE ROCK, AR",Satisfactory,"Oct 20, 2025","Apr 16, 2026",Large Bank,"$3,705,306",Low Satisfactory,Low Satisfactory,
+"FARMERS & MERCHANTS BANK, THE",677644,"STUTTGART, AR",Satisfactory,"Jun 03, 2019","Dec 16, 2019",Int Small Bank,"$1,048,367",,Low Satisfactory,Satisfactory
+FIVE POINTS BANK,554857,"GRAND ISLAND, NE",Outstanding,"Oct 21, 2019","Jan 23, 2020",Int Small Bank,"$1,133,574",Low Satisfactory,Low Satisfactory,Satisfactory
+MAINSTREET BANK,3248849,"FAIRFAX, VA",Satisfactory,"Jul 28, 2025","Dec 20, 2025",Large Bank,"$2,217,133",High Satisfactory,Outstanding,Satisfactory
+OAKSTAR BANK,3374412,"SPRINGFIELD, MO",Satisfactory,"Jun 13, 2022","Dec 19, 2022",Int Small Bank,"$1,895,004",High Satisfactory,High Satisfactory,Outstanding
+ONE COMMUNITY BANK,247140,"OREGON, WI",Satisfactory,"Nov 28, 2022","Apr 28, 2023",Int Small Bank,"$1,780,838",Needs to Improve,Low Satisfactory,Satisfactory
+TEXAS REGIONAL BANK,380458,"HARLINGEN, TX",Satisfactory,"May 28, 2019","Aug 25, 2019",Int Small Bank,"$866,562",High Satisfactory,Low Satisfactory,Satisfactory
+GUARANTY BANK,3804535,"SPRINGFIELD, MO",Satisfactory,"May 01, 2023","Mar 31, 2024",Int Small Bank,"$2,148,808",High Satisfactory,High Satisfactory,Satisfactory
+TRUNORTH BANK,161273,"PEABODY, MA",Outstanding,"Mar 02, 2026","Jul 25, 2026",Large Bank,"$3,233,778",High Satisfactory,High Satisfactory,
+1880 BANK,746223,"CAMBRIDGE, MD",Satisfactory,"Feb 05, 2018","Sep 06, 2018",Int Small Bank,"$354,590",,,Satisfactory
+AMERICAN NATION BANK,256058,"ARDMORE, OK",Satisfactory,"Sep 27, 2021","Dec 31, 2021",Int Small Bank,"$566,443",,,Satisfactory
+AUBURNBANK,749635,"AUBURN, AL",Satisfactory,"Mar 03, 2025","Jun 22, 2025",Int Small Bank,"$976,852",High Satisfactory,High Satisfactory,Satisfactory
+"BANK AND TRUST, SSB, THE",623454,"DEL RIO, TX",Satisfactory,"Oct 04, 2021","Apr 28, 2022",Int Small Bank,"$546,252",High Satisfactory,,Satisfactory
+BANK OF BLUE VALLEY,1421161,"OVERLAND PARK, KS",Satisfactory,"Nov 13, 2018","Jan 28, 2019",Int Small Bank,"$708,066",Low Satisfactory,Low Satisfactory,Satisfactory
+BANK OF PONTIAC,930442,"PONTIAC, IL",Satisfactory,"Jun 21, 2021","Sep 24, 2021",Int Small Bank,"$673,841",,,Satisfactory
+BANK OF THE JAMES,2787770,"LYNCHBURG, VA",Satisfactory,"May 27, 2025","Nov 20, 2025",Int Small Bank,"$1,002,624",,,Satisfactory
+BANK OF THE ORIENT,777366,"SAN FRANCISCO, CA",Satisfactory,"Aug 20, 2018","Dec 20, 2018",Int Small Bank,"$736,455",Low Satisfactory,Low Satisfactory,Satisfactory
+BANK7,18854,"OKLAHOMA CITY, OK",Satisfactory,"Sep 17, 2018","Dec 20, 2018",Int Small Bank,"$705,775",,,Outstanding
+CASS COMMERCIAL BANK,177751,"DES PERES, MO",Satisfactory,"May 13, 2024","Mar 03, 2025",Int Small Bank,"$1,344,302",Low Satisfactory,High Satisfactory,Satisfactory
+CENTRAL BANK OF LAKE OF THE OZARKS,1015243,"OSAGE BEACH, MO",Satisfactory,"Nov 05, 2018","Feb 17, 2019",Int Small Bank,"$727,794",,,Satisfactory
+CFG COMMUNITY BANK,2471239,"LUTHERVILLE, MD",Satisfactory,"Aug 06, 2018","Nov 28, 2018",Int Small Bank,"$809,373",,,Satisfactory
+CHARTER BANK,160650,"EAU CLAIRE, WI",Satisfactory,"Aug 20, 2018","Jan 07, 2019",Int Small Bank,"$873,386",,,Satisfactory
+CIERA BANK,327855,"GRAHAM, TX",Satisfactory,"Sep 10, 2018","Dec 16, 2018",Int Small Bank,"$524,741",,,Satisfactory
+CITIZENS BANK & TRUST COMPANY,192147,"VAN BUREN, AR",Satisfactory,"Oct 24, 2022","Jan 29, 2023",Int Small Bank,"$539,942",,,Satisfactory
+COMMENCEMENT BANK,3537897,"TACOMA, WA",Satisfactory,"Oct 06, 2025","Mar 09, 2026",Int Small Bank,"$681,488",,,Satisfactory
+COMMERCIAL STATE BANK,361653,"ANDREWS, TX",Needs to Improve,"Jan 08, 2018","Jun 18, 2018",Int Small Bank,"$536,479",,,Needs to Improve
+COMMUNITY FIRST BANK,175140,"BOSCOBEL, WI",Satisfactory,"Aug 12, 2024","Nov 04, 2024",Int Small Bank,"$592,807",,,Satisfactory
+CORNERSTONE BANK,447100,"SPENCER, MA",Satisfactory,"Oct 15, 2018","Oct 25, 2019",Int Small Bank,"$1,132,009",,,Satisfactory
+EQUITABLE BANK,115575,"EAST WEYMOUTH, MA",Satisfactory,"Jun 18, 2018","Apr 15, 2019",Int Small Bank,"$332,913",,,Satisfactory
+FARMERS & MERCHANTS BANK,713926,"TIMBERVILLE, VA",Satisfactory,"Sep 22, 2025","Mar 02, 2026",Int Small Bank,"$1,310,287",,Low Satisfactory,Satisfactory
+FIELDPOINT PRIVATE BANK & TRUST,3664588,"GREENWICH, CT",Needs to Improve,"Jan 16, 2024","Aug 18, 2024",Int Small Bank,"$1,656,434",,,Satisfactory
+FINANCIAL FEDERAL BANK,590976,"MEMPHIS, TN",Satisfactory,"May 30, 2023","Aug 19, 2024",Int Small Bank,"$891,834",,,Satisfactory
+FIRST AMERICAN BANK,653648,"FORT DODGE, IA",Satisfactory,"Jul 23, 2018","Mar 25, 2019",Int Small Bank,"$926,841",Low Satisfactory,Needs to Improve,Outstanding
+FIRST BANK,899428,"STRASBURG, VA",Satisfactory,"Jun 23, 2025","Apr 04, 2026",Int Small Bank,"$2,033,720",,,Satisfactory
+FIRST EAGLE BANK,759045,"CHICAGO, IL",Outstanding,"Nov 05, 2018","Feb 22, 2019",Int Small Bank,"$511,365",,,Outstanding
+FIRST FLORIDA INTEGRITY BANK,3591282,"NAPLES, FL",Satisfactory,"Jun 11, 2018","Oct 19, 2018",Int Small Bank,"$1,423,696",,,Satisfactory
+"FIRST STATE BANK AND TRUST COMPANY, INC.",489548,"CARUTHERSVILLE, MO",Satisfactory,"Oct 20, 2025","Jan 18, 2026",Int Small Bank,"$607,546",,,Satisfactory
+FIRST WESTERN BANK,34742,"BOONEVILLE, AR",Satisfactory,"May 12, 2025","Sep 06, 2025",Int Small Bank,"$725,601",,,Satisfactory
+FIRSTBANK,296456,"ANTLERS, OK",Satisfactory,"Feb 23, 2026","May 11, 2026",Int Small Bank,"$640,630",,,Satisfactory
+FNB COMMUNITY BANK,839255,"MIDWEST CITY, OK",Satisfactory,"Sep 19, 2022","Dec 05, 2022",Int Small Bank,"$621,516",,,Satisfactory
+FRANKLIN SAVINGS BANK,228000,"FARMINGTON, ME",Outstanding,"Nov 05, 2018","Mar 04, 2019",Int Small Bank,"$406,919",High Satisfactory,Low Satisfactory,Satisfactory
+FRAZER BANK,245351,"ALTUS, OK",Satisfactory,"Jul 09, 2018","Oct 11, 2018",Int Small Bank,"$331,190",,,Satisfactory
+"FREEDOM BANK OF VIRGINIA, THE",3019982,"FAIRFAX, VA",Satisfactory,"Sep 24, 2018","Jul 12, 2019",Int Small Bank,"$512,830",,,Outstanding
+"FRIENDSHIP STATE BANK, THE",427241,"FRIENDSHIP, IN",Satisfactory,"Oct 17, 2022","Feb 06, 2023",Int Small Bank,"$555,781",,,Satisfactory
+GNB BANK,724744,"GRUNDY CENTER, IA",Satisfactory,"Oct 15, 2018","Jan 18, 2019",Int Small Bank,"$537,888",,,Satisfactory
+GROVE BANK & TRUST,648130,"MIAMI, FL",Satisfactory,"Sep 17, 2018","Dec 09, 2018",Int Small Bank,"$625,613",Needs to Improve,High Satisfactory,Satisfactory
+HEARTLAND BANK,853112,"WHITEHALL, OH",Satisfactory,"Oct 01, 2018","Jul 06, 2019",Int Small Bank,"$1,001,144",High Satisfactory,High Satisfactory,Satisfactory
+HIGHLANDS UNION BANK,969424,"ABINGDON, VA",Needs to Improve,"Jul 09, 2018","Dec 17, 2018",Int Small Bank,"$596,131",High Satisfactory,Low Satisfactory,Needs to Improve
+BANKHOMETOWN,1004470,"OXFORD, MA",Satisfactory,"Mar 02, 2026","Jul 25, 2026",Int Small Bank,"$1,568,009",,,Satisfactory
+MADISON COUNTY BANK,385471,"MADISON, NE",Satisfactory,"May 14, 2018","Aug 14, 2018",Int Small Bank,"$389,321",,,Satisfactory
+MANSFIELD CO-OPERATIVE BANK,163370,"MANSFIELD, MA",Satisfactory,"Feb 26, 2018","Dec 10, 2018",Int Small Bank,"$506,539",,,Satisfactory
+MAQUOKETA STATE BANK,683449,"MAQUOKETA, IA",Satisfactory,"Apr 25, 2022","Aug 05, 2022",Int Small Bank,"$404,040",,,Satisfactory
+MERCHANTS BANK OF BANGOR,935111,"BANGOR, PA",Outstanding,"Nov 05, 2018","May 17, 2019",Int Small Bank,"$399,601",,,Satisfactory
+NEW TRIPOLI BANK,331713,"NEW TRIPOLI, PA",Satisfactory,"Jan 09, 2023","Jun 08, 2023",Int Small Bank,"$596,936",,,Satisfactory
+OLD MISSOURI BANK,2785646,"SPRINGFIELD, MO",Satisfactory,"Mar 06, 2023","Jun 03, 2023",Int Small Bank,"$1,070,997",,,Satisfactory
+"PEOPLES BANK, THE",530655,"PRATT, KS",Satisfactory,"Oct 22, 2018","Jan 06, 2019",Int Small Bank,"$362,080",,,Satisfactory
+PLATTE VALLEY BANK,2465881,"SCOTTSBLUFF, NE",Outstanding,"May 14, 2018","Aug 16, 2018",Int Small Bank,"$556,930",,,Outstanding
+POINTBANK,844567,"PILOT POINT, TX",Satisfactory,"Jul 26, 2021","Nov 19, 2021",Int Small Bank,"$715,760",,,Needs to Improve
+PORTAGE COMMUNITY BANK,2668598,"RAVENNA, OH",Satisfactory,"Nov 26, 2018","Sep 13, 2019",Int Small Bank,"$329,763",,,Satisfactory
+PUTNAM COUNTY BANK,417626,"HURRICANE, WV",Satisfactory,"Dec 03, 2018","Jun 23, 2019",Int Small Bank,"$609,190",High Satisfactory,Needs to Improve,Satisfactory
+SECURITY BANK,516855,"TULSA, OK",Satisfactory,"Jan 24, 2022","Apr 11, 2022",Int Small Bank,"$782,762",,,Satisfactory
+"ST. HENRY BANK, THE",568126,"SAINT HENRY, OH",Satisfactory,"Jan 27, 2025","Aug 31, 2025",Int Small Bank,"$396,117",,,Satisfactory
+STATE BANK FINANCIAL,2631172,"LA CROSSE, WI",Satisfactory,"Mar 11, 2024","Aug 15, 2024",Int Small Bank,"$449,240",High Satisfactory,Low Satisfactory,Satisfactory
+TIOGA STATE BANK,910118,"SPENCER, NY",Satisfactory,"Aug 13, 2018","Jan 17, 2019",Int Small Bank,"$471,190",,,Satisfactory
+TOWN AND COUNTRY BANK,590248,"SPRINGFIELD, IL",Outstanding,"Sep 27, 2021","Feb 13, 2022",Int Small Bank,"$878,304",,,Satisfactory
+TRIUMPH BANK,3395293,"MEMPHIS, TN",Satisfactory,"Mar 12, 2018","Jan 20, 2019",Int Small Bank,"$683,391",,,Satisfactory
+TRUPOINT BANK,274829,"GRUNDY, VA",Satisfactory,"Oct 15, 2018","Jan 19, 2019",Int Small Bank,"$432,026",,,Satisfactory
+UNITED BANK & CAPITAL TRUST COMPANY,728742,"FRANKFORT, KY",Satisfactory,"Jan 08, 2018","Apr 25, 2018",Int Small Bank,"$1,627,864",,,Satisfactory
+WOODLANDS BANK,1479470,"WILLIAMSPORT, PA",Outstanding,"Sep 20, 2021","May 09, 2022",Int Small Bank,"$536,881",,,Outstanding
+"YELLOWSTONE BANK, THE",680457,"LAUREL, MT",Satisfactory,"Sep 12, 2022","Feb 13, 2023",Int Small Bank,"$1,203,280",,,Satisfactory
+AMERICAN HERITAGE BANK,311050,"SAPULPA, OK",Satisfactory,"May 18, 2026","Aug 02, 2026",Int Small Bank,"$1,443,414",High Satisfactory,High Satisfactory,Outstanding
+BANK OF CLARKE,753324,"BERRYVILLE, VA",Satisfactory,"Sep 16, 2024","May 15, 2025",Int Small Bank,"$1,789,371",Outstanding,,Satisfactory
+BENCHMARK COMMUNITY BANK,94522,"KENBRIDGE, VA",Satisfactory,"Aug 15, 2022","Feb 04, 2023",Int Small Bank,"$1,060,822",High Satisfactory,Needs to Improve,Satisfactory
+CBI BANK & TRUST,830542,"MUSCATINE, IA",Outstanding,"Oct 20, 2025","Mar 08, 2026",Int Small Bank,"$1,575,685",High Satisfactory,High Satisfactory,Satisfactory
+CENTRAL BANK OF BRANSON,576541,"BRANSON, MO",Satisfactory,"Jul 15, 2019","Oct 18, 2019",Int Small Bank,"$339,839",,,Satisfactory
+CENTRAL BANK OF OKLAHOMA,2826316,"TULSA, OK",Satisfactory,"Mar 11, 2019","Jun 10, 2019",Int Small Bank,"$696,047",,,Outstanding
+CHESAPEAKE BANK,214722,"KILMARNOCK, VA",Satisfactory,"Nov 18, 2024","May 09, 2025",Int Small Bank,"$1,585,686",,,Satisfactory
+CITIZENS 1ST BANK,869663,"TYLER, TX",Satisfactory,"Oct 21, 2019","Jan 17, 2020",Int Small Bank,"$701,138",,,Satisfactory
+"CITIZENS BANK, THE",856748,"BATESVILLE, AR",Satisfactory,"May 15, 2023","Mar 30, 2024",Int Small Bank,"$1,335,234",High Satisfactory,High Satisfactory,Satisfactory
+CITIZENS STATE BANK,482053,"WISNER, NE",Satisfactory,"Nov 04, 2019","Feb 13, 2020",Int Small Bank,"$345,784",,,Satisfactory
+CITIZENS TRUST BANK,680130,"ATLANTA, GA",Satisfactory,"May 20, 2019","May 15, 2020",Int Small Bank,"$410,144",Outstanding,Needs to Improve,Satisfactory
+CLEAR LAKE BANK AND TRUST COMPANY,865544,"CLEAR LAKE, IA",Satisfactory,"Oct 21, 2019","Jan 19, 2020",Int Small Bank,"$442,522",,,Satisfactory
+"CLEAR MOUNTAIN BANK, INC.",886624,"BRUCETON MILLS, WV",Satisfactory,"Oct 07, 2019","Feb 10, 2020",Int Small Bank,"$638,908",,,Satisfactory
+COMMERCEWEST BANK,3052813,"IRVINE, CA",Satisfactory,"Jan 07, 2019","May 27, 2019",Int Small Bank,"$589,928",,,Satisfactory
+"COMMERCIAL AND SAVINGS BANK OF MILLERSBURG, OHIO, THE",189129,"MILLERSBURG, OH",Outstanding,"Mar 25, 2024","Nov 24, 2024",Int Small Bank,"$1,156,221",Low Satisfactory,Needs to Improve,Satisfactory
+COMMUNITY FINANCIAL SERVICES BANK,698144,"BENTON, KY",Satisfactory,"Oct 11, 2022","Jan 19, 2023",Int Small Bank,"$1,400,575",,,Satisfactory
+COMMUNITY STATE BANK,790543,"ANKENY, IA",Satisfactory,"Oct 28, 2024","Jun 21, 2025",Int Small Bank,"$1,523,552",,,Satisfactory
+CORNHUSKER BANK,544652,"LINCOLN, NE",Satisfactory,"Oct 23, 2023","Jan 20, 2024",Int Small Bank,"$930,629",,,Satisfactory
+"CROGHAN COLONIAL BANK, THE",362717,"FREMONT, OH",Outstanding,"Sep 25, 2023","Apr 11, 2025",Int Small Bank,"$1,115,462",High Satisfactory,Needs to Improve,Satisfactory
+CUSB BANK,900146,"CRESCO, IA",Satisfactory,"May 16, 2022","Jul 23, 2022",Int Small Bank,"$582,700",,,Satisfactory
+EASTERN MICHIGAN BANK,643340,"CROSWELL, MI",Satisfactory,"Jun 03, 2019","Sep 01, 2019",Int Small Bank,"$355,048",,,Satisfactory
+"FAUQUIER BANK, THE",976226,"WARRENTON, VA",Satisfactory,"May 20, 2019","Feb 16, 2020",Int Small Bank,"$700,032",Low Satisfactory,Low Satisfactory,Satisfactory
+FIRST BANK OF BERNE,312244,"BERNE, IN",Satisfactory,"Mar 03, 2025","May 16, 2025",Int Small Bank,"$1,100,701",Low Satisfactory,Low Satisfactory,Satisfactory
+FIRST CHOICE BANK,3374878,"CERRITOS, CA",Outstanding,"Sep 23, 2019","Jan 13, 2020",Int Small Bank,"$1,730,411",,,Outstanding
+FIRST IPSWICH BANK,442806,"IPSWICH, MA",Satisfactory,"Apr 08, 2019","Aug 17, 2019",Int Small Bank,"$421,567",,,Satisfactory
+FNBC BANK,100843,"ASH FLAT, AR",Satisfactory,"Mar 04, 2019","Jun 08, 2019",Int Small Bank,"$464,018",,,Satisfactory
+"HARDIN COUNTY BANK, THE",526854,"SAVANNAH, TN",Satisfactory,"Jan 22, 2024","May 06, 2024",Int Small Bank,"$590,925",,,Satisfactory
+"KILLBUCK SAVINGS BANK COMPANY, THE",1017425,"KILLBUCK, OH",Outstanding,"Jul 29, 2024","Jan 18, 2025",Int Small Bank,"$839,312",High Satisfactory,Needs to Improve,Satisfactory
+LANDMARK COMMUNITY BANK,2963547,"PITTSTON, PA",Satisfactory,"Jun 10, 2019","Nov 29, 2019",Int Small Bank,"$335,558",,,Satisfactory
+LINDELL BANK & TRUST COMPANY,185859,"SAINT LOUIS, MO",Satisfactory,"Sep 05, 2023","Dec 18, 2023",Int Small Bank,"$863,098",Low Satisfactory,Low Satisfactory,Satisfactory
+MIDWEST BANK,709143,"MONMOUTH, IL",Satisfactory,"Sep 23, 2019","Jan 31, 2020",Int Small Bank,"$500,252",Low Satisfactory,Low Satisfactory,Satisfactory
+MISSION BANK,2736714,"BAKERSFIELD, CA",Outstanding,"Jul 29, 2019","Nov 11, 2019",Int Small Bank,"$723,707",,,Satisfactory
+MONTGOMERY BANK,613558,"SIKESTON, MO",Satisfactory,"May 01, 2023","Aug 06, 2023",Int Small Bank,"$1,300,407",,,Outstanding
+"NEW PEOPLES BANK, INC.",2736451,"HONAKER, VA",Satisfactory,"Jul 22, 2019","Nov 16, 2019",Int Small Bank,"$720,772",Low Satisfactory,Needs to Improve,Satisfactory
+NORTHSTAR BANK,2958972,"BAD AXE, MI",Satisfactory,"Feb 06, 2023","Jul 10, 2023",Int Small Bank,"$911,313",,,Satisfactory
+OAK VALLEY COMMUNITY BANK,1864197,"OAKDALE, CA",Outstanding,"Oct 21, 2019","Feb 14, 2020",Int Small Bank,"$1,068,909",,,Satisfactory
+"OHIO VALLEY BANK COMPANY, THE",498317,"GALLIPOLIS, OH",Outstanding,"Mar 31, 2025","Feb 14, 2026",Int Small Bank,"$1,478,660",,,Satisfactory
+OPPORTUNITY BANK OF MONTANA,685676,"HELENA, MT",Outstanding,"Oct 24, 2022","Apr 29, 2024",Int Small Bank,"$1,874,166",,,Outstanding
+PACIFIC ENTERPRISE BANK,3490871,"IRVINE, CA",Satisfactory,"Jul 15, 2019","Feb 10, 2020",Int Small Bank,"$502,156",,,Satisfactory
+PATRIOT BANK,3120646,"MILLINGTON, TN",Needs to Improve,"Mar 04, 2019","Feb 25, 2021",Int Small Bank,"$332,883",,,Satisfactory
+PEOPLES BANK,819855,"LUBBOCK, TX",Satisfactory,"Oct 02, 2023","Mar 04, 2024",Int Small Bank,"$1,018,252",,,Satisfactory
+PEOPLES BANK & TRUST COMPANY OF MADISON COUNTY,746513,"BEREA, KY",Outstanding,"Aug 05, 2019","Oct 24, 2019",Int Small Bank,"$400,298",,,Satisfactory
+PRESIDIO BANK,3398100,"SAN FRANCISCO, CA",Outstanding,"Apr 29, 2019","Aug 30, 2019",Int Small Bank,"$862,435",,,Outstanding
+"PROFINIUM, INC.",865450,"TRUMAN, MN",Outstanding,"Sep 22, 2025","Feb 15, 2026",Int Small Bank,"$518,911",,,Outstanding
+PROVIDENCE BANK,704755,"COLUMBIA, MO",Satisfactory,"Mar 25, 2019","Jul 12, 2019",Int Small Bank,"$1,021,040",,,Satisfactory
+READING CO-OPERATIVE BANK,1008674,"READING, MA",Satisfactory,"Jul 31, 2023","Feb 11, 2024",Int Small Bank,"$858,404",,,Satisfactory
+RSNB BANK,550952,"ROCK SPRINGS, WY",Satisfactory,"Sep 23, 2019","Dec 09, 2019",Int Small Bank,"$358,425",,,Satisfactory
+STIFEL BANK,3076220,"SAINT LOUIS, MO",Outstanding,"Mar 04, 2024","Sep 21, 2024",Strategic Plan,"$11,965,308",,,Satisfactory
+TENNESSEE STATE BANK,479839,"PIGEON FORGE, TN",Satisfactory,"Jun 12, 2023","Oct 29, 2023",Int Small Bank,"$1,035,492",Low Satisfactory,Needs to Improve,Satisfactory
+TOWN & COUNTRY BANK,487357,"SALEM, MO",Satisfactory,"May 20, 2019","Sep 14, 2019",Int Small Bank,"$513,159",,,Satisfactory
+TRUXTON TRUST COMPANY,3290240,"NASHVILLE, TN",Satisfactory,"Oct 31, 2022","Jan 28, 2023",Int Small Bank,"$875,161",,,Satisfactory
+UNITED BANK & TRUST,990352,"MARYSVILLE, KS",Satisfactory,"Oct 24, 2022","Jan 23, 2023",Int Small Bank,"$779,651",,,Satisfactory
+VISIONBANK OF IOWA,269049,"AMES, IA",Satisfactory,"Sep 16, 2019","May 02, 2020",Int Small Bank,"$492,891",,,Satisfactory
+WATERTOWN SAVINGS BANK,886204,"WATERTOWN, MA",Satisfactory,"Oct 23, 2023","Mar 03, 2024",Int Small Bank,"$1,416,091",,,Satisfactory
+WOODTRUST BANK,833749,"WISCONSIN RAPIDS, WI",Satisfactory,"Oct 06, 2025","Feb 23, 2026",Int Small Bank,"$651,588",,,Satisfactory
+ADAMS BANK & TRUST,463650,"OGALLALA, NE",Satisfactory,"Jul 27, 2020","Nov 02, 2020",Int Small Bank,"$846,119",High Satisfactory,Low Satisfactory,Satisfactory
+BANK MIDWEST,45551,"SPIRIT LAKE, IA",Satisfactory,"May 19, 2025","Aug 24, 2025",Int Small Bank,"$1,376,433",High Satisfactory,,Satisfactory
+BANK OF JACKSON HOLE,898458,"JACKSON, WY",Satisfactory,"Feb 24, 2020","May 18, 2020",Int Small Bank,"$912,635",,,Satisfactory
+BARABOO STATE BANK,24949,"BARABOO, WI",Satisfactory,"Jan 13, 2020","May 25, 2020",Int Small Bank,"$370,864",,,Satisfactory
+CENTRAL BANK,31255,"HOUSTON, TX",Satisfactory,"Nov 09, 2020","Apr 30, 2021",Int Small Bank,"$808,067",,,Satisfactory
+CENTRAL BANK OF SEDALIA,611451,"SEDALIA, MO",Satisfactory,"Jul 27, 2020","Oct 19, 2020",Int Small Bank,"$429,034",,,Outstanding
+DEMOTTE STATE BANK,539340,"DEMOTTE, IN",Satisfactory,"Aug 14, 2023","Jan 28, 2024",Int Small Bank,"$530,051",,,Satisfactory
+EAGLE BANK AND TRUST COMPANY,453446,"LITTLE ROCK, AR",Satisfactory,"Sep 03, 2024","Apr 06, 2025",Int Small Bank,"$474,036",,,Satisfactory
+EMPIRE STATE BANK,3277241,"NEWBURGH, NY",Satisfactory,"Nov 30, 2020","May 17, 2021",Int Small Bank,"$420,909",,,Satisfactory
+EVOLVE BANK & TRUST,592448,"WEST MEMPHIS, AR",Satisfactory,"Nov 09, 2020","Dec 09, 2021",Int Small Bank,"$603,606",,,Needs to Improve
+FARMERS & MERCHANTS SAVINGS BANK,863746,"MANCHESTER, IA",Satisfactory,"Jul 27, 2020","Nov 01, 2020",Int Small Bank,"$581,431",,,Satisfactory
+"FARMERS AND MECHANICS BANK, THE",744238,"GALESBURG, IL",Satisfactory,"Mar 09, 2020","Jun 29, 2020",Int Small Bank,"$376,236",,,Satisfactory
+FARMERS AND MERCHANTS BANK,205243,"BALDWYN, MS",Satisfactory,"Aug 24, 2020","Dec 03, 2020",Int Small Bank,"$385,170",,,Satisfactory
+"FARMERS BANK, WINDSOR VA",619327,"WINDSOR, VA",Satisfactory,"Feb 03, 2020","Nov 07, 2020",Int Small Bank,"$476,543",,,Satisfactory
+FIRST SAVINGS BANK,785473,"JEFFERSONVILLE, IN",Needs to Improve,"Jan 06, 2020","Nov 08, 2021",Int Small Bank,"$1,218,618",,,Satisfactory
+GREENFIELD CO-OPERATIVE BANK,326979,"GREENFIELD, MA",Satisfactory,"Oct 05, 2020","Jan 21, 2021",Int Small Bank,"$742,582",,,Satisfactory
+JONAH BANK OF WYOMING,3412417,"CASPER, WY",Satisfactory,"Mar 18, 2024","Jun 03, 2024",Int Small Bank,"$514,019",,,Satisfactory
+MARTHA&#39;S VINEYARD BANK,196800,"EDGARTOWN, MA",Outstanding,"Sep 25, 2023","Jan 18, 2024",Int Small Bank,"$1,340,291",,,Satisfactory
+MONTICELLO BANKING COMPANY,266945,"MONTICELLO, KY",Satisfactory,"Sep 05, 2023","Jan 27, 2024",Int Small Bank,"$1,164,339",,,Satisfactory
+"NORTH SIDE BANK AND TRUST COMPANY, THE",615217,"CINCINNATI, OH",Outstanding,"Oct 07, 2024","Feb 15, 2026",Int Small Bank,"$1,009,577",Low Satisfactory,Substantial Noncompliance,Satisfactory
+"NORTHWESTERN BANK, THE",153054,"CHIPPEWA FALLS, WI",Satisfactory,"Nov 02, 2020","Feb 15, 2021",Int Small Bank,"$492,687",,,Outstanding
+PEOPLES BANK & TRUST CO.,909055,"TROY, MO",Satisfactory,"Feb 03, 2020","May 25, 2020",Int Small Bank,"$455,557",,,Satisfactory
+PREMIER BANK,2687133,"DUBUQUE, IA",Satisfactory,"Sep 21, 2020","Sep 02, 2021",Int Small Bank,"$347,911",,,Satisfactory
+PRIMEBANK,671147,"LE MARS, IA",Satisfactory,"Sep 21, 2020","Dec 14, 2020",Int Small Bank,"$513,287",,,Satisfactory
+RELIANT BANK,3415463,"BRENTWOOD, TN",Satisfactory,"Nov 09, 2020","Apr 25, 2021",Int Small Bank,"$2,982,303",,,Satisfactory
+UNITED SECURITY BANK,1162017,"FRESNO, CA",Satisfactory,"Oct 26, 2020","Feb 15, 2021",Int Small Bank,"$956,213",High Satisfactory,High Satisfactory,Satisfactory
+UNITED TEXAS BANK,726953,"DALLAS, TX",Satisfactory,"Nov 03, 2021","Feb 20, 2022",Int Small Bank,"$1,109,562",,,Satisfactory
+UWHARRIE BANK,590220,"ALBEMARLE, NC",Satisfactory,"Nov 16, 2020","Jun 20, 2021",Int Small Bank,"$787,146",,,Satisfactory
+WALPOLE CO-OPERATIVE BANK,63573,"WALPOLE, MA",Satisfactory,"May 08, 2023","Sep 10, 2023",Int Small Bank,"$584,640",,,Satisfactory
+WELLINGTON STATE BANK,371362,"WELLINGTON, TX",Satisfactory,"Oct 23, 2023","Feb 10, 2024",Int Small Bank,"$562,371",,,Satisfactory
+"ANDOVER BANK, THE",27614,"ANDOVER, OH",Outstanding,"Feb 24, 2025","Jan 24, 2026",Int Small Bank,"$583,080",,,Satisfactory
+"BANK OF FAYETTE COUNTY, THE",466754,"PIPERTON, TN",Satisfactory,"Jul 22, 2024","Nov 02, 2024",Int Small Bank,"$924,008",,,Satisfactory
+BANK OF TEXAS,925653,"MIDLAND, TX",Satisfactory,"Sep 16, 2024","Jan 13, 2025",Int Small Bank,"$534,531",,,Satisfactory
+BLUESTONE BANK,699105,"RAYNHAM, MA",Satisfactory,"Nov 04, 2024","Mar 02, 2025",Int Small Bank,"$1,529,846",,,Satisfactory
+CITIZENS BANK AND TRUST COMPANY,991621,"BLACKSTONE, VA",Satisfactory,"Sep 27, 2021","Feb 07, 2022",Int Small Bank,"$533,003",Low Satisfactory,Low Satisfactory,Satisfactory
+"CITIZENS BANK OF KENTUCKY, INC",495419,"PAINTSVILLE, KY",Outstanding,"Nov 29, 2021","Mar 25, 2022",Int Small Bank,"$776,322",,,Outstanding
+DIAMOND BANK,27847,"MURFREESBORO, AR",Satisfactory,"Mar 17, 2025","Jun 16, 2025",Int Small Bank,"$836,310",,,Satisfactory
+DIETERICH BANK,771140,"EFFINGHAM, IL",Satisfactory,"Jan 21, 2025","Jun 12, 2025",Int Small Bank,"$1,407,708",,,Satisfactory
+FARMERS BANK OF NORTHERN MISSOURI,303952,"UNIONVILLE, MO",Satisfactory,"Feb 08, 2021","May 24, 2021",Int Small Bank,"$423,619",,,Satisfactory
+FARMERS STATE BANK,475354,"VICTOR, MT",Satisfactory,"May 10, 2021","Oct 22, 2021",Int Small Bank,"$577,693",,,Satisfactory
+FIDELITY BANK,848248,"WEST MEMPHIS, AR",Satisfactory,"May 05, 2025","Aug 10, 2025",Int Small Bank,"$546,524",,,Outstanding
+FIELD & MAIN BANK,618740,"HENDERSON, KY",Satisfactory,"Jan 13, 2025","Apr 27, 2025",Int Small Bank,"$769,106",,,Satisfactory
+FIRST BANK,376442,"WAVERLY, IA",Satisfactory,"Sep 09, 2024","Jan 24, 2025",Int Small Bank,"$715,627",,,Satisfactory
+FIRST FINANCIAL BANK,48374,"EL DORADO, AR",Satisfactory,"Sep 06, 2021","Jan 03, 2022",Int Small Bank,"$1,557,182",Low Satisfactory,Low Satisfactory,Satisfactory
+FIRST NORTHERN BANK OF WYOMING,868956,"BUFFALO, WY",Satisfactory,"Oct 25, 2021","Jan 23, 2022",Int Small Bank,"$527,452",,,Satisfactory
+FIRST STATE BANK NEBRASKA,499453,"LINCOLN, NE",Satisfactory,"May 24, 2021","Aug 30, 2021",Int Small Bank,"$755,752",,,Satisfactory
+INSOUTH BANK,329550,"BROWNSVILLE, TN",Satisfactory,"Mar 15, 2021","Aug 16, 2021",Int Small Bank,"$369,487",,,Satisfactory
+IOWA STATE BANK,982348,"HULL, IA",Satisfactory,"Mar 08, 2021","Jun 07, 2021",Int Small Bank,"$728,627",,,Satisfactory
+LONE STAR STATE BANK OF WEST TEXAS,3607062,"LUBBOCK, TX",Satisfactory,"Jun 28, 2021","Oct 01, 2021",Int Small Bank,"$1,051,741",,,Satisfactory
+MINSTER BANK,604024,"MINSTER, OH",Outstanding,"Oct 14, 2025","Mar 15, 2026",Int Small Bank,"$778,145",,,Satisfactory
+MNB BANK,575759,"MCCOOK, NE",Satisfactory,"Nov 15, 2021","Feb 14, 2022",Int Small Bank,"$408,310",,,Outstanding
+NORTH AMERICAN BANKING COMPANY,2631846,"ROSEVILLE, MN",Satisfactory,"Jun 09, 2025","Oct 13, 2025",Int Small Bank,"$1,368,790",,,Satisfactory
+NORTH STATE BANK,2915461,"RALEIGH, NC",Satisfactory,"Jun 30, 2025","Nov 27, 2025",Int Small Bank,"$1,435,137",,,Satisfactory
+"PADUCAH BANK AND TRUST COMPANY, THE",285740,"PADUCAH, KY",Satisfactory,"Sep 20, 2021","Jan 03, 2022",Int Small Bank,"$811,568",,,Satisfactory
+PEOPLES BANK,968249,"CLIVE, IA",Satisfactory,"Oct 27, 2025","Jan 30, 2026",Int Small Bank,"$485,897",,,Satisfactory
+PIONEER BANK,920854,"MAPLETON, MN",Outstanding,"Jan 25, 2021","Jun 21, 2021",Int Small Bank,"$676,506",,,Outstanding
+PLUMAS BANK,670467,"QUINCY, CA",Satisfactory,"Jun 07, 2021","Sep 30, 2021",Int Small Bank,"$1,205,927",,,Satisfactory
+PROFESSIONAL BANK,3816510,"CORAL GABLES, FL",Satisfactory,"Jun 07, 2021","Sep 19, 2021",Int Small Bank,"$2,056,933",,,Outstanding
+"RICHWOOD BANKING COMPANY, INC., THE",150727,"RICHWOOD, OH",Outstanding,"May 12, 2025","Oct 05, 2025",Int Small Bank,"$1,217,625",,,Satisfactory
+SECURITY FINANCIAL BANK,450959,"DURAND, WI",Outstanding,"May 05, 2025","Nov 10, 2025",Int Small Bank,"$970,358",,,Outstanding
+SECURITY STATE BANK,955959,"BASIN, WY",Satisfactory,"Mar 08, 2021","May 27, 2021",Int Small Bank,"$392,588",,,Satisfactory
+TOUCHSTONE BANK,746429,"MC KENNEY, VA",Satisfactory,"Nov 15, 2021","May 26, 2022",Int Small Bank,"$586,651",,,Satisfactory
+VISTA BANK,645465,"DALLAS, TX",Satisfactory,"Mar 01, 2021","Jun 06, 2021",Int Small Bank,"$1,344,135",,,Satisfactory
+WEST MICHIGAN COMMUNITY BANK,715340,"HUDSONVILLE, MI",Satisfactory,"Nov 18, 2024","Jun 30, 2025",Int Small Bank,"$1,001,481",,,Outstanding
+ABINGTON BANK,61476,"ABINGTON, MA",Satisfactory,"Jul 18, 2022","Dec 18, 2022",Int Small Bank,"$607,939",,,Satisfactory
+ADIRONDACK BANK,101671,"UTICA, NY",Satisfactory,"Oct 31, 2022","Jun 01, 2023",Int Small Bank,"$990,659",,,Satisfactory
+ALDEN STATE BANK,414102,"ALDEN, NY",Satisfactory,"Oct 31, 2022","Jun 18, 2023",Int Small Bank,"$443,484",,,Satisfactory
+AMERICAN STATE BANK,262358,"ARP, TX",Satisfactory,"Sep 26, 2022","Jan 13, 2023",Int Small Bank,"$758,300",,,Satisfactory
+BANK OF BARTLETT,225559,"BARTLETT, TN",Satisfactory,"Mar 28, 2022","Apr 14, 2023",Int Small Bank,"$491,950",High Satisfactory,Low Satisfactory,Satisfactory
+"CALLAWAY BANK, THE",719656,"FULTON, MO",Satisfactory,"Oct 06, 2025","Jan 11, 2026",Int Small Bank,"$498,766",,,Satisfactory
+CENTRAL STATE BANK,678744,"ELKADER, IA",Satisfactory,"Jun 06, 2022","Aug 29, 2022",Int Small Bank,"$404,247",,,Satisfactory
+COASTAL COMMUNITY BANK,2562164,"EVERETT, WA",Satisfactory,"Mar 07, 2022","Mar 13, 2023",Int Small Bank,"$2,632,697",,,Satisfactory
+COMMUNITY BANK AND TRUST,957757,"NEOSHO, MO",Satisfactory,"May 02, 2022","Jul 18, 2022",Int Small Bank,"$415,896",High Satisfactory,Low Satisfactory,Satisfactory
+CONNECTION BANK,624246,"FORT MADISON, IA",Satisfactory,"Apr 14, 2025","Aug 09, 2025",Int Small Bank,"$488,603",,,Satisfactory
+EQUITABLE BANK,81175,"GRAND ISLAND, NE",Satisfactory,"Jun 06, 2022","Sep 08, 2022",Int Small Bank,"$434,802",,,Satisfactory
+FIRST STATE BANK,113740,"EASTPOINTE, MI",Satisfactory,"Mar 14, 2022","Sep 12, 2022",Int Small Bank,"$937,238",,,Satisfactory
+FIRST STATE BANK OF LIVINGSTON,884358,"LIVINGSTON, TX",Outstanding,"Mar 03, 2025","Jun 07, 2025",Int Small Bank,"$689,499",,,Satisfactory
+"GENOA BANKING COMPANY, THE",504311,"GENOA, OH",Satisfactory,"Sep 26, 2022","Apr 17, 2023",Int Small Bank,"$515,980",,,Satisfactory
+GRAND RIVER BANK,3812147,"GRANDVILLE, MI",Satisfactory,"Jul 07, 2025","Dec 14, 2025",Int Small Bank,"$516,223",,,Satisfactory
+INSBANK,2877345,"NASHVILLE, TN",Satisfactory,"Nov 07, 2022","Feb 05, 2023",Int Small Bank,"$721,727",,,Satisfactory
+JONES BANK,469559,"SEWARD, NE",Satisfactory,"Sep 26, 2022","Dec 11, 2022",Int Small Bank,"$400,163",,,Satisfactory
+PARADISE BANK,3368635,"BOCA RATON, FL",Satisfactory,"Sep 19, 2022","Dec 22, 2022",Int Small Bank,"$416,402",,,Satisfactory
+PLATTE VALLEY BANK,580155,"TORRINGTON, WY",Satisfactory,"Mar 07, 2022","Jun 05, 2022",Int Small Bank,"$566,416",,,Satisfactory
+SUSSER BANK,965789,"DALLAS, TX",Satisfactory,"Feb 28, 2022","Aug 27, 2022",Int Small Bank,"$1,458,568",,,Satisfactory
+"BANK OF ADVANCE, THE",879644,"ADVANCE, MO",Satisfactory,"Jul 24, 2023","Nov 03, 2023",Int Small Bank,"$454,487",High Satisfactory,,Satisfactory
+BANK OF OAK RIDGE,2903123,"OAK RIDGE, NC",Satisfactory,"Jun 12, 2023","Apr 22, 2024",Int Small Bank,"$586,336",,,Satisfactory
+CENTRAL STATE BANK,353238,"CALERA, AL",Satisfactory,"Sep 25, 2023","Mar 07, 2024",Int Small Bank,"$578,836",,,Satisfactory
+CHARTER WEST BANK,582953,"WEST POINT, NE",Satisfactory,"Jan 09, 2023","Mar 27, 2023",Int Small Bank,"$414,929",,,Satisfactory
+CITIZENS BANK OF KANSAS,1014853,"KINGMAN, KS",Satisfactory,"Aug 14, 2023","Oct 30, 2023",Int Small Bank,"$481,443",,,Satisfactory
+ENTERPRISE BANK,1836701,"OMAHA, NE",Satisfactory,"Aug 07, 2023","Oct 23, 2023",Int Small Bank,"$436,312",,,Satisfactory
+FIRST CHOICE BANK,968744,"PONTOTOC, MS",Satisfactory,"Mar 20, 2023","Jun 24, 2023",Int Small Bank,"$434,542",,,Satisfactory
+"FIRST MONTANA BANK, INC.",613156,"MISSOULA, MT",Satisfactory,"Sep 11, 2023","Jun 23, 2024",Int Small Bank,"$567,131",,,Satisfactory
+FIRST OPTION BANK,285852,"OSAWATOMIE, KS",Satisfactory,"Mar 06, 2023","Jun 16, 2023",Int Small Bank,"$612,375",,,Outstanding
+FIRST STATE BANK SOUTHWEST,823656,"PIPESTONE, MN",Outstanding,"Aug 14, 2023","Mar 18, 2024",Int Small Bank,"$392,166",,,Outstanding
+"FNB COMMUNITY BANK,THE",137447,"VANDALIA, IL",Satisfactory,"Jul 24, 2023","Nov 03, 2023",Int Small Bank,"$489,724",,,Satisfactory
+HIGH COUNTRY BANK,479370,"SALIDA, CO",Satisfactory,"Jul 10, 2023","Sep 25, 2023",Int Small Bank,"$440,094",,,Satisfactory
+LEA COUNTY STATE BANK,1015252,"HOBBS, NM",Satisfactory,"Mar 06, 2023","May 29, 2023",Int Small Bank,"$583,068",,,Outstanding
+MIDWEST BANK,669555,"PIERCE, NE",Satisfactory,"Nov 27, 2023","Feb 26, 2024",Int Small Bank,"$1,006,807",,,Outstanding
+NEBRASKALAND BANK,2667957,"NORTH PLATTE, NE",Satisfactory,"May 01, 2023","Jul 17, 2023",Int Small Bank,"$934,997",,,Outstanding
+NORTH SHORE BANK OF COMMERCE,126553,"DULUTH, MN",Satisfactory,"May 08, 2023","Jan 21, 2024",Int Small Bank,"$415,908",,,Outstanding
+OXFORD BANK,448040,"OXFORD, MI",Satisfactory,"May 15, 2023","Feb 16, 2024",Int Small Bank,"$821,623",,,Satisfactory
+PRIORITYONE BANK,956938,"MAGEE, MS",Satisfactory,"Oct 30, 2023","Apr 27, 2024",Int Small Bank,"$1,032,203",,,Outstanding
+RELYANCE BANK,49241,"WHITE HALL, AR",Satisfactory,"Jun 05, 2023","Sep 23, 2023",Int Small Bank,"$1,190,663",,,Outstanding
+SELECT BANK,3567269,"FOREST, VA",Satisfactory,"Apr 17, 2023","Jun 01, 2024",Int Small Bank,"$440,948",,,Satisfactory
+SOLVAY BANK,722816,"SOLVAY, NY",Outstanding,"Oct 06, 2025","Feb 26, 2026",Int Small Bank,"$1,181,142",Outstanding,Low Satisfactory,Satisfactory
+TRI-COUNTY BANK,695349,"BROWN CITY, MI",Satisfactory,"Aug 14, 2023","Apr 06, 2024",Int Small Bank,"$535,638",,,Satisfactory
+UNIBANK,3487947,"LYNNWOOD, WA",Satisfactory,"Jul 31, 2023","Jul 05, 2024",Int Small Bank,"$607,134",,,Satisfactory
+"VICTORY BANK, THE",3603961,"LIMERICK, PA",Satisfactory,"Jul 10, 2023","Jun 14, 2024",Int Small Bank,"$420,491",,,Satisfactory
+ANSTAFF BANK,261940,"GREEN FOREST, AR",Satisfactory,"Nov 12, 2024","Feb 28, 2025",Int Small Bank,"$1,015,990",,,Satisfactory
+ARMOR BANK,168571,"FORREST CITY, AR",Satisfactory,"Oct 15, 2024","Jan 19, 2025",Int Small Bank,"$450,573",,,Satisfactory
+BANK OF COMMERCE,862057,"CHANUTE, KS",Satisfactory,"Apr 15, 2024","Jul 04, 2024",Int Small Bank,"$459,152",Outstanding,,Satisfactory
+CARROLL BANK AND TRUST,541857,"HUNTINGDON, TN",Satisfactory,"Jun 03, 2024","Sep 27, 2024",Int Small Bank,"$506,110",,,Satisfactory
+CENTRAL SAVINGS BANK,382050,"SAULT SAINTE MARIE, MI",Outstanding,"Jan 29, 2024","Aug 25, 2024",Int Small Bank,"$430,381",,,Outstanding
+CHELSEA STATE BANK,711548,"CHELSEA, MI",Satisfactory,"Feb 26, 2024","Jun 10, 2024",Int Small Bank,"$403,647",,,Satisfactory
+COASTAL STATES BANK,3274709,"HILTON HEAD ISLAND, SC",Satisfactory,"Oct 21, 2024","Apr 06, 2025",Int Small Bank,"$2,113,953",,,Satisfactory
+COMMUNITY STATE BANK,502746,"AVILLA, IN",Satisfactory,"Mar 04, 2024","Jun 15, 2024",Int Small Bank,"$486,259",,,Satisfactory
+FIRST LIBERTY BANK,629353,"LIBERTY, TX",Outstanding,"Dec 02, 2024","Apr 14, 2025",Int Small Bank,"$501,041",,,Satisfactory
+FIRST STATE BANK,114840,"RUSSELLVILLE, AR",Satisfactory,"Dec 02, 2024","Mar 22, 2025",Int Small Bank,"$559,812",,,Outstanding
+FIVE POINTS BANK OF HASTINGS,386450,"HASTINGS, NE",Satisfactory,"Jul 29, 2024","Oct 14, 2024",Int Small Bank,"$533,338",,,Satisfactory
+GRAND BANK,76854,"TULSA, OK",Satisfactory,"Jun 10, 2024","Sep 02, 2024",Int Small Bank,"$591,730",,,Outstanding
+NOBLEBANK & TRUST,3385744,"ANNISTON, AL",Satisfactory,"Mar 25, 2024","Jul 08, 2024",Int Small Bank,"$409,247",,,Outstanding
+PEGASUS BANK,3465392,"DALLAS, TX",Satisfactory,"Nov 18, 2024","May 02, 2025",Int Small Bank,"$1,292,315",,,Outstanding
+SIGNATURE BANK OF ARKANSAS,3350724,"FAYETTEVILLE, AR",Satisfactory,"Oct 15, 2024","Feb 16, 2025",Int Small Bank,"$1,210,630",,,Satisfactory
+SOVEREIGN BANK,396253,"SHAWNEE, OK",Satisfactory,"Nov 18, 2024","Mar 01, 2025",Int Small Bank,"$1,098,902",,,Outstanding
+"UNION STATE BANK OF EVEREST, THE",736550,"EVEREST, KS",Satisfactory,"Dec 09, 2024","Mar 13, 2025",Int Small Bank,"$413,006",,,Satisfactory
+VISION BANK,241157,"ADA, OK",Outstanding,"Nov 04, 2024","Jun 02, 2025",Int Small Bank,"$997,260",,,Outstanding
+WASHINGTON STATE BANK,433943,"WASHINGTON, IA",Satisfactory,"Jan 22, 2024","May 05, 2024",Int Small Bank,"$548,508",,,Satisfactory
+ASIAN BANK,2785477,"PHILADELPHIA, PA",Satisfactory,"Jun 02, 2025","Nov 14, 2025",Int Small Bank,"$606,439",,,Satisfactory
+BANK OF THE FLINT HILLS,552059,"WAMEGO, KS",Satisfactory,"Jul 07, 2025","Oct 20, 2025",Int Small Bank,"$468,873",,,Satisfactory
+BANKTENNESSEE,831576,"COLLIERVILLE, TN",Satisfactory,"Mar 24, 2025","Jun 22, 2025",Int Small Bank,"$613,915",,,Satisfactory
+BENCHMARK BANK,980960,"PLANO, TX",Satisfactory,"Aug 04, 2025","Nov 30, 2025",Int Small Bank,"$1,218,286",,,Satisfactory
+BLUE SKY BANK,517357,"PAWHUSKA, OK",Satisfactory,"Dec 01, 2025","Mar 12, 2026",Int Small Bank,"$1,196,528",,,Satisfactory
+CHAMBERS BANK,517049,"DANVILLE, AR",Satisfactory,"Feb 18, 2025","Jul 05, 2025",Int Small Bank,"$1,387,566",,,Outstanding
+CHICKASAW COMMUNITY BANK,64552,"OKLAHOMA CITY, OK",Satisfactory,"Apr 28, 2025","Oct 06, 2025",Int Small Bank,"$469,509",,,Outstanding
+CORNERSTONE COMMUNITY BANK,3485420,"RED BLUFF, CA",Satisfactory,"May 12, 2025","Aug 29, 2025",Int Small Bank,"$657,922",,,Satisfactory
+"FARMERS & MERCHANTS BANK, THE",574949,"BERLIN, WI",Satisfactory,"Sep 15, 2025","Dec 22, 2025",Int Small Bank,"$952,328",,,Satisfactory
+FIRST CAPITAL BANK,2849463,"CHARLESTON, SC",Satisfactory,"May 19, 2025","Nov 03, 2025",Int Small Bank,"$1,012,100",,,Satisfactory
+FIRST PRYORITY BANK,524953,"PRYOR, OK",Satisfactory,"Nov 17, 2025","Jun 15, 2026",Int Small Bank,"$498,549",,,Satisfactory
+FNB OXFORD BANK,590640,"OXFORD, MS",Satisfactory,"Mar 03, 2025","Jun 14, 2025",Int Small Bank,"$817,381",,,Satisfactory
+LIFESTORE BANK,715872,"WEST JEFFERSON, NC",Satisfactory,"Oct 14, 2025","Feb 23, 2026",Int Small Bank,"$474,039",,,Satisfactory
+"MISSOURI BANK, THE",309150,"WARRENTON, MO",Satisfactory,"Aug 18, 2025","Dec 06, 2025",Int Small Bank,"$470,003",,,Satisfactory
+MOUNTAIN VALLEY BANK,475653,"WALDEN, CO",Satisfactory,"Jun 09, 2025","Sep 08, 2025",Int Small Bank,"$571,946",,,Satisfactory
+STONE BANK,913146,"MOUNTAIN VIEW, AR",Satisfactory,"Mar 31, 2025","Jul 21, 2025",Int Small Bank,"$839,584",,,Satisfactory
+TXN BANK,77253,"HONDO, TX",Satisfactory,"Jun 02, 2025","Oct 13, 2025",Int Small Bank,"$611,776",,,Satisfactory
+UNION STATE BANK,227151,"ARKANSAS CITY, KS",Satisfactory,"Mar 17, 2025","Aug 10, 2026",Int Small Bank,"$702,830",,,Satisfactory
+VERIMORE BANK,710176,"BROOKFIELD, MO",Satisfactory,"Dec 01, 2025","Mar 05, 2026",Int Small Bank,"$460,685",,,Outstanding
+WORTHINGTON BANK,3150205,"ARLINGTON, TX",Satisfactory,"Apr 07, 2025","Aug 02, 2025",Int Small Bank,"$612,795",,,Outstanding
+FIRST NORTHEAST BANK OF NEBRASKA,208655,"LYONS, NE",Satisfactory,"Apr 20, 2026","Jul 12, 2026",Int Small Bank,"$480,723",,,Outstanding
+OREGON PACIFIC BANKING CO. DBA OREGON PACIFIC BANK,160360,"FLORENCE, OR",Satisfactory,"Jan 12, 2026","May 28, 2026",Int Small Bank,"$837,360",,,Satisfactory
+ROLLING HILLS BANK & TRUST,882242,"ATLANTIC, IA",Satisfactory,"Feb 23, 2026","Jun 27, 2026",Int Small Bank,"$472,271",,,Satisfactory
+GREEN DOT BANK,243375,"PROVO, UT",Outstanding,"Nov 12, 2024","Mar 02, 2025",Strategic Plan,"$3,932,353",,,
+SILICON VALLEY BANK,802866,"SANTA CLARA, CA",Satisfactory,"Oct 22, 2018","Feb 02, 2019",Strategic Plan,"$55,073,093",Needs to Improve,Low Satisfactory,
+ALLY BANK,3284070,"SANDY, UT",Outstanding,"Sep 28, 2020","Jan 15, 2021",Strategic Plan,"$172,910,000",,,
+SILVERGATE BANK,1216826,"LA JOLLA, CA",Satisfactory,"Mar 02, 2020","Jul 05, 2020",Strategic Plan,"$2,127,181",,,Satisfactory
+STIFEL BANK AND TRUST,3076248,"SAINT LOUIS, MO",Outstanding,"Mar 23, 2020","Jul 12, 2021",Strategic Plan,"$13,901,250",High Satisfactory,Outstanding,
+"CHARLES SCHWAB BANK, SSB",3150447,"WESTLAKE, TX",Outstanding,"Oct 14, 2025","Mar 27, 2026",Strategic Plan,"$243,112,000",,,
+"CHARLES SCHWAB PREMIER BANK, SSB",1893049,"WESTLAKE, TX",Outstanding,"Oct 14, 2025","Mar 27, 2026",Strategic Plan,"$25,134,000",,,
+TRISTATE CAPITAL BANK,3475083,"PITTSBURGH, PA",Outstanding,"Jun 03, 2024","Nov 21, 2024",Strategic Plan,"$19,449,826",,,
+"BANK OF NEW YORK MELLON, THE",541101,"NEW YORK, NY",Satisfactory,"Nov 19, 2018","Jun 22, 2019",Wholesale,"$273,110,000",Low Satisfactory,Outstanding,
+DEUTSCHE BANK TRUST COMPANY AMERICAS,214807,"NEW YORK, NY",Outstanding,"Jun 18, 2018","Jan 03, 2019",Wholesale,"$42,106,000",,,
+MIZUHO BANK (USA),229913,"NEW YORK, NY",Outstanding,"Feb 22, 2021","Jul 22, 2021",Wholesale,"$7,380,887",,,
+"NORTHERN TRUST COMPANY, THE",210434,"CHICAGO, IL",Outstanding,"Oct 15, 2018","May 02, 2019",Wholesale,"$134,656,952",High Satisfactory,Outstanding,
+GOLDMAN SACHS BANK USA,2182786,"NEW YORK, NY",Outstanding,"Jul 08, 2019","Jun 18, 2020",Wholesale,"$191,517,000",,,
+STATE STREET BANK AND TRUST COMPANY,35301,"BOSTON, MA",Outstanding,"Sep 27, 2021","Feb 18, 2022",Wholesale,"$322,958,000",,,
+MARLIN BUSINESS BANK,3716852,"SALT LAKE CITY, UT",Satisfactory,"Jun 10, 2019","Mar 02, 2020",Limited Purpose,"$1,049,840",,,
+VCC BANK,3626858,"RICHMOND, VA",Outstanding,"Jan 06, 2020","Aug 22, 2020",Limited Purpose,"$214,190",,,

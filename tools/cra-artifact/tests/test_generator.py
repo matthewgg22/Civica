@@ -152,6 +152,7 @@ def test_send_refuses_unverified_bank(monkeypatch):
     depend on real data happening to be in the failing state."""
     banks, assumptions, org = generate.load_inputs()
     fake = dict(banks["bank_irvine"]); fake["verified"] = False
+    fake["target_status"] = "target"  # isolate the verified:false path from the no-target guard
     patched = dict(banks); patched["__unverified_fixture__"] = fake
     monkeypatch.setattr(generate, "load_inputs",
                         lambda: (patched, assumptions, org))
@@ -189,9 +190,12 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
 # ---- PDF smoke (skips when Chrome absent) -----------------------------------
 @pytest.mark.skipif(not Path(generate.CHROME).exists(), reason="Chrome not installed")
 def test_pdf_smoke(tmp_path):
-    rc = generate.main(["--bank", "bank_irvine"])
+    """Smoke-tests a bank we would actually send. This used bank_irvine until it
+    was reclassified no-target -- a smoke test should exercise the sendable
+    path, not a bank the generator now refuses."""
+    rc = generate.main(["--bank", "busey_bank"])
     assert rc == 0
-    pdf = TOOL_ROOT / "out/bank_irvine.pdf"
+    pdf = TOOL_ROOT / "out/busey_bank.pdf"
     assert pdf.exists() and 10_000 < pdf.stat().st_size < 10 * 1024 * 1024
     # 5 pages
     n_pages = subprocess.run(
@@ -203,8 +207,21 @@ def test_pdf_smoke(tmp_path):
 
 # ---- multi-state wiring ------------------------------------------------------
 def test_unsupported_state_refused():
+    """A state with no fact base at all must still be refused.
+
+    This used to assert PA. PA was refused because its fact base diverges from
+    FNS, which is a different problem from having no data -- and the right
+    answer turned out to be a coverage-mode template, not exclusion. Wyoming has
+    no fact base of any kind, so it is the honest example now."""
     with pytest.raises(states.UnsupportedStateError):
-        states.state_meta("PA")  # FNS-divergence exclusion is deliberate
+        states.state_meta("WY")
+
+
+def test_the_fns_divergence_states_are_supported_but_constrained():
+    """PA and NJ are wired, and wired in coverage mode specifically. If either
+    ever silently became a normal absolute-claim state, this fails."""
+    for st in ("PA", "NJ"):
+        assert states.state_meta(st)["headline_mode"] == "coverage"
 
 def test_fl_metrics_load_and_state_average():
     meta = states.state_meta("FL")
@@ -305,11 +322,60 @@ def test_dense_mode_engages_on_total_content_not_the_county_line():
 
 
 @pytest.mark.skipif(not Path(generate.CHROME).exists(), reason="Chrome not installed")
+def test_component_ratings_are_not_internally_impossible():
+    """The FDIC CRAPES API served Busey Bank a 2022 record with LENDING_RATING and
+    SERVICE_RATING both "Substantial Non Complianc" against an overall rating of
+    Satisfactory -- with Investment and Rating Points missing. The row was corrupt,
+    and the tell was that the combination cannot exist: the lending test is weighted
+    most heavily (12 CFR 345.28 / Appendix A), so Substantial Noncompliance there
+    caps the overall rating far below Satisfactory. Any bank record reproducing that
+    combination is carrying API data that was never checked against the PE."""
+    banks, _a, _o = generate.load_inputs()
+    for key, bank in banks.items():
+        cr = (bank.get("component_ratings") or "").lower()
+        if not cr:
+            continue
+        overall_ok = "overall satisfactory" in cr or "overall outstanding" in cr
+        if overall_ok and "lending" in cr:
+            lending = cr.split("lending", 1)[1].split("/")[0]
+            assert "substantial" not in lending, (
+                f"{key}: claims a satisfactory-or-better overall rating alongside a "
+                f"Lending Test at Substantial Noncompliance -- impossible; re-read the PE"
+            )
+
+
+def test_every_bank_declares_a_state_the_registry_supports():
+    """`state` defaults to "CA" in memo.py and quarterly.py. A bank loaded without
+    one is therefore scored against California county metrics silently — which is
+    the same failure mode that once dropped California out of the national ranking
+    entirely. Every AA county must resolve, so an omitted state must be an error
+    here rather than a plausible-looking wrong number in a bank's PDF."""
+    banks, _a, _o = generate.load_inputs()
+    for key, bank in banks.items():
+        assert bank.get("state"), f"{key} does not declare a state"
+        if bank.get("artifact_status") == "blocked":
+            # A blocked bank is one whose evidence is sound but whose state has no
+            # usable fact base -- Meridian's single assessment area spans PA, NJ, DE
+            # and MD, and not one of the four resolves. It must still declare its
+            # state and say WHY it cannot be built, so the block is legible later.
+            assert bank.get("artifact_block_reason"), f"{key}: blocked without a reason"
+            continue
+        meta = states.state_meta(bank["state"])  # raises for an unregistered state
+        metrics = score.load_county_metrics(meta["metrics"])
+        covered = [c for c in bank["aa_counties"] if c in metrics]
+        assert covered, (
+            f"{key} declares state {bank['state']} but none of its AA counties "
+            f"{bank['aa_counties']} appear in that state's fact base"
+        )
+
+
 def test_every_loaded_bank_memo_is_exactly_one_page():
     """The memo is the bank's exam evidence — it must fit one page, and the
     generator must fail loudly rather than clip content."""
     banks, _a, _o = generate.load_inputs()
-    for key in banks:
+    for key, bank in banks.items():
+        if bank.get("artifact_status") == "blocked":
+            continue  # no figures can be produced; see test_a_blocked_bank_is_refused_loudly
         rc = memo.main(["--bank", key, "--specimen"])  # raises MemoOverflowError if >1
         assert rc == 0
 
@@ -587,12 +653,19 @@ def test_every_bank_ask_is_anchored_to_disclosed_giving_in_its_target_aa():
 
 
 def test_the_per_aa_rule_can_raise_an_ask_not_only_lower_it():
-    """Guards against reading the correction as 'always ask for less'. Hanmi's
-    prior $15,000 sat below their average Los Angeles donation of $20,077."""
+    """Guards against reading the correction as 'always ask for less'.
+
+    Hanmi was the original example, on the reasoning that its prior $15,000 sat
+    below its average Los Angeles donation of $20,077. src/ask.py disagreed and
+    moved it back to $15,000 -- anchoring on a share of the assessment area's
+    ANNUAL budget ($93,693/yr) rather than on the size of a typical cheque. The
+    principle still holds, so the test now points at the banks where the rule
+    actually raised the ask."""
     banks, _, _ = generate.load_inputs()
-    h = banks["hanmi_bank"]
-    assert h["ask_usd"] > h["ask_usd_prior"]
-    assert "281,080" in h["pe_giving"]
+    raised = {k: b for k, b in banks.items()
+              if b.get("ask_usd_prior") and b["ask_usd"] > b["ask_usd_prior"]}
+    assert raised, "the per-AA rule must be able to raise an ask, not only lower it"
+    assert "first_american_bank" in raised and "busey_bank" in raised
 
 
 # ---- pro rata attribution for pooled county programs -------------------------
@@ -755,10 +828,124 @@ def test_no_bank_merges_separately_evaluated_assessment_areas():
 
 
 def test_ocean_bank_does_not_claim_orange_county():
-    """Ocean's PE tables exactly two AAs -- Miami MD (Miami-Dade) and Fort
-    Lauderdale MD (Broward). Orange County was in our record and appears in
-    neither. A county the bank does not serve is the fastest way to lose a
-    CRA officer's confidence."""
+    """Ocean's PE tables exactly two EVALUATED AAs -- Miami MD (Miami-Dade) and
+    Fort Lauderdale MD (Broward) -- and we anchor on Miami-Dade, their primary
+    at 20 of 22 branches.
+
+    The docstring here used to say Orange "appears in neither" and that the bank
+    "does not serve" it. Both were wrong. Orange IS a delineated assessment area:
+    the bank opened an Orlando office and added it, but the office had been open
+    about a month, so "examiners did not evaluate the bank's performance in
+    Orange County." Delineated and unexamined, not absent. Palm Beach was added
+    later still and appears nowhere in the 2023 PE.
+
+    The exclusion stands -- our figures cover the primary evaluated AA -- but for
+    the right reason. Claiming an unexamined county's need as though it were
+    examined would be the error; so would telling a CRA officer their own bank
+    does not serve Orlando."""
     banks, _, _ = generate.load_inputs()
     assert "Orange" not in banks["ocean_bank"]["aa_counties"]
     assert banks["ocean_bank"]["aa_counties"] == ["Miami-Dade"]
+
+
+def test_a_blocked_bank_is_refused_loudly_not_by_an_opaque_registry_error():
+    """Meridian Bank's single assessment area spans PA, NJ, DE and MD. PA and NJ
+    are refused on purpose -- their fact bases carry FNS-divergence CAUTION notes,
+    so the artifact's headline metric cannot be stated -- and DE and MD were never
+    built. Nine of eleven counties are in refused states and the other two have no
+    data. The generator must say that, rather than surfacing 'state not wired'."""
+    banks, _a, _o = generate.load_inputs()
+    # Meridian was the original member and is no longer blocked -- coverage mode
+    # unblocked it. The guard still matters for the next such bank, so it is
+    # exercised against a fixture rather than deleted along with its last user.
+    fixture = dict(banks["meridian_bank"])
+    fixture["artifact_status"] = "blocked"
+    fixture["artifact_block_reason"] = "fixture: no usable fact base"
+    with pytest.raises(states.ArtifactBlockedError):
+        states.assert_buildable("__blocked_fixture__", fixture)
+    for key, bank in banks.items():
+        if bank.get("artifact_status") == "blocked":
+            assert bank.get("artifact_block_reason"), f"{key}: blocked without a reason"
+
+
+def test_a_blocked_bank_still_carries_full_evidence():
+    """Blocked is a data problem, not an evidence problem. The record must stay
+    send-ready so it needs no rework when the fact base arrives."""
+    banks, _a, _o = generate.load_inputs()
+    for key, bank in banks.items():
+        if bank.get("artifact_status") != "blocked":
+            continue
+        assert bank.get("verified") is True, f"{key}: blocked AND unverified"
+        assert bank.get("aa_giving_usd"), f"{key}: no assessment-area giving recorded"
+        assert bank.get("ask_usd"), f"{key}: no ask computed"
+    # Meridian kept its full evidence while blocked, which is why unblocking it
+    # required no rework at all.
+    m = banks["meridian_bank"]
+    assert m["verified"] is True and m["aa_giving_usd"] and m["ask_usd"]
+
+
+def test_generator_refuses_a_no_target_bank_before_writing_anything(tmp_path):
+    """A PDF that exists is a PDF that can be attached to an email.
+
+    Three test fixtures and four no-target banks reached the operator's send
+    folder because the guards ran at --send time, AFTER the file was written.
+    The refusal now happens before any file is produced."""
+    # ABB was the fixture here until 2026-08-26, when it was reclassified a
+    # PEER target: High Satisfactory on both tests but $1.6M of disclosed AA
+    # giving. Under a capacity screen that is a target, not a refusal. helm_bank
+    # is a genuine no-target -- no gap AND no capacity ($25,161).
+    out = TOOL_ROOT / "out/helm_bank.pdf"
+    before = out.stat().st_mtime if out.exists() else None
+    with pytest.raises(generate.NoDocumentedGapError):
+        generate.main(["--bank", "helm_bank"])
+    after = out.stat().st_mtime if out.exists() else None
+    assert before == after, "a refused bank must not (re)write a PDF"
+
+
+def test_generator_refuses_an_unsized_bank():
+    """Five Star and Bank of Marin have real gaps but no per-assessment-area
+    giving figure, so their ask is a retained placeholder. Printing it would put
+    a number in front of a bank that we cannot justify."""
+    for key in ("five_star_bank", "bank_of_marin"):
+        with pytest.raises(generate.UnsizedAskError):
+            generate.main(["--bank", key])
+
+
+def test_nonsendable_banks_can_still_be_inspected_deliberately():
+    """The refusal must be overridable on purpose -- otherwise a record can
+    never be eyeballed again -- but only by an explicit flag."""
+    rc = generate.main(["--bank", "bank_irvine", "--html-only", "--allow-nonsendable"])
+    assert rc == 0
+
+
+def test_every_sendable_bank_still_generates():
+    """The guard must not over-refuse: everything with a computed ask renders."""
+    banks, _a, _o = generate.load_inputs()
+    sendable = [k for k, b in banks.items()
+                if b.get("target_status") == "target"
+                and b.get("ask_verdict") in ("earmark", "pool")
+                # a recorded wrong-scope giving figure blocks generation on purpose
+                and not b.get("ask_scope_caveat")]
+    # A floor, not a fixed count -- the roster grows as PEs are read, and a
+    # hardcoded number turns every new target into a failing test.
+    assert len(sendable) >= 17, f"sendable roster shrank to {len(sendable)}"
+    for key in sendable:
+        assert generate.main(["--bank", key, "--html-only"]) == 0, f"{key} failed to render"
+
+
+def test_send_gates_run_before_any_file_is_written():
+    """Refusing after the PDF exists still leaves a sendable file on disk.
+
+    The three __*_fixture__ PDFs found in the operator's Downloads folder were
+    produced exactly this way: the guard raised, the test passed, and the file
+    stayed behind. Every gate now runs before generation."""
+    banks, assumptions, org = generate.load_inputs()
+    fake = dict(banks["busey_bank"]); fake["verified"] = False
+    patched = dict(banks); patched["__leak_probe__"] = fake
+    import unittest.mock as m
+    with m.patch.object(generate, "load_inputs", lambda: (patched, assumptions, org)):
+        with pytest.raises(generate.UnverifiedBankError):
+            generate.main(["--bank", "__leak_probe__", "--send"])
+    for ext in ("pdf", "html"):
+        assert not (TOOL_ROOT / f"out/__leak_probe__.{ext}").exists(), (
+            f"a refused bank left a .{ext} behind")

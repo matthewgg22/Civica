@@ -1,0 +1,154 @@
+"""No artifact may be built on a superseded performance evaluation.
+
+Busey is why this exists. Its artifact quoted the March 2022 finding that it had
+"no branches, limited service facilities, or ATMs within low- and moderate-income
+areas" in the Chicago MD. An October 14, 2025 evaluation rates its Service Test
+High Satisfactory and its Investment Test Outstanding -- the bank fixed the
+deficiency. Sending that letter would have quoted a resolved finding back at the
+institution that resolved it.
+
+It hid for two reasons worth keeping written down:
+
+  1. Busey is a state member bank supervised by the FEDERAL RESERVE. The roster
+     recorded it as FDIC, and the FDIC pull therefore never showed the new exam.
+  2. CRAPES exposes EXM_CRA_PUB_DTE, the PUBLIC date, not the exam date.
+     Comparing a roster exam date against a public date flags almost every bank
+     as stale. The true exam date is encoded in the file id (..._YYMMDD.PDF).
+"""
+import datetime
+import json
+import sys
+from pathlib import Path
+
+TOOL_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(TOOL_ROOT))
+from src import generate  # noqa: E402
+
+INDEX = json.loads((TOOL_ROOT / "inputs/current_exams.json").read_text())
+GRACE = datetime.timedelta(days=45)
+
+
+def _d(s):
+    return datetime.datetime.strptime(s, "%Y-%m-%d")
+
+
+def _newest_known(bank):
+    """Newest exam date recorded for this bank, by identifier -- never by name.
+
+    Matching on a normalised name once matched FirstBank of Nashville to First
+    Bank of Waverly, Iowa and raised a false staleness alarm. Identifiers only.
+    """
+    hits = []
+    cert, rssd = str(bank.get("cert") or ""), str(bank.get("rssd") or "")
+    if cert and cert in INDEX["by_cert"]:
+        hits.append(INDEX["by_cert"][cert])
+    if rssd and rssd in INDEX["by_rssd"]:
+        hits.append(INDEX["by_rssd"][rssd])
+    return max(hits, key=lambda h: h["exam_date"]) if hits else None
+
+
+def test_no_sendable_bank_is_built_on_a_superseded_evaluation():
+    banks, _a, _o = generate.load_inputs()
+    stale = []
+    for key, b in banks.items():
+        if b.get("target_status") != "target":
+            continue
+        newest = _newest_known(b)
+        if not newest or not b.get("pe_date"):
+            continue
+        if _d(newest["exam_date"]) > _d(b["pe_date"]) + GRACE:
+            stale.append(f"{key}: artifact built on {b['pe_date']} but a "
+                         f"{newest['exam_date']} exam exists ({newest['source']})")
+    assert not stale, "superseded evaluations on the roster:\n  " + "\n  ".join(stale)
+
+
+def test_busey_is_no_longer_pitched_on_a_resolved_finding():
+    banks, _a, _o = generate.load_inputs()
+    b = banks["busey_bank"]
+    assert b["pe_date"] == "2025-10-14"
+    assert b["svc_rating"] == "High Satisfactory"
+    assert not b.get("pe_need_quote"), \
+        "the 2022 LMI-access finding is RESOLVED; quoting it would be false"
+    from src import archetype
+    assert archetype.resolve(b) == "peer"
+
+
+def test_the_regulator_on_record_is_the_one_that_actually_examines_the_bank():
+    """Busey was recorded as FDIC while being a Fed state member bank, which is
+    why its 2025 exam stayed invisible. Where an identifier resolves in the Fed
+    index, the record must say so."""
+    banks, _a, _o = generate.load_inputs()
+    for key, b in banks.items():
+        rssd = str(b.get("rssd") or "")
+        if rssd and rssd in INDEX["by_rssd"] and b.get("target_status") == "target":
+            assert b.get("regulator") in ("FED", "FRB"), \
+                f"{key}: RSSD {rssd} is in the Federal Reserve index but regulator says {b.get('regulator')}"
+
+
+def test_occ_banks_carry_a_hand_verification_note():
+    """The exam index cannot cover OCC banks -- the OCC publishes no searchable
+    component ratings, so absence from the index is not evidence of currency.
+    Those records must instead carry an explicit hand check."""
+    banks, _a, _o = generate.load_inputs()
+    for key, b in banks.items():
+        if b.get("regulator") != "OCC" or b.get("target_status") != "target":
+            continue
+        note = b.get("pe_verified_current_against", "")
+        # Until 2026-08-26 the only way to check an OCC bank was a month-by-month
+        # archive probe, because the OCC was believed to publish nothing
+        # searchable. It does -- apps.occ.gov/crasearch, whose own rating="all"
+        # default returns zero rows and made it look absent. Either route is a
+        # real check now; what is still forbidden is treating absence from the
+        # FDIC/Fed exam index as evidence.
+        assert ("OCC archive probed" in note) or ("OCC CRA API" in note), \
+            f"{key}: OCC bank with neither an archive probe nor an API check on record"
+
+
+def test_no_publication_month_is_stored_as_an_exam_date():
+    """City National held 2024-04-01 -- the OCC PUBLICATION folder month -- while
+    its evaluation is dated March 27, 2023, and Mega held a CRAPES public date.
+    An artifact that miscites the date of the bank's own evaluation is wrong on a
+    fact the reader can check in one click."""
+    banks, _a, _o = generate.load_inputs()
+    assert banks["city_national"]["pe_date"] == "2023-03-27"
+    assert banks["mega_bank"]["pe_date"] == "2025-01-21"
+    for key, b in banks.items():
+        if b.get("pe_date_prior_value"):
+            assert b.get("pe_date_note", "").startswith("CORRECTED"), \
+                f"{key}: date was changed without recording why"
+
+
+MAX_REMEDIATION_AGE_YEARS = 4
+
+
+def test_an_old_finding_is_not_quoted_without_a_caution():
+    """Busey generalised.
+
+    A remediation pitch quotes an examiner's finding back at the bank. Busey's
+    2022 finding was resolved by its 2025 exam, and we came within a step of
+    sending it. A PE that is merely CURRENT can still be old enough that the
+    finding no longer describes the institution -- so past four years, the record
+    must say so explicitly rather than let the artifact imply currency.
+    """
+    import datetime
+    from src import archetype
+
+    banks, _a, _o = generate.load_inputs()
+    today = datetime.date.today()
+    offenders = []
+    for key, b in banks.items():
+        if b.get("target_status") != "target":
+            continue
+        try:
+            if archetype.resolve(b) != "remediation":
+                continue
+        except archetype.ArchetypeError:
+            continue
+        try:
+            pe = datetime.datetime.strptime(b["pe_date"], "%Y-%m-%d").date()
+        except (KeyError, ValueError):
+            continue
+        years = (today - pe).days / 365.25
+        if years > MAX_REMEDIATION_AGE_YEARS and not b.get("pe_age_caution"):
+            offenders.append(f"{key}: quotes a {years:.1f}-year-old finding with no pe_age_caution")
+    assert not offenders, "stale findings quoted as current:\n  " + "\n  ".join(offenders)

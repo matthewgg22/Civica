@@ -1,0 +1,20 @@
+bank_key,bank,ask_usd,contact_name,contact_title,contact_channel,address,confidence,source,note
+western_alliance,Western Alliance Bank,25000,Craig Robinson,Head of Community Relations,(408) 689-8417,"1 East Washington Street, Suite 1400, Phoenix AZ 85004",HIGH,"2024-2026 CRA Strategic Plan public notice, hosted by the Federal Reserve","Regulator-filed and legally required to be published — the single most reliable contact in the roster"
+busey_bank,Busey Bank,20000,Matthew Sabatino,named for written CRA comments,CRA@busey.com,"100 W University Avenue, Champaign IL 61820",HIGH,busey.com CRA public file page,"Both a role mailbox AND a named person — best-structured contact of any bank here"
+first_american_bank,First American Bank,25000,David J. Leeney,CRA Officer,website contact form,"1650 Louis Avenue, Elk Grove Village IL 60007",HIGH,firstambank.com CRA page,"HQ city matches cert 3657 — checked, because several unrelated banks share this name"
+ctbc_bank_usa,CTBC Bank Corp. (USA),25000,Robert De Acevedo,SVP & CRA Officer,not published,"801 S. Figueroa St., Suite 2300, Los Angeles CA 90017",MEDIUM,web search result; NOT confirmed on the bank's own site,"Linda Maldonado listed as CRA Analyst. VERIFY before use — titles from search results go stale"
+river_city_bank,River City Bank,25000,,CRA Officer (unnamed),rivercitybank.com/cra-public-file/,"2480 Natomas Park Drive, Suite 100, Sacramento CA 95833",MEDIUM,bank CRA public file page,"Bank publishes the role and address but no name; site returns 403 to scripted fetches"
+ocean_bank,Ocean Bank,25000,,CRA Officer,oceanbank.com CRA public file section,"Miami FL",LOW,bank website,"ACTIVE CRA OFFICER JOB POSTING FOUND — the seat may be vacant; expect slow response"
+hanmi_bank,Hanmi Bank,15000,,CRA Officer,hanmi.com/community-reinvestment-act/ · (213) 382-2200,"3660 Wilshire Blvd, Suite A, Los Angeles CA 90010",LOW,bank website,"CRA Officer job posting also seen. HQ moved from 900 Wilshire — use the newer address"
+texas_first_bank,Texas First Bank,12500,,CRA Officer,CRA public file PDF on texasfirst.bank,"Texas City TX 77592",LOW,bank CRA public file (2024),"Public file contains no email and no named officer"
+meridian_bank,Meridian Bank,25000,,not published,(484) 235-0349,"9 Old Lincoln Highway, Malvern PA 19355",LOW,bank website,"No CRA contact published. PE gives 1776 East Lancaster Ave, Paoli — the bank appears to have moved; confirm before mailing"
+habib_american_bank,Habib American Bank,15000,,not published,not published,"New York NY",LOW,searched; nothing bank-published,"ALSO examined by NYDFS under New York State CRA — a second regulator and a second PE series worth reading before contact"
+city_national,City National Bank,7000,,NOT RESEARCHED,,,NONE,,pool tier — not yet done
+third_coast_bank,Third Coast Bank,6500,,NOT RESEARCHED,,,NONE,,pool tier — not yet done
+firstbank_tn,FirstBank,6500,,NOT RESEARCHED,,,NONE,,pool tier — not yet done
+banco_do_brasil_americas,Banco do Brasil Americas,4500,,NOT RESEARCHED,,,NONE,,pool tier — not yet done
+lakeside_bank,Lakeside Bank,4500,,NOT RESEARCHED,,,NONE,,pool tier — not yet done
+mechanics_bank,Mechanics Bank (Fresno AA),500,,NOT RESEARCHED,,,NONE,,pool tier — not yet done
+mechanics_bank_bakersfield,Mechanics Bank (Bakersfield AA),1000,,NOT RESEARCHED,,,NONE,,"pool tier — same institution as above, one contact serves both"
+five_star_bank,Five Star Bank,25000,,NOT RESEARCHED,,,NONE,,unsized — no ask to make yet
+bank_of_marin,Bank of Marin,10000,,NOT RESEARCHED,,,NONE,,unsized — no ask to make yet
