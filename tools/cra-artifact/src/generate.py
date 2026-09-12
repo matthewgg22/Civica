@@ -147,10 +147,20 @@ def build_values(bank, assumptions, org, metrics, meta):
     counties_plain = (", ".join(bank["aa_counties"])
                       + (" Counties" if len(bank["aa_counties"]) > 1 else " County"))
     why_this_bank = (
-        f"Outreach and measurement stay within {bank['name']}'s delineated CRA "
-        f"assessment area ({counties_plain}), so activity and reporting map to the "
-        "geography your Performance Evaluation already defines."
+        f"We run and measure the program only inside {bank['name']}'s CRA "
+        f"assessment area ({counties_plain}) — the same geography your Performance "
+        "Evaluation already covers."
     )
+    # Plain-language funnel conversion for the page-3 sample report: normalizes the
+    # mid-scenario rates to a per-1,000-clicks story so a reader sees why the
+    # prompt -> application -> approval path is effective.
+    r = assumptions["rates"]
+    _sess = 1000 * r["click_to_session"]["mid"]
+    _chk = _sess * r["session_to_check"]["mid"]
+    _sub = _chk * r["check_to_app_started"]["mid"] * r["started_to_submitted"]
+    _appr = _sub * r["approval"]["mid"]
+    funnel_note = (f"Mid-range: of 1,000 ad clicks, ~{_chk:.0f} reach an eligibility "
+                   f"check, ~{_sub:.0f} apply, and ~{_appr:.0f} are approved.")
     # Credibility line (reviewer ask): a single substantiable sentence on why
     # the analysis here is Civica's own work, not vendor boilerplate. State-aware
     # on two axes — CA carries a trained model (AUC) AND the CDSS ME review;
@@ -180,6 +190,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         "why_this_bank": why_this_bank,
         "credibility_line": credibility_line,
         "cra_rule_cite": cra_rule_cite,
+        "funnel_note": funnel_note,
         "org_name": org["org_name"],
         "program_name": org["program_name"],
         "status_line": org["status_line"],

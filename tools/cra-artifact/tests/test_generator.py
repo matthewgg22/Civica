@@ -182,10 +182,9 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     assert not need["show_ratio"] and 'class="ratio-line"' not in html
     # closing next-step + contact present (quiet close, not a "the ask" box)
     assert "30-minute call" in html and org["contact_email"] in html
-    # CA banks render the sub-county PUMA choropleth (replaces the county bars),
-    # honestly labelled as PUMA footprints, not tracts
-    assert "data-puma" in html and "sub-county footprint (PUMA)" in html
-    assert "not census tracts" in html
+    # CA banks render the sub-county PUMA choropleth (replaces the county bars)
+    assert "data-puma" in html and "Eligible but not enrolled" in html
+    assert "Census PUMA" in html and 'class="geo-ticks"' in html
     # every core-table number carries a clarifying sub-line (formatting parity)
     for sub in ("income-eligible for SNAP", "of those eligible",
                 "in federal SNAP funds", "per eligible household"):
@@ -272,7 +271,7 @@ def test_pumamap_supported_states_render_and_others_fall_back():
     assert svg.count("<polygon") > 30 and "data-puma" in svg
     # the full right-column block carries the honest PUMA/not-tracts labels
     html = pumamap.puma_visual_html(["Miami-Dade"], "FL", "survey-weighted fact base")
-    assert "PUMA" in html and "not census tracts" in html
+    assert "PUMA" in html and "Census PUMA" in html
     # unsupported state -> empty, so generate.py uses the county-bar fallback
     assert pumamap.puma_visual_html(["Harris"], "TX", "x") == ""
 
