@@ -149,19 +149,34 @@ The near-universal finding: verifications requested that are **not required for 
 
 Bank-AA-mapped standouts (quotable specifics): **Riverside** (ABB/City National) demanded "proof you do not receive meals" and bank/immunization records; **San Bernardino** (ABB/City National) requested tax returns; **Sacramento** (Five Star) demanded immunization and sworn statements; **Yuba** (Five Star) demanded bank verification of a *categorically-eligible* household; **Sonoma** (Bank of Marin) demanded bank/checking/savings; **Marin** (Bank of Marin) limited proof to a single type and demanded sworn statements.
 
-**What this does for each CA bank's need case (all five verdict families):**
-- **Five Star** — Sacramento carries the access-denial verdict, dated ES/30-day CAP language, three wrong-language notice findings, a confidentiality breach, **and** over-verification; Yolo adds a dated ES CAP, a Spanish wrong-language finding, confidentiality, and over-verification. Both audited AA counties fail on nearly every family.
-- **American Business Bank / City National** — San Bernardino carries the access-denial verdict, an ES CAP since 2022, a Spanish wrong-language finding, and over-verification (tax returns); Riverside adds a confidentiality breach and "proof of a negative" over-verification; City National's AA adds Ventura and Los Angeles.
-- **Bank of Marin** — all four AA counties now fail on something: Sonoma (ES CAP since 2018 + confidentiality + over-verification), Marin (ES CAP since 2019 + wrong-language + confidentiality + over-verification), San Francisco (30-day below goal + wrong-language + confidentiality), Napa (quantitative need only).
-- **Bank Irvine / Hanmi / Mega** — Los Angeles's marquee wrong-language finding and over-verification sit in every one of these AAs.
+### F. Expedited-service criteria / methods-to-apply not explained to callers
+Verdict: *"ES-entitlement criteria and time frames were not consistently explained to callers"* (MPP 63-301.521), and/or the methods to apply (fax/mail/online) omitted. **9 of 38 reviews.** Distinct from Family B (which is the *timeliness* of ES) — this is applicants not being told the emergency track *exists*.
 
-*(Verbatim quotes and line numbers are in the raw ME text; pull the exact sentence per bank at packet-assembly time. All five families are structured and reproducible: grep each report for the "Assessment:" declaratives, the "preferred … language was …" findings, "Confidentiality was not … maintained," and the CW 2200 "not required / not questionable / already available" findings.)*
+| County | FFY | Target bank AA |
+|---|---|---|
+| **San Bernardino** | 2025 | **American Business Bank, City National** |
+| **Yolo** | 2025 | **Five Star Bank** |
+| Humboldt, Monterey, Siskiyou, Merced, San Benito, San Joaquin, Sierra | 24–25 | — |
+
+### G. Missed-interview / NOMI misuse — a procedural-denial engine
+The Notice of Missed Interview (NOMI) mishandled: **not sent** when required, **sent after the household completed/attended** the interview, sent when the household was never contacted, or carrying the **wrong compliance date**. A mishandled NOMI wrongly terminates or denies a household that actually did interview — a direct under-enrollment mechanism. Named as an error in **28 of 38 reviews.** Bank-AA-mapped: Sacramento, Yolo (Five Star); Riverside FFY24 & FFY25, San Bernardino (ABB/City National); San Francisco, Marin (Bank of Marin); Los Angeles, Orange (Bank Irvine/Hanmi/Mega/City National).
+
+### H. NVRA voter registration not offered
+Verdict: *"Voter Registration was not consistently offered"* / *"Voter Registration Card (VRC) was not consistently provided."* **7 of 38 reviews** — a federal (National Voter Registration Act) compliance miss, quotable and on the record. Bank-AA-mapped: **Riverside FFY24** and **San Bernardino** (ABB/City National), **San Francisco** (Bank of Marin); also Inyo, Tulare, Tuolumne, Butte. *(Use with care — it speaks to administrative compliance generally, not to the benefits-access thesis; strongest as corroboration that the county's front-of-house process is slipping, not as a standalone need lever.)*
+
+**What this does for each CA bank's need case (all eight verdict families):**
+- **Five Star** — Sacramento carries the access-denial verdict, dated ES/30-day CAP, three wrong-language notices, confidentiality, over-verification, **and** NOMI misuse; Yolo adds a dated ES CAP, a Spanish wrong-language finding, confidentiality, over-verification, **ES-not-explained**, and a NOMI sent "in error after the interview was completed." Both audited AA counties fail across almost every family.
+- **American Business Bank / City National** — San Bernardino carries the access-denial verdict, ES CAP since 2022, Spanish wrong-language, over-verification (tax returns), **ES-not-explained**, NOMI misuse, **and NVRA**; Riverside adds confidentiality, "proof of a negative" over-verification, NOMI misuse, **and NVRA**; City National's AA adds Ventura and Los Angeles.
+- **Bank of Marin** — all four AA counties fail on something: Sonoma (ES CAP since 2018 + confidentiality + over-verification), Marin (ES CAP since 2019 + wrong-language + confidentiality + over-verification + NOMI), San Francisco (30-day below goal + wrong-language + confidentiality + NOMI + **NVRA**), Napa (quantitative need only).
+- **Bank Irvine / Hanmi / Mega** — Los Angeles's marquee wrong-language finding, over-verification, and NOMI misuse sit in every one of these AAs.
+
+*(Verbatim quotes and line numbers are in the raw ME text; pull the exact sentence per bank at packet-assembly time. All eight families are structured and reproducible: grep each report for the "Assessment:" declaratives, the "preferred … language was …" findings, "Confidentiality was not … maintained," the CW 2200 "not required / not questionable / already available" findings, "not consistently explained to callers," "Notice of Missed Interview (NOMI)" error phrasings, and "Voter Registration … not … offered.")*
 
 ---
 
 ## Where to find more leads like these
 
-1. **The rest of this same production — mined deeper.** Five families are now extracted (access-denial, Timeliness CAP, wrong-language notices, confidentiality, over-verification). The remaining quotable "Assessment:" verdicts worth pulling the same way: **expedited-service criteria / methods-to-apply not explained to callers**, **missed-interview / NOMI-misuse** (procedural denials), and **voter-registration (NVRA) not offered** — each county-specific and verbatim.
+1. **The rest of this same production — mined deeper.** Eight families are now extracted (access-denial, Timeliness CAP, wrong-language notices, confidentiality, over-verification, ES-not-explained, NOMI-misuse, NVRA). Remaining quotable "Assessment:" verdicts, lower priority: **shelter/income budget miscalculations** (lost deductions), **BDA/date-stamp not preserved** (lost filing dates), and **preferred-interview-method not honored** — county-specific but further from the benefits-access thesis.
 2. **The other folders in R012681.** The FOIA production also includes PER/QC scorecard material (the `__2_`/`__3_` folders) — county payment- and negative-error rates that corroborate the "0% payment error masks broken access" through-line with hard numbers.
 3. **Florida equivalent (for the Miami cluster).** The CDSS ME has no FL counterpart in hand; the Miami-AA access evidence for Helm / Banco do Brasil / Ocean would come from **Florida DCF** program-access / QC review records — a separate public-records request.
 4. **Public, non-FOIA sources that often contain quotable access findings** (no request needed): the **California State Auditor** (has audited CalFresh/county human-services access), county **civil grand jury** reports (frequently scathing and specific on county benefits administration), FNS **Program Access Reviews** and management-evaluation summaries, and **litigation/consent-decree** language (e.g. access or language-access settlements). These carry the same "third-party, on the record" weight the ME verdicts do.

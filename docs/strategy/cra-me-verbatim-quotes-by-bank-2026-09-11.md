@@ -24,6 +24,8 @@ Source files live in the ME text extract; county → report file:
 - **Wrong-language notice** (l.302): "…the request was in English instead of the household's preferred language of Spanish."
 - **Confidentiality** (l.47): "Confidentiality was not consistently maintained. The CF program was disclosed before callers were authenticated with at least two items of personally identifiable information."
 - **Over-verification** (l.276): "…the CW 2200 form requested for immunization records when it is not required for the CF program."
+- **ES not explained** (l.47): "[ES-entitlement criteria and time frames] were not consistently provided to callers."
+- **NOMI misuse** (l.245): "…the household attended their scheduled interview and the NOMI was sent to the household in error."
 
 ### Yuba — FFY2025 *(Five Star Bank — the benchmark/positive county)*
 - **Access verdict (positive)** (l.1033): "The county provides appropriate access to potential CF applicants." *(Cite as the achievable ceiling in the AA, not a gap.)*
@@ -45,10 +47,14 @@ Source files live in the ME text extract; county → report file:
 - **Phone access** (l.1037): "The average wait time was 46 minutes. Some callers were not able to speak to a live [person]." · (l.52) "Mystery callers were not able to contact a live person."
 - **Expedited service** (l.1140): "…not meeting the performance goal of 90 percent for three-day ES processing. On May 27, 2022, San Bernardino County was notified of the requirement to develop, submit, and implement a Corrective Action Plan (CAP)…"
 - **Wrong-language notice** (l.233): "…the CW 2200 form was sent to the household in English when their preferred written language was Spanish."
+- **ES not explained** (l.51): "ES criteria and timeframes were not consistently explained to mystery callers."
+- **NVRA voter registration** (l.46): "Coverage of Voter Registration was not consistent." *(households not provided a VRC)*
 
 ### Riverside — FFY2024 *(American Business Bank, City National)*
 - **Confidentiality** (l.745): "Confidentiality was not consistently maintained at the Coachella and Indio Offices. The CF program was disclosed before households were authenticated with at least two items of personally identifiable information (PII). (MPP 19-002.1 and 63-201.34)"
 - **Over-verification / proof of a negative** (l.774): "CW 2200 form over verified information by requesting 'proof you do not receive meals at CVRM,' which is not required for CF. (MPP 63-402.4; ACL 19-51)"
+- **NVRA voter registration** (l.42): "Voter Registration Card (VRC) was not consistently provided to households."
+- **NOMI misuse** (l.224): "…the NOMI was sent to the household when the interview was not scheduled for the date listed on the NOMI."
 
 ### Riverside — FFY2025 *(American Business Bank, City National)*
 - **Interview method / procedural** (l.222): "…[the household] requested their interview to be in person, but it was scheduled to be by telephone."
@@ -73,7 +79,7 @@ Source files live in the ME text extract; county → report file:
 ### San Francisco — FFY2024 *(Bank of Marin)*
 - **Wrong-language notice** (l.268): "…the approval NOA was sent to the household in English when their preferred language was Chinese."
 - **Confidentiality** (l.47): "Confidentiality was not consistently maintained."
-- **Voter registration** (l.47): "Voter Registration was not consistently offered." *(SF also documents cases decided without an interview — pull the exact recert/denial sentence from the report before quoting.)*
+- **NVRA voter registration** (l.50): "Voter Registration was not consistently offered." *(SF also documents cases decided without an interview — pull the exact recert/denial sentence from the report before quoting.)*
 
 ---
 
