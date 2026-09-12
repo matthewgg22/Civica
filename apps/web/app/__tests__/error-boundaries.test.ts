@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { strings, errorStrings, LOCALES } from "../i18n";
+import { strings, errorStrings, notFoundStrings, LOCALES } from "../i18n";
 
 // Launch audit: the app error/404/global-error boundaries used to render the
 // retired Civica parchment palette and funnel users into the parked "CalFresh
@@ -80,6 +80,28 @@ describe("error + 404 boundaries are Demeter-branded, not Civica", () => {
     // The gate must not be the old en/es-only check.
     expect(src).not.toContain('saved === "en" || saved === "es"');
     expect(src).toContain("errorStrings");
+    expect(src).toContain("LOCALES");
+  });
+
+  it("the 404 ships localized copy for EVERY supported locale, not just en/es", () => {
+    for (const loc of LOCALES) {
+      const n = notFoundStrings[loc];
+      expect(n, `${loc} notFound copy`).toBeDefined();
+      expect(n.notFoundTitle.length, `${loc} notFoundTitle`).toBeGreaterThan(3);
+      expect(n.notFoundBody.length, `${loc} notFoundBody`).toBeGreaterThan(20);
+      expect(n.notFoundHomeCta.length, `${loc} notFoundHomeCta`).toBeGreaterThan(1);
+      expect(n.notFoundQuestionsCta.length, `${loc} notFoundQuestionsCta`).toBeGreaterThan(2);
+      const blob = [n.notFoundStatus, n.notFoundTitle, n.notFoundBody, n.notFoundHomeCta].join(" | ");
+      expect(blob, `${loc} 404 branding`).not.toMatch(/civica|calfresh|welcome/i);
+    }
+    expect(notFoundStrings.zh.notFoundTitle).toMatch(/[一-鿿]/);
+    expect(notFoundStrings.vi.notFoundTitle).toMatch(/[àáảãạăâđêôơư]/i);
+  });
+
+  it("not-found.tsx honors all locales and uses the localized notFoundStrings source", () => {
+    const src = read("not-found.tsx");
+    expect(src).not.toContain('saved === "en" || saved === "es"');
+    expect(src).toContain("notFoundStrings");
     expect(src).toContain("LOCALES");
   });
 
