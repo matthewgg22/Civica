@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import * as Sentry from "@sentry/nextjs";
 import { DemeterMark } from "../components/DemeterMark";
-import { notFoundStrings, errorStrings, LOCALES, STORAGE_KEY, type Locale } from "./i18n";
+import { LOCALES, STORAGE_KEY, type Locale } from "./i18n";
+import { notFoundStrings, errorStrings } from "../lib/i18n/boundary-copy";
 
 // Root 404. Demeter-branded per apps/web/DEMETER-DESIGN.md. Most not-found hits
 // are stale links or hand-typed URLs. CTAs route to the Demeter home and to the

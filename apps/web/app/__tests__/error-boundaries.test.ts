@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { strings, errorStrings, notFoundStrings, LOCALES } from "../i18n";
+import { strings, LOCALES } from "../i18n";
+import { errorStrings, notFoundStrings } from "../../lib/i18n/boundary-copy";
 
 // Launch audit: the app error/404/global-error boundaries used to render the
 // retired Civica parchment palette and funnel users into the parked "CalFresh

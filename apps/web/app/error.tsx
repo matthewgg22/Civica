@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import * as Sentry from "@sentry/nextjs";
 import { DemeterMark } from "../components/DemeterMark";
-import { errorStrings, LOCALES, STORAGE_KEY, type Locale } from "./i18n";
+import { LOCALES, STORAGE_KEY, type Locale } from "./i18n";
+import { errorStrings } from "../lib/i18n/boundary-copy";
 
 // Root error boundary for the public site. Catches errors thrown inside the
 // root layout's children — every Demeter route funnels here. The root layout's

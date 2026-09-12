@@ -37,6 +37,8 @@ const FORMAL = [
   "lib/i18n/demeter-signin-copy.ts",
   "lib/i18n/snap-page.ts",
   "lib/i18n/feedback-copy.ts",
+  // Error/404 boundary copy for every locale; Demeter's formal 您 register.
+  "lib/i18n/boundary-copy.ts",
   "app/screen/saved/page.tsx",
   "app/[lang]/chat/page.tsx",
   "app/[lang]/questions/page.tsx",
