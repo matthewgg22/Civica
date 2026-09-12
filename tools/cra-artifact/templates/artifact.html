@@ -9,7 +9,7 @@
      grays, one accent. Print minimums: body >=10pt, footer >=8pt.
      PROJECTED sample lives in the detachable appendix (page 3). */
   :root {
-    --ink:#232220; --body:#4B4A46; --muted:#6C6A64; --paper:#FFFFFF;
+    --ink:#232220; --body:#38362F; --muted:#54524B; --paper:#FFFFFF;
     --tint:#F6F5F3; --rule:#E8E6E2; --rule-strong:#D2CFC9;
     --accent:#C0553B; --accent-deep:#8E3A26; --wheat:#E8C547; --nodata:#ECEAE6;
   }
@@ -145,10 +145,11 @@
   .watermark { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
   .watermark span { font-family:'Be Vietnam Pro',sans-serif; font-weight:600; font-size:52pt; letter-spacing:.18em; color:var(--accent); opacity:.07; transform:rotate(-24deg); }
   table.report { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
-  table.report caption { text-align:left; font-size:8.4pt; color:var(--muted); margin-bottom:6px; caption-side:top; line-height:1.4; }
+  table.report caption { text-align:left; font-size:8.4pt; color:var(--muted); margin-bottom:6px; caption-side:top; line-height:1.4; text-wrap:pretty; }
+  .funnel-note { font-size:8.8pt; line-height:1.45; color:var(--ink); font-weight:500; margin-top:8px; }
   table.report th { background:var(--tint); border-bottom:2px solid var(--rule-strong); font-size:8.4pt; font-weight:600; text-align:right; padding:6px 9px; color:var(--ink); }
   table.report th:first-child { text-align:left; }
-  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:4.2px 9px; }
+  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:3px 9px; }
   table.report td:first-child { text-align:left; color:var(--body); }
   table.report tbody tr:not(.band) td:first-child { padding-left:20px; }
   table.report tr.band td { background:var(--tint); font-size:7.2pt; letter-spacing:.07em; text-transform:uppercase; text-align:left; color:var(--muted); font-weight:600; padding:3.4px 9px; }
@@ -200,7 +201,6 @@
         <div><b class="serif">&minus;10.1 pts</b><span>less likely to carry a delinquent account, off a 41% baseline</span></div>
         <div><b class="serif">+17 pts</b><span>credit score, up from a 634 (subprime) average</span></div>
       </div>
-      <div class="rsrc">Treatment-on-the-treated among ~65,000 Los Angeles SNAP applicants, administrative records linked to credit reports; San Francisco households that fell out at recertification moved the other way, losing 15 to 19 points. Homonoff, Lee &amp; Meckel, NBER Working Paper 34434 (preliminary draft, November 2025; subject to revision). The credit-score effect is the least precisely estimated; debt and delinquency effects are stronger. Research on SNAP access, not a measurement of [[org_name]]'s program.</div>
     </div>
     <div class="aa-context">
       <div class="why">
@@ -210,17 +210,17 @@
       [[me_evidence_block]]
     </div>
   </div>
-  <div class="pagefoot">[[data_gaps_note]]Sources: eligibility &amp; enrollment [[model_note]]. Known biases in the gross-income proxy and ACS benefit under-reporting may overstate the eligible-unenrolled population (see appendix). Assessment area as delineated in [[bank_name]]'s [[pe_date]] CRA Performance Evaluation ([[regulator]]). Benefit figures: USDA FNS FY2024. [[org_name]], a 501(c)(3) organization.</div>
+  <div class="pagefoot"><strong>Household outcomes</strong> (&minus;$2,436 / &minus;10.1 pts / +17 pts): treatment-on-the-treated among ~65,000 Los Angeles SNAP applicants, administrative records linked to credit reports; Homonoff, Lee &amp; Meckel, NBER Working Paper 34434 (preliminary draft, November 2025; subject to revision). Research on SNAP access, not a measurement of [[org_name]]'s program. &nbsp;·&nbsp; [[data_gaps_note]]<strong>Sources:</strong> eligibility &amp; enrollment [[model_note]]; known biases in the gross-income proxy and ACS under-reporting may overstate the eligible-unenrolled population (see appendix). Assessment area as delineated in [[bank_name]]'s [[pe_date]] CRA Performance Evaluation ([[regulator]]). Benefit figures: USDA FNS FY2024. [[org_name]], a 501(c)(3) organization.</div>
   <div class="pagenum">1 / 3</div>
 </div>
 
 <!-- PAGE 2 — the program + the ask -->
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
-  <h2 class="pagehead">A benefits-access pilot in your assessment area</h2>
+  <h2 class="pagehead">A benefits-access pilot for [[bank_name]]</h2>
   <div class="body-block" style="margin-top:12px;">
     <h3>The program</h3>
-    Factual, geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") across your assessment area drives residents to a free eligibility check and application support. We take no per-enrollment compensation; donated search advertising extends your grant's reach beyond the paid outreach and the measurement itself.
+    Factual, geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") across your assessment area drives residents to a free eligibility check and application support. We take no per-enrollment compensation.
   </div>
   <div class="provenance"><b>Why Civica.</b> [[credibility_line]]</div>
   <div class="crafile">
@@ -256,7 +256,7 @@
   <div class="projected-wrap">
     <div class="watermark"><span>PROJECTED</span></div>
     <table class="report">
-      <caption>Illustrative one-quarter pilot at $[[ask_fmt]], [[aa_label]]. Conservative and mid-range scenarios, projected from the assumption set below.</caption>
+      <caption>Illustrative one-quarter pilot at $[[ask_fmt]] across your assessment area. Conservative and mid-range scenarios, from the assumptions below.</caption>
       <thead><tr><th>Quarterly outcome</th><th>Conservative</th><th>Mid-range</th></tr></thead>
       <tbody>
         <tr class="band"><td colspan="3">Delivery &amp; service · observed in-product</td></tr>
@@ -273,7 +273,8 @@
         <tr><td>Cost per submitted application</td><td>[[low_cps]]</td><td>[[mid_cps]]</td></tr>
       </tbody>
     </table>
-    <div class="repnote">A funded report replaces every projection above with measured values, reports <em>submitted</em> applications as the primary outcome, and states the measured mid-funnel rates alongside these assumptions. Where measured performance lands at the conservative end, the report says so plainly. Assumption set: version [[assumptions_version]].</div>
+    <div class="funnel-note">[[funnel_note]]</div>
+    <div class="repnote">A funded report replaces every projection above with measured values and reports <em>submitted</em> applications as the primary outcome. Assumption set: version [[assumptions_version]].</div>
   </div>
   <div class="appx">
     <div class="col">
