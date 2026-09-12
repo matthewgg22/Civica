@@ -98,6 +98,9 @@ def build_memo_values(bank, org, args) -> dict:
         "contact_phone_line": (f" · {phone}" if phone else ""),
         "bank_name": bank["name"],
         "regulator": bank["regulator"],
+        # Regulator-specific CFR part so the CD citation names the bank's own rule
+        # (FDIC 345 / OCC 25 / FRB 228); the .12(g)(2) subsection is harmonized.
+        "cra_part": generate.cra_reg_part(bank["regulator"]),
         "pe_date": bank["pe_date"],
         "memo_date": datetime.date.today().strftime("%B %-d, %Y"),
         "amount": ("[grant amount]" if args.specimen else f"${args.amount:,.0f}"),
