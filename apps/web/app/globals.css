@@ -431,7 +431,10 @@ button {
 /* ---- Error pages (error.tsx, not-found.tsx) — Demeter-branded ---- */
 
 .error-page {
-  min-height: 70vh;
+  /* The root layout is just <body>{children}</body> — no nav/footer — so this
+     main is the whole viewport. Fill it (100dvh) and center the card, or the
+     card floats in the top 70% with the body ground showing below it. */
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   padding: 3rem 0;
@@ -496,6 +499,10 @@ button {
 
 .error-card__reference-value {
   color: var(--demeter-body);
+}
+
+.error-card__reference-hint {
+  color: var(--demeter-muted);
 }
 
 .error-card__actions {

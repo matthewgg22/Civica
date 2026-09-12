@@ -196,3 +196,83 @@ export const strings = {
 
 export type StringKey = keyof (typeof strings)["en"];
 export type Copy = (typeof strings)["en"];
+
+// Error-boundary copy for ALL supported locales, not just the en/es landing
+// dictionary above. The error page is reached by any visitor, so a Vietnamese
+// or Chinese user must not drop to English mid-failure. Typed as
+// Record<Locale, …> so the compiler refuses to ship a missing locale.
+// NOTE: vi/zh/tl below are pending native-speaker sign-off (see #1082); they
+// ship because a translated error page beats an English one for LEP users.
+export type ErrorCopy = {
+  errorStatus: string;
+  errorTitle: string;
+  errorBody: string;
+  errorReferenceLabel: string;
+  errorReferenceHint: string;
+  errorRetryCta: string;
+  errorHomeCta: string;
+  errorHelpNote: string;
+};
+
+export const errorStrings: Record<Locale, ErrorCopy> = {
+  en: {
+    errorStatus: "SOMETHING WENT WRONG",
+    errorTitle: "This page didn't load.",
+    errorBody:
+      "Something on our end went wrong, not anything you did. Try again in a moment. This doesn't affect your SNAP case or eligibility.",
+    errorReferenceLabel: "Reference",
+    errorReferenceHint: "Share this if you contact us.",
+    errorRetryCta: "Try again",
+    errorHomeCta: "Back to the chat",
+    errorHelpNote:
+      "Need SNAP help right now? Contact your state SNAP agency, or dial 211 to reach a local benefits navigator.",
+  },
+  es: {
+    errorStatus: "ALGO SALIÓ MAL",
+    errorTitle: "Esta página no se cargó.",
+    errorBody:
+      "Algo falló de nuestro lado, no fue nada que hiciste. Vuelve a intentarlo en un momento. Esto no afecta tu caso ni tu elegibilidad para SNAP.",
+    errorReferenceLabel: "Referencia",
+    errorReferenceHint: "Compártela si nos contactas.",
+    errorRetryCta: "Intentar de nuevo",
+    errorHomeCta: "Volver al chat",
+    errorHelpNote:
+      "¿Necesitas ayuda con SNAP ahora? Comunícate con la agencia de SNAP de tu estado, o llama al 211 para hablar con un navegador de beneficios local.",
+  },
+  zh: {
+    errorStatus: "出现错误",
+    errorTitle: "此页面无法加载。",
+    errorBody:
+      "这是我们这边出现了问题，与您无关。请稍后再试。这不会影响您的 SNAP 申请或资格。",
+    errorReferenceLabel: "参考编号",
+    errorReferenceHint: "如果您与我们联系，请提供此编号。",
+    errorRetryCta: "重试",
+    errorHomeCta: "返回聊天",
+    errorHelpNote:
+      "现在需要 SNAP 帮助吗？请联系您所在州的 SNAP 机构，或拨打 211 联系当地福利导航员。",
+  },
+  vi: {
+    errorStatus: "ĐÃ XẢY RA LỖI",
+    errorTitle: "Trang này không tải được.",
+    errorBody:
+      "Đã có lỗi từ phía chúng tôi, không phải do bạn. Vui lòng thử lại sau giây lát. Việc này không ảnh hưởng đến hồ sơ hoặc điều kiện SNAP của bạn.",
+    errorReferenceLabel: "Mã tham chiếu",
+    errorReferenceHint: "Vui lòng cung cấp mã này nếu bạn liên hệ với chúng tôi.",
+    errorRetryCta: "Thử lại",
+    errorHomeCta: "Quay lại trò chuyện",
+    errorHelpNote:
+      "Cần trợ giúp SNAP ngay bây giờ? Hãy liên hệ cơ quan SNAP của tiểu bang, hoặc gọi 211 để gặp nhân viên hỗ trợ phúc lợi tại địa phương.",
+  },
+  tl: {
+    errorStatus: "MAY NANGYARING MALI",
+    errorTitle: "Hindi na-load ang page na ito.",
+    errorBody:
+      "May nangyaring mali sa aming panig, hindi dahil sa ginawa mo. Subukang muli sa ilang sandali. Hindi nito naaapektuhan ang iyong SNAP case o pagkakwalipika.",
+    errorReferenceLabel: "Reference",
+    errorReferenceHint: "Ibahagi ito kung makikipag-ugnayan ka sa amin.",
+    errorRetryCta: "Subukang muli",
+    errorHomeCta: "Bumalik sa chat",
+    errorHelpNote:
+      "Kailangan mo ba ng tulong sa SNAP ngayon? Makipag-ugnayan sa SNAP agency ng iyong estado, o tumawag sa 211 para sa lokal na benefits navigator.",
+  },
+};
