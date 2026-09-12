@@ -274,8 +274,10 @@ def test_memo_carries_every_evidence_element():
     v = memo.build_memo_values(banks["bank_irvine"], org,
                                _Args(amount=15000, date="2026-10-01"))
     html = generate.render((TOOL_ROOT / "templates/memo.html").read_text(), v)
-    # (a) CD category + primary purpose
-    assert "12 CFR __.12(g)(2)" in html and "__.12(h)—8" in html
+    # (a) CD category + primary purpose. The CD category cites the bank's own
+    # CFR part (bank_irvine is FDIC -> 12 CFR 345); the Q&A citations stay in the
+    # harmonized "§__" form the Interagency Q&A itself uses.
+    assert "12 CFR 345.12(g)(2)" in html and "__.12(h)—8" in html
     # (b) LMI proof: the SNAP proxy quoted from the Q&A
     assert "__.12(g)(2)—1" in html and "Supplemental Nutrition Assistance programs" in html
     # (c) geographic nexus
@@ -286,6 +288,29 @@ def test_memo_carries_every_evidence_element():
     assert "entirely to program delivery" in html
     assert "no other institution" in html
     assert "not</strong> tied to applications" in html
+
+
+def test_cra_citation_is_regulator_specific():
+    """The CD citation names the bank's OWN CFR part — FDIC -> 12 CFR 345,
+    OCC -> 12 CFR 25 — in both the pager and the memo, and the pager marks the
+    activity as community development, not a lending-test item."""
+    banks, assumptions, org = generate.load_inputs()
+    metrics = score.load_county_metrics()
+    pager = (TOOL_ROOT / "templates/artifact.html").read_text()
+    memo_tmpl = (TOOL_ROOT / "templates/memo.html").read_text()
+    # FDIC bank (bank_irvine): Part 345, plus the not-a-lending-test clause.
+    fdic = generate.build_values(banks["bank_irvine"], assumptions, org, metrics,
+                                 states.state_meta("CA"))[0]
+    fdic_pager = generate.render(pager, fdic)
+    assert "12 CFR Part 345 (FDIC)" in fdic_pager
+    assert "not on the lending test" in fdic_pager
+    # OCC bank (city_national): Part 25 in the pager and 25.12(g)(2) in the memo.
+    occ = generate.build_values(banks["city_national"], assumptions, org, metrics,
+                                states.state_meta("CA"))[0]
+    assert "12 CFR Part 25 (OCC)" in generate.render(pager, occ)
+    occ_memo = generate.render(
+        memo_tmpl, memo.build_memo_values(banks["city_national"], org, _Args(specimen=True)))
+    assert "12 CFR 25.12(g)(2)" in occ_memo
 
 
 def test_memo_never_asserts_qualification():
