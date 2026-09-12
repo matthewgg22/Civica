@@ -64,6 +64,18 @@ def fmt_musd(x):
     return f"${x/1e3:,.0f}K"
 
 
+# A bank's CRA rule lives in its prudential regulator's CFR part (1995
+# framework): FDIC -> 12 CFR 345, OCC -> 12 CFR 25, FRB -> 12 CFR 228 (Reg BB).
+# The community-services-to-LMI subsection is harmonized across the three parts
+# as .12(g)(2) (the Interagency Q&A cites it in the common "§__.12(g)(2)" form).
+CRA_REG_PART = {"FDIC": "345", "OCC": "25", "FRB": "228", "Federal Reserve": "228"}
+
+
+def cra_reg_part(regulator: str) -> str:
+    """CFR part number for a regulator's CRA rule; '__' if unknown."""
+    return CRA_REG_PART.get(regulator, "__")
+
+
 def render(template: str, values: dict) -> str:
     """Strict [[field]] substitution: missing field or leftover marker fails."""
     def sub(m):
@@ -155,9 +167,13 @@ def build_values(bank, assumptions, org, metrics, meta):
             "boilerplate: a survey-weighted estimate built directly from 2023 "
             "federal ACS microdata, reproducible from public sources."
         )
+    # Regulator-specific CRA rule citation for the community-reinvestment box.
+    cra_part = cra_reg_part(bank["regulator"])
+    cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
     v = {
         "why_this_bank": why_this_bank,
         "credibility_line": credibility_line,
+        "cra_rule_cite": cra_rule_cite,
         "org_name": org["org_name"],
         "program_name": org["program_name"],
         "status_line": org["status_line"],

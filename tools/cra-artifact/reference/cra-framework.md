@@ -197,6 +197,18 @@ size** (see [§3](#3-who-is-covered-and-who-reports-data)):
 - **Alternatives** — wholesale/limited-purpose banks use a **Community
   Development test**; any bank may elect an approved **Strategic Plan**.
 
+> **Home-mortgage lending is a major — often the largest — driver of the Lending
+> Test**, but note the split from [§3](#3-who-is-covered-and-who-reports-data):
+> CRA-specific *data collection* is small-business, small-farm, and CD loans —
+> **home mortgage is not CRA-reported; the examiner pulls it from HMDA** — yet the
+> Lending Test *evaluation* leans heavily on that home-mortgage record. So
+> "mortgage drives CRA" is true of the evaluation, not the reporting. This also
+> frames Civica's fit: a grant-funded benefits-access program **is not lending**,
+> so it never touches the mortgage-driven Lending Test — it is a
+> community-development contribution, evaluated on the Investment/Service (or CD)
+> side. See [`cra-state-laws.md`](./cra-state-laws.md) for how several states
+> extended CRA specifically to reach *nonbank mortgage lenders*.
+
 **Exam scheduling.** Each agency must publish its **quarterly CRA examination
 schedule at least 30 days before** the quarter begins; the FDIC, for example,
 issues quarterly lists of institutions up for CRA exam.
@@ -334,14 +346,21 @@ the proxy. This is the guidance behind the pitch's "Beneficiaries" line.
 1. Frame SNAP under the general prong — "income qualifications equivalent to, or
    stricter than" LMI — with free/reduced-price-meal eligibility and Medicaid as
    the parallel named examples. That is how the Q&A carries SNAP.
-2. **Citation form.** The FFIEC Q&A page (updated 3/29/2025) says that, during
-   the 2023-rule transition, citations "should be read as referring to
-   Appendix G." **But** the 2023 rule was enjoined and is being rescinded
-   ([§2](#2-current-regime-status-dated--read-this-first)), so under the
-   operative 1995 framework the citation is simply **§ __.12(g)(2)—1** of
-   12 CFR 25/228/345. Cite the legacy form; treat the "Appendix G" remap as an
-   artifact of a rule that is not in force. *(Verify once more before external
-   use — this is the one place the sources point in two directions.)*
+2. **Citation form — verified 2026-09-12, and it has a trap.** Under the
+   operative **1995 framework**, community development is defined at **§ __.12(g)**
+   and community services to LMI at **§ __.12(g)(2)** (interpreted by Q&A
+   **§ __.12(g)(2)—1**) — confirmed against the Interagency Q&A and OCC/FFIEC
+   sources. **However, the current eCFR/Cornell codification shows the enjoined
+   2023 rule**, which moved community development to **§ __.13** and *renamed* the
+   category "community supportive services" at **§ __.13(d)**. So a present-day
+   lookup of "§ __.12(g)(2)" will not match the codified text, and "§ __.13(d)"
+   is the **enjoined, non-operative** rule. Resolution for bank documents: **cite
+   the 1995 form (§ __.12(g)(2)) and disclose the framework**; do not cite the
+   § __.13 codification. In this repo, the pager cites only the unambiguous Part
+   number (12 CFR Part 345/25/228) and the qualification memo cites § __.12(g)(2)
+   with a footer stating citations follow the operative 1995 framework. The
+   Q&A page's "read as Appendix G" transition note is an artifact of the enjoined
+   rule and is moot.
 
 ### 8.2 Interpretive letters
 
@@ -447,9 +466,10 @@ Mapping the framework to the per-bank artifact and qualification memo:
   further FDIC/OCC amendment are both pending; and the asset thresholds
   ([§3](#3-who-is-covered-and-who-reports-data)), which the agencies re-index
   every January.
-- **The one two-directional point:** the Q&A citation form (§ __.12(g)(2)—1 vs.
-  the "Appendix G" transition remap) — resolved in favor of the legacy form
-  because the 2023 rule is not in force, but confirm once more before publishing
-  ([§8.1](#81-the-snap--lmi-proxy--__12g21-load-bearing-for-the-pitch)).
+- **Citation form — verified 2026-09-12.** Operative citation is the 1995
+  framework's **§ __.12(g)(2)**; the current eCFR codifies the enjoined 2023 rule
+  at **§ __.13(d)** ("community supportive services"), so cite the 1995 form and
+  disclose the framework, never the § __.13 codification. Details in
+  [§8.1](#81-the-snap--lmi-proxy--__12g21-load-bearing-for-the-pitch).
 - **Not legal advice.** Whether any activity qualifies for CRA consideration,
   and how it is weighted, is determined by the bank's regulator and examiners.
