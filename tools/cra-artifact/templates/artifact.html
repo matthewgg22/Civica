@@ -24,7 +24,7 @@
   .letterhead .org { font-size:9pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent); white-space:nowrap; }
   .letterhead .doc { font-size:8pt; color:var(--muted); white-space:nowrap; padding-left:12px; }
   h2.pagehead { font-family:'Newsreader',serif; font-size:21pt; font-weight:600; letter-spacing:-.01em; color:var(--ink); margin-top:22px; }
-  .pagefoot { border-top:1px solid var(--rule); margin-top:auto; padding-top:8px; font-size:8pt; line-height:1.5; color:var(--muted); }
+  .pagefoot { border-top:1px solid var(--rule); margin-top:auto; padding-top:8px; font-size:6.8pt; line-height:1.5; color:var(--muted); }
 
   /* ---------- Page 1 — the need ---------- */
   /* body-zone fills the space between letterhead and footer and distributes the
@@ -102,7 +102,7 @@
   .crafile { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:11px 15px; margin-top:12px; }
   .crafile-cap { font-size:8pt; letter-spacing:.1em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:7px; }
   .cra-dl { width:100%; border-collapse:collapse; }
-  .cra-dl td { font-size:8.4pt; line-height:1.42; color:var(--body); padding:4px 0; vertical-align:top; border-bottom:1px solid var(--rule); }
+  .cra-dl td { font-size:8.4pt; line-height:1.42; color:var(--body); padding:5px 0; vertical-align:middle; border-bottom:1px solid var(--rule); }
   .cra-dl tr:last-child td { border-bottom:none; }
   .cra-dl td.l { width:1.25in; font-weight:600; color:var(--ink); padding-right:12px; white-space:nowrap; }
   .cra-foot { font-size:7.4pt; line-height:1.4; color:var(--muted); margin-top:7px; }
@@ -120,6 +120,7 @@
   table.report th:first-child { text-align:left; }
   table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:4.2px 9px; }
   table.report td:first-child { text-align:left; color:var(--body); }
+  table.report tbody tr:not(.band) td:first-child { padding-left:20px; }
   table.report tr.band td { background:var(--tint); font-size:7.2pt; letter-spacing:.07em; text-transform:uppercase; text-align:left; color:var(--muted); font-weight:600; padding:3.4px 9px; }
   table.report tr.key td { font-weight:600; color:var(--ink); }
   .repnote { font-size:7.8pt; color:var(--muted); margin-top:7px; line-height:1.42; max-width:6.8in; }
@@ -159,7 +160,7 @@
       <div class="colbrk">[[county_breakdown]]</div>
     </div>
     <div class="why">
-      <div class="why-cap">Why this bank</div>
+      <div class="why-cap">Geographic focus</div>
       <p>[[why_this_bank]]</p>
     </div>
     [[me_evidence_block]]
@@ -173,7 +174,7 @@
   <h2 class="pagehead">A benefits-access pilot in your assessment area</h2>
   <div class="body-block" style="margin-top:12px;">
     <h3>How the pilot works</h3>
-    Factual, geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") across your assessment area drives residents to a free eligibility check and application support. We accept no per-enrollment compensation. Existing donated search advertising (a Google Ad Grant) extends the reach of your bank-funded outreach, so your grant primarily buys reach beyond it and the measurement itself.
+    Factual, geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") across your assessment area drives residents to a free eligibility check and application support. We accept no per-enrollment compensation. Existing donated search advertising extends the reach of your bank-funded outreach, so your grant primarily buys reach beyond it and the measurement itself.
   </div>
   <div class="research">
     <div class="rlabel">When the paperwork gets easier</div>
@@ -212,7 +213,7 @@
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 3 of 3</div></div>
   <div class="eyebrow" style="margin-top:20px;">Appendix · for your exam file · PROJECTED sample + methodology · detach as needed</div>
   <h2 class="pagehead" style="margin-top:6px;">Sample quarterly report <span class="chip">Projected — not measured</span></h2>
-  <div class="projwarn">These are projections, not results. A funded pilot replaces every figure below with measured values.</div>
+  <div class="projwarn">These are projections. A funded pilot replaces them with measured values.</div>
   <div class="projected-wrap">
     <div class="watermark"><span>PROJECTED</span></div>
     <table class="report">
@@ -243,7 +244,7 @@
         <li><strong>Layer 2 · consented panel:</strong> opt-in 30/60-day check-in; opt-in and response rates disclosed, outcomes reported among respondents only, never extrapolated silently.</li>
         <li><strong>Layer 3 · corroboration:</strong> the state's published county caseload figures shown as directional context, not attribution; geographic holdout testing at multi-county scale.</li>
       </ul>
-      <div class="disclose"><strong>Why we report this way.</strong> Payment is never tied to enrollment counts, ads are factual not persuasive, and projections are labeled until they are measurements. A report your examiner can trust is worth more than a bigger number.</div>
+      <div class="disclose"><strong>How we report.</strong> Payment is never tied to enrollment counts, and projections stay labeled until they are measured. You receive an auditable record of activity in your assessment area.</div>
     </div>
     <div class="col">
       <h3>Methodology &amp; disclosures</h3>

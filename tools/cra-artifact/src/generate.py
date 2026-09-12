@@ -129,10 +129,9 @@ def build_values(bank, assumptions, org, metrics, meta):
     counties_plain = (", ".join(bank["aa_counties"])
                       + (" Counties" if len(bank["aa_counties"]) > 1 else " County"))
     why_this_bank = (
-        f"{bank['name']}'s CRA assessment area covers {counties_plain}. Civica "
-        "restricts all outreach and measurement to that geography, so the bank "
-        "sees exactly where its community-development dollars go and what they "
-        "produce."
+        f"Outreach and measurement stay within {bank['name']}'s delineated CRA "
+        f"assessment area ({counties_plain}), so activity and reporting map to the "
+        "geography your Performance Evaluation already defines."
     )
     v = {
         "why_this_bank": why_this_bank,
