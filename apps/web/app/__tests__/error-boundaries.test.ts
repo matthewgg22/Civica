@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { strings } from "../i18n";
+import { strings, errorStrings, LOCALES } from "../i18n";
 
 // Launch audit: the app error/404/global-error boundaries used to render the
 // retired Civica parchment palette and funnel users into the parked "CalFresh
@@ -50,6 +50,37 @@ describe("error + 404 boundaries are Demeter-branded, not Civica", () => {
     const src = read("error.tsx");
     expect(src).toContain('error.digest ?? "none"');
     expect(src).not.toContain('?? ", "');
+  });
+
+  it("the error page ships localized copy for EVERY supported locale, not just en/es", () => {
+    // A vi/zh/tl visitor who hits an error must not drop to English — the whole
+    // product serves LEP users. errorStrings is typed Record<Locale,…> so a
+    // missing locale won't compile; this pins the content is real, not stubbed.
+    for (const loc of LOCALES) {
+      const e = errorStrings[loc];
+      expect(e, `${loc} error copy`).toBeDefined();
+      expect(e.errorTitle.length, `${loc} errorTitle`).toBeGreaterThan(3);
+      expect(e.errorBody.length, `${loc} errorBody`).toBeGreaterThan(20);
+      expect(e.errorRetryCta.length, `${loc} errorRetryCta`).toBeGreaterThan(1);
+      expect(e.errorHomeCta.length, `${loc} errorHomeCta`).toBeGreaterThan(1);
+      expect(e.errorReferenceHint.length, `${loc} errorReferenceHint`).toBeGreaterThan(3);
+      // The always-works fallback (211) survives translation in every locale.
+      expect(e.errorHelpNote, `${loc} errorHelpNote 211`).toMatch(/211/);
+      // No retired-brand leakage in any locale.
+      const blob = [e.errorStatus, e.errorTitle, e.errorBody, e.errorHomeCta].join(" | ");
+      expect(blob, `${loc} error branding`).not.toMatch(/civica|calfresh|welcome/i);
+    }
+    // Non-Latin locales actually carry non-ASCII glyphs (caught a stubbed-EN bug).
+    expect(errorStrings.zh.errorTitle).toMatch(/[一-鿿]/);
+    expect(errorStrings.vi.errorTitle).toMatch(/[àáảãạăâđêôơư]/i);
+  });
+
+  it("error.tsx honors all locales and uses the localized errorStrings source", () => {
+    const src = read("error.tsx");
+    // The gate must not be the old en/es-only check.
+    expect(src).not.toContain('saved === "en" || saved === "es"');
+    expect(src).toContain("errorStrings");
+    expect(src).toContain("LOCALES");
   });
 
   it("not-found has no empty-label link (regression)", () => {
