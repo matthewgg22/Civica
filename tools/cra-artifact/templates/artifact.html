@@ -1,216 +1,232 @@
 <!doctype html>
 <html><head><meta charset="utf-8"><title>[[org_name]] — [[bank_name]]</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  /* Tokens — design review 2026-08-22. Print minimums: body >=10pt, footer >=8pt. */
-  :root { --ink:#1a1f1c; --accent:#1d4d3b; --muted:#5c6660; --hair:#d8ddda; --nodata:#e8eae9; --tint:#eef3f0; }
+  /* Demeter design system (apps/web/DEMETER-DESIGN.md): terracotta accent,
+     Newsreader speaks, Be Vietnam Pro labels, true-white ground, hue-neutral
+     grays, one accent. Print minimums: body >=10pt, footer >=8pt.
+     PROJECTED sample lives in the detachable appendix (page 3). */
+  :root {
+    --ink:#232220; --body:#4B4A46; --muted:#6C6A64; --paper:#FFFFFF;
+    --tint:#F6F5F3; --rule:#E8E6E2; --rule-strong:#D2CFC9;
+    --accent:#C0553B; --accent-deep:#8E3A26; --wheat:#E8C547; --nodata:#ECEAE6;
+  }
   * { margin:0; padding:0; box-sizing:border-box; }
   @page { size: Letter; margin: 0; }
-  body { font-family:'IBM Plex Sans',sans-serif; color:var(--ink); background:#fff; }
-  .serif { font-family:'Source Serif 4',Georgia,serif; }
-  .page { width:8.5in; height:11in; padding:.75in .7in .42in; display:flex; flex-direction:column; page-break-after:always; position:relative; overflow:hidden; }
+  body { font-family:'Be Vietnam Pro',-apple-system,sans-serif; color:var(--body); background:var(--paper); }
+  .serif { font-family:'Newsreader',Georgia,serif; }
+  .page { width:8.5in; height:11in; padding:.7in .7in .4in; display:flex; flex-direction:column; page-break-after:always; position:relative; overflow:hidden; }
   .page:last-child { page-break-after:auto; }
+  .eyebrow { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); }
   .letterhead { display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid var(--accent); padding-bottom:8px; }
-  .letterhead .org { font-size:9.5pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent); white-space:nowrap; }
+  .letterhead .org { font-size:9pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent); white-space:nowrap; }
   .letterhead .doc { font-size:8pt; color:var(--muted); white-space:nowrap; padding-left:12px; }
-  h2.pagehead { font-family:'Source Serif 4',serif; font-size:20pt; font-weight:600; margin-top:26px; }
-  .research { border-top:1.5px solid var(--accent); margin-top:13px; padding-top:8px; }
-  .research .rlabel { font-size:8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent); font-weight:600; }
-  .rstats { display:flex; gap:.32in; margin-top:7px; }
-  .rstats > div { flex:1; }
-  .rstats b { display:block; font-family:'Source Serif 4',serif; font-size:17pt; font-weight:600; line-height:1; font-variant-numeric:tabular-nums; }
-  .rstats span { display:block; font-size:8.2pt; line-height:1.35; color:#3c3c3c; margin-top:3px; }
-  .rsrc { font-size:7.4pt; line-height:1.4; color:var(--muted); margin-top:7px; }
-  .me-evidence { border-top:1.5px solid var(--accent); margin-top:11px; padding-top:7px; }
-  .me-evidence .me-label { font-size:8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent); font-weight:600; }
+  h2.pagehead { font-family:'Newsreader',serif; font-size:21pt; font-weight:600; letter-spacing:-.01em; color:var(--ink); margin-top:22px; }
+  .pagefoot { border-top:1px solid var(--rule); margin-top:auto; padding-top:8px; font-size:8pt; line-height:1.5; color:var(--muted); }
+
+  /* ---------- Page 1 — the need ---------- */
+  .big { font-family:'Newsreader',serif; font-size:82pt; line-height:.92; letter-spacing:-.015em; color:var(--ink); margin-top:24px; }
+  .head-sentence { font-family:'Newsreader',serif; font-size:16.5pt; line-height:1.32; color:var(--ink); margin-top:8px; max-width:6.6in; }
+  .head-sentence em { font-style:normal; box-shadow:inset 0 -0.14em 0 var(--wheat); }
+  .qualifier { font-size:8.4pt; color:var(--muted); margin-top:6px; max-width:6.2in; }
+  .ratio-line { font-size:10pt; color:var(--accent-deep); font-weight:600; margin-top:6px; }
+  .needrow { display:flex; gap:.34in; margin-top:20px; align-items:stretch; }
+  .needrow .coltable { flex:1.35; }
+  .needrow .colmap { flex:1; min-width:0; }
+  /* core-materials table */
+  table.core { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+  table.core caption { text-align:left; }
+  .core-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:6px; }
+  table.core td { padding:8.5px 2px; border-bottom:1px solid var(--rule); vertical-align:baseline; }
+  table.core tr:last-child td { border-bottom:none; }
+  table.core td.k { font-size:9.5pt; color:var(--body); }
+  table.core td.v { text-align:right; font-family:'Newsreader',serif; font-size:15pt; font-weight:600; color:var(--ink); white-space:nowrap; }
+  table.core td.v small { font-family:'Be Vietnam Pro',sans-serif; font-size:8pt; font-weight:500; color:var(--muted); display:block; margin-top:1px; }
+  table.core tr.ask td { border-top:2px solid var(--accent); padding-top:9px; }
+  table.core tr.ask td.k { color:var(--accent-deep); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:8.4pt; }
+  table.core tr.ask td.v { color:var(--accent-deep); }
+  .mapbox { height:100%; min-height:2.7in; border:1px solid var(--rule); position:relative; background:var(--paper); display:flex; align-items:center; justify-content:center; padding:24px 8px 26px; }
+  .mapbox svg { max-width:100%; max-height:100%; }
+  .maplabel { position:absolute; top:7px; left:9px; font-size:7pt; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+  .legend { position:absolute; bottom:7px; left:9px; right:9px; font-size:6.8pt; color:var(--muted); display:flex; flex-wrap:wrap; gap:8px; }
+  .sw { display:inline-block; width:11px; height:8px; margin-right:3px; vertical-align:baseline; }
+  .me-evidence { border-top:1.5px solid var(--accent); margin-top:15px; padding-top:7px; }
+  .me-evidence .me-label { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-deep); font-weight:600; }
   .me-evidence ul { list-style:none; margin-top:5px; }
-  .me-evidence li { font-size:8.4pt; line-height:1.38; color:#3c3c3c; margin-top:3px; }
+  .me-evidence li { font-size:8.6pt; line-height:1.4; color:var(--body); margin-top:3px; }
   .me-evidence li b { color:var(--ink); }
   .me-evidence .me-src { color:var(--muted); font-size:7.3pt; white-space:nowrap; }
   .me-evidence .me-frame { font-size:7.3pt; line-height:1.4; color:var(--muted); margin-top:5px; }
-  .pagefoot { border-top:1px solid var(--hair); margin-top:auto; padding-top:8px; font-size:8pt; line-height:1.5; color:var(--muted); }
-  /* ---------- Page 1 ---------- */
-  .big { font-family:'Source Serif 4',serif; font-size:86pt; line-height:.95; letter-spacing:-.01em; margin-top:30px; }
-  .head-sentence { font-family:'Source Serif 4',serif; font-size:17pt; line-height:1.35; margin-top:8px; max-width:5.6in; }
-  .head-sentence em { font-style:normal; border-bottom:2.5px solid var(--accent); }
-  .subline { font-size:11pt; color:var(--muted); margin-top:10px; max-width:5.4in; }
-  .subline strong { color:var(--ink); }
-  .qualifier { font-size:8.5pt; color:var(--muted); margin-top:5px; }
-  .ratio-line { font-size:10pt; color:var(--accent); font-weight:600; margin-top:6px; }
-  .maprow { display:flex; gap:.28in; margin-top:26px; flex:1; min-height:0; }
-  .mapbox { flex:1.45; border:1px solid var(--hair); position:relative; background:#fbfcfb; display:flex; align-items:center; justify-content:center; padding:26px 10px 30px; }
-  .mapbox svg { max-width:100%; max-height:100%; }
-  .maplabel { position:absolute; top:8px; left:10px; font-size:7.5pt; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
-  .legend { position:absolute; bottom:8px; left:10px; font-size:7.5pt; color:var(--muted); display:flex; gap:10px; }
-  .sw { display:inline-block; width:12px; height:9px; margin-right:3px; vertical-align:baseline; }
-  .stats { flex:1; display:flex; flex-direction:column; justify-content:center; gap:18px; }
-  .stat { border-top:1px solid var(--hair); padding-top:8px; }
-  .stat .label { font-size:8pt; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
-  .stat .value { font-size:24pt; font-weight:600; font-variant-numeric:tabular-nums; }
-  .stat .note { font-size:8.5pt; color:var(--muted); }
-  /* ---------- Page 2 ---------- */
-  .cred { font-size:11pt; line-height:1.55; margin-top:14px; max-width:6.2in; }
-  .body-block { font-size:10.5pt; line-height:1.55; margin-top:16px; max-width:6.4in; }
-  .body-block h3 { font-family:'Source Serif 4',serif; font-size:13pt; font-weight:600; margin-bottom:4px; }
+
+  /* ---------- Page 2 — program + ask ---------- */
+  .cred { font-family:'Newsreader',serif; font-size:12.5pt; line-height:1.5; color:var(--ink); margin-top:14px; max-width:6.4in; }
+  .body-block { font-size:10pt; line-height:1.55; color:var(--body); margin-top:15px; max-width:6.5in; }
+  .body-block h3 { font-family:'Newsreader',serif; font-size:13pt; font-weight:600; color:var(--ink); margin-bottom:4px; }
+  .research { border-top:1.5px solid var(--accent); margin-top:16px; padding-top:8px; }
+  .research .rlabel { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-deep); font-weight:600; }
+  .rstats { display:flex; gap:.34in; margin-top:8px; }
+  .rstats > div { flex:1; }
+  .rstats b { display:block; font-family:'Newsreader',serif; font-size:18pt; font-weight:600; line-height:1; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .rstats span { display:block; font-size:8.2pt; line-height:1.35; color:var(--body); margin-top:4px; }
+  .rsrc { font-size:7.4pt; line-height:1.4; color:var(--muted); margin-top:8px; max-width:6.6in; }
   .tiers { display:flex; gap:.22in; margin-top:18px; }
-  .tier { flex:1; border:1px solid var(--hair); border-top:3px solid var(--accent); padding:12px; }
-  .tier .name { font-size:8.5pt; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
-  .tier .amt { font-family:'Source Serif 4',serif; font-size:19pt; font-weight:600; margin-top:2px; }
-  .tier .desc { font-size:9pt; line-height:1.45; color:var(--muted); margin-top:6px; }
-  .cta { border:2.5px solid var(--accent); margin-top:auto; margin-bottom:14px; padding:16px 18px; }
-  .cta .ask { font-family:'Source Serif 4',serif; font-size:15pt; font-weight:600; }
-  .cta .who { font-size:10.5pt; margin-top:6px; }
-  .brightline { font-size:8.5pt; color:var(--muted); margin-top:8px; max-width:6.4in; }
-  /* ---------- Page 3 (PROJECTED) ---------- */
-  .projected-wrap { position:relative; margin-top:18px; }
+  .tier { flex:1; border:1px solid var(--rule); border-top:3px solid var(--accent); border-radius:2px; padding:12px; }
+  .tier.lead { background:var(--tint); }
+  .tier .name { font-size:8pt; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; }
+  .tier .amt { font-family:'Newsreader',serif; font-size:18pt; font-weight:600; color:var(--ink); margin-top:2px; }
+  .tier .desc { font-size:8.6pt; line-height:1.45; color:var(--muted); margin-top:6px; }
+  .split { margin-top:14px; font-size:9pt; line-height:1.5; color:var(--muted); max-width:6.6in; }
+  .split strong { color:var(--ink); }
+  .cta { border:2px solid var(--accent); border-radius:3px; margin-top:auto; margin-bottom:12px; padding:15px 18px; display:flex; justify-content:space-between; align-items:center; gap:16px; }
+  .cta .ask { font-family:'Newsreader',serif; font-size:15.5pt; font-weight:600; color:var(--ink); }
+  .cta .who { font-size:9.5pt; color:var(--body); text-align:right; }
+  .brightline { font-size:8pt; color:var(--muted); max-width:6.6in; }
+
+  /* ---------- Page 3 — appendix (PROJECTED sample + methodology) ---------- */
+  .chip { display:inline-block; background:var(--accent); color:#fff; font-size:8pt; font-weight:600; letter-spacing:.08em; padding:3px 9px; border-radius:2px; text-transform:uppercase; vertical-align:middle; margin-left:8px; }
+  .projected-wrap { position:relative; margin-top:12px; }
   .watermark { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
-  .watermark span { font-family:'IBM Plex Sans',sans-serif; font-weight:600; font-size:54pt; letter-spacing:.18em; color:var(--accent); opacity:.08; transform:rotate(-24deg); }
-  .chip { display:inline-block; background:var(--accent); color:#fff; font-size:8pt; font-weight:600; letter-spacing:.1em; padding:3px 8px; text-transform:uppercase; }
-  table.report { width:100%; border-collapse:collapse; margin-top:10px; font-variant-numeric:tabular-nums; }
-  table.report caption { text-align:left; font-size:9pt; color:var(--muted); margin-bottom:6px; caption-side:top; }
-  table.report th { background:var(--tint); border-bottom:2px solid var(--accent); font-size:9pt; text-align:right; padding:7px 10px; }
+  .watermark span { font-family:'Be Vietnam Pro',sans-serif; font-weight:600; font-size:52pt; letter-spacing:.18em; color:var(--accent); opacity:.07; transform:rotate(-24deg); }
+  table.report { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+  table.report caption { text-align:left; font-size:8.4pt; color:var(--muted); margin-bottom:6px; caption-side:top; line-height:1.4; }
+  table.report th { background:var(--tint); border-bottom:2px solid var(--rule-strong); font-size:8.4pt; font-weight:600; text-align:right; padding:6px 9px; color:var(--ink); }
   table.report th:first-child { text-align:left; }
-  table.report td { border-bottom:1px solid var(--hair); font-size:10pt; text-align:right; padding:7px 10px; }
-  table.report td:first-child { text-align:left; }
-  .repnote { font-size:8.5pt; color:var(--muted); margin-top:10px; line-height:1.5; }
-  /* ---------- Page 4 / 5 ---------- */
-  .measure li, .method li { font-size:10pt; line-height:1.55; margin:7px 0 7px 16px; }
-  .method h3, .measure h3 { font-family:'Source Serif 4',serif; font-size:12.5pt; font-weight:600; margin-top:16px; }
-  .disclose { border-left:3px solid var(--accent); background:var(--tint); padding:10px 14px; font-size:9.5pt; line-height:1.55; margin-top:14px; }
+  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:4.2px 9px; }
+  table.report td:first-child { text-align:left; color:var(--body); }
+  table.report tr.band td { background:var(--tint); font-size:7.2pt; letter-spacing:.07em; text-transform:uppercase; text-align:left; color:var(--muted); font-weight:600; padding:3.4px 9px; }
+  table.report tr.key td { font-weight:600; color:var(--ink); }
+  .repnote { font-size:7.8pt; color:var(--muted); margin-top:7px; line-height:1.42; max-width:6.8in; }
+  .appx { display:flex; gap:.34in; margin-top:11px; }
+  .appx .col { flex:1; }
+  .appx h3 { font-family:'Newsreader',serif; font-size:11pt; font-weight:600; color:var(--ink); margin:0 0 3px; }
+  .appx h3.n2 { margin-top:10px; }
+  .appx p, .appx li { font-size:8.1pt; line-height:1.45; color:var(--body); }
+  .appx ul { list-style:none; margin-top:3px; }
+  .appx li { margin-top:3.5px; padding-left:10px; position:relative; }
+  .appx li::before { content:""; position:absolute; left:0; top:.55em; width:4px; height:4px; background:var(--accent); border-radius:50%; }
+  .disclose { border-left:3px solid var(--accent); background:var(--tint); padding:8px 11px; font-size:8.1pt; line-height:1.45; color:var(--body); margin-top:9px; }
+  .disclose strong { color:var(--ink); }
 </style></head><body>
 
 <!-- PAGE 1 — the need -->
 <div class="page">
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 1 of 5</div></div>
-  <div class="big">[[headline_unenrolled]]</div>
-  <div class="head-sentence">eligible residents of <em>your assessment area</em> are not receiving [[program_ref]] benefits they qualify for.</div>
-  <div class="subline">That is an estimated <strong>[[benefit_range]] per year</strong> in unclaimed federal nutrition benefits that would be spent in [[aa_label]] grocery stores.</div>
-  <div class="qualifier">Estimated from 2023 ACS 1-Year PUMS ([[method_short]]); dollar range reflects household-size assumptions, not a confidence interval. Methodology and known biases: page 5.</div>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 1 of 3</div></div>
+  <div class="big serif">[[headline_unenrolled]]</div>
+  <div class="head-sentence">eligible residents of <em>your assessment area</em> are not receiving [[program_ref]] benefits they qualify for &mdash; an estimated <em>[[benefit_range]] a year</em> in unclaimed federal nutrition dollars that would be spent in [[aa_label]] grocery stores.</div>
+  <div class="qualifier">Estimated from 2023 ACS 1-Year PUMS ([[method_short]]); the dollar range reflects household-size assumptions, not a confidence interval. Full methodology and known biases: appendix, page 3.</div>
   [[ratio_line]]
-  <div class="maprow">
-    <div class="mapbox">
-      <div class="maplabel">[[map_caption]]</div>
-      [[map_svg]]
-      <div class="legend"><span><span class="sw" style="background:#1d4d3b"></span>assessment area</span><span><span class="sw" style="background:#3f7360"></span>higher need</span><span><span class="sw" style="background:#cdddd5"></span>lower need</span><span><span class="sw" style="background:#e8eae9;border:1px solid #d8ddda"></span>no data</span></div>
+  <div class="needrow">
+    <div class="coltable">
+      <div class="core-cap">The numbers, for your assessment area</div>
+      <table class="core">
+        <tr><td class="k">Eligible residents (est.)</td><td class="v">[[eligible_fmt]]</td></tr>
+        <tr><td class="k">Not receiving benefits</td><td class="v">[[headline_unenrolled]]</td></tr>
+        <tr><td class="k">Unclaimed benefits / year</td><td class="v">[[benefit_range]]</td></tr>
+        <tr><td class="k">Current enrollment</td><td class="v">[[aa_enrolled_pct]]%<small>vs. [[state_enrolled_pct]]% statewide</small></td></tr>
+        <tr><td class="k">Avg. household benefit</td><td class="v">$[[benefit_monthly]]/mo</td></tr>
+        <tr class="ask"><td class="k">Our ask &mdash; this bank</td><td class="v">$[[ask_fmt]]</td></tr>
+      </table>
     </div>
-    <div class="stats">
-      <div class="stat"><div class="label">Eligible residents, est.</div><div class="value">[[eligible_fmt]]</div><div class="note">in covered assessment-area counties</div></div>
-      <div class="stat"><div class="label">Currently enrolled, est.</div><div class="value">[[aa_enrolled_pct]]%</div><div class="note">vs. [[state_enrolled_pct]]% statewide</div></div>
-      <div class="stat"><div class="label">Avg. household benefit</div><div class="value">$[[benefit_monthly]]/mo</div><div class="note">USDA FNS, FY2024 national average</div></div>
+    <div class="colmap">
+      <div class="mapbox">
+        <div class="maplabel">[[map_caption]]</div>
+        [[map_svg]]
+        <div class="legend"><span><span class="sw" style="background:#C0553B"></span>assessment area</span><span><span class="sw" style="background:#D08466"></span>higher need</span><span><span class="sw" style="background:#F3D9CF"></span>lower need</span><span><span class="sw" style="background:#ECEAE6;border:1px solid #D2CFC9"></span>no data</span></div>
+      </div>
     </div>
-  </div>
-  <div class="research">
-    <div class="rlabel">What changes when the paperwork gets easier</div>
-    <div class="rstats">
-      <div><b>&minus;$2,436</b><span>in credit-card debt by year three &mdash; a 51% reduction</span></div>
-      <div><b>&minus;10.1 pts</b><span>less likely to carry a delinquent account, off a 41% baseline</span></div>
-      <div><b>+17 pts</b><span>credit score, from a 634 average &mdash; the subprime range</span></div>
-    </div>
-    <div class="rsrc">Treatment-on-the-treated effects among ~65,000 Los Angeles SNAP applicants, from administrative records linked to credit reports; households that fell out at recertification in San Francisco moved the other way, losing 15 to 19 points. Homonoff, Lee &amp; Meckel, NBER Working Paper 34434 (preliminary draft, November 2025; estimates subject to revision). Credit-score effects are the least precisely estimated of the three; the debt and delinquency effects are stronger. This is research on SNAP access generally, not a measurement of [[org_name]]'s program.</div>
   </div>
   [[me_evidence_block]]
-  <div class="pagefoot">[[data_gaps_note]]Sources: eligibility &amp; enrollment [[model_note]]. Known biases in the gross-income proxy and ACS benefit under-reporting may overstate the eligible-unenrolled population — see page 5. Assessment area as delineated in [[bank_name]]'s [[pe_date]] CRA Performance Evaluation ([[regulator]]). Benefit figures: USDA FNS FY2024. [[org_name]], a 501(c)(3) organization.</div>
+  <div class="pagefoot">[[data_gaps_note]]Sources: eligibility &amp; enrollment [[model_note]]. Known biases in the gross-income proxy and ACS benefit under-reporting may overstate the eligible-unenrolled population (see appendix). Assessment area as delineated in [[bank_name]]'s [[pe_date]] CRA Performance Evaluation ([[regulator]]). Benefit figures: USDA FNS FY2024. [[org_name]], a 501(c)(3) organization.</div>
 </div>
 
 <!-- PAGE 2 — the program + the ask -->
 <div class="page">
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 2 of 5</div></div>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 2 of 3</div></div>
   <h2 class="pagehead">A benefits-access pilot in your assessment area</h2>
   <div class="cred">[[org_name]] is [[status_line_lc]] [[engine_line]]</div>
   <div class="body-block">
     <h3>What the pilot does</h3>
-    Factual, geo-targeted outreach ("You may qualify for [[program_ref]] — check in 5 minutes") across your assessment area drives residents to a free eligibility check and application support. Ads state facts and never pressure; we accept no per-enrollment compensation. A Google Ad Grant (up to $10,000/month of donated search advertising) stretches every grant dollar — your funding primarily buys reach beyond the grant and the measurement itself.
+    Factual, geo-targeted outreach ("You may qualify for [[program_ref]] &mdash; check in 5 minutes") across your assessment area drives residents to a free eligibility check and application support. Ads state facts and never pressure; we accept no per-enrollment compensation. A Google Ad Grant (up to $10,000/month of donated search advertising) stretches every grant dollar &mdash; your funding primarily buys reach beyond the grant and the measurement itself.
+  </div>
+  <div class="research">
+    <div class="rlabel">What changes when the paperwork gets easier</div>
+    <div class="rstats">
+      <div><b class="serif">&minus;$2,436</b><span>credit-card debt by year three &mdash; a 51% reduction</span></div>
+      <div><b class="serif">&minus;10.1 pts</b><span>less likely to carry a delinquent account, off a 41% baseline</span></div>
+      <div><b class="serif">+17 pts</b><span>credit score, from a 634 average &mdash; the subprime boundary</span></div>
+    </div>
+    <div class="rsrc">Treatment-on-the-treated among ~65,000 Los Angeles SNAP applicants, from administrative records linked to credit reports; households that fell out at recertification in San Francisco moved the other way, losing 15 to 19 points. Homonoff, Lee &amp; Meckel, NBER Working Paper 34434 (preliminary draft, November 2025; estimates subject to revision). Credit-score effects are the least precisely estimated of the three; the debt and delinquency effects are stronger. Research on SNAP access generally, not a measurement of [[org_name]]'s program.</div>
   </div>
   <div class="body-block">
-    <p class="body" style="font-size:9.5pt; margin-top:10px;">Independent research ties this specific intervention to household financial stability. Linking SNAP administrative records to credit reports across roughly 65,000 Los Angeles and 40,000 San Francisco applicants, Homonoff, Lee &amp; Meckel find that households who cleared the interview requirement carried <strong>$2,436 less credit-card debt</strong> by year three, were <strong>10.1 percentage points less likely</strong> to hold a delinquent account, and saw credit scores rise <strong>17 points</strong> from a 634 average &mdash; which the authors note has &ldquo;the potential to move recipients out of the subprime range.&rdquo; Households that fell out at recertification moved the other way, losing 15 to 19 points. <span style="color:#6b6b6b;">Homonoff, Lee &amp; Meckel, NBER Working Paper 34434 (preliminary draft, November 2025; estimates subject to revision). Credit-score effects are the study&rsquo;s least precisely estimated; debt and delinquency effects are stronger. This research concerns SNAP access generally, not Civica Torrey&rsquo;s program.</span></p>
-  <h3>What you receive</h3>
-    A quarterly report (sample on page 3) documenting outreach delivered, residents served, and applications generated in your assessment area, with dollar-traceability from grant to outcome — prepared so your team can use it directly in CRA documentation. Activities of this type are typically considered community development services under the community-services prong; your compliance team makes that determination.
+    <h3>What you receive</h3>
+    A quarterly report (sample in the appendix) documenting outreach delivered, residents served, and applications generated in your assessment area, with dollar-traceability from grant to outcome &mdash; prepared so your team can use it directly in CRA documentation. Activities of this type are typically considered community development services under the community-services prong; your compliance team makes that determination.
   </div>
   <div class="tiers">
     <div class="tier"><div class="name">Community Sponsor</div><div class="amt">$5,000–$10,000</div><div class="desc">One quarter of outreach in selected tracts. Fast to say yes to; designed for sponsorship budgets.</div></div>
-    <div class="tier"><div class="name">Pilot Grant</div><div class="amt">$[[ask_fmt]]</div><div class="desc">A full quarter across the assessment area, with the complete measurement program and quarterly report.</div></div>
+    <div class="tier lead"><div class="name">Pilot Grant &mdash; proposed</div><div class="amt">$[[ask_fmt]]</div><div class="desc">A full quarter across the assessment area, with the complete measurement program and quarterly report.</div></div>
     <div class="tier"><div class="name">Program Grant</div><div class="amt">$30,000–$50,000</div><div class="desc">Two or more quarters; adds funnel-measurement depth and a year-end summary for exam files.</div></div>
   </div>
-  <div class="body-block" style="margin-top:14px; font-size:9.5pt; color:var(--muted);">
-    <strong style="color:var(--ink);">Where each dollar goes, every bank, every quarter:</strong> 60¢ outreach in your assessment area · 15¢ measurement &amp; reporting (your quarterly report and exam-file memo) · 10¢ creative, ad operations &amp; Spanish-language localization · 15¢ indirect costs, the federal de minimis rate at 2 CFR 200.414(f). The same split for every participating bank — only the geography changes.
-  </div>
+  <div class="split"><strong>Where each dollar goes, every bank, every quarter:</strong> 60¢ outreach in your assessment area · 15¢ measurement &amp; reporting (your quarterly report and exam-file memo) · 10¢ creative, ad operations &amp; Spanish-language localization · 15¢ indirect costs, the federal de minimis rate at 2 CFR 200.414(f). The same split for every participating bank &mdash; only the geography changes.</div>
   <div class="cta">
     <div class="ask">The ask: a 30-minute conversation.</div>
-    <div class="who">[[contact_name]], [[contact_title]] · [[contact_email]][[contact_phone_line]]</div>
+    <div class="who">[[contact_name]], [[contact_title]]<br>[[contact_email]][[contact_phone_line]]</div>
   </div>
-  <div class="pagefoot brightline">Program guardrail: our tools never steer applicants toward any funder's products or services. Any future referral integration would be a separate, explicitly disclosed agreement — never part of this pilot.</div>
+  <div class="pagefoot brightline">Program guardrail: our tools never steer applicants toward any funder's products or services. Any future referral integration would be a separate, explicitly disclosed agreement &mdash; never part of this pilot.</div>
 </div>
 
-<!-- PAGE 3 — sample quarterly report (PROJECTED) -->
+<!-- PAGE 3 — appendix: PROJECTED sample report + methodology (detach as needed) -->
 <div class="page">
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 3 of 5</div></div>
-  <h2 class="pagehead">Sample quarterly report <span class="chip">Projected — not measured</span></h2>
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 3 of 3</div></div>
+  <div class="eyebrow" style="margin-top:20px;">Appendix · for your exam file · PROJECTED sample + methodology · detach as needed</div>
+  <h2 class="pagehead" style="margin-top:6px;">Sample quarterly report <span class="chip">Projected — not measured</span></h2>
   <div class="projected-wrap">
     <div class="watermark"><span>PROJECTED</span></div>
     <table class="report">
-      <caption>Illustrative one-quarter pilot at $[[ask_fmt]], [[aa_label]]. Conservative and mid-range scenarios; all figures projected from the assumption set on page 4.</caption>
+      <caption>Illustrative one-quarter pilot at $[[ask_fmt]], [[aa_label]]. Conservative and mid-range scenarios, projected from the assumption set below.</caption>
       <thead><tr><th>Quarterly outcome</th><th>Conservative</th><th>Mid-range</th></tr></thead>
       <tbody>
-        <tr><td colspan="3" style="background:var(--tint); font-size:8pt; letter-spacing:.08em; text-transform:uppercase; text-align:left;">Delivery &amp; service — observed in-product</td></tr>
+        <tr class="band"><td colspan="3">Delivery &amp; service — observed in-product</td></tr>
         <tr><td>Ad clicks delivered in assessment area</td><td>[[low_clicks]]</td><td>[[mid_clicks]]</td></tr>
         <tr><td>Eligibility-check sessions</td><td>[[low_sessions]]</td><td>[[mid_sessions]]</td></tr>
         <tr><td>Eligibility checks completed</td><td>[[low_checks]]</td><td>[[mid_checks]]</td></tr>
-        <tr><td colspan="3" style="background:var(--tint); font-size:8pt; letter-spacing:.08em; text-transform:uppercase; text-align:left;">Action — observed in-product</td></tr>
+        <tr class="band"><td colspan="3">Action — observed in-product</td></tr>
         <tr><td>Applications started</td><td>[[low_started]]</td><td>[[mid_started]]</td></tr>
-        <tr><td><strong>Applications submitted</strong> (primary metric)</td><td><strong>[[low_submitted]]</strong></td><td><strong>[[mid_submitted]]</strong></td></tr>
-        <tr><td colspan="3" style="background:var(--tint); font-size:8pt; letter-spacing:.08em; text-transform:uppercase; text-align:left;">Outcomes — via consented follow-up panel, response rate disclosed</td></tr>
+        <tr class="key"><td>Applications submitted (primary metric)</td><td>[[low_submitted]]</td><td>[[mid_submitted]]</td></tr>
+        <tr class="band"><td colspan="3">Outcomes — via consented follow-up panel, response rate disclosed</td></tr>
         <tr><td>Est. approved households</td><td>[[low_approved]]</td><td>[[mid_approved]]</td></tr>
-        <tr><td><strong>Est. annual benefits unlocked</strong></td><td><strong>[[low_benefit]]</strong></td><td><strong>[[mid_benefit]]</strong></td></tr>
-        <tr><td colspan="3" style="background:var(--tint); font-size:8pt; letter-spacing:.08em; text-transform:uppercase; text-align:left;">Efficiency</td></tr>
+        <tr class="key"><td>Est. annual benefits unlocked</td><td>[[low_benefit]]</td><td>[[mid_benefit]]</td></tr>
+        <tr class="band"><td colspan="3">Efficiency</td></tr>
         <tr><td>Cost per submitted application</td><td>[[low_cps]]</td><td>[[mid_cps]]</td></tr>
       </tbody>
     </table>
-    <div class="repnote">A funded report replaces every projection above with measured values, reports <em>submitted</em> applications as the primary outcome, and states the measured mid-funnel rates alongside these assumptions. Where measured performance lands at the conservative end, the report says so plainly.</div>
+    <div class="repnote">A funded report replaces every projection above with measured values, reports <em>submitted</em> applications as the primary outcome, and states the measured mid-funnel rates alongside these assumptions. Where measured performance lands at the conservative end, the report says so plainly. Assumption set: version [[assumptions_version]].</div>
   </div>
-  <div class="pagefoot">All figures on this page are projections labeled as such; none represent measured performance. Assumption set: version [[assumptions_version]], page 4.</div>
-</div>
-
-<!-- PAGE 4 — how measurement works -->
-<div class="page">
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 4 of 5</div></div>
-  <h2 class="pagehead">How measurement works</h2>
-  <div class="body-block">This pilot's stated learning goal is measuring the step no published benchmark covers: how many residents who start an eligibility check go on to submit an application. The measurement plan, in the order data flows:</div>
-  <ul class="measure">
-    <li><strong>Layer 1 — Observed (system of record):</strong> ad delivery by geography reconciled monthly against invoices; sessions, eligibility checks completed, likely-eligible rate, clarification questions answered, applications started and submitted with assistance — every number in this layer is a recorded system event, and this layer alone carries the CRA documentation (eligibility screening evidences "eligible to receive," the standard the guidance uses).</li>
-    <li><strong>Layer 2 — Consented follow-up panel:</strong> users may opt into a 30/60-day check-in ("Did you apply? Were you approved?"). Reported exactly as measured: opt-in rate, response rate, and outcomes among respondents — never silently extrapolated to the full population. Where a range is projected from panel results, the conservative bound is respondents-only.</li>
-    <li><strong>Layer 3 — Aggregate corroboration:</strong> the state's published monthly county caseload figures appear alongside our numbers as directional context (not attribution). At multi-county scale, geographic holdout testing becomes available for causal measurement — the phase-two design.</li>
-    <li><strong>Privacy posture:</strong> minimum collection, immediate aggregation, follow-up data retained only for the panel window. We report counts, never people.</li>
-    <li><strong>Known limits, stated up front:</strong> ZIP codes straddle county lines; some users click from outside the assessment area; session-to-application rates are the pilot's measurement target, not a promise. The first report quantifies each of these rather than hiding them.</li>
-  </ul>
-  <div class="disclose"><strong>Why we report this way.</strong> Payment is never tied to enrollment counts, ads are factual rather than persuasive, and projections are labeled until they are measurements. A report your examiner can trust is worth more to both of us than a bigger number.</div>
-  <div class="pagefoot">Assumption set version [[assumptions_version]] — conservative/mid-range scenario parameters available on request as a machine-readable file with source citations.</div>
-</div>
-
-<!-- PAGE 5 — methodology & disclosures -->
-<div class="page">
-  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]] · Page 5 of 5</div></div>
-  <h2 class="pagehead">Methodology &amp; disclosures</h2>
-  <div class="method">
-    <h3>Eligibility and enrollment estimates</h3>
-    <ul>
-      <li>[[method_bullet]]</li>
-      <li><strong>Known bias, disclosed:</strong> the model uses a gross-income proxy for SNAP eligibility, and ACS respondents under-report benefit receipt. Both effects push the estimated eligible-unenrolled population <em>upward</em>. Figures here should be read as an upper-range estimate of unmet need.</li>
-      <li>County-level estimates carry sampling uncertainty from 1-Year ACS data; the dollar range on page 1 reflects household-size assumptions ([[hh_high]]–[[hh_low]] persons per eligible household), not a statistical confidence interval.</li>
-    </ul>
-    <h3>Geography</h3>
-    <ul>
-      <li>Assessment area as delineated in [[bank_name]]'s [[pe_date]] CRA Performance Evaluation ([[regulator]]): [[aa_counties_list]]. Map shows the assessment area in regional context at county grain.</li>
-    </ul>
-    <h3>Benefit figures</h3>
-    <ul>
-      <li>Average monthly benefit of $[[benefit_monthly]] per household: USDA Food and Nutrition Service, FY2024 national average. Annualized at 12 months.</li>
-    </ul>
-    <h3>Data vintages</h3>
-    <ul>
-      <li>Need model: 2023 ACS 1-Year PUMS · County allocation: 2020 tract-to-PUMA crosswalk · Benefit averages: USDA FY2024 · Assessment area: [[pe_date]] performance evaluation · Document generated [[prepared_date]].</li>
-    </ul>
+  <div class="appx">
+    <div class="col">
+      <h3>How measurement works</h3>
+      <ul>
+        <li><strong>Layer 1 — observed:</strong> ad delivery reconciled to invoices; sessions, checks, applications started and submitted are recorded system events. This layer alone carries the CRA documentation.</li>
+        <li><strong>Layer 2 — consented panel:</strong> opt-in 30/60-day check-in; opt-in and response rates disclosed, outcomes reported among respondents only, never extrapolated silently.</li>
+        <li><strong>Layer 3 — corroboration:</strong> the state's published county caseload figures shown as directional context, not attribution; geographic holdout testing at multi-county scale.</li>
+      </ul>
+      <div class="disclose"><strong>Why we report this way.</strong> Payment is never tied to enrollment counts, ads are factual not persuasive, and projections are labeled until they are measurements. A report your examiner can trust is worth more than a bigger number.</div>
+    </div>
+    <div class="col">
+      <h3>Methodology &amp; disclosures</h3>
+      <ul>
+        <li>[[method_bullet]]</li>
+        <li><strong>Known bias, disclosed:</strong> the model uses a gross-income proxy for eligibility, and ACS respondents under-report benefit receipt. Both push the estimated eligible-unenrolled population <em>upward</em> &mdash; read the figures as an upper-range estimate of unmet need.</li>
+        <li>County estimates carry 1-Year ACS sampling uncertainty; the page-1 dollar range reflects household-size assumptions ([[hh_high]]–[[hh_low]] persons/household), not a statistical confidence interval.</li>
+      </ul>
+      <h3 class="n2">Geography &amp; vintages</h3>
+      <ul>
+        <li>Assessment area as delineated in the [[pe_date]] CRA Performance Evaluation ([[regulator]]): [[aa_counties_list]].</li>
+        <li>Need model: 2023 ACS 1-Year PUMS · county allocation: 2020 tract-to-PUMA crosswalk · benefits: USDA FNS FY2024 ($[[benefit_monthly]]/mo/household, annualized) · generated [[prepared_date]].</li>
+      </ul>
+    </div>
   </div>
-  <div class="pagefoot">[[org_name]] · [[status_line]] · Contact: [[contact_name]], [[contact_email]][[contact_phone_line]] · Determination letter and full methodology available on request.</div>
+  <div class="pagefoot">[[org_name]] · [[status_line]] · Contact: [[contact_name]], [[contact_email]][[contact_phone_line]] · Determination letter and full methodology available on request. All page-3 figures are projections labeled as such; none represent measured performance.</div>
 </div>
 </body></html>

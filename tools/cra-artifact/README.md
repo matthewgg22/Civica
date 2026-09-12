@@ -2,7 +2,7 @@
 
 Spec: [docs/designs/cra-artifact-build-spec.md](../../docs/designs/cra-artifact-build-spec.md) · Strategy: [docs/designs/cra-benefits-access-pilot.md](../../docs/designs/cra-benefits-access-pilot.md) · Research: [docs/strategy/cra-pilot-research-2026-08-22.md](../../docs/strategy/cra-pilot-research-2026-08-22.md)
 
-Generates a 5-page US-Letter PDF (need → program + ask → PROJECTED sample report → measurement plan → methodology) for one bank at a time. County-grain, built on `data-ops/analysis/track1-food-desert/artifacts/county_metrics.csv` + `data-ops/reference/ca_counties.geojson`. Stdlib-only Python; renders via headless Chrome.
+Generates a 3-page US-Letter PDF on the Demeter design system (terracotta accent, Newsreader/Be Vietnam Pro) for one bank at a time: a **2-page pitch** (page 1 need — core-materials table + compact county map + documented-access callout; page 2 program + credit research + ask) plus a **detachable appendix** (page 3 — PROJECTED sample quarterly report + measurement plan + methodology/bias disclosures). County-grain, built on `data-ops/analysis/track1-food-desert/artifacts/county_metrics.csv` + `data-ops/reference/ca_counties.geojson`. Stdlib-only Python; renders via headless Chrome.
 
 ```bash
 python3 -m src.generate --bank bank_irvine            # out/bank_irvine.{html,pdf} + oracle numbers

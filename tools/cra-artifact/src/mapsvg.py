@@ -13,10 +13,11 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 CA_COUNTIES = REPO_ROOT / "data-ops/reference/ca_counties.geojson"
 US_COUNTIES = REPO_ROOT / "data-ops/reference/us_counties_20m.geojson"
 
-ACCENT = "#1d4d3b"
-# Lightness-ordered ramp, low need -> high need (survives grayscale).
-RAMP = ["#cdddd5", "#a6c3b6", "#7fa896", "#5c8f7b", "#3f7360"]
-NO_DATA = "#e8eae9"
+ACCENT = "#C0553B"
+# Lightness-ordered terracotta ramp, low need -> high need (survives grayscale).
+# Demeter accent family; ACCENT (#C0553B) reserved for the AA fill, not in the ramp.
+RAMP = ["#F3D9CF", "#E3AE9A", "#D08466", "#B9613F", "#8E3A26"]
+NO_DATA = "#ECEAE6"
 
 N_NEIGHBORS = 5
 

@@ -193,12 +193,12 @@ def test_pdf_smoke(tmp_path):
     assert rc == 0
     pdf = TOOL_ROOT / "out/bank_irvine.pdf"
     assert pdf.exists() and 10_000 < pdf.stat().st_size < 10 * 1024 * 1024
-    # 5 pages
+    # 3 pages: 2-page pitch + 1 detachable appendix (PROJECTED sample + methodology)
     n_pages = subprocess.run(
         ["mdls", "-name", "kMDItemNumberOfPages", "-raw", str(pdf)],
         capture_output=True, text=True).stdout.strip()
     if n_pages not in ("", "(null)"):
-        assert n_pages == "5"
+        assert n_pages == "3"
 
 
 # ---- multi-state wiring ------------------------------------------------------
@@ -830,9 +830,9 @@ def test_access_callout_does_not_perturb_need_math():
     assert "me-evidence" in values["me_evidence_block"]
 
 
-def test_access_callout_keeps_artifact_at_five_pages(tmp_path):
+def test_access_callout_keeps_artifact_at_three_pages(tmp_path):
     # The strongest overflow guard: a bank whose AA triggers the callout must
-    # still render exactly five pages.
+    # still render exactly three pages (2-page pitch + appendix).
     rc = generate.main(["--bank", "american_business_bank"])
     assert rc == 0
     pdf = TOOL_ROOT / "out" / "american_business_bank.pdf"
@@ -840,4 +840,4 @@ def test_access_callout_keeps_artifact_at_five_pages(tmp_path):
         ["mdls", "-name", "kMDItemNumberOfPages", "-raw", str(pdf)],
         capture_output=True, text=True).stdout.strip()
     if n_pages not in ("", "(null)"):
-        assert n_pages == "5"
+        assert n_pages == "3"
