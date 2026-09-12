@@ -62,7 +62,7 @@ Leading indicator: engaged sessions (≥3 queries) submit at a multiple of one-q
 
 1. **Acquisition** — $1.04 blended per click; nonprofit search is one of the cheapest verticals that exists, and the Ad Grant subsidizes it further.
 2. **Participation** — query depth predicts submission; every stage above is an observed in-product event, not a survey.
-3. **90-day review** — enrollment + eligibility confirmed per cohort; ~2 of 3 CA denials are procedural — missed interviews alone are up to **half of all denials** — so guided applications convert at structurally higher rates.
+3. **90-day review** — enrollment + eligibility confirmed per cohort; ~2 of 3 CA denials are procedural — missed interviews alone are up to **half of all denials** — so guided applications convert at structurally higher rates. *(Corroborated by CDSS's own county reviews: across 36 CalFresh Management Evaluations, FFY24–25, procedural/negative-action error runs 50–100% in many counties even where the payment-error rate is 0.00%.)*
 4. **Dollars** — $324/household/month of federal money, recurring, spent in the bank's assessment area.
 5. **Credit** — NYU Wagner/UCSD, NBER w34434 (2025), two **California** experiments incl. an RCT on ~65K LA applicants: marginally-approved SNAP recipients cut card debt **$2,436 by yr 3 (−50%)**, delinquent-account share **−5–10pp**, severe delinquency **−up to 13pp (−⅔)**; the marginal **disenrollee** (SF) adds $500 of card debt and **loses 15 credit-score points in one year** (+87% delinquent accounts by yr 3). Fed/Equifax panel corroborates nationally (~33 pts implied over 3 yrs). Marginal enrollees averaged **$375/mo** — above our $324 anchor, so the model is conservative. Validate via matched-cohort on the bank's own portfolio: delinquency ↓, utilization ↓, overdraft/NSF ↓, deposit stability ↑.
 
@@ -70,7 +70,7 @@ Leading indicator: engaged sessions (≥3 queries) submit at a multiple of one-q
 
 - *Enrolled anyway?* → "Netted out — the incremental column already halves it. Cleaner read: geographic holdout counties."
 - *Why not a food bank?* → "Fund both. $25K here moves ~$648K/yr of recurring federal dollars into your footprint."
-- *CRA credit?* → "Documented enrollment assistance to LMI households in your assessment area — county-level counts for the exam file."
+- *CRA credit?* → "Documented enrollment assistance to LMI households in your assessment area — county-level counts for the exam file. The need is documented at county level too: CDSS's own reviews of [county] flagged the access gaps this is responsive to."
 - *If it under-performs?* → "Every stage above is instrumented — you see exactly which link broke, within one quarter."
 - *Isn't card debt bank revenue?* → "Not this debt — 610-score distress borrowing at 25–30% APR that goes delinquent (+87% delinquent accounts in the SF study). It's charge-off risk, and it sits on national monolines' books, not yours. You gain deposit stability and customers crossing 620/640 into products you actually underwrite."
 
