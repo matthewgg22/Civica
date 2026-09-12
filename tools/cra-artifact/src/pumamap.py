@@ -160,7 +160,7 @@ def regional_puma_svg(aa_counties, state, width=430, height=250):
     cx, cy = (minlon + maxlon) / 2, (minlat + maxlat) / 2
     # Keep a generous ring of surrounding continental counties for context; the
     # islands don't stretch this because they're dropped from the draw below.
-    expand = 1.8 if len(aa_counties) == 1 else 1.3
+    expand = 1.5 if len(aa_counties) == 1 else 1.18
     half_w = max((maxlon - minlon) / 2, 0.05) * expand
     half_h = max((maxlat - minlat) / 2, 0.05) * expand
     fminx, fmaxx, fminy, fmaxy = cx - half_w, cx + half_w, cy - half_h, cy + half_h
