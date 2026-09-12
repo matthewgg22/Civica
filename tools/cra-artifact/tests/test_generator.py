@@ -184,6 +184,10 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     assert "30-minute call" in html and org["contact_email"] in html
     # per-county breakdown present (replaces the flat AA choropleth)
     assert 'class="brk"' in html and "Not enrolled, by county" in html
+    # every core-table number carries a clarifying sub-line (formatting parity)
+    for sub in ("income-eligible for SNAP", "of those eligible",
+                "in federal SNAP funds", "per eligible household"):
+        assert sub in html
     # never render the HIGH scenario words
     assert "Optimistic" not in html and "best case" not in html.lower()
     # credibility line present, with the CA-only substantiation (trained model +
