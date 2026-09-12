@@ -21,7 +21,7 @@ from pathlib import Path
 
 TOOL_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOL_ROOT))
-from src import access_evidence, mapsvg, report, score, states  # noqa: E402
+from src import access_evidence, mapsvg, pumamap, report, score, states  # noqa: E402
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
@@ -128,6 +128,12 @@ def build_values(bank, assumptions, org, metrics, meta):
                    if len(bank["aa_counties"]) == 1
                    else "Assessment area · SNAP need by county")
     county_breakdown = build_county_breakdown(need["covered_counties"], metrics)
+    # Sub-county PUMA choropleth where we have both need data and geometry
+    # (CA, FL); every other state falls back to the county-bar breakdown.
+    aa_geo_visual = pumamap.puma_visual_html(
+        bank["aa_counties"], bank.get("state", "CA"), meta["method_short"])
+    if not aa_geo_visual:
+        aa_geo_visual = county_breakdown
     ratio_line = ""
     if need["show_ratio"]:
         ratio_line = (f'<div class="ratio-line">Unmet need here runs '
@@ -213,7 +219,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         # access_evidence.py; never feeds need/funnel/score. Empty = silent.
         "me_evidence_block": access_evidence.evidence_html(
             bank["aa_counties"], state=bank.get("state", "CA")),
-        "county_breakdown": county_breakdown,
+        "aa_geo_visual": aa_geo_visual,
         "assumptions_version": assumptions["version"],
         "hh_low": hh["low_dollar"],
         "hh_high": hh["high_dollar"],

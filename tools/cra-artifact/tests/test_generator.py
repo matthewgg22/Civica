@@ -182,8 +182,14 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     assert not need["show_ratio"] and 'class="ratio-line"' not in html
     # closing next-step + contact present (quiet close, not a "the ask" box)
     assert "30-minute call" in html and org["contact_email"] in html
-    # per-county breakdown present (replaces the flat AA choropleth)
-    assert 'class="brk"' in html and "Not enrolled, by county" in html
+    # CA banks render the sub-county PUMA choropleth (replaces the county bars),
+    # honestly labelled as PUMA footprints, not tracts
+    assert "data-puma" in html and "sub-county footprint (PUMA)" in html
+    assert "not census tracts" in html
+    # every core-table number carries a clarifying sub-line (formatting parity)
+    for sub in ("income-eligible for SNAP", "of those eligible",
+                "in federal SNAP funds", "per eligible household"):
+        assert sub in html
     # never render the HIGH scenario words
     assert "Optimistic" not in html and "best case" not in html.lower()
     # credibility line present, with the CA-only substantiation (trained model +
@@ -251,6 +257,34 @@ def test_fl_methodology_language_not_ca():
     assert "Why Civica" in html
     assert "Management Evaluation" not in html
     assert "AUC" not in html
+
+
+# ---- sub-county PUMA choropleth ---------------------------------------------
+from src import pumamap  # noqa: E402
+
+
+def test_pumamap_supported_states_render_and_others_fall_back():
+    # geometry + need data wired for CA and FL; not for other states
+    assert pumamap.available("CA") and pumamap.available("FL")
+    assert not pumamap.available("TX")
+    # a CA AA resolves many PUMAs and shades them
+    svg = pumamap.regional_puma_svg(["Los Angeles", "Orange"], "CA")
+    assert svg.count("<polygon") > 30 and "data-puma" in svg
+    # the full right-column block carries the honest PUMA/not-tracts labels
+    html = pumamap.puma_visual_html(["Miami-Dade"], "FL", "survey-weighted fact base")
+    assert "PUMA" in html and "not census tracts" in html
+    # unsupported state -> empty, so generate.py uses the county-bar fallback
+    assert pumamap.puma_visual_html(["Harris"], "TX", "x") == ""
+
+
+def test_pumamap_need_join_is_complete():
+    """Every PUMA in the need CSV must join to geometry (vintage alignment)."""
+    for state in ("CA", "FL"):
+        need = set(pumamap.load_puma_need(state))
+        import json
+        geo = {f["properties"]["puma"]
+               for f in json.loads(pumamap.STATES[state][1].read_text())["features"]}
+        assert need and need <= geo, f"{state}: {len(need - geo)} PUMAs missing geometry"
 
 
 # ---- qualification memo -----------------------------------------------------
