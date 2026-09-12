@@ -186,6 +186,11 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     assert 'class="brk"' in html and "Not enrolled, by county" in html
     # never render the HIGH scenario words
     assert "Optimistic" not in html and "best case" not in html.lower()
+    # credibility line present, with the CA-only substantiation (trained model +
+    # the CDSS ME review that only exists for California banks)
+    assert "Why Civica" in html and "Management Evaluation" in html
+    # no fabricated traction: the doc never claims a delivered-user count
+    assert "300 people" not in html
 
 
 # ---- PDF smoke (skips when Chrome absent) -----------------------------------
@@ -236,6 +241,16 @@ def test_fl_methodology_language_not_ca():
     assert "LightGBM" not in html          # CA model claim must not leak into FL
     assert "gross-income test" in html     # fact-base language present
     assert "You may qualify for SNAP" in html
+    # CalFresh is California's SNAP brand; it must never appear in a non-CA
+    # artifact. Regressed once: the page-1 ask line and the page-2 crafile
+    # "Activity" row both hardcoded "CalFresh" instead of [[program_ref]].
+    assert "CalFresh" not in html
+    # Credibility line is present but state-correct: no CA-only claims leak in.
+    # FL is a direct survey-weighted estimate — no trained model (AUC) and no
+    # CDSS Management Evaluation review exists outside California.
+    assert "Why Civica" in html
+    assert "Management Evaluation" not in html
+    assert "AUC" not in html
 
 
 # ---- qualification memo -----------------------------------------------------

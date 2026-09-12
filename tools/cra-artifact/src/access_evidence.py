@@ -48,18 +48,21 @@ def evidence_html(aa_counties, state="CA", counties=None, max_entries=MAX_ENTRIE
     hits = select(aa_counties, state=state, counties=counties, max_entries=max_entries)
     if not hits:
         return ""
-    items = []
+    # Serif pull-quote cards, not left-accent-border cards (DEMETER-DESIGN
+    # flags the colored-left-border card as an AI-slop pattern). The quote
+    # carries the weight; county + source sit under it in a sans caption.
+    cards = []
     for county, e in hits:
         note = f" {html.escape(e['note'])}" if e.get("note") else ""
-        items.append(
-            f'<li><b>{html.escape(county)} County:</b> '
-            f'&ldquo;{html.escape(e["quote"])}&rdquo;{note} '
-            f'<span class="me-src">{html.escape(e["source"])}</span></li>'
+        cards.append(
+            f'<div class="qcard"><div class="q">{html.escape(e["quote"])}{note}</div>'
+            f'<div class="qsrc"><b>{html.escape(county)} County</b> · '
+            f'{html.escape(e["source"])}</div></div>'
         )
     return (
         '<div class="me-evidence">'
         '<div class="me-label">Documented in your assessment area · CDSS CalFresh reviews</div>'
-        f'<ul>{"".join(items)}</ul>'
+        f'<div class="qcards">{"".join(cards)}</div>'
         '<div class="me-frame">The state’s own county reviews, verbatim, offered as '
         'performance context on documented need, not a representation about outcomes.</div>'
         '</div>'
