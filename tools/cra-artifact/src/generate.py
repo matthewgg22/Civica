@@ -183,6 +183,15 @@ def build_values(bank, assumptions, org, metrics, meta):
             "boilerplate: a survey-weighted estimate built directly from 2023 "
             "federal ACS microdata, reproducible from public sources."
         )
+    # And the engine itself, not just the analysis: name the conversational
+    # assistant and why it works (grounded in the agency's own rules), since the
+    # chatbot — the actual product — is what applicants are directed to.
+    credibility_line += (
+        " And the product is not a landing page but a conversational assistant "
+        "grounded in your state's own SNAP rules — it answers applicants' "
+        "questions and cites the governing rule, so they get accurate guidance "
+        "rather than generic search results."
+    )
     # Regulator-specific CRA rule citation for the community-reinvestment box.
     cra_part = cra_reg_part(bank["regulator"])
     cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
