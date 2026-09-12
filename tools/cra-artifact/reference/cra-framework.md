@@ -10,7 +10,8 @@ team and its examiners.**
 
 - **Compiled:** 2026-09-12
 - **Scope:** U.S. federal CRA framework administered by the FRB, FDIC, and OCC
-  (via the FFIEC). State "mini-CRA" statutes are out of scope.
+  (via the FFIEC). State "mini-CRA" statutes are covered in the companion
+  [`cra-state-laws.md`](./cra-state-laws.md).
 - **Sourcing note:** FFIEC's own pages (`ffiec.gov/data/cra/*`, `/craratings/*`)
   return HTTP 403 to automated fetchers; those pages were read live in a
   browser, and every dollar figure and date below is additionally cross-checked
