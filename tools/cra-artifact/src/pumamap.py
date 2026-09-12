@@ -150,7 +150,9 @@ def regional_puma_svg(aa_counties, state, width=430, height=250):
         or [pt for p in aa_pumas for ring in _rings(geoms[p]) for pt in ring]
     lons, lats = [q[0] for q in aa_pts], [q[1] for q in aa_pts]
     cx, cy = (min(lons) + max(lons)) / 2, (min(lats) + max(lats)) / 2
-    expand = 2.0 if len(aa_counties) == 1 else 1.28
+    # Zoom tight on the assessment area — just a thin ring of surrounding
+    # counties for orientation, not a wide regional view.
+    expand = 1.45 if len(aa_counties) == 1 else 1.1
     half_w = max((max(lons) - min(lons)) / 2, 0.05) * expand
     half_h = max((max(lats) - min(lats)) / 2, 0.05) * expand
     fminx, fmaxx, fminy, fmaxy = cx - half_w, cx + half_w, cy - half_h, cy + half_h
