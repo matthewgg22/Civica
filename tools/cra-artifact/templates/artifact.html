@@ -40,14 +40,14 @@
   /* explicit top gap: the qualifier above has no rule/border to separate it
      from the table caption, so it needs real whitespace (the space-between
      distribution alone leaves it too tight on a full page). */
-  .needrow { display:flex; gap:.42in; align-items:flex-start; margin-top:12px; }
+  .needrow { display:flex; gap:.42in; align-items:flex-start; margin-top:9px; }
   .needrow .coltable { flex:1.2; }
   .needrow .colbrk { flex:.9; min-width:0; }
   /* core-materials table */
   table.core { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
   table.core caption { text-align:left; }
   .core-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:4px; }
-  table.core td { padding:8px 2px; border-bottom:1px solid var(--rule); vertical-align:baseline; }
+  table.core td { padding:6px 2px; border-bottom:1px solid var(--rule); vertical-align:baseline; }
   table.core tr:last-child td { border-bottom:none; }
   table.core td.k { font-size:9.5pt; color:var(--body); white-space:nowrap; }
   table.core td.v { text-align:right; font-family:'Newsreader',serif; font-size:14pt; font-weight:600; color:var(--ink); white-space:nowrap; padding-left:8px; }
@@ -175,9 +175,9 @@
       <div class="coltable">
         <div class="core-cap">Unmet need in your CRA assessment area</div>
         <table class="core">
-          <tr><td class="k">Eligible residents (est.)</td><td class="v">[[eligible_fmt]]</td></tr>
+          <tr><td class="k">Eligible residents (est.)</td><td class="v">[[eligible_fmt]]<small>income-eligible for SNAP</small></td></tr>
           <tr><td class="k">Not receiving benefits</td><td class="v">[[headline_unenrolled]]<small>[[aa_unenrolled_pct]]% of those eligible</small></td></tr>
-          <tr><td class="k">Unclaimed benefits / year</td><td class="v">[[benefit_range]]</td></tr>
+          <tr><td class="k">Unclaimed benefits / year</td><td class="v">[[benefit_range]]<small>in federal SNAP funds</small></td></tr>
           <tr><td class="k">Benefit per household</td><td class="v">$[[benefit_monthly]]/mo<small>per eligible household</small></td></tr>
           <tr class="ask"><td class="k">Our ask &middot; [[bank_name]]</td><td class="v">$[[ask_fmt]]</td></tr>
         </table>
