@@ -5,7 +5,7 @@ Rewritten 2026-08-22 after reading all seven published Performance Evaluations f
 **The core move:** every bank on this list has a *documented, published* weakness in its evaluation — in the examiner's own words. We are not pitching a good cause. We are answering, specifically and in their vocabulary, the criticism their regulator already put in writing.
 
 > **⚠️ Before you call — currency check (2026-09-11).** Two things in the battle cards below are stale:
-> 1. **Asks.** The dollar asks in the cards are the v2 (Aug 2026) figures. They were later re-anchored per *targeted assessment area* and are recorded, verified, in `tools/cra-artifact/inputs/assessment_areas.json` — **that file governs the ask.** Current verified asks: Bank Irvine **$5K**, Hanmi **$25K**, Five Star **$25K**, Bank of Marin **$10K**, American Business Bank **$25K**, City National **$75K**, Mega Bank **$5K**, Helm **$5K**, Banco do Brasil **$10K**, Ocean **$25K**. Where a card's *rationale* cites the old number (e.g. "$15,000 is the largest grant in their PE"), re-check it against the PE before quoting — don't just swap the figure.
+> 1. **Asks — reconciled 2026-09-11.** Every card's ask and its rationale now match the verified per-*targeted-assessment-area* figures in `tools/cra-artifact/inputs/assessment_areas.json` — **that file remains authoritative.** Verified asks: Bank Irvine **$5K**, Hanmi **$25K**, Five Star **$25K**, Bank of Marin **$10K**, American Business Bank **$25K**, City National **$75K**, Mega Bank **$5K**, Helm **$5K**, Banco do Brasil **$10K**, Ocean **$25K**. (The earlier v2 figures were institution-wide; the verified asks are anchored on giving in the *target* AA, which moved several up or down.)
 > 2. **New cards.** **City National ($75K)** and **Mega Bank ($5K)** battle cards are now drafted below (both LA/Orange cluster). City National's is the largest and most complex ask — its NTI is a **fair-lending downgrade**, so never imply a grant repairs the rating; lead with the **Service Test** and the $31M consent-order geography.
 >
 > Documented-need evidence from the CDSS Management Evaluation reviews is now available per bank — see **"Documented need in the AA"** below, and the verbatim quote-bank in `cra-me-verbatim-quotes-by-bank-2026-09-11.md`.
@@ -79,32 +79,35 @@ Each quote below is verbatim from that bank's own Performance Evaluation.
 - **Our answer:** a community-services activity that is neither an MBS nor an employee-hours program — the one gap their portfolio structurally cannot fill with securities.
 - **Opener:** "Your investment book is entirely affordable-housing MBS, which your examiner noted isn't innovative or complex, and your service hours dropped 17%. We're a community-services program in your AA that documents itself."
 
-### Hanmi Bank — ask $15,000 (hard ceiling) · Q3 2026 exam
+### Hanmi Bank — ask $25,000 · Q3 2026 exam
 - **Their gap:** Investment Test Low Satisfactory, *"rarely in a leadership position,"* *"rarely uses innovative and/or complex investments."* Giving is **declining** — LA fell from $519,840 (52 grants) to $281,080 (14 grants). Already places 3,116 of 3,496 CD service hours in Community Services.
-- **Our answer:** they're already committed to the Community Services category; we add documented volume there at a price inside their ceiling ($15,000 is the largest grant appearing anywhere in their PE).
+- **Our answer:** they're already committed to the Community Services category; we add documented volume there. **Ask basis:** $25,000 is anchored on their **target Los Angeles AA**, where they gave 14 donations totaling $281,080 (avg **$20,077**) — so the ask sits just above their average LA-AA gift. *(The earlier $15,000 "hard ceiling" figure was institution-wide and sat below that average; the verified per-AA ask is $25,000.)*
 - **Note the pattern:** NTI in 2021 → spent → Satisfactory 2023 → cut giving. With an exam now, that number should be climbing again.
 
-### Banco do Brasil Americas — ask $15,000 · Q3 2026 re-exam · already funds our peers
+### Banco do Brasil Americas — ask $10,000 · Q3 2026 re-exam · already funds our peers
 - **Their gap:** NTI overall (Lending). Investment Test High Satisfactory and grants grew **6.3×**. **Orlando AA recorded ONE community development service** all period, called a *"limited"* level.
 - **Our answer:** they already fund this exact work — six donations totaling **$20,500** to a nonprofit providing *"crisis care, food and household subsidy, and employment training,"* and five totaling **$10,000** to one providing *"emergency food and shelter, rent and utility payment assistance, and financial literacy education."* We are that program, with documentation attached and Orlando coverage.
+- **Ask basis:** $10,000 anchored on the **Miami AA** and matched to a demonstrated gift — it equals the $10,000 they already gave the financial-literacy org above. *(Verified per-AA ask; the earlier $15,000 figure was institution-wide.)*
 - **Opener:** "You've funded crisis-care and financial-literacy organizations at $10–20K. We do that work with exam-ready documentation, and we can cover Orlando, where your last evaluation recorded a single community development service."
 
-### Helm Bank USA — ask $7,500 (sponsor tier) · Q4 2026 re-exam
+### Helm Bank USA — ask $5,000 (sponsor tier) · Q4 2026 re-exam
 - **Their gap:** CD services *"below the performance of similarly situated institutions."* Their community contact: *"a significant need for … financial literacy education to low- and moderate-income individuals."*
-- **Reality check:** entire grant program = **$25,161 over 3.2 years, ~$1,300 average**. Ask the sponsor tier and mean it. Their CD Test already passed; the honest sell is the services gap, not rating rescue.
+- **Reality check:** entire grant program = **$25,161 over 3.2 years, ~$1,300 average**. **$5,000 is the verified sponsor-tier ask** — already ~4× their average gift, so ask it and mean it; the earlier $7,500 overshot a very small giving base. Their CD Test already passed; the honest sell is the services gap, not rating rescue.
 
-### American Business Bank — ask $50,000 · Q4 2026 exam · biggest realistic check
+### American Business Bank — ask $25,000 · Q4 2026 exam
 - **Their posture:** High Satisfactory; grants **+185.7% by dollar**, *"doubled the grants at one comparable bank and tripled the grants at the other."* Demonstrated **$458,000** to a single CDC. Employees already do **free income tax preparation for low-income families** — the closest analogue in the entire set to benefits-application assistance.
 - **Their gap:** CD services *"much below the other comparable bank that was a leader,"* and investment ratios *"decreased since the excellent performance at the prior evaluation."*
+- **Ask basis:** $25,000 anchored on their **target CSA-level AA** giving (258 grants/donations totaling $1.6M, avg **$6,202**) — roughly four typical grants, and their $458,000 to a single CDC shows the capacity is there. *(The earlier $50,000 "biggest check" figure was institution-wide; City National now carries the largest ask at $75,000.)*
 - **Opener:** "Your team already runs free tax prep for low-income families — this is the same population and the same moment, at a scale volunteering can't reach."
 
-### Five Star Bank — ask $30,000 · Q4 2026 exam
+### Five Star Bank — ask $25,000 · Q4 2026 exam
 - **Their posture:** Investment Test High Satisfactory ("excellent" in Sacramento); wrote **$900,000** to one Title I school. Service Test **Low Satisfactory** — *"no branch in low-, one branch in moderate-"* income tracts. Chico contact: *"poverty and homelessness, unemployment, and a lack of knowledge for financial resources… more can be done."*
 - **Our answer:** a service-side program reaching LMI tracts their branch network doesn't. **Cite their own precedent:** their contracted counselor was called *"especially innovative"* — bank-funded professional delivery, exactly what they'd be funding here.
+- **Ask basis:** $25,000 anchored on the **Sacramento AA** giving (195 donations totaling $1.3M, avg **$6,667**); the $900,000 Title-I gift shows the capacity. *(Verified per-AA ask; the earlier $30,000 was institution-wide.)*
 
-### Bank Irvine — ask $10,000 · long shot, honestly
+### Bank Irvine — ask $5,000 · long shot, honestly
 - Examined under **Small Bank procedures**: streamlined lending test, CD activity optional and counting only toward an *Outstanding*. Its NTI is a lending-distribution failure a grant cannot repair. Strongest pressure signal, weakest structural fit. Pitch as sponsorship; expect a no.
-- *Ask note: `assessment_areas.json` carries a verified **$5,000** for Bank Irvine, anchored on its target-AA giving (no CD donations disclosed in the PE); the $10,000 here is the older v2 figure.*
+- **Ask basis:** $5,000 anchored on the target AA (no CD donations disclosed in the PE, so anchored low). *(The earlier $10,000 was institution-wide.)*
 
 ### City National Bank — ask $75,000 · OCC (charter 14695), PE Apr 2024 · largest ask, most complex conversation
 - **The thing we must not say:** City National's Needs-to-Improve is **not** a community-development failure. Lending is High Satisfactory and **Investment is Outstanding**; the overall NTI follows a *Discriminatory or Other Illegal Credit Practices* review — a **fair-lending downgrade**. **A grant cannot repair the rating and no material may imply it can** — this matters most here because it's the largest ask in the project.
