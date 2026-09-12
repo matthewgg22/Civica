@@ -115,19 +115,53 @@ Verbatim pull-quotes captured for packet assembly, e.g.:
 - **San Diego:** *"At the El Cajon FRC, the application form in Arabic application packets was in English, rather than the Arabic version. (MPP 21-115.2, 63-202.21, and 63-300.34)"*
 - Every failed county carries the standard recommendation *"Ensure that notices sent to households are in their preferred written language."*
 
-**What this does for each CA bank's need case (all three verdict families):**
-- **Five Star** — Sacramento carries the access-denial verdict, dated ES/30-day CAP language, **and** three wrong-language notice findings (incl. a Farsi notice with no GEN 1365); Yolo adds a dated ES CAP and a Spanish wrong-language finding. Both audited AA counties fail on multiple families.
-- **American Business Bank / City National** — San Bernardino carries the access-denial verdict, an ES CAP since 2022, **and** a Spanish wrong-language finding; City National's AA adds Ventura (ES CAP since 2023 + two wrong-language findings) and Los Angeles (the "not sent in the correct language" marquee finding).
-- **Bank of Marin** — three of four AA counties fail: Sonoma (ES CAP since 2018), Marin (ES CAP since 2019 + a Chinese-to-English-household CW 2200), and San Francisco (30-day below goal + Chinese and Spanish wrong-language notices).
-- **Bank Irvine / Hanmi / Mega** — Los Angeles's marquee wrong-language finding sits in every one of these AAs.
+### D. Confidentiality not maintained — CF program / PII exposed
+Verdict: *"Confidentiality was not consistently maintained."* **15 of 38 reviews.** The dominant specific is disclosing the CalFresh case **before authenticating the caller with two items of PII** (MPP 19-002.1 / 63-201.34); the rest are unsecured/unattended workstations and, in Merced, full names called aloud in the lobby.
 
-*(Verbatim quotes and line numbers are in the raw ME text; pull the exact sentence per bank at packet-assembly time. All three families are structured/reproducible: grep each report for the "Assessment:" declaratives and the "preferred … language was …" findings.)*
+| County | FFY | Specific | Target bank AA |
+|---|---|---|---|
+| **Sacramento** | 2024 | CF disclosed before 2-item PII authentication | **Five Star Bank** |
+| **Yolo** | 2025 | CF disclosed before 2-item PII authentication | **Five Star Bank** |
+| **Riverside** | 2024 | CF disclosed before authentication (Coachella & Indio offices) | **American Business Bank, City National** |
+| **San Francisco** | 2024 | not maintained at the Mission Service Center (workstations) | **Bank of Marin** |
+| **Marin** | 2025 | CF disclosed before 2-item PII authentication | **Bank of Marin** |
+| **Sonoma** | 2024 | CF disclosed before 2-item PII authentication | **Bank of Marin** |
+| Monterey, SLO, Santa Clara, Alameda, Madera, Humboldt | 24–25 | CF disclosed before 2-item PII authentication | — |
+| **Merced** | 2025 | full first-and-last names called aloud in the lobby | — |
+| **Stanislaus** | 2025 | unattended workstations/screens | — |
+| **Fresno** | 2025 | workstations left unattended (callers *were* PII-authenticated) | — |
+
+### E. Over-verification — CW 2200 demanding what CalFresh can't require
+The near-universal finding: verifications requested that are **not required for CalFresh, already available electronically (MEDS/IEVS), or not questionable**, or limited to a single document type. Named as a finding in **34 of 38 reviews** — the hard count behind the friction map's #1 pattern, and the direct evidence base for corpus issue #1125. Most-demanded improper items across counties:
+
+| # counties | Improper item demanded |
+|---:|---|
+| 10 | a sworn / "penalty of perjury" statement not required for CF |
+| 7 | bank / checking / savings-account balances |
+| 5 | immunization records |
+| 5 | school attendance / schedule / end date |
+| 5 | limited verification to a single type/source |
+| 3 | citizenship/immigration already verified (MEDS/SAVE) |
+| 3 | identity already A-verified in MEDS |
+| 3 | pregnancy due date |
+| 2 | proof of a *negative* ("proof you do not receive meals / income") |
+| 2 | tax returns |
+
+Bank-AA-mapped standouts (quotable specifics): **Riverside** (ABB/City National) demanded "proof you do not receive meals" and bank/immunization records; **San Bernardino** (ABB/City National) requested tax returns; **Sacramento** (Five Star) demanded immunization and sworn statements; **Yuba** (Five Star) demanded bank verification of a *categorically-eligible* household; **Sonoma** (Bank of Marin) demanded bank/checking/savings; **Marin** (Bank of Marin) limited proof to a single type and demanded sworn statements.
+
+**What this does for each CA bank's need case (all five verdict families):**
+- **Five Star** — Sacramento carries the access-denial verdict, dated ES/30-day CAP language, three wrong-language notice findings, a confidentiality breach, **and** over-verification; Yolo adds a dated ES CAP, a Spanish wrong-language finding, confidentiality, and over-verification. Both audited AA counties fail on nearly every family.
+- **American Business Bank / City National** — San Bernardino carries the access-denial verdict, an ES CAP since 2022, a Spanish wrong-language finding, and over-verification (tax returns); Riverside adds a confidentiality breach and "proof of a negative" over-verification; City National's AA adds Ventura and Los Angeles.
+- **Bank of Marin** — all four AA counties now fail on something: Sonoma (ES CAP since 2018 + confidentiality + over-verification), Marin (ES CAP since 2019 + wrong-language + confidentiality + over-verification), San Francisco (30-day below goal + wrong-language + confidentiality), Napa (quantitative need only).
+- **Bank Irvine / Hanmi / Mega** — Los Angeles's marquee wrong-language finding and over-verification sit in every one of these AAs.
+
+*(Verbatim quotes and line numbers are in the raw ME text; pull the exact sentence per bank at packet-assembly time. All five families are structured and reproducible: grep each report for the "Assessment:" declaratives, the "preferred … language was …" findings, "Confidentiality was not … maintained," and the CW 2200 "not required / not questionable / already available" findings.)*
 
 ---
 
 ## Where to find more leads like these
 
-1. **The rest of this same production — mined deeper.** Each report has ~6 "Assessment:" verdicts; we've now pulled the three highest-value families (access-denial, Timeliness CAP, wrong-language notices). Still worth extracting the same way: **confidentiality** breaches (CF program / PII disclosed before authentication), **over-verification** verdicts, and **expedited-service-not-explained-to-callers** verdicts — several are equally quotable and county-specific.
+1. **The rest of this same production — mined deeper.** Five families are now extracted (access-denial, Timeliness CAP, wrong-language notices, confidentiality, over-verification). The remaining quotable "Assessment:" verdicts worth pulling the same way: **expedited-service criteria / methods-to-apply not explained to callers**, **missed-interview / NOMI-misuse** (procedural denials), and **voter-registration (NVRA) not offered** — each county-specific and verbatim.
 2. **The other folders in R012681.** The FOIA production also includes PER/QC scorecard material (the `__2_`/`__3_` folders) — county payment- and negative-error rates that corroborate the "0% payment error masks broken access" through-line with hard numbers.
 3. **Florida equivalent (for the Miami cluster).** The CDSS ME has no FL counterpart in hand; the Miami-AA access evidence for Helm / Banco do Brasil / Ocean would come from **Florida DCF** program-access / QC review records — a separate public-records request.
 4. **Public, non-FOIA sources that often contain quotable access findings** (no request needed): the **California State Auditor** (has audited CalFresh/county human-services access), county **civil grand jury** reports (frequently scathing and specific on county benefits administration), FNS **Program Access Reviews** and management-evaluation summaries, and **litigation/consent-decree** language (e.g. access or language-access settlements). These carry the same "third-party, on the record" weight the ME verdicts do.
