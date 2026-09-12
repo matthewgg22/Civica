@@ -276,3 +276,58 @@ export const errorStrings: Record<Locale, ErrorCopy> = {
       "Kailangan mo ba ng tulong sa SNAP ngayon? Makipag-ugnayan sa SNAP agency ng iyong estado, o tumawag sa 211 para sa lokal na benefits navigator.",
   },
 };
+
+// 404 copy for ALL supported locales (same reasoning as errorStrings: the 404
+// is reachable by any visitor). en/es mirror the landing dictionary above
+// verbatim; vi/zh/tl are new and pending native-speaker sign-off (#1082). The
+// shared 211 help note is reused from errorStrings, not duplicated here.
+export type NotFoundCopy = {
+  notFoundStatus: string;
+  notFoundTitle: string;
+  notFoundBody: string;
+  notFoundHomeCta: string;
+  notFoundQuestionsCta: string;
+};
+
+export const notFoundStrings: Record<Locale, NotFoundCopy> = {
+  en: {
+    notFoundStatus: "PAGE NOT FOUND",
+    notFoundTitle: "We couldn't find that page.",
+    notFoundBody:
+      "The link may be old or mistyped. Demeter answers your SNAP questions using your state's own rules, and shows the rule behind every answer.",
+    notFoundHomeCta: "Go to Demeter",
+    notFoundQuestionsCta: "Browse common questions",
+  },
+  es: {
+    notFoundStatus: "PÁGINA NO ENCONTRADA",
+    notFoundTitle: "No encontramos esa página.",
+    notFoundBody:
+      "El enlace puede estar desactualizado o mal escrito. Demeter responde tus preguntas sobre SNAP usando las reglas de tu estado, y muestra la regla detrás de cada respuesta.",
+    notFoundHomeCta: "Ir a Demeter",
+    notFoundQuestionsCta: "Ver preguntas comunes",
+  },
+  zh: {
+    notFoundStatus: "找不到页面",
+    notFoundTitle: "我们找不到该页面。",
+    notFoundBody:
+      "链接可能已过期或输入有误。Demeter 使用您所在州的规则回答您的 SNAP 问题，并显示每个答案背后的规则。",
+    notFoundHomeCta: "前往 Demeter",
+    notFoundQuestionsCta: "浏览常见问题",
+  },
+  vi: {
+    notFoundStatus: "KHÔNG TÌM THẤY TRANG",
+    notFoundTitle: "Chúng tôi không tìm thấy trang đó.",
+    notFoundBody:
+      "Liên kết có thể đã cũ hoặc bị nhập sai. Demeter trả lời các câu hỏi SNAP của bạn theo quy định của tiểu bang bạn, và hiển thị quy định đằng sau mỗi câu trả lời.",
+    notFoundHomeCta: "Đến Demeter",
+    notFoundQuestionsCta: "Xem các câu hỏi thường gặp",
+  },
+  tl: {
+    notFoundStatus: "HINDI MAKITA ANG PAHINA",
+    notFoundTitle: "Hindi namin makita ang pahinang iyon.",
+    notFoundBody:
+      "Maaaring luma na o maling na-type ang link. Sinasagot ng Demeter ang iyong mga tanong sa SNAP gamit ang mga panuntunan ng iyong estado, at ipinapakita ang panuntunan sa likod ng bawat sagot.",
+    notFoundHomeCta: "Pumunta sa Demeter",
+    notFoundQuestionsCta: "Tingnan ang mga karaniwang tanong",
+  },
+};

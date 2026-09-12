@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import * as Sentry from "@sentry/nextjs";
 import { DemeterMark } from "../components/DemeterMark";
-import { strings, STORAGE_KEY, type Locale } from "./i18n";
+import { notFoundStrings, errorStrings, LOCALES, STORAGE_KEY, type Locale } from "./i18n";
 
 // Root 404. Demeter-branded per apps/web/DEMETER-DESIGN.md. Most not-found hits
 // are stale links or hand-typed URLs. CTAs route to the Demeter home and to the
@@ -16,7 +16,9 @@ export default function NotFound() {
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved === "en" || saved === "es") setLocale(saved);
+      // Every supported locale, not just en/es — a 404 must not drop a vi/zh/tl
+      // visitor to English.
+      if (saved && (LOCALES as string[]).includes(saved)) setLocale(saved as Locale);
     } catch {
       // localStorage disabled — keep default.
     }
@@ -30,14 +32,15 @@ export default function NotFound() {
     });
   }, []);
 
-  const copy = strings[locale as keyof typeof strings] ?? strings.en;
+  const copy = notFoundStrings[locale] ?? notFoundStrings.en;
+  const help = (errorStrings[locale] ?? errorStrings.en).errorHelpNote;
 
   return (
     <main className="error-page">
       <div className="container">
         <div className="error-card">
           <div className="error-card__mark">
-            <DemeterMark size={40} />
+            <DemeterMark size={30} />
           </div>
           <p className="error-card__status error-card__status--muted">
             {copy.notFoundStatus}
@@ -55,7 +58,7 @@ export default function NotFound() {
               {copy.notFoundQuestionsCta} →
             </Link>
           </div>
-          <p className="error-card__help">{copy.errorHelpNote}</p>
+          <p className="error-card__help">{help}</p>
         </div>
       </div>
     </main>
