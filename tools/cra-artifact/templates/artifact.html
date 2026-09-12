@@ -154,7 +154,9 @@
   .appx ul { list-style:none; margin-top:3px; }
   .appx li { margin-top:3.5px; padding-left:10px; position:relative; }
   .appx li::before { content:""; position:absolute; left:0; top:.55em; width:4px; height:4px; background:var(--accent); border-radius:50%; }
-  .disclose { border-left:3px solid var(--accent); background:var(--tint); padding:8px 11px; font-size:8.1pt; line-height:1.45; color:var(--body); margin-top:9px; text-wrap:pretty; }
+  /* Plain framed callout (matches .crafile), not a left-accent card — the
+     colored-left-rail card is a DEMETER-DESIGN AI-slop pattern. */
+  .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:9px 12px; font-size:8.1pt; line-height:1.45; color:var(--body); margin-top:9px; text-wrap:pretty; }
   .disclose strong { color:var(--ink); }
 </style></head><body>
 
