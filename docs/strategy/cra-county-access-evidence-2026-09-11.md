@@ -88,18 +88,46 @@ Formal, dated regulator actions — examiner-grade and verbatim-quotable ("on a 
 | **Sacramento** | 3-day ES + 30-day below goal | (both below goal, FFY24) | **Five Star Bank** |
 | **San Francisco** | 30-day below goal | (below goal, FFY24) | **Bank of Marin** |
 
-**What this does for each CA bank's need case:**
-- **Five Star** — its Sacramento AA carries *both* the access-denial verdict *and* dated ES/30-day CAP language, and Yolo adds a second dated ES CAP. Two audited AA counties with formal CDSS actions.
-- **American Business Bank / City National** — San Bernardino carries the access-denial verdict *and* an ES CAP since 2022; City National's AA adds Ventura's ES CAP since 2023.
-- **Bank of Marin** — three of its four AA counties carry formal actions: Sonoma (ES CAP since 2018, the state's longest-running here), Marin (since 2019), and San Francisco (30-day below goal).
+### C. Wrong-language notices — CW 2200 / NOAs mailed in a language the household can't read
+The verdict that maps most directly to the multilingual-chatbot value proposition (and to corpus issue #1128). **16 of 38 reviews** document a notice sent in the wrong language, naming **8 preferred languages** that were failed: Spanish, Chinese, Farsi, Vietnamese, Korean, Hmong, Arabic, and English (reverse errors). Each entry is a specific, verbatim, case-level finding — not a category.
 
-*(Verbatim quotes and line numbers are in the raw ME text; pull the exact sentence per bank at packet-assembly time. The verdict is a structured field, so this ledger is reproducible: grep each report for the "Assessment:" declaratives.)*
+| County | FFY | Documented mismatch (preferred → sent in) | Target bank AA |
+|---|---|---|---|
+| **Sacramento** | 2024 | Farsi → English **with no GEN 1365 attached**; Spanish → English; English → Vietnamese | **Five Star Bank** |
+| **San Bernardino** | 2025 | Spanish → English (CW 2200) | **American Business Bank, City National** |
+| **San Francisco** | 2024 | Chinese → English; Spanish → English | **Bank of Marin** |
+| **Marin** | 2025 | CW 2200 sent in Chinese to an English household; Russian & Chinese underserved | **Bank of Marin** |
+| **Ventura** | 2024 | English → Vietnamese; Spanish → English | **City National** |
+| **Los Angeles** | 2024 | CW 2200 & notices "not sent in the correct language" (marquee finding) | **Bank Irvine, Hanmi, Mega, City National** |
+| **San Diego** | 2024 | Chinese → English; **Arabic packet contained the English application form, not the Arabic version** (El Cajon FRC) | *(Hanmi's SD AA — not targeted)* |
+| **Alameda** | 2025 | Chinese → English; Spanish → English; English → Spanish | *(Bank of Marin excludes Alameda-partial)* |
+| **Contra Costa** | 2025 | Korean → English; Spanish → English | — |
+| **Santa Clara** | 2025 | Spanish → English; Vietnamese → English | — |
+| **Stanislaus** | 2025 | Spanish; **Arabic** (primary-language failures) | — |
+| **Yolo** | 2025 | Spanish → English (CW 2200) | **Five Star Bank** |
+| **San Benito** | 2025 | Spanish → English (NA 960Y / notices) | — |
+| **Monterey** | 2024 | Spanish → English *and* English → Spanish; **GEN 1365 not sent** | — |
+| **Madera** | 2025 | forms & notices not in preferred written language (Spanish) | — |
+| **Fresno** | 2025 | Hmong-preferred household served in English (spoken) | — |
+
+Verbatim pull-quotes captured for packet assembly, e.g.:
+- **Sacramento:** *"…the applicant's preferred written language was Farsi. The form was not accompanied with the Notice of Language Services (GEN 1365). (MPP 21-115; ACL 17-102)"*
+- **San Diego:** *"At the El Cajon FRC, the application form in Arabic application packets was in English, rather than the Arabic version. (MPP 21-115.2, 63-202.21, and 63-300.34)"*
+- Every failed county carries the standard recommendation *"Ensure that notices sent to households are in their preferred written language."*
+
+**What this does for each CA bank's need case (all three verdict families):**
+- **Five Star** — Sacramento carries the access-denial verdict, dated ES/30-day CAP language, **and** three wrong-language notice findings (incl. a Farsi notice with no GEN 1365); Yolo adds a dated ES CAP and a Spanish wrong-language finding. Both audited AA counties fail on multiple families.
+- **American Business Bank / City National** — San Bernardino carries the access-denial verdict, an ES CAP since 2022, **and** a Spanish wrong-language finding; City National's AA adds Ventura (ES CAP since 2023 + two wrong-language findings) and Los Angeles (the "not sent in the correct language" marquee finding).
+- **Bank of Marin** — three of four AA counties fail: Sonoma (ES CAP since 2018), Marin (ES CAP since 2019 + a Chinese-to-English-household CW 2200), and San Francisco (30-day below goal + Chinese and Spanish wrong-language notices).
+- **Bank Irvine / Hanmi / Mega** — Los Angeles's marquee wrong-language finding sits in every one of these AAs.
+
+*(Verbatim quotes and line numbers are in the raw ME text; pull the exact sentence per bank at packet-assembly time. All three families are structured/reproducible: grep each report for the "Assessment:" declaratives and the "preferred … language was …" findings.)*
 
 ---
 
 ## Where to find more leads like these
 
-1. **The rest of this same production — mined deeper.** Each report has ~6 "Assessment:" verdicts; we've pulled the two highest-value families. Others worth extracting the same way: **notice-language** verdicts (wrong-language NOAs), **confidentiality** breaches (PII disclosed before authentication), and **over-verification** verdicts — several are equally quotable and county-specific.
+1. **The rest of this same production — mined deeper.** Each report has ~6 "Assessment:" verdicts; we've now pulled the three highest-value families (access-denial, Timeliness CAP, wrong-language notices). Still worth extracting the same way: **confidentiality** breaches (CF program / PII disclosed before authentication), **over-verification** verdicts, and **expedited-service-not-explained-to-callers** verdicts — several are equally quotable and county-specific.
 2. **The other folders in R012681.** The FOIA production also includes PER/QC scorecard material (the `__2_`/`__3_` folders) — county payment- and negative-error rates that corroborate the "0% payment error masks broken access" through-line with hard numbers.
 3. **Florida equivalent (for the Miami cluster).** The CDSS ME has no FL counterpart in hand; the Miami-AA access evidence for Helm / Banco do Brasil / Ocean would come from **Florida DCF** program-access / QC review records — a separate public-records request.
 4. **Public, non-FOIA sources that often contain quotable access findings** (no request needed): the **California State Auditor** (has audited CalFresh/county human-services access), county **civil grand jury** reports (frequently scathing and specific on county benefits administration), FNS **Program Access Reviews** and management-evaluation summaries, and **litigation/consent-decree** language (e.g. access or language-access settlements). These carry the same "third-party, on the record" weight the ME verdicts do.
