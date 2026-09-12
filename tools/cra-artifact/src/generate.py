@@ -73,6 +73,33 @@ def render(template: str, values: dict) -> str:
     return out
 
 
+def build_county_breakdown(covered_counties, metrics, cap=6):
+    """Ranked per-county unmet-need bars — the regional insight a flat AA
+    choropleth can't carry (which counties actually drive the need).
+
+    Presentation only: reads the same county metrics the score uses, never
+    changes a headline figure. Rows beyond `cap` fold into an 'other counties'
+    line so the numbers still sum to the assessment-area total.
+    """
+    rows = [(c, metrics[c]["eligible_pop"] * metrics[c]["non_enroll_rate"])
+            for c in covered_counties]
+    rows.sort(key=lambda t: t[1], reverse=True)
+    if len(rows) > cap:
+        tail = sum(u for _, u in rows[cap - 1:])
+        rows = rows[:cap - 1] + [(f"{len(rows) - (cap - 1)} other counties", tail)]
+    top = rows[0][1] if rows and rows[0][1] > 0 else 1
+    lis = []
+    for name, u in rows:
+        pct = max(4.0, u / top * 100.0)
+        lis.append(
+            f'<li><span class="c">{name}</span>'
+            f'<span class="track"><span class="bar" style="width:{pct:.1f}%"></span></span>'
+            f'<span class="n">{fmt_int(round(u, -3))}</span></li>'
+        )
+    return ('<div class="brk"><div class="brk-cap">Not enrolled, by county</div>'
+            f'<ul>{"".join(lis)}</ul></div>')
+
+
 def build_values(bank, assumptions, org, metrics, meta):
     need = score.bank_need(bank["aa_counties"], metrics, assumptions)
     fun = report.funnel(bank["ask_usd"], assumptions)
@@ -81,6 +108,7 @@ def build_values(bank, assumptions, org, metrics, meta):
     map_caption = (f"{aa_label} in regional context · SNAP need by county"
                    if len(bank["aa_counties"]) == 1
                    else "Assessment area · SNAP need by county")
+    county_breakdown = build_county_breakdown(need["covered_counties"], metrics)
     ratio_line = ""
     if need["show_ratio"]:
         ratio_line = (f'<div class="ratio-line">Unmet need here runs '
@@ -130,6 +158,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         # access_evidence.py; never feeds need/funnel/score. Empty = silent.
         "me_evidence_block": access_evidence.evidence_html(
             bank["aa_counties"], state=bank.get("state", "CA")),
+        "county_breakdown": county_breakdown,
         "assumptions_version": assumptions["version"],
         "hh_low": hh["low_dollar"],
         "hh_high": hh["high_dollar"],

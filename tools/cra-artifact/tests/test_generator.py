@@ -180,8 +180,10 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     assert "2023 ACS 1-Year" in html
     # ratio suppressed for Irvine (1.12 < 1.15)
     assert not need["show_ratio"] and 'class="ratio-line"' not in html
-    # ask + CTA present; no steering language absent
-    assert "The ask: a 30-minute conversation." in html
+    # closing next-step + contact present (quiet close, not a "the ask" box)
+    assert "30-minute call" in html and org["contact_email"] in html
+    # per-county breakdown present (replaces the flat AA choropleth)
+    assert 'class="brk"' in html and "Not enrolled, by county" in html
     # never render the HIGH scenario words
     assert "Optimistic" not in html and "best case" not in html.lower()
 
