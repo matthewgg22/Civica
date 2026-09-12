@@ -94,11 +94,14 @@ def build_county_breakdown(covered_counties, metrics, cap=6):
     top = rows[0][1] if rows and rows[0][1] > 0 else 1
     lis = []
     for name, u in rows:
-        pct = max(4.0, u / top * 100.0)
+        pct = max(3.0, u / top * 100.0)
+        # Stacked row: county + count on one line, a full-width proportional
+        # bar beneath. Full-width bars give the ranking room to read (LA dwarfs
+        # the rest) instead of stubby bars stranded from their numbers.
         lis.append(
-            f'<li><span class="c">{name}</span>'
-            f'<span class="track"><span class="bar" style="width:{pct:.1f}%"></span></span>'
-            f'<span class="n">{fmt_int(round(u, -3))}</span></li>'
+            f'<li><div class="brk-row"><span class="c">{name}</span>'
+            f'<span class="n">{fmt_int(round(u, -3))}</span></div>'
+            f'<div class="track"><span class="bar" style="width:{pct:.1f}%"></span></div></li>'
         )
     return ('<div class="brk"><div class="brk-cap">Not enrolled, by county</div>'
             f'<ul>{"".join(lis)}</ul></div>')
@@ -154,6 +157,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         "method_bullet": meta["method_bullet"],
         "eligible_fmt": fmt_int(need["eligible"]),
         "aa_enrolled_pct": f"{need['aa_enrolled_pct']:.0f}",
+        "aa_unenrolled_pct": f"{100 - need['aa_enrolled_pct']:.0f}",
         "state_enrolled_pct": f"{need['state_enrolled_pct']:.0f}",
         "benefit_monthly": f"{need['avg_household_monthly_usd']:.0f}",
         "data_gaps_note": gaps,

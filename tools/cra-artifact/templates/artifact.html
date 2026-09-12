@@ -51,14 +51,16 @@
   table.core tr.ask td { border-top:2px solid var(--accent); padding-top:9px; }
   table.core tr.ask td.k { color:var(--accent-deep); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:8.4pt; }
   table.core tr.ask td.v { color:var(--accent-deep); }
-  /* per-county unmet-need breakdown (replaces the flat AA choropleth) */
-  .brk-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:10px; }
+  /* per-county unmet-need breakdown (replaces the flat AA choropleth):
+     county + count on one line, a full-width proportional bar beneath. */
+  .brk-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:12px; }
   .brk ul { list-style:none; }
-  .brk li { display:flex; align-items:center; gap:9px; margin-bottom:18px; font-variant-numeric:tabular-nums; }
-  .brk .c { flex:0 0 auto; width:1.35in; font-size:8.8pt; color:var(--body); line-height:1.2; }
-  .brk .track { flex:1; height:9px; background:var(--tint); border-radius:2px; overflow:hidden; }
+  .brk li { margin-bottom:14px; }
+  .brk-row { display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px; }
+  .brk .c { font-size:9.2pt; color:var(--body); }
+  .brk .n { font-family:'Newsreader',serif; font-size:11.5pt; font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .brk .track { height:7px; background:var(--tint); border-radius:2px; overflow:hidden; }
   .brk .bar { display:block; height:100%; background:var(--accent); border-radius:2px; }
-  .brk .n { flex:0 0 auto; font-family:'Newsreader',serif; font-size:11pt; font-weight:600; color:var(--ink); text-align:right; min-width:.75in; }
   .me-evidence { border-top:1.5px solid var(--accent); padding-top:8px; }
   .me-evidence .me-label { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-deep); font-weight:600; }
   .me-evidence ul { list-style:none; margin-top:5px; }
@@ -132,9 +134,8 @@
         <div class="core-cap">The numbers, for your assessment area</div>
         <table class="core">
           <tr><td class="k">Eligible residents (est.)</td><td class="v">[[eligible_fmt]]</td></tr>
-          <tr><td class="k">Not receiving benefits</td><td class="v">[[headline_unenrolled]]</td></tr>
+          <tr><td class="k">Not receiving benefits</td><td class="v">[[headline_unenrolled]]<small>[[aa_unenrolled_pct]]% of those eligible</small></td></tr>
           <tr><td class="k">Unclaimed benefits / year</td><td class="v">[[benefit_range]]</td></tr>
-          <tr><td class="k">Current enrollment</td><td class="v">[[aa_enrolled_pct]]%<small>vs. [[state_enrolled_pct]]% statewide</small></td></tr>
           <tr><td class="k">Avg. household benefit</td><td class="v">$[[benefit_monthly]]/mo</td></tr>
           <tr class="ask"><td class="k">Our ask (this bank)</td><td class="v">$[[ask_fmt]]</td></tr>
         </table>
@@ -142,7 +143,7 @@
       <div class="colbrk">[[county_breakdown]]</div>
     </div>
     <div class="research">
-      <div class="rlabel">What changes when the paperwork gets easier</div>
+      <div class="rlabel">When the paperwork gets easier</div>
       <div class="rstats">
         <div><b class="serif">&minus;$2,436</b><span>credit-card debt by year three, a 51% reduction</span></div>
         <div><b class="serif">&minus;10.1 pts</b><span>less likely to carry a delinquent account, off a 41% baseline</span></div>
@@ -161,11 +162,11 @@
   <h2 class="pagehead">A benefits-access pilot in your assessment area</h2>
   <div class="cred">[[org_name]] is [[status_line_lc]] [[engine_line]]</div>
   <div class="body-block">
-    <h3>What the pilot does</h3>
+    <h3>How the pilot works</h3>
     Factual, geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") across your assessment area drives residents to a free eligibility check and application support. We accept no per-enrollment compensation. A Google Ad Grant (up to $10,000/month of donated search advertising) stretches every grant dollar, so your funding primarily buys reach beyond the grant and the measurement itself.
   </div>
   <div class="body-block">
-    <h3>What you receive</h3>
+    <h3>The quarterly deliverable</h3>
     A quarterly report (sample in the appendix) documenting outreach delivered, residents served, and applications generated in your assessment area, with dollar-traceability from grant to outcome, prepared so your team can use it directly in CRA documentation. Activities of this type are typically considered community development services under the community-services prong; your compliance team makes that determination.
   </div>
   <div class="tiers">
