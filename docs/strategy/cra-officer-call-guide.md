@@ -4,6 +4,12 @@ Rewritten 2026-08-22 after reading all seven published Performance Evaluations f
 
 **The core move:** every bank on this list has a *documented, published* weakness in its evaluation — in the examiner's own words. We are not pitching a good cause. We are answering, specifically and in their vocabulary, the criticism their regulator already put in writing.
 
+> **⚠️ Before you call — currency check (2026-09-11).** Two things in the battle cards below are stale:
+> 1. **Asks.** The dollar asks in the cards are the v2 (Aug 2026) figures. They were later re-anchored per *targeted assessment area* and are recorded, verified, in `tools/cra-artifact/inputs/assessment_areas.json` — **that file governs the ask.** Current verified asks: Bank Irvine **$5K**, Hanmi **$25K**, Five Star **$25K**, Bank of Marin **$10K**, American Business Bank **$25K**, City National **$75K**, Mega Bank **$5K**, Helm **$5K**, Banco do Brasil **$10K**, Ocean **$25K**. Where a card's *rationale* cites the old number (e.g. "$15,000 is the largest grant in their PE"), re-check it against the PE before quoting — don't just swap the figure.
+> 2. **Missing cards.** **City National ($75K — the largest ask in the set)** and **Mega Bank ($5K)** have no battle card yet. Both are LA/Orange-cluster banks; City National's documented gap is a **Service Test (Low Satisfactory)** and its NTI is a fair-lending downgrade (never imply a grant repairs it). Build these two before calling them.
+>
+> Documented-need evidence from the CDSS Management Evaluation reviews is now available per bank — see **"Documented need in the AA"** below, and the verbatim quote-bank in `cra-me-verbatim-quotes-by-bank-2026-09-11.md`.
+
 ---
 
 ## The frame
@@ -100,6 +106,22 @@ Each quote below is verbatim from that bank's own Performance Evaluation.
 - Examined under **Small Bank procedures**: streamlined lending test, CD activity optional and counting only toward an *Outstanding*. Its NTI is a lending-distribution failure a grant cannot repair. Strongest pressure signal, weakest structural fit. Pitch as sponsorship; expect a no.
 
 ---
+
+## Documented need in the AA — CDSS ME reviews (performance context)
+
+**What this is, exactly.** The California Department of Social Services audits how each county administers CalFresh (Management Evaluation reviews, FFY 2024–2025; obtained by FOIA). We mined all 36 counties for eight structured, verbatim examiner-verdict families and mapped them to each bank's assessment-area counties. Full ledger: `cra-county-access-evidence-2026-09-11.md`; verbatim quotes + line cites: `cra-me-verbatim-quotes-by-bank-2026-09-11.md`.
+
+**How to use it — and how not to.** This is **performance-context / responsiveness input** — Ammunition bullet #6 ("need data raises responsiveness weighting — it does not earn credit"). It is **not** a rating claim and **not** a substitute for the core frame: you still lead in *their* category — community services + financial capability — with the NBER credit research as the bridge, exactly as the PEs taught. Two honesty rules:
+- It is **CDSS** (the SNAP agency) documenting *county administrative access*, **not a CRA examiner naming a need.** Say "the state's own reviews of your county document…", never "your examiner said." (No PE named benefits access as a need — don't imply one did.)
+- **Verify each quote against the source** before you say it, and frame as *"a documented access gap this program is responsive to,"* never *"the gap our grant closes."*
+
+**Per bank (offer only if need/responsiveness comes up; California banks only):**
+- **American Business Bank** (LA, Orange, San Bernardino, Riverside): San Bernardino is one of only **two** counties statewide whose review carries the verdict *"The county does not provide appropriate access to potential CF applicants,"* with a 46-minute average call wait; Riverside adds documented over-verification ("proof you do not receive meals," not required for CF) and a confidentiality lapse. Pairs with their free-tax-prep analogue.
+- **City National** (adds Ventura + San Bernardino): the San Bernardino verdict above, plus Ventura on a 3-day-ES Corrective Action Plan since 2023 — squarely a **Service Test** story, which is their documented gap.
+- **Five Star Bank** (Sacramento, Yolo, Yuba): **Sacramento** is the *other* "does not provide appropriate access" county — notices mailed in the wrong language (incl. a Farsi verification request with no language-services notice) and a call center most applicants couldn't reach; Yolo is on an ES CAP since 2022; **Yuba passed** — cite it as the achievable benchmark in their own AA.
+- **Bank of Marin** (Marin, Sonoma, San Francisco): **Sonoma** on a 3-day-ES Corrective Action Plan since **2018** (the state's longest-running here); San Francisco mailed approval notices in English to Chinese- and Spanish-preferred households and did not consistently offer voter registration; Marin mailed notices in English to a Russian-preferring household.
+- **Bank Irvine · Hanmi · Mega** (LA, Orange): **Los Angeles** — their AA — has as a marquee ME finding verification requests and notices *"not sent in the correct language,"* with call waits of **39 minutes to 1 hour 22 minutes**. Orange, by contrast, staffs six languages — there the gap is over-verification, not language.
+- **Helm · Banco do Brasil · Ocean** (Florida): **no ME evidence — do not use any of the above.** The CDSS production is California-only; the Miami-AA need case stays on the PE gaps and the quantitative unmet-need counts already in the cards.
 
 ## The questions (in order)
 
