@@ -25,6 +25,7 @@ python3 -m pytest tests/ -q                           # 19 tests: golden fixture
 - Missing template fields and metrics↔geometry mismatches fail the build; no-data is gray, never zero.
 - PROJECTED watermark + chip on the sample report; both known upward biases + all data vintages printed.
 - Single-county AAs get a regional-context map, never a one-polygon choropleth.
+- **Page-1 documented-access callout** (`inputs/county_access_evidence.json`, rendered by `src/access_evidence.py`): verbatim CDSS Management-Evaluation findings for the bank's AA counties, **quote-only** (source always shown), **silent when absent** (a county with no entry, and every non-CA bank, renders nothing — never a fabricated barrier), **capped at 2 entries strongest-first** so the artifact stays exactly five pages, and **excluded from all need/funnel/score math** (a test asserts `build_values`'s `need` equals `score.bank_need` computed alone). CA only — the CDSS production has no out-of-state counterpart.
 
 ## Before the first real send (human steps)
 1. Re-read Bank Irvine's PE; flip `verified: true`. Check current branch list on bankirvine.com.

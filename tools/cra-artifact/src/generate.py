@@ -21,7 +21,7 @@ from pathlib import Path
 
 TOOL_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOL_ROOT))
-from src import mapsvg, report, score, states  # noqa: E402
+from src import access_evidence, mapsvg, report, score, states  # noqa: E402
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
@@ -126,6 +126,10 @@ def build_values(bank, assumptions, org, metrics, meta):
         "benefit_monthly": f"{need['avg_household_monthly_usd']:.0f}",
         "data_gaps_note": gaps,
         "ask_fmt": fmt_int(bank["ask_usd"]),
+        # Page-1 documented-access callout (CDSS ME). Presentation only — see
+        # access_evidence.py; never feeds need/funnel/score. Empty = silent.
+        "me_evidence_block": access_evidence.evidence_html(
+            bank["aa_counties"], state=bank.get("state", "CA")),
         "assumptions_version": assumptions["version"],
         "hh_low": hh["low_dollar"],
         "hh_high": hh["high_dollar"],

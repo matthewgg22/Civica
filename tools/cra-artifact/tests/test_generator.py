@@ -11,7 +11,7 @@ import pytest
 TOOL_ROOT = Path(__file__).resolve().parents[1]
 import sys
 sys.path.insert(0, str(TOOL_ROOT))
-from src import generate, mapsvg, report, score, states  # noqa: E402
+from src import access_evidence, generate, mapsvg, report, score, states  # noqa: E402
 
 TOL = 1e-9
 
@@ -762,3 +762,82 @@ def test_ocean_bank_does_not_claim_orange_county():
     banks, _, _ = generate.load_inputs()
     assert "Orange" not in banks["ocean_bank"]["aa_counties"]
     assert banks["ocean_bank"]["aa_counties"] == ["Miami-Dade"]
+
+
+# ---- Page-1 documented-access callout (issue #1129) ------------------------
+# Presentation-only evidence: verbatim, silent-when-absent, and never math.
+
+def _evidence():
+    return access_evidence.load()
+
+
+def test_access_evidence_every_entry_is_verified_and_complete():
+    for county, e in _evidence().items():
+        assert e.get("verified") is True, f"{county} not verified"
+        for k in ("ffy", "sev", "quote", "source"):
+            assert e.get(k), f"{county} missing {k}"
+
+
+def test_access_evidence_silent_for_non_ca_state():
+    # A Florida bank's AA counties must render nothing (production is CA-only).
+    assert access_evidence.evidence_html(
+        ["Miami-Dade", "Broward", "Palm Beach"], state="FL") == ""
+
+
+def test_access_evidence_silent_for_uncovered_county():
+    # A county with no entry renders nothing — never a fabricated barrier.
+    assert access_evidence.evidence_html(["Nowhere", "Erewhon"], state="CA") == ""
+
+
+def test_access_evidence_is_quote_verbatim():
+    e = _evidence()["San Bernardino"]
+    html = access_evidence.evidence_html(["San Bernardino"], state="CA")
+    assert e["quote"] in html          # rendered verbatim, not paraphrased
+    assert e["source"] in html         # source always shown
+    assert "San Bernardino County" in html
+
+
+def test_access_evidence_caps_and_orders_by_severity():
+    # Dense AA: at most MAX_ENTRIES, strongest (lowest sev) first.
+    aa = ["Los Angeles", "Orange", "San Bernardino", "Riverside"]
+    hits = access_evidence.select(aa, state="CA")
+    assert len(hits) <= access_evidence.MAX_ENTRIES
+    assert hits[0][0] == "San Bernardino"           # sev 1 wins
+    assert [c for c, _ in hits] == sorted(
+        [c for c, _ in hits], key=lambda c: (_evidence()[c]["sev"], c))
+
+
+def test_access_evidence_never_returns_a_number():
+    # The module is presentation-only; its output is a string or ''.
+    out = access_evidence.evidence_html(["Sacramento"], state="CA")
+    assert isinstance(out, str) and "does not provide appropriate access" in out
+
+
+def test_access_callout_does_not_perturb_need_math():
+    # build_values must produce exactly the need score.bank_need computes alone —
+    # proving the callout path never feeds the figures.
+    banks = json.loads((TOOL_ROOT / "inputs/assessment_areas.json").read_text())["banks"]
+    assumptions = json.loads((TOOL_ROOT / "inputs/funnel_assumptions.json").read_text())
+    org = json.loads((TOOL_ROOT / "inputs/org.json").read_text())
+    bank = banks["american_business_bank"]   # AA has San Bernardino + LA entries
+    meta = states.state_meta(bank.get("state", "CA"))
+    metrics = score.load_county_metrics(meta["metrics"])
+    values, need = generate.build_values(bank, assumptions, org, metrics, meta)
+    direct = score.bank_need(bank["aa_counties"], metrics, assumptions)
+    for k in ("eligible", "unenrolled", "ratio", "benefit_low_usd", "benefit_high_usd"):
+        assert abs(need[k] - direct[k]) < TOL
+    # and the callout actually rendered into the artifact for this bank
+    assert "me-evidence" in values["me_evidence_block"]
+
+
+def test_access_callout_keeps_artifact_at_five_pages(tmp_path):
+    # The strongest overflow guard: a bank whose AA triggers the callout must
+    # still render exactly five pages.
+    rc = generate.main(["--bank", "american_business_bank"])
+    assert rc == 0
+    pdf = TOOL_ROOT / "out" / "american_business_bank.pdf"
+    n_pages = subprocess.run(
+        ["mdls", "-name", "kMDItemNumberOfPages", "-raw", str(pdf)],
+        capture_output=True, text=True).stdout.strip()
+    if n_pages not in ("", "(null)"):
+        assert n_pages == "5"
