@@ -44,7 +44,7 @@
   table.core { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
   table.core caption { text-align:left; }
   .core-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:6px; }
-  table.core td { padding:13px 2px; border-bottom:1px solid var(--rule); vertical-align:baseline; }
+  table.core td { padding:10px 2px; border-bottom:1px solid var(--rule); vertical-align:baseline; }
   table.core tr:last-child td { border-bottom:none; }
   table.core td.k { font-size:9.5pt; color:var(--body); white-space:nowrap; }
   table.core td.v { text-align:right; font-family:'Newsreader',serif; font-size:14pt; font-weight:600; color:var(--ink); white-space:nowrap; padding-left:8px; }
@@ -52,6 +52,10 @@
   table.core tr.ask td { border-top:2px solid var(--accent); padding-top:9px; }
   table.core tr.ask td.k { color:var(--accent-deep); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:8.4pt; }
   table.core tr.ask td.v { color:var(--accent-deep); }
+  /* Ask, said plainly right where it lives — the row gives the figure, this
+     line gives the what, so the banker never hunts for the proposition. */
+  .ask-note { font-size:9.2pt; line-height:1.42; color:var(--body); margin-top:10px; }
+  .ask-note strong { color:var(--accent-deep); font-weight:600; }
   /* per-county unmet-need breakdown (replaces the flat AA choropleth):
      county + count on one line, a full-width proportional bar beneath. */
   .brk-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:12px; }
@@ -85,8 +89,10 @@
   .research .rlabel { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-deep); font-weight:600; }
   .rstats { display:flex; gap:.36in; margin-top:10px; }
   .rstats > div { flex:1; }
-  .rstats b { display:block; font-family:'Newsreader',serif; font-size:18pt; font-weight:600; line-height:1; color:var(--ink); font-variant-numeric:tabular-nums; }
-  .rstats span { display:block; font-size:8.2pt; line-height:1.4; color:var(--body); margin-top:7px; text-wrap:balance; }
+  /* Subordinated: these are external research figures, not Civica's own
+     outcomes, so the numerals sit below the page's need hero in weight. */
+  .rstats b { display:block; font-family:'Newsreader',serif; font-size:13.5pt; font-weight:600; line-height:1; color:var(--body); font-variant-numeric:tabular-nums; }
+  .rstats span { display:block; font-size:8pt; line-height:1.4; color:var(--muted); margin-top:6px; text-wrap:balance; }
   .rsrc { font-size:7.4pt; line-height:1.45; color:var(--muted); margin-top:12px; max-width:6.6in; }
   .tiers { display:flex; gap:.22in; margin-top:18px; }
   .tier { flex:1; border:1px solid var(--rule); border-top:3px solid var(--accent); border-radius:2px; padding:12px; }
@@ -157,11 +163,12 @@
           <tr><td class="k">Avg. household benefit</td><td class="v">$[[benefit_monthly]]/mo</td></tr>
           <tr class="ask"><td class="k">Our ask (this bank)</td><td class="v">$[[ask_fmt]]</td></tr>
         </table>
+        <div class="ask-note">A <strong>$[[ask_fmt]]</strong> pilot: one quarter of CalFresh access outreach and measurement across your assessment area.</div>
       </div>
       <div class="colbrk">[[county_breakdown]]</div>
     </div>
     <div class="research">
-      <div class="rlabel">Downstream financial outcomes</div>
+      <div class="rlabel">What SNAP access can mean for a household</div>
       <div class="rstats">
         <div><b class="serif">&minus;$2,436</b><span>less credit-card debt by year three, down 51%</span></div>
         <div><b class="serif">&minus;10.1 pts</b><span>less likely to carry a delinquent account, off a 41% baseline</span></div>
