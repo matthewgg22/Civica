@@ -236,6 +236,10 @@ def test_fl_methodology_language_not_ca():
     assert "LightGBM" not in html          # CA model claim must not leak into FL
     assert "gross-income test" in html     # fact-base language present
     assert "You may qualify for SNAP" in html
+    # CalFresh is California's SNAP brand; it must never appear in a non-CA
+    # artifact. Regressed once: the page-1 ask line and the page-2 crafile
+    # "Activity" row both hardcoded "CalFresh" instead of [[program_ref]].
+    assert "CalFresh" not in html
 
 
 # ---- qualification memo -----------------------------------------------------
