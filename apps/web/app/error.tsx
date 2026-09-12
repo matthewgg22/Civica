@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import * as Sentry from "@sentry/nextjs";
 import { DemeterMark } from "../components/DemeterMark";
-import { strings, STORAGE_KEY, type Locale } from "./i18n";
+import { LOCALES, STORAGE_KEY, type Locale } from "./i18n";
+import { errorStrings } from "../lib/i18n/boundary-copy";
 
 // Root error boundary for the public site. Catches errors thrown inside the
 // root layout's children — every Demeter route funnels here. The root layout's
@@ -25,7 +26,9 @@ export default function Error({
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved === "en" || saved === "es") setLocale(saved);
+      // Honor every supported locale, not just en/es — a vi/zh/tl visitor must
+      // not drop to English mid-failure (the whole product serves LEP users).
+      if (saved && (LOCALES as string[]).includes(saved)) setLocale(saved as Locale);
     } catch {
       // localStorage disabled — keep default.
     }
@@ -41,7 +44,7 @@ export default function Error({
     });
   }, [error.digest]);
 
-  const copy = strings[locale as keyof typeof strings] ?? strings.en;
+  const copy = errorStrings[locale] ?? errorStrings.en;
   const errorId = error.digest ?? "none";
 
   return (
@@ -49,7 +52,7 @@ export default function Error({
       <div className="container">
         <div className="error-card" role="alert">
           <div className="error-card__mark">
-            <DemeterMark size={40} />
+            <DemeterMark size={30} />
           </div>
           <p className="error-card__status">{copy.errorStatus}</p>
           <h1 className="error-card__title">{copy.errorTitle}</h1>
@@ -57,6 +60,7 @@ export default function Error({
           <p className="error-card__reference">
             {copy.errorReferenceLabel}:{" "}
             <span className="error-card__reference-value">{errorId}</span>
+            <span className="error-card__reference-hint"> · {copy.errorReferenceHint}</span>
           </p>
           <div className="error-card__actions">
             <button
