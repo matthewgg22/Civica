@@ -158,7 +158,7 @@ def regional_puma_svg(aa_counties, state, width=430, height=250):
     minlon, maxlon = _pct(lons, 0.02), _pct(lons, 0.98)
     minlat, maxlat = _pct(lats, 0.02), _pct(lats, 0.98)
     cx, cy = (minlon + maxlon) / 2, (minlat + maxlat) / 2
-    expand = 1.22 if len(aa_counties) == 1 else 1.04
+    expand = 1.12 if len(aa_counties) == 1 else 1.0
     half_w = max((maxlon - minlon) / 2, 0.05) * expand
     half_h = max((maxlat - minlat) / 2, 0.05) * expand
     fminx, fmaxx, fminy, fmaxy = cx - half_w, cx + half_w, cy - half_h, cy + half_h
@@ -174,8 +174,21 @@ def regional_puma_svg(aa_counties, state, width=430, height=250):
 
     def polys(geom, attrs):
         a = " ".join(f'{k}="{v}"' for k, v in attrs.items())
-        return "".join(f'<polygon points="{" ".join(project(x, y) for x, y in ring)}" {a}/>'
-                       for ring in _rings(geom))
+        out = []
+        for ring in _rings(geom):
+            rx = [p[0] for p in ring]
+            ry = [p[1] for p in ring]
+            # Skip rings wholly outside the frame — drops offshore islands
+            # (Channel Islands, the Keys) so they never leak into the letterbox.
+            if max(rx) < fminx or min(rx) > fmaxx or max(ry) < fminy or min(ry) > fmaxy:
+                continue
+            # Also drop small far-south rings: the offshore islands are simple
+            # low-vertex polygons well below the mainland; the coast itself is one
+            # large ring, so this never crops populated shoreline.
+            if len(ring) < 40 and max(ry) < cy - 0.08:
+                continue
+            out.append(f'<polygon points="{" ".join(project(x, y) for x, y in ring)}" {a}/>')
+        return "".join(out)
 
     shapes = []
     # (1) surrounding counties within the frame — light neutral context
@@ -206,11 +219,36 @@ def puma_visual_html(aa_counties, state, model_short):
     if not available(state):
         return ""
     svg = regional_puma_svg(aa_counties, state)
+    lo, mid, hi = puma_scale_labels(aa_counties, state)
     legend = ('<div class="geo-legend">'
-              '<span class="geo-scale" aria-hidden="true"></span>'
-              '<span class="geo-ends">fewer &rarr; more not enrolled</span></div>')
+              '<div class="geo-scale" aria-hidden="true"></div>'
+              f'<div class="geo-ticks"><span>{lo}</span><span>{mid}</span><span>{hi}</span></div>'
+              '<div class="geo-legcap">eligible, not enrolled &mdash; per PUMA</div>'
+              '</div>')
     return ('<div class="geomap">'
-            '<div class="geo-cap">Not enrolled, by PUMA</div>'
+            '<div class="geo-cap">Eligible but not enrolled</div>'
             f'{svg}{legend}'
             '<div class="geo-src">Each shape is a Census PUMA (~100k residents).</div>'
             '</div>')
+
+
+def _fmt_k(v):
+    v = round(v)
+    if v >= 10000:
+        return f"{v/1000:.0f}k"
+    if v >= 1000:
+        return f"{v/1000:.1f}k"
+    return f"{v:,.0f}"
+
+
+def puma_scale_labels(aa_counties, state):
+    """Low / mid / high of per-PUMA unenrolled counts, for the legend ticks."""
+    puma_keys = {f["properties"]["puma"]
+                 for f in json.loads(STATES[state][1].read_text())["features"]}
+    need = load_puma_need(state)
+    aa = _pumas_for_counties(state, _county_fips(state, aa_counties)) & puma_keys
+    vals = sorted(need[p]["unenrolled"] for p in aa if p in need)
+    if not vals:
+        return "", "", ""
+    lo, hi = vals[0], vals[-1]
+    return _fmt_k(lo), _fmt_k((lo + hi) / 2), _fmt_k(hi)

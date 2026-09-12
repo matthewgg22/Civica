@@ -70,12 +70,12 @@
   /* Sub-county PUMA choropleth (replaces the county bars where we have geometry) */
   .geo-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:7px; }
   .geomap svg { width:100%; height:auto; display:block; }
-  .geo-legend { display:flex; align-items:center; gap:7px; margin-top:7px; font-size:6.8pt; color:var(--muted); flex-wrap:wrap; }
-  .geo-scale { width:58px; height:7px; border-radius:2px; display:inline-block;
+  .geo-legend { margin-top:8px; font-size:6.8pt; color:var(--body); }
+  .geo-scale { width:100%; height:7px; border-radius:2px; display:block;
     background:linear-gradient(90deg,#F3D9CF,#E3AE9A,#D08466,#B9613F,#8E3A26); }
-  .geo-nd { display:inline-flex; align-items:center; gap:4px; }
-  .geo-nd i { width:8px; height:8px; border-radius:1px; background:var(--nodata); display:inline-block; }
-  .geo-src { font-size:6.6pt; line-height:1.4; color:var(--muted); margin-top:7px; }
+  .geo-ticks { display:flex; justify-content:space-between; margin-top:3px; color:var(--body); font-variant-numeric:tabular-nums; }
+  .geo-legcap { margin-top:2px; color:var(--muted); }
+  .geo-src { font-size:6.6pt; line-height:1.4; color:var(--muted); margin-top:6px; }
   /* Inside .aa-context the CDSS quotes are a sub-part of the geographic-focus
      section, so a light hairline links them rather than the heavy accent rule
      that used to read as a separate section. */

@@ -183,8 +183,8 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     # closing next-step + contact present (quiet close, not a "the ask" box)
     assert "30-minute call" in html and org["contact_email"] in html
     # CA banks render the sub-county PUMA choropleth (replaces the county bars)
-    assert "data-puma" in html and "Not enrolled, by PUMA" in html
-    assert "Census PUMA" in html
+    assert "data-puma" in html and "Eligible but not enrolled" in html
+    assert "Census PUMA" in html and 'class="geo-ticks"' in html
     # every core-table number carries a clarifying sub-line (formatting parity)
     for sub in ("income-eligible for SNAP", "of those eligible",
                 "in federal SNAP funds", "per eligible household"):
