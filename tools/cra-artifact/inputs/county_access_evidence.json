@@ -1,0 +1,64 @@
+{
+  "_provenance": {
+    "note": "Verbatim examiner findings from CDSS CalFresh Management Evaluation reviews (FOIA R012681, FFY 2024-2025). Performance-context evidence of documented access barriers in a bank's assessment-area counties. QUOTE-ONLY: each entry is verbatim from the county's ME report; never paraphrase into a stronger claim. Rendered on Page 1 only for AA counties present here; absent counties render nothing (never a fabricated barrier). California only. Excluded from all funnel/score math.",
+    "source_production": "CDSS R012681, FFY 2024-2025 CalFresh Management Evaluation reviews",
+    "compiled": "2026-09-11",
+    "sev_key": "1=access-denial verdict, 2=expedited-service CAP / wrong-language notice, 3=confidentiality, 4=over-verification",
+    "ledger": "docs/strategy/cra-county-access-evidence-2026-09-11.md; verbatim quote-bank: docs/strategy/cra-me-verbatim-quotes-by-bank-2026-09-11.md"
+  },
+  "counties": {
+    "San Bernardino": {
+      "ffy": "FFY2025", "sev": 1, "verified": true,
+      "quote": "The county does not provide appropriate access to potential CF applicants.",
+      "source": "CDSS CalFresh ME, FFY2025"
+    },
+    "Sacramento": {
+      "ffy": "FFY2024", "sev": 1, "verified": true,
+      "quote": "The county does not provide appropriate access to potential CF applicants.",
+      "source": "CDSS CalFresh ME, FFY2024"
+    },
+    "Sonoma": {
+      "ffy": "FFY2024", "sev": 2, "verified": true,
+      "quote": "The county is not meeting the performance goal of 90 percent for three-day ES processing.",
+      "note": "On a Timeliness Corrective Action Plan since 2018.",
+      "source": "CDSS CalFresh ME, FFY2024"
+    },
+    "Yolo": {
+      "ffy": "FFY2025", "sev": 2, "verified": true,
+      "quote": "The county is not meeting the performance goal of 90 percent for three-day ES processing.",
+      "note": "On a Timeliness Corrective Action Plan since May 2022.",
+      "source": "CDSS CalFresh ME, FFY2025"
+    },
+    "Ventura": {
+      "ffy": "FFY2024", "sev": 2, "verified": true,
+      "quote": "The county is not meeting the performance goal of 90 percent for three-day ES processing.",
+      "note": "On a Timeliness Corrective Action Plan since September 2023.",
+      "source": "CDSS CalFresh ME, FFY2024"
+    },
+    "Los Angeles": {
+      "ffy": "FFY2024", "sev": 2, "verified": true,
+      "quote": "CW 2200 forms ... requested information that was not required, and/or were not sent in the correct language.",
+      "source": "CDSS CalFresh ME, FFY2024"
+    },
+    "Marin": {
+      "ffy": "FFY2025", "sev": 2, "verified": true,
+      "quote": "The CW 2200 form, denial NOA, and approval NOA were sent to the household in English when their preferred written language was Russian.",
+      "source": "CDSS CalFresh ME, FFY2025"
+    },
+    "San Francisco": {
+      "ffy": "FFY2024", "sev": 2, "verified": true,
+      "quote": "The approval NOA was sent to the household in English when their preferred language was Chinese.",
+      "source": "CDSS CalFresh ME, FFY2024"
+    },
+    "Riverside": {
+      "ffy": "FFY2024", "sev": 3, "verified": true,
+      "quote": "Confidentiality was not consistently maintained at the Coachella and Indio Offices.",
+      "source": "CDSS CalFresh ME, FFY2024"
+    },
+    "Orange": {
+      "ffy": "FFY2024", "sev": 4, "verified": true,
+      "quote": "CW 2200 form over verified information by requesting proof of citizenship and school attendance.",
+      "source": "CDSS CalFresh ME, FFY2024"
+    }
+  }
+}
