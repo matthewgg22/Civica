@@ -174,7 +174,7 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
                                          states.state_meta("CA"))
     html = generate.render((TOOL_ROOT / "templates/artifact.html").read_text(), values)
     # PROJECTED system present
-    assert html.count("PROJECTED") >= 2 and "Projected — not measured" in html
+    assert html.count("PROJECTED") >= 2 and "Projected · not measured" in html
     # both bias disclosures + vintage in methodology
     assert "gross-income proxy" in html and "under-report" in html
     assert "2023 ACS 1-Year" in html

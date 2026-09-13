@@ -159,8 +159,10 @@ def build_values(bank, assumptions, org, metrics, meta):
     _chk = _sess * r["session_to_check"]["mid"]
     _sub = _chk * r["check_to_app_started"]["mid"] * r["started_to_submitted"]
     _appr = _sub * r["approval"]["mid"]
-    funnel_note = (f"Mid-range: of 1,000 ad clicks, ~{_chk:.0f} reach an eligibility "
-                   f"check, ~{_sub:.0f} apply, and ~{_appr:.0f} are approved.")
+    # Wording matches the table rows exactly: _chk = eligibility checks COMPLETED
+    # (not sessions), _sub = applications SUBMITTED.
+    funnel_note = (f"Mid-range: per 1,000 ad clicks, ~{_chk:.0f} complete an eligibility "
+                   f"check, ~{_sub:.0f} submit an application, and ~{_appr:.0f} are approved.")
     # Credibility line (reviewer ask): a single substantiable sentence on why
     # the analysis here is Civica's own work, not vendor boilerplate. State-aware
     # on two axes — CA carries a trained model (AUC) AND the CDSS ME review;
@@ -188,7 +190,7 @@ def build_values(bank, assumptions, org, metrics, meta):
     # chatbot — the actual product — is what applicants are directed to.
     credibility_line += (
         " And the product is not a landing page but a conversational assistant "
-        "grounded in your state's own SNAP rules — it answers applicants' "
+        "grounded in your state's own SNAP rules; it answers applicants' "
         "questions and cites the governing rule, so they get accurate guidance "
         "rather than generic search results."
     )
@@ -254,6 +256,17 @@ def build_values(bank, assumptions, org, metrics, meta):
         v[f"{s}_approved"] = fmt_int(f["approved_households"])
         v[f"{s}_benefit"] = fmt_musd(f["annual_benefit_usd"]) + "/yr"
         v[f"{s}_cps"] = f"${bank['ask_usd'] / f['apps_submitted']:,.0f}"
+        # Aggregate downstream credit-card debt reduced = approved households ×
+        # the $2,436 per-household 3-year research effect (Homonoff et al.).
+        # Labelled on page 3 as research-based, not measured by this program.
+        # Compute the aggregates from the ROUNDED approved count shown in the
+        # table so the arithmetic checks out (approved × per-household effect).
+        _appr_shown = round(f["approved_households"])
+        _debt = _appr_shown * 2436
+        v[f"{s}_debt"] = f"${_debt/1e6:.1f}M" if _debt >= 1e6 else f"${_debt/1e3:.0f}K"
+        # Cumulative credit-score points = approved households × the +17 per-household
+        # research effect (illustrative; the per-household figure is in the label).
+        v[f"{s}_cspts"] = fmt_int(_appr_shown * 17)
     return v, need
 
 
