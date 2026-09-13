@@ -9594,6 +9594,9 @@ a.dmwel__cta { text-decoration: none; }
 /* The card is a block container; an inline-flex child needs this to sit centred
    under the primary rather than flush left. */
 .dmwel__card { text-align: center; }
+/* The card takes initial focus (see DemeterWelcome); it is a container, not
+   a control, so it must not paint a ring of its own. */
+.dmwel__card:focus { outline: none; }
 .dmwel__what, .dmwel__body, .dmwel__mark { text-align: left; }
 
 /* THE NARROWEST PHONE STILL GETS ONE ROW. At 320px the pair came to 244 of

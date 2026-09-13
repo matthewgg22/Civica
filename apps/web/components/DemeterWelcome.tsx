@@ -57,12 +57,11 @@ export function DemeterWelcome({
   signInHref?: string;
 }) {
   const cardRef = useRef<HTMLDivElement | null>(null);
-  const ctaRef = useRef<HTMLButtonElement | null>(null);
   const openerRef = useRef<Element | null>(null);
 
   useEffect(() => {
     openerRef.current = document.activeElement;
-    ctaRef.current?.focus();
+    cardRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
@@ -103,6 +102,17 @@ export function DemeterWelcome({
         role="dialog"
         aria-modal="true"
         aria-labelledby="dmwel-title"
+        /* The CARD takes initial focus, not a button inside it (owner,
+           2026-09-13). Focus had gone to "Continue without signing in", and a
+           focused button paints its focus ring — so on every open, for anyone
+           whose last input was the keyboard, a terracotta box appeared around
+           that link, directly under the filled pill. It read as a second
+           bordered button, and no amount of shrinking the ring fixed the fact
+           that a ring was being drawn at all. Focusing the dialog itself is
+           the ordinary modal pattern (DemeterFoodNow already does it): the
+           card is announced, Tab still walks the controls, and a ring appears
+           when someone actually tabs to one. */
+        tabIndex={-1}
         ref={cardRef}
         onClick={(e) => e.stopPropagation()}
       >
@@ -175,13 +185,12 @@ export function DemeterWelcome({
               type="button"
               className="dmwel__secondary"
               onClick={onDismiss}
-              ref={ctaRef}
             >
               {copy.continueWithout}
             </button>
           </>
         ) : (
-          <button type="button" className="dmwel__cta" onClick={onDismiss} ref={ctaRef}>
+          <button type="button" className="dmwel__cta" onClick={onDismiss}>
             {copy.cta}
             <span className="dmwel__arrow" aria-hidden>
               →
