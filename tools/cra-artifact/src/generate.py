@@ -186,15 +186,17 @@ def build_values(bank, assumptions, org, metrics, meta):
             "boilerplate: a survey-weighted estimate built directly from 2023 "
             "federal ACS microdata, reproducible from public sources."
         )
-    # And the engine itself, not just the analysis: name the conversational
-    # assistant and why it works (grounded in the agency's own rules), since the
-    # chatbot — the actual product — is what applicants are directed to.
-    credibility_line += (
-        " And the product is not a landing page but a conversational assistant "
-        "grounded in your state's own SNAP rules; it answers applicants' "
-        "questions and cites the governing rule, so they get accurate guidance "
-        "rather than generic search results."
-    )
+    # (The product itself — the rule-grounded conversational assistant — is
+    # already described in "The program" section above, so the credibility line
+    # no longer repeats it.)
+    # Optional per-bank "Why this bank specifically" callout: a fully-sourced,
+    # bank-specific argument (e.g. commercial/no-retail structure + the exam
+    # component a grant lands on). Present only for banks that carry the field;
+    # every other bank renders nothing here.
+    _bank_note = bank.get("bank_specific_note", "").strip()
+    bank_specific_block = (
+        f'<div class="provenance" style="margin-top:8px;"><b>Why {bank["name"]} '
+        f'specifically.</b> {_bank_note}</div>' if _bank_note else "")
     # Regulator-specific CRA rule citation for the community-reinvestment box.
     cra_part = cra_reg_part(bank["regulator"])
     cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
@@ -248,6 +250,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         "prepared_date": datetime.date.today().strftime("%B %Y"),
         "headline_unenrolled": fmt_int(round(need["unenrolled"])),
         "recon_note": recon_note,
+        "bank_specific_block": bank_specific_block,
         "benefit_range": f"{fmt_musd(need['benefit_low_usd'])}–{fmt_musd(need['benefit_high_usd'])}",
         "ratio_line": ratio_line,
         "map_caption": map_caption,
