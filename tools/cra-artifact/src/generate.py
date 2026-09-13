@@ -173,18 +173,17 @@ def build_values(bank, assumptions, org, metrics, meta):
     state = bank.get("state", "CA")
     if state == "CA":
         credibility_line = (
-            "The need and access findings here are Civica's own analysis, not "
-            "vendor boilerplate: the estimate is a reproducible model of 2023 "
-            "federal ACS microdata (cross-validated AUC 0.80), and the county "
-            "findings come from our review of 37 CalFresh Management Evaluation "
-            "reviews (36 California counties, FFY 2024–2025) obtained by "
-            "public-records request."
+            "The need and access findings here are Civica's own analysis: the "
+            "estimate is a reproducible model of 2023 federal ACS microdata "
+            "(cross-validated AUC 0.80), and the county findings come from our "
+            "review of 37 CalFresh Management Evaluation reviews (36 California "
+            "counties, FFY 2024–2025) obtained by public-records request."
         )
     else:
         credibility_line = (
-            "The need estimate here is Civica's own analysis, not vendor "
-            "boilerplate: a survey-weighted estimate built directly from 2023 "
-            "federal ACS microdata, reproducible from public sources."
+            "The need estimate here is Civica's own analysis: a survey-weighted "
+            "estimate built directly from 2023 federal ACS microdata, "
+            "reproducible from public sources."
         )
     # (The product itself — the rule-grounded conversational assistant — is
     # already described in "The program" section above, so the credibility line
