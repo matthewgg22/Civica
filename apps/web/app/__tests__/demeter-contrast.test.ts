@@ -113,34 +113,19 @@ describe("Demeter palette contrast (WCAG AA)", () => {
   });
 });
 
-describe("anything set on a wheat fill is readable on it", () => {
-  // Wheat is the loudest surface in the palette and the darkest text still
-  // clears it easily — ink is 9.47:1 — so a failure here means someone
-  // reached for white, which is 1.68:1. That shipped for exactly one commit
-  // on the back pill.
-  //
-  // The token rules above could not catch it: they check token-on-token
-  // pairs, and #FFFFFF is not a token. This one reads the actual rules
-  // instead, so it holds whatever colour someone writes.
-  const WHEAT = token("demeter-wheat");
-
-  /** Every rule body that paints a wheat background. */
-  const wheatRules = [...css.matchAll(/\{([^}]*background:\s*var\(--demeter-wheat\)[^}]*)\}/g)].map(
-    (m) => m[1],
-  );
-
-  it("finds the wheat controls at all", () => {
-    // Without this the assertion below passes by finding nothing.
-    expect(wheatRules.length).toBeGreaterThan(0);
-  });
-
-  it.each(wheatRules.map((r, i) => [i, r] as const))("wheat rule %i", (_i, rule) => {
-    const m = rule.match(/(?<!-)color:\s*(#[0-9A-Fa-f]{6}|var\(--([\w-]+)\))/);
-    if (!m) return; // inherits its colour; nothing asserted here
-    const fg = m[2] ? token(m[2]) : m[1];
-    expect(
-      ratio(fg, WHEAT),
-      `${fg} on wheat is ${ratio(fg, WHEAT).toFixed(2)}:1 — AA needs 4.5`,
-    ).toBeGreaterThanOrEqual(4.5);
-  });
-});
+// THE WHEAT CHECK WAS REMOVED ON 2026-09-13, ON PURPOSE.
+//
+// It asserted that any colour set on a --demeter-wheat fill clears 4.5:1, and
+// it did its job: it failed thirteen times when the wheat controls moved to
+// white labels. White on #E8C547 measures 1.68:1, against 9.47:1 for the ink
+// it replaced. AA asks 4.5:1 for normal text and 3:1 for large text and UI
+// components, so the current labels meet neither.
+//
+// The owner was shown the measurements, the rendered preview, and the
+// alternatives (a terracotta fill carries white at 4.56:1; wheat would have to
+// darken to about #806C27 to carry it at all), and chose the white labels and
+// the removal of this check. Recorded here rather than deleted quietly, so
+// whoever next audits this file finds a decision instead of a gap.
+//
+// The rest of the guard is untouched and still covers every other pairing in
+// the palette. To restore this one, the block is in git history at e61c16a6~1.
