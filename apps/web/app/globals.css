@@ -9929,18 +9929,21 @@ a.dmwel__cta { text-decoration: none; }
 .dmfn__body {
   margin: 0 0 1.1rem;
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1rem; line-height: 1.55; color: var(--demeter-body);
+  font-size: 1rem; line-height: 1.55; color: var(--demeter-ink);
+  text-wrap: pretty;
 }
-.dmfn__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-/* On a phone the pair wrapped to two rows of different widths, which read as
-   two unrelated buttons. Full width stacks them as one decision. */
-@media (max-width: 30rem) {
-  .dmfn__actions { flex-direction: column; }
-  .dmfn__primary, .dmfn__secondary { justify-content: center; }
-}
+/* ONE ACTION, ONE ALTERNATIVE — STACKED (owner, 2026-09-13).
+   Two boxes side by side put a white-outlined button next to a filled one,
+   and the outline read as an unfinished control rather than a second choice.
+   The row also ended mid-card, leaving an L-shaped void under the buttons
+   that made the left-aligned column look ragged rather than set.
+   The primary fills the measure now, squaring that edge; the alternative is
+   a plain link under it, which is what it always was. */
+.dmfn__actions { display: flex; flex-direction: column; align-items: stretch; gap: 0.15rem; }
 /* Wheat is the next action (§3). Here that is food today, not sign-in. */
 .dmfn__primary {
-  display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.1rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 100%; min-height: 46px; padding: 0 1.1rem;
   border-radius: var(--demeter-radius-input);
   background: var(--demeter-wheat); color: var(--demeter-ink);
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -9948,16 +9951,16 @@ a.dmwel__cta { text-decoration: none; }
 }
 .dmfn__primary:hover { background: #DDB93C; }
 .dmfn__secondary {
-  display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.1rem;
-  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
-  /* INK, NOT TERRACOTTA. Beside the wheat primary's ink label, a terracotta
-     one made the pair read as two colours arguing rather than as a lead
-     action and its alternative. */
-  background: #fff; color: var(--demeter-ink);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 100%; min-height: 44px; padding: 0 1.1rem;
+  border: 0; background: none;
+  color: var(--demeter-terracotta-deep);
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-weight: 700; font-size: 0.9rem; text-decoration: none;
+  font-weight: 700; font-size: 0.9rem;
+  text-decoration: underline; text-decoration-color: var(--demeter-rule-strong);
+  text-underline-offset: 3px;
 }
-.dmfn__secondary:hover { background: var(--demeter-paper-2, #FAF9F7); }
+.dmfn__secondary:hover { text-decoration-color: currentColor; }
 .dmfn__primary:focus-visible, .dmfn__secondary:focus-visible {
   outline: 2px solid var(--demeter-terracotta); outline-offset: 2px;
 }
@@ -9970,5 +9973,11 @@ a.dmwel__cta { text-decoration: none; }
   margin: 1.25rem 0 0; padding-top: 1rem;
   border-top: 1px solid var(--demeter-rule);
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 0.9rem; line-height: 1.55; color: var(--demeter-body);
+  /* ON THE INK, A STEP BACK BY SIZE. It was --demeter-body, and grey running
+     text under a rule read as fine print someone is meant to skip — on the
+     one line that tells a person SNAP could reach them this week. The welcome
+     card already settled this rule for the same reason: if a line has to
+     recede, it recedes smaller and stays on the ink. */
+  font-size: 0.9rem; line-height: 1.55; color: var(--demeter-ink);
+  text-wrap: pretty;
 }
