@@ -9841,3 +9841,101 @@ a.dmwel__cta { text-decoration: none; }
 .dmlangs__link:focus-visible {
   outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 4px;
 }
+
+/* ── "Need food this week?" — crisis affordance in the chat's top bar ──────
+   Owner, 2026-09-13. It was a section partway down /screen/ask: behind a
+   scroll for the person who cannot wait for one, and unreachable from /chat.
+
+   BORDERED, NOT FILLED. Sign-in keeps the surface's one filled action
+   (DEMETER-DESIGN.md §3 — one primary per surface), so this carries urgency
+   through terracotta text and a real border instead of a second fill
+   competing beside it. */
+.dmchat .demeter__foodnow {
+  display: inline-flex; align-items: center;
+  min-height: 38px; padding: 0 0.9rem;
+  border: 1px solid var(--demeter-terracotta);
+  border-radius: var(--demeter-radius-input);
+  background: #fff; color: var(--demeter-terracotta-deep);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-weight: 700; font-size: 0.85rem; line-height: 1;
+  cursor: pointer; white-space: nowrap;
+}
+.dmchat .demeter__foodnow:hover { background: #FDF3F0; }
+.dmchat .demeter__foodnow:focus-visible {
+  outline: 2px solid var(--demeter-terracotta); outline-offset: 2px;
+}
+/* The full label crowds sign-in on a phone; the short one keeps the meaning.
+   aria-label carries the full sentence either way. */
+.demeter__foodnow-short { display: none; }
+@media (max-width: 640px) {
+  .demeter__foodnow-full { display: none; }
+  .demeter__foodnow-short { display: inline; }
+  .dmchat .demeter__foodnow { padding: 0 0.7rem; font-size: 0.8rem; }
+  .demeter__headright { gap: 0.5rem; }
+}
+
+/* The dialog. Same card-over-blurred-chat as sign-in: the conversation stays
+   visible behind it, so this reads as a detour, not a lost place. */
+.dmfn {
+  position: fixed; inset: 0; z-index: 80;
+  display: grid; place-items: center; padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px) saturate(0.9); -webkit-backdrop-filter: blur(10px) saturate(0.9);
+  animation: dmsiIn 160ms ease-out both;
+}
+.dmfn__card {
+  position: relative;
+  width: min(30rem, 100%);
+  background: #fff; color: var(--demeter-ink);
+  border: 1px solid var(--demeter-rule);
+  border-radius: var(--demeter-radius-card, 12px);
+  box-shadow: 0 18px 48px rgba(35, 34, 32, 0.14);
+  padding: 1.75rem;
+}
+.dmfn__card:focus { outline: none; }
+.dmfn__close {
+  position: absolute; top: 0.75rem; right: 0.75rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; padding: 0;
+  border: 0; border-radius: 999px; background: transparent;
+  color: var(--demeter-muted); cursor: pointer;
+}
+.dmfn__close:hover { background: var(--demeter-rule); color: var(--demeter-ink); }
+.dmfn__close:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
+/* Serif speaks (§4). */
+.dmfn__title {
+  margin: 0 2rem 0.6rem 0;
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.45rem; font-weight: 600; line-height: 1.2; color: var(--demeter-ink);
+}
+.dmfn__body {
+  margin: 0 0 1.1rem;
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.55; color: var(--demeter-body);
+}
+.dmfn__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+/* Wheat is the next action (§3). Here that is food today, not sign-in. */
+.dmfn__primary {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.1rem;
+  border-radius: var(--demeter-radius-input);
+  background: var(--demeter-wheat); color: var(--demeter-ink);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-weight: 700; font-size: 0.9rem; text-decoration: none;
+}
+.dmfn__primary:hover { background: #DDB93C; }
+.dmfn__secondary {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.1rem;
+  border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
+  background: #fff; color: var(--demeter-terracotta-deep);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-weight: 700; font-size: 0.9rem; text-decoration: none;
+}
+.dmfn__secondary:hover { background: var(--demeter-paper-2, #FAF9F7); }
+.dmfn__primary:focus-visible, .dmfn__secondary:focus-visible {
+  outline: 2px solid var(--demeter-terracotta); outline-offset: 2px;
+}
+.dmfn__expedited {
+  margin: 1.1rem 0 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; line-height: 1.5; color: var(--demeter-muted);
+}

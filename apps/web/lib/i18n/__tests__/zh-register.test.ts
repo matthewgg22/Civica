@@ -35,6 +35,7 @@ const WEB = join(__dirname, "..", "..", "..");
 const FORMAL = [
   "lib/i18n/demeter-chat-copy.ts",
   "lib/i18n/demeter-signin-copy.ts",
+  "lib/i18n/demeter-foodnow-copy.ts",
   "lib/i18n/snap-page.ts",
   "lib/i18n/feedback-copy.ts",
   // Error/404 boundary copy for every locale; Demeter's formal 您 register.
