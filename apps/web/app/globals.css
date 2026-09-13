@@ -9495,7 +9495,11 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    with the divider gone, wrapping now just stacks them. */
 .dmwel__marks {
   display: flex; align-items: center; justify-content: center;
-  gap: 1.1rem; flex-wrap: wrap; margin-bottom: 1rem;
+  /* TIGHTER, AND OPTICALLY MATCHED (owner, 2026-09-13). At 1.1rem the two
+     marks read as two separate things with a gap between them rather than as
+     a pairing, and the SNAP mark at 124px stood visibly taller than the
+     Demeter lockup it sat beside. */
+  gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem;
 }
 .dmwel__brand {
   display: inline-flex; flex-direction: column; align-items: center;
@@ -9510,7 +9514,9 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 /* The mark is reproduced UNALTERED at its true 663:460 ratio — a condition of
    being allowed to use it at all. Only the box is ours. */
 .dmwel__logo { display: inline-flex; justify-content: center; margin: 0; }
-.dmwel__logo img { height: auto; max-width: 124px; }
+/* Ratio untouched (a condition of using it); only the scale is ours, capped so
+   its height lands with the lockup's rather than over it. */
+.dmwel__logo img { height: auto; max-width: 108px; }
 
 /* ONE VOICE, ONE COLOUR. Card copy had been split across the display serif and
    the sans at three different greys, which read as three registers on a card
@@ -9568,9 +9574,17 @@ a.dmwel__cta { text-decoration: none; }
 .dmwel__arrow { font-size: 0.95em; line-height: 1; }
 
 /* Continuing without an account is an offer, not the offer. */
+/* FIT THE TEXT, NOT THE ROW (owner, 2026-09-13). This is display:block at
+   width:100% and it also carries ctaRef, so it is focused the instant the card
+   opens — which drew a 2px terracotta outline around the full width of the
+   card, directly under a filled pill. It read as a second button competing
+   with the primary, on open, every time. Centred and fit to its own text, the
+   ring now hugs the words the way a focused link should. The tap target stays
+   comfortable through padding and min-height rather than through full width. */
 .dmwel__secondary {
-  display: block; width: 100%; margin-top: 0.55rem;
-  padding: 0.55rem 1rem; min-height: 40px;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: auto; max-width: 100%; margin: 0.55rem auto 0;
+  padding: 0.5rem 0.9rem; min-height: 40px;
   border: 0; background: none; cursor: pointer;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.82rem; color: var(--demeter-ink);
@@ -9578,7 +9592,11 @@ a.dmwel__cta { text-decoration: none; }
   text-underline-offset: 3px;
 }
 .dmwel__secondary:hover { color: var(--demeter-ink); text-decoration-color: currentColor; }
-.dmwel__secondary:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 4px; }
+.dmwel__secondary:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 6px; }
+/* The card is a block container; an inline-flex child needs this to sit centred
+   under the primary rather than flush left. */
+.dmwel__card { text-align: center; }
+.dmwel__what, .dmwel__body, .dmwel__mark { text-align: left; }
 
 /* THE NARROWEST PHONE STILL GETS ONE ROW. At 320px the pair came to 244 of
    240 available and wrapped by four pixels, which costs 74px of height on the
@@ -9894,11 +9912,11 @@ a.dmwel__cta { text-decoration: none; }
 }
 .dmfn__card:focus { outline: none; }
 .dmfn__close {
-  position: absolute; top: 0.75rem; right: 0.75rem;
+  position: absolute; top: 0.9rem; right: 0.9rem;
   display: inline-flex; align-items: center; justify-content: center;
   width: 32px; height: 32px; padding: 0;
   border: 0; border-radius: 999px; background: transparent;
-  color: var(--demeter-muted); cursor: pointer;
+  color: var(--demeter-body); cursor: pointer;
 }
 .dmfn__close:hover { background: var(--demeter-rule); color: var(--demeter-ink); }
 .dmfn__close:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
@@ -9914,6 +9932,12 @@ a.dmwel__cta { text-decoration: none; }
   font-size: 1rem; line-height: 1.55; color: var(--demeter-body);
 }
 .dmfn__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+/* On a phone the pair wrapped to two rows of different widths, which read as
+   two unrelated buttons. Full width stacks them as one decision. */
+@media (max-width: 30rem) {
+  .dmfn__actions { flex-direction: column; }
+  .dmfn__primary, .dmfn__secondary { justify-content: center; }
+}
 /* Wheat is the next action (§3). Here that is food today, not sign-in. */
 .dmfn__primary {
   display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.1rem;
@@ -9926,7 +9950,10 @@ a.dmwel__cta { text-decoration: none; }
 .dmfn__secondary {
   display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.1rem;
   border: 1px solid var(--demeter-rule-strong); border-radius: var(--demeter-radius-input);
-  background: #fff; color: var(--demeter-terracotta-deep);
+  /* INK, NOT TERRACOTTA. Beside the wheat primary's ink label, a terracotta
+     one made the pair read as two colours arguing rather than as a lead
+     action and its alternative. */
+  background: #fff; color: var(--demeter-ink);
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-weight: 700; font-size: 0.9rem; text-decoration: none;
 }
@@ -9934,8 +9961,14 @@ a.dmwel__cta { text-decoration: none; }
 .dmfn__primary:focus-visible, .dmfn__secondary:focus-visible {
   outline: 2px solid var(--demeter-terracotta); outline-offset: 2px;
 }
+/* SERIF, BEHIND A RULE. This was the one sans paragraph on the card — running
+   text set in the label face, which §4 reserves for labels, so it read as a
+   different register wedged under the buttons. It is the same voice as the
+   body now, a step back by size rather than by typeface, with a hairline
+   marking it as the aside it is (owner, 2026-09-13). */
 .dmfn__expedited {
-  margin: 1.1rem 0 0;
-  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.85rem; line-height: 1.5; color: var(--demeter-muted);
+  margin: 1.25rem 0 0; padding-top: 1rem;
+  border-top: 1px solid var(--demeter-rule);
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.9rem; line-height: 1.55; color: var(--demeter-body);
 }
