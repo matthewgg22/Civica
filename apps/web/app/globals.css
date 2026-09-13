@@ -9493,11 +9493,20 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    with the divider gone, wrapping now just stacks them. */
 .dmwel__marks {
   display: flex; align-items: center; justify-content: center;
-  /* TIGHTER, AND OPTICALLY MATCHED (owner, 2026-09-13). At 1.1rem the two
-     marks read as two separate things with a gap between them rather than as
-     a pairing, and the SNAP mark at 124px stood visibly taller than the
-     Demeter lockup it sat beside. */
-  gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem;
+  /* AIR BETWEEN THEM, ON PURPOSE (owner, 2026-09-13, superseding the tighter
+     gap set earlier the same day — that went the wrong way).
+     These are two marks with two different owners: ours, and the government
+     program's. At 0.8rem they crowded into what read as a single combined
+     lockup, which is both worse spacing and the wrong impression to give of a
+     mark we are permitted to reproduce but not to merge with our own. The gap
+     now reads as "these are two things", which is what they are. */
+  gap: 2rem; flex-wrap: wrap; margin-bottom: 1rem;
+  /* Sizes as variables, not as a second declaration further down: the card's
+     append-guard requires max-width and font-size to appear once each, and it
+     is right to — four competing .dmwel__mark font-sizes once shipped at the
+     same time, each with the comment that justified it. */
+  --dmwel-logo-w: 176px;
+  --dmwel-word-size: 1.45rem;
 }
 .dmwel__brand {
   display: inline-flex; flex-direction: column; align-items: center;
@@ -9505,7 +9514,10 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 }
 .dmwel__brandword {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em;
+  /* Up with the mark and the SNAP logo (owner, 2026-09-13): the government
+     mark's four-line descriptor was too small to read, and enlarging it alone
+     would have left our own lockup looking like the junior partner. */
+  font-size: var(--dmwel-word-size); font-weight: 700; letter-spacing: -0.01em;
   color: var(--demeter-ink);
 }
 .dmwel__brandword em { font-style: normal; color: var(--demeter-terracotta-deep); }
@@ -9514,7 +9526,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 .dmwel__logo { display: inline-flex; justify-content: center; margin: 0; }
 /* Ratio untouched (a condition of using it); only the scale is ours, capped so
    its height lands with the lockup's rather than over it. */
-.dmwel__logo img { height: auto; max-width: 108px; }
+.dmwel__logo img { height: auto; max-width: var(--dmwel-logo-w); }
 
 /* ONE VOICE, ONE COLOUR. Card copy had been split across the display serif and
    the sans at three different greys, which read as three registers on a card
@@ -9530,12 +9542,14 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: 0.98rem; line-height: 1.62; margin: 0 0 0.7rem;
   color: var(--demeter-ink);
-  /* LEFT, while the title and the marks stay centred. Set centred, the five
-     lines of the definition each began at a different x and the reader had to
-     find the left edge again on every one. The required notice was already
-     left-aligned, so the fine print was the only thing on the card set for
-     reading — backwards. */
-  text-align: left;
+  /* CENTRED (owner, 2026-09-13). This was left, and the reason was sound at
+     the time: the copy was USDA's 39-word definition, and set centred each of
+     its five lines began at a different x so the reader had to find the left
+     edge again on every one. The copy is two short paragraphs now — the card
+     is centred around them and at this length centring reads as composed
+     rather than as work. The required notice stays LEFT below: four lines of
+     fine print is still long enough for the original objection to hold. */
+  text-align: center;
   text-wrap: pretty;
 }
 /* The caveat sits a step back from the line above it — by SIZE, not by grey.
@@ -9597,12 +9611,19 @@ a.dmwel__cta { text-decoration: none; }
 /* The card takes initial focus (see DemeterWelcome); it is a container, not
    a control, so it must not paint a ring of its own. */
 .dmwel__card:focus { outline: none; }
-.dmwel__what, .dmwel__body, .dmwel__mark { text-align: left; }
+.dmwel__mark { text-align: left; }
 
 /* THE NARROWEST PHONE STILL GETS ONE ROW. At 320px the pair came to 244 of
    240 available and wrapped by four pixels, which costs 74px of height on the
    screen that can least afford it. A slimmer gutter at this width buys the
    row back; wrap stays as the failure mode below it. */
+/* PHONES. The enlarged pair is 343px wide against ~343px of content box at
+   375px — exactly on the line, which wraps on anything narrower. This steps it
+   down before that happens. Values only; the properties are declared once. */
+@media (max-width: 30rem) {
+  .dmwel__marks { --dmwel-logo-w: 140px; --dmwel-word-size: 1.25rem; }
+}
+
 @media (max-width: 22rem) {
   .dmwel__card { padding-left: 1.15rem; padding-right: 1.15rem; }
   /* Clear of the corner dismiss. Once the pair holds one row at this width the
@@ -9610,7 +9631,13 @@ a.dmwel__cta { text-decoration: none; }
      and the X — absolutely positioned in that corner — sat ON the government's
      mark. Obscuring the logo is the one thing the permission to use it does
      not allow, so the row starts below the button here. */
-  .dmwel__marks { gap: 0.8rem; margin-top: 0.9rem; }
+  /* The pair grew; at 320px it gives some of that back to hold one row. Values
+     only — the properties themselves are declared once, above. */
+  .dmwel__marks {
+    gap: 1.25rem; margin-top: 0.9rem;
+    --dmwel-logo-w: 112px;
+    --dmwel-word-size: 1.15rem;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
