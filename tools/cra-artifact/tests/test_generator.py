@@ -274,6 +274,10 @@ def test_pumamap_supported_states_render_and_others_fall_back():
     assert "PUMA" in html and "Census PUMA" in html
     # unsupported state -> empty, so generate.py uses the county-bar fallback
     assert pumamap.puma_visual_html(["Harris"], "TX", "x") == ""
+    # page-2 nexus locator: AA counties + context for supported states, else ""
+    loc = pumamap.locator_svg(["Los Angeles", "Orange"], "CA")
+    assert loc.count("<polygon") > 5 and "<svg" in loc
+    assert pumamap.locator_svg(["Harris"], "TX") == ""
 
 
 def test_pumamap_need_join_is_complete():

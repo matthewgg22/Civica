@@ -254,3 +254,68 @@ def puma_scale_labels(aa_counties, state):
         return "", "", ""
     lo, hi = vals[0], vals[-1]
     return _fmt_k(lo), _fmt_k((lo + hi) / 2), _fmt_k(hi)
+
+
+def locator_svg(aa_counties, state, width=168, height=88):
+    """Small county locator: AA counties in accent, surrounding counties gray.
+
+    Illustrates the CRA geographic nexus on page 2 — no PUMA detail, no legend;
+    just 'here is your assessment area.' Empty string for unsupported states.
+    """
+    if not available(state):
+        return ""
+    counties = _state_counties(state)
+    aa_pts = [pt for c in aa_counties if c in counties
+              for ring in _rings(counties[c]) for pt in ring]
+    if not aa_pts:
+        return ""
+    lons = sorted(q[0] for q in aa_pts)
+    lats = sorted(q[1] for q in aa_pts)
+
+    def _pct(a, p):
+        return a[min(len(a) - 1, max(0, int(len(a) * p)))]
+
+    minlon, maxlon = _pct(lons, 0.02), _pct(lons, 0.98)
+    minlat, maxlat = _pct(lats, 0.02), _pct(lats, 0.98)
+    cx, cy = (minlon + maxlon) / 2, (minlat + maxlat) / 2
+    expand = 1.9 if len(aa_counties) == 1 else 1.35
+    half_w = max((maxlon - minlon) / 2, 0.05) * expand
+    half_h = max((maxlat - minlat) / 2, 0.05) * expand
+    fminx, fmaxx, fminy, fmaxy = cx - half_w, cx + half_w, cy - half_h, cy + half_h
+    lat0 = math.radians(cy)
+    minx, maxx, miny, maxy = fminx * math.cos(lat0), fmaxx * math.cos(lat0), fminy, fmaxy
+    pad = 2
+    s = min((width - 2 * pad) / (maxx - minx), (height - 2 * pad) / (maxy - miny))
+    ox = (width - (maxx - minx) * s) / 2
+    oy = (height - (maxy - miny) * s) / 2
+
+    def project(lon, lat):
+        return f"{ox + (lon * math.cos(lat0) - minx) * s:.1f},{oy + (maxy - lat) * s:.1f}"
+
+    def polys(geom, attrs):
+        a = " ".join(f'{k}="{v}"' for k, v in attrs.items())
+        out = []
+        for ring in _rings(geom):
+            rx = [p[0] for p in ring]
+            ry = [p[1] for p in ring]
+            if max(rx) < fminx or min(rx) > fmaxx or max(ry) < fminy or min(ry) > fmaxy:
+                continue
+            if len(ring) < 40 and max(ry) < cy - 0.08:
+                continue
+            out.append(f'<polygon points="{" ".join(project(x, y) for x, y in ring)}" {a}/>')
+        return "".join(out)
+
+    aa = set(aa_counties)
+    shapes = []
+    for name, g in counties.items():
+        bx0, by0, bx1, by1 = _bbox(g)
+        if bx1 < fminx or bx0 > fmaxx or by1 < fminy or by0 > fmaxy or name in aa:
+            continue
+        shapes.append(polys(g, {"fill": CONTEXT_FILL, "stroke": CONTEXT_STROKE,
+                                "stroke-width": "0.6"}))
+    for c in aa_counties:
+        if c in counties:
+            shapes.append(polys(counties[c], {"fill": ACCENT, "stroke": "#ffffff",
+                                              "stroke-width": "0.6"}))
+    return (f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" '
+            f'role="img" aria-label="Assessment-area counties">' + "".join(shapes) + "</svg>")

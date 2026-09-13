@@ -134,6 +134,8 @@ def build_values(bank, assumptions, org, metrics, meta):
         bank["aa_counties"], bank.get("state", "CA"), meta["method_short"])
     if not aa_geo_visual:
         aa_geo_visual = county_breakdown
+    # Small county locator for the page-2 geographic-nexus row (empty off CA/FL).
+    aa_locator = pumamap.locator_svg(bank["aa_counties"], bank.get("state", "CA"))
     ratio_line = ""
     if need["show_ratio"]:
         ratio_line = (f'<div class="ratio-line">Unmet need here runs '
@@ -240,6 +242,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         "me_evidence_block": access_evidence.evidence_html(
             bank["aa_counties"], state=bank.get("state", "CA")),
         "aa_geo_visual": aa_geo_visual,
+        "aa_locator": aa_locator,
         "assumptions_version": assumptions["version"],
         "hh_low": hh["low_dollar"],
         "hh_high": hh["high_dollar"],
