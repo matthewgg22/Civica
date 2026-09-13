@@ -16,7 +16,12 @@
 // help you this week", which is the opposite of true for exactly the household
 // expedited service exists for.
 //
-// It still points at a food bank first, because even same-week is not tonight.
+// IT DOES NOT PROMISE FOOD TODAY. The first cut said "a food bank can give you
+// food today", which we cannot know: pantries keep their own hours, some run on
+// weekly distributions, some take appointments. Telling someone "today" and
+// having them arrive at a locked door is worse than telling them the truth —
+// free groceries, no application, and 211 knows the hours. Same failure mode as
+// the seven-day claim above, in the other direction (owner, 2026-09-13).
 
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 
@@ -39,44 +44,44 @@ export const FOODNOW_T: Record<AnswerLang, FoodNowCopy> = {
     label: "Need food this week?",
     labelShort: "Food this week?",
     title: "Need food this week?",
-    body: "A food bank can give you food today, and 211 will find one near you. Neither asks you to qualify first.",
+    body: "Food pantries give out free groceries, with no application and no qualifying. 211 can find the nearest one and tell you when it is open.",
     bank: "Find a food bank",
     call211: "Call or visit 211",
     expedited:
-      "SNAP can be quick too. If you have very little income or cash on hand, expedited service puts benefits on your card within 7 days of applying, and often sooner. Say so when you file.",
+      "SNAP itself can be fast. With almost no income or cash on hand, expedited service puts benefits on your card within 7 days. Say so when you file.",
     close: "Close",
   },
   es: {
     label: "¿Necesitas comida esta semana?",
     labelShort: "¿Comida esta semana?",
     title: "¿Necesitas comida esta semana?",
-    body: "Un banco de alimentos puede darte comida hoy, y el 211 te encuentra uno cerca. Ninguno te pide calificar primero.",
+    body: "Las despensas de alimentos reparten comida gratis, sin solicitud y sin calificar. El 211 puede encontrar la más cercana y decirte a qué hora abre.",
     bank: "Buscar un banco de alimentos",
     call211: "Llamar o visitar el 211",
     expedited:
-      "SNAP también puede ser rápido. Si tienes muy pocos ingresos o poco efectivo disponible, el servicio acelerado pone los beneficios en tu tarjeta dentro de los 7 días de solicitar, y muchas veces antes. Dilo cuando presentes la solicitud.",
+      "SNAP también puede ser rápido. Con casi ningún ingreso ni efectivo disponible, el servicio acelerado pone los beneficios en tu tarjeta dentro de los 7 días. Dilo cuando presentes la solicitud.",
     close: "Cerrar",
   },
   vi: {
     label: "Cần thực phẩm tuần này?",
     labelShort: "Thực phẩm tuần này?",
     title: "Cần thực phẩm tuần này?",
-    body: "Ngân hàng thực phẩm có thể cho bạn thực phẩm ngay hôm nay, và tổng đài 211 sẽ tìm giúp bạn một nơi gần nhà. Cả hai đều không yêu cầu bạn phải đủ điều kiện trước.",
+    body: "Các điểm phát thực phẩm cho thực phẩm miễn phí, không cần nộp đơn và không cần đủ điều kiện. Tổng đài 211 có thể tìm nơi gần nhất và cho bạn biết giờ mở cửa.",
     bank: "Tìm ngân hàng thực phẩm",
     call211: "Gọi hoặc truy cập 211",
     expedited:
-      "SNAP cũng có thể nhanh. Nếu bạn có rất ít thu nhập hoặc rất ít tiền mặt, dịch vụ xét duyệt nhanh sẽ đưa trợ cấp vào thẻ của bạn trong vòng 7 ngày kể từ khi nộp đơn, và thường là sớm hơn. Hãy nói rõ điều đó khi nộp đơn.",
+      "Bản thân SNAP cũng có thể nhanh. Nếu gần như không có thu nhập hay tiền mặt, dịch vụ xét duyệt nhanh đưa trợ cấp vào thẻ trong vòng 7 ngày. Hãy nói rõ khi nộp đơn.",
     close: "Đóng",
   },
   zh: {
     label: "这周需要食物吗？",
     labelShort: "这周需要食物？",
     title: "这周需要食物吗？",
-    body: "食物银行今天就能给您食物，211 可以帮您找到附近的一家。两者都不要求您先符合资格。",
+    body: "食物发放点免费发放食物，不用申请，也不用先符合资格。211 可以帮您找到最近的一家，并告诉您开放时间。",
     bank: "寻找食物银行",
     call211: "致电或访问 211",
     expedited:
-      "SNAP 也可以很快。如果您的收入极低或手头现金很少，加急服务会在您申请后 7 天内把福利存入您的卡，通常更快。申请时请说明这一点。",
+      "SNAP 本身也可以很快。如果您几乎没有收入或现金，加急服务会在 7 天内把福利存入您的卡。申请时请说明这一点。",
     close: "关闭",
   },
 };
