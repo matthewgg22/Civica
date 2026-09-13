@@ -953,3 +953,23 @@ def test_headline_reconciled_to_usda_participation_rate():
         assert "How we count unmet need" in html
         # the inflated modeled count must not leak onto the page as the headline
         assert generate.fmt_int(round(need["model_unenrolled"])) not in html
+
+
+def test_bank_specific_block_renders_only_when_present():
+    """The optional per-bank 'Why <bank> specifically' callout renders only for
+    banks that carry a bank_specific_note (ABB), and never leaks onto banks
+    without one — so the generator degrades gracefully across the roster."""
+    banks, assumptions, org = generate.load_inputs()
+    tpl = (TOOL_ROOT / "templates/artifact.html").read_text()
+    meta = states.state_meta("CA")
+    metrics = score.load_county_metrics(meta["metrics"])
+    abb_v, _ = generate.build_values(banks["american_business_bank"], assumptions,
+                                     org, metrics, meta)
+    abb = generate.render(tpl, abb_v)
+    assert "Why American Business Bank specifically" in abb
+    assert "almost no retail footprint" in abb and "investment test" in abb
+    # bank_irvine carries no note -> no per-bank block, and the label never leaks
+    irv_v, _ = generate.build_values(banks["bank_irvine"], assumptions, org,
+                                     metrics, meta)
+    irv = generate.render(tpl, irv_v)
+    assert "specifically.</b>" not in irv
