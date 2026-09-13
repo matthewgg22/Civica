@@ -447,7 +447,7 @@ const en: PageCopy = {
   retailersNote: "Store counts published by USDA, as of {date}.",
   foodNowLabel: "Need food this week?",
   foodNowBody:
-    "A food bank can help today, and 211 will find one near you. SNAP can be quick too: with very little income or cash on hand, expedited service puts benefits on your card within 7 days of applying.",
+    "Food banks give out groceries at no cost, and 211 is a free line for food help near you. SNAP can be fast too: with almost no income or cash, the rules give the agency 7 days.",
   foodNowBank: "Find a food bank",
   foodNow211: "Call or visit 211",
   fearsH2: "The questions people actually ask first",
@@ -751,7 +751,7 @@ const es: PageCopy = {
   retailersNote: "Conteo de tiendas publicado por el USDA, al {date}.",
   foodNowLabel: "\u00bfNecesitas comida esta semana?",
   foodNowBody:
-    "Un banco de alimentos puede ayudarte hoy, y el 211 te encuentra uno cerca. SNAP tambi\u00e9n puede ser r\u00e1pido: con muy pocos ingresos o poco efectivo disponible, el servicio acelerado pone los beneficios en tu tarjeta dentro de los 7 d\u00edas de solicitar.",
+    "Los bancos de alimentos reparten comida sin costo, y el 211 es una l\u00ednea gratuita de ayuda alimentaria cerca de ti. SNAP tambi\u00e9n puede ser r\u00e1pido: con casi ning\u00fan ingreso ni efectivo, las reglas le dan 7 d\u00edas a la agencia.",
   foodNowBank: "Buscar un banco de alimentos",
   foodNow211: "Llama o visita el 211",
   fearsH2: "Por qu\u00e9 la gente no solicita",
@@ -1040,7 +1040,7 @@ const vi: PageCopy = {
   retailersNote: "Số liệu cửa hàng do Bộ Nông nghiệp Hoa Kỳ công bố, tính đến {date}.",
   foodNowLabel: "Cần thực phẩm ngay tuần này?",
   foodNowBody:
-    "Ngân hàng thực phẩm có thể giúp bạn ngay hôm nay, và tổng đài 211 sẽ tìm giúp bạn một nơi gần nhà. SNAP cũng có thể nhanh: nếu thu nhập rất thấp hoặc rất ít tiền mặt, dịch vụ xét duyệt nhanh đưa trợ cấp vào thẻ của bạn trong vòng 7 ngày kể từ khi nộp đơn.",
+    "Ngân hàng thực phẩm phát thực phẩm miễn phí, và tổng đài 211 là đường dây miễn phí hỗ trợ thực phẩm gần nhà. SNAP cũng có thể nhanh: gần như không có thu nhập hay tiền mặt thì quy định cho cơ quan 7 ngày.",
   foodNowBank: "Tìm ngân hàng thực phẩm",
   foodNow211: "Gọi hoặc truy cập 211",
   fearsH2: "Vì sao người ta không nộp đơn",
@@ -1330,7 +1330,7 @@ const zh: PageCopy = {
   retailersNote: "商店数量由美国农业部公布，截至 {date}。",
   foodNowLabel: "这周就需要食物？",
   foodNowBody:
-    "食物银行今天就能帮忙，211 可以帮您找到附近的一家。SNAP 也可以很快：如果您的收入极低或手头现金很少，加急服务会在申请后 7 天内把福利存入您的卡。",
+    "食物银行免费发放食物，211 是附近食物援助的免费热线。SNAP 也可以很快：几乎没有收入或现金时，规定给机构 7 天时间。",
   foodNowBank: "查找食物银行",
   foodNow211: "致电或访问 211",
   fearsH2: "人们不申请的原因",
