@@ -120,7 +120,8 @@ def build_county_breakdown(covered_counties, metrics, cap=6):
 
 
 def build_values(bank, assumptions, org, metrics, meta):
-    need = score.bank_need(bank["aa_counties"], metrics, assumptions)
+    need = score.bank_need(bank["aa_counties"], metrics, assumptions,
+                           reconcile_rate=meta.get("usda_participation_rate"))
     fun = report.funnel(bank["ask_usd"], assumptions)
     aa_label = (f"{bank['aa_counties'][0]} County" if len(bank["aa_counties"]) == 1
                 else "assessment-area")
@@ -197,6 +198,32 @@ def build_values(bank, assumptions, org, metrics, meta):
     # Regulator-specific CRA rule citation for the community-reinvestment box.
     cra_part = cra_reg_part(bank["regulator"])
     cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
+    # Reconciliation note (page-1 methods): when we report the eligible-but-
+    # unenrolled headline at USDA's published participation rate (see
+    # score.bank_need + states.usda_participation_rate), disclose exactly that,
+    # so a reader who checks the USDA figure finds we anticipated it. CA also
+    # carries the post-H.R.1 direction (LAO Feb-2026); other states omit the
+    # state-specific haircut to avoid an unsourced number. Empty when a state
+    # has no published rate wired (falls back to the raw model figure).
+    if need.get("reconciled"):
+        if state == "CA":
+            recon_note = (
+                "<strong>How we count unmet need:</strong> our eligible-population "
+                "estimate matches USDA's independent California figure within ~1%; "
+                "we apply USDA's published participation rate (81%, FY2022), not "
+                "the ACS model's raw non-enrollment rate, which survey "
+                "under-reporting of SNAP receipt inflates. Federal H.R.1 changes "
+                "effective 2026 (noncitizen, ABAWD) shrink this pool further "
+                "(California LAO, Feb 2026). &nbsp;·&nbsp; ")
+        else:
+            recon_note = (
+                "<strong>How we count unmet need:</strong> we apply USDA's "
+                "published state participation rate (81%, FY2022), not the "
+                "survey-weighted non-enrollment count, which over-reads unmet "
+                "need because ACS respondents under-report SNAP receipt. "
+                "&nbsp;·&nbsp; ")
+    else:
+        recon_note = ""
     v = {
         "why_this_bank": why_this_bank,
         "credibility_line": credibility_line,
@@ -219,7 +246,8 @@ def build_values(bank, assumptions, org, metrics, meta):
                              + bank.get("aa_note", "")),
         "aa_label": aa_label,
         "prepared_date": datetime.date.today().strftime("%B %Y"),
-        "headline_unenrolled": fmt_int(round(need["unenrolled"], -3)),
+        "headline_unenrolled": fmt_int(round(need["unenrolled"])),
+        "recon_note": recon_note,
         "benefit_range": f"{fmt_musd(need['benefit_low_usd'])}–{fmt_musd(need['benefit_high_usd'])}",
         "ratio_line": ratio_line,
         "map_caption": map_caption,
