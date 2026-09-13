@@ -201,15 +201,48 @@ def build_values(bank, assumptions, org, metrics, meta):
     # the HTML. State-specific so the FL banks show Florida/DCF/SNAP, not CA.
     _shot = "chat-shot-ca.png" if state == "CA" else "chat-shot-fl.png"
     chat_shot_src = (TOOL_ROOT / "assets" / _shot).as_uri()
-    # Leader-line target dots (in 0-100 SVG space over the screenshot). The
-    # answer + citation sit at different heights per state because the answers
-    # differ in length, so the target y-values are state-specific; the callout
-    # labels themselves are fixed in the template.
-    _ay, _cy = (53, 84) if state == "CA" else (50, 69)   # answer y, citation y
-    chat_leaders = (
-        f'<polyline points="26.5,41 22,47" class="ld"/><circle cx="22" cy="47" r="0.7" class="dot"/>'
-        f'<polyline points="73,49 52,{_ay}" class="ld"/><circle cx="52" cy="{_ay}" r="0.7" class="dot"/>'
-        f'<polyline points="73,71 43,{_cy}" class="ld"/><circle cx="43" cy="{_cy}" r="0.7" class="dot"/>')
+    # Page-3 annotated screenshot. CA carries a tightly-cropped capture (aspect
+    # 2760x1545) with leader-line callouts on the state selector, the live
+    # estimate, the building outline, and the cited answer. FL still uses its
+    # earlier full-height capture without callouts (couldn't recapture — the live
+    # product's daily question cap was reached); both render correctly because
+    # the aspect ratio and the overlay are state-specific.
+    if state == "CA":
+        chat_aspect = "2760/2174"
+        # Callouts over the cropped CA screenshot (2760x2174). Coordinates are
+        # percentages of the image box. Lines are drawn in a
+        # preserveAspectRatio="none" SVG (so endpoints map straight to the %
+        # grid), but the target dots and the label cards are HTML — a circle in
+        # that stretched SVG would render as an oval, so the round dots are
+        # fixed-pixel HTML instead.
+        # (tx,ty) target on image · (lx,lt,lw) label card · (ax,ay) line meets card
+        _cos = [
+            ((23.5, 1.5), (27, 1, 20), (27, 3.5),
+             "State-aware", "Localized to California — answers from CDSS."),
+            ((14, 44), (27, 9, 21), (27, 12.5),
+             "A live application outline", "Household, income and rent fill in as they talk."),
+            ((70, 9), (60, 0.5, 23), (70, 6.5),
+             "A messy, real question", "The kind a form can’t take — mixed-status, gig income, no W-2."),
+            ((73, 37), (77, 29.5, 22), (77, 34),
+             "Answered, with the rule cited", "Plain language, confidence stated, governing rule linked (CDSS ACIN I-46-25)."),
+            ((14, 96.5), (21, 91.5, 21), (21, 94),
+             "Four languages", "English, Spanish, Vietnamese, Chinese."),
+        ]
+        _leaders = "".join(
+            f'<polyline points="{ax},{ay} {tx},{ty}" class="ld"/>'
+            for (tx, ty), _lab, (ax, ay), _t, _b in _cos)
+        _dots = "".join(
+            f'<div class="cdot" style="left:{tx}%;top:{ty}%"></div>'
+            for (tx, ty), _lab, _an, _t, _b in _cos)
+        _labels = "".join(
+            f'<div class="co" style="left:{lx}%;top:{lt}%;width:{lw}%"><b>{t}</b>{bdy}</div>'
+            for _tg, (lx, lt, lw), _an, t, bdy in _cos)
+        chat_overlay = (f'<svg class="leaders" viewBox="0 0 100 100" '
+                        f'preserveAspectRatio="none" aria-hidden="true">{_leaders}</svg>'
+                        f'{_dots}{_labels}')
+    else:
+        chat_aspect = "2760/2360"
+        chat_overlay = ""
     # Regulator-specific CRA rule citation for the community-reinvestment box.
     cra_part = cra_reg_part(bank["regulator"])
     cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
@@ -268,7 +301,8 @@ def build_values(bank, assumptions, org, metrics, meta):
         # asset, so the generator stays stdlib-only. See assets/qr-chat.svg.
         "qr_chat_svg": (TOOL_ROOT / "assets/qr-chat.svg").read_text(),
         "chat_shot_src": chat_shot_src,
-        "chat_leaders": chat_leaders,
+        "chat_aspect": chat_aspect,
+        "chat_overlay": chat_overlay,
         # Page-3 (platform evidence) state-awareness: the demo and the ME-audit
         # provenance are state-specific, so the CalFresh/California framing must
         # not render for the FL banks. The mixed-status citations (7 CFR) are

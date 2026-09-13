@@ -176,15 +176,15 @@
   /* Page 3 — the platform, as built (annotated real screenshot) */
   .platform-hero { margin-top:8px; }
   .chatshot { position:relative; }
-  .chatshot > img { width:100%; display:block; border:1px solid var(--rule); border-radius:6px; aspect-ratio:2760/2360; object-fit:cover; }
-  .chatshot .leaders { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
-  .chatshot .leaders .ld { fill:none; stroke:var(--accent-deep); stroke-width:1; vector-effect:non-scaling-stroke; }
-  .chatshot .leaders .dot { fill:var(--accent); stroke:#fff; stroke-width:0.3; }
-  .chatshot .co { position:absolute; font-size:7.4pt; line-height:1.3; color:var(--body); }
-  .chatshot .co b { display:block; font-family:'Newsreader',serif; font-weight:600; font-size:8.4pt; color:var(--accent-deep); margin-bottom:1px; }
-  .co-l1 { left:25.5%; top:29%; width:21%; }
-  .co-r1 { left:73%; top:41%; width:26%; }
-  .co-r2 { left:73%; top:63%; width:26%; }
+  .chatshot > img { width:100%; height:100%; display:block; border:1px solid var(--rule); border-radius:6px; object-fit:cover; }
+  .chatshot .leaders { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
+  .chatshot .leaders .ld { fill:none; stroke:var(--accent-deep); stroke-width:1.5; stroke-linecap:round; vector-effect:non-scaling-stroke; opacity:.9; }
+  /* Round target dots as HTML (fixed px), so the stretched SVG can't oval them. */
+  .chatshot .cdot { position:absolute; width:8px; height:8px; border-radius:50%; background:var(--accent); border:1.5px solid #fff; box-shadow:0 0 0 .5px var(--accent-deep); transform:translate(-50%,-50%); }
+  .chatshot .co { position:absolute; font-size:7.2pt; line-height:1.28; color:var(--body);
+    background:rgba(252,250,246,.94); border:0.5px solid var(--accent); border-left:2.5px solid var(--accent-deep);
+    border-radius:3px; padding:3px 6px 3.5px; box-shadow:0 1px 3px rgba(35,34,32,.10); }
+  .chatshot .co b { display:block; font-family:'Newsreader',serif; font-weight:600; font-size:8.4pt; color:var(--accent-deep); margin-bottom:1.5px; }
   .chatshot-cap { font-size:7pt; color:var(--muted); margin-top:5px; text-align:center; }
   .evidence-foot { display:flex; gap:.3in; margin-top:8px; border-top:2px solid var(--accent); padding-top:9px; align-items:flex-start; }
   .ev-text { flex:1.55; min-width:0; }
@@ -278,14 +278,11 @@
   <h2 class="pagehead" style="margin-top:6px;">The platform, as built</h2>
   <div class="thesis" style="margin-top:8px;">The program on the previous page is running today. This is the system that delivers it &mdash; a rules-grounded assistant, not a general chatbot.</div>
   <div class="platform-hero">
-    <div class="chatshot">
-      <img src="[[chat_shot_src]]" alt="A real Demeter conversation in the live interface: a mixed-status SNAP question answered with the governing federal rule cited, showing the state selector, the live application outline, and the language options."/>
-      <svg class="leaders" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">[[chat_leaders]]</svg>
-      <div class="co co-l1"><b>A live application outline</b>Household, income, and rent fill in as they talk; it flags what's still needed.</div>
-      <div class="co co-r1"><b>A messy question, answered</b>The kind a form can't handle &mdash; eligibility, gig income, expenses &mdash; in plain language.</div>
-      <div class="co co-r2"><b>Cited &amp; checkable</b>Every answer states its confidence and links the governing rule to verify.</div>
+    <div class="chatshot" style="aspect-ratio:[[chat_aspect]];">
+      <img src="[[chat_shot_src]]" alt="A real Demeter conversation in the live interface: a mixed-status SNAP question answered with the governing federal rule cited, showing the state selector and the live application outline building as the applicant talks."/>
+      [[chat_overlay]]
     </div>
-    <div class="chatshot-cap">A real conversation from the live assistant &mdash; the interface an applicant uses: state selector (top left), a live application outline, and four languages (bottom left).</div>
+    <div class="chatshot-cap">A real conversation in the live assistant &mdash; the interface an applicant actually uses, unretouched.</div>
   </div>
   <div class="evidence-foot">
     <div class="ev-text">
