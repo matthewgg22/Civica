@@ -145,7 +145,7 @@ export function DemeterWelcome({
             spare, and the divider has nothing left to divide. */}
         <div className="dmwel__marks">
           <span className="dmwel__brand">
-            <DemeterMark size={56} />
+            <DemeterMark size={72} />
             <span className="dmwel__brandword" translate="no">
               Demeter <em>AI</em>
             </span>
@@ -162,10 +162,13 @@ export function DemeterWelcome({
         <h2 className="dmwel__title" id="dmwel-title">
           {copy.title}
         </h2>
-        <p className="dmwel__what">{copy.whatIsSnap}</p>
-        {/* ONE POINT PER LINE. This was two dense paragraphs and the reader had
-            to mine both for the fact that matters. */}
-        <p className="dmwel__body">{copy.body}</p>
+        {/* ONE PARAGRAPH (owner, 2026-09-13). What SNAP is and what this does
+            with it are a single thought, and splitting them put a paragraph
+            break in the middle of it. The caveat stays separate because it is
+            a different kind of sentence. */}
+        <p className="dmwel__what">
+          {copy.whatIsSnap} {copy.body}
+        </p>
         <p className="dmwel__body dmwel__body--quiet">{copy.bodyTwo}</p>
 
         {/* SIGN IN LEADS, CONTINUING IS THE QUIET ONE (owner, 2026-08-26).

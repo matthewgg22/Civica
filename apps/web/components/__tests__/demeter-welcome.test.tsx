@@ -337,8 +337,17 @@ describe("the welcome card's second pass", () => {
     }
   });
 
-  it("sets the card's prose left while the title stays centred", () => {
-    expect(rule(".dmwel__what,\n.dmwel__body")).toMatch(/text-align:\s*left/);
+  it("sets the card's prose centred, and the fine print left", () => {
+    // UPDATED 2026-09-13. This asserted `left`, correctly, while the card
+    // carried USDA's 39-word definition: five centred lines each start at a
+    // different x and the reader hunts the left edge on every one. The copy is
+    // two short paragraphs now and the owner centred them.
+    //
+    // The notice keeps its own alignment BECAUSE the original objection still
+    // applies to it — it is the one block long enough to suffer. Asserting
+    // both here is what stops a later pass centring the whole card by reflex.
+    expect(rule(".dmwel__what,\n.dmwel__body")).toMatch(/text-align:\s*center/);
+    expect(rule(".dmwel__mark")).toMatch(/text-align:\s*left/);
     expect(rule(".dmwel__title")).not.toMatch(/text-align/);
   });
 
