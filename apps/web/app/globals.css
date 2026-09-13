@@ -9493,11 +9493,14 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    with the divider gone, wrapping now just stacks them. */
 .dmwel__marks {
   display: flex; align-items: center; justify-content: center;
-  /* TIGHTER, AND OPTICALLY MATCHED (owner, 2026-09-13). At 1.1rem the two
-     marks read as two separate things with a gap between them rather than as
-     a pairing, and the SNAP mark at 124px stood visibly taller than the
-     Demeter lockup it sat beside. */
-  gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem;
+  /* AIR BETWEEN THEM, ON PURPOSE (owner, 2026-09-13, superseding the tighter
+     gap set earlier the same day — that went the wrong way).
+     These are two marks with two different owners: ours, and the government
+     program's. At 0.8rem they crowded into what read as a single combined
+     lockup, which is both worse spacing and the wrong impression to give of a
+     mark we are permitted to reproduce but not to merge with our own. The gap
+     now reads as "these are two things", which is what they are. */
+  gap: 2rem; flex-wrap: wrap; margin-bottom: 1rem;
 }
 .dmwel__brand {
   display: inline-flex; flex-direction: column; align-items: center;
@@ -9610,7 +9613,7 @@ a.dmwel__cta { text-decoration: none; }
      and the X — absolutely positioned in that corner — sat ON the government's
      mark. Obscuring the logo is the one thing the permission to use it does
      not allow, so the row starts below the button here. */
-  .dmwel__marks { gap: 0.8rem; margin-top: 0.9rem; }
+  .dmwel__marks { gap: 1.25rem; margin-top: 0.9rem; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
