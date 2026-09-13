@@ -256,17 +256,12 @@ def build_values(bank, assumptions, org, metrics, meta):
         v[f"{s}_approved"] = fmt_int(f["approved_households"])
         v[f"{s}_benefit"] = fmt_musd(f["annual_benefit_usd"]) + "/yr"
         v[f"{s}_cps"] = f"${bank['ask_usd'] / f['apps_submitted']:,.0f}"
-        # Aggregate downstream credit-card debt reduced = approved households ×
-        # the $2,436 per-household 3-year research effect (Homonoff et al.).
-        # Labelled on page 3 as research-based, not measured by this program.
-        # Compute the aggregates from the ROUNDED approved count shown in the
-        # table so the arithmetic checks out (approved × per-household effect).
-        _appr_shown = round(f["approved_households"])
-        _debt = _appr_shown * 2436
-        v[f"{s}_debt"] = f"${_debt/1e6:.1f}M" if _debt >= 1e6 else f"${_debt/1e3:.0f}K"
-        # Cumulative credit-score points = approved households × the +17 per-household
-        # research effect (illustrative; the per-household figure is in the label).
-        v[f"{s}_cspts"] = fmt_int(_appr_shown * 17)
+        # Downstream research effects (debt, delinquency, credit score) are shown
+        # ONLY as per-household figures in page-1 prose, labelled as published
+        # research measured on other people. They are deliberately NOT aggregated
+        # into the projected table: multiplying a per-household effect by a
+        # projected approval count stacks assumptions, and credit-score points in
+        # particular do not sum across households.
     return v, need
 
 
