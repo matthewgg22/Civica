@@ -54,7 +54,7 @@
   table.core td.v small { font-family:'Be Vietnam Pro',sans-serif; font-size:8pt; font-weight:500; color:var(--muted); display:block; margin-top:1px; }
   table.core tr.ask td { border-top:2px solid var(--accent); padding-top:9px; }
   table.core tr.ask td.k { color:var(--accent-deep); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:8.4pt; white-space:normal; padding-right:10px; }
-  table.core tr.ask td.v { color:var(--accent-deep); }
+  table.core tr.ask td.v { color:var(--accent-deep); font-size:18.5pt; }
   /* per-county unmet-need breakdown (replaces the flat AA choropleth):
      county + count on one line, a full-width proportional bar beneath. */
   .brk-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:8px; }
@@ -95,7 +95,7 @@
   .aa-context { border-top:1.5px solid var(--accent); margin-top:8px; padding-top:7px; }
   /* "What SNAP is" — plain explainer, its own section above the research box */
   .why { border-top:1.5px solid var(--accent); margin-top:9px; padding-top:8px; }
-  .why-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:5px; }
+  .why-cap { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:5px; }
   .why p { font-family:'Newsreader',serif; font-size:11pt; line-height:1.4; color:var(--ink); max-width:6.7in; }
 
   /* ---------- Page 2 — program + ask ---------- */
@@ -131,7 +131,7 @@
   .close .who { font-size:9.5pt; color:var(--body); text-align:right; white-space:nowrap; }
   .brightline { font-size:8pt; color:var(--muted); max-width:6.6in; }
   .crafile { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:7px 14px; margin-top:6px; }
-  .crafile-cap { font-size:8pt; letter-spacing:.1em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:7px; }
+  .crafile-cap { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:7px; }
   .cra-dl { width:100%; border-collapse:collapse; }
   .cra-dl td { font-size:8.4pt; line-height:1.4; color:var(--body); padding:4px 0; vertical-align:middle; border-bottom:1px solid var(--rule); }
   .cra-dl tr:last-child td { border-bottom:none; }
@@ -283,7 +283,6 @@
         <li><strong>What we ask afterward:</strong> an opt-in 30/60-day check-in; we disclose the response rate and report outcomes only for those who respond, without extrapolating.</li>
         <li><strong>What we check ourselves against:</strong> the state's published county caseload for direction rather than attribution, with holdout testing at multi-county scale.</li>
       </ul>
-      <div class="disclose"><strong>Reporting.</strong> Payment is never tied to enrollment counts, and you receive an auditable record of activity in your assessment area.</div>
     </div>
     <div class="col">
       <h3>Methodology &amp; disclosures</h3>
@@ -299,6 +298,7 @@
       </ul>
     </div>
   </div>
+  <div class="disclose"><strong>Reporting.</strong> Payment is never tied to enrollment counts, and you receive an auditable record of activity in your assessment area.</div>
   <div class="pagefoot">[[org_name]] · [[status_line]] · Contact: [[contact_name]], [[contact_email]][[contact_phone_line]] · Determination letter and full methodology available on request. All page-3 figures are projections labeled as such; none represent measured performance.</div>
   <div class="pagenum">3 / 3</div>
 </div>
