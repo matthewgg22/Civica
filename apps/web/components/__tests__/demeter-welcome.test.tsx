@@ -194,10 +194,19 @@ describe("when it shows", () => {
     // the card won — leaving a keyboard reader inside a dialog while the
     // effect believed it had focused the box behind it. Now the effect stands
     // down while the card is up and takes over when it closes.
+    //
+    // UPDATED 2026-09-13: this asserted tagName === "BUTTON", because focus
+    // used to land on the dismiss button. It lands on the dialog itself now —
+    // a focused button painted a ring that read as a second bordered control
+    // under the primary (see demeter-welcome-focus.test.tsx). The regression
+    // this test exists for is unchanged and still checked: focus is INSIDE the
+    // card rather than on the composer behind it.
     const c = chat();
-    expect(document.activeElement?.tagName, "the card holds focus").toBe("BUTTON");
-    // "Sign in" is the primary and is a LINK; the dismiss is the quiet button
-    // beneath it, and it is the one that holds focus.
+    const card = c.querySelector(".dmwel__card")!;
+    expect(
+      card === document.activeElement || card.contains(document.activeElement),
+      "the card holds focus, not the composer behind it",
+    ).toBe(true);
     fireEvent.click(c.querySelector(".dmwel__secondary")!);
     expect(c.querySelector(".dmwel")).toBeNull();
   });
