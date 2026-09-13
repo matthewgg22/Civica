@@ -336,7 +336,9 @@ def test_cra_citation_is_regulator_specific():
                                  states.state_meta("CA"))[0]
     fdic_pager = generate.render(pager, fdic)
     assert "12 CFR Part 345 (FDIC)" in fdic_pager
-    assert "not on the lending test" in fdic_pager
+    # names the test a grant is actually assessed under, and excludes the lending test
+    assert "investment test" in fdic_pager
+    assert "not the lending test" in fdic_pager
     # OCC bank (city_national): Part 25 in the pager and 25.12(g)(2) in the memo.
     occ = generate.build_values(banks["city_national"], assumptions, org, metrics,
                                 states.state_meta("CA"))[0]
