@@ -122,7 +122,8 @@ export default async function ScreenAskPage({
             food emergency, and the tool this whole page leads to should not
             follow a callout aimed at the ones who are. */}
         <SnapAskCta state={initialState} />
-        {/* Still high, and not behind a click: SNAP takes at least seven days
+        {/* Still high, and not behind a click: even expedited SNAP can take up
+            to seven days
             even when it is urgent. */}
         <SnapFoodNow />
         <SnapDetail states={VERIFIED_STATES} />
