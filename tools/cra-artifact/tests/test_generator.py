@@ -996,7 +996,7 @@ def test_platform_evidence_page_present_and_state_aware():
         score.load_county_metrics(meta["metrics"]), meta)[0])
     assert "The platform, as built" in ca
     assert "chat-shot-ca.png" in ca                             # the real CA screenshot
-    assert "Answers the second question" in ca                  # a leader-line callout
+    assert "A live application outline" in ca                   # a leader-line callout
     assert "qrline" in ca                                       # the live-link QR
     assert "no eligibility determination" in ca                 # the rails
     assert "Harvard Innovation Labs" in ca                      # affiliation line

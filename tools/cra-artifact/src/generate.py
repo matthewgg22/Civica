@@ -201,6 +201,15 @@ def build_values(bank, assumptions, org, metrics, meta):
     # the HTML. State-specific so the FL banks show Florida/DCF/SNAP, not CA.
     _shot = "chat-shot-ca.png" if state == "CA" else "chat-shot-fl.png"
     chat_shot_src = (TOOL_ROOT / "assets" / _shot).as_uri()
+    # Leader-line target dots (in 0-100 SVG space over the screenshot). The
+    # answer + citation sit at different heights per state because the answers
+    # differ in length, so the target y-values are state-specific; the callout
+    # labels themselves are fixed in the template.
+    _ay, _cy = (53, 84) if state == "CA" else (50, 69)   # answer y, citation y
+    chat_leaders = (
+        f'<polyline points="26.5,41 22,47" class="ld"/><circle cx="22" cy="47" r="0.7" class="dot"/>'
+        f'<polyline points="73,49 52,{_ay}" class="ld"/><circle cx="52" cy="{_ay}" r="0.7" class="dot"/>'
+        f'<polyline points="73,71 43,{_cy}" class="ld"/><circle cx="43" cy="{_cy}" r="0.7" class="dot"/>')
     # Regulator-specific CRA rule citation for the community-reinvestment box.
     cra_part = cra_reg_part(bank["regulator"])
     cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
@@ -259,14 +268,14 @@ def build_values(bank, assumptions, org, metrics, meta):
         # asset, so the generator stays stdlib-only. See assets/qr-chat.svg.
         "qr_chat_svg": (TOOL_ROOT / "assets/qr-chat.svg").read_text(),
         "chat_shot_src": chat_shot_src,
+        "chat_leaders": chat_leaders,
         # Page-3 (platform evidence) state-awareness: the demo and the ME-audit
         # provenance are state-specific, so the CalFresh/California framing must
         # not render for the FL banks. The mixed-status citations (7 CFR) are
         # federal and valid in every state.
         "state_name": pumamap.STATE_NAMES.get(state, "your state"),
         "me_audit_clause": (
-            "; the California pack is informed by an audit of 38 county "
-            "Management Evaluation reports obtained by public-records request"
+            "; the CA pack built from an audit of 38 county ME reports"
             if state == "CA" else ""),
         "benefit_range": f"{fmt_musd(need['benefit_low_usd'])}–{fmt_musd(need['benefit_high_usd'])}",
         "ratio_line": ratio_line,
