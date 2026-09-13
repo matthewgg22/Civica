@@ -148,16 +148,16 @@
   .watermark span { font-family:'Be Vietnam Pro',sans-serif; font-weight:600; font-size:52pt; letter-spacing:.18em; color:var(--accent); opacity:.07; transform:rotate(-24deg); }
   table.report { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
   table.report caption { text-align:left; font-size:8.4pt; color:var(--muted); margin-bottom:6px; caption-side:top; line-height:1.4; text-wrap:pretty; }
-  .funnel-note { font-size:8.8pt; line-height:1.45; color:var(--ink); font-weight:500; margin-top:8px; }
+  .funnel-note { font-size:8.8pt; line-height:1.4; color:var(--ink); font-weight:500; margin-top:5px; }
   table.report th { background:var(--tint); border-bottom:2px solid var(--rule-strong); font-size:8.4pt; font-weight:600; text-align:right; padding:5px 9px; color:var(--ink); }
   table.report th:first-child { text-align:left; }
-  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:3px 9px; }
+  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:2px 9px; }
   table.report td:first-child { text-align:left; color:var(--body); }
   table.report tbody tr:not(.band) td:first-child { padding-left:20px; }
-  table.report tr.band td { background:var(--tint); font-size:7.2pt; letter-spacing:.07em; text-transform:uppercase; text-align:left; color:var(--muted); font-weight:600; padding:3.4px 9px; }
+  table.report tr.band td { background:var(--tint); font-size:7.2pt; letter-spacing:.07em; text-transform:uppercase; text-align:left; color:var(--muted); font-weight:600; padding:2.4px 9px; }
   table.report tr.key td { font-weight:600; color:var(--ink); }
   .repnote { font-size:7.8pt; color:var(--body); margin-top:5px; line-height:1.4; max-width:6.8in; }
-  .appx { display:flex; gap:.34in; margin-top:11px; }
+  .appx { display:flex; gap:.34in; margin-top:8px; }
   .appx .col { flex:1; }
   .appx h3 { font-family:'Newsreader',serif; font-size:11pt; font-weight:600; color:var(--ink); margin:0 0 3px; }
   .appx h3.n2 { margin-top:5px; }
@@ -165,11 +165,11 @@
      single word (the "one-word bleed"); the renderer rebalances the tail. */
   .appx p, .appx li { font-size:8.1pt; line-height:1.45; color:var(--body); text-wrap:pretty; }
   .appx ul { list-style:none; margin-top:3px; }
-  .appx li { margin-top:2.5px; padding-left:10px; position:relative; }
+  .appx li { margin-top:2px; padding-left:10px; position:relative; }
   .appx li::before { content:""; position:absolute; left:0; top:.55em; width:4px; height:4px; background:var(--accent); border-radius:50%; }
   /* Plain framed callout (matches .crafile), not a left-accent card — the
      colored-left-rail card is a DEMETER-DESIGN AI-slop pattern. */
-  .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:7px 11px; font-size:8.1pt; line-height:1.4; color:var(--body); margin-top:7px; text-wrap:pretty; }
+  .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:6px 11px; font-size:8.1pt; line-height:1.38; color:var(--body); margin-top:5px; text-wrap:pretty; }
   .disclose strong { color:var(--ink); }
 </style></head><body>
 
@@ -270,12 +270,15 @@
         <tr class="band"><td colspan="3">Outcomes · via consented follow-up panel, response rate disclosed</td></tr>
         <tr><td>Est. approved households</td><td>[[low_approved]]</td><td>[[mid_approved]]</td></tr>
         <tr class="key"><td>Est. annual benefits unlocked</td><td>[[low_benefit]]</td><td>[[mid_benefit]]</td></tr>
+        <tr class="band"><td colspan="3">Downstream household effects · published research, not measured here</td></tr>
+        <tr><td>Total credit-card debt reduced (~3 yrs)</td><td>[[low_debt]]</td><td>[[mid_debt]]</td></tr>
+        <tr><td>Higher credit score, per approved household</td><td>+17 pts</td><td>+17 pts</td></tr>
         <tr class="band"><td colspan="3">Efficiency</td></tr>
         <tr><td>Cost per submitted application</td><td>[[low_cps]]</td><td>[[mid_cps]]</td></tr>
       </tbody>
     </table>
     <div class="funnel-note">[[funnel_note]]</div>
-    <div class="repnote"><strong>Downstream household effects</strong> (published SNAP research, not measured here): ~$2,436 less credit-card debt, 10.1 pts lower delinquency, +17 credit-score points per approved household (~3 years). A funded report replaces projections with measured values, reporting <em>submitted</em> applications as the primary outcome. Assumption set: version [[assumptions_version]].</div>
+    <div class="repnote">Downstream effects apply published SNAP research (Homonoff, Lee &amp; Meckel) to projected approvals — not measured here. A funded report replaces projections with measured values. Assumption set: version [[assumptions_version]].</div>
   </div>
   <div class="appx">
     <div class="col">
@@ -292,13 +295,13 @@
       <h3>Methodology &amp; disclosures</h3>
       <ul>
         <li>[[method_bullet]]</li>
-        <li><strong>Known bias, disclosed:</strong> the model uses a gross-income proxy and ACS under-reports benefit receipt — both push the estimate <em>upward</em>, so read it as an upper range of unmet need.</li>
-        <li>County estimates carry 1-Year ACS sampling uncertainty; the page-1 dollar range reflects household size ([[hh_high]]–[[hh_low]] persons), not a confidence interval.</li>
+        <li><strong>Known bias, disclosed:</strong> a gross-income proxy and ACS under-reporting push the estimate <em>upward</em> — read it as an upper range of unmet need.</li>
+        <li>County estimates carry 1-Year ACS sampling uncertainty; the page-1 dollar range reflects household size, not a confidence interval.</li>
       </ul>
       <h3 class="n2">Geography &amp; vintages</h3>
       <ul>
         <li>Assessment area: the [[pe_date]] CRA PE ([[regulator]]) &mdash; [[aa_counties_list]].</li>
-        <li>2023 ACS 1-Year PUMS; 2020 tract-to-PUMA crosswalk; benefits USDA FNS FY2024 ($[[benefit_monthly]]/mo/household); generated [[prepared_date]].</li>
+        <li>2023 ACS 1-Year PUMS; 2020 tract-to-PUMA crosswalk; USDA FNS FY2024 benefits; generated [[prepared_date]].</li>
       </ul>
     </div>
   </div>
