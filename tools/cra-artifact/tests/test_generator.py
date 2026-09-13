@@ -984,10 +984,12 @@ def test_bank_specific_block_renders_only_when_present():
 
 def test_platform_evidence_page_present_and_state_aware():
     """Page 3 is the 'platform, as built' evidence page: it embeds a REAL
-    captured screenshot of the live assistant (as a data URI) with leader-line
-    callouts, plus the built-in-limits rails, the try-it QR, and the affiliation
-    line. The screenshot is state-specific (CA vs FL) and the ME-audit provenance
-    renders ONLY for CA banks."""
+    captured screenshot of the live assistant (referenced by file:// path) plus
+    the built-in-limits rails, the try-it QR, and the affiliation line. The CA
+    screenshot carries HTML callout cards + SVG leader lines over the cropped
+    capture; FL uses its plain (uncropped) screenshot with no callout overlay,
+    so the fancy annotated treatment is CA-only. The ME-audit provenance renders
+    ONLY for CA banks."""
     banks, assumptions, org = generate.load_inputs()
     tpl = (TOOL_ROOT / "templates/artifact.html").read_text()
     meta = states.state_meta("CA")
@@ -996,7 +998,12 @@ def test_platform_evidence_page_present_and_state_aware():
         score.load_county_metrics(meta["metrics"]), meta)[0])
     assert "The platform, as built" in ca
     assert "chat-shot-ca.png" in ca                             # the real CA screenshot
-    assert "A live application outline" in ca                   # a leader-line callout
+    assert 'aspect-ratio:2760/2174' in ca                       # the CA crop's aspect
+    assert "A live application outline" in ca                   # a callout card
+    assert "Answered, with the rule cited" in ca               # the cited-rule callout
+    assert "CDSS ACIN I-46-25" in ca                            # citation named in the callout
+    assert "Four languages" in ca                               # the languages callout
+    assert 'class="cdot"' in ca and 'class="leaders"' in ca     # HTML dots + SVG lines
     assert "qrline" in ca                                       # the live-link QR
     assert "no eligibility determination" in ca                 # the rails
     assert "Harvard Innovation Labs" in ca                      # affiliation line
@@ -1009,4 +1016,6 @@ def test_platform_evidence_page_present_and_state_aware():
     assert "The platform, as built" in fl
     assert "chat-shot-fl.png" in fl                             # FL screenshot, not CA
     assert "chat-shot-ca.png" not in fl
+    assert 'aspect-ratio:2760/2360' in fl                       # FL uncropped aspect
+    assert 'class="cdot"' not in fl and "Four languages" not in fl  # no callouts on FL
     assert "California" not in fl and "38 county" not in fl      # no CA framing leaks
