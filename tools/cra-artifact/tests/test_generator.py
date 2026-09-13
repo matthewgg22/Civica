@@ -186,7 +186,7 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     assert "data-puma" in html and "Eligible but not enrolled" in html
     assert "Census PUMA" in html and 'class="geo-ticks"' in html
     # every core-table number carries a clarifying sub-line (formatting parity)
-    for sub in ("income-eligible for SNAP", "of those eligible",
+    for sub in ("income-eligible for SNAP", "at USDA's participation rate",
                 "in federal SNAP funds", "per eligible household"):
         assert sub in html
     # never render the HIGH scenario words
@@ -336,7 +336,9 @@ def test_cra_citation_is_regulator_specific():
                                  states.state_meta("CA"))[0]
     fdic_pager = generate.render(pager, fdic)
     assert "12 CFR Part 345 (FDIC)" in fdic_pager
-    assert "not on the lending test" in fdic_pager
+    # names the test a grant is actually assessed under, and excludes the lending test
+    assert "investment test" in fdic_pager
+    assert "not the lending test" in fdic_pager
     # OCC bank (city_national): Part 25 in the pager and 25.12(g)(2) in the memo.
     occ = generate.build_values(banks["city_national"], assumptions, org, metrics,
                                 states.state_meta("CA"))[0]
@@ -898,7 +900,10 @@ def test_access_callout_does_not_perturb_need_math():
     meta = states.state_meta(bank.get("state", "CA"))
     metrics = score.load_county_metrics(meta["metrics"])
     values, need = generate.build_values(bank, assumptions, org, metrics, meta)
-    direct = score.bank_need(bank["aa_counties"], metrics, assumptions)
+    # Direct call must mirror build_values' inputs, including the USDA-rate
+    # reconciliation, to isolate the access-callout path as the thing under test.
+    direct = score.bank_need(bank["aa_counties"], metrics, assumptions,
+                             reconcile_rate=meta.get("usda_participation_rate"))
     for k in ("eligible", "unenrolled", "ratio", "benefit_low_usd", "benefit_high_usd"):
         assert abs(need[k] - direct[k]) < TOL
     # and the callout actually rendered into the artifact for this bank
@@ -916,3 +921,55 @@ def test_access_callout_keeps_artifact_at_three_pages(tmp_path):
         capture_output=True, text=True).stdout.strip()
     if n_pages not in ("", "(null)"):
         assert n_pages == "3"
+
+
+def test_headline_reconciled_to_usda_participation_rate():
+    """The eligible-but-unenrolled headline is reported at USDA's published
+    participation rate, not the ACS model's raw non-enrollment rate (which is
+    inflated by survey under-reporting of SNAP receipt). Regression guard for
+    the honest-numbers pass: the raw modeled figure (~60% non-enrollment) must
+    never be the headline, and the reconciliation must be disclosed on the page.
+    """
+    banks = json.loads((TOOL_ROOT / "inputs/assessment_areas.json").read_text())["banks"]
+    assumptions = json.loads((TOOL_ROOT / "inputs/funnel_assumptions.json").read_text())
+    org = json.loads((TOOL_ROOT / "inputs/org.json").read_text())
+    for key in ("american_business_bank", "ocean_bank"):   # a CA and an FL bank
+        bank = banks[key]
+        meta = states.state_meta(bank.get("state", "CA"))
+        par = meta.get("usda_participation_rate")
+        assert par, f"{key}'s state must carry a USDA participation rate"
+        metrics = score.load_county_metrics(meta["metrics"])
+        values, need = generate.build_values(bank, assumptions, org, metrics, meta)
+        # unenrolled == eligible x (1 - PAR), and the raw model figure is larger
+        assert need["reconciled"] is True
+        assert abs(need["unenrolled"] - need["eligible"] * (1 - par)) < 1.0
+        assert need["model_unenrolled"] > need["unenrolled"] * 1.5, (
+            f"{key}: model figure should be materially higher than reconciled")
+        # displayed non-enrollment pct is USDA-derived (e.g. 19 for an 81% PAR)
+        assert values["aa_unenrolled_pct"] == f"{round((1 - par) * 100)}"
+        html = generate.render(
+            (TOOL_ROOT / "templates/artifact.html").read_text(), values)
+        assert "at USDA's participation rate" in html
+        assert "How we count unmet need" in html
+        # the inflated modeled count must not leak onto the page as the headline
+        assert generate.fmt_int(round(need["model_unenrolled"])) not in html
+
+
+def test_bank_specific_block_renders_only_when_present():
+    """The optional per-bank 'Why <bank> specifically' callout renders only for
+    banks that carry a bank_specific_note (ABB), and never leaks onto banks
+    without one — so the generator degrades gracefully across the roster."""
+    banks, assumptions, org = generate.load_inputs()
+    tpl = (TOOL_ROOT / "templates/artifact.html").read_text()
+    meta = states.state_meta("CA")
+    metrics = score.load_county_metrics(meta["metrics"])
+    abb_v, _ = generate.build_values(banks["american_business_bank"], assumptions,
+                                     org, metrics, meta)
+    abb = generate.render(tpl, abb_v)
+    assert "Why American Business Bank specifically" in abb
+    assert "almost no retail footprint" in abb and "investment test" in abb
+    # bank_irvine carries no note -> no per-bank block, and the label never leaks
+    irv_v, _ = generate.build_values(banks["bank_irvine"], assumptions, org,
+                                     metrics, meta)
+    irv = generate.render(tpl, irv_v)
+    assert "specifically.</b>" not in irv

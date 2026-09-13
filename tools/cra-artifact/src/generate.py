@@ -120,7 +120,8 @@ def build_county_breakdown(covered_counties, metrics, cap=6):
 
 
 def build_values(bank, assumptions, org, metrics, meta):
-    need = score.bank_need(bank["aa_counties"], metrics, assumptions)
+    need = score.bank_need(bank["aa_counties"], metrics, assumptions,
+                           reconcile_rate=meta.get("usda_participation_rate"))
     fun = report.funnel(bank["ask_usd"], assumptions)
     aa_label = (f"{bank['aa_counties'][0]} County" if len(bank["aa_counties"]) == 1
                 else "assessment-area")
@@ -185,18 +186,46 @@ def build_values(bank, assumptions, org, metrics, meta):
             "boilerplate: a survey-weighted estimate built directly from 2023 "
             "federal ACS microdata, reproducible from public sources."
         )
-    # And the engine itself, not just the analysis: name the conversational
-    # assistant and why it works (grounded in the agency's own rules), since the
-    # chatbot — the actual product — is what applicants are directed to.
-    credibility_line += (
-        " And the product is not a landing page but a conversational assistant "
-        "grounded in your state's own SNAP rules; it answers applicants' "
-        "questions and cites the governing rule, so they get accurate guidance "
-        "rather than generic search results."
-    )
+    # (The product itself — the rule-grounded conversational assistant — is
+    # already described in "The program" section above, so the credibility line
+    # no longer repeats it.)
+    # Optional per-bank "Why this bank specifically" callout: a fully-sourced,
+    # bank-specific argument (e.g. commercial/no-retail structure + the exam
+    # component a grant lands on). Present only for banks that carry the field;
+    # every other bank renders nothing here.
+    _bank_note = bank.get("bank_specific_note", "").strip()
+    bank_specific_block = (
+        f'<div class="provenance" style="margin-top:8px;"><b>Why {bank["name"]} '
+        f'specifically.</b> {_bank_note}</div>' if _bank_note else "")
     # Regulator-specific CRA rule citation for the community-reinvestment box.
     cra_part = cra_reg_part(bank["regulator"])
     cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
+    # Reconciliation note (page-1 methods): when we report the eligible-but-
+    # unenrolled headline at USDA's published participation rate (see
+    # score.bank_need + states.usda_participation_rate), disclose exactly that,
+    # so a reader who checks the USDA figure finds we anticipated it. CA also
+    # carries the post-H.R.1 direction (LAO Feb-2026); other states omit the
+    # state-specific haircut to avoid an unsourced number. Empty when a state
+    # has no published rate wired (falls back to the raw model figure).
+    if need.get("reconciled"):
+        if state == "CA":
+            recon_note = (
+                "<strong>How we count unmet need:</strong> our eligible-population "
+                "estimate matches USDA's independent California figure within ~1%; "
+                "we apply USDA's published participation rate (81%, FY2022), not "
+                "the ACS model's raw non-enrollment rate, which survey "
+                "under-reporting of SNAP receipt inflates. Federal H.R.1 changes "
+                "effective 2026 (noncitizen, ABAWD) shrink this pool further "
+                "(California LAO, Feb 2026). &nbsp;·&nbsp; ")
+        else:
+            recon_note = (
+                "<strong>How we count unmet need:</strong> we apply USDA's "
+                "published state participation rate (81%, FY2022), not the "
+                "survey-weighted non-enrollment count, which over-reads unmet "
+                "need because ACS respondents under-report SNAP receipt. "
+                "&nbsp;·&nbsp; ")
+    else:
+        recon_note = ""
     v = {
         "why_this_bank": why_this_bank,
         "credibility_line": credibility_line,
@@ -219,7 +248,9 @@ def build_values(bank, assumptions, org, metrics, meta):
                              + bank.get("aa_note", "")),
         "aa_label": aa_label,
         "prepared_date": datetime.date.today().strftime("%B %Y"),
-        "headline_unenrolled": fmt_int(round(need["unenrolled"], -3)),
+        "headline_unenrolled": fmt_int(round(need["unenrolled"])),
+        "recon_note": recon_note,
+        "bank_specific_block": bank_specific_block,
         "benefit_range": f"{fmt_musd(need['benefit_low_usd'])}–{fmt_musd(need['benefit_high_usd'])}",
         "ratio_line": ratio_line,
         "map_caption": map_caption,
@@ -256,17 +287,12 @@ def build_values(bank, assumptions, org, metrics, meta):
         v[f"{s}_approved"] = fmt_int(f["approved_households"])
         v[f"{s}_benefit"] = fmt_musd(f["annual_benefit_usd"]) + "/yr"
         v[f"{s}_cps"] = f"${bank['ask_usd'] / f['apps_submitted']:,.0f}"
-        # Aggregate downstream credit-card debt reduced = approved households ×
-        # the $2,436 per-household 3-year research effect (Homonoff et al.).
-        # Labelled on page 3 as research-based, not measured by this program.
-        # Compute the aggregates from the ROUNDED approved count shown in the
-        # table so the arithmetic checks out (approved × per-household effect).
-        _appr_shown = round(f["approved_households"])
-        _debt = _appr_shown * 2436
-        v[f"{s}_debt"] = f"${_debt/1e6:.1f}M" if _debt >= 1e6 else f"${_debt/1e3:.0f}K"
-        # Cumulative credit-score points = approved households × the +17 per-household
-        # research effect (illustrative; the per-household figure is in the label).
-        v[f"{s}_cspts"] = fmt_int(_appr_shown * 17)
+        # Downstream research effects (debt, delinquency, credit score) are shown
+        # ONLY as per-household figures in page-1 prose, labelled as published
+        # research measured on other people. They are deliberately NOT aggregated
+        # into the projected table: multiplying a per-household effect by a
+        # projected approval count stacks assumptions, and credit-score points in
+        # particular do not sum across households.
     return v, need
 
 
