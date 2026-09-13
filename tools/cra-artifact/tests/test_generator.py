@@ -983,11 +983,11 @@ def test_bank_specific_block_renders_only_when_present():
 
 
 def test_platform_evidence_page_present_and_state_aware():
-    """Page 3 is the 'platform, as built' evidence page: it must carry the
-    rule-grounded exchange with real federal citations, the built-in-limits
-    rails, and the try-it QR. Its CalFresh/California framing and the ME-audit
-    provenance render ONLY for CA banks; the 7 CFR citations are federal and
-    valid in every state, so they appear for FL too."""
+    """Page 3 is the 'platform, as built' evidence page: it embeds a REAL
+    captured screenshot of the live assistant (as a data URI) with leader-line
+    callouts, plus the built-in-limits rails, the try-it QR, and the affiliation
+    line. The screenshot is state-specific (CA vs FL) and the ME-audit provenance
+    renders ONLY for CA banks."""
     banks, assumptions, org = generate.load_inputs()
     tpl = (TOOL_ROOT / "templates/artifact.html").read_text()
     meta = states.state_meta("CA")
@@ -995,7 +995,8 @@ def test_platform_evidence_page_present_and_state_aware():
         banks["american_business_bank"], assumptions, org,
         score.load_county_metrics(meta["metrics"]), meta)[0])
     assert "The platform, as built" in ca
-    assert "7 CFR 273.11(c)" in ca and "7 CFR 273.6(a)" in ca   # verified citations
+    assert "chat-shot-ca.png" in ca                             # the real CA screenshot
+    assert "Answers the second question" in ca                  # a leader-line callout
     assert "qrline" in ca                                       # the live-link QR
     assert "no eligibility determination" in ca                 # the rails
     assert "Harvard Innovation Labs" in ca                      # affiliation line
@@ -1006,5 +1007,6 @@ def test_platform_evidence_page_present_and_state_aware():
         banks["ocean_bank"], assumptions, org,
         score.load_county_metrics(fmeta["metrics"]), fmeta)[0])
     assert "The platform, as built" in fl
+    assert "chat-shot-fl.png" in fl                             # FL screenshot, not CA
+    assert "chat-shot-ca.png" not in fl
     assert "California" not in fl and "38 county" not in fl      # no CA framing leaks
-    assert "7 CFR 273.11(c)" in fl                               # federal cite still valid

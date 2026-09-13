@@ -173,9 +173,19 @@
      colored-left-rail card is a DEMETER-DESIGN AI-slop pattern. */
   .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:6px 11px; font-size:8.1pt; line-height:1.38; color:var(--body); margin-top:5px; text-wrap:pretty; }
   .disclose strong { color:var(--ink); }
-  /* Page 3 — the platform, as built (annotated evidence visual) */
+  /* Page 3 — the platform, as built (annotated real screenshot) */
   .platform-hero { margin-top:8px; }
-  .platform-hero svg { width:100%; height:auto; display:block; }
+  .chatshot { position:relative; }
+  .chatshot > img { width:100%; display:block; border:1px solid var(--rule); border-radius:6px; }
+  .chatshot .leaders { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .chatshot .leaders .ld { fill:none; stroke:var(--accent-deep); stroke-width:1; vector-effect:non-scaling-stroke; }
+  .chatshot .leaders .dot { fill:var(--accent); stroke:#fff; stroke-width:0.3; }
+  .chatshot .co { position:absolute; font-size:7.4pt; line-height:1.3; color:var(--body); }
+  .chatshot .co b { display:block; font-family:'Newsreader',serif; font-weight:600; font-size:8.4pt; color:var(--accent-deep); margin-bottom:1px; }
+  .co-r1 { left:74%; top:39%; width:25%; }
+  .co-r2 { left:74%; top:61%; width:25%; }
+  .co-l1 { left:0.5%; top:57%; width:23.5%; }
+  .chatshot-cap { font-size:7pt; color:var(--muted); margin-top:5px; text-align:center; }
   .evidence-foot { display:flex; gap:.3in; margin-top:8px; border-top:2px solid var(--accent); padding-top:9px; align-items:flex-start; }
   .ev-text { flex:1.55; min-width:0; }
   .ev-text p { font-size:8.4pt; line-height:1.46; color:var(--body); text-wrap:pretty; margin-bottom:6px; }
@@ -268,73 +278,18 @@
   <h2 class="pagehead" style="margin-top:6px;">The platform, as built</h2>
   <div class="thesis" style="margin-top:8px;">The program on the previous page is running today. This is the system that delivers it &mdash; a rules-grounded assistant, not a general chatbot.</div>
   <div class="platform-hero">
-  <svg viewBox="0 0 720 366" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Annotated example of a live assistant answer, showing the inline rule citation, the verified-and-dated stamp, and how it handles a mixed-status question">
-    <style>
-      .cx-t{font-family:'Be Vietnam Pro',sans-serif;fill:var(--body);}
-      .cx-ink{fill:var(--ink);} .cx-mut{fill:var(--muted);} .cx-acc{fill:var(--accent-deep);font-weight:600;}
-      .cx-lead{fill:none;stroke:var(--muted);stroke-width:1;} .cx-dot{fill:var(--accent);}
-      .cx-title{font-family:'Newsreader',serif;fill:var(--ink);font-weight:600;}
-    </style>
-    <!-- chat panel -->
-    <rect x="212" y="6" width="296" height="354" rx="12" fill="#ffffff" stroke="var(--rule)"/>
-    <text x="228" y="27" class="cx-t cx-acc" font-size="8.5" letter-spacing=".08em">DEMETER</text>
-    <text x="286" y="27" class="cx-t cx-mut" font-size="8">· free SNAP help</text>
-    <line x1="228" y1="34" x2="492" y2="34" stroke="var(--rule)"/>
-    <!-- ask bubble (right) -->
-    <rect x="262" y="44" width="234" height="40" rx="9" fill="var(--tint)"/>
-    <text x="274" y="60" class="cx-t cx-ink" font-size="8.6">My kids were born here but I'm undocumented</text>
-    <text x="274" y="75" class="cx-t cx-ink" font-size="8.6">&#8212; can they get SNAP, and is applying a risk?</text>
-    <!-- answer bubble (left, accent edge) -->
-    <rect x="226" y="98" width="256" height="168" rx="9" fill="#ffffff" stroke="var(--rule)"/>
-    <rect x="226" y="98" width="3.5" height="168" rx="1.5" fill="var(--accent)"/>
-    <text x="240" y="116" class="cx-t cx-ink" font-size="8.6">Yes &#8212; your U.S.-citizen children qualify</text>
-    <text x="240" y="129" class="cx-t cx-ink" font-size="8.6">regardless of your status; each person is</text>
-    <text x="240" y="142" class="cx-t cx-ink" font-size="8.6">assessed on their own <tspan class="cx-acc">[7 CFR 273.11(c)]</tspan>.</text>
-    <text x="240" y="155" class="cx-t cx-ink" font-size="8.6">As a non-applicant you give no SSN, and</text>
-    <text x="240" y="168" class="cx-t cx-ink" font-size="8.6">the benefit doesn't count for public</text>
-    <text x="240" y="181" class="cx-t cx-ink" font-size="8.6">charge <tspan class="cx-acc">[7 CFR 273.6(a)]</tspan>.</text>
-    <line x1="240" y1="196" x2="468" y2="196" stroke="var(--rule)"/>
-    <text x="240" y="212" class="cx-t cx-acc" font-size="8.4">&#10003; CERTAIN</text>
-    <text x="292" y="212" class="cx-t cx-mut" font-size="7.6">every cited rule is pulled from the text</text>
-    <text x="240" y="228" class="cx-t cx-mut" font-size="7.4">Federal SNAP rules (eCFR) · FY2026, valid to Sep 30 2026</text>
-    <!-- faux input -->
-    <rect x="226" y="286" width="256" height="22" rx="11" fill="#ffffff" stroke="var(--rule)"/>
-    <text x="240" y="300" class="cx-t cx-mut" font-size="8">Ask a follow-up&#8230;</text>
-    <circle cx="470" cy="297" r="8" fill="var(--accent)"/>
-    <text x="470" y="300" class="cx-t" fill="#fff" font-size="8" text-anchor="middle">&#8593;</text>
-    <text x="212" y="352" class="cx-t cx-mut" font-size="7">Illustrative &#8212; reproduced from the live assistant; the citations are real.</text>
-    <!-- ===== callouts ===== -->
-    <!-- 1: the second question (left-top) -> ask bubble -->
-    <circle cx="262" cy="64" r="2.6" class="cx-dot"/>
-    <polyline points="262,64 176,64 168,58" class="cx-lead"/>
-    <text x="14" y="48" class="cx-title" font-size="9.5">The second question</text>
-    <text x="14" y="61" class="cx-t cx-mut" font-size="8">A form can't answer this &#8212;</text>
-    <text x="14" y="72" class="cx-t cx-mut" font-size="8">and it's exactly where</text>
-    <text x="14" y="83" class="cx-t cx-mut" font-size="8">people give up.</text>
-    <!-- 2: diffuses the fear (left-bottom) -> public charge line -->
-    <circle cx="226" cy="168" r="2.6" class="cx-dot"/>
-    <polyline points="226,168 150,168 142,174" class="cx-lead"/>
-    <text x="14" y="150" class="cx-title" font-size="9.5">Diffuses the fear</text>
-    <text x="14" y="163" class="cx-t cx-mut" font-size="8">Citizen kids qualify; a</text>
-    <text x="14" y="174" class="cx-t cx-mut" font-size="8">non-applicant gives no SSN</text>
-    <text x="14" y="185" class="cx-t cx-mut" font-size="8">and is no public-charge risk.</text>
-    <!-- 3: the rule, cited inline (right-top) -> citation -->
-    <circle cx="440" cy="142" r="2.6" class="cx-dot"/>
-    <polyline points="440,142 520,142 528,136" class="cx-lead"/>
-    <text x="534" y="120" class="cx-title" font-size="9.5">The rule, cited inline</text>
-    <text x="534" y="133" class="cx-t cx-mut" font-size="8">Every answer quotes the</text>
-    <text x="534" y="144" class="cx-t cx-mut" font-size="8">governing federal regulation</text>
-    <text x="534" y="155" class="cx-t cx-mut" font-size="8">&#8212; a bank or applicant can</text>
-    <text x="534" y="166" class="cx-t cx-mut" font-size="8">check it. Not a chatbot guess.</text>
-    <!-- 4: verified & dated (right-bottom) -> CERTAIN -->
-    <circle cx="482" cy="210" r="2.6" class="cx-dot"/>
-    <polyline points="482,210 520,210 528,204" class="cx-lead"/>
-    <text x="534" y="196" class="cx-title" font-size="9.5">Verified &amp; dated</text>
-    <text x="534" y="209" class="cx-t cx-mut" font-size="8">An unverifiable citation is</text>
-    <text x="534" y="220" class="cx-t cx-mut" font-size="8">blocked before it's shown,</text>
-    <text x="534" y="231" class="cx-t cx-mut" font-size="8">and each answer is stamped to</text>
-    <text x="534" y="242" class="cx-t cx-mut" font-size="8">the rules in force &#8212; incl. 2026.</text>
-  </svg>
+    <div class="chatshot">
+      <img src="[[chat_shot_src]]" alt="A real Demeter conversation in the live interface: a mixed-status SNAP question answered with the governing federal rule cited, showing the state selector, the live application outline, and the language options."/>
+      <svg class="leaders" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <polyline points="74,46 52,48" class="ld"/><circle cx="52" cy="48" r="0.7" class="dot"/>
+        <polyline points="74,69 42,78" class="ld"/><circle cx="42" cy="78" r="0.7" class="dot"/>
+        <polyline points="3,58 3,40 9,40" class="ld"/><circle cx="9" cy="40" r="0.7" class="dot"/>
+      </svg>
+      <div class="co co-r1"><b>Answers the second question</b>Citizen kids qualify; a non-applicant gives no SSN and is no public-charge risk &mdash; the mixed-status fear, handled.</div>
+      <div class="co co-r2"><b>Cited &amp; checkable</b>States its confidence and links the governing regulation text to check &mdash; not a chatbot guess.</div>
+      <div class="co co-l1"><b>A live application outline</b>builds as they chat, localized to the state's own agency.</div>
+    </div>
+    <div class="chatshot-cap">A real conversation from the live assistant &mdash; the interface an applicant uses: state selector (top left), cited answers, and four languages (bottom left).</div>
   </div>
   <div class="evidence-foot">
     <div class="ev-text">

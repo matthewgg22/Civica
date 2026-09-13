@@ -196,6 +196,11 @@ def build_values(bank, assumptions, org, metrics, meta):
     bank_specific_block = (
         f'<div class="provenance" style="margin-top:8px;"><b>Why {bank["name"]} '
         f'specifically.</b> {_bank_note}</div>' if _bank_note else "")
+    # Page-3 hero: a REAL captured screenshot of the live assistant, referenced by
+    # file:// URI so Chrome embeds it into the PDF without a giant base64 blob in
+    # the HTML. State-specific so the FL banks show Florida/DCF/SNAP, not CA.
+    _shot = "chat-shot-ca.png" if state == "CA" else "chat-shot-fl.png"
+    chat_shot_src = (TOOL_ROOT / "assets" / _shot).as_uri()
     # Regulator-specific CRA rule citation for the community-reinvestment box.
     cra_part = cra_reg_part(bank["regulator"])
     cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
@@ -253,6 +258,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         # Static QR to the live assistant (same URL for every bank); pre-generated
         # asset, so the generator stays stdlib-only. See assets/qr-chat.svg.
         "qr_chat_svg": (TOOL_ROOT / "assets/qr-chat.svg").read_text(),
+        "chat_shot_src": chat_shot_src,
         # Page-3 (platform evidence) state-awareness: the demo and the ME-audit
         # provenance are state-specific, so the CalFresh/California framing must
         # not render for the FL banks. The mixed-status citations (7 CFR) are
