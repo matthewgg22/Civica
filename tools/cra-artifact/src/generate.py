@@ -174,11 +174,10 @@ def build_values(bank, assumptions, org, metrics, meta):
     state = bank.get("state", "CA")
     if state == "CA":
         credibility_line = (
-            "The need and access findings here are Civica's own analysis: the "
-            "estimate is a reproducible model of 2023 federal ACS microdata "
-            "(cross-validated AUC 0.80), and the county findings come from our "
-            "review of 37 CalFresh Management Evaluation reviews (36 California "
-            "counties, FFY 2024–2025) obtained by public-records request."
+            "The findings here are Civica's own: a reproducible model of 2023 "
+            "federal ACS microdata (cross-validated AUC 0.80), and a review of 37 "
+            "CalFresh Management Evaluation reviews across 36 California counties "
+            "(FFY 2024–2025), obtained by public-records request."
         )
     else:
         credibility_line = (
