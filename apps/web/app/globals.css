@@ -5065,7 +5065,7 @@ html {
 /* The wheat pill is Demeter's own standing entry — the same control the rail
    and BackToChat use — where pine was another product's primary. */
 .gpage__cta {
-  background: var(--demeter-wheat); color: var(--demeter-ink);
+  background: var(--demeter-wheat); color: #FFFFFF;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
 }
 .gpage__cta:hover { filter: brightness(0.94); }
@@ -5132,7 +5132,7 @@ html {
 .vback {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.86rem; font-weight: 700;
-  color: var(--demeter-ink);
+  color: #FFFFFF;
   background: var(--demeter-wheat);
   border-radius: var(--demeter-radius-pill);
   text-decoration: none;
@@ -5369,7 +5369,7 @@ html {
 }
 .vstates__askcta {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  background: var(--demeter-wheat); color: var(--demeter-ink);
+  background: var(--demeter-wheat); color: #FFFFFF;
   border-radius: var(--demeter-radius-pill); padding: 0.55rem 1.2rem;
   font-weight: 700; font-size: 0.9rem; text-decoration: none;
   min-height: 44px; display: inline-flex; align-items: center; gap: 0.35rem;
@@ -6109,8 +6109,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    contrast outright. */
 .dmx--askcta .dmx__outlink,
 .dmx--fearscta .dmx__outlink {
-  background: var(--demeter-wheat); border-color: transparent;
-}
+  background: var(--demeter-wheat); border-color: transparent; color: #FFFFFF;}
 /* NARROWER STILL than the general .dmx__outlink cap, and for a different
    reason: this card and .dmnow right below it sit directly under the hero
    text, which wraps at .dmo__h1's 20ch / .dmo__lede's 52ch — roughly 600-
@@ -6535,8 +6534,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   display: flex; flex-direction: column; gap: 0.2rem;
   margin: 1.75rem 0 0; padding: 1.1rem 1.35rem;
   border: 0; border-radius: var(--demeter-radius-card);
-  text-decoration: none; background: var(--demeter-wheat);
-}
+  text-decoration: none; background: var(--demeter-wheat); color: #FFFFFF;}
 .dmfear__cta:hover { filter: brightness(0.96); }
 .dmfear__ctalabel {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
@@ -7544,7 +7542,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
      one-line label comes to ~45px on its own, and a two-line one simply
      grows instead of pressing against the edges. */
   display: inline-block;
-  background: var(--demeter-wheat); color: var(--demeter-ink);
+  background: var(--demeter-wheat); color: #FFFFFF;
   font-weight: 700; font-size: 0.9rem; text-decoration: none;
   border-radius: var(--demeter-radius-pill);
   padding: 0.72rem 1.05rem;
@@ -7788,11 +7786,11 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    Ink on wheat, not paper: #EFB544 is a light gold and white text on it fails
    contrast outright. */
 .dmnav__tab--primary {
-  background: var(--demeter-wheat); color: var(--demeter-ink); font-weight: 700;
+  background: var(--demeter-wheat); color: #FFFFFF; font-weight: 700;
   padding: 0 1.1rem;
 }
-.dmnav__tab--primary:hover { background: var(--demeter-wheat); filter: brightness(0.94); }
-.dmnav__tab--primary[aria-current="page"] { color: var(--demeter-ink); }
+.dmnav__tab--primary:hover { background: var(--demeter-wheat); filter: brightness(0.94); color: #FFFFFF;}
+.dmnav__tab--primary[aria-current="page"] { color: #FFFFFF; }
 
 /* ═══ /chat — THE TOOL, FULL HEIGHT ══════════════════════════════════════════
    The whole reason this page exists. On the landing page the chat is a card in
@@ -7946,7 +7944,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    read as page furniture and the panel behind it went unfound. Wheat is
    the next action on this surface. */
 .dmchat .demeter__sidebartoggle--closed {
-  background: var(--demeter-wheat); color: var(--demeter-ink);
+  background: var(--demeter-wheat); color: #FFFFFF;
   border-radius: var(--demeter-radius-input);
 }
 .dmchat .demeter__sidebartoggle--closed:hover { background: #DDB93C; }
@@ -8425,7 +8423,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
   border-radius: var(--demeter-radius-pill); cursor: pointer; white-space: nowrap;
 }
 .demeter__modeoffer-yes {
-  background: var(--demeter-wheat); color: var(--demeter-ink); border: 0;
+  background: var(--demeter-wheat); color: #FFFFFF; border: 0;
 }
 .demeter__modeoffer-yes:hover { filter: brightness(0.94); }
 .demeter__modeoffer-no {
@@ -8458,7 +8456,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
    around it. Dark ink on wheat rather than paper: #EFB544 is a light gold and
    white text on it fails contrast outright. */
 .demeter__stateoffer-yes {
-  border: 0; background: var(--demeter-wheat); color: var(--demeter-ink); font-weight: 700;
+  border: 0; background: var(--demeter-wheat); color: #FFFFFF; font-weight: 700;
 }
 .demeter__stateoffer-yes:hover { filter: brightness(0.94); }
 .demeter__stateoffer { border-color: var(--demeter-wheat); }
@@ -8614,7 +8612,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
 .dmchat .demeter__emailbtn {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   width: 100%; min-height: 40px; border: 0; border-radius: var(--demeter-radius-pill); cursor: pointer;
-  background: var(--demeter-wheat); color: var(--demeter-ink);
+  background: var(--demeter-wheat); color: #FFFFFF;
   font-size: 0.78rem; font-weight: 700;
 }
 .dmchat .demeter__emailbtn:hover:not(:disabled) { filter: brightness(0.94); }
@@ -9945,7 +9943,7 @@ a.dmwel__cta { text-decoration: none; }
   display: inline-flex; align-items: center; justify-content: center;
   width: 100%; min-height: 46px; padding: 0 1.1rem;
   border-radius: var(--demeter-radius-input);
-  background: var(--demeter-wheat); color: var(--demeter-ink);
+  background: var(--demeter-wheat); color: #FFFFFF;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-weight: 700; font-size: 0.9rem; text-decoration: none;
 }
