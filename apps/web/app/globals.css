@@ -9505,7 +9505,7 @@ html:has(.signin-page[data-surface="demeter"]), body:has(.signin-page[data-surfa
      append-guard requires max-width and font-size to appear once each, and it
      is right to — four competing .dmwel__mark font-sizes once shipped at the
      same time, each with the comment that justified it. */
-  --dmwel-logo-w: 152px;
+  --dmwel-logo-w: 176px;
   --dmwel-word-size: 1.45rem;
 }
 .dmwel__brand {
@@ -9617,6 +9617,13 @@ a.dmwel__cta { text-decoration: none; }
    240 available and wrapped by four pixels, which costs 74px of height on the
    screen that can least afford it. A slimmer gutter at this width buys the
    row back; wrap stays as the failure mode below it. */
+/* PHONES. The enlarged pair is 343px wide against ~343px of content box at
+   375px — exactly on the line, which wraps on anything narrower. This steps it
+   down before that happens. Values only; the properties are declared once. */
+@media (max-width: 30rem) {
+  .dmwel__marks { --dmwel-logo-w: 140px; --dmwel-word-size: 1.25rem; }
+}
+
 @media (max-width: 22rem) {
   .dmwel__card { padding-left: 1.15rem; padding-right: 1.15rem; }
   /* Clear of the corner dismiss. Once the pair holds one row at this width the
@@ -9628,8 +9635,8 @@ a.dmwel__cta { text-decoration: none; }
      only — the properties themselves are declared once, above. */
   .dmwel__marks {
     gap: 1.25rem; margin-top: 0.9rem;
-    --dmwel-logo-w: 118px;
-    --dmwel-word-size: 1.2rem;
+    --dmwel-logo-w: 112px;
+    --dmwel-word-size: 1.15rem;
   }
 }
 

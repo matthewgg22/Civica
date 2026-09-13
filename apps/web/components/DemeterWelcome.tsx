@@ -145,7 +145,7 @@ export function DemeterWelcome({
             spare, and the divider has nothing left to divide. */}
         <div className="dmwel__marks">
           <span className="dmwel__brand">
-            <DemeterMark size={72} />
+            <DemeterMark size={76} />
             <span className="dmwel__brandword" translate="no">
               Demeter <em>AI</em>
             </span>
@@ -155,7 +155,7 @@ export function DemeterWelcome({
             set. Decorative: the heading beside it names the program, so alt
             text would announce the same thing twice. */}
           <span className="dmwel__logo">
-            <Image src="/snap-logo.png" alt="" aria-hidden width={124} height={86} priority />
+            <Image src="/snap-logo.png" alt="" aria-hidden width={176} height={122} priority />
           </span>
         </div>
 
