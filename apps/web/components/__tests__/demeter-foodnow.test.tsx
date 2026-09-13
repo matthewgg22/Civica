@@ -107,6 +107,26 @@ describe("food-now affordance in the chat chrome", () => {
     }
   });
 
+  it("never promises food the same day, in any locale", () => {
+    // Pantries keep their own hours, run weekly distributions, and some take
+    // appointments. "A food bank can give you food today" sends someone to a
+    // locked door — the seven-day error's mirror image: a timing claim we
+    // cannot stand behind, made to a person who cannot afford to be wrong.
+    const sameDay = [
+      /food today/i,
+      /give you food today/i,
+      /comida hoy/i,
+      /ngay hôm nay/,
+      /今天就能/,
+    ];
+    for (const [lang, copy] of Object.entries(FOODNOW_T)) {
+      const all = Object.values(copy).join(" ");
+      for (const bad of sameDay) {
+        expect(bad.test(all), `${lang} copy promises same-day food`).toBe(false);
+      }
+    }
+  });
+
   it("states the expedited deadline as a ceiling in every locale", () => {
     for (const [lang, copy] of Object.entries(FOODNOW_T)) {
       expect(copy.expedited, `${lang} is missing the expedited line`).toBeTruthy();
