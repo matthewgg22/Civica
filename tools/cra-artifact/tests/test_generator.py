@@ -997,14 +997,14 @@ def test_platform_evidence_page_present_and_state_aware():
     assert "The platform, as built" in ca
     assert "7 CFR 273.11(c)" in ca and "7 CFR 273.6(a)" in ca   # verified citations
     assert "qrline" in ca                                       # the live-link QR
-    assert "makes no eligibility determination" in ca           # the rails
+    assert "no eligibility determination" in ca                 # the rails
+    assert "Harvard Innovation Labs" in ca                      # affiliation line
     assert "38 county" in ca                                     # CA ME-audit clause
-    assert "CalFresh (SNAP) in California" in ca
     assert "3 / 4" in ca and "4 / 4" in ca                       # renumbered
     fmeta = states.state_meta("FL")
     fl = generate.render(tpl, generate.build_values(
         banks["ocean_bank"], assumptions, org,
         score.load_county_metrics(fmeta["metrics"]), fmeta)[0])
-    assert "SNAP in Florida" in fl
+    assert "The platform, as built" in fl
     assert "California" not in fl and "38 county" not in fl      # no CA framing leaks
     assert "7 CFR 273.11(c)" in fl                               # federal cite still valid

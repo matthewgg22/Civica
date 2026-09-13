@@ -173,29 +173,21 @@
      colored-left-rail card is a DEMETER-DESIGN AI-slop pattern. */
   .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:6px 11px; font-size:8.1pt; line-height:1.38; color:var(--body); margin-top:5px; text-wrap:pretty; }
   .disclose strong { color:var(--ink); }
-  /* Page 3 — the platform, as built (product evidence) */
-  .platform-grid { display:flex; gap:.3in; margin-top:11px; align-items:flex-start; }
-  .platform-grid .chat { flex:1.3; min-width:0; }
-  .platform-grid .platform-side { flex:1; min-width:0; }
-  .bubble { font-size:8.6pt; line-height:1.4; border-radius:9px; padding:7px 10px; margin-top:6px; }
-  .bubble.ask { background:var(--tint); color:var(--ink); border:1px solid var(--rule); border-bottom-left-radius:2px; }
-  .bubble.ans { background:#fff; border:1px solid var(--accent); color:var(--body); border-bottom-right-radius:2px; }
-  .bubble cite { font-style:normal; color:var(--accent-deep); font-weight:600; white-space:nowrap; }
-  .cert { margin-top:6px; font-size:7.4pt; font-weight:600; letter-spacing:.02em; color:var(--accent-deep); }
-  .freshfoot { margin-top:2px; font-size:6.9pt; color:var(--muted); }
-  .chat-note { font-size:6.9pt; color:var(--muted); margin-top:5px; }
-  .buildlist { list-style:none; margin-top:3px; }
-  .buildlist li { font-size:8.2pt; line-height:1.4; color:var(--body); margin-top:5px; padding-left:11px; position:relative; text-wrap:pretty; }
-  .buildlist li::before { content:""; position:absolute; left:0; top:.52em; width:4px; height:4px; background:var(--accent); border-radius:50%; }
-  .buildlist strong { color:var(--ink); }
-  .tryit { display:flex; align-items:center; gap:10px; margin-top:10px; padding:8px 9px; border:1px solid var(--rule-strong); border-radius:3px; background:var(--tint); }
-  .tryit .qr { width:72px; flex:none; }
-  .tryit .qr svg { width:100%; height:auto; display:block; }
-  .tryit-txt { font-size:8.4pt; line-height:1.4; color:var(--body); }
-  .tryit-txt strong { color:var(--ink); }
-  .rails { margin-top:12px; font-size:8.4pt; line-height:1.46; color:var(--body); border-top:2px solid var(--accent); padding-top:8px; text-wrap:pretty; }
-  .checkable { margin-top:8px; font-size:8.4pt; line-height:1.46; color:var(--body); text-wrap:pretty; }
-  .rails strong, .checkable strong { color:var(--ink); }
+  /* Page 3 — the platform, as built (annotated evidence visual) */
+  .platform-hero { margin-top:8px; }
+  .platform-hero svg { width:100%; height:auto; display:block; }
+  .evidence-foot { display:flex; gap:.3in; margin-top:8px; border-top:2px solid var(--accent); padding-top:9px; align-items:flex-start; }
+  .ev-text { flex:1.55; min-width:0; }
+  .ev-text p { font-size:8.4pt; line-height:1.46; color:var(--body); text-wrap:pretty; margin-bottom:6px; }
+  .ev-text p:last-child { margin-bottom:0; }
+  .ev-text strong { color:var(--ink); }
+  .ev-side { flex:1; min-width:0; }
+  .qrbox { display:flex; align-items:center; gap:9px; padding:7px 8px; border:1px solid var(--rule-strong); border-radius:3px; background:var(--tint); }
+  .qrbox .qr { width:62px; flex:none; }
+  .qrbox .qr svg { width:100%; height:auto; display:block; }
+  .qr-txt { font-size:8.2pt; line-height:1.35; color:var(--body); }
+  .qr-txt strong { color:var(--ink); }
+  .affil { margin-top:7px; font-size:8pt; line-height:1.4; color:var(--muted); text-wrap:pretty; }
 </style></head><body>
 
 <!-- PAGE 1 — the need -->
@@ -275,32 +267,85 @@
   <div class="eyebrow" style="margin-top:20px;">Evidence · the working system behind the pilot</div>
   <h2 class="pagehead" style="margin-top:6px;">The platform, as built</h2>
   <div class="thesis" style="margin-top:8px;">The program on the previous page is running today. This is the system that delivers it &mdash; a rules-grounded assistant, not a general chatbot.</div>
-  <div class="platform-grid">
-    <div class="chat">
-      <div class="brk-cap">Illustrative exchange &middot; live assistant</div>
-      <div class="bubble ask">I'm undocumented but my kids were born here. Can they get [[program_ref]] in [[state_name]], and does applying put me at risk?</div>
-      <div class="bubble ans">Yes. Your U.S.-citizen children can get [[program_ref]] regardless of your status &mdash; eligible members are assessed on their own <cite>(7 CFR 273.11(c))</cite>. You're a non-applicant, so you don't provide an SSN or immigration documents for yourself, and the benefit doesn't count against you for public charge <cite>(7 CFR 273.6(a))</cite>.
-        <div class="cert">&#10003; CERTAIN &mdash; every rule cited comes from regulation text you can check.</div>
-        <div class="freshfoot">Based on federal SNAP rules (eCFR). FY2026 figures, valid through Sept 30, 2026.</div>
-      </div>
-      <div class="chat-note">A real answer from the live assistant; the citations are real and checkable.</div>
+  <div class="platform-hero">
+  <svg viewBox="0 0 720 366" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Annotated example of a live assistant answer, showing the inline rule citation, the verified-and-dated stamp, and how it handles a mixed-status question">
+    <style>
+      .cx-t{font-family:'Be Vietnam Pro',sans-serif;fill:var(--body);}
+      .cx-ink{fill:var(--ink);} .cx-mut{fill:var(--muted);} .cx-acc{fill:var(--accent-deep);font-weight:600;}
+      .cx-lead{fill:none;stroke:var(--muted);stroke-width:1;} .cx-dot{fill:var(--accent);}
+      .cx-title{font-family:'Newsreader',serif;fill:var(--ink);font-weight:600;}
+    </style>
+    <!-- chat panel -->
+    <rect x="212" y="6" width="296" height="354" rx="12" fill="#ffffff" stroke="var(--rule)"/>
+    <text x="228" y="27" class="cx-t cx-acc" font-size="8.5" letter-spacing=".08em">DEMETER</text>
+    <text x="286" y="27" class="cx-t cx-mut" font-size="8">· free SNAP help</text>
+    <line x1="228" y1="34" x2="492" y2="34" stroke="var(--rule)"/>
+    <!-- ask bubble (right) -->
+    <rect x="262" y="44" width="234" height="40" rx="9" fill="var(--tint)"/>
+    <text x="274" y="60" class="cx-t cx-ink" font-size="8.6">My kids were born here but I'm undocumented</text>
+    <text x="274" y="75" class="cx-t cx-ink" font-size="8.6">&#8212; can they get SNAP, and is applying a risk?</text>
+    <!-- answer bubble (left, accent edge) -->
+    <rect x="226" y="98" width="256" height="168" rx="9" fill="#ffffff" stroke="var(--rule)"/>
+    <rect x="226" y="98" width="3.5" height="168" rx="1.5" fill="var(--accent)"/>
+    <text x="240" y="116" class="cx-t cx-ink" font-size="8.6">Yes &#8212; your U.S.-citizen children qualify</text>
+    <text x="240" y="129" class="cx-t cx-ink" font-size="8.6">regardless of your status; each person is</text>
+    <text x="240" y="142" class="cx-t cx-ink" font-size="8.6">assessed on their own <tspan class="cx-acc">[7 CFR 273.11(c)]</tspan>.</text>
+    <text x="240" y="155" class="cx-t cx-ink" font-size="8.6">As a non-applicant you give no SSN, and</text>
+    <text x="240" y="168" class="cx-t cx-ink" font-size="8.6">the benefit doesn't count for public</text>
+    <text x="240" y="181" class="cx-t cx-ink" font-size="8.6">charge <tspan class="cx-acc">[7 CFR 273.6(a)]</tspan>.</text>
+    <line x1="240" y1="196" x2="468" y2="196" stroke="var(--rule)"/>
+    <text x="240" y="212" class="cx-t cx-acc" font-size="8.4">&#10003; CERTAIN</text>
+    <text x="292" y="212" class="cx-t cx-mut" font-size="7.6">every cited rule is pulled from the text</text>
+    <text x="240" y="228" class="cx-t cx-mut" font-size="7.4">Federal SNAP rules (eCFR) · FY2026, valid to Sep 30 2026</text>
+    <!-- faux input -->
+    <rect x="226" y="286" width="256" height="22" rx="11" fill="#ffffff" stroke="var(--rule)"/>
+    <text x="240" y="300" class="cx-t cx-mut" font-size="8">Ask a follow-up&#8230;</text>
+    <circle cx="470" cy="297" r="8" fill="var(--accent)"/>
+    <text x="470" y="300" class="cx-t" fill="#fff" font-size="8" text-anchor="middle">&#8593;</text>
+    <text x="212" y="352" class="cx-t cx-mut" font-size="7">Illustrative &#8212; reproduced from the live assistant; the citations are real.</text>
+    <!-- ===== callouts ===== -->
+    <!-- 1: the second question (left-top) -> ask bubble -->
+    <circle cx="262" cy="64" r="2.6" class="cx-dot"/>
+    <polyline points="262,64 176,64 168,58" class="cx-lead"/>
+    <text x="14" y="48" class="cx-title" font-size="9.5">The second question</text>
+    <text x="14" y="61" class="cx-t cx-mut" font-size="8">A form can't answer this &#8212;</text>
+    <text x="14" y="72" class="cx-t cx-mut" font-size="8">and it's exactly where</text>
+    <text x="14" y="83" class="cx-t cx-mut" font-size="8">people give up.</text>
+    <!-- 2: diffuses the fear (left-bottom) -> public charge line -->
+    <circle cx="226" cy="168" r="2.6" class="cx-dot"/>
+    <polyline points="226,168 150,168 142,174" class="cx-lead"/>
+    <text x="14" y="150" class="cx-title" font-size="9.5">Diffuses the fear</text>
+    <text x="14" y="163" class="cx-t cx-mut" font-size="8">Citizen kids qualify; a</text>
+    <text x="14" y="174" class="cx-t cx-mut" font-size="8">non-applicant gives no SSN</text>
+    <text x="14" y="185" class="cx-t cx-mut" font-size="8">and is no public-charge risk.</text>
+    <!-- 3: the rule, cited inline (right-top) -> citation -->
+    <circle cx="440" cy="142" r="2.6" class="cx-dot"/>
+    <polyline points="440,142 520,142 528,136" class="cx-lead"/>
+    <text x="534" y="120" class="cx-title" font-size="9.5">The rule, cited inline</text>
+    <text x="534" y="133" class="cx-t cx-mut" font-size="8">Every answer quotes the</text>
+    <text x="534" y="144" class="cx-t cx-mut" font-size="8">governing federal regulation</text>
+    <text x="534" y="155" class="cx-t cx-mut" font-size="8">&#8212; a bank or applicant can</text>
+    <text x="534" y="166" class="cx-t cx-mut" font-size="8">check it. Not a chatbot guess.</text>
+    <!-- 4: verified & dated (right-bottom) -> CERTAIN -->
+    <circle cx="482" cy="210" r="2.6" class="cx-dot"/>
+    <polyline points="482,210 520,210 528,204" class="cx-lead"/>
+    <text x="534" y="196" class="cx-title" font-size="9.5">Verified &amp; dated</text>
+    <text x="534" y="209" class="cx-t cx-mut" font-size="8">An unverifiable citation is</text>
+    <text x="534" y="220" class="cx-t cx-mut" font-size="8">blocked before it's shown,</text>
+    <text x="534" y="231" class="cx-t cx-mut" font-size="8">and each answer is stamped to</text>
+    <text x="534" y="242" class="cx-t cx-mut" font-size="8">the rules in force &#8212; incl. 2026.</text>
+  </svg>
+  </div>
+  <div class="evidence-foot">
+    <div class="ev-text">
+      <p><strong>Built-in limits.</strong> Makes no eligibility determination and routes anyone who needs a decision to their county or 2-1-1; redacts personal data before it leaves the system and never asks for an SSN, date of birth, or account number; carries crisis and domestic-violence lines. Resident conversations are never shared with the bank and no products are marketed to residents; question text auto-purges (7 days; 30 for flagged).</p>
+      <p><strong>Checked, and checkable.</strong> A graded set of ~600 questions across all 53 states and territories (incl. adversarial and crisis cases), re-run on every rules change &mdash; we'll hand your compliance team the questions and rubric to run themselves. Corpus (eCFR + 53 packs, dated provenance[[me_audit_clause]]) on a 120-day refresh.</p>
     </div>
-    <div class="platform-side">
-      <div class="brk-cap">How it's built</div>
-      <ul class="buildlist">
-        <li>Answers come only from <strong>verbatim federal regulation text</strong> (eCFR Title 7 Part 273), retrieved per question &mdash; not a chatbot's memory.</li>
-        <li>Every citation is <strong>machine-verified</strong> against the retrieved text; an unverifiable one stops the answer, retries, or falls back to verified quotes.</li>
-        <li>No dollar or percent appears unless it traces to the source &mdash; in English, Spanish, Vietnamese, and Chinese.</li>
-        <li>Current for the <strong>2026 federal changes</strong>; each answer carries the rule and a dated freshness stamp.</li>
-      </ul>
-      <div class="tryit">
-        <div class="qr">[[qr_chat_svg]]</div>
-        <div class="tryit-txt"><strong>Try it yourself.</strong> Scan the code, or visit<br>civica-applicant.vercel.app/chat</div>
-      </div>
+    <div class="ev-side">
+      <div class="qrbox"><div class="qr">[[qr_chat_svg]]</div><div class="qr-txt"><strong>Try it.</strong> Scan, or<br>civica-applicant.vercel.app/chat</div></div>
+      <div class="affil">Civica was accepted into the Harvard Innovation Labs incubator, where the initial study was conducted.</div>
     </div>
   </div>
-  <div class="rails"><strong>Built-in limits.</strong> The assistant makes no eligibility determination and routes anyone who needs a decision to their county or 2-1-1. It redacts personal data before it leaves the system and never asks for a Social Security number, date of birth, or account number, and it carries crisis and domestic-violence referral lines. Resident conversations are never shared with the bank and no products are marketed to residents; question text is purged automatically (7 days; 30 for flagged items).</div>
-  <div class="checkable"><strong>Checked, and checkable.</strong> Accuracy is graded against a fixed set of ~600 questions across all 53 states and territories &mdash; including adversarial and crisis cases &mdash; with deterministic scorers re-run on every rules change; we will hand your compliance team the question set and the rubric to run themselves. The corpus (eCFR plus policy packs for all 53 jurisdictions, each with documented provenance[[me_audit_clause]]) is flagged for refresh every 120 days.</div>
   <div class="pagenum">3 / 4</div>
 </div>
 
