@@ -4859,7 +4859,7 @@ html {
    messages keep a chip so the two voices stay visually distinct, but it is
    the quiet neutral tint, not a brand-colored block: terracotta is for
    actions, not for the reader's words. */
-.demeter__msg--user { align-self: flex-end; background: var(--demeter-tint); color: var(--demeter-ink); border: 1px solid var(--demeter-rule); border-bottom-right-radius: 0.3rem; }
+.demeter__msg--user { align-self: flex-end; background: var(--demeter-tint); color: var(--demeter-ink); border: 1px solid var(--demeter-user-edge); border-bottom-right-radius: 0.3rem; }
 .demeter__msg--assistant { align-self: flex-start; background: transparent; color: var(--demeter-ink); border: 0; border-radius: 0; padding-left: 0; padding-right: 0; }
 .demeter__rule { border: 0; border-top: 1px solid var(--demeter-rule); margin: 0.6rem 0 0.4rem; }
 .demeter__thinking { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; color: var(--demeter-muted); font-style: italic; }
@@ -5517,6 +5517,14 @@ html {
   --demeter-radius-input: 8px;
   --demeter-rule: #E8E6E2;            /* neutral hairline (white-ground decision) — cards, dividers */
   --demeter-rule-strong: #D2CFC9;     /* neutral (white-ground decision) — inputs, table heads */
+  /* The reader's own chip, and only that. --demeter-rule is 1.25:1 on white
+     and --demeter-rule-strong is 1.55:1 — at those values the chip's edge is
+     not a boundary, it is a rumour, and thickening a line nobody can see just
+     makes a wider invisible line. This sits on the same warm axis, at 3.10:1,
+     which is what WCAG asks of a boundary that carries meaning. It is a
+     NEUTRAL on purpose: terracotta is for actions, not for the reader's
+     words (see .demeter__msg--user). */
+  --demeter-user-edge: #95928C;
 }
 
 /* --demeter-font-display (Newsreader, serif — "anything that speaks": answers,
