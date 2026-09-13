@@ -176,7 +176,8 @@ export interface PageCopy {
    *  page needs to hand over rather than half-start the conversation. */
   askLink: string;
   askIntro: string;
-  /** "I need food today." SNAP takes at least seven days even when it is
+  /** "I need food today." Even expedited SNAP is up to seven days (7 CFR
+   *  273.2(i)(3)(i) makes that the deadline, not the floor), and tonight is
    *  urgent, so a page that only explains SNAP leaves someone out of food this
    *  week with an accurate answer and no dinner. Every comparable service
    *  (Feeding America, GetCalFresh) carries this; we carried nothing. */
@@ -446,7 +447,7 @@ const en: PageCopy = {
   retailersNote: "Store counts published by USDA, as of {date}.",
   foodNowLabel: "Need food this week?",
   foodNowBody:
-    "SNAP takes at least seven days even when it is urgent. A food bank can help now, and 211 will find one near you.",
+    "A food bank can help today, and 211 will find one near you. SNAP can be quick too: with very little income or cash on hand, expedited service puts benefits on your card within 7 days of applying.",
   foodNowBank: "Find a food bank",
   foodNow211: "Call or visit 211",
   fearsH2: "The questions people actually ask first",
@@ -750,7 +751,7 @@ const es: PageCopy = {
   retailersNote: "Conteo de tiendas publicado por el USDA, al {date}.",
   foodNowLabel: "\u00bfNecesitas comida esta semana?",
   foodNowBody:
-    "SNAP tarda al menos siete d\u00edas incluso cuando es urgente. Un banco de alimentos puede ayudarte ahora, y el 211 te encuentra uno cerca.",
+    "Un banco de alimentos puede ayudarte hoy, y el 211 te encuentra uno cerca. SNAP tambi\u00e9n puede ser r\u00e1pido: con muy pocos ingresos o poco efectivo disponible, el servicio acelerado pone los beneficios en tu tarjeta dentro de los 7 d\u00edas de solicitar.",
   foodNowBank: "Buscar un banco de alimentos",
   foodNow211: "Llama o visita el 211",
   fearsH2: "Por qu\u00e9 la gente no solicita",
@@ -1039,7 +1040,7 @@ const vi: PageCopy = {
   retailersNote: "Số liệu cửa hàng do Bộ Nông nghiệp Hoa Kỳ công bố, tính đến {date}.",
   foodNowLabel: "Cần thực phẩm ngay tuần này?",
   foodNowBody:
-    "SNAP mất ít nhất bảy ngày ngay cả khi khẩn cấp. Ngân hàng thực phẩm có thể giúp ngay, và tổng đài 211 sẽ tìm giúp bạn một nơi gần nhà.",
+    "Ngân hàng thực phẩm có thể giúp bạn ngay hôm nay, và tổng đài 211 sẽ tìm giúp bạn một nơi gần nhà. SNAP cũng có thể nhanh: nếu thu nhập rất thấp hoặc rất ít tiền mặt, dịch vụ xét duyệt nhanh đưa trợ cấp vào thẻ của bạn trong vòng 7 ngày kể từ khi nộp đơn.",
   foodNowBank: "Tìm ngân hàng thực phẩm",
   foodNow211: "Gọi hoặc truy cập 211",
   fearsH2: "Vì sao người ta không nộp đơn",
@@ -1329,7 +1330,7 @@ const zh: PageCopy = {
   retailersNote: "商店数量由美国农业部公布，截至 {date}。",
   foodNowLabel: "这周就需要食物？",
   foodNowBody:
-    "即使情况紧急，SNAP 也至少需要七天。食物银行现在就能帮忙，211 可以帮您找到附近的一家。",
+    "食物银行今天就能帮忙，211 可以帮您找到附近的一家。SNAP 也可以很快：如果您的收入极低或手头现金很少，加急服务会在申请后 7 天内把福利存入您的卡。",
   foodNowBank: "查找食物银行",
   foodNow211: "致电或访问 211",
   fearsH2: "人们不申请的原因",

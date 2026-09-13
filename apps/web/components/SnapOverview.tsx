@@ -514,7 +514,7 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
 
 /** "I need food this week."
  *
- *  SNAP takes at least seven days even under expedited service, so a page that
+ *  Expedited service is up to seven days, not instant, so a page that
  *  only explains SNAP hands someone who is out of food an accurate answer and
  *  no dinner. Feeding America leads with a food-bank finder; GetCalFresh points
  *  at real people. We carried nothing.

@@ -431,7 +431,7 @@ describe("the Beeck finding — the one claim on the page that is not ours", () 
 
 describe("food this week — the page's one obligation", () => {
   it("is not behind a click, and points somewhere that can help today", () => {
-    // SNAP takes at least seven days even under expedited service. A page that
+    // Expedited SNAP is up to seven days, not instant. A page that
     // only explains SNAP hands someone who is out of food an accurate answer
     // and no dinner.
     for (const lang of ANSWER_LANGS) {

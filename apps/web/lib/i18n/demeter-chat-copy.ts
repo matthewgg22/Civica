@@ -155,13 +155,14 @@ export const T = {
       // SNAP mark invites), it just does not go first.
       body: "Every answer quotes the rule it came from, so you can check it.",
       bodyTwo: "Demeter is not the government and cannot decide your case.",
-      /* THE CARD OWNS THE FULL DEFINITION (owner, 2026-08-26). It used
-         to borrow emptyWhatIsSnap, so dismissing the card handed the reader
-         the same 29 words again in the empty state directly behind it — the
-         first thing the product did after introducing itself was repeat
-         itself. */
+      /* SHORT, AND STILL NOT THE EMPTY STATE'S (owner, 2026-09-13). This
+         carried USDA's own 39-word definition, which on a card with three
+         other things to say read as a paragraph to get past rather than the
+         first useful sentence. Two plain clauses now. It stays distinct from
+         emptyWhatIsSnap so dismissing the card does not hand the reader the
+         same words again in the empty state directly behind it. */
       whatIsSnap:
-        "SNAP (formerly known as food stamps) provides food benefits to low-income families to supplement their grocery budget so they can afford the nutritious food essential to health and well-being.",
+        "SNAP is monthly money for groceries, for people with low incomes. It used to be called food stamps.",
       cta: "Start asking",
       close: "Close",
     },
@@ -433,13 +434,14 @@ export const T = {
       continueWithout: "Continuar sin iniciar sesión",
       body: "Cada respuesta cita la regla de la que salió, para que puedas comprobarla.",
       bodyTwo: "Demeter no es el gobierno y no puede decidir tu caso.",
-      /* THE CARD OWNS THE FULL DEFINITION (owner, 2026-08-26). It used
-         to borrow emptyWhatIsSnap, so dismissing the card handed the reader
-         the same 29 words again in the empty state directly behind it — the
-         first thing the product did after introducing itself was repeat
-         itself. */
+      /* SHORT, AND STILL NOT THE EMPTY STATE'S (owner, 2026-09-13). This
+         carried USDA's own 39-word definition, which on a card with three
+         other things to say read as a paragraph to get past rather than the
+         first useful sentence. Two plain clauses now. It stays distinct from
+         emptyWhatIsSnap so dismissing the card does not hand the reader the
+         same words again in the empty state directly behind it. */
       whatIsSnap:
-        "SNAP (antes conocido como cupones de alimentos) ofrece beneficios de alimentos a familias de bajos ingresos para complementar su presupuesto de comida, de modo que puedan pagar los alimentos nutritivos esenciales para la salud y el bienestar.",
+        "SNAP es dinero mensual para comprar comida, para personas de bajos ingresos. Antes se llamaba cupones de alimentos.",
       cta: "Empezar a preguntar",
       close: "Cerrar",
     },
@@ -651,13 +653,14 @@ export const T = {
       continueWithout: "Tiếp tục mà không đăng nhập",
       body: "Mỗi câu trả lời đều trích dẫn quy định mà nó dựa vào, để bạn tự kiểm chứng.",
       bodyTwo: "Demeter không phải là chính phủ và không thể quyết định hồ sơ của bạn.",
-      /* THE CARD OWNS THE FULL DEFINITION (owner, 2026-08-26). It used
-         to borrow emptyWhatIsSnap, so dismissing the card handed the reader
-         the same 29 words again in the empty state directly behind it — the
-         first thing the product did after introducing itself was repeat
-         itself. */
+      /* SHORT, AND STILL NOT THE EMPTY STATE'S (owner, 2026-09-13). This
+         carried USDA's own 39-word definition, which on a card with three
+         other things to say read as a paragraph to get past rather than the
+         first useful sentence. Two plain clauses now. It stays distinct from
+         emptyWhatIsSnap so dismissing the card does not hand the reader the
+         same words again in the empty state directly behind it. */
       whatIsSnap:
-        "SNAP (trước đây gọi là tem phiếu thực phẩm) cung cấp trợ cấp thực phẩm cho các gia đình thu nhập thấp để bổ sung vào ngân sách đi chợ, giúp họ mua được thực phẩm dinh dưỡng thiết yếu cho sức khỏe và đời sống.",
+        "SNAP là khoản tiền hàng tháng để mua thực phẩm, dành cho người có thu nhập thấp. Trước đây gọi là tem phiếu thực phẩm.",
       cta: "Bắt đầu hỏi",
       close: "Đóng",
     },
@@ -865,13 +868,14 @@ export const T = {
       continueWithout: "不登录，继续使用",
       body: "每条回答都会附上依据的法规，方便您自行核对。",
       bodyTwo: "Demeter 不是政府机构，无法决定您的案件。",
-      /* THE CARD OWNS THE FULL DEFINITION (owner, 2026-08-26). It used
-         to borrow emptyWhatIsSnap, so dismissing the card handed the reader
-         the same 29 words again in the empty state directly behind it — the
-         first thing the product did after introducing itself was repeat
-         itself. */
+      /* SHORT, AND STILL NOT THE EMPTY STATE'S (owner, 2026-09-13). This
+         carried USDA's own 39-word definition, which on a card with three
+         other things to say read as a paragraph to get past rather than the
+         first useful sentence. Two plain clauses now. It stays distinct from
+         emptyWhatIsSnap so dismissing the card does not hand the reader the
+         same words again in the empty state directly behind it. */
       whatIsSnap:
-        "SNAP（旧称食品券）为低收入家庭提供食品补助，补贴他们的买菜开支，让他们买得起对健康和生活至关重要的营养食品。",
+        "SNAP 是每月发放的买菜钱，面向低收入人群。以前叫做食品券。",
       cta: "开始提问",
       close: "关闭",
     },
