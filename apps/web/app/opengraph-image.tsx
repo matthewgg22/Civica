@@ -23,12 +23,46 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const FONT_DIR = join(process.cwd(), "public", "fonts", "demeter");
-const NEWSREADER_600 = readFileSync(join(FONT_DIR, "Newsreader-SemiBold.ttf"));
-const NEWSREADER_400 = readFileSync(join(FONT_DIR, "Newsreader-Regular.ttf"));
-const BEVIETNAM_500 = readFileSync(join(FONT_DIR, "BeVietnamPro-Medium.ttf"));
-const MARK = `data:image/png;base64,${readFileSync(
-  join(process.cwd(), "public", "demeter-wheat-mark.png"),
-).toString("base64")}`;
+
+// THESE READS MUST STAY LAZY. They were module-level consts, and that took the
+// whole site down (2026-09-12).
+//
+// `app/opengraph-image.tsx` is a ROOT FILE CONVENTION, so Next imports this
+// module while resolving metadata for every route that inherits the root
+// layout — not just when it renders the card. Module-level readFileSync
+// therefore ran inside every other route's lambda, and next.config.ts traces
+// these files into the `/opengraph-image` lambda ONLY. Everywhere else the
+// files are absent, the import threw ENOENT, and metadata resolution failed.
+//
+// Because metadata is baked in at build time for static routes and resolved
+// per request for dynamic ones, the damage landed exactly on /chat,
+// /screen/ask, /screen and /sign-in while /questions, /states, /safety,
+// /sitemap.xml and /api/health all kept serving 200. Locally it never
+// reproduced: `next start` has the whole repo on disk.
+//
+// Reading inside the handler means importing this module touches no
+// filesystem. Only the `/opengraph-image` route — the one the tracing include
+// covers — ever opens these files. Memoized so a warm lambda reads once.
+let assets: {
+  newsreader600: Buffer;
+  newsreader400: Buffer;
+  beVietnam500: Buffer;
+  mark: string;
+} | null = null;
+
+function loadAssets() {
+  if (!assets) {
+    assets = {
+      newsreader600: readFileSync(join(FONT_DIR, "Newsreader-SemiBold.ttf")),
+      newsreader400: readFileSync(join(FONT_DIR, "Newsreader-Regular.ttf")),
+      beVietnam500: readFileSync(join(FONT_DIR, "BeVietnamPro-Medium.ttf")),
+      mark: `data:image/png;base64,${readFileSync(
+        join(process.cwd(), "public", "demeter-wheat-mark.png"),
+      ).toString("base64")}`,
+    };
+  }
+  return assets;
+}
 
 // DEMETER-DESIGN.md §3 — the real tokens.
 const PAPER = "#FFFFFF";
@@ -52,6 +86,7 @@ const HEADWORDS: Array<[string, string]> = [
 const INSET = 30;
 
 export default function OpengraphImage() {
+  const { newsreader600, newsreader400, beVietnam500, mark } = loadAssets();
   return new ImageResponse(
     (
       <div
@@ -69,7 +104,7 @@ export default function OpengraphImage() {
       >
         {/* Wordmark: real mark + "Demeter" (ink) + "AI" (terracotta) — inset. */}
         <div style={{ display: "flex", alignItems: "center", gap: 28, marginLeft: INSET }}>
-          <img src={MARK} width={109} height={109} alt="" style={{ borderRadius: 999 }} />
+          <img src={mark} width={109} height={109} alt="" style={{ borderRadius: 999 }} />
           <div style={{ display: "flex", alignItems: "baseline", gap: 14, fontFamily: "Newsreader", fontWeight: 600 }}>
             <div style={{ fontSize: 61, color: INK, letterSpacing: "-0.01em" }}>Demeter</div>
             <div style={{ fontSize: 61, color: TERRA }}>AI</div>
@@ -127,9 +162,9 @@ export default function OpengraphImage() {
     {
       ...size,
       fonts: [
-        { name: "Newsreader", data: NEWSREADER_600, weight: 600, style: "normal" },
-        { name: "Newsreader", data: NEWSREADER_400, weight: 400, style: "normal" },
-        { name: "Be Vietnam Pro", data: BEVIETNAM_500, weight: 500, style: "normal" },
+        { name: "Newsreader", data: newsreader600, weight: 600, style: "normal" },
+        { name: "Newsreader", data: newsreader400, weight: 400, style: "normal" },
+        { name: "Be Vietnam Pro", data: beVietnam500, weight: 500, style: "normal" },
       ],
     },
   );
