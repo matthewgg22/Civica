@@ -94,8 +94,8 @@
   /* Geographic focus + the CDSS evidence read as one assessment-area section:
      a single accent rule opens the group, both parts sit beneath it. */
   .aa-context { border-top:1.5px solid var(--accent); margin-top:8px; padding-top:7px; }
-  /* Why this bank — the institutional proposition */
-  .why { margin-top:0; }
+  /* "What SNAP is" — plain explainer, its own section above the research box */
+  .why { border-top:1.5px solid var(--accent); margin-top:9px; padding-top:8px; }
   .why-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:5px; }
   .why p { font-family:'Newsreader',serif; font-size:11pt; line-height:1.4; color:var(--ink); max-width:6.7in; }
 
@@ -195,6 +195,10 @@
       </div>
       <div class="colbrk">[[aa_geo_visual]]</div>
     </div>
+    <div class="why">
+      <div class="why-cap">What SNAP is</div>
+      <p>SNAP is the federal food-benefit program: monthly grocery money for low- and moderate-income households, spent at neighborhood stores. Most people who qualify but never enroll are stopped by the process, not the rules. Civica's free assistant, a chatbot grounded in your state's own SNAP rules, answers their questions in plain language and guides them through the application.</p>
+    </div>
     <div class="research">
       <div class="rlabel">SNAP access and household finances</div>
       <div class="rstats">
@@ -203,15 +207,9 @@
         <div><b class="serif">+17 pts</b><span>higher credit score, up from 634 (subprime)</span></div>
       </div>
     </div>
-    <div class="aa-context">
-      <div class="why">
-        <div class="why-cap">What SNAP is</div>
-        <p>SNAP is the federal food-benefit program &mdash; monthly grocery money for low- and moderate-income households, spent at neighborhood stores. Most people who qualify but never enroll are stopped by the process, not the rules. Civica's free assistant, a chatbot grounded in your state's own SNAP rules, answers their questions in plain language and guides them through the application.</p>
-      </div>
-      [[me_evidence_block]]
-    </div>
+    [[me_evidence_block]]
   </div>
-  <div class="pagefoot"><strong>Household outcomes:</strong> ~65,000 Los Angeles SNAP applicants, admin records linked to credit reports; Homonoff, Lee &amp; Meckel, NBER WP 34434 (preliminary draft, November 2025; subject to revision) — SNAP access, not a measurement of [[org_name]]'s program. &nbsp;·&nbsp; [[data_gaps_note]]<strong>Sources:</strong> eligibility [[model_note]]; proxy and under-reporting biases may overstate the estimate (appendix). Assessment area: [[bank_name]]'s [[pe_date]] CRA PE ([[regulator]]). Benefits: USDA FNS FY2024. [[org_name]], 501(c)(3).</div>
+  <div class="pagefoot"><strong>Household outcomes:</strong> ~65,000 Los Angeles SNAP applicants, admin records linked to credit reports; Homonoff, Lee &amp; Meckel, NBER WP 34434 (preliminary draft, November 2025; subject to revision). Research on SNAP access, not a measurement of [[org_name]]'s program. &nbsp;·&nbsp; [[data_gaps_note]]<strong>Sources:</strong> eligibility [[model_note]]; proxy and under-reporting biases may overstate the estimate (appendix). Assessment area: [[bank_name]]'s [[pe_date]] CRA PE ([[regulator]]). Benefits: USDA FNS FY2024. [[org_name]], 501(c)(3).</div>
   <div class="pagenum">1 / 3</div>
 </div>
 
@@ -221,16 +219,16 @@
   <h2 class="pagehead">A benefits-access pilot for [[bank_name]]</h2>
   <div class="body-block" style="margin-top:12px;">
     <h3>The program</h3>
-    Factual, geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") across your assessment area sends residents to Civica's free eligibility assistant — a conversational chatbot grounded in your state's own SNAP rules that answers their questions in plain language, shows the rule behind each answer, and guides them into an application. We take no per-enrollment compensation.
+    Factual, geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") across your assessment area sends residents to Civica's free eligibility assistant, a conversational chatbot grounded in your state's own SNAP rules that answers their questions in plain language, shows the rule behind each answer, and guides them into an application. We take no per-enrollment compensation.
   </div>
   <div class="provenance"><b>Why Civica.</b> [[credibility_line]]</div>
   <div class="crafile">
     <div class="crafile-cap">For [[bank_name]]'s community-reinvestment file</div>
     <table class="cra-dl">
-      <tr><td class="l">Activity</td><td>[[program_ref]] benefits-access outreach and application assistance in your assessment area. A community-development activity &mdash; community services targeted to low- and moderate-income individuals under [[cra_rule_cite]]; funded as a grant, it is evaluated as community development, not on the lending test.</td></tr>
+      <tr><td class="l">Activity</td><td>[[program_ref]] benefits-access outreach and application assistance in your assessment area. A community-development activity: community services targeted to low- and moderate-income individuals under [[cra_rule_cite]]; funded as a grant, it is evaluated as community development, not on the lending test.</td></tr>
       <tr><td class="l">Beneficiaries</td><td>Low- and moderate-income residents. The federal Interagency Q&amp;A names USDA's Supplemental Nutrition Assistance programs as an accepted LMI proxy (Q&amp;A §&#8239;__.12(g)(2)&#8211;1), so no household-level income documentation is required.</td></tr>
       <tr><td class="l">Geographic nexus</td><td>Delivered and measured within [[bank_name]]'s delineated assessment area, reconciled to invoices.</td></tr>
-      <tr><td class="l">Documentation</td><td>A quarterly report of ad delivery, eligibility checks, and applications started and submitted &mdash; all by county &mdash; plus a one-page qualification memo citing the CRA category and the governing rule, and an annual exam-file summary. Prepared for your file.</td></tr>
+      <tr><td class="l">Documentation</td><td>A quarterly report of ad delivery, eligibility checks, and applications started and submitted (all by county), plus a one-page qualification memo citing the CRA category and the governing rule, and an annual exam-file summary. Prepared for your file.</td></tr>
     </table>
     <div class="cra-foot">Treatment under the CRA framework remains subject to your institution's compliance team and examiners.</div>
   </div>
@@ -239,12 +237,11 @@
     <div class="tier lead"><div class="name">Pilot Grant · proposed</div><div class="amt">$[[ask_fmt]]</div><div class="desc">A full quarter across the assessment area, with the complete measurement program and quarterly report.</div></div>
     <div class="tier"><div class="name">Program Grant</div><div class="amt">$30,000–50,000</div><div class="desc">Two or more quarters; adds funnel depth and a year-end exam-file summary.</div></div>
   </div>
-  <div class="split"><strong>Pro-rata allocation.</strong> Every grant dollar is applied in the same proportions: 60¢ assessment-area outreach · 15¢ measurement &amp; reporting · 10¢ creative &amp; Spanish localization · 15¢ indirect (the 2 CFR 200.414(f) de minimis rate) — the same split for every bank; only the geography changes.</div>
+  <div class="split"><strong>Pro-rata allocation.</strong> Every grant dollar is applied in the same proportions: 60¢ assessment-area outreach · 15¢ measurement &amp; reporting · 10¢ creative &amp; Spanish localization · 15¢ indirect (the 2 CFR 200.414(f) de minimis rate). The same split for every bank; only the geography changes.</div>
   <div class="close">
     <div class="close-line">A 30-minute call covers the program, the measurement, and the exam-file documentation.</div>
     <div class="who">[[contact_name]], [[contact_title]]<br>[[contact_email]][[contact_phone_line]]</div>
   </div>
-  <div class="pagefoot brightline">Program guardrail: our tools never steer applicants toward any funder's products or services. Any future referral integration would be a separate, explicitly disclosed agreement, never part of this pilot.</div>
   <div class="pagenum">2 / 3</div>
 </div>
 
@@ -252,7 +249,7 @@
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
   <div class="eyebrow" style="margin-top:20px;">Appendix · for your [[regulator]] examination · PROJECTED sample + methodology</div>
-  <h2 class="pagehead" style="margin-top:6px;">Sample quarterly report <span class="chip">Projected — not measured</span></h2>
+  <h2 class="pagehead" style="margin-top:6px;">Sample quarterly report <span class="chip">Projected · not measured</span></h2>
   <div class="projwarn">These are projections. A funded pilot replaces them with measured values.</div>
   <div class="projected-wrap">
     <div class="watermark"><span>PROJECTED</span></div>
@@ -271,14 +268,14 @@
         <tr><td>Est. approved households</td><td>[[low_approved]]</td><td>[[mid_approved]]</td></tr>
         <tr class="key"><td>Est. annual benefits unlocked</td><td>[[low_benefit]]</td><td>[[mid_benefit]]</td></tr>
         <tr class="band"><td colspan="3">Downstream household effects · published research, not measured here</td></tr>
-        <tr><td>Total credit-card debt reduced (~3 yrs)</td><td>[[low_debt]]</td><td>[[mid_debt]]</td></tr>
-        <tr><td>Higher credit score, per approved household</td><td>+17 pts</td><td>+17 pts</td></tr>
+        <tr><td>Total credit-card debt reduced (over 3 yrs)</td><td>[[low_debt]]</td><td>[[mid_debt]]</td></tr>
+        <tr><td>Credit-score points gained, cumulative (+17 per household)</td><td>[[low_cspts]]</td><td>[[mid_cspts]]</td></tr>
         <tr class="band"><td colspan="3">Efficiency</td></tr>
         <tr><td>Cost per submitted application</td><td>[[low_cps]]</td><td>[[mid_cps]]</td></tr>
       </tbody>
     </table>
     <div class="funnel-note">[[funnel_note]]</div>
-    <div class="repnote">Downstream effects apply published SNAP research (Homonoff, Lee &amp; Meckel) to projected approvals — not measured here. A funded report replaces projections with measured values. Assumption set: version [[assumptions_version]].</div>
+    <div class="repnote">Downstream effects apply published SNAP research (Homonoff, Lee &amp; Meckel) to projected approvals; not measured here. A funded report replaces projections with measured values. Assumption set: version [[assumptions_version]].</div>
   </div>
   <div class="appx">
     <div class="col">
@@ -295,12 +292,12 @@
       <h3>Methodology &amp; disclosures</h3>
       <ul>
         <li>[[method_bullet]]</li>
-        <li><strong>Known bias, disclosed:</strong> a gross-income proxy and ACS under-reporting push the estimate <em>upward</em> — read it as an upper range of unmet need.</li>
+        <li><strong>Known bias, disclosed:</strong> a gross-income proxy and ACS under-reporting push the estimate <em>upward</em>, so read it as an upper range of unmet need.</li>
         <li>County estimates carry 1-Year ACS sampling uncertainty; the page-1 dollar range reflects household size, not a confidence interval.</li>
       </ul>
       <h3 class="n2">Geography &amp; vintages</h3>
       <ul>
-        <li>Assessment area: the [[pe_date]] CRA PE ([[regulator]]) &mdash; [[aa_counties_list]].</li>
+        <li>Assessment area: the [[pe_date]] CRA PE ([[regulator]]); [[aa_counties_list]].</li>
         <li>2023 ACS 1-Year PUMS; 2020 tract-to-PUMA crosswalk; USDA FNS FY2024 benefits; generated [[prepared_date]].</li>
       </ul>
     </div>

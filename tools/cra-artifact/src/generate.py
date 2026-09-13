@@ -190,7 +190,7 @@ def build_values(bank, assumptions, org, metrics, meta):
     # chatbot — the actual product — is what applicants are directed to.
     credibility_line += (
         " And the product is not a landing page but a conversational assistant "
-        "grounded in your state's own SNAP rules — it answers applicants' "
+        "grounded in your state's own SNAP rules; it answers applicants' "
         "questions and cites the governing rule, so they get accurate guidance "
         "rather than generic search results."
     )
@@ -259,8 +259,14 @@ def build_values(bank, assumptions, org, metrics, meta):
         # Aggregate downstream credit-card debt reduced = approved households ×
         # the $2,436 per-household 3-year research effect (Homonoff et al.).
         # Labelled on page 3 as research-based, not measured by this program.
-        _debt = f["approved_households"] * 2436
+        # Compute the aggregates from the ROUNDED approved count shown in the
+        # table so the arithmetic checks out (approved × per-household effect).
+        _appr_shown = round(f["approved_households"])
+        _debt = _appr_shown * 2436
         v[f"{s}_debt"] = f"${_debt/1e6:.1f}M" if _debt >= 1e6 else f"${_debt/1e3:.0f}K"
+        # Cumulative credit-score points = approved households × the +17 per-household
+        # research effect (illustrative; the per-household figure is in the label).
+        v[f"{s}_cspts"] = fmt_int(_appr_shown * 17)
     return v, need
 
 
