@@ -132,7 +132,8 @@ def build_values(bank, assumptions, org, metrics, meta):
     # Sub-county PUMA choropleth where we have both need data and geometry
     # (CA, FL); every other state falls back to the county-bar breakdown.
     aa_geo_visual = pumamap.puma_visual_html(
-        bank["aa_counties"], bank.get("state", "CA"), meta["method_short"])
+        bank["aa_counties"], bank.get("state", "CA"), meta["method_short"],
+        reconcile_rate=meta.get("usda_participation_rate"))
     if not aa_geo_visual:
         aa_geo_visual = county_breakdown
     ratio_line = ""

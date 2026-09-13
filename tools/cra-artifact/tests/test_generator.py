@@ -185,8 +185,8 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     # closing next-step + contact present (quiet close, not a "the ask" box)
     assert "30-minute call" in html and org["contact_email"] in html
     # CA banks render the sub-county PUMA choropleth (replaces the county bars)
-    assert "data-puma" in html and "Eligible but not enrolled" in html
-    assert "Census PUMA" in html and 'class="geo-ticks"' in html
+    assert "puma-bar" in html and "Eligible but not enrolled" in html
+    assert "Census PUMA" in html and 'class="geo-bars"' in html
     # every core-table number carries a clarifying sub-line (formatting parity)
     for sub in ("income-eligible for SNAP", "at USDA's participation rate",
                 "in federal SNAP funds", "per eligible household"):
@@ -268,11 +268,15 @@ def test_pumamap_supported_states_render_and_others_fall_back():
     # geometry + need data wired for CA and FL; not for other states
     assert pumamap.available("CA") and pumamap.available("FL")
     assert not pumamap.available("TX")
-    # a CA AA resolves many PUMAs and shades them
-    svg = pumamap.regional_puma_svg(["Los Angeles", "Orange"], "CA")
-    assert svg.count("<polygon") > 30 and "data-puma" in svg
-    # the full right-column block carries the honest PUMA/not-tracts labels
-    html = pumamap.puma_visual_html(["Miami-Dade"], "FL", "survey-weighted fact base")
+    # a CA AA resolves several PUMAs into a ranked bar chart
+    bars = pumamap.ranked_bar_svg(["Los Angeles", "Orange"], "CA", reconcile_rate=0.81)
+    assert bars.count("<rect") >= 5 and "puma-bar" in bars
+    # the small locator shades the AA counties in the state
+    loc = pumamap.locator_svg(["Los Angeles", "Orange"], "CA")
+    assert loc.count("<polygon") > 30 and pumamap.ACCENT in loc
+    # the full right-column block carries the honest PUMA labels
+    html = pumamap.puma_visual_html(["Miami-Dade"], "FL", "survey-weighted fact base",
+                                    reconcile_rate=0.81)
     assert "PUMA" in html and "Census PUMA" in html
     # unsupported state -> empty, so generate.py uses the county-bar fallback
     assert pumamap.puma_visual_html(["Harris"], "TX", "x") == ""
