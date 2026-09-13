@@ -175,8 +175,8 @@ def build_values(bank, assumptions, org, metrics, meta):
     if state == "CA":
         credibility_line = (
             "The findings here are Civica's own: a reproducible model of 2023 "
-            "federal ACS microdata (cross-validated AUC 0.80), and a review of 37 "
-            "CalFresh Management Evaluation reviews across 36 California counties "
+            "federal ACS microdata (cross-validated AUC 0.80), and a review of 38 "
+            "California county CalFresh Management Evaluation reports "
             "(FFY 2024–2025), obtained by public-records request."
         )
     else:
@@ -250,6 +250,18 @@ def build_values(bank, assumptions, org, metrics, meta):
         "headline_unenrolled": fmt_int(round(need["unenrolled"])),
         "recon_note": recon_note,
         "bank_specific_block": bank_specific_block,
+        # Static QR to the live assistant (same URL for every bank); pre-generated
+        # asset, so the generator stays stdlib-only. See assets/qr-chat.svg.
+        "qr_chat_svg": (TOOL_ROOT / "assets/qr-chat.svg").read_text(),
+        # Page-3 (platform evidence) state-awareness: the demo and the ME-audit
+        # provenance are state-specific, so the CalFresh/California framing must
+        # not render for the FL banks. The mixed-status citations (7 CFR) are
+        # federal and valid in every state.
+        "state_name": pumamap.STATE_NAMES.get(state, "your state"),
+        "me_audit_clause": (
+            "; the California pack is informed by an audit of 38 county "
+            "Management Evaluation reports obtained by public-records request"
+            if state == "CA" else ""),
         "benefit_range": f"{fmt_musd(need['benefit_low_usd'])}–{fmt_musd(need['benefit_high_usd'])}",
         "ratio_line": ratio_line,
         "map_caption": map_caption,

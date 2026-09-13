@@ -173,6 +173,29 @@
      colored-left-rail card is a DEMETER-DESIGN AI-slop pattern. */
   .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:6px 11px; font-size:8.1pt; line-height:1.38; color:var(--body); margin-top:5px; text-wrap:pretty; }
   .disclose strong { color:var(--ink); }
+  /* Page 3 — the platform, as built (product evidence) */
+  .platform-grid { display:flex; gap:.3in; margin-top:11px; align-items:flex-start; }
+  .platform-grid .chat { flex:1.3; min-width:0; }
+  .platform-grid .platform-side { flex:1; min-width:0; }
+  .bubble { font-size:8.6pt; line-height:1.4; border-radius:9px; padding:7px 10px; margin-top:6px; }
+  .bubble.ask { background:var(--tint); color:var(--ink); border:1px solid var(--rule); border-bottom-left-radius:2px; }
+  .bubble.ans { background:#fff; border:1px solid var(--accent); color:var(--body); border-bottom-right-radius:2px; }
+  .bubble cite { font-style:normal; color:var(--accent-deep); font-weight:600; white-space:nowrap; }
+  .cert { margin-top:6px; font-size:7.4pt; font-weight:600; letter-spacing:.02em; color:var(--accent-deep); }
+  .freshfoot { margin-top:2px; font-size:6.9pt; color:var(--muted); }
+  .chat-note { font-size:6.9pt; color:var(--muted); margin-top:5px; }
+  .buildlist { list-style:none; margin-top:3px; }
+  .buildlist li { font-size:8.2pt; line-height:1.4; color:var(--body); margin-top:5px; padding-left:11px; position:relative; text-wrap:pretty; }
+  .buildlist li::before { content:""; position:absolute; left:0; top:.52em; width:4px; height:4px; background:var(--accent); border-radius:50%; }
+  .buildlist strong { color:var(--ink); }
+  .tryit { display:flex; align-items:center; gap:10px; margin-top:10px; padding:8px 9px; border:1px solid var(--rule-strong); border-radius:3px; background:var(--tint); }
+  .tryit .qr { width:72px; flex:none; }
+  .tryit .qr svg { width:100%; height:auto; display:block; }
+  .tryit-txt { font-size:8.4pt; line-height:1.4; color:var(--body); }
+  .tryit-txt strong { color:var(--ink); }
+  .rails { margin-top:12px; font-size:8.4pt; line-height:1.46; color:var(--body); border-top:2px solid var(--accent); padding-top:8px; text-wrap:pretty; }
+  .checkable { margin-top:8px; font-size:8.4pt; line-height:1.46; color:var(--body); text-wrap:pretty; }
+  .rails strong, .checkable strong { color:var(--ink); }
 </style></head><body>
 
 <!-- PAGE 1 — the need -->
@@ -212,7 +235,7 @@
     [[me_evidence_block]]
   </div>
   <div class="pagefoot"><strong>Household outcomes:</strong> ~62,000 Los Angeles SNAP applicants, admin records linked to credit reports; Homonoff, Lee &amp; Meckel, NBER WP 34434 (2025 draft). Research on SNAP access, not a measurement of [[org_name]]'s program. &nbsp;·&nbsp; [[data_gaps_note]][[recon_note]]<strong>Sources:</strong> eligibility [[model_note]]; USDA FNS participation rates (Reaching Those in Need, FY2022). Assessment area: [[bank_name]]'s [[pe_date]] CRA PE ([[regulator]]). Benefits: USDA FNS FY2024. [[org_name]], 501(c)(3).</div>
-  <div class="pagenum">1 / 3</div>
+  <div class="pagenum">1 / 4</div>
 </div>
 
 <!-- PAGE 2 — the program + the ask -->
@@ -243,10 +266,45 @@
     <div class="close-line">A 30-minute call walks through the program, how the grant is applied, and the exam-file documentation.</div>
     <div class="who">[[contact_name]], [[contact_title]]<br>[[contact_email]][[contact_phone_line]]</div>
   </div>
-  <div class="pagenum">2 / 3</div>
+  <div class="pagenum">2 / 4</div>
 </div>
 
-<!-- PAGE 3 — appendix: PROJECTED sample report + methodology (detach as needed) -->
+<!-- PAGE 3 — the platform, as built (product evidence) -->
+<div class="page">
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
+  <div class="eyebrow" style="margin-top:20px;">Evidence · the working system behind the pilot</div>
+  <h2 class="pagehead" style="margin-top:6px;">The platform, as built</h2>
+  <div class="thesis" style="margin-top:8px;">The program on the previous page is running today. This is the system that delivers it &mdash; a rules-grounded assistant, not a general chatbot.</div>
+  <div class="platform-grid">
+    <div class="chat">
+      <div class="brk-cap">Illustrative exchange &middot; live assistant</div>
+      <div class="bubble ask">I'm undocumented but my kids were born here. Can they get [[program_ref]] in [[state_name]], and does applying put me at risk?</div>
+      <div class="bubble ans">Yes. Your U.S.-citizen children can get [[program_ref]] regardless of your status &mdash; eligible members are assessed on their own <cite>(7 CFR 273.11(c))</cite>. You're a non-applicant, so you don't provide an SSN or immigration documents for yourself, and the benefit doesn't count against you for public charge <cite>(7 CFR 273.6(a))</cite>.
+        <div class="cert">&#10003; CERTAIN &mdash; every rule cited comes from regulation text you can check.</div>
+        <div class="freshfoot">Based on federal SNAP rules (eCFR). FY2026 figures, valid through Sept 30, 2026.</div>
+      </div>
+      <div class="chat-note">A real answer from the live assistant; the citations are real and checkable.</div>
+    </div>
+    <div class="platform-side">
+      <div class="brk-cap">How it's built</div>
+      <ul class="buildlist">
+        <li>Answers come only from <strong>verbatim federal regulation text</strong> (eCFR Title 7 Part 273), retrieved per question &mdash; not a chatbot's memory.</li>
+        <li>Every citation is <strong>machine-verified</strong> against the retrieved text; an unverifiable one stops the answer, retries, or falls back to verified quotes.</li>
+        <li>No dollar or percent appears unless it traces to the source &mdash; in English, Spanish, Vietnamese, and Chinese.</li>
+        <li>Current for the <strong>2026 federal changes</strong>; each answer carries the rule and a dated freshness stamp.</li>
+      </ul>
+      <div class="tryit">
+        <div class="qr">[[qr_chat_svg]]</div>
+        <div class="tryit-txt"><strong>Try it yourself.</strong> Scan the code, or visit<br>civica-applicant.vercel.app/chat</div>
+      </div>
+    </div>
+  </div>
+  <div class="rails"><strong>Built-in limits.</strong> The assistant makes no eligibility determination and routes anyone who needs a decision to their county or 2-1-1. It redacts personal data before it leaves the system and never asks for a Social Security number, date of birth, or account number, and it carries crisis and domestic-violence referral lines. Resident conversations are never shared with the bank and no products are marketed to residents; question text is purged automatically (7 days; 30 for flagged items).</div>
+  <div class="checkable"><strong>Checked, and checkable.</strong> Accuracy is graded against a fixed set of ~600 questions across all 53 states and territories &mdash; including adversarial and crisis cases &mdash; with deterministic scorers re-run on every rules change; we will hand your compliance team the question set and the rubric to run themselves. The corpus (eCFR plus policy packs for all 53 jurisdictions, each with documented provenance[[me_audit_clause]]) is flagged for refresh every 120 days.</div>
+  <div class="pagenum">3 / 4</div>
+</div>
+
+<!-- PAGE 4 — appendix: PROJECTED sample report + methodology (detach as needed) -->
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
   <div class="eyebrow" style="margin-top:20px;">Appendix for your [[regulator]] examination · sample + methodology</div>
@@ -300,6 +358,6 @@
   </div>
   <div class="disclose"><strong>Reporting.</strong> Payment is never tied to enrollment counts, and you receive an auditable record of activity in your assessment area.</div>
   <div class="pagefoot">[[org_name]] · [[status_line]] · Contact: [[contact_name]], [[contact_email]][[contact_phone_line]] · Determination letter and full methodology available on request. All page-3 figures are projections labeled as such; none represent measured performance.</div>
-  <div class="pagenum">3 / 3</div>
+  <div class="pagenum">4 / 4</div>
 </div>
 </body></html>

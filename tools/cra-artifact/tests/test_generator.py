@@ -207,12 +207,12 @@ def test_pdf_smoke(tmp_path):
     assert rc == 0
     pdf = TOOL_ROOT / "out/bank_irvine.pdf"
     assert pdf.exists() and 10_000 < pdf.stat().st_size < 10 * 1024 * 1024
-    # 3 pages: 2-page pitch + 1 detachable appendix (PROJECTED sample + methodology)
+    # 4 pages: 2-page pitch + platform-evidence page + detachable appendix
     n_pages = subprocess.run(
         ["mdls", "-name", "kMDItemNumberOfPages", "-raw", str(pdf)],
         capture_output=True, text=True).stdout.strip()
     if n_pages not in ("", "(null)"):
-        assert n_pages == "3"
+        assert n_pages == "4"
 
 
 # ---- multi-state wiring ------------------------------------------------------
@@ -917,9 +917,9 @@ def test_access_callout_does_not_perturb_need_math():
     assert "me-evidence" in values["me_evidence_block"]
 
 
-def test_access_callout_keeps_artifact_at_three_pages(tmp_path):
+def test_access_callout_keeps_artifact_at_four_pages(tmp_path):
     # The strongest overflow guard: a bank whose AA triggers the callout must
-    # still render exactly three pages (2-page pitch + appendix).
+    # still render exactly four pages (2-page pitch + platform evidence + appendix).
     rc = generate.main(["--bank", "american_business_bank"])
     assert rc == 0
     pdf = TOOL_ROOT / "out" / "american_business_bank.pdf"
@@ -927,7 +927,7 @@ def test_access_callout_keeps_artifact_at_three_pages(tmp_path):
         ["mdls", "-name", "kMDItemNumberOfPages", "-raw", str(pdf)],
         capture_output=True, text=True).stdout.strip()
     if n_pages not in ("", "(null)"):
-        assert n_pages == "3"
+        assert n_pages == "4"
 
 
 def test_headline_reconciled_to_usda_participation_rate():
@@ -980,3 +980,31 @@ def test_bank_specific_block_renders_only_when_present():
                                      metrics, meta)
     irv = generate.render(tpl, irv_v)
     assert "specifically.</b>" not in irv
+
+
+def test_platform_evidence_page_present_and_state_aware():
+    """Page 3 is the 'platform, as built' evidence page: it must carry the
+    rule-grounded exchange with real federal citations, the built-in-limits
+    rails, and the try-it QR. Its CalFresh/California framing and the ME-audit
+    provenance render ONLY for CA banks; the 7 CFR citations are federal and
+    valid in every state, so they appear for FL too."""
+    banks, assumptions, org = generate.load_inputs()
+    tpl = (TOOL_ROOT / "templates/artifact.html").read_text()
+    meta = states.state_meta("CA")
+    ca = generate.render(tpl, generate.build_values(
+        banks["american_business_bank"], assumptions, org,
+        score.load_county_metrics(meta["metrics"]), meta)[0])
+    assert "The platform, as built" in ca
+    assert "7 CFR 273.11(c)" in ca and "7 CFR 273.6(a)" in ca   # verified citations
+    assert "qrline" in ca                                       # the live-link QR
+    assert "makes no eligibility determination" in ca           # the rails
+    assert "38 county" in ca                                     # CA ME-audit clause
+    assert "CalFresh (SNAP) in California" in ca
+    assert "3 / 4" in ca and "4 / 4" in ca                       # renumbered
+    fmeta = states.state_meta("FL")
+    fl = generate.render(tpl, generate.build_values(
+        banks["ocean_bank"], assumptions, org,
+        score.load_county_metrics(fmeta["metrics"]), fmeta)[0])
+    assert "SNAP in Florida" in fl
+    assert "California" not in fl and "38 county" not in fl      # no CA framing leaks
+    assert "7 CFR 273.11(c)" in fl                               # federal cite still valid
