@@ -239,6 +239,9 @@ def locator_svg(aa_counties, state, width=118, height=82):
             + "".join(shapes) + "</svg>")
 
 
+STATE_NAMES = {"CA": "California", "FL": "Florida"}
+
+
 def puma_visual_html(aa_counties, state, model_short, reconcile_rate=None):
     """Right-column visual: a ranked bar chart of the highest-need neighborhoods
     (PUMAs) plus a small state locator — or '' if the state is unsupported."""
@@ -246,12 +249,13 @@ def puma_visual_html(aa_counties, state, model_short, reconcile_rate=None):
         return ""
     bars = ranked_bar_svg(aa_counties, state, reconcile_rate=reconcile_rate)
     loc = locator_svg(aa_counties, state)
+    state_name = STATE_NAMES.get(state, "the state")
+    caption = (f"Assessment area within {state_name}. Each bar is a Census PUMA "
+               "(~100k residents), shown at USDA's participation rate.")
     return ('<div class="geomap">'
             '<div class="geo-cap">Eligible but not enrolled &mdash; top neighborhoods</div>'
             f'<div class="geo-bars">{bars}</div>'
-            f'<div class="geo-loc">{loc}<span>assessment area within the state</span></div>'
-            '<div class="geo-src">Each bar is a Census PUMA (~100k residents), '
-            "at USDA's participation rate.</div>"
+            f'<div class="geo-loc">{loc}<span>{caption}</span></div>'
             '</div>')
 
 

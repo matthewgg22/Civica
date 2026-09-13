@@ -146,7 +146,7 @@
       "cofunder_naming_consent": null,
       "cofunder_consent_note": "Ask at signing. Default is a count, never a name — CD grants are not in the public CRA file.",
       "aa_structure": "single CSA-level AA",
-      "bank_specific_note": "One full-service branch, nine loan-production offices, no HMDA reporting, and consumer loans at 0.3% of the book — a commercial bank with almost no retail footprint, for which retail-facing, LMI-serving CRA activity is structurally hard to generate. A benefits-access grant is exactly that activity, without a branch network, and it lands on the investment test, where the bank's qualified-investment ratio slipped from its prior exam and trailed both peer banks examiners used.",
+      "bank_specific_note": "One full-service branch, nine loan-production offices, no HMDA reporting, and consumer loans at 0.3% of the book — a commercial bank with almost no retail footprint, for which retail-facing, LMI-serving CRA activity is structurally hard to generate. This grant is exactly that activity, delivered without a branch network, and it lands on the investment test, where the bank's qualified-investment ratio fell from its prior exam and trailed both peer banks the examiners used.",
       "bank_specific_note_source": "FDIC CRA Performance Evaluation, exam 2024-01-29 (see pe_url): one full-service branch + 9 LPOs, not a HMDA reporter, consumer loans 0.3% of book; Investment Test High Satisfactory but qualified-investment ratio decreased vs prior exam and below both comparable banks."
     },
     "helm_bank": {

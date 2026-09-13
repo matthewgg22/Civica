@@ -72,7 +72,7 @@
   .geomap svg { width:100%; height:auto; display:block; }
   .geo-bars svg { width:100%; height:auto; display:block; }
   .geo-loc { display:flex; align-items:center; gap:7px; margin-top:5px; }
-  .geo-loc svg { width:64px; height:auto; flex:none; }
+  .geo-loc svg { width:92px; height:auto; flex:none; }
   .geo-loc span { font-size:6.6pt; line-height:1.35; color:var(--muted); }
   .geo-src { font-size:6.6pt; line-height:1.4; color:var(--muted); margin-top:5px; }
   /* Inside .aa-context the CDSS quotes are a sub-part of the geographic-focus
@@ -105,7 +105,8 @@
   .body-block h3 { font-family:'Newsreader',serif; font-size:13pt; font-weight:600; color:var(--ink); margin-bottom:4px; }
   /* Provenance line — one quiet, substantiable statement of why the analysis
      here is Civica's own work (reviewer ask). No traction claim. */
-  .provenance { font-size:9pt; line-height:1.42; color:var(--body); margin-top:5px; max-width:6.5in; }
+  .provenance { font-size:9pt; line-height:1.42; color:var(--body); margin-top:5px; max-width:6.5in; text-wrap:pretty; }
+  .body-block .run-in { color:var(--ink); font-weight:600; }
   .provenance b { color:var(--ink); font-weight:600; }
   /* Research aside: a shaded box marks it as supporting external evidence,
      visually distinct from the page's own need figures. Tint fill, not a
@@ -180,7 +181,7 @@
   <div class="body-zone">
     <div class="zone-head">
       <div class="big serif">[[headline_unenrolled]]</div>
-      <div class="head-sentence">eligible residents of <em>your assessment area</em> are not enrolled in [[program_ref]], at USDA's published participation rate for the state. That is an estimated <em>[[benefit_range]] a year</em> in unclaimed federal nutrition dollars, spent in [[aa_label]] grocery stores.</div>
+      <div class="head-sentence">eligible residents of <em>your assessment area</em> are not enrolled in [[program_ref]] &mdash; an estimated <em>[[benefit_range]] a year</em> in unclaimed federal nutrition dollars, spent in [[aa_label]] grocery stores.</div>
       [[ratio_line]]
     </div>
     <div class="needrow">
@@ -198,7 +199,7 @@
     </div>
     <div class="why">
       <div class="why-cap">What SNAP is</div>
-      <p>SNAP is the federal food-benefit program: monthly grocery money for low- and moderate-income households, spent at neighborhood stores. Most people who qualify but never enroll are stopped by the process, not the rules. Civica's free assistant answers their questions in plain language and guides them through the application.</p>
+      <p>SNAP &mdash; the Supplemental Nutrition Assistance Program, commonly known as food stamps &mdash; is monthly grocery money for low- and moderate-income households, spent at neighborhood stores. Most people who qualify but never enroll are stopped by the process, not the rules. Civica's free assistant answers their questions in plain language and guides them through the application.</p>
     </div>
     <div class="research">
       <div class="rlabel">SNAP access and household finances</div>
@@ -219,16 +220,14 @@
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
   <h2 class="pagehead">A benefits-access pilot for [[bank_name]]</h2>
   <div class="thesis">This pairs two things that usually trade off: the reach of a media campaign and the accuracy of a one-on-one assister &mdash; broad enough to cover your whole assessment area, and grounded enough that every answer traces to the governing rule.</div>
-  <div class="body-block">
-    <h3>The program</h3>
-    Civica provides free [[program_ref]] application assistance across your assessment area &mdash; the same service a county-designated assister or food-bank navigator provides. Geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") invites residents in the highest-need tracts to an assistant that answers from your state's own SNAP rules and guides them to a submitted application. Because its marginal cost is near zero, a single grant covers the whole assessment area &mdash; not a radius around one office.
+  <div class="body-block"><b class="run-in">The program.</b> Civica provides free [[program_ref]] application assistance across your assessment area &mdash; the same service a county-designated assister or food-bank navigator provides. Geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") invites residents in the highest-need tracts to an assistant that answers from your state's own SNAP rules and guides them to a submitted application. Because its marginal cost is near zero, a single grant covers the whole assessment area &mdash; not a radius around one office.
   </div>
   <div class="provenance"><b>Why Civica.</b> [[credibility_line]]</div>
   [[bank_specific_block]]
   <div class="crafile">
     <div class="crafile-cap">For [[bank_name]]'s community-reinvestment file</div>
     <table class="cra-dl">
-      <tr><td class="l">Activity</td><td>[[program_ref]] benefits-access outreach and application assistance in your assessment area — a community-development activity (community services targeted to LMI individuals under [[cra_rule_cite]]). Funded as a grant, it is a qualified community-development investment, assessed under the investment test, not the lending test. Civica takes no per-enrollment compensation.</td></tr>
+      <tr><td class="l">Activity</td><td>[[program_ref]] benefits-access outreach and application assistance in your assessment area — a community-development activity (community services targeted to LMI individuals under [[cra_rule_cite]]). Funded as a grant, it is a qualified community-development investment, assessed under the investment test. Civica takes no per-enrollment compensation.</td></tr>
       <tr><td class="l">Beneficiaries</td><td>Low- and moderate-income residents. The federal Interagency Q&amp;A names USDA's Supplemental Nutrition Assistance programs as an accepted LMI proxy (Q&amp;A §&#8239;__.12(g)(2)&#8211;1; 81 FR 48506, 48526, July 25, 2016), so no household-level income documentation is required.</td></tr>
       <tr><td class="l">Geographic nexus</td><td>Delivered and measured within [[bank_name]]'s delineated assessment area, documented by county. Where banks share geography, we allocate applications by tract in writing, so nothing is double-counted.</td></tr>
       <tr><td class="l">Documentation</td><td>A quarterly report of ad delivery, eligibility checks, and applications started and submitted (all by county), plus a one-page qualification memo citing the CRA category and the governing rule, and an annual exam-file summary. Prepared for your file.</td></tr>
