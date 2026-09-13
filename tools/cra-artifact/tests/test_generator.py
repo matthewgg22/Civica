@@ -173,8 +173,10 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     values, need = generate.build_values(banks["bank_irvine"], assumptions, org, metrics,
                                          states.state_meta("CA"))
     html = generate.render((TOOL_ROOT / "templates/artifact.html").read_text(), values)
-    # PROJECTED system present
-    assert html.count("PROJECTED") >= 2 and "Projected · not measured" in html
+    # projected-sample caveat: one badge + one sentence (calibrated down from
+    # the earlier six-way over-disclaiming, but still unmistakable and honest)
+    assert "Projected · not measured" in html
+    assert "These are projections" in html
     # both bias disclosures + vintage in methodology
     assert "gross-income proxy" in html and "under-report" in html
     assert "2023 ACS 1-Year" in html
