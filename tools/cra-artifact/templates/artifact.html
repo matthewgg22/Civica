@@ -144,8 +144,9 @@
   /* ---------- Page 3 — appendix (PROJECTED sample + methodology) ---------- */
   .chip { display:inline-block; background:var(--accent); color:#fff; font-size:8pt; font-weight:600; letter-spacing:.08em; padding:3px 9px; border-radius:2px; text-transform:uppercase; vertical-align:middle; margin-left:8px; }
   .projected-wrap { position:relative; margin-top:9px; }
-  .watermark { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
-  .watermark span { font-family:'Be Vietnam Pro',sans-serif; font-weight:600; font-size:52pt; letter-spacing:.18em; color:var(--accent); opacity:.07; transform:rotate(-24deg); }
+  /* projected sample table header reads as a tinted band; the "· projected"
+     marker lives in the header row rather than a diagonal wash over the numbers */
+  table.report thead th { background:rgba(192,85,59,.09); }
   table.report { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
   table.report caption { text-align:left; font-size:8.4pt; color:var(--muted); margin-bottom:6px; caption-side:top; line-height:1.4; text-wrap:pretty; }
   .funnel-note { font-size:8.8pt; line-height:1.4; color:var(--ink); font-weight:500; margin-top:5px; }
@@ -190,7 +191,7 @@
           <tr><td class="k">Eligible, not enrolled</td><td class="v">[[headline_unenrolled]]<small>[[aa_unenrolled_pct]]% at USDA's participation rate</small></td></tr>
           <tr><td class="k">Unclaimed benefits / year</td><td class="v">[[benefit_range]]<small>in federal SNAP funds</small></td></tr>
           <tr><td class="k">Benefit per household</td><td class="v">$[[benefit_monthly]]/mo<small>per eligible household</small></td></tr>
-          <tr class="ask"><td class="k">Our ask &middot; [[bank_name]]</td><td class="v">$[[ask_fmt]]</td></tr>
+          <tr class="ask"><td class="k">Our ask</td><td class="v">$[[ask_fmt]]</td></tr>
         </table>
       </div>
       <div class="colbrk">[[aa_geo_visual]]</div>
@@ -203,13 +204,13 @@
       <div class="rlabel">SNAP access and household finances</div>
       <div class="rstats">
         <div><b class="serif">$2,436</b><span>less credit-card debt by year three (down 51%)</span></div>
-        <div><b class="serif">10.1 pts</b><span>lower odds of a delinquent account (off a 41% baseline)</span></div>
-        <div><b class="serif">+17 pts</b><span>higher credit score, up from 634 (subprime)</span></div>
+        <div><b class="serif">10.1 pts</b><span>lower likelihood of a delinquent account (off a 41% baseline)</span></div>
+        <div><b class="serif">~17 pts</b><span>higher credit score, from 634 (subprime; final-quarter effect)</span></div>
       </div>
     </div>
     [[me_evidence_block]]
   </div>
-  <div class="pagefoot"><strong>Household outcomes:</strong> ~65,000 Los Angeles SNAP applicants, admin records linked to credit reports; Homonoff, Lee &amp; Meckel, NBER WP 34434 (preliminary draft, November 2025; subject to revision). Research on SNAP access, not a measurement of [[org_name]]'s program. &nbsp;·&nbsp; [[data_gaps_note]][[recon_note]]<strong>Sources:</strong> eligibility [[model_note]]; USDA FNS participation rates (Reaching Those in Need, FY2022). Assessment area: [[bank_name]]'s [[pe_date]] CRA PE ([[regulator]]). Benefits: USDA FNS FY2024. [[org_name]], 501(c)(3).</div>
+  <div class="pagefoot"><strong>Household outcomes:</strong> ~62,000 Los Angeles SNAP applicants, admin records linked to credit reports; Homonoff, Lee &amp; Meckel, NBER WP 34434 (preliminary draft, November 2025; subject to revision). Research on SNAP access, not a measurement of [[org_name]]'s program. &nbsp;·&nbsp; [[data_gaps_note]][[recon_note]]<strong>Sources:</strong> eligibility [[model_note]]; USDA FNS participation rates (Reaching Those in Need, FY2022). Assessment area: [[bank_name]]'s [[pe_date]] CRA PE ([[regulator]]). Benefits: USDA FNS FY2024. [[org_name]], 501(c)(3).</div>
   <div class="pagenum">1 / 3</div>
 </div>
 
@@ -219,25 +220,25 @@
   <h2 class="pagehead">A benefits-access pilot for [[bank_name]]</h2>
   <div class="body-block" style="margin-top:12px;">
     <h3>The program</h3>
-    Factual, geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") across your assessment area sends residents to Civica's free eligibility assistant, a conversational chatbot grounded in your state's own SNAP rules that answers their questions in plain language, shows the rule behind each answer, and guides them into an application. We take no per-enrollment compensation.
+    Factual, geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") across your assessment area sends residents to Civica's free eligibility assistant, a conversational chatbot grounded in your state's own SNAP rules that answers their questions in plain language, shows the rule behind each answer, and guides them into an application.
   </div>
   <div class="provenance"><b>Why Civica.</b> [[credibility_line]]</div>
   <div class="crafile">
     <div class="crafile-cap">For [[bank_name]]'s community-reinvestment file</div>
     <table class="cra-dl">
-      <tr><td class="l">Activity</td><td>[[program_ref]] benefits-access outreach and application assistance in your assessment area. A community-development activity: community services targeted to low- and moderate-income individuals under [[cra_rule_cite]]; funded as a grant, it is evaluated as community development, not on the lending test.</td></tr>
-      <tr><td class="l">Beneficiaries</td><td>Low- and moderate-income residents. The federal Interagency Q&amp;A names USDA's Supplemental Nutrition Assistance programs as an accepted LMI proxy (Q&amp;A §&#8239;__.12(g)(2)&#8211;1), so no household-level income documentation is required.</td></tr>
+      <tr><td class="l">Activity</td><td>[[program_ref]] benefits-access outreach and application assistance in your assessment area. A community-development activity: community services targeted to low- and moderate-income individuals under [[cra_rule_cite]]; funded as a grant, it is a qualified community-development investment, assessed under the investment test (or, for an intermediate bank, the community-development test), not the lending test. Civica takes no per-enrollment compensation, avoiding any fee-for-enrollment concern under SNAP rules.</td></tr>
+      <tr><td class="l">Beneficiaries</td><td>Low- and moderate-income residents. The federal Interagency Q&amp;A names USDA's Supplemental Nutrition Assistance programs as an accepted LMI proxy (Q&amp;A §&#8239;__.12(g)(2)&#8211;1; 81 FR 48506, 48526, July 25, 2016), so no household-level income documentation is required.</td></tr>
       <tr><td class="l">Geographic nexus</td><td>Delivered and measured within [[bank_name]]'s delineated assessment area, reconciled to invoices.</td></tr>
       <tr><td class="l">Documentation</td><td>A quarterly report of ad delivery, eligibility checks, and applications started and submitted (all by county), plus a one-page qualification memo citing the CRA category and the governing rule, and an annual exam-file summary. Prepared for your file.</td></tr>
     </table>
     <div class="cra-foot">Treatment under the CRA framework remains subject to your institution's compliance team and examiners.</div>
   </div>
   <div class="tiers">
-    <div class="tier"><div class="name">Community Sponsor</div><div class="amt">$5,000–10,000</div><div class="desc">One quarter of outreach in selected tracts. Designed for sponsorship budgets.</div></div>
-    <div class="tier lead"><div class="name">Pilot Grant · proposed</div><div class="amt">$[[ask_fmt]]</div><div class="desc">A full quarter across the assessment area, with the complete measurement program and quarterly report.</div></div>
-    <div class="tier"><div class="name">Program Grant</div><div class="amt">$30,000–50,000</div><div class="desc">Two or more quarters; adds funnel depth and a year-end exam-file summary.</div></div>
+    <div class="tier"><div class="name">Community Sponsor</div><div class="amt">$5,000–10,000</div><div class="desc">Outreach in selected high-need tracts, with the standard quarterly report.</div></div>
+    <div class="tier lead"><div class="name">Pilot Grant · proposed</div><div class="amt">$[[ask_fmt]]</div><div class="desc">Full assessment-area coverage, with the complete measurement program and quarterly report.</div></div>
+    <div class="tier"><div class="name">Program Grant</div><div class="amt">$30,000–50,000</div><div class="desc">Full coverage plus added funnel depth, language reach, and a year-end exam-file summary.</div></div>
   </div>
-  <div class="split"><strong>Pro-rata allocation.</strong> Every grant dollar is applied in the same proportions: 60¢ assessment-area outreach · 15¢ measurement &amp; reporting · 10¢ creative &amp; Spanish localization · 15¢ indirect (the 2 CFR 200.414(f) de minimis rate). The same split for every bank; only the geography changes.</div>
+  <div class="split"><strong>Pro-rata allocation.</strong> Every grant dollar is applied in the same proportions: 60¢ assessment-area outreach · 15¢ measurement &amp; reporting · 10¢ creative &amp; Spanish localization · 15¢ indirect (the 2 CFR 200.414(f) de minimis rate).</div>
   <div class="close">
     <div class="close-line">A 30-minute call covers the program, the measurement, and the exam-file documentation.</div>
     <div class="who">[[contact_name]], [[contact_title]]<br>[[contact_email]][[contact_phone_line]]</div>
@@ -252,10 +253,9 @@
   <h2 class="pagehead" style="margin-top:6px;">Sample quarterly report <span class="chip">Projected · not measured</span></h2>
   <div class="projwarn">These are projections. A funded pilot replaces them with measured values.</div>
   <div class="projected-wrap">
-    <div class="watermark"><span>PROJECTED</span></div>
     <table class="report">
       <caption>Illustrative single calendar quarter at $[[ask_fmt]] across [[aa_counties_list]]. Conservative and mid-range scenarios.</caption>
-      <thead><tr><th>Quarterly outcome</th><th>Conservative</th><th>Mid-range</th></tr></thead>
+      <thead><tr><th>Quarterly outcome · projected</th><th>Conservative</th><th>Mid-range</th></tr></thead>
       <tbody>
         <tr class="band"><td colspan="3">Delivery &amp; service · observed in-product</td></tr>
         <tr><td>Ad clicks delivered in assessment area</td><td>[[low_clicks]]</td><td>[[mid_clicks]]</td></tr>
