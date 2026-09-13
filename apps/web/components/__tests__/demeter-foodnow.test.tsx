@@ -127,7 +127,37 @@ describe("food-now affordance in the chat chrome", () => {
     }
   });
 
-  it("states the expedited deadline as a ceiling in every locale", () => {
+  it("does not promise what a third party will do for the reader", () => {
+    // Owner, 2026-09-13: stop making determinations about things outside our
+    // control. Three drafts each asserted someone else's behaviour — a pantry
+    // handing out food today, a pantry asking nothing of you, 211 producing
+    // the nearest address and its hours. We control none of it, and a person
+    // who acts on it and finds otherwise is worse off than one we simply told
+    // what these resources are.
+    const overclaims = [
+      /will find/i,
+      /no application and no qualifying/i,
+      /and its hours/i,
+      /encuentra la despensa/i,
+      /su horario/i,
+      /tìm điểm gần nhất/,
+      /giờ mở cửa/,
+      /找到最近的/,
+      /开放时间/,
+    ];
+    for (const [lang, copy] of Object.entries(FOODNOW_T)) {
+      const all = Object.values(copy).join(" ");
+      for (const bad of overclaims) {
+        expect(bad.test(all), `${lang} copy promises third-party behaviour`).toBe(false);
+      }
+    }
+  });
+
+  it("attributes the 7-day standard to the rule rather than promising it", () => {
+    // The one number left in this copy. It stays because it is a federal
+    // requirement we can cite (7 CFR 273.2(i)(3)(i)), and it is phrased as
+    // what the rules give the agency rather than as benefits that will arrive
+    // — the product's own thesis, applied to its interface copy.
     for (const [lang, copy] of Object.entries(FOODNOW_T)) {
       expect(copy.expedited, `${lang} is missing the expedited line`).toBeTruthy();
       expect(/7/.test(copy.expedited), `${lang} does not name the 7-day standard`).toBe(true);

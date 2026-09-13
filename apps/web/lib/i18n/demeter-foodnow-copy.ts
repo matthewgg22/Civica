@@ -16,12 +16,22 @@
 // help you this week", which is the opposite of true for exactly the household
 // expedited service exists for.
 //
-// IT DOES NOT PROMISE FOOD TODAY. The first cut said "a food bank can give you
-// food today", which we cannot know: pantries keep their own hours, some run on
-// weekly distributions, some take appointments. Telling someone "today" and
-// having them arrive at a locked door is worse than telling them the truth —
-// free groceries, no application, and 211 knows the hours. Same failure mode as
-// the seven-day claim above, in the other direction (owner, 2026-09-13).
+// IT DOES NOT PROMISE WHAT ANYONE ELSE WILL DO (owner, 2026-09-13).
+//
+// Three drafts of this copy each made a claim about a third party we do not
+// control: "a food bank can give you food today" (pantries keep their own
+// hours and some run weekly distributions), "no application and no
+// qualifying" (what a pantry asks for varies by site), and "211 will find the
+// nearest pantry and its hours" (211 is a referral line, not a directory we
+// can vouch for). All three were kindly meant and none of them was ours to
+// promise — the same failure as the seven-day claim, applied to other people's
+// operations instead of the agency's clock.
+//
+// So the copy DESCRIBES the resources and lets them speak for themselves:
+// what a food bank is, what 211 is, and what the rules require of the agency.
+// The one number left is the 7-day expedited standard, and it is attributed to
+// the rule rather than stated as an outcome — which is the whole product's
+// thesis applied to its own interface copy.
 
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 
@@ -44,44 +54,44 @@ export const FOODNOW_T: Record<AnswerLang, FoodNowCopy> = {
     label: "Need food this week?",
     labelShort: "Food this week?",
     title: "Need food this week?",
-    body: "Food pantries give out free groceries, with no application and no qualifying. 211 can find the nearest one and tell you when it is open.",
+    body: "Food banks give out groceries at no cost. 211 is a free line that connects you to food help near you.",
     bank: "Find a food bank",
     call211: "Call or visit 211",
     expedited:
-      "SNAP itself can be fast. With almost no income or cash on hand, expedited service puts benefits on your card within 7 days. Say so when you file.",
+      "SNAP can be fast too: with almost no income or cash, the rules give the agency 7 days. Say so when you file.",
     close: "Close",
   },
   es: {
     label: "¿Necesitas comida esta semana?",
     labelShort: "¿Comida esta semana?",
     title: "¿Necesitas comida esta semana?",
-    body: "Las despensas de alimentos reparten comida gratis, sin solicitud y sin calificar. El 211 puede encontrar la más cercana y decirte a qué hora abre.",
+    body: "Los bancos de alimentos reparten comida sin costo. El 211 es una línea gratuita de ayuda alimentaria cerca de ti.",
     bank: "Buscar un banco de alimentos",
     call211: "Llamar o visitar el 211",
     expedited:
-      "SNAP también puede ser rápido. Con casi ningún ingreso ni efectivo disponible, el servicio acelerado pone los beneficios en tu tarjeta dentro de los 7 días. Dilo cuando presentes la solicitud.",
+      "SNAP también puede ser rápido: con casi ningún ingreso ni efectivo, las reglas le dan 7 días a la agencia. Dilo cuando solicites.",
     close: "Cerrar",
   },
   vi: {
     label: "Cần thực phẩm tuần này?",
     labelShort: "Thực phẩm tuần này?",
     title: "Cần thực phẩm tuần này?",
-    body: "Các điểm phát thực phẩm cho thực phẩm miễn phí, không cần nộp đơn và không cần đủ điều kiện. Tổng đài 211 có thể tìm nơi gần nhất và cho bạn biết giờ mở cửa.",
+    body: "Ngân hàng thực phẩm phát thực phẩm miễn phí. Tổng đài 211 là đường dây miễn phí hỗ trợ thực phẩm gần nhà.",
     bank: "Tìm ngân hàng thực phẩm",
     call211: "Gọi hoặc truy cập 211",
     expedited:
-      "Bản thân SNAP cũng có thể nhanh. Nếu gần như không có thu nhập hay tiền mặt, dịch vụ xét duyệt nhanh đưa trợ cấp vào thẻ trong vòng 7 ngày. Hãy nói rõ khi nộp đơn.",
+      "SNAP cũng có thể nhanh: gần như không có thu nhập hay tiền mặt thì quy định cho cơ quan 7 ngày. Hãy nói rõ khi nộp đơn.",
     close: "Đóng",
   },
   zh: {
     label: "这周需要食物吗？",
     labelShort: "这周需要食物？",
     title: "这周需要食物吗？",
-    body: "食物发放点免费发放食物，不用申请，也不用先符合资格。211 可以帮您找到最近的一家，并告诉您开放时间。",
+    body: "食物银行免费发放食物。211 是一条免费热线，可以为您联系附近的食物援助。",
     bank: "寻找食物银行",
     call211: "致电或访问 211",
     expedited:
-      "SNAP 本身也可以很快。如果您几乎没有收入或现金，加急服务会在 7 天内把福利存入您的卡。申请时请说明这一点。",
+      "SNAP 本身也可以很快：几乎没有收入或现金时，规定给机构 7 天时间。申请时请说明。",
     close: "关闭",
   },
 };
