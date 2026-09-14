@@ -194,13 +194,13 @@ def ranked_bar_svg(aa_counties, state, reconcile_rate=None,
         cy = pad_t + i * row_h + row_h / 2
         bw = max(1.5, bar_max * (v / maxv))
         out.append(
-            f'<text x="0" y="{cy + 2.4:.1f}" font-size="7.6" fill="{INK}" '
+            f'<text x="0" y="{cy + 3.1:.1f}" font-size="9" fill="{INK}" '
             f"font-family=\"'Be Vietnam Pro',sans-serif\">{_esc(_short_name(nm))}</text>")
         out.append(
             f'<rect x="{bar_x:.1f}" y="{cy - bar_h / 2:.1f}" width="{bw:.1f}" '
             f'height="{bar_h:.1f}" rx="1.5" fill="{ACCENT}" class="puma-bar"/>')
         out.append(
-            f'<text x="{bar_x + bw + 4:.1f}" y="{cy + 2.4:.1f}" font-size="7" '
+            f'<text x="{bar_x + bw + 4:.1f}" y="{cy + 3.1:.1f}" font-size="8.2" '
             f'fill="{MUTED}" font-family="\'Be Vietnam Pro\',sans-serif">'
             f'{_fmt_k(v)}</text>')
     return (f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" '
@@ -253,7 +253,7 @@ def puma_visual_html(aa_counties, state, model_short, reconcile_rate=None):
     caption = (f"Assessment area within {state_name}. Each bar is a Census PUMA "
                "(~100k residents), shown at USDA's participation rate.")
     return ('<div class="geomap">'
-            '<div class="geo-cap">Eligible but not enrolled &mdash; top neighborhoods</div>'
+            '<div class="geo-cap">Eligible but not enrolled&mdash;top neighborhoods</div>'
             f'<div class="geo-bars">{bars}</div>'
             f'<div class="geo-loc">{loc}<span>{caption}</span></div>'
             '</div>')
