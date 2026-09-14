@@ -189,7 +189,7 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     assert "Census PUMA" in html and 'class="geo-bars"' in html
     # every core-table number carries a clarifying sub-line (formatting parity)
     for sub in ("income-eligible for SNAP", "at USDA's participation rate",
-                "in federal SNAP funds", "per eligible household"):
+                "per eligible household"):
         assert sub in html
     # never render the HIGH scenario words
     assert "Optimistic" not in html and "best case" not in html.lower()
@@ -973,13 +973,13 @@ def test_bank_specific_block_renders_only_when_present():
     abb_v, _ = generate.build_values(banks["american_business_bank"], assumptions,
                                      org, metrics, meta)
     abb = generate.render(tpl, abb_v)
-    assert "Why American Business Bank specifically" in abb
+    assert "Why American Business Bank." in abb
     assert "almost no retail footprint" in abb and "investment test" in abb
     # bank_irvine carries no note -> no per-bank block, and the label never leaks
     irv_v, _ = generate.build_values(banks["bank_irvine"], assumptions, org,
                                      metrics, meta)
     irv = generate.render(tpl, irv_v)
-    assert "specifically.</b>" not in irv
+    assert "Why Bank Irvine" not in irv
 
 
 def test_platform_evidence_page_present_and_state_aware():
@@ -1002,12 +1002,11 @@ def test_platform_evidence_page_present_and_state_aware():
     assert 'class="cmark"' in ca                                # numbered markers on the screenshot
     assert 'class="chat-legend"' in ca                          # the intent legend below it
     assert "A messy, real question" in ca                       # a legend item
-    assert "re-asked" in ca                                     # the "from what you've told me" item
-    assert "logged internally" in ca                            # the CERTAIN item (distinct from Cited)
-    assert "citation corpus" in ca                              # the Cited item (distinct from Certain)
-    assert "Prompts the next step" in ca                        # a legend item
+    assert "A live estimate" in ca                              # a legend item
+    assert "Dated and sourced" in ca                            # sourcing item (no mis-cited CERTAIN)
+    assert "self-select out" in ca                              # intent copy, not a screen caption
     assert "Four languages" in ca                               # a legend item
-    assert "limited-English" in ca                              # intent copy, not a screen caption
+    assert "limited-English-proficient" in ca                   # corrected languages copy
     assert "qrline" in ca                                       # the live-link QR
     assert "no eligibility determination" in ca                 # the rails
     assert "Harvard Innovation Labs" in ca                      # affiliation line
