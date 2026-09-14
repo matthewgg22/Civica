@@ -37,8 +37,7 @@ import { DemeterSave } from "./DemeterSave";
 import { T } from "../lib/i18n/demeter-chat-copy";
 import { supabaseBrowser } from "../lib/supabase-browser";
 import { DemeterSignInModal } from "./DemeterSignInModal";
-import { DemeterFoodNow } from "./DemeterFoodNow";
-import { FOODNOW_T } from "../lib/i18n/demeter-foodnow-copy";
+import { FoodNowButton } from "./FoodNowButton";
 import { stateName } from "../lib/state-names";
 import { detectState, detectUncoveredPlace, type StateMention } from "../lib/detect-state";
 import type { SavedMsg } from "../lib/demeter-conversations";
@@ -807,7 +806,6 @@ export function DemeterChat({
    *  the fallback: every sign-in link keeps its href and this only takes over
    *  when JavaScript is there to handle it. */
   const [signInOpen, setSignInOpen] = useState(false);
-  const [foodNowOpen, setFoodNowOpen] = useState(false);
   useEffect(() => {
     if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
   }, []);
@@ -2055,16 +2053,7 @@ export function DemeterChat({
               rather than filled: sign-in stays the surface's one filled
               action (DEMETER-DESIGN.md §3), so this reads as urgent without
               two buttons shouting over each other. */}
-          <button
-            type="button"
-            className="demeter__foodnow"
-            onClick={() => setFoodNowOpen(true)}
-            aria-haspopup="dialog"
-            aria-label={FOODNOW_T[lang].label}
-          >
-            <span className="demeter__foodnow-full">{FOODNOW_T[lang].label}</span>
-            <span className="demeter__foodnow-short">{FOODNOW_T[lang].labelShort}</span>
-          </button>
+          <FoodNowButton lang={lang} />
           {/* UNIVERSAL, both rail states (owner rec 2026-08-22 — this
               supersedes the earlier one-sign-in-on-screen rule): the top
               right always offers it, and the rail's settings bar groups a
@@ -3063,7 +3052,6 @@ export function DemeterChat({
           )}
         </aside>
       </div>
-      {foodNowOpen && <DemeterFoodNow lang={lang} onClose={() => setFoodNowOpen(false)} />}
       {signInOpen && (
         <DemeterSignInModal
           next={lang === "en" ? "/chat" : `/${lang}/chat`}
