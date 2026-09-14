@@ -14,7 +14,7 @@
   },
   "benefit": {
     "avg_household_monthly_usd": 351.49,
-    "source": "USDA FNS FY2024 national average per household"
+    "source": "USDA FNA FY2024 national average per household"
   },
   "household_size_eligible": {
     "low_dollar": 2.5,

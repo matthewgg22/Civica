@@ -22,6 +22,14 @@ STATES = {
         "model_note": "modeled from 2023 ACS 1-Year PUMS (LightGBM, CV AUC 0.80)",
         "method_short": "modeled",
         "method_bullet": "Modeled from the 2023 ACS 1-Year PUMS with a gradient-boosted classifier (cross-validated AUC 0.80), allocated from PUMAs to counties by a tract-weighted crosswalk.",
+        # USDA FNS published SNAP participation rate (Reaching Those in Need,
+        # FY2022; CA 81%, national 88%). We keep the model's eligible base (it
+        # matches USDA's independent CA estimate of 4.618M within ~1%) but report
+        # the eligible-but-unenrolled count at USDA's published rate rather than
+        # the model's raw ACS non-enrollment rate, which is inflated by
+        # well-documented survey under-reporting of SNAP receipt. See
+        # reconcile_rate in score.bank_need.
+        "usda_participation_rate": 0.81,
     },
     "FL": {
         "fips": "12",
@@ -31,6 +39,11 @@ STATES = {
         "model_note": "estimated directly from 2023 ACS 1-Year PUMS household records (gross-income eligibility test, survey-weighted)",
            "method_short": "survey-weighted fact base",
            "method_bullet": "Estimated directly from the 2023 ACS 1-Year PUMS: survey-weighted households passing the SNAP gross-income test (130% of the poverty guideline by size) that don’t report SNAP receipt, allocated from PUMAs to counties by a tract-weighted crosswalk.",
+        # USDA FNS Reaching Those in Need, FY2022: FL 81%, national 88%. Same
+        # reconciliation as CA — the survey-weighted count over-reads unmet need
+        # because ACS respondents under-report SNAP receipt; we report the
+        # unenrolled figure at USDA's published participation rate instead.
+        "usda_participation_rate": 0.81,
     },
     "TX": {
         "fips": "48",

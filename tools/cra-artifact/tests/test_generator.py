@@ -173,8 +173,10 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     values, need = generate.build_values(banks["bank_irvine"], assumptions, org, metrics,
                                          states.state_meta("CA"))
     html = generate.render((TOOL_ROOT / "templates/artifact.html").read_text(), values)
-    # PROJECTED system present
-    assert html.count("PROJECTED") >= 2 and "Projected · not measured" in html
+    # projected-sample caveat: one badge + one sentence (calibrated down from
+    # the earlier six-way over-disclaiming, but still unmistakable and honest)
+    assert "Projected · not measured" in html
+    assert "These are projections" in html
     # both bias disclosures + vintage in methodology
     assert "gross-income proxy" in html and "under-report" in html
     assert "2023 ACS 1-Year" in html
@@ -183,11 +185,11 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     # closing next-step + contact present (quiet close, not a "the ask" box)
     assert "30-minute call" in html and org["contact_email"] in html
     # CA banks render the sub-county PUMA choropleth (replaces the county bars)
-    assert "data-puma" in html and "Eligible but not enrolled" in html
-    assert "Census PUMA" in html and 'class="geo-ticks"' in html
+    assert "puma-bar" in html and "Eligible but not enrolled" in html
+    assert "Census PUMA" in html and 'class="geo-bars"' in html
     # every core-table number carries a clarifying sub-line (formatting parity)
-    for sub in ("income-eligible for SNAP", "of those eligible",
-                "in federal SNAP funds", "per eligible household"):
+    for sub in ("income-eligible for SNAP", "at USDA's participation rate",
+                "per eligible household"):
         assert sub in html
     # never render the HIGH scenario words
     assert "Optimistic" not in html and "best case" not in html.lower()
@@ -205,12 +207,12 @@ def test_pdf_smoke(tmp_path):
     assert rc == 0
     pdf = TOOL_ROOT / "out/bank_irvine.pdf"
     assert pdf.exists() and 10_000 < pdf.stat().st_size < 10 * 1024 * 1024
-    # 3 pages: 2-page pitch + 1 detachable appendix (PROJECTED sample + methodology)
+    # 4 pages: 2-page pitch + platform-evidence page + detachable appendix
     n_pages = subprocess.run(
         ["mdls", "-name", "kMDItemNumberOfPages", "-raw", str(pdf)],
         capture_output=True, text=True).stdout.strip()
     if n_pages not in ("", "(null)"):
-        assert n_pages == "3"
+        assert n_pages == "4"
 
 
 # ---- multi-state wiring ------------------------------------------------------
@@ -266,11 +268,15 @@ def test_pumamap_supported_states_render_and_others_fall_back():
     # geometry + need data wired for CA and FL; not for other states
     assert pumamap.available("CA") and pumamap.available("FL")
     assert not pumamap.available("TX")
-    # a CA AA resolves many PUMAs and shades them
-    svg = pumamap.regional_puma_svg(["Los Angeles", "Orange"], "CA")
-    assert svg.count("<polygon") > 30 and "data-puma" in svg
-    # the full right-column block carries the honest PUMA/not-tracts labels
-    html = pumamap.puma_visual_html(["Miami-Dade"], "FL", "survey-weighted fact base")
+    # a CA AA resolves several PUMAs into a ranked bar chart
+    bars = pumamap.ranked_bar_svg(["Los Angeles", "Orange"], "CA", reconcile_rate=0.81)
+    assert bars.count("<rect") >= 5 and "puma-bar" in bars
+    # the small locator shades the AA counties in the state
+    loc = pumamap.locator_svg(["Los Angeles", "Orange"], "CA")
+    assert loc.count("<polygon") > 30 and pumamap.ACCENT in loc
+    # the full right-column block carries the honest PUMA labels
+    html = pumamap.puma_visual_html(["Miami-Dade"], "FL", "survey-weighted fact base",
+                                    reconcile_rate=0.81)
     assert "PUMA" in html and "Census PUMA" in html
     # unsupported state -> empty, so generate.py uses the county-bar fallback
     assert pumamap.puma_visual_html(["Harris"], "TX", "x") == ""
@@ -336,7 +342,8 @@ def test_cra_citation_is_regulator_specific():
                                  states.state_meta("CA"))[0]
     fdic_pager = generate.render(pager, fdic)
     assert "12 CFR Part 345 (FDIC)" in fdic_pager
-    assert "not on the lending test" in fdic_pager
+    # names the test a grant is actually assessed under (the investment test)
+    assert "investment test" in fdic_pager
     # OCC bank (city_national): Part 25 in the pager and 25.12(g)(2) in the memo.
     occ = generate.build_values(banks["city_national"], assumptions, org, metrics,
                                 states.state_meta("CA"))[0]
@@ -521,12 +528,14 @@ def test_wp34434_numbers_always_carry_the_preliminary_version_stamp():
         if "34434" not in text:
             continue
         low = text.lower()
-        assert "preliminary" in low, (
-            f"{f.name} cites WP 34434 without the word 'preliminary'")
-        assert "november 2025" in low, (
-            f"{f.name} cites WP 34434 without the draft date")
-        assert "subject to revision" in low, (
-            f"{f.name} cites WP 34434 without 'estimates subject to revision'")
+        # Every citation must version-stamp WP 34434 as a non-final 2025 draft
+        # (the pitch uses the terse "(2025 draft)"; the funded report keeps the
+        # fuller "preliminary draft, November 2025; subject to revision"). Both
+        # carry "draft" + "2025"; that is the load-bearing honesty stamp.
+        assert "draft" in low, (
+            f"{f.name} cites WP 34434 without a draft stamp")
+        assert "2025" in low, (
+            f"{f.name} cites WP 34434 without the draft year")
 
 
 def test_wp34434_precision_caveat_travels_with_the_credit_score_figure():
@@ -898,16 +907,19 @@ def test_access_callout_does_not_perturb_need_math():
     meta = states.state_meta(bank.get("state", "CA"))
     metrics = score.load_county_metrics(meta["metrics"])
     values, need = generate.build_values(bank, assumptions, org, metrics, meta)
-    direct = score.bank_need(bank["aa_counties"], metrics, assumptions)
+    # Direct call must mirror build_values' inputs, including the USDA-rate
+    # reconciliation, to isolate the access-callout path as the thing under test.
+    direct = score.bank_need(bank["aa_counties"], metrics, assumptions,
+                             reconcile_rate=meta.get("usda_participation_rate"))
     for k in ("eligible", "unenrolled", "ratio", "benefit_low_usd", "benefit_high_usd"):
         assert abs(need[k] - direct[k]) < TOL
     # and the callout actually rendered into the artifact for this bank
     assert "me-evidence" in values["me_evidence_block"]
 
 
-def test_access_callout_keeps_artifact_at_three_pages(tmp_path):
+def test_access_callout_keeps_artifact_at_four_pages(tmp_path):
     # The strongest overflow guard: a bank whose AA triggers the callout must
-    # still render exactly three pages (2-page pitch + appendix).
+    # still render exactly four pages (2-page pitch + platform evidence + appendix).
     rc = generate.main(["--bank", "american_business_bank"])
     assert rc == 0
     pdf = TOOL_ROOT / "out" / "american_business_bank.pdf"
@@ -915,4 +927,102 @@ def test_access_callout_keeps_artifact_at_three_pages(tmp_path):
         ["mdls", "-name", "kMDItemNumberOfPages", "-raw", str(pdf)],
         capture_output=True, text=True).stdout.strip()
     if n_pages not in ("", "(null)"):
-        assert n_pages == "3"
+        assert n_pages == "4"
+
+
+def test_headline_reconciled_to_usda_participation_rate():
+    """The eligible-but-unenrolled headline is reported at USDA's published
+    participation rate, not the ACS model's raw non-enrollment rate (which is
+    inflated by survey under-reporting of SNAP receipt). Regression guard for
+    the honest-numbers pass: the raw modeled figure (~60% non-enrollment) must
+    never be the headline, and the reconciliation must be disclosed on the page.
+    """
+    banks = json.loads((TOOL_ROOT / "inputs/assessment_areas.json").read_text())["banks"]
+    assumptions = json.loads((TOOL_ROOT / "inputs/funnel_assumptions.json").read_text())
+    org = json.loads((TOOL_ROOT / "inputs/org.json").read_text())
+    for key in ("american_business_bank", "ocean_bank"):   # a CA and an FL bank
+        bank = banks[key]
+        meta = states.state_meta(bank.get("state", "CA"))
+        par = meta.get("usda_participation_rate")
+        assert par, f"{key}'s state must carry a USDA participation rate"
+        metrics = score.load_county_metrics(meta["metrics"])
+        values, need = generate.build_values(bank, assumptions, org, metrics, meta)
+        # unenrolled == eligible x (1 - PAR), and the raw model figure is larger
+        assert need["reconciled"] is True
+        assert abs(need["unenrolled"] - need["eligible"] * (1 - par)) < 1.0
+        assert need["model_unenrolled"] > need["unenrolled"] * 1.5, (
+            f"{key}: model figure should be materially higher than reconciled")
+        # displayed non-enrollment pct is USDA-derived (e.g. 19 for an 81% PAR)
+        assert values["aa_unenrolled_pct"] == f"{round((1 - par) * 100)}"
+        html = generate.render(
+            (TOOL_ROOT / "templates/artifact.html").read_text(), values)
+        assert "at USDA's participation rate" in html
+        assert "How we count unmet need" in html
+        # the inflated modeled count must not leak onto the page as the headline
+        assert generate.fmt_int(round(need["model_unenrolled"])) not in html
+
+
+def test_bank_specific_block_renders_only_when_present():
+    """The optional per-bank 'Why <bank> specifically' callout renders only for
+    banks that carry a bank_specific_note (ABB), and never leaks onto banks
+    without one — so the generator degrades gracefully across the roster."""
+    banks, assumptions, org = generate.load_inputs()
+    tpl = (TOOL_ROOT / "templates/artifact.html").read_text()
+    meta = states.state_meta("CA")
+    metrics = score.load_county_metrics(meta["metrics"])
+    abb_v, _ = generate.build_values(banks["american_business_bank"], assumptions,
+                                     org, metrics, meta)
+    abb = generate.render(tpl, abb_v)
+    assert "Why American Business Bank." in abb
+    assert "almost no retail footprint" in abb and "investment test" in abb
+    # bank_irvine carries no note -> no per-bank block, and the label never leaks
+    irv_v, _ = generate.build_values(banks["bank_irvine"], assumptions, org,
+                                     metrics, meta)
+    irv = generate.render(tpl, irv_v)
+    assert "Why Bank Irvine" not in irv
+
+
+def test_platform_evidence_page_present_and_state_aware():
+    """Page 3 is the 'platform, as built' evidence page: it embeds a REAL
+    captured screenshot of the live assistant (referenced by file:// path) plus
+    the built-in-limits rails, the try-it QR, and the affiliation line. The CA
+    screenshot carries HTML callout cards + SVG leader lines over the cropped
+    capture; FL uses its plain (uncropped) screenshot with no callout overlay,
+    so the fancy annotated treatment is CA-only. The ME-audit provenance renders
+    ONLY for CA banks."""
+    banks, assumptions, org = generate.load_inputs()
+    tpl = (TOOL_ROOT / "templates/artifact.html").read_text()
+    meta = states.state_meta("CA")
+    ca = generate.render(tpl, generate.build_values(
+        banks["american_business_bank"], assumptions, org,
+        score.load_county_metrics(meta["metrics"]), meta)[0])
+    assert "The product, as delivered" in ca
+    assert "chat-shot-ca.png" in ca                             # the real CA screenshot
+    assert 'aspect-ratio:2760/2311' in ca                       # the CA composite's aspect (3-turn capture)
+    assert 'class="cmark"' in ca                                # numbered markers on the screenshot
+    assert 'class="chat-legend"' in ca                          # the intent legend below it
+    assert "A messy, real question" in ca                       # a legend item
+    assert "A live estimate" in ca                              # a legend item
+    assert "running record" in ca                               # the "from what you've told me" item
+    assert "Guides the next answer" in ca                       # the chat-bar prompt item
+    assert "Checkable, and improving" in ca                     # the CERTAIN badge item
+    assert "sharpen accuracy over time" in ca                   # CERTAIN = training signal, not a caption
+    assert "Dated and sourced" in ca                            # sourcing item (no mis-cited CERTAIN)
+    assert "self-select out" in ca                              # intent copy, not a screen caption
+    assert "Four languages" in ca                               # a legend item
+    assert "limited-English-proficient" in ca                   # corrected languages copy
+    assert "qrline" in ca                                       # the live-link QR
+    assert "no eligibility determination" in ca                 # the rails
+    assert "Harvard Innovation Labs" in ca                      # affiliation line
+    assert "38 county" in ca                                     # CA ME-audit clause
+    assert "3 / 4" in ca and "4 / 4" in ca                       # renumbered
+    fmeta = states.state_meta("FL")
+    fl = generate.render(tpl, generate.build_values(
+        banks["ocean_bank"], assumptions, org,
+        score.load_county_metrics(fmeta["metrics"]), fmeta)[0])
+    assert "The product, as delivered" in fl
+    assert "chat-shot-fl.png" in fl                             # FL screenshot, not CA
+    assert "chat-shot-ca.png" not in fl
+    assert 'aspect-ratio:2760/2360' in fl                       # FL uncropped aspect
+    assert 'class="cmark"' not in fl and 'class="chat-legend"' not in fl  # no markers/legend on FL
+    assert "California" not in fl and "38 county" not in fl      # no CA framing leaks

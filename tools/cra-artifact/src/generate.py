@@ -90,7 +90,7 @@ def render(template: str, values: dict) -> str:
 
 
 def build_county_breakdown(covered_counties, metrics, cap=6):
-    """Ranked per-county unmet-need bars — the regional insight a flat AA
+    """Ranked per-county unmet-need bars—the regional insight a flat AA
     choropleth can't carry (which counties actually drive the need).
 
     Presentation only: reads the same county metrics the score uses, never
@@ -120,7 +120,8 @@ def build_county_breakdown(covered_counties, metrics, cap=6):
 
 
 def build_values(bank, assumptions, org, metrics, meta):
-    need = score.bank_need(bank["aa_counties"], metrics, assumptions)
+    need = score.bank_need(bank["aa_counties"], metrics, assumptions,
+                           reconcile_rate=meta.get("usda_participation_rate"))
     fun = report.funnel(bank["ask_usd"], assumptions)
     aa_label = (f"{bank['aa_counties'][0]} County" if len(bank["aa_counties"]) == 1
                 else "assessment-area")
@@ -131,7 +132,8 @@ def build_values(bank, assumptions, org, metrics, meta):
     # Sub-county PUMA choropleth where we have both need data and geometry
     # (CA, FL); every other state falls back to the county-bar breakdown.
     aa_geo_visual = pumamap.puma_visual_html(
-        bank["aa_counties"], bank.get("state", "CA"), meta["method_short"])
+        bank["aa_counties"], bank.get("state", "CA"), meta["method_short"],
+        reconcile_rate=meta.get("usda_participation_rate"))
     if not aa_geo_visual:
         aa_geo_visual = county_breakdown
     ratio_line = ""
@@ -148,7 +150,7 @@ def build_values(bank, assumptions, org, metrics, meta):
                       + (" Counties" if len(bank["aa_counties"]) > 1 else " County"))
     why_this_bank = (
         f"We run and measure the program only inside {bank['name']}'s CRA "
-        f"assessment area ({counties_plain}) — the same geography your Performance "
+        f"assessment area ({counties_plain})—the same geography your Performance "
         "Evaluation already covers."
     )
     # Plain-language funnel conversion for the page-3 sample report: normalizes the
@@ -165,38 +167,119 @@ def build_values(bank, assumptions, org, metrics, meta):
                    f"check, ~{_sub:.0f} submit an application, and ~{_appr:.0f} are approved.")
     # Credibility line (reviewer ask): a single substantiable sentence on why
     # the analysis here is Civica's own work, not vendor boilerplate. State-aware
-    # on two axes — CA carries a trained model (AUC) AND the CDSS ME review;
+    # on two axes—CA carries a trained model (AUC) AND the CDSS ME review;
     # every other state is a direct survey-weighted estimate with neither, so
     # the CDSS clause must never appear off-CA (mirrors the CalFresh trap). No
     # traction/delivery number is asserted here by design.
     state = bank.get("state", "CA")
     if state == "CA":
         credibility_line = (
-            "The need and access findings here are Civica's own analysis, not "
-            "vendor boilerplate: the estimate is a reproducible model of 2023 "
-            "federal ACS microdata (cross-validated AUC 0.80), and the county "
-            "findings come from our review of 37 CalFresh Management Evaluation "
-            "reviews (36 California counties, FFY 2024–2025) obtained by "
+            "The findings here are Civica's own: a reproducible model of 2023 "
+            "federal ACS microdata, and a review of 38 California county CalFresh "
+            "Management Evaluation reports (FFY 2024–2025), obtained by "
             "public-records request."
         )
     else:
         credibility_line = (
-            "The need estimate here is Civica's own analysis, not vendor "
-            "boilerplate: a survey-weighted estimate built directly from 2023 "
-            "federal ACS microdata, reproducible from public sources."
+            "The need estimate here is Civica's own analysis: a survey-weighted "
+            "estimate built directly from 2023 federal ACS microdata, "
+            "reproducible from public sources."
         )
-    # And the engine itself, not just the analysis: name the conversational
-    # assistant and why it works (grounded in the agency's own rules), since the
-    # chatbot — the actual product — is what applicants are directed to.
-    credibility_line += (
-        " And the product is not a landing page but a conversational assistant "
-        "grounded in your state's own SNAP rules; it answers applicants' "
-        "questions and cites the governing rule, so they get accurate guidance "
-        "rather than generic search results."
-    )
+    # (The product itself—the rule-grounded conversational assistant—is
+    # already described in "The program" section above, so the credibility line
+    # no longer repeats it.)
+    # Optional per-bank "Why this bank specifically" callout: a fully-sourced,
+    # bank-specific argument (e.g. commercial/no-retail structure + the exam
+    # component a grant lands on). Present only for banks that carry the field;
+    # every other bank renders nothing here.
+    _bank_note = bank.get("bank_specific_note", "").strip()
+    bank_specific_block = (
+        f'<div class="provenance" style="margin-top:11px;"><b>Why {bank["name"]}.'
+        f'</b> {_bank_note}</div>' if _bank_note else "")
+    # Page-3 hero: a REAL captured screenshot of the live assistant, referenced by
+    # file:// URI so Chrome embeds it into the PDF without a giant base64 blob in
+    # the HTML. State-specific so the FL banks show Florida/DCF/SNAP, not CA.
+    _shot = "chat-shot-ca.png" if state == "CA" else "chat-shot-fl.png"
+    chat_shot_src = (TOOL_ROOT / "assets" / _shot).as_uri()
+    # Page-3 annotated screenshot. CA carries a composited capture of one real
+    # conversation (aspect 2760x2548): the messy question, the live $494 estimate,
+    # and the interview answer marked CERTAIN with its citation—numbered markers
+    # on the image, an intent legend beneath. FL still uses its earlier full-
+    # height capture without callouts (couldn't recapture—the live product's
+    # daily question cap was reached); both render correctly because the aspect
+    # ratio and the overlay are state-specific.
+    if state == "CA":
+        chat_aspect = "2760/2311"
+        # Numbered markers sit ON the screenshot; the legend beneath it explains
+        # the INTENT behind each simple feature (not a caption of what's shown).
+        # (x,y) is the marker centre in % of the image box, ordered top-to-bottom
+        # so the numbers ascend as the eye moves down the capture. Small numbers
+        # avoid the leader-line/label overlap of earlier versions.
+        _marks = [
+            (97, 1),     # 1  the messy question bubble (top-right corner)
+            (24, 9),     # 2  state selector (dropdown caret)
+            (74, 13),    # 3  the plain-language answer
+            (25, 42),    # 4  WHERE THIS LANDS—likely eligible + $494
+            (24, 50),    # 5  FROM WHAT YOU'VE TOLD ME—the running record
+            (58, 68),    # 6  the dated eCFR source line
+            (70, 83),    # 7  the CERTAIN badge + citation
+            (23, 83),    # 8  right of the four languages
+            (52, 93),    # 9  the grayed chat-bar prompt
+        ]
+        chat_overlay = "".join(
+            f'<div class="cmark" style="left:{x}%;top:{y}%">{i + 1}</div>'
+            for i, (x, y) in enumerate(_marks))
+        _legend = [
+            ("A messy, real question", "A fixed form can’t hold an edge case like this; plain-language input can, so people don’t self-select out."),
+            ("State-aware", "SNAP runs through 53 state and territory agencies with different rules; here it answers from California’s (CDSS)."),
+            ("Answered plainly", "The answer explains the reasoning, not just yes or no—the part of a caseworker’s job that most often gets skipped."),
+            ("A live estimate", "The outline fills in from what the applicant says and lands on a plausible number, so someone unsure can see the stakes before the form."),
+            ("From what you’ve told me", "It keeps a running record of the conversation and shows it back, so nothing is re-asked and the applicant can correct it."),
+            ("Dated and sourced", "Every answer footers the rule set (eCFR) and the fiscal year it is valid through, so a reviewer can check it and it can’t silently go stale."),
+            ("Checkable, and improving", "When every rule traces to regulation text the answer is marked CERTAIN and shows the citation to open; those confirmed answers are the signal used to sharpen accuracy over time."),
+            ("Four languages", "It also answers in Spanish, Vietnamese and Chinese—the largest limited-English-proficient populations California outreach has to reach."),
+            ("Guides the next answer", "The prompt in the box nudges the exact detail that sharpens the estimate, so the applicant knows what to say next."),
+        ]
+        chat_legend = ('<div class="chat-legend">' + "".join(
+            f'<div class="leg"><span class="leg-n">{i + 1}</span>'
+            f'<span class="leg-t"><b>{t}.</b> {d}</span></div>'
+            for i, (t, d) in enumerate(_legend)) + "</div>")
+        chat_cap = ("A real conversation in the live assistant. "
+                    "Each numbered feature is explained below.")
+    else:
+        chat_aspect = "2760/2360"
+        chat_overlay = ""
+        chat_legend = ""
+        # FL carries no markers/legend, so don't promise a numbered key below.
+        chat_cap = "A real conversation in the live assistant."
     # Regulator-specific CRA rule citation for the community-reinvestment box.
     cra_part = cra_reg_part(bank["regulator"])
     cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
+    # Reconciliation note (page-1 methods): when we report the eligible-but-
+    # unenrolled headline at USDA's published participation rate (see
+    # score.bank_need + states.usda_participation_rate), disclose exactly that,
+    # so a reader who checks the USDA figure finds we anticipated it. CA also
+    # carries the post-H.R.1 direction (LAO Feb-2026); other states omit the
+    # state-specific haircut to avoid an unsourced number. Empty when a state
+    # has no published rate wired (falls back to the raw model figure).
+    if need.get("reconciled"):
+        if state == "CA":
+            recon_note = (
+                "<strong>How we count unmet need:</strong> our eligible-population "
+                "estimate matches USDA's independent California figure within ~1%; "
+                "we apply USDA's published participation rate (81%, FY2022), not the "
+                "model's raw non-enrollment rate. H.R.1 changes effective 2026 "
+                "(noncitizen, ABAWD) shrink this pool further (California LAO, Feb "
+                "2026). &nbsp;·&nbsp; ")
+        else:
+            recon_note = (
+                "<strong>How we count unmet need:</strong> we apply USDA's "
+                "published state participation rate (81%, FY2022), not the "
+                "survey-weighted non-enrollment count, which over-reads unmet "
+                "need because ACS respondents under-report SNAP receipt. "
+                "&nbsp;·&nbsp; ")
+    else:
+        recon_note = ""
     v = {
         "why_this_bank": why_this_bank,
         "credibility_line": credibility_line,
@@ -219,7 +302,25 @@ def build_values(bank, assumptions, org, metrics, meta):
                              + bank.get("aa_note", "")),
         "aa_label": aa_label,
         "prepared_date": datetime.date.today().strftime("%B %Y"),
-        "headline_unenrolled": fmt_int(round(need["unenrolled"], -3)),
+        "headline_unenrolled": fmt_int(round(need["unenrolled"])),
+        "recon_note": recon_note,
+        "bank_specific_block": bank_specific_block,
+        # Static QR to the live assistant (same URL for every bank); pre-generated
+        # asset, so the generator stays stdlib-only. See assets/qr-chat.svg.
+        "qr_chat_svg": (TOOL_ROOT / "assets/qr-chat.svg").read_text(),
+        "chat_shot_src": chat_shot_src,
+        "chat_aspect": chat_aspect,
+        "chat_overlay": chat_overlay,
+        "chat_legend": chat_legend,
+        "chat_cap": chat_cap,
+        # Page-3 (platform evidence) state-awareness: the demo and the ME-audit
+        # provenance are state-specific, so the CalFresh/California framing must
+        # not render for the FL banks. The mixed-status citations (7 CFR) are
+        # federal and valid in every state.
+        "state_name": pumamap.STATE_NAMES.get(state, "your state"),
+        "me_audit_clause": (
+            "; the CA pack built from an audit of 38 county ME reports"
+            if state == "CA" else ""),
         "benefit_range": f"{fmt_musd(need['benefit_low_usd'])}–{fmt_musd(need['benefit_high_usd'])}",
         "ratio_line": ratio_line,
         "map_caption": map_caption,
@@ -237,7 +338,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         "benefit_monthly": f"{need['avg_household_monthly_usd']:.0f}",
         "data_gaps_note": gaps,
         "ask_fmt": fmt_int(bank["ask_usd"]),
-        # Page-1 documented-access callout (CDSS ME). Presentation only — see
+        # Page-1 documented-access callout (CDSS ME). Presentation only—see
         # access_evidence.py; never feeds need/funnel/score. Empty = silent.
         "me_evidence_block": access_evidence.evidence_html(
             bank["aa_counties"], state=bank.get("state", "CA")),
@@ -256,17 +357,12 @@ def build_values(bank, assumptions, org, metrics, meta):
         v[f"{s}_approved"] = fmt_int(f["approved_households"])
         v[f"{s}_benefit"] = fmt_musd(f["annual_benefit_usd"]) + "/yr"
         v[f"{s}_cps"] = f"${bank['ask_usd'] / f['apps_submitted']:,.0f}"
-        # Aggregate downstream credit-card debt reduced = approved households ×
-        # the $2,436 per-household 3-year research effect (Homonoff et al.).
-        # Labelled on page 3 as research-based, not measured by this program.
-        # Compute the aggregates from the ROUNDED approved count shown in the
-        # table so the arithmetic checks out (approved × per-household effect).
-        _appr_shown = round(f["approved_households"])
-        _debt = _appr_shown * 2436
-        v[f"{s}_debt"] = f"${_debt/1e6:.1f}M" if _debt >= 1e6 else f"${_debt/1e3:.0f}K"
-        # Cumulative credit-score points = approved households × the +17 per-household
-        # research effect (illustrative; the per-household figure is in the label).
-        v[f"{s}_cspts"] = fmt_int(_appr_shown * 17)
+        # Downstream research effects (debt, delinquency, credit score) are shown
+        # ONLY as per-household figures in page-1 prose, labelled as published
+        # research measured on other people. They are deliberately NOT aggregated
+        # into the projected table: multiplying a per-household effect by a
+        # projected approval count stacks assumptions, and credit-score points in
+        # particular do not sum across households.
     return v, need
 
 
@@ -308,7 +404,7 @@ def main(argv=None):
     print(f"HTML: {html_path}")
 
     # Numbers the oracle hand-calc (T5e) must independently reproduce:
-    print(f"ORACLE CHECK — {bank['name']}: eligible={need['eligible']:.0f} "
+    print(f"ORACLE CHECK—{bank['name']}: eligible={need['eligible']:.0f} "
           f"unenrolled={need['unenrolled']:.0f} ratio={need['ratio']:.3f} "
           f"benefit_range=({need['benefit_low_usd']:.0f}, {need['benefit_high_usd']:.0f})")
 
@@ -321,7 +417,7 @@ def main(argv=None):
     if args.send:
         if not bank.get("verified"):
             raise UnverifiedBankError(
-                f"{args.bank} has verified:false — re-read the PE and flip the "
+                f"{args.bank} has verified:false—re-read the PE and flip the "
                 "flag before archiving a send copy")
         digest = hashlib.sha256(pdf_path.read_bytes()).hexdigest()[:8]
         sent = TOOL_ROOT / "sent"
