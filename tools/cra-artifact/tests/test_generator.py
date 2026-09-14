@@ -998,13 +998,15 @@ def test_platform_evidence_page_present_and_state_aware():
         score.load_county_metrics(meta["metrics"]), meta)[0])
     assert "The product, as delivered" in ca
     assert "chat-shot-ca.png" in ca                             # the real CA screenshot
-    assert 'aspect-ratio:2760/1818' in ca                       # the CA composite's aspect
+    assert 'aspect-ratio:2760/2311' in ca                       # the CA composite's aspect (3-turn capture)
     assert 'class="cmark"' in ca                                # numbered markers on the screenshot
     assert 'class="chat-legend"' in ca                          # the intent legend below it
     assert "A messy, real question" in ca                       # a legend item
     assert "A live estimate" in ca                              # a legend item
     assert "running record" in ca                               # the "from what you've told me" item
     assert "Guides the next answer" in ca                       # the chat-bar prompt item
+    assert "Checkable, and improving" in ca                     # the CERTAIN badge item
+    assert "sharpen accuracy over time" in ca                   # CERTAIN = training signal, not a caption
     assert "Dated and sourced" in ca                            # sourcing item (no mis-cited CERTAIN)
     assert "self-select out" in ca                              # intent copy, not a screen caption
     assert "Four languages" in ca                               # a legend item

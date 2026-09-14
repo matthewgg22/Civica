@@ -174,12 +174,12 @@
   .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:6px 11px; font-size:8.1pt; line-height:1.38; color:var(--body); margin-top:5px; text-wrap:pretty; }
   .disclose strong { color:var(--ink); }
   /* Page 3—the platform, as built (annotated real screenshot) */
-  .platform-hero { margin-top:6px; }
-  /* The demo bleeds past the text column toward the page edges (the .page has a
-     .7in side margin) so it reads bigger; only the image bleeds—caption and
-     legend stay in the column. */
-  .chatshot { position:relative; margin:0 -0.32in; }
-  .chatshot > img { width:100%; height:100%; display:block; border:1px solid var(--rule-strong); border-radius:5px; object-fit:cover; }
+  .platform-hero { margin-top:5px; text-align:center; }
+  /* The composited demo is sized by HEIGHT so a taller three-turn capture cannot
+     overflow the page; width follows the aspect ratio (near the full text
+     column). Caption and legend stay in the column. */
+  .chatshot { position:relative; display:inline-block; height:5.4in; aspect-ratio:[[chat_aspect]]; margin:0 auto; vertical-align:top; max-width:100%; }
+  .chatshot > img { width:100%; height:100%; display:block; border:1px solid var(--rule-strong); border-radius:5px; object-fit:fill; }
   /* Numbered markers sit ON the screenshot; the legend below explains the intent.
      A crisp ring (border only—no blurred shadow, which a PDF rasterizes as a
      gray square) keeps the badge circular on any background. */
@@ -188,8 +188,8 @@
     font:700 10.5px/19px 'Be Vietnam Pro',sans-serif; text-align:center;
     border:1.5px solid var(--accent-deep); }
   .chatshot-cap { font-size:7pt; color:var(--muted); margin-top:5px; text-align:center; }
-  .chat-legend { display:grid; grid-template-columns:1fr 1fr; gap:2px 20px; margin-top:6px; }
-  .leg { display:flex; gap:6px; font-size:7pt; line-height:1.24; color:var(--body); break-inside:avoid; }
+  .chat-legend { display:grid; grid-template-columns:1fr 1fr; gap:2px 18px; margin-top:5px; }
+  .leg { display:flex; gap:6px; font-size:6.9pt; line-height:1.22; color:var(--body); break-inside:avoid; }
   .leg-n { flex:0 0 auto; width:12px; height:12px; margin-top:1px; border-radius:50%;
     background:var(--wheat); color:#3a2a08; font:700 7.5px/12px 'Be Vietnam Pro',sans-serif; text-align:center; }
   .leg-t b { color:var(--accent-deep); }
@@ -298,7 +298,7 @@
       <img src="[[chat_shot_src]]" alt="A real Demeter conversation in the live interface: a mixed-status SNAP question answered with the governing federal rule cited, showing the state selector and the live application outline building as the applicant talks."/>
       [[chat_overlay]]
     </div>
-    <div class="chatshot-cap">A real conversation in the live assistant. Each numbered feature is explained below.</div>
+    <div class="chatshot-cap">[[chat_cap]]</div>
   </div>
   [[chat_legend]]
   <div class="pagenum">3 / 4</div>

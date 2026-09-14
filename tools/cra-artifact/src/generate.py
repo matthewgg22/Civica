@@ -201,50 +201,57 @@ def build_values(bank, assumptions, org, metrics, meta):
     # the HTML. State-specific so the FL banks show Florida/DCF/SNAP, not CA.
     _shot = "chat-shot-ca.png" if state == "CA" else "chat-shot-fl.png"
     chat_shot_src = (TOOL_ROOT / "assets" / _shot).as_uri()
-    # Page-3 annotated screenshot. CA carries a tightly-cropped capture (aspect
-    # 2760x1545) with leader-line callouts on the state selector, the live
-    # estimate, the building outline, and the cited answer. FL still uses its
-    # earlier full-height capture without callouts (couldn't recapture—the live
-    # product's daily question cap was reached); both render correctly because
-    # the aspect ratio and the overlay are state-specific.
+    # Page-3 annotated screenshot. CA carries a composited capture of one real
+    # conversation (aspect 2760x2548): the messy question, the live $494 estimate,
+    # and the interview answer marked CERTAIN with its citation—numbered markers
+    # on the image, an intent legend beneath. FL still uses its earlier full-
+    # height capture without callouts (couldn't recapture—the live product's
+    # daily question cap was reached); both render correctly because the aspect
+    # ratio and the overlay are state-specific.
     if state == "CA":
-        chat_aspect = "2760/1818"
+        chat_aspect = "2760/2311"
         # Numbered markers sit ON the screenshot; the legend beneath it explains
         # the INTENT behind each simple feature (not a caption of what's shown).
-        # (x,y) is the marker centre in % of the image box; the order matches the
-        # legend. Small numbers avoid the leader-line/label overlap of earlier
-        # versions.
+        # (x,y) is the marker centre in % of the image box, ordered top-to-bottom
+        # so the numbers ascend as the eye moves down the capture. Small numbers
+        # avoid the leader-line/label overlap of earlier versions.
         _marks = [
-            (23, 11.5),  # 1  state selector (dropdown caret)
-            (24.5, 38),  # 2  WHERE THIS LANDS—likely eligible + $494 (box corner)
-            (24.5, 60),  # 3  FROM WHAT YOU'VE TOLD ME—the running record
-            (96.5, 3),   # 4  the messy question bubble (top-right corner)
-            (40, 24),    # 5  the plain-language reasoning (income-limit test)
-            (30, 84),    # 6  the dated eCFR source line
-            (34, 90),    # 7  the grayed chat-bar prompt
-            (22, 91),    # 8  right of the four languages
+            (97, 1),     # 1  the messy question bubble (top-right corner)
+            (24, 9),     # 2  state selector (dropdown caret)
+            (74, 13),    # 3  the plain-language answer
+            (25, 42),    # 4  WHERE THIS LANDS—likely eligible + $494
+            (24, 50),    # 5  FROM WHAT YOU'VE TOLD ME—the running record
+            (58, 68),    # 6  the dated eCFR source line
+            (70, 83),    # 7  the CERTAIN badge + citation
+            (23, 83),    # 8  right of the four languages
+            (52, 93),    # 9  the grayed chat-bar prompt
         ]
         chat_overlay = "".join(
             f'<div class="cmark" style="left:{x}%;top:{y}%">{i + 1}</div>'
             for i, (x, y) in enumerate(_marks))
         _legend = [
+            ("A messy, real question", "A fixed form can’t hold an edge case like this; plain-language input can, so people don’t self-select out."),
             ("State-aware", "SNAP runs through 53 state and territory agencies with different rules; here it answers from California’s (CDSS)."),
+            ("Answered plainly", "The answer explains the reasoning, not just yes or no—the part of a caseworker’s job that most often gets skipped."),
             ("A live estimate", "The outline fills in from what the applicant says and lands on a plausible number, so someone unsure can see the stakes before the form."),
             ("From what you’ve told me", "It keeps a running record of the conversation and shows it back, so nothing is re-asked and the applicant can correct it."),
-            ("A messy, real question", "A fixed form can’t hold an edge case like this; plain-language input can, so people don’t self-select out."),
-            ("Answered plainly", "The answer explains the reasoning, not just yes or no—the part of a caseworker’s job that most often gets skipped."),
             ("Dated and sourced", "Every answer footers the rule set (eCFR) and the fiscal year it is valid through, so a reviewer can check it and it can’t silently go stale."),
-            ("Guides the next answer", "The prompt in the box nudges the exact detail that sharpens the estimate, so the applicant knows what to say next."),
+            ("Checkable, and improving", "When every rule traces to regulation text the answer is marked CERTAIN and shows the citation to open; those confirmed answers are the signal used to sharpen accuracy over time."),
             ("Four languages", "It also answers in Spanish, Vietnamese and Chinese—the largest limited-English-proficient populations California outreach has to reach."),
+            ("Guides the next answer", "The prompt in the box nudges the exact detail that sharpens the estimate, so the applicant knows what to say next."),
         ]
         chat_legend = ('<div class="chat-legend">' + "".join(
             f'<div class="leg"><span class="leg-n">{i + 1}</span>'
             f'<span class="leg-t"><b>{t}.</b> {d}</span></div>'
             for i, (t, d) in enumerate(_legend)) + "</div>")
+        chat_cap = ("A real conversation in the live assistant. "
+                    "Each numbered feature is explained below.")
     else:
         chat_aspect = "2760/2360"
         chat_overlay = ""
         chat_legend = ""
+        # FL carries no markers/legend, so don't promise a numbered key below.
+        chat_cap = "A real conversation in the live assistant."
     # Regulator-specific CRA rule citation for the community-reinvestment box.
     cra_part = cra_reg_part(bank["regulator"])
     cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
@@ -305,6 +312,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         "chat_aspect": chat_aspect,
         "chat_overlay": chat_overlay,
         "chat_legend": chat_legend,
+        "chat_cap": chat_cap,
         # Page-3 (platform evidence) state-awareness: the demo and the ME-audit
         # provenance are state-specific, so the CalFresh/California framing must
         # not render for the FL banks. The mixed-status citations (7 CFR) are
