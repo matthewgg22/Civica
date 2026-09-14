@@ -174,19 +174,26 @@
   .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:6px 11px; font-size:8.1pt; line-height:1.38; color:var(--body); margin-top:5px; text-wrap:pretty; }
   .disclose strong { color:var(--ink); }
   /* Page 3 — the platform, as built (annotated real screenshot) */
-  .platform-hero { margin-top:8px; }
-  .chatshot { position:relative; }
-  .chatshot > img { width:100%; height:100%; display:block; border:1px solid var(--rule); border-radius:6px; object-fit:cover; }
-  .chatshot .leaders { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
-  .chatshot .leaders .ld { fill:none; stroke:var(--accent-deep); stroke-width:1.5; stroke-linecap:round; vector-effect:non-scaling-stroke; opacity:.9; }
-  /* Round target dots as HTML (fixed px), so the stretched SVG can't oval them. */
-  .chatshot .cdot { position:absolute; width:8px; height:8px; border-radius:50%; background:var(--accent); border:1.5px solid #fff; box-shadow:0 0 0 .5px var(--accent-deep); transform:translate(-50%,-50%); }
-  .chatshot .co { position:absolute; font-size:7.2pt; line-height:1.28; color:var(--body);
-    background:rgba(252,250,246,.94); border:0.5px solid var(--accent); border-left:2.5px solid var(--accent-deep);
-    border-radius:3px; padding:3px 6px 3.5px; box-shadow:0 1px 3px rgba(35,34,32,.10); }
-  .chatshot .co b { display:block; font-family:'Newsreader',serif; font-weight:600; font-size:8.4pt; color:var(--accent-deep); margin-bottom:1.5px; }
+  .platform-hero { margin-top:6px; }
+  /* The demo bleeds past the text column toward the page edges (the .page has a
+     .7in side margin) so it reads bigger; only the image bleeds — caption and
+     legend stay in the column. */
+  .chatshot { position:relative; margin:0 -0.32in; }
+  .chatshot > img { width:100%; height:100%; display:block; border-radius:4px; object-fit:cover; }
+  /* Numbered markers sit ON the screenshot; the legend below explains the intent.
+     A crisp ring (border only — no blurred shadow, which a PDF rasterizes as a
+     gray square) keeps the badge circular on any background. */
+  .chatshot .cmark { position:absolute; width:19px; height:19px; margin:-9.5px 0 0 -9.5px;
+    border-radius:50%; background:var(--wheat); color:#3a2a08;
+    font:700 10.5px/19px 'Be Vietnam Pro',sans-serif; text-align:center;
+    border:1.5px solid var(--accent-deep); }
   .chatshot-cap { font-size:7pt; color:var(--muted); margin-top:5px; text-align:center; }
-  .evidence-foot { display:flex; gap:.3in; margin-top:8px; border-top:2px solid var(--accent); padding-top:9px; align-items:flex-start; }
+  .chat-legend { display:grid; grid-template-columns:1fr 1fr; gap:2px 20px; margin-top:6px; }
+  .leg { display:flex; gap:6px; font-size:7pt; line-height:1.24; color:var(--body); break-inside:avoid; }
+  .leg-n { flex:0 0 auto; width:12px; height:12px; margin-top:1px; border-radius:50%;
+    background:var(--wheat); color:#3a2a08; font:700 7.5px/12px 'Be Vietnam Pro',sans-serif; text-align:center; }
+  .leg-t b { color:var(--accent-deep); }
+  .evidence-foot { display:flex; gap:.3in; margin-top:6px; border-top:2px solid var(--accent); padding-top:7px; align-items:flex-start; }
   .ev-text { flex:1.55; min-width:0; }
   .ev-text p { font-size:8.4pt; line-height:1.46; color:var(--body); text-wrap:pretty; margin-bottom:6px; }
   .ev-text p:last-child { margin-bottom:0; }
@@ -274,17 +281,9 @@
 <!-- PAGE 3 — the platform, as built (product evidence) -->
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
-  <div class="eyebrow" style="margin-top:20px;">Evidence · the working system behind the pilot</div>
-  <h2 class="pagehead" style="margin-top:6px;">The platform, as built</h2>
-  <div class="thesis" style="margin-top:8px;">The program on the previous page is running today. This is the system that delivers it &mdash; a rules-grounded assistant, not a general chatbot.</div>
-  <div class="platform-hero">
-    <div class="chatshot" style="aspect-ratio:[[chat_aspect]];">
-      <img src="[[chat_shot_src]]" alt="A real Demeter conversation in the live interface: a mixed-status SNAP question answered with the governing federal rule cited, showing the state selector and the live application outline building as the applicant talks."/>
-      [[chat_overlay]]
-    </div>
-    <div class="chatshot-cap">A real conversation in the live assistant &mdash; the interface an applicant actually uses, unretouched.</div>
-  </div>
-  <div class="evidence-foot">
+  <h2 class="pagehead" style="margin-top:22px;">The platform, as built</h2>
+  <div class="thesis" style="margin-top:8px;">The working system behind the pilot &mdash; a rules-grounded assistant, not a general chatbot.</div>
+  <div class="evidence-foot" style="border-top:none; margin-top:9px; padding-top:0;">
     <div class="ev-text">
       <p><strong>Built-in limits.</strong> Makes no eligibility determination &mdash; routes decisions to the county or 2-1-1. Redacts personal data before it leaves the system; never asks for an SSN, DOB, or account number; carries crisis and DV lines. Resident data is never shared with the bank, no products are marketed, and question text auto-purges (7/30 days).</p>
       <p><strong>Checked, and checkable.</strong> A graded ~600-question set across all 53 jurisdictions (adversarial + crisis included), re-run on every rules change &mdash; and offered to your compliance team to run themselves. Corpus: eCFR + 53 packs, dated provenance[[me_audit_clause]]; 120-day refresh.</p>
@@ -294,6 +293,14 @@
       <div class="affil">Civica was accepted into the Harvard Innovation Labs incubator, where the initial study was conducted.</div>
     </div>
   </div>
+  <div class="platform-hero">
+    <div class="chatshot" style="aspect-ratio:[[chat_aspect]];">
+      <img src="[[chat_shot_src]]" alt="A real Demeter conversation in the live interface: a mixed-status SNAP question answered with the governing federal rule cited, showing the state selector and the live application outline building as the applicant talks."/>
+      [[chat_overlay]]
+    </div>
+    <div class="chatshot-cap">A real conversation in the live assistant &mdash; simple on the surface, deliberate underneath. Each number is explained below.</div>
+  </div>
+  [[chat_legend]]
   <div class="pagenum">3 / 4</div>
 </div>
 

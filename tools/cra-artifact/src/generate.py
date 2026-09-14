@@ -208,41 +208,45 @@ def build_values(bank, assumptions, org, metrics, meta):
     # product's daily question cap was reached); both render correctly because
     # the aspect ratio and the overlay are state-specific.
     if state == "CA":
-        chat_aspect = "2760/2174"
-        # Callouts over the cropped CA screenshot (2760x2174). Coordinates are
-        # percentages of the image box. Lines are drawn in a
-        # preserveAspectRatio="none" SVG (so endpoints map straight to the %
-        # grid), but the target dots and the label cards are HTML — a circle in
-        # that stretched SVG would render as an oval, so the round dots are
-        # fixed-pixel HTML instead.
-        # (tx,ty) target on image · (lx,lt,lw) label card · (ax,ay) line meets card
-        _cos = [
-            ((23.5, 1.5), (27, 1, 20), (27, 3.5),
-             "State-aware", "Localized to California — answers from CDSS."),
-            ((14, 44), (27, 9, 21), (27, 12.5),
-             "A live application outline", "Household, income and rent fill in as they talk."),
-            ((70, 9), (60, 0.5, 23), (70, 6.5),
-             "A messy, real question", "The kind a form can’t take — mixed-status, gig income, no W-2."),
-            ((73, 37), (77, 29.5, 22), (77, 34),
-             "Answered, with the rule cited", "Plain language, confidence stated, governing rule linked (CDSS ACIN I-46-25)."),
-            ((14, 96.5), (21, 91.5, 21), (21, 94),
-             "Four languages", "English, Spanish, Vietnamese, Chinese."),
+        chat_aspect = "2760/1707"
+        # Numbered markers sit ON the screenshot; the legend beneath it explains
+        # the INTENT behind each simple feature (not a caption of what's shown).
+        # (x,y) is the marker centre in % of the image box; the order matches the
+        # legend. Small numbers avoid the leader-line/label overlap of earlier
+        # versions.
+        _marks = [
+            (23, 12.5),  # 1  state selector (dropdown caret)
+            (24.5, 40),  # 2  WHERE THIS LANDS — likely eligible + $494 (box corner)
+            (24.5, 59),  # 3  FROM WHAT YOU'VE TOLD ME — the captured facts (header row)
+            (96.5, 8.5), # 4  the messy question bubble (top-right corner)
+            (52, 45),    # 5  right of the plain-language answer
+            (30, 73),    # 6  the CERTAIN confidence badge
+            (50, 78),    # 7  the citation link
+            (62, 86),    # 8  after the chat-bar prompt text
+            (22, 97),    # 9  right of the four languages
         ]
-        _leaders = "".join(
-            f'<polyline points="{ax},{ay} {tx},{ty}" class="ld"/>'
-            for (tx, ty), _lab, (ax, ay), _t, _b in _cos)
-        _dots = "".join(
-            f'<div class="cdot" style="left:{tx}%;top:{ty}%"></div>'
-            for (tx, ty), _lab, _an, _t, _b in _cos)
-        _labels = "".join(
-            f'<div class="co" style="left:{lx}%;top:{lt}%;width:{lw}%"><b>{t}</b>{bdy}</div>'
-            for _tg, (lx, lt, lw), _an, t, bdy in _cos)
-        chat_overlay = (f'<svg class="leaders" viewBox="0 0 100 100" '
-                        f'preserveAspectRatio="none" aria-hidden="true">{_leaders}</svg>'
-                        f'{_dots}{_labels}')
+        chat_overlay = "".join(
+            f'<div class="cmark" style="left:{x}%;top:{y}%">{i + 1}</div>'
+            for i, (x, y) in enumerate(_marks))
+        _legend = [
+            ("State-aware", "SNAP is 53 separate state and territory programs; it localizes to the applicant’s jurisdiction, so the answer is right where they live."),
+            ("A ballpark, up front", "A plausible number is what moves a hesitant applicant from “maybe later” to actually starting the application."),
+            ("From what you’ve told me", "The outline captures each detail as they talk and shows it back — nothing is re-asked, and they can correct it."),
+            ("A messy, real question", "Everyone has an edge case. Plain words hold what a fixed form can’t, so no one opts out for being “too complicated.”"),
+            ("Plain-language reasoning", "Explaining the <em>why</em> — not just yes/no — lets someone act, and frees caseworkers for the genuinely hard cases."),
+            ("Certain", "The confidence flag isn’t just for the reader: it’s logged internally, training the system toward correct answers over time."),
+            ("Cited", "Every rule links to machine-checked source text — verifiable now, and building the citation corpus behind the answers."),
+            ("Prompts the next step", "It asks for the one detail that most sharpens the estimate — gathering what matters without a full form."),
+            ("Four languages", "Spanish, Vietnamese and Chinese are among the largest limited-English, low-income language groups in the U.S. — the widest barriers to access."),
+        ]
+        chat_legend = ('<div class="chat-legend">' + "".join(
+            f'<div class="leg"><span class="leg-n">{i + 1}</span>'
+            f'<span class="leg-t"><b>{t}.</b> {d}</span></div>'
+            for i, (t, d) in enumerate(_legend)) + "</div>")
     else:
         chat_aspect = "2760/2360"
         chat_overlay = ""
+        chat_legend = ""
     # Regulator-specific CRA rule citation for the community-reinvestment box.
     cra_part = cra_reg_part(bank["regulator"])
     cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
@@ -303,6 +307,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         "chat_shot_src": chat_shot_src,
         "chat_aspect": chat_aspect,
         "chat_overlay": chat_overlay,
+        "chat_legend": chat_legend,
         # Page-3 (platform evidence) state-awareness: the demo and the ME-audit
         # provenance are state-specific, so the CalFresh/California framing must
         # not render for the FL banks. The mixed-status citations (7 CFR) are
