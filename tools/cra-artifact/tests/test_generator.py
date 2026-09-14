@@ -996,13 +996,15 @@ def test_platform_evidence_page_present_and_state_aware():
     ca = generate.render(tpl, generate.build_values(
         banks["american_business_bank"], assumptions, org,
         score.load_county_metrics(meta["metrics"]), meta)[0])
-    assert "The platform, as built" in ca
+    assert "The product, as delivered" in ca
     assert "chat-shot-ca.png" in ca                             # the real CA screenshot
-    assert 'aspect-ratio:2760/1707' in ca                       # the CA composite's aspect
+    assert 'aspect-ratio:2760/1818' in ca                       # the CA composite's aspect
     assert 'class="cmark"' in ca                                # numbered markers on the screenshot
     assert 'class="chat-legend"' in ca                          # the intent legend below it
     assert "A messy, real question" in ca                       # a legend item
     assert "A live estimate" in ca                              # a legend item
+    assert "running record" in ca                               # the "from what you've told me" item
+    assert "Guides the next answer" in ca                       # the chat-bar prompt item
     assert "Dated and sourced" in ca                            # sourcing item (no mis-cited CERTAIN)
     assert "self-select out" in ca                              # intent copy, not a screen caption
     assert "Four languages" in ca                               # a legend item
@@ -1016,7 +1018,7 @@ def test_platform_evidence_page_present_and_state_aware():
     fl = generate.render(tpl, generate.build_values(
         banks["ocean_bank"], assumptions, org,
         score.load_county_metrics(fmeta["metrics"]), fmeta)[0])
-    assert "The platform, as built" in fl
+    assert "The product, as delivered" in fl
     assert "chat-shot-fl.png" in fl                             # FL screenshot, not CA
     assert "chat-shot-ca.png" not in fl
     assert 'aspect-ratio:2760/2360' in fl                       # FL uncropped aspect
