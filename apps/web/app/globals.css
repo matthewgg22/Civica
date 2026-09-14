@@ -9881,6 +9881,22 @@ a.dmwel__cta { text-decoration: none; }
 /* ── Language links, front door only ────────────────────────────────────────
    What survived the removal of the site nav. Set as a quiet row above the
    page rather than a bar: it is one control, not a site map. */
+/* THE FRONT DOOR'S HEADER ROW. /screen/ask has no sign-in, so there was no
+   right-hand cluster to put the crisis control beside — this makes one, and
+   puts it in the same screen position it occupies on /chat so the two doors
+   agree. The language bar keeps its own left edge and its own padding; this
+   only wraps the row. */
+.dmpage__topbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  max-width: 1180px; margin: 0 auto; padding-right: clamp(1rem, 4vw, 3.5rem);
+}
+.dmpage__topbar .dmlangs { margin: 0; padding-right: 0; }
+@media (max-width: 30rem) {
+  /* Narrow: the four languages wrap to their own line and the control keeps
+     the top-right corner rather than being pushed off it. */
+  .dmpage__topbar { align-items: flex-start; padding-top: 0.5rem; }
+}
+
 .dmlangs {
   display: flex; flex-wrap: wrap; gap: 0 1.1rem;
   max-width: 1180px; margin: 0 auto; padding: 0.5rem clamp(1rem, 4vw, 3.5rem) 0;
@@ -9896,7 +9912,7 @@ a.dmwel__cta { text-decoration: none; }
   outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; border-radius: 4px;
 }
 
-/* ── "Need food this week?" — crisis affordance in the chat's top bar ──────
+/* ── "Need food this week?" — the crisis affordance, on both surfaces ─────
    Owner, 2026-09-13. It was a section partway down /screen/ask: behind a
    scroll for the person who cannot wait for one, and unreachable from /chat.
 
@@ -9904,7 +9920,7 @@ a.dmwel__cta { text-decoration: none; }
    (DEMETER-DESIGN.md §3 — one primary per surface), so this carries urgency
    through terracotta text and a real border instead of a second fill
    competing beside it. */
-.dmchat .demeter__foodnow {
+.demeter__foodnow {
   display: inline-flex; align-items: center;
   min-height: 38px; padding: 0 0.9rem;
   border: 1px solid var(--demeter-terracotta);
@@ -9914,8 +9930,8 @@ a.dmwel__cta { text-decoration: none; }
   font-weight: 700; font-size: 0.85rem; line-height: 1;
   cursor: pointer; white-space: nowrap;
 }
-.dmchat .demeter__foodnow:hover { background: #FDF3F0; }
-.dmchat .demeter__foodnow:focus-visible {
+.demeter__foodnow:hover { background: #FDF3F0; }
+.demeter__foodnow:focus-visible {
   outline: 2px solid var(--demeter-terracotta); outline-offset: 2px;
 }
 /* The full label crowds sign-in on a phone; the short one keeps the meaning.
@@ -9924,7 +9940,7 @@ a.dmwel__cta { text-decoration: none; }
 @media (max-width: 640px) {
   .demeter__foodnow-full { display: none; }
   .demeter__foodnow-short { display: inline; }
-  .dmchat .demeter__foodnow { padding: 0 0.7rem; font-size: 0.8rem; }
+  .demeter__foodnow { padding: 0 0.7rem; font-size: 0.8rem; }
   .demeter__headright { gap: 0.5rem; }
 }
 

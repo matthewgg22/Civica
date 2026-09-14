@@ -32,6 +32,7 @@
 
 import type { Metadata } from "next";
 import { LanguageLinks } from "../../../components/LanguageLinks";
+import { FoodNowButton } from "../../../components/FoodNowButton";
 import { LandingWelcome } from "../../../components/LandingWelcome";
 import { VERIFIED_STATES, VERIFIED_STATE_CODES } from "@civica/demeter-engine/packs";
 import { redirect } from "next/navigation";
@@ -107,7 +108,13 @@ export default async function ScreenAskPage({
           card, same seen-key as the chat's: dismiss it on either surface and
           it is dismissed on both. */}
       <LandingWelcome lang="en" />
-      <LanguageLinks />
+      {/* The crisis control sits in the same screen position it holds on
+          /chat, so the two front doors agree. It was only on /chat, which
+          left the page the bare domain actually redirects to without it. */}
+      <div className="dmpage__topbar">
+        <LanguageLinks />
+        <FoodNowButton lang="en" />
+      </div>
       
       <div className="dmpage__inner">
         <SnapOrientation

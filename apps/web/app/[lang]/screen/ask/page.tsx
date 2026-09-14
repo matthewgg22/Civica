@@ -15,6 +15,7 @@
 
 import type { Metadata } from "next";
 import { LanguageLinks } from "../../../../components/LanguageLinks";
+import { FoodNowButton } from "../../../../components/FoodNowButton";
 import { LandingWelcome } from "../../../../components/LandingWelcome";
 import { notFound, redirect } from "next/navigation";
 import { VERIFIED_STATES, VERIFIED_STATE_CODES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
@@ -121,7 +122,12 @@ export default async function LocalizedAskPage({
     <main className="dmpage" lang={LANG_TAG[l]}>
       {/* Same card, same seen-key, in this reader's language. */}
       <LandingWelcome lang={l} />
-      <LanguageLinks lang={l} />
+      {/* Same position as /chat and as the English front door. A reader who
+          needs food this week needs it in their own language too. */}
+      <div className="dmpage__topbar">
+        <LanguageLinks lang={l} />
+        <FoodNowButton lang={l} />
+      </div>
       
       <div className="dmpage__inner">
         <SnapOrientation
