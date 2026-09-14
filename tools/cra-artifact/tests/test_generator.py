@@ -998,12 +998,16 @@ def test_platform_evidence_page_present_and_state_aware():
         score.load_county_metrics(meta["metrics"]), meta)[0])
     assert "The platform, as built" in ca
     assert "chat-shot-ca.png" in ca                             # the real CA screenshot
-    assert 'aspect-ratio:2760/2174' in ca                       # the CA crop's aspect
-    assert "A live application outline" in ca                   # a callout card
-    assert "Answered, with the rule cited" in ca               # the cited-rule callout
-    assert "CDSS ACIN I-46-25" in ca                            # citation named in the callout
-    assert "Four languages" in ca                               # the languages callout
-    assert 'class="cdot"' in ca and 'class="leaders"' in ca     # HTML dots + SVG lines
+    assert 'aspect-ratio:2760/1707' in ca                       # the CA composite's aspect
+    assert 'class="cmark"' in ca                                # numbered markers on the screenshot
+    assert 'class="chat-legend"' in ca                          # the intent legend below it
+    assert "A messy, real question" in ca                       # a legend item
+    assert "re-asked" in ca                                     # the "from what you've told me" item
+    assert "logged internally" in ca                            # the CERTAIN item (distinct from Cited)
+    assert "citation corpus" in ca                              # the Cited item (distinct from Certain)
+    assert "Prompts the next step" in ca                        # a legend item
+    assert "Four languages" in ca                               # a legend item
+    assert "limited-English" in ca                              # intent copy, not a screen caption
     assert "qrline" in ca                                       # the live-link QR
     assert "no eligibility determination" in ca                 # the rails
     assert "Harvard Innovation Labs" in ca                      # affiliation line
@@ -1017,5 +1021,5 @@ def test_platform_evidence_page_present_and_state_aware():
     assert "chat-shot-fl.png" in fl                             # FL screenshot, not CA
     assert "chat-shot-ca.png" not in fl
     assert 'aspect-ratio:2760/2360' in fl                       # FL uncropped aspect
-    assert 'class="cdot"' not in fl and "Four languages" not in fl  # no callouts on FL
+    assert 'class="cmark"' not in fl and 'class="chat-legend"' not in fl  # no markers/legend on FL
     assert "California" not in fl and "38 county" not in fl      # no CA framing leaks
