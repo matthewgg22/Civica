@@ -175,9 +175,9 @@ def build_values(bank, assumptions, org, metrics, meta):
     if state == "CA":
         credibility_line = (
             "The findings here are Civica's own: a reproducible model of 2023 "
-            "federal ACS microdata (cross-validated AUC 0.80), and a review of 38 "
-            "California county CalFresh Management Evaluation reports "
-            "(FFY 2024–2025), obtained by public-records request."
+            "federal ACS microdata, and a review of 38 California county CalFresh "
+            "Management Evaluation reports (FFY 2024–2025), obtained by "
+            "public-records request."
         )
     else:
         credibility_line = (
@@ -194,8 +194,8 @@ def build_values(bank, assumptions, org, metrics, meta):
     # every other bank renders nothing here.
     _bank_note = bank.get("bank_specific_note", "").strip()
     bank_specific_block = (
-        f'<div class="provenance" style="margin-top:8px;"><b>Why {bank["name"]} '
-        f'specifically.</b> {_bank_note}</div>' if _bank_note else "")
+        f'<div class="provenance" style="margin-top:8px;"><b>Why {bank["name"]}.'
+        f'</b> {_bank_note}</div>' if _bank_note else "")
     # Page-3 hero: a REAL captured screenshot of the live assistant, referenced by
     # file:// URI so Chrome embeds it into the PDF without a giant base64 blob in
     # the HTML. State-specific so the FL banks show Florida/DCF/SNAP, not CA.
@@ -217,27 +217,21 @@ def build_values(bank, assumptions, org, metrics, meta):
         _marks = [
             (23, 12.5),  # 1  state selector (dropdown caret)
             (24.5, 40),  # 2  WHERE THIS LANDS — likely eligible + $494 (box corner)
-            (24.5, 59),  # 3  FROM WHAT YOU'VE TOLD ME — the captured facts (header row)
-            (96.5, 8.5), # 4  the messy question bubble (top-right corner)
-            (52, 45),    # 5  right of the plain-language answer
-            (30, 73),    # 6  the CERTAIN confidence badge
-            (50, 78),    # 7  the citation link
-            (62, 86),    # 8  after the chat-bar prompt text
-            (22, 97),    # 9  right of the four languages
+            (96.5, 8),   # 3  the messy question bubble (top-right corner)
+            (52, 45),    # 4  the plain-language answer
+            (30, 74),    # 5  the dated eCFR source line
+            (22, 97),    # 6  right of the four languages
         ]
         chat_overlay = "".join(
             f'<div class="cmark" style="left:{x}%;top:{y}%">{i + 1}</div>'
             for i, (x, y) in enumerate(_marks))
         _legend = [
-            ("State-aware", "SNAP is 53 separate state and territory programs; it localizes to the applicant’s jurisdiction, so the answer is right where they live."),
-            ("A ballpark, up front", "A plausible number is what moves a hesitant applicant from “maybe later” to actually starting the application."),
-            ("From what you’ve told me", "The outline captures each detail as they talk and shows it back — nothing is re-asked, and they can correct it."),
-            ("A messy, real question", "Everyone has an edge case. Plain words hold what a fixed form can’t, so no one opts out for being “too complicated.”"),
-            ("Plain-language reasoning", "Explaining the <em>why</em> — not just yes/no — lets someone act, and frees caseworkers for the genuinely hard cases."),
-            ("Certain", "The confidence flag isn’t just for the reader: it’s logged internally, training the system toward correct answers over time."),
-            ("Cited", "Every rule links to machine-checked source text — verifiable now, and building the citation corpus behind the answers."),
-            ("Prompts the next step", "It asks for the one detail that most sharpens the estimate — gathering what matters without a full form."),
-            ("Four languages", "Spanish, Vietnamese and Chinese are among the largest limited-English, low-income language groups in the U.S. — the widest barriers to access."),
+            ("State-aware", "SNAP runs through 53 state and territory agencies with different rules; here it answers from California’s (CDSS)."),
+            ("A live estimate", "The outline fills in from what the applicant says and lands on a plausible number, so someone unsure can see the stakes before the form."),
+            ("A messy, real question", "A fixed form can’t hold an edge case like this; plain-language input can, so people don’t self-select out."),
+            ("Answered plainly", "The answer explains the reasoning, not just yes or no — the part of a caseworker’s job that most often gets skipped."),
+            ("Dated and sourced", "Every answer footers the rule set (eCFR) and the fiscal year it is valid through, so a reviewer can check it and it can’t silently go stale."),
+            ("Four languages", "It also answers in Spanish, Vietnamese and Chinese — the largest limited-English-proficient populations California outreach has to reach."),
         ]
         chat_legend = ('<div class="chat-legend">' + "".join(
             f'<div class="leg"><span class="leg-n">{i + 1}</span>'
