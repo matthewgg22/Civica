@@ -225,6 +225,14 @@ function SignInForm() {
             </p>
           )}
 
+          {/* Same line as the modal, same reason — the two sign-in surfaces
+              must not disagree about whether an account is required. Demeter
+              only: the Civica apply flow's account genuinely gates an
+              application. */}
+          {forConversation && !EMAIL_SIGNIN_ENABLED && (
+            <p className="signin-noaccount">{dt.noAccountNeeded}</p>
+          )}
+
 {EMAIL_SIGNIN_ENABLED && (
             <>
           <div className="signin-divider" role="separator">

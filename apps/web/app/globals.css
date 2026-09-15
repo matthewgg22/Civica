@@ -10017,3 +10017,14 @@ a.dmwel__cta { text-decoration: none; }
   font-size: 0.9rem; line-height: 1.55; color: var(--demeter-ink);
   text-wrap: pretty;
 }
+
+/* "You don't need an account" — under the one sign-in door we can offer while
+   mail is unprovisioned (#699/#802). Quiet, on the ink rather than a grey:
+   the sentence exists to stop someone concluding they are locked out, which
+   is not something to whisper. */
+.signin-noaccount {
+  margin: 0.85rem 0 0;
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.9rem; line-height: 1.5; color: var(--demeter-ink);
+  text-wrap: pretty;
+}
