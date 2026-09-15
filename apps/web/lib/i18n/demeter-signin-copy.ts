@@ -22,6 +22,10 @@ export interface DemeterSigninCopy {
   title: string;
   subtitle: string;
   continueGoogle: string;
+  /** Google is the only door until mail is provisioned (#699/#802). Without
+   *  this line the card reads as a wall to anyone who has no Google account —
+   *  on a product whose whole point is that nobody is blocked from asking. */
+  noAccountNeeded: string;
   /** Dismiss label for the in-chat modal (2026-08-22). */
   close: string;
   or: string;
@@ -62,6 +66,8 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     subtitle:
       "Sign in and this conversation will be here when you come back.",
     continueGoogle: "Continue with Google",
+    noAccountNeeded:
+      "You don't need an account to use Demeter. Signing in only saves this conversation — close this and keep asking.",
     close: "Close",
     or: "or",
     emailLabel: "Email address",
@@ -93,6 +99,8 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     subtitle:
       "Inicia sesión y esta conversación estará aquí cuando regreses.",
     continueGoogle: "Continúa con Google",
+    noAccountNeeded:
+      "No necesitas una cuenta para usar Demeter. Iniciar sesión solo guarda esta conversación: cierra esto y sigue preguntando.",
     close: "Cerrar",
     or: "o",
     emailLabel: "Correo electrónico",
@@ -124,6 +132,8 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     subtitle:
       "Đăng nhập và cuộc trò chuyện này sẽ ở đây khi bạn quay lại.",
     continueGoogle: "Tiếp tục với Google",
+    noAccountNeeded:
+      "Bạn không cần tài khoản để dùng Demeter. Đăng nhập chỉ để lưu cuộc trò chuyện này — hãy đóng lại và tiếp tục hỏi.",
     close: "Đóng",
     or: "hoặc",
     emailLabel: "Địa chỉ email",
@@ -154,6 +164,7 @@ export const SIGNIN_T: Record<AnswerLang, DemeterSigninCopy> = {
     title: "保存您的对话",
     subtitle: "登录后，这段对话会在您回来时依然在这里。",
     continueGoogle: "使用 Google 继续",
+    noAccountNeeded: "您不需要账号也能使用 Demeter。登录只是为了保存这段对话 — 关闭此窗口即可继续提问。",
     close: "关闭",
     or: "或",
     emailLabel: "电子邮箱",

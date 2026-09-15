@@ -146,6 +146,18 @@ export function DemeterSignInModal({
               </svg>
               {dt.continueGoogle}
             </a>
+            {/* WHAT NOT SIGNING IN COSTS, said plainly. Until mail is
+                provisioned (#699/#802) Google is the only door, and a card
+                offering one door and nothing else reads as a wall to anyone
+                who has not got that account — on a product whose first
+                principle is that nobody is blocked from asking. Signing in
+                buys save/resume and nothing else; this says so, so the person
+                can close the card and carry on rather than conclude they
+                cannot use it. Shown whenever email is unavailable, so it
+                disappears on its own the day a second door opens. */}
+            {!EMAIL_SIGNIN_ENABLED && (
+              <p className="signin-noaccount">{dt.noAccountNeeded}</p>
+            )}
             {EMAIL_SIGNIN_ENABLED && (
               <>
             <div className="signin-divider" role="separator">
