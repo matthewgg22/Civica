@@ -108,18 +108,32 @@
   .provenance { font-size:9pt; line-height:1.46; color:var(--body); margin-top:15px; max-width:6.5in; text-wrap:pretty; }
   .body-block .run-in { color:var(--ink); font-weight:600; }
   .provenance b { color:var(--ink); font-weight:600; }
-  /* Research aside: a shaded box marks it as supporting external evidence,
-     visually distinct from the page's own need figures. Tint fill, not a
-     left-accent border (DEMETER-DESIGN flags the colored-left-rail card). */
-  .research { background:var(--tint); border:1px solid var(--rule); border-radius:3px; margin-top:9px; padding:8px 13px; }
-  .research .rlabel { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-deep); font-weight:600; }
-  .rstats { display:flex; gap:.36in; margin-top:8px; }
-  .rstats > div { flex:1; text-align:center; }
-  /* Subordinated: these are external research figures, not Civica's own
-     outcomes, so the numerals sit below the page's need hero in weight. */
-  .rstats b { display:block; font-family:'Newsreader',serif; font-size:13.5pt; font-weight:600; line-height:1; color:var(--body); font-variant-numeric:tabular-nums; }
-  .rstats span { display:block; font-size:8pt; line-height:1.4; color:var(--muted); margin-top:6px; text-wrap:balance; }
-  .rsrc { font-size:7.4pt; line-height:1.45; color:var(--muted); margin-top:9px; max-width:6.6in; }
+  /* Causal chain as DELIVERABLES: a horizontal flow the bank receives. Solid
+     arrows are links recorded and reported quarterly; dashed arrows are
+     estimated or research-based. Honest by construction — the reader sees which
+     links are measured. Replaces the old external-research stat box. */
+  .chain { margin-top:9px; }
+  .chain-cap { display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+    font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:9px; }
+  .chain-key { font-size:6.8pt; letter-spacing:0; text-transform:none; font-weight:500; color:var(--muted); white-space:nowrap; }
+  .chain-key i { display:inline-block; width:15px; height:0; vertical-align:middle; margin:0 3px 0 8px; }
+  .chain-key .k-solid { border-top:2px solid var(--accent); }
+  .chain-key .k-dash { border-top:2px dashed var(--muted); }
+  .chain-row { display:flex; align-items:stretch; gap:0; }
+  .cnode { flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; text-align:center;
+    font-size:8pt; font-weight:600; color:var(--ink); line-height:1.12; padding:7px 5px;
+    border:1px solid var(--rule-strong); border-radius:3px; background:var(--tint); }
+  .cnode small { display:block; font-weight:500; font-size:6.8pt; color:var(--muted); margin-top:1px; }
+  .cnode.start { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .carr { flex:1 1 auto; align-self:center; height:0; position:relative; margin:0 1px; min-width:12px; }
+  .carr.solid { border-top:2px solid var(--accent); }
+  .carr.dash { border-top:2px dashed var(--muted); }
+  .carr::after { content:""; position:absolute; right:-1px; top:-4.5px; width:0; height:0;
+    border-top:4.5px solid transparent; border-bottom:4.5px solid transparent; border-left:6px solid; }
+  .carr.solid::after { border-left-color:var(--accent); }
+  .carr.dash::after { border-left-color:var(--muted); }
+  .chain-note { font-size:7.4pt; line-height:1.42; color:var(--muted); margin-top:9px; max-width:6.7in; text-wrap:pretty; }
+  .chain-note b { color:var(--body); }
   .tiers { display:flex; gap:.22in; margin-top:17px; }
   .tier { flex:1; border:1px solid var(--rule); border-top:3px solid var(--accent); border-radius:2px; padding:15px 12px; }
   .tier.lead { background:var(--tint); }
@@ -174,11 +188,11 @@
   .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:7px 12px; font-size:8.1pt; line-height:1.38; color:var(--body); margin-top:8px; text-wrap:pretty; }
   .disclose strong { color:var(--ink); }
   /* Page 3—the platform, as built (annotated real screenshot) */
-  .platform-hero { margin-top:6px; text-align:center; }
-  /* The composited demo (empty right space cropped out) is sized by HEIGHT so it
-     cannot overflow the page; width follows the aspect ratio and now fills the
-     text column, bleeding slightly past it. Caption and legend below. */
-  .chatshot { position:relative; display:inline-block; height:6.1in; aspect-ratio:[[chat_aspect]]; margin:0 auto; vertical-align:top; max-width:100%; }
+  .platform-hero { margin-top:6px; margin-left:-0.22in; margin-right:-0.22in; text-align:center; }
+  /* The composited demo is the real landscape product view; sized by HEIGHT so it
+     cannot overflow the page, its width fills the text column and bleeds slightly
+     past it (the negative side margins above). Caption and legend below. */
+  .chatshot { position:relative; display:inline-block; height:5.85in; aspect-ratio:[[chat_aspect]]; margin:0 auto; vertical-align:top; max-width:100%; }
   .chatshot > img { width:100%; height:100%; display:block; border:1px solid var(--rule-strong); border-radius:5px; object-fit:fill; }
   /* Numbered markers sit ON the screenshot; the legend below explains the intent.
      A crisp ring (border only—no blurred shadow, which a PDF rasterizes as a
@@ -233,13 +247,22 @@
       <div class="why-cap">What is the Supplemental Nutrition Assistance Program (SNAP)?</div>
       <p>SNAP, commonly known as food stamps, is monthly grocery money for low- and moderate-income households. Most people who qualify but never enroll are stopped by the process, not the rules. Civica's free assistant answers their questions in plain language and guides them through the application.</p>
     </div>
-    <div class="research">
-      <div class="rlabel">SNAP enrollment's impact on household finances</div>
-      <div class="rstats">
-        <div><b class="serif">$2,436</b><span>less credit-card debt by year three (down 51%)</span></div>
-        <div><b class="serif">10.1 pts</b><span>lower likelihood of a delinquent account (off a 41% baseline)</span></div>
-        <div><b class="serif">~17 pts</b><span>higher credit score, from 634 (subprime; final-quarter effect)</span></div>
+    <div class="chain">
+      <div class="chain-cap"><span>What the grant sets in motion</span><span class="chain-key"><i class="k-solid"></i>recorded &amp; reported quarterly<i class="k-dash"></i>estimated / research</span></div>
+      <div class="chain-row">
+        <div class="cnode start">Grant</div>
+        <div class="carr solid"></div>
+        <div class="cnode">Digital outreach<small>in LMI tracts</small></div>
+        <div class="carr solid"></div>
+        <div class="cnode">Applications<small>submitted</small></div>
+        <div class="carr dash"></div>
+        <div class="cnode">Fewer denials<small>(paperwork)</small></div>
+        <div class="carr dash"></div>
+        <div class="cnode">Benefits<small>received</small></div>
+        <div class="carr dash"></div>
+        <div class="cnode">Household<small>finances</small></div>
       </div>
+      <div class="chain-note"><b>Household finances</b> — research on procedurally-denied applicants (Homonoff, Lee &amp; Meckel, NBER WP 34434, 2025 draft), not a promise of our program's effect: ~$2,436 less credit-card debt by year three and 10.1 pts lower delinquency (the firmer effects); ~17 points higher credit score, from an average of 634, is the weakest and least precisely estimated.</div>
     </div>
     [[me_evidence_block]]
   </div>
@@ -258,10 +281,11 @@
   <div class="crafile">
     <div class="crafile-cap">For [[bank_name]]'s community-reinvestment file</div>
     <table class="cra-dl">
-      <tr><td class="l">Activity</td><td>[[program_ref]] benefits-access outreach and application assistance in your assessment area—a community-development activity (community services targeted to LMI individuals under [[cra_rule_cite]]). Funded as a grant, it is a qualified community-development investment, assessed under the investment test.</td></tr>
-      <tr><td class="l">Beneficiaries</td><td>Low- and moderate-income residents. The federal Interagency Q&amp;A names USDA's Supplemental Nutrition Assistance programs as an accepted LMI proxy (Q&amp;A §&#8239;__.12(g)(2)&#8211;1; 81 FR 48506, 48526, July 25, 2016), so no household-level income documentation is required.</td></tr>
-      <tr><td class="l">Geographic nexus</td><td>Delivered and measured within [[bank_name]]'s delineated assessment area, documented by county. Where banks share geography, campaign activity is allocated pro rata by county, so each institution's cumulative credit reflects only its share.</td></tr>
-      <tr><td class="l">Documentation</td><td>A quarterly report of ad delivery, eligibility checks, and applications started and submitted (all by county; the sample on page 4 shows the format), plus a one-page qualification memo citing the CRA category and the governing rule, and an annual exam-file summary. Prepared for your file.</td></tr>
+      <tr><td class="l">Primary purpose</td><td>The grant funds only [[program_ref]] application assistance&mdash;a community-development service (community services targeted to LMI individuals under [[cra_rule_cite]]). Qualification rests on this purpose, not on the results it produces.</td></tr>
+      <tr><td class="l">LMI targeting</td><td>Two independent tests. <b>Delivery:</b> the share of digital-outreach delivery and eligibility-check sessions in LMI census tracts, reported quarterly. <b>Eligibility:</b> the program's gross-income ceiling (200% of the federal poverty level) sits within the LMI band (&le;80% of area median income) in all four counties. The federal Interagency Q&amp;A (§&#8239;__.12(g)(2)&#8211;1; 81 FR 48506, 2016) is cited only as backup&mdash;it addresses SNAP <em>recipients</em>, while our users are <em>applicants</em>.</td></tr>
+      <tr><td class="l">Geographic nexus</td><td>Delivered and measured within [[bank_name]]'s delineated assessment area, documented by county. Where banks share geography, credit is allocated by each bank's share of dollars in each county, so nothing is claimed twice.</td></tr>
+      <tr><td class="l">Investment-test criteria</td><td>Scored on the qualitative factors at [[cra_invest_cite]]. <b>Innovativeness/complexity (e)(2):</b> delivers measured, attributable results, not a count of activities. <b>Responsiveness (e)(3):</b> addresses the application-access barriers the state's own reviews of these counties document.</td></tr>
+      <tr><td class="l">Documentation</td><td>A quarterly report of outreach delivery, eligibility checks, and applications started and submitted (all by county; the sample on page 4 shows the format), plus a one-page qualification memo and an annual exam-file summary. Prepared for your file.</td></tr>
     </table>
     <div class="cra-foot">Treatment under the CRA framework remains subject to your institution's compliance team and examiners.</div>
   </div>
@@ -284,7 +308,7 @@
   <div class="thesis" style="margin-top:6px;">The working system behind the pilot&mdash;a rules-grounded assistant.</div>
   <div class="evidence-foot" style="border-top:none; margin-top:7px; padding-top:0;">
     <div class="ev-text">
-      <p><strong>Built-in limits.</strong> Makes no eligibility determination&mdash;routes decisions to the county or 2-1-1. Never asks for an SSN, DOB, or account number; carries crisis and DV lines. Nothing is shared with the bank, and question text auto-purges (7/30 days).</p>
+      <p><strong>Built-in limits.</strong> It estimates, never decides&mdash;the county decides; anything outside its scope routes to the county or 2-1-1. Never asks for an SSN, DOB, or account number; carries crisis and domestic-violence lines. Nothing is shared with the bank, and question text auto-purges.</p>
       <p><strong>Independently checkable.</strong> A graded ~600-question set across all 53 jurisdictions (adversarial and crisis cases included), re-run on every rules change and open to your compliance team. Corpus: eCFR plus 53 packs, dated provenance[[me_audit_clause]]; 120-day refresh.</p>
     </div>
     <div class="ev-side">
@@ -345,7 +369,7 @@
       <h3>Methodology &amp; disclosures</h3>
       <ul>
         <li>[[method_bullet]]</li>
-        <li><strong>Reconciled to a federal series:</strong> the eligible-not-enrolled count is held to USDA's published participation rate (81%, FY2022), so the page-1 headline tracks an independent federal figure within ~1% rather than the model's raw non-enrollment rate.</li>
+        <li>[[recon_method_bullet]]</li>
         <li><strong>Known bias, disclosed:</strong> a gross-income proxy and ACS under-reporting push the estimate <em>upward</em>, so read it as an upper range of unmet need.</li>
         <li>County estimates carry 1-Year ACS sampling uncertainty; the page-1 dollar range reflects household size, not a confidence interval.</li>
       </ul>

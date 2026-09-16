@@ -1,0 +1,14 @@
+{
+  "_comment": "Actual CalFresh ENROLLED persons by county, used to anchor the page-1 eligible base so it reconciles with the state's own caseload (a model-only eligible base sits BELOW actual enrollment because CA runs Broad-Based Categorical Eligibility at 200% FPL, which the federal-parameters ACS model does not see). Headline eligible = enrolled / USDA participation rate; not-enrolled = eligible - enrolled. See GitHub issue for the proper BBCE re-model.",
+  "source": "CDSS CalFresh persons by county, compiled by the California Association of Food Banks (2025 estimates, from CDSS administrative data). Statewide total 5,558,282.",
+  "source_url": "https://www.cafoodbanks.org/wp-content/uploads/2025/08/Estimated-CalFresh-Recipients-by-County_2025.pdf",
+  "vintage": "2025",
+  "state": "CA",
+  "statewide_persons": 5558282,
+  "counties": {
+    "Los Angeles": 1578521,
+    "Orange": 318178,
+    "Riverside": 345499,
+    "San Bernardino": 377207
+  }
+}

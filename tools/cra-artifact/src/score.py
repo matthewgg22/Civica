@@ -40,7 +40,7 @@ def state_average(metrics):
     return tot_non / tot_e
 
 
-def bank_need(aa_counties, metrics, assumptions, reconcile_rate=None):
+def bank_need(aa_counties, metrics, assumptions, reconcile_rate=None, caseload=None):
     """Compute the artifact's numbers for a bank's assessment-area counties.
 
     Returns a dict with absolute-need headline numbers, the (possibly
@@ -64,11 +64,29 @@ def bank_need(aa_counties, metrics, assumptions, reconcile_rate=None):
     if not covered:
         raise DataGapError(f"no metrics coverage for any AA county: {aa_counties}")
 
-    eligible = sum(metrics[c]["eligible_pop"] for c in covered)
+    model_eligible = sum(metrics[c]["eligible_pop"] for c in covered)
     model_unenrolled = sum(metrics[c]["eligible_pop"] * metrics[c]["non_enroll_rate"]
                            for c in covered)
-    model_aa_rate = model_unenrolled / eligible
+    model_aa_rate = model_unenrolled / model_eligible
     state_rate = state_average(metrics)
+
+    # Anchor the eligible base on the state's ACTUAL enrolled caseload when it is
+    # available (CA). A model-only eligible base is drawn on federal SNAP rules
+    # (~130% FPL) and comes out BELOW real enrollment, because California runs
+    # Broad-Based Categorical Eligibility (200% FPL) — so "eligible < enrolled"
+    # and the headline can't be reconciled against CDSS. Anchoring eligible =
+    # enrolled / participation_rate makes it reconcile with the caseload by
+    # construction. Requires caseload for every covered county; otherwise the
+    # model base is used (FL, and any AA the caseload file does not cover).
+    aa_enrolled = None
+    caseload_anchored = bool(
+        reconcile_rate is not None and caseload
+        and all(c in caseload for c in covered))
+    if caseload_anchored:
+        aa_enrolled = sum(caseload[c] for c in covered)
+        eligible = aa_enrolled / reconcile_rate
+    else:
+        eligible = model_eligible
 
     reconciled = reconcile_rate is not None
     if reconciled:
@@ -92,6 +110,9 @@ def bank_need(aa_counties, metrics, assumptions, reconcile_rate=None):
         "eligible": eligible,
         "unenrolled": unenrolled,
         "reconciled": reconciled,
+        "caseload_anchored": caseload_anchored,
+        "aa_enrolled": aa_enrolled,
+        "model_eligible": model_eligible,
         "model_unenrolled": model_unenrolled,
         "model_aa_rate": model_aa_rate,
         "aa_enrolled_pct": (1 - aa_rate) * 100,

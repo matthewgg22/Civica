@@ -119,9 +119,24 @@ def build_county_breakdown(covered_counties, metrics, cap=6):
             f'<ul>{"".join(lis)}</ul></div>')
 
 
+def _load_caseload(state):
+    """Actual CalFresh enrolled persons by county for `state`, or None.
+
+    Used to anchor the headline eligible base on the real caseload so it
+    reconciles with the state's own enrollment (see inputs/calfresh_caseload.json
+    and score.bank_need)."""
+    path = TOOL_ROOT / "inputs" / "calfresh_caseload.json"
+    if not path.exists():
+        return None
+    data = json.loads(path.read_text())
+    return data["counties"] if data.get("state") == state else None
+
+
 def build_values(bank, assumptions, org, metrics, meta):
+    caseload = _load_caseload(bank.get("state", "CA"))
     need = score.bank_need(bank["aa_counties"], metrics, assumptions,
-                           reconcile_rate=meta.get("usda_participation_rate"))
+                           reconcile_rate=meta.get("usda_participation_rate"),
+                           caseload=caseload)
     fun = report.funnel(bank["ask_usd"], assumptions)
     aa_label = (f"{bank['aa_counties'][0]} County" if len(bank["aa_counties"]) == 1
                 else "assessment-area")
@@ -131,9 +146,13 @@ def build_values(bank, assumptions, org, metrics, meta):
     county_breakdown = build_county_breakdown(need["covered_counties"], metrics)
     # Sub-county PUMA choropleth where we have both need data and geometry
     # (CA, FL); every other state falls back to the county-bar breakdown.
+    # When the headline is caseload-anchored, the per-neighborhood bars are
+    # scaled to sum to the same reconciled AA total, so the map and the headline
+    # tell one consistent story.
     aa_geo_visual = pumamap.puma_visual_html(
         bank["aa_counties"], bank.get("state", "CA"), meta["method_short"],
-        reconcile_rate=meta.get("usda_participation_rate"))
+        reconcile_rate=meta.get("usda_participation_rate"),
+        total_override=need["unenrolled"] if need.get("caseload_anchored") else None)
     if not aa_geo_visual:
         aa_geo_visual = county_breakdown
     ratio_line = ""
@@ -209,24 +228,24 @@ def build_values(bank, assumptions, org, metrics, meta):
     # daily question cap was reached); both render correctly because the aspect
     # ratio and the overlay are state-specific.
     if state == "CA":
-        chat_aspect = "2150/2225"
+        chat_aspect = "2760/2225"
         # Numbered markers sit ON the screenshot; the legend beneath it explains
         # the INTENT behind each simple feature (not a caption of what's shown).
         # (x,y) is the marker centre in % of the image box, ordered top-to-bottom
         # so the numbers ascend as the eye moves down the capture. Small numbers
         # avoid the leader-line/label overlap of earlier versions.
-        # Bubbles read straight down (user bubbles left-aligned), the PDF-offer
-        # row is gone, and the empty right column is cropped out: the image is a
-        # tight 2150x2225. Marker x% are relative to the 2150 width.
+        # Real product layout (user bubbles right-aligned, answers left), PDF-offer
+        # row removed: the image is a landscape 2760x2225. Marker x% are relative
+        # to the 2760 width.
         _marks = [
-            (94, 2),     # 1  the messy question bubble (top)
-            (31, 9),     # 2  state selector (dropdown caret)
-            (31, 44),    # 3  WHERE THIS LANDS—likely eligible + $494
-            (31, 59),    # 4  FROM WHAT YOU'VE TOLD ME—the running record
-            (68, 66),    # 5  the dated eCFR source line
-            (90, 85),    # 6  the CERTAIN badge + citation
-            (30, 88),    # 7  right of the four languages
-            (62, 94),    # 8  the grayed chat-bar prompt
+            (97, 2),     # 1  the messy question bubble (top-right)
+            (24, 9),     # 2  state selector (dropdown caret)
+            (24, 44),    # 3  WHERE THIS LANDS—likely eligible + $494
+            (24, 59),    # 4  FROM WHAT YOU'VE TOLD ME—the running record
+            (53, 66),    # 5  the dated eCFR source line
+            (70, 85),    # 6  the CERTAIN badge + citation
+            (23, 88),    # 7  right of the four languages
+            (48, 94),    # 8  the grayed chat-bar prompt
         ]
         chat_overlay = "".join(
             f'<div class="cmark" style="left:{x}%;top:{y}%">{i + 1}</div>'
@@ -256,6 +275,10 @@ def build_values(bank, assumptions, org, metrics, meta):
     # Regulator-specific CRA rule citation for the community-reinvestment box.
     cra_part = cra_reg_part(bank["regulator"])
     cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
+    # Investment-test qualitative criteria live at .23(e) in each regulator's
+    # CRA rule (FDIC 345, OCC 25, Fed 228): (e)(2) innovativeness/complexity,
+    # (e)(3) responsiveness to community-development needs.
+    cra_invest_cite = f"12 CFR {cra_part}.23(e)"
     # Reconciliation note (page-1 methods): when we report the eligible-but-
     # unenrolled headline at USDA's published participation rate (see
     # score.bank_need + states.usda_participation_rate), disclose exactly that,
@@ -264,7 +287,19 @@ def build_values(bank, assumptions, org, metrics, meta):
     # state-specific haircut to avoid an unsourced number. Empty when a state
     # has no published rate wired (falls back to the raw model figure).
     if need.get("reconciled"):
-        if state == "CA":
+        if state == "CA" and need.get("caseload_anchored"):
+            _enr = f"{need['aa_enrolled'] / 1e6:.1f}M"
+            recon_note = (
+                "<strong>How we count unmet need:</strong> we anchor the eligible "
+                f"base on the assessment area's actual CalFresh caseload (CDSS, ~{_enr} "
+                "persons enrolled; compiled by the CA Assn. of Food Banks, 2025) and "
+                "apply USDA's published California participation rate (81%, FY2022): "
+                "eligible = enrolled &divide; 0.81, so the count reconciles with the "
+                "state's own enrollment. A federal-rules model base understates "
+                "eligibility because California's Broad-Based Categorical Eligibility "
+                "reaches 200% FPL. H.R.1 changes effective 2026 (noncitizen, ABAWD) "
+                "shrink this pool further (California LAO, Feb 2026). &nbsp;·&nbsp; ")
+        elif state == "CA":
             recon_note = (
                 "<strong>How we count unmet need:</strong> our eligible-population "
                 "estimate matches USDA's independent California figure within ~1%; "
@@ -281,10 +316,26 @@ def build_values(bank, assumptions, org, metrics, meta):
                 "&nbsp;·&nbsp; ")
     else:
         recon_note = ""
+    # Page-4 methodology bullet mirrors the headline method, state-correct so no
+    # CA brand ("CalFresh"/"CDSS"/"California") leaks onto a non-CA artifact.
+    if need.get("caseload_anchored"):
+        recon_method_bullet = (
+            "<strong>Reconciled to the state caseload:</strong> the eligible base "
+            "is anchored on CDSS's actual CalFresh enrollment in the assessment "
+            "area, then divided by USDA's published California participation rate "
+            "(81%, FY2022), so the page-1 count reconciles with the state's own "
+            "enrollment rather than a federal-rules model base that sits below it.")
+    else:
+        recon_method_bullet = (
+            "<strong>Reconciled to a federal series:</strong> the "
+            "eligible-not-enrolled count is held to USDA's published participation "
+            "rate (81%, FY2022) rather than the model's raw non-enrollment rate, "
+            "which survey under-reporting inflates.")
     v = {
         "why_this_bank": why_this_bank,
         "credibility_line": credibility_line,
         "cra_rule_cite": cra_rule_cite,
+        "cra_invest_cite": cra_invest_cite,
         "funnel_note": funnel_note,
         "org_name": org["org_name"],
         "program_name": org["program_name"],
@@ -305,6 +356,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         "prepared_date": datetime.date.today().strftime("%B %Y"),
         "headline_unenrolled": fmt_int(round(need["unenrolled"])),
         "recon_note": recon_note,
+        "recon_method_bullet": recon_method_bullet,
         "bank_specific_block": bank_specific_block,
         # Static QR to the live assistant (same URL for every bank); pre-generated
         # asset, so the generator stays stdlib-only. See assets/qr-chat.svg.

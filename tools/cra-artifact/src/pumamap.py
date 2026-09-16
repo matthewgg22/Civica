@@ -157,7 +157,7 @@ def _short_name(raw: str) -> str:
 
 
 def ranked_bar_svg(aa_counties, state, reconcile_rate=None,
-                   width=430, height=196, top_n=8):
+                   width=430, height=196, top_n=8, total_override=None):
     """Top-N assessment-area PUMAs by eligible-but-unenrolled residents, as a
     ranked horizontal bar chart named by neighborhood.
 
@@ -178,6 +178,14 @@ def ranked_bar_svg(aa_counties, state, reconcile_rate=None,
         val = e["eligible"] * factor if factor is not None else e["unenrolled"]
         if val > 0:
             rows.append((names[p], val))
+    # Scale every PUMA so the AA total matches the (caseload-anchored) headline;
+    # the relative distribution is preserved, the absolute bar values stay
+    # consistent with page 1.
+    if total_override is not None:
+        model_total = sum(v for _, v in rows)
+        if model_total > 0:
+            k = total_override / model_total
+            rows = [(nm, v * k) for nm, v in rows]
     rows.sort(key=lambda t: t[1], reverse=True)
     rows = rows[:top_n]
     if not rows:
@@ -242,12 +250,14 @@ def locator_svg(aa_counties, state, width=118, height=82):
 STATE_NAMES = {"CA": "California", "FL": "Florida"}
 
 
-def puma_visual_html(aa_counties, state, model_short, reconcile_rate=None):
+def puma_visual_html(aa_counties, state, model_short, reconcile_rate=None,
+                     total_override=None):
     """Right-column visual: a ranked bar chart of the highest-need neighborhoods
     (PUMAs) plus a small state locator — or '' if the state is unsupported."""
     if not available(state):
         return ""
-    bars = ranked_bar_svg(aa_counties, state, reconcile_rate=reconcile_rate)
+    bars = ranked_bar_svg(aa_counties, state, reconcile_rate=reconcile_rate,
+                          total_override=total_override)
     loc = locator_svg(aa_counties, state)
     state_name = STATE_NAMES.get(state, "the state")
     caption = (f"Assessment area within {state_name}. Each bar is a Census PUMA "
