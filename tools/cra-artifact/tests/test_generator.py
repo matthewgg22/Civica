@@ -1047,23 +1047,23 @@ def test_platform_evidence_page_present_and_state_aware():
     assert "chat-shot-ca.png" in ca                             # the real CA screenshot
     assert 'aspect-ratio:2760/2225' in ca                       # the CA composite's aspect (landscape product view)
     assert 'class="cmark"' in ca                                # numbered markers on the screenshot
-    assert 'class="chat-legend"' in ca                          # the intent legend below it
-    assert "A messy, real question" in ca                       # a legend item
-    assert "A live estimate" in ca                              # a legend item
-    assert "running record" in ca                               # the "from what you've told me" item
-    assert "Guides the next answer" in ca                       # the chat-bar prompt item
-    assert "Checkable, and improving" in ca                     # the CERTAIN badge item
-    assert "sharpen accuracy over time" in ca                   # CERTAIN = training signal, not a caption
-    assert "Dated and sourced" in ca                            # sourcing item (no mis-cited CERTAIN)
+    assert 'class="chat-legend"' in ca                          # the five-item event key below it
+    # barrier table drives the page (evidence -> how addressed -> what's measured)
+    assert 'class="barriers"' in ca
+    assert "Why a chatbot" in ca and "Why digital outreach" in ca
+    # take-up evidence carries its population caveat (elderly SNAP, PA)
+    assert "Finkelstein" in ca and "Pennsylvania" in ca
+    # verified outreach evidence: Pew smartphone-only + the LA social-ads null result
+    assert "smartphone-only" in ca and "Rogers" in ca
+    # five recorded-event callouts (rewritten captions)
+    assert "A messy, real question" in ca and "State-aware" in ca
+    assert "A live estimate" in ca and "A correctable record" in ca
+    assert "Rule cited, dated" in ca
+    assert "running record" in ca                               # in the barrier table
     assert "self-select out" in ca                              # intent copy, not a screen caption
-    assert "Four languages" in ca                               # a legend item
-    assert "limited-English-proficient" in ca                   # corrected languages copy
-    assert "qrline" in ca                                       # the live-link QR
-    assert "estimates, never decides" in ca                     # the rails (county decides)
-    assert "Harvard Innovation Labs" in ca                      # affiliation line
-    assert "Baker grant" in ca                                   # impact-study funding on the affil line
+    assert "limited-English-proficient" in ca                   # languages barrier row
+    assert "estimates, never decides" in ca                     # the safeguards rail (county decides)
     assert "general chatbot" not in ca                           # thesis no longer contrasts against a chatbot
-    assert "38 county" in ca                                     # CA ME-audit clause
     assert "3 / 4" in ca and "4 / 4" in ca                       # renumbered
     fmeta = states.state_meta("FL")
     fl = generate.render(tpl, generate.build_values(
