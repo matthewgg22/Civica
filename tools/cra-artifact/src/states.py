@@ -19,7 +19,7 @@ STATES = {
         "metrics": REPO_ROOT / "data-ops/analysis/track1-food-desert/artifacts/county_metrics.csv",
         "geojson": "ca_named",  # legacy name-keyed ca_counties.geojson
         "program_ref": "CalFresh (SNAP)",
-        "model_note": "modeled from 2023 ACS 1-Year PUMS (LightGBM, CV AUC 0.80)",
+        "model_note": "modeled from 2023 ACS 1-Year PUMS (method on page 4)",
         "method_short": "modeled",
         "method_bullet": "Modeled from the 2023 ACS 1-Year PUMS with a gradient-boosted classifier (cross-validated AUC 0.80), allocated from PUMAs to counties by a tract-weighted crosswalk.",
         # USDA FNS published SNAP participation rate (Reaching Those in Need,

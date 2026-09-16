@@ -237,41 +237,119 @@ def build_values(bank, assumptions, org, metrics, meta):
         # Real product layout (user bubbles right-aligned, answers left), PDF-offer
         # row removed: the image is a landscape 2760x2225. Marker x% are relative
         # to the 2760 width.
+        # Five callouts, each tied to a RECORDED event the quarterly report counts
+        # (the barrier table above carries the "why"; this is the short key).
+        # Ordered top-to-bottom so numbers ascend as the eye moves down.
         _marks = [
             (97, 2),     # 1  the messy question bubble (top-right)
-            (24, 9),     # 2  state selector (dropdown caret)
-            (24, 44),    # 3  WHERE THIS LANDS—likely eligible + $494
-            (24, 59),    # 4  FROM WHAT YOU'VE TOLD ME—the running record
-            (53, 66),    # 5  the dated eCFR source line
-            (70, 85),    # 6  the CERTAIN badge + citation
-            (23, 88),    # 7  right of the four languages
-            (48, 94),    # 8  the grayed chat-bar prompt
+            (24, 9),     # 2  state selector — state-aware session
+            (24, 44),    # 3  WHERE THIS LANDS—the live $494 estimate
+            (24, 59),    # 4  FROM WHAT YOU'VE TOLD ME—the correctable record
+            (70, 85),    # 5  the CERTAIN badge + citation—rule cited, dated
         ]
         chat_overlay = "".join(
             f'<div class="cmark" style="left:{x}%;top:{y}%">{i + 1}</div>'
             for i, (x, y) in enumerate(_marks))
         _legend = [
-            ("A messy, real question", "A fixed form can’t hold an edge case like this; plain-language input can, so people don’t self-select out."),
-            ("State-aware", "SNAP runs through 53 state and territory agencies with different rules; here it answers from California’s (CDSS)."),
-            ("A live estimate", "The outline fills in from what the applicant says and lands on a plausible number, so someone unsure can see the stakes before the form."),
-            ("From what you’ve told me", "It keeps a running record of the conversation and shows it back, so nothing is re-asked and the applicant can correct it."),
-            ("Dated and sourced", "Every answer footers the rule set (eCFR) and the fiscal year it is valid through, so a reviewer can check it and it can’t silently go stale."),
-            ("Checkable, and improving", "When every rule traces to regulation text the answer is marked CERTAIN and shows the citation to open; those confirmed answers are the signal used to sharpen accuracy over time."),
-            ("Four languages", "It also answers in Spanish, Vietnamese and Chinese—the largest limited-English-proficient populations California outreach has to reach."),
-            ("Guides the next answer", "The prompt in the box nudges the exact detail that sharpens the estimate, so the applicant knows what to say next."),
+            ("A messy, real question", "plain-language input a fixed form can’t take, so people don’t self-select out."),
+            ("State-aware", "answers from California’s rules (CDSS); each session is recorded by state."),
+            ("A live estimate", "an estimated benefit fills in as the applicant talks—recorded as an eligibility check."),
+            ("A correctable record", "it shows back what you’ve told it, so nothing is re-asked and the applicant can fix it."),
+            ("Rule cited, dated", "shows the rule and the fiscal year under each answer, so a reviewer can check it."),
         ]
         chat_legend = ('<div class="chat-legend">' + "".join(
             f'<div class="leg"><span class="leg-n">{i + 1}</span>'
-            f'<span class="leg-t"><b>{t}.</b> {d}</span></div>'
+            f'<span class="leg-t"><b>{t}:</b> {d}</span></div>'
             for i, (t, d) in enumerate(_legend)) + "</div>")
-        chat_cap = ("A real conversation in the live assistant. "
-                    "Each numbered feature is explained below.")
+        chat_cap = "A real conversation in the live assistant."
     else:
         chat_aspect = "2760/2360"
         chat_overlay = ""
         chat_legend = ""
         # FL carries no markers/legend, so don't promise a numbered key below.
         chat_cap = "A real conversation in the live assistant."
+    # ---- Page-3 evidence region (state-driven so no CA brand leaks onto FL) ----
+    qr_svg = (TOOL_ROOT / "assets/qr-chat.svg").read_text()
+    _me_audit = ("; the CA pack built from an audit of 38 county ME reports"
+                 if state == "CA" else "")
+    _qrbox = ('<div class="qrbox"><div class="qr">' + qr_svg + '</div>'
+              '<div class="qr-txt"><strong>Try it.</strong> Scan, or visit<br>'
+              '<span class="url">civica-applicant.vercel.app/chat</span></div></div>')
+    if state == "CA":
+        evidence_block = (
+            '<table class="barriers"><thead><tr>'
+            '<th style="width:1.05in">Barrier</th><th>What the evidence shows</th>'
+            '<th style="width:1.5in">How the assistant addresses it</th>'
+            '<th style="width:1.0in">Measured (pg 4)</th></tr></thead><tbody>'
+            '<tr><td class="b">Don’t know they qualify</td>'
+            '<td class="ev">Information alone nearly doubled SNAP take-up, 6%&rarr;11%<sup>*</sup></td>'
+            '<td>A five-minute personalized estimate</td>'
+            '<td class="m">Eligibility checks completed</td></tr>'
+            '<tr><td class="b">A confusing application</td>'
+            '<td class="ev">Hands-on application help raised take-up to 18%, vs 11% for information alone<sup>*</sup></td>'
+            '<td>Plain-language answers, cited rules, a correctable running record</td>'
+            '<td class="m">Applications submitted</td></tr>'
+            '<tr><td class="b">Language</td>'
+            '<td class="ev">Reaches the largest limited-English-proficient populations California outreach must serve</td>'
+            '<td>Answers in Spanish, Vietnamese, Chinese and English</td>'
+            '<td class="m">Sessions by language</td></tr>'
+            '</tbody></table>'
+            '<div class="barriers-note"><sup>*</sup> Take-up figures: a randomized trial of '
+            'elderly SNAP applicants in Pennsylvania (Finkelstein &amp; Notowidigdo, QJE 2019); '
+            'the pilot tests whether they hold for the general CalFresh population. The process '
+            'barriers the state’s own county reviews document (page 1)—wrong-language '
+            'forms, information wrongly requested—are a further target; post-submission '
+            'reminders are a planned addition.</div>'
+            '<div class="whyrow"><div class="why-chat">'
+            '<div class="why-h">Why a chatbot</div>'
+            '<p>Human application help has the strongest evidence, but it’s capped by staff '
+            'hours and cost per case. The assistant offers that kind of help around the clock, in '
+            'four languages, at near-zero marginal cost—the pilot tests whether it reproduces '
+            'those results.</p></div>'
+            '<div class="why-out"><div class="why-h">Why digital outreach</div><ul>'
+            '<li><b>Aimed at need:</b> geo-targeted to LMI tracts—the targeting the CRA LMI test rewards.</li>'
+            '<li><b>Where people are:</b> 16% of U.S. adults are smartphone-only, far more among households under $30k (Pew).</li>'
+            '<li><b>Into help, not an ad:</b> an LA trial found social-media ads alone didn’t lift enrollment (Rogers, 2024), so every contact opens straight into the assistant.</li>'
+            '</ul><div class="why-try"><b>Try it:</b> civica-applicant.vercel.app/chat</div>'
+            '</div></div>')
+        safeguards_line = (
+            '<div class="safeguards"><b>Safeguards:</b> estimates, never decides; no '
+            'SSN/DOB/account number; crisis &amp; DV lines; nothing shared with the bank; '
+            'text auto-purges.</div>')
+        p3_detail_foot = (
+            '<div class="p3foot"><b>Independently checkable:</b> a graded ~600-question '
+            'set across all 53 jurisdictions (adversarial and crisis cases included), '
+            're-run on every rules change and open to your compliance team. Civica is in '
+            'the Harvard Innovation Labs incubator; the impact study behind these figures '
+            'is available on request.</div>')
+    else:
+        evidence_block = (
+            '<div class="evidence-foot" style="border-top:none;margin-top:7px;padding-top:0;">'
+            '<div class="ev-text">'
+            '<p><strong>Built-in limits.</strong> It estimates, never decides—the county '
+            'decides; anything outside its scope routes to the county or 2-1-1. Never asks for an '
+            'SSN, DOB, or account number; carries crisis and domestic-violence lines. Nothing is '
+            'shared with the bank, and question text auto-purges.</p>'
+            '<p><strong>Independently checkable.</strong> A graded ~600-question set across all 53 '
+            'jurisdictions, re-run on every rules change and open to your compliance team.</p>'
+            '</div><div class="ev-side">' + _qrbox + '</div></div>')
+        safeguards_line = ""
+        p3_detail_foot = ""
+    # Page-3 demo section. CA: the screenshot bleeds left, with the five recorded-
+    # feature explainers stacked to its right. FL: the plain full-width hero.
+    _img = ('<img src="' + chat_shot_src + '" alt="A real Demeter conversation in '
+            'the live assistant, annotated with recorded-event callouts."/>')
+    _shot = (f'<div class="chatshot" style="aspect-ratio:{chat_aspect};">'
+             + _img + chat_overlay + '</div>')
+    if state == "CA":
+        demo_section = (
+            '<div class="demo-row"><div class="demo-col">' + _shot
+            + f'<div class="chatshot-cap">{chat_cap}</div></div>'
+            '<div class="legend-col"><div class="legend-head">Five recorded '
+            'features, keyed on the screenshot</div>' + chat_legend + '</div></div>')
+    else:
+        demo_section = ('<div class="platform-hero">' + _shot
+                        + f'<div class="chatshot-cap">{chat_cap}</div></div>')
     # Regulator-specific CRA rule citation for the community-reinvestment box.
     cra_part = cra_reg_part(bank["regulator"])
     cra_rule_cite = f"12 CFR Part {cra_part} ({bank['regulator']})"
@@ -290,15 +368,13 @@ def build_values(bank, assumptions, org, metrics, meta):
         if state == "CA" and need.get("caseload_anchored"):
             _enr = f"{need['aa_enrolled'] / 1e6:.1f}M"
             recon_note = (
-                "<strong>How we count unmet need:</strong> we anchor the eligible "
-                f"base on the assessment area's actual CalFresh caseload (CDSS, ~{_enr} "
-                "persons enrolled; compiled by the CA Assn. of Food Banks, 2025) and "
-                "apply USDA's published California participation rate (81%, FY2022): "
-                "eligible = enrolled &divide; 0.81, so the count reconciles with the "
-                "state's own enrollment. A federal-rules model base understates "
-                "eligibility because California's Broad-Based Categorical Eligibility "
-                "reaches 200% FPL. H.R.1 changes effective 2026 (noncitizen, ABAWD) "
-                "shrink this pool further (California LAO, Feb 2026). &nbsp;·&nbsp; ")
+                "<strong>How we count unmet need:</strong> eligible = the assessment "
+                f"area's actual CalFresh caseload (CDSS via CA Assn. of Food Banks, 2025; "
+                f"~{_enr} enrolled) &divide; USDA's California participation rate (81%, "
+                "FY2022), so the count reconciles with the state's own enrollment "
+                "(a federal-rules model base understates it because California's "
+                "Broad-Based Categorical Eligibility reaches 200% FPL). H.R.1 changes "
+                "(2026) shrink this pool further (California LAO, Feb 2026). &nbsp;·&nbsp; ")
         elif state == "CA":
             recon_note = (
                 "<strong>How we count unmet need:</strong> our eligible-population "
@@ -360,7 +436,11 @@ def build_values(bank, assumptions, org, metrics, meta):
         "bank_specific_block": bank_specific_block,
         # Static QR to the live assistant (same URL for every bank); pre-generated
         # asset, so the generator stays stdlib-only. See assets/qr-chat.svg.
-        "qr_chat_svg": (TOOL_ROOT / "assets/qr-chat.svg").read_text(),
+        "qr_chat_svg": qr_svg,
+        "evidence_block": evidence_block,
+        "safeguards_line": safeguards_line,
+        "p3_detail_foot": p3_detail_foot,
+        "demo_section": demo_section,
         "chat_shot_src": chat_shot_src,
         "chat_aspect": chat_aspect,
         "chat_overlay": chat_overlay,

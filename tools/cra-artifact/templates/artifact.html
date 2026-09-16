@@ -24,7 +24,7 @@
   .letterhead .org { font-size:9pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent); white-space:nowrap; }
   .letterhead .doc { font-size:8pt; color:var(--muted); white-space:nowrap; padding-left:12px; }
   h2.pagehead { font-family:'Newsreader',serif; font-size:21pt; font-weight:600; letter-spacing:-.01em; color:var(--ink); margin-top:22px; }
-  .pagefoot { border-top:1px solid var(--rule); margin-top:auto; padding-top:8px; font-size:6.8pt; line-height:1.5; color:var(--muted); }
+  .pagefoot { border-top:1px solid var(--rule); margin-top:auto; padding-top:7px; font-size:6.3pt; line-height:1.46; color:var(--muted); }
   .pagenum { position:absolute; bottom:.18in; left:.7in; right:.7in; text-align:center; font-size:7pt; letter-spacing:.12em; color:var(--muted); }
 
   /* ---------- Page 1—the need ---------- */
@@ -47,12 +47,12 @@
   table.core { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
   table.core caption { text-align:left; }
   .core-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:4px; }
-  table.core td { padding:11px 2px; border-bottom:1px solid var(--rule); vertical-align:baseline; }
+  table.core td { padding:8px 2px; border-bottom:1px solid var(--rule); vertical-align:baseline; }
   table.core tr:last-child td { border-bottom:none; }
   table.core td.k { font-size:9.5pt; color:var(--body); white-space:nowrap; }
   table.core td.v { text-align:right; font-family:'Newsreader',serif; font-size:14pt; font-weight:600; color:var(--ink); white-space:nowrap; padding-left:8px; }
   table.core td.v small { font-family:'Be Vietnam Pro',sans-serif; font-size:8pt; font-weight:500; color:var(--muted); display:block; margin-top:1px; }
-  table.core tr.ask td { border-top:2px solid var(--accent); padding-top:15px; }
+  table.core tr.ask td { border-top:2px solid var(--accent); padding-top:11px; }
   table.core tr.ask td.k { color:var(--accent-deep); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:8.4pt; white-space:normal; padding-right:10px; }
   table.core tr.ask td.v { color:var(--accent-deep); font-size:18.5pt; }
   /* per-county unmet-need breakdown (replaces the flat AA choropleth):
@@ -80,7 +80,7 @@
      that used to read as a separate section. */
   .me-evidence { border-top:1px solid var(--rule); padding-top:7px; margin-top:7px; }
   .me-evidence .me-label { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-deep); font-weight:600; }
-  .me-evidence .qcards { display:flex; gap:.38in; margin-top:9px; align-items:stretch; }
+  .me-evidence .qcards { display:flex; gap:.38in; margin-top:6px; align-items:stretch; }
   /* equal-height cards + margin-top:auto on the source line so the two source
      credits sit on one shared baseline regardless of quote length */
   .me-evidence .qcard { flex:1; display:flex; flex-direction:column; }
@@ -94,7 +94,7 @@
      a single accent rule opens the group, both parts sit beneath it. */
   .aa-context { border-top:1.5px solid var(--accent); margin-top:8px; padding-top:7px; }
   /* "What SNAP is"—plain explainer, its own section above the research box */
-  .why { border-top:1.5px solid var(--accent); margin-top:9px; padding-top:8px; }
+  .why { border-top:1.5px solid var(--accent); margin-top:7px; padding-top:6px; }
   .why-cap { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:5px; }
   .why p { font-family:'Newsreader',serif; font-size:11pt; line-height:1.4; color:var(--ink); max-width:6.7in; }
 
@@ -125,6 +125,9 @@
     border:1px solid var(--rule-strong); border-radius:3px; background:var(--tint); }
   .cnode small { display:block; font-weight:500; font-size:6.8pt; color:var(--muted); margin-top:1px; }
   .cnode.start { background:var(--accent); color:#fff; border-color:var(--accent); }
+  /* the enrolled/outcome endpoint is wheat, tying the chain to the yellow impact box below */
+  .cnode.end { background:var(--wheat); color:#3a2a08; border-color:var(--wheat); }
+  .cnode.end small { color:#6b5410; }
   .carr { flex:1 1 auto; align-self:center; height:0; position:relative; margin:0 1px; min-width:12px; }
   .carr.solid { border-top:2px solid var(--accent); }
   .carr.dash { border-top:2px dashed var(--muted); }
@@ -132,8 +135,20 @@
     border-top:4.5px solid transparent; border-bottom:4.5px solid transparent; border-left:6px solid; }
   .carr.solid::after { border-left-color:var(--accent); }
   .carr.dash::after { border-left-color:var(--muted); }
-  .chain-note { font-size:7.4pt; line-height:1.42; color:var(--muted); margin-top:9px; max-width:6.7in; text-wrap:pretty; }
-  .chain-note b { color:var(--body); }
+  /* The chain's final link drops (a wheat connector) into a highlighted payoff
+     box that states the household-finances impact, so the research pays the chain
+     off visually instead of hiding in a footnote. */
+  .fin-wrap { position:relative; margin-top:11px; }
+  /* wheat connector reads as an arrow dropping from the enrolled/finances node
+     into the impact box: a short stem (::before) capped by a triangle (::after) */
+  .fin-wrap::before { content:""; position:absolute; top:-11px; right:9%; width:2.5px; height:7px; background:var(--wheat); }
+  .fin-wrap::after { content:""; position:absolute; top:-4px; right:9%; margin-right:-2.75px; width:0; height:0; border-left:4px solid transparent; border-right:4px solid transparent; border-top:6px solid var(--wheat); }
+  .fin-box { border:1.6px solid var(--wheat); border-radius:3px; background:rgba(232,197,71,.10); padding:7px 13px; }
+  .fin-title { font-size:7.6pt; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:6px; }
+  .fin-stats { display:flex; gap:20px; }
+  .fin-stats > div { flex:1; font-size:7.8pt; line-height:1.28; color:var(--muted); }
+  .fin-stats b { display:block; font-family:'Newsreader',serif; font-size:14pt; font-weight:600; color:var(--ink); line-height:1; margin-bottom:3px; }
+  .fin-src { font-size:6.8pt; line-height:1.35; color:var(--muted); margin-top:7px; text-wrap:pretty; }
   .tiers { display:flex; gap:.22in; margin-top:17px; }
   .tier { flex:1; border:1px solid var(--rule); border-top:3px solid var(--accent); border-radius:2px; padding:15px 12px; }
   .tier.lead { background:var(--tint); }
@@ -192,7 +207,15 @@
   /* The composited demo is the real landscape product view; sized by HEIGHT so it
      cannot overflow the page, its width fills the text column and bleeds slightly
      past it (the negative side margins above). Caption and legend below. */
-  .chatshot { position:relative; display:inline-block; height:5.85in; aspect-ratio:[[chat_aspect]]; margin:0 auto; vertical-align:top; max-width:100%; }
+  .chatshot { position:relative; display:inline-block; height:4.15in; aspect-ratio:[[chat_aspect]]; margin:0 auto; vertical-align:top; max-width:100%; }
+  /* CA page 3: demo bleeds left, the five explainers stack in a column to its right */
+  .demo-row { display:flex; gap:.26in; margin-top:8px; margin-left:-0.3in; align-items:flex-start; }
+  .demo-col { flex:0 0 auto; }
+  .demo-col .chatshot { height:4.0in; }
+  .legend-col { flex:1; min-width:0; padding-top:2px; }
+  .legend-head { font-size:7.4pt; letter-spacing:.07em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:8px; line-height:1.3; }
+  .legend-col .chat-legend { display:block; margin-top:0; }
+  .legend-col .leg { margin-bottom:9px; font-size:7pt; line-height:1.28; }
   .chatshot > img { width:100%; height:100%; display:block; border:1px solid var(--rule-strong); border-radius:5px; object-fit:fill; }
   /* Numbered markers sit ON the screenshot; the legend below explains the intent.
      A crisp ring (border only—no blurred shadow, which a PDF rasterizes as a
@@ -202,8 +225,8 @@
     font:700 10.5px/19px 'Be Vietnam Pro',sans-serif; text-align:center;
     border:1.5px solid var(--accent-deep); }
   .chatshot-cap { font-size:7pt; color:var(--muted); margin-top:4px; text-align:center; }
-  .chat-legend { display:grid; grid-template-columns:1fr 1fr; gap:2px 18px; margin-top:5px; }
-  .leg { display:flex; gap:6px; font-size:6.8pt; line-height:1.2; color:var(--body); break-inside:avoid; }
+  .chat-legend { display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px 14px; margin-top:5px; }
+  .leg { display:flex; gap:5px; font-size:6.6pt; line-height:1.18; color:var(--body); break-inside:avoid; }
   .leg-n { flex:0 0 auto; width:12px; height:12px; margin-top:1px; border-radius:50%;
     background:var(--wheat); color:#3a2a08; font:700 7.5px/12px 'Be Vietnam Pro',sans-serif; text-align:center; }
   .leg-t b { color:var(--accent-deep); }
@@ -219,6 +242,31 @@
   .qr-txt { font-size:7.8pt; line-height:1.4; color:var(--body); }
   .qr-txt strong { color:var(--ink); }
   .qr-txt .url { white-space:nowrap; }
+  /* Page 3 v2: barrier table + why-chatbot/why-outreach + safeguards + detail foot */
+  .barriers { width:100%; border-collapse:collapse; margin-top:9px; }
+  .barriers th { text-align:left; font-size:6.9pt; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); font-weight:600; border-bottom:1.5px solid var(--accent); padding:0 9px 4px 0; vertical-align:bottom; }
+  .barriers th:last-child, .barriers td:last-child { padding-right:0; }
+  .barriers td { font-size:8pt; line-height:1.24; color:var(--body); border-bottom:1px solid var(--rule); padding:4px 9px 4px 0; vertical-align:top; text-wrap:pretty; }
+  .barriers tr:last-child td { border-bottom:none; }
+  .barriers td.b { font-weight:600; color:var(--ink); }
+  .barriers td.m { color:var(--muted); font-size:7.4pt; }
+  .barriers .ev sup { color:var(--accent-deep); font-weight:700; }
+  .barriers-note { font-size:6.8pt; line-height:1.34; color:var(--muted); margin-top:5px; text-wrap:pretty; }
+  .barriers-note sup { color:var(--accent-deep); font-weight:700; }
+  .whyrow { display:flex; gap:.34in; margin-top:8px; align-items:flex-start; }
+  .why-chat { flex:1.45; } .why-out { flex:1; }
+  .why-h { font-size:7.6pt; letter-spacing:.09em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:4px; }
+  .why-chat p { font-size:8.4pt; line-height:1.44; color:var(--body); text-wrap:pretty; }
+  .why-out ul { list-style:none; }
+  .why-out li { font-size:7.6pt; line-height:1.3; color:var(--body); margin-bottom:4px; padding-left:9px; position:relative; text-wrap:pretty; }
+  .why-out li::before { content:""; position:absolute; left:0; top:.5em; width:3.5px; height:3.5px; background:var(--accent); border-radius:50%; }
+  .why-out li b { color:var(--ink); }
+  .why-try { font-size:8pt; line-height:1.3; color:var(--body); margin-top:6px; }
+  .why-try b { color:var(--accent-deep); }
+  .safeguards { font-size:7.4pt; line-height:1.4; color:var(--muted); margin-top:7px; text-align:center; text-wrap:pretty; }
+  .safeguards b { color:var(--body); }
+  .p3foot { font-size:6.9pt; line-height:1.4; color:var(--muted); margin-top:8px; border-top:1px solid var(--rule); padding-top:6px; text-wrap:pretty; }
+  .p3foot b { color:var(--body); }
   .affil { margin-top:7px; font-size:8pt; line-height:1.4; color:var(--muted); text-wrap:pretty; }
 </style></head><body>
 
@@ -245,7 +293,7 @@
     </div>
     <div class="why">
       <div class="why-cap">What is the Supplemental Nutrition Assistance Program (SNAP)?</div>
-      <p>SNAP, commonly known as food stamps, is monthly grocery money for low- and moderate-income households. Most people who qualify but never enroll are stopped by the process, not the rules. Civica's free assistant answers their questions in plain language and guides them through the application.</p>
+      <p>SNAP (food stamps) is monthly grocery money for low- and moderate-income households. Most who qualify but never enroll are stopped by the process, not the rules&mdash;so Civica's free assistant answers their questions in plain language and guides them through the application.</p>
     </div>
     <div class="chain">
       <div class="chain-cap"><span>What the grant sets in motion</span><span class="chain-key"><i class="k-solid"></i>recorded &amp; reported quarterly<i class="k-dash"></i>estimated / research</span></div>
@@ -258,15 +306,23 @@
         <div class="carr dash"></div>
         <div class="cnode">Fewer denials<small>(paperwork)</small></div>
         <div class="carr dash"></div>
-        <div class="cnode">Benefits<small>received</small></div>
+        <div class="cnode">Enrolled<small>benefits received</small></div>
         <div class="carr dash"></div>
-        <div class="cnode">Household<small>finances</small></div>
+        <div class="cnode end">Household<small>finances</small></div>
       </div>
-      <div class="chain-note"><b>Household finances</b> — research on procedurally-denied applicants (Homonoff, Lee &amp; Meckel, NBER WP 34434, 2025 draft), not a promise of our program's effect: ~$2,436 less credit-card debt by year three and 10.1 pts lower delinquency (the firmer effects); ~17 points higher credit score, from an average of 634, is the weakest and least precisely estimated.</div>
+      <div class="fin-wrap"><div class="fin-box">
+        <div class="fin-title">Impact to household finances</div>
+        <div class="fin-stats">
+          <div><b>$2,436</b>less credit-card debt by year three</div>
+          <div><b>10.1 pts</b>lower likelihood of a delinquent account</div>
+          <div><b>~17 pts</b>higher credit score, from 634 (the softest of the three effects)</div>
+        </div>
+        <div class="fin-src">Research on procedurally-denied SNAP applicants (~62,000 Los Angeles applicants, admin records linked to credit reports; Homonoff, Lee &amp; Meckel, NBER WP 34434, 2025 draft)&mdash;the debt and delinquency effects are the firmest. Not a measurement of [[org_name]]'s program.</div>
+      </div></div>
     </div>
     [[me_evidence_block]]
   </div>
-  <div class="pagefoot"><strong>Household outcomes:</strong> ~62,000 Los Angeles SNAP applicants, admin records linked to credit reports; Homonoff, Lee &amp; Meckel, NBER WP 34434 (2025 draft). Research on SNAP access, not a measurement of [[org_name]]'s program. &nbsp;·&nbsp; [[data_gaps_note]][[recon_note]]<strong>Sources:</strong> eligibility [[model_note]]; USDA FNA participation rates (Reaching Those in Need, FY2022). Assessment area: [[bank_name]]'s [[pe_date]] CRA PE ([[regulator]]). Benefits: USDA FNA FY2024. [[org_name]], 501(c)(3).</div>
+  <div class="pagefoot">[[data_gaps_note]][[recon_note]]<strong>Sources:</strong> eligibility [[model_note]]; USDA FNA participation rates (Reaching Those in Need, FY2022) &amp; FY2024 benefits. Assessment area: [[bank_name]]'s [[pe_date]] CRA PE ([[regulator]]). [[org_name]], 501(c)(3).</div>
   <div class="pagenum">1 / 4</div>
 </div>
 
@@ -304,26 +360,12 @@
 <!-- PAGE 3—the platform, as built (product evidence) -->
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
-  <h2 class="pagehead" style="margin-top:14px;">The assistant at work</h2>
-  <div class="thesis" style="margin-top:6px;">The working system behind the pilot&mdash;a rules-grounded assistant.</div>
-  <div class="evidence-foot" style="border-top:none; margin-top:7px; padding-top:0;">
-    <div class="ev-text">
-      <p><strong>Built-in limits.</strong> It estimates, never decides&mdash;the county decides; anything outside its scope routes to the county or 2-1-1. Never asks for an SSN, DOB, or account number; carries crisis and domestic-violence lines. Nothing is shared with the bank, and question text auto-purges.</p>
-      <p><strong>Independently checkable.</strong> A graded ~600-question set across all 53 jurisdictions (adversarial and crisis cases included), re-run on every rules change and open to your compliance team. Corpus: eCFR plus 53 packs, dated provenance[[me_audit_clause]]; 120-day refresh.</p>
-    </div>
-    <div class="ev-side">
-      <div class="qrbox"><div class="qr">[[qr_chat_svg]]</div><div class="qr-txt"><strong>Try it.</strong> Scan, or visit<br><span class="url">civica-applicant.vercel.app/chat</span></div></div>
-      <div class="affil">Civica is part of the Harvard Innovation Labs incubator; the impact study behind these figures was conducted in Fall 2026 under a Baker grant.</div>
-    </div>
-  </div>
-  <div class="platform-hero">
-    <div class="chatshot" style="aspect-ratio:[[chat_aspect]];">
-      <img src="[[chat_shot_src]]" alt="A real Demeter conversation in the live interface: a mixed-status SNAP question answered with the governing federal rule cited, showing the state selector and the live application outline building as the applicant talks."/>
-      [[chat_overlay]]
-    </div>
-    <div class="chatshot-cap">[[chat_cap]]</div>
-  </div>
-  [[chat_legend]]
+  <h2 class="pagehead" style="margin-top:9px;">The assistant at work</h2>
+  <div class="thesis" style="margin-top:4px;">The working system behind the pilot&mdash;a rules-grounded assistant.</div>
+  [[evidence_block]]
+  [[demo_section]]
+  [[safeguards_line]]
+  [[p3_detail_foot]]
   <div class="pagenum">3 / 4</div>
 </div>
 
