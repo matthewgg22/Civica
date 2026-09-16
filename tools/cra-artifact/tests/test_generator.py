@@ -198,14 +198,25 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     assert "Why these numbers" in html and "Management Evaluation" in html
     # SNAP explainer header carries the full program name; the ask block breathes
     assert "What is the Supplemental Nutrition Assistance Program (SNAP)?" in html
-    assert "enrollment's impact on household finances" in html
+    # page 1 leads the evidence with the deliverable chain (measured vs estimated)
+    assert "What the grant sets in motion" in html and 'class="chain"' in html
+    # investment-test criteria named on page 2 (the exam's own rubric)
+    assert ".23(e)" in html and "Innovativeness" in html and "Responsiveness" in html
+    # LMI proxy Q&A is backup only (it is about recipients; our users are applicants)
+    assert "cited only as backup" in html
     # page 4: sample & methodology, Baker-grant assumption note, reconciliation
     assert "sample &amp; methodology" in html or "sample & methodology" in html
     assert "Baker-grant impact study" in html
-    assert "Reconciled to a federal series" in html
+    assert "Reconciled to the state caseload" in html
     assert "community-development investment under the CRA investment test" in html
-    # page 2: pooled attribution reads pro rata (not "double-counted")
-    assert "allocated pro rata" in html and "double-counted" not in html
+    # page 1 headline is anchored on actual CalFresh enrollment, so it reconciles
+    # with the state caseload (eligible must exceed the enrolled count, never sit
+    # below it — the reviewer-flagged incoherence)
+    assert "actual CalFresh caseload" in html
+    assert "Broad-Based Categorical Eligibility" in html
+    # page 2: pooled attribution is defined precisely by each bank's dollar share
+    # per county (not "double-counted")
+    assert "each bank's share of dollars" in html and "double-counted" not in html
     # no fabricated traction: the doc never claims a delivered-user count
     assert "300 people" not in html
 
@@ -920,7 +931,8 @@ def test_access_callout_does_not_perturb_need_math():
     # Direct call must mirror build_values' inputs, including the USDA-rate
     # reconciliation, to isolate the access-callout path as the thing under test.
     direct = score.bank_need(bank["aa_counties"], metrics, assumptions,
-                             reconcile_rate=meta.get("usda_participation_rate"))
+                             reconcile_rate=meta.get("usda_participation_rate"),
+                             caseload=generate._load_caseload(bank.get("state", "CA")))
     for k in ("eligible", "unenrolled", "ratio", "benefit_low_usd", "benefit_high_usd"):
         assert abs(need[k] - direct[k]) < TOL
     # and the callout actually rendered into the artifact for this bank
@@ -938,6 +950,31 @@ def test_access_callout_keeps_artifact_at_four_pages(tmp_path):
         capture_output=True, text=True).stdout.strip()
     if n_pages not in ("", "(null)"):
         assert n_pages == "4"
+
+
+def test_ca_headline_anchored_on_actual_caseload_reconciles():
+    """Reviewer-flagged killer: a model-only eligible base sits BELOW California's
+    actual CalFresh enrollment (CA runs BBCE at 200% FPL), so 'eligible but not
+    enrolled' was incoherent. The CA headline must anchor eligible on the real
+    caseload / USDA rate, so eligible > enrolled and it reconciles by construction.
+    """
+    banks = json.loads((TOOL_ROOT / "inputs/assessment_areas.json").read_text())["banks"]
+    assumptions = json.loads((TOOL_ROOT / "inputs/funnel_assumptions.json").read_text())
+    org = json.loads((TOOL_ROOT / "inputs/org.json").read_text())
+    bank = banks["american_business_bank"]
+    meta = states.state_meta("CA")
+    par = meta["usda_participation_rate"]
+    metrics = score.load_county_metrics(meta["metrics"])
+    _, need = generate.build_values(bank, assumptions, org, metrics, meta)
+    caseload = generate._load_caseload("CA")
+    enrolled = sum(caseload[c] for c in bank["aa_counties"])
+    assert need["caseload_anchored"] is True
+    assert abs(need["aa_enrolled"] - enrolled) < 1.0
+    # eligible = enrolled / participation rate, and it now EXCEEDS enrollment
+    assert abs(need["eligible"] - enrolled / par) < 1.0
+    assert need["eligible"] > need["aa_enrolled"], "eligible must exceed enrolled"
+    # and it exceeds the (too-small) federal-rules model base it replaced
+    assert need["eligible"] > need["model_eligible"]
 
 
 def test_headline_reconciled_to_usda_participation_rate():
@@ -1008,7 +1045,7 @@ def test_platform_evidence_page_present_and_state_aware():
         score.load_county_metrics(meta["metrics"]), meta)[0])
     assert "The assistant at work" in ca
     assert "chat-shot-ca.png" in ca                             # the real CA screenshot
-    assert 'aspect-ratio:2150/2225' in ca                       # the CA composite's aspect (tight left-aligned column)
+    assert 'aspect-ratio:2760/2225' in ca                       # the CA composite's aspect (landscape product view)
     assert 'class="cmark"' in ca                                # numbered markers on the screenshot
     assert 'class="chat-legend"' in ca                          # the intent legend below it
     assert "A messy, real question" in ca                       # a legend item
@@ -1022,7 +1059,7 @@ def test_platform_evidence_page_present_and_state_aware():
     assert "Four languages" in ca                               # a legend item
     assert "limited-English-proficient" in ca                   # corrected languages copy
     assert "qrline" in ca                                       # the live-link QR
-    assert "no eligibility determination" in ca                 # the rails
+    assert "estimates, never decides" in ca                     # the rails (county decides)
     assert "Harvard Innovation Labs" in ca                      # affiliation line
     assert "Baker grant" in ca                                   # impact-study funding on the affil line
     assert "general chatbot" not in ca                           # thesis no longer contrasts against a chatbot
