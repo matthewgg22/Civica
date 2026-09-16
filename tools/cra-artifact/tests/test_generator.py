@@ -195,7 +195,17 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     assert "Optimistic" not in html and "best case" not in html.lower()
     # credibility line present, with the CA-only substantiation (trained model +
     # the CDSS ME review that only exists for California banks)
-    assert "Why Civica" in html and "Management Evaluation" in html
+    assert "Why these numbers" in html and "Management Evaluation" in html
+    # SNAP explainer header carries the full program name; the ask block breathes
+    assert "What is the Supplemental Nutrition Assistance Program (SNAP)?" in html
+    assert "enrollment's impact on household finances" in html
+    # page 4: sample & methodology, Baker-grant assumption note, reconciliation
+    assert "sample &amp; methodology" in html or "sample & methodology" in html
+    assert "Baker-grant impact study" in html
+    assert "Reconciled to a federal series" in html
+    assert "community-development investment under the CRA investment test" in html
+    # page 2: pooled attribution reads pro rata (not "double-counted")
+    assert "allocated pro rata" in html and "double-counted" not in html
     # no fabricated traction: the doc never claims a delivered-user count
     assert "300 people" not in html
 
@@ -255,7 +265,7 @@ def test_fl_methodology_language_not_ca():
     # Credibility line is present but state-correct: no CA-only claims leak in.
     # FL is a direct survey-weighted estimate — no trained model (AUC) and no
     # CDSS Management Evaluation review exists outside California.
-    assert "Why Civica" in html
+    assert "Why these numbers" in html
     assert "Management Evaluation" not in html
     assert "AUC" not in html
 
@@ -996,9 +1006,9 @@ def test_platform_evidence_page_present_and_state_aware():
     ca = generate.render(tpl, generate.build_values(
         banks["american_business_bank"], assumptions, org,
         score.load_county_metrics(meta["metrics"]), meta)[0])
-    assert "The product, as delivered" in ca
+    assert "The assistant at work" in ca
     assert "chat-shot-ca.png" in ca                             # the real CA screenshot
-    assert 'aspect-ratio:2760/2311' in ca                       # the CA composite's aspect (3-turn capture)
+    assert 'aspect-ratio:2150/2225' in ca                       # the CA composite's aspect (tight left-aligned column)
     assert 'class="cmark"' in ca                                # numbered markers on the screenshot
     assert 'class="chat-legend"' in ca                          # the intent legend below it
     assert "A messy, real question" in ca                       # a legend item
@@ -1014,13 +1024,15 @@ def test_platform_evidence_page_present_and_state_aware():
     assert "qrline" in ca                                       # the live-link QR
     assert "no eligibility determination" in ca                 # the rails
     assert "Harvard Innovation Labs" in ca                      # affiliation line
+    assert "Baker grant" in ca                                   # impact-study funding on the affil line
+    assert "general chatbot" not in ca                           # thesis no longer contrasts against a chatbot
     assert "38 county" in ca                                     # CA ME-audit clause
     assert "3 / 4" in ca and "4 / 4" in ca                       # renumbered
     fmeta = states.state_meta("FL")
     fl = generate.render(tpl, generate.build_values(
         banks["ocean_bank"], assumptions, org,
         score.load_county_metrics(fmeta["metrics"]), fmeta)[0])
-    assert "The product, as delivered" in fl
+    assert "The assistant at work" in fl
     assert "chat-shot-fl.png" in fl                             # FL screenshot, not CA
     assert "chat-shot-ca.png" not in fl
     assert 'aspect-ratio:2760/2360' in fl                       # FL uncropped aspect
