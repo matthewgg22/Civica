@@ -174,10 +174,10 @@ def build_values(bank, assumptions, org, metrics, meta):
     state = bank.get("state", "CA")
     if state == "CA":
         credibility_line = (
-            "The findings here are Civica's own: a reproducible model of 2023 "
-            "federal ACS microdata, and a review of 38 California county CalFresh "
-            "Management Evaluation reports (FFY 2024–2025), obtained by "
-            "public-records request."
+            "The need and access figures here are Civica's own work: a "
+            "reproducible model of 2023 federal ACS microdata, and a review of "
+            "38 California county CalFresh Management Evaluation reports "
+            "(FFY 2024–2025), obtained by public-records request."
         )
     else:
         credibility_line = (
@@ -209,22 +209,24 @@ def build_values(bank, assumptions, org, metrics, meta):
     # daily question cap was reached); both render correctly because the aspect
     # ratio and the overlay are state-specific.
     if state == "CA":
-        chat_aspect = "2760/2311"
+        chat_aspect = "2150/2225"
         # Numbered markers sit ON the screenshot; the legend beneath it explains
         # the INTENT behind each simple feature (not a caption of what's shown).
         # (x,y) is the marker centre in % of the image box, ordered top-to-bottom
         # so the numbers ascend as the eye moves down the capture. Small numbers
         # avoid the leader-line/label overlap of earlier versions.
+        # Bubbles read straight down (user bubbles left-aligned), the PDF-offer
+        # row is gone, and the empty right column is cropped out: the image is a
+        # tight 2150x2225. Marker x% are relative to the 2150 width.
         _marks = [
-            (97, 1),     # 1  the messy question bubble (top-right corner)
-            (24, 9),     # 2  state selector (dropdown caret)
-            (74, 13),    # 3  the plain-language answer
-            (25, 42),    # 4  WHERE THIS LANDS—likely eligible + $494
-            (24, 50),    # 5  FROM WHAT YOU'VE TOLD ME—the running record
-            (58, 68),    # 6  the dated eCFR source line
-            (70, 83),    # 7  the CERTAIN badge + citation
-            (23, 83),    # 8  right of the four languages
-            (52, 93),    # 9  the grayed chat-bar prompt
+            (94, 2),     # 1  the messy question bubble (top)
+            (31, 9),     # 2  state selector (dropdown caret)
+            (31, 44),    # 3  WHERE THIS LANDS—likely eligible + $494
+            (31, 59),    # 4  FROM WHAT YOU'VE TOLD ME—the running record
+            (68, 66),    # 5  the dated eCFR source line
+            (90, 85),    # 6  the CERTAIN badge + citation
+            (30, 88),    # 7  right of the four languages
+            (62, 94),    # 8  the grayed chat-bar prompt
         ]
         chat_overlay = "".join(
             f'<div class="cmark" style="left:{x}%;top:{y}%">{i + 1}</div>'
@@ -232,7 +234,6 @@ def build_values(bank, assumptions, org, metrics, meta):
         _legend = [
             ("A messy, real question", "A fixed form can’t hold an edge case like this; plain-language input can, so people don’t self-select out."),
             ("State-aware", "SNAP runs through 53 state and territory agencies with different rules; here it answers from California’s (CDSS)."),
-            ("Answered plainly", "The answer explains the reasoning, not just yes or no—the part of a caseworker’s job that most often gets skipped."),
             ("A live estimate", "The outline fills in from what the applicant says and lands on a plausible number, so someone unsure can see the stakes before the form."),
             ("From what you’ve told me", "It keeps a running record of the conversation and shows it back, so nothing is re-asked and the applicant can correct it."),
             ("Dated and sourced", "Every answer footers the rule set (eCFR) and the fiscal year it is valid through, so a reviewer can check it and it can’t silently go stale."),

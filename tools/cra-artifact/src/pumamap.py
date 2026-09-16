@@ -112,7 +112,7 @@ class PumaMapError(Exception):
 
 INK = "#232220"             # bar labels (matches the artifact ink token)
 MUTED = "#54524B"           # bar value annotations
-LOC_OFF = "#E9E7E2"         # non-AA counties in the small locator
+LOC_OFF = "#D6D3CC"         # non-AA counties in the small locator
 LOC_STROKE = "#ffffff"      # hairlines between locator counties
 
 
@@ -153,7 +153,7 @@ def _short_name(raw: str) -> str:
     s = (s.replace("Los Angeles", "LA")
           .replace(" Cities", "").replace(" City", "")
           .replace(" County", " Co.").strip())
-    return s if len(s) <= 34 else s[:33] + "…"
+    return s if len(s) <= 30 else s[:29] + "…"
 
 
 def ranked_bar_svg(aa_counties, state, reconcile_rate=None,
@@ -187,20 +187,20 @@ def ranked_bar_svg(aa_counties, state, reconcile_rate=None,
     pad_t, pad_b, pad_r = 6, 4, 4
     row_h = (height - pad_t - pad_b) / len(rows)
     bar_h = min(row_h * 0.46, 12)
-    bar_x = width * 0.52
+    bar_x = width * 0.55
     bar_max = width - bar_x - pad_r - 42   # room for the value label at the end
     out = []
     for i, (nm, v) in enumerate(rows):
         cy = pad_t + i * row_h + row_h / 2
         bw = max(1.5, bar_max * (v / maxv))
         out.append(
-            f'<text x="0" y="{cy + 3.1:.1f}" font-size="9" fill="{INK}" '
+            f'<text x="0" y="{cy + 3.6:.1f}" font-size="10.6" fill="{INK}" '
             f"font-family=\"'Be Vietnam Pro',sans-serif\">{_esc(_short_name(nm))}</text>")
         out.append(
             f'<rect x="{bar_x:.1f}" y="{cy - bar_h / 2:.1f}" width="{bw:.1f}" '
             f'height="{bar_h:.1f}" rx="1.5" fill="{ACCENT}" class="puma-bar"/>')
         out.append(
-            f'<text x="{bar_x + bw + 4:.1f}" y="{cy + 3.1:.1f}" font-size="8.2" '
+            f'<text x="{bar_x + bw + 4:.1f}" y="{cy + 3.6:.1f}" font-size="9.4" '
             f'fill="{MUTED}" font-family="\'Be Vietnam Pro\',sans-serif">'
             f'{_fmt_k(v)}</text>')
     return (f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" '
