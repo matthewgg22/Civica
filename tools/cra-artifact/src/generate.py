@@ -10,7 +10,9 @@ coverage, metrics/geometry mismatch, invalid assumptions. --send refuses
 unverified banks (assessment_areas.json verified:false).
 """
 import argparse
+import base64
 import datetime
+import functools
 import hashlib
 import json
 import re
@@ -24,6 +26,28 @@ sys.path.insert(0, str(TOOL_ROOT))
 from src import access_evidence, mapsvg, pumamap, report, score, states  # noqa: E402
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+
+
+@functools.lru_cache(maxsize=1)
+def _font_faces() -> str:
+    """Inline the static Newsreader weights as @font-face data-URIs.
+
+    Newsreader is a VARIABLE font. Loaded from Google Fonts, headless Chrome can
+    only embed it in the PDF as Type-3 glyph programs with a Custom encoding,
+    which garbles the copy/text layer (examiners can't select it cleanly). The
+    fix is to self-host fixed-weight, fixed-opsz STATIC instances: Chrome embeds
+    those as CID TrueType with a proper Unicode map. Faces built from the
+    variable font with fontTools; see assets/fonts/newsreader-*.ttf. Be Vietnam
+    Pro stays on Google Fonts (it already embeds cleanly as CID TrueType)."""
+    faces = []
+    for wght in (400, 500, 600):
+        data = (TOOL_ROOT / f"assets/fonts/newsreader-{wght}.ttf").read_bytes()
+        b64 = base64.b64encode(data).decode("ascii")
+        faces.append(
+            "@font-face{font-family:'Newsreader';font-style:normal;font-weight:%d;"
+            "font-display:swap;src:url(data:font/ttf;base64,%s) format('truetype');}"
+            % (wght, b64))
+    return "<style>" + "".join(faces) + "</style>"
 
 REQUIRED_ASSUMPTION_KEYS = {
     "version", "cpc_usd", "budget_split", "rates", "benefit",
@@ -257,7 +281,7 @@ def build_values(bank, assumptions, org, metrics, meta):
             ("A live estimate", "an estimated benefit fills in as the applicant talks—recorded as an eligibility check."),
             ("A correctable record", "it shows back what you’ve told it, so nothing is re-asked and the applicant can fix it."),
             ("Rule cited, dated", "shows the rule and the fiscal year under each answer, so a reviewer can check it."),
-            ("Four languages", "answers in Spanish, Vietnamese, Chinese and English—the session language is recorded (page 4)."),
+            ("Four languages", "Spanish, Vietnamese, Chinese and English—session language recorded (page 4)."),
         ]
         chat_legend = ('<div class="chat-legend">' + "".join(
             f'<div class="leg"><span class="leg-n">{i + 1}</span>'
@@ -284,7 +308,7 @@ def build_values(bank, assumptions, org, metrics, meta):
             '<th style="width:1.5in">How the assistant addresses it</th>'
             '<th style="width:1.0in">Measured (pg 4)</th></tr></thead><tbody>'
             '<tr><td class="b">Don’t know they qualify</td>'
-            '<td class="ev">Information alone nearly doubled SNAP take-up, 6%&rarr;11%<sup>*</sup></td>'
+            '<td class="ev">Information alone nearly doubled SNAP take-up, 6% to 11%<sup>*</sup></td>'
             '<td>A five-minute personalized estimate</td>'
             '<td class="m">Eligibility checks completed</td></tr>'
             '<tr><td class="b">A confusing application</td>'
@@ -307,11 +331,11 @@ def build_values(bank, assumptions, org, metrics, meta):
             '<p>Human application help has the strongest evidence, but it’s capped by staff '
             'hours and cost per case. The assistant offers that kind of help around the clock, in '
             'four languages, at near-zero marginal cost—the pilot tests whether it reproduces '
-            'those results.</p></div>'
+            'those results. An LA trial found social-media ads alone didn’t lift enrollment '
+            '(Rogers, 2024), so every contact opens straight into the assistant, not an ad.</p></div>'
             '<div class="why-out"><div class="why-h">The outreach channel</div><ul>'
-            '<li><b>Aimed at need:</b> geo-targeted to LMI tracts—the targeting the CRA LMI test rewards.</li>'
-            '<li><b>Phone-first:</b> 16% of U.S. adults are smartphone-only, far more among households under $30k (Pew).</li>'
-            '<li><b>Into help, not an ad:</b> an LA trial found social-media ads alone didn’t lift enrollment (Rogers, 2024), so every contact opens straight into the assistant.</li>'
+            '<li><b>Targeted reach:</b> digital ads deliver to the highest-need LMI tracts at low cost, measurably—the geo-targeting the CRA LMI test rewards.</li>'
+            '<li><b>Phone-first:</b> 16% of U.S. adults are smartphone-only—27% of those under $30k (Pew).</li>'
             '</ul></div></div>')
         safeguards_line = (
             '<div class="safeguards"><b>Safeguards:</b> estimates, never decides; no '
@@ -321,8 +345,8 @@ def build_values(bank, assumptions, org, metrics, meta):
             '<div class="p3foot"><b>Independently checkable:</b> a graded ~600-question '
             'set across all 53 jurisdictions (adversarial and crisis cases included), '
             're-run on every rules change and open to your compliance team. Civica Torrey is in '
-            'the Harvard Innovation Labs incubator; the impact study behind these figures '
-            'is available on request.</div>')
+            'the Harvard Innovation Labs incubator; the impact study is available '
+            'on request.</div>')
     else:
         evidence_block = (
             '<div class="evidence-foot" style="border-top:none;margin-top:7px;padding-top:0;">'
@@ -419,6 +443,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         "and ABAWD work rules shrink the eligible pool going forward" + _hr1_src
         + "; the rules corpus reflects law through 2025.")
     v = {
+        "font_faces": _font_faces(),
         "why_this_bank": why_this_bank,
         "credibility_line": credibility_line,
         "cra_rule_cite": cra_rule_cite,

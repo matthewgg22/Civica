@@ -2,7 +2,8 @@
 <html><head><meta charset="utf-8"><title>[[org_name]]—[[bank_name]]</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+[[font_faces]]
 <style>
   /* Demeter design system (apps/web/DEMETER-DESIGN.md): terracotta accent,
      Newsreader speaks, Be Vietnam Pro labels, true-white ground, hue-neutral
@@ -20,6 +21,7 @@
   .page { width:8.5in; height:11in; padding:.7in .7in .4in; display:flex; flex-direction:column; page-break-after:always; position:relative; overflow:hidden; }
   .page:last-child { page-break-after:auto; }
   .eyebrow { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); }
+  .scope { font-size:8.4pt; color:var(--muted); margin-top:5px; text-wrap:pretty; }
   .letterhead { display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid var(--accent); padding-bottom:8px; }
   .letterhead .org { font-size:9pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent); white-space:nowrap; }
   .letterhead .doc { font-size:8pt; color:var(--muted); white-space:nowrap; padding-left:12px; }
@@ -105,7 +107,7 @@
   .body-block h3 { font-family:'Newsreader',serif; font-size:13pt; font-weight:600; color:var(--ink); margin-bottom:4px; }
   /* Provenance line—one quiet, substantiable statement of why the analysis
      here is Civica Torrey's own work (reviewer ask). No traction claim. */
-  .provenance { font-size:9pt; line-height:1.46; color:var(--body); margin-top:10px; max-width:6.5in; text-wrap:pretty; }
+  .provenance { font-size:9pt; line-height:1.46; color:var(--body); margin-top:13px; max-width:6.5in; text-wrap:pretty; }
   .body-block .run-in { color:var(--ink); font-weight:600; }
   .provenance b { color:var(--ink); font-weight:600; }
   /* Causal chain as DELIVERABLES: a horizontal flow the bank receives. Solid
@@ -150,8 +152,8 @@
   .fin-stats > div { flex:1; font-size:7.8pt; line-height:1.28; color:var(--muted); text-align:center; }
   .fin-stats b { display:block; font-family:'Newsreader',serif; font-size:14pt; font-weight:600; color:var(--ink); line-height:1; margin-bottom:3px; }
   .fin-src { font-size:6.8pt; line-height:1.35; color:var(--muted); margin-top:7px; text-wrap:pretty; }
-  .tiers { display:flex; gap:.22in; margin-top:11px; }
-  .tier { flex:1; border:1px solid var(--rule); border-top:3px solid var(--accent); border-radius:2px; padding:11px 12px; }
+  .tiers { display:flex; gap:.22in; margin-top:17px; }
+  .tier { flex:1; border:1px solid var(--rule); border-top:3px solid var(--accent); border-radius:2px; padding:13px 12px; }
   .tier.lead { background:var(--tint); }
   .tier .name { font-size:8pt; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; }
   .tier .amt { font-family:'Newsreader',serif; font-size:15.5pt; font-weight:600; color:var(--ink); margin-top:3px; white-space:nowrap; }
@@ -162,13 +164,13 @@
   .close .close-line { font-family:'Newsreader',serif; font-size:12.5pt; font-weight:500; color:var(--ink); max-width:4.6in; line-height:1.3; }
   .close .who { font-size:9.5pt; color:var(--body); text-align:right; white-space:nowrap; }
   .brightline { font-size:8pt; color:var(--muted); max-width:6.6in; }
-  .crafile { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:8px 14px; margin-top:11px; }
+  .crafile { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:9px 14px; margin-top:15px; }
   .crafile-cap { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:5px; }
   .cra-dl { width:100%; border-collapse:collapse; }
-  .cra-dl td { font-size:8.4pt; line-height:1.36; color:var(--body); padding:2px 0; vertical-align:middle; border-bottom:1px solid var(--rule); text-wrap:pretty; }
+  .cra-dl td { font-size:8.4pt; line-height:1.42; color:var(--body); padding:5px 0; vertical-align:top; border-bottom:1px solid var(--rule); text-wrap:pretty; }
   .cra-dl tr:last-child td { border-bottom:none; }
   .cra-dl td.l { width:1.25in; font-weight:600; color:var(--ink); padding-right:12px; white-space:nowrap; }
-  .cra-foot { font-size:7.4pt; line-height:1.4; color:var(--muted); margin-top:7px; text-wrap:pretty; }
+  .cra-foot { font-size:7.4pt; line-height:1.4; color:var(--muted); margin-top:9px; text-align:center; text-wrap:pretty; }
   /* page-3 projection banner */
   .projwarn { font-size:9pt; letter-spacing:.06em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-top:10px; }
 
@@ -214,9 +216,9 @@
      past it (the negative side margins above). Caption and legend below. */
   .chatshot { position:relative; display:inline-block; height:4.15in; aspect-ratio:[[chat_aspect]]; margin:0 auto; vertical-align:top; max-width:100%; }
   /* CA page 3: demo bleeds left, the five explainers stack in a column to its right */
-  .demo-row { display:flex; gap:.26in; margin-top:8px; margin-left:-0.3in; align-items:flex-start; }
+  .demo-row { display:flex; gap:.24in; margin-top:8px; margin-left:-0.46in; align-items:flex-start; }
   .demo-col { flex:0 0 auto; }
-  .demo-col .chatshot { height:4.0in; }
+  .demo-col .chatshot { height:4.28in; }
   .legend-col { flex:1; min-width:0; padding-top:2px; }
   .legend-head { font-size:7.4pt; letter-spacing:.07em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:8px; line-height:1.3; }
   .legend-col .chat-legend { display:block; margin-top:0; }
@@ -343,10 +345,10 @@
   <div class="crafile">
     <div class="crafile-cap">For [[bank_name]]'s community-reinvestment file</div>
     <table class="cra-dl">
-      <tr><td class="l">Primary purpose</td><td>The grant funds only [[program_ref]] application assistance&mdash;a community-development service (community services targeted to LMI individuals under [[cra_rule_cite]]). It qualifies on that activity; the measured results below strengthen the file but the grant counts on the work itself.</td></tr>
-      <tr><td class="l">LMI targeting</td><td>Two independent tests. <b>Delivery:</b> the share of digital-outreach delivery and eligibility-check sessions in LMI census tracts, reported quarterly. <b>Eligibility:</b> the program's gross-income ceiling (200% of the federal poverty level) sits within the LMI band (&le;80% of area median income) in all four counties. The federal Interagency Q&amp;A (§&#8239;__.12(g)(2)&#8211;1; 81 FR 48506, 2016) is cited only as backup&mdash;it addresses SNAP <em>recipients</em>, while our users are <em>applicants</em>.</td></tr>
+      <tr><td class="l">Primary purpose</td><td>The grant funds only [[program_ref]] application assistance&mdash;a community-development service to LMI individuals ([[cra_rule_cite]]). It qualifies on the activity itself; the results below only strengthen the file.</td></tr>
+      <tr><td class="l">LMI targeting</td><td>Two independent tests. <b>Delivery:</b> the share of digital-outreach delivery and eligibility-check sessions in LMI census tracts, reported quarterly. <b>Eligibility:</b> the program's gross-income ceiling (200% of the federal poverty level) sits within the LMI band (80% or less of area median income) in all four counties. The federal Interagency Q&amp;A (§&#8239;__.12(g)(2)&#8211;1; 81 FR 48506, 2016) is cited only as backup&mdash;it addresses SNAP <em>recipients</em>, while our users are <em>applicants</em>.</td></tr>
       <tr><td class="l">Geographic nexus</td><td>Delivered and measured within [[bank_name]]'s delineated assessment area, documented by county. Where banks share geography, credit is allocated by each bank's share of dollars in each county, so nothing is claimed twice.</td></tr>
-      <tr><td class="l">Investment-test criteria</td><td>Scored on the qualitative factors at [[cra_invest_cite]]. <b>Innovativeness/complexity (e)(2):</b> delivers measured, attributable results, not a count of activities. <b>Responsiveness (e)(3):</b> addresses the application-access barriers the state's own reviews of these counties document.</td></tr>
+      <tr><td class="l">Investment-test criteria</td><td>Scored on the qualitative factors at [[cra_invest_cite]]. <b>Innovativeness/complexity (e)(2):</b> measured, attributable results, not activity counts. <b>Responsiveness (e)(3):</b> addresses the counties' documented application-access barriers.</td></tr>
       <tr><td class="l">Documentation</td><td>A quarterly report of outreach delivery, eligibility checks, and applications started and submitted (all by county; the sample on page 4 shows the format), plus a one-page qualification memo and an annual exam-file summary. Prepared for your file.</td></tr>
     </table>
     <div class="cra-foot">Treatment under the CRA framework remains subject to your institution's compliance team and examiners.</div>
@@ -379,11 +381,11 @@
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
   <div class="eyebrow" style="margin-top:20px;">Appendix for your [[regulator]] examination · deliverables sample &amp; methodology</div>
+  <div class="scope">Modeled scenario &middot; a single calendar quarter at $[[ask_fmt]] across [[aa_counties_list]].</div>
   <h2 class="pagehead" style="margin-top:6px;">Evidence deliverables <span class="chip">Projected · not measured</span></h2>
   <div class="projwarn">What you receive each quarter&mdash;these are projections; a funded pilot replaces them with measured values.</div>
   <div class="projected-wrap">
     <table class="report">
-      <caption>A single calendar quarter at $[[ask_fmt]] across [[aa_counties_list]].</caption>
       <thead><tr><th>Deliverable</th><th>Conservative</th><th>Mid-range</th><th class="hm">How measured</th></tr></thead>
       <tbody>
         <tr class="band"><td colspan="4">Outreach reaches LMI tracts</td></tr>
@@ -402,7 +404,7 @@
       </tbody>
     </table>
     <div class="funnel-note">[[funnel_note]]</div>
-    <div class="repnote">The mid-range uses conservative all-user conversion rates, not engaged-user figures. For reference, in Civica Torrey's Baker-grant impact study (N=800) applicants with five or more queries submitted at ~74% and were approved at ~68%. Set version [[assumptions_version]].</div>
+    <div class="repnote">The mid-range uses conservative all-user conversion rates, not engaged-user figures. In Civica Torrey's Baker-grant impact study (N=800), applicants with 5+ queries submitted at ~74% and were approved at ~68%. Set version [[assumptions_version]].</div>
   </div>
   <div class="appx">
     <div class="col">
