@@ -180,13 +180,17 @@
   table.report { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; border:1px solid var(--rule-strong); }
   table.report caption { text-align:left; font-size:8.4pt; color:var(--muted); margin-bottom:6px; caption-side:top; line-height:1.4; text-wrap:pretty; }
   .funnel-note { font-size:8.8pt; line-height:1.4; color:var(--ink); font-weight:500; margin-top:5px; }
-  table.report th { background:var(--tint); border-bottom:2px solid var(--rule-strong); font-size:8.4pt; font-weight:600; text-align:right; padding:5px 9px; color:var(--ink); }
+  table.report th { background:var(--tint); border-bottom:2px solid var(--rule-strong); font-size:8.4pt; font-weight:600; text-align:right; padding:4px 9px; color:var(--ink); }
   table.report th:first-child { text-align:left; }
-  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:4.4px 9px; }
+  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:3.4px 9px; }
   table.report td:first-child { text-align:left; color:var(--body); }
   table.report tbody tr:not(.band) td:first-child { padding-left:20px; }
-  table.report tr.band td { background:var(--tint); font-size:7.2pt; letter-spacing:.07em; text-transform:uppercase; text-align:left; color:var(--muted); font-weight:600; padding:2.4px 9px; }
+  table.report tr.band td { background:var(--tint); font-size:7.2pt; letter-spacing:.07em; text-transform:uppercase; text-align:left; color:var(--muted); font-weight:600; padding:2px 9px; }
   table.report tr.key td { font-weight:600; color:var(--ink); }
+  /* the "how measured" column is left-aligned muted text (Recorded / Estimated /
+     Follow-up), replacing the old "observed in-product" band labels */
+  table.report th.hm, table.report td.hm { text-align:left; }
+  table.report td.hm { font-size:7.5pt; font-weight:400; color:var(--muted); padding-left:14px; }
   .repnote { font-size:7.8pt; color:var(--body); margin-top:5px; line-height:1.38; max-width:6.8in; }
   .appx { display:flex; gap:.34in; margin-top:8px; }
   .appx .col { flex:1; }
@@ -194,13 +198,13 @@
   .appx h3.n2 { margin-top:6px; }
   /* text-wrap:pretty keeps the last line of each layer bullet from stranding a
      single word (the "one-word bleed"); the renderer rebalances the tail. */
-  .appx p, .appx li { font-size:8.1pt; line-height:1.42; color:var(--body); text-wrap:pretty; }
-  .appx ul { list-style:none; margin-top:3px; }
-  .appx li { margin-top:2.5px; padding-left:10px; position:relative; }
+  .appx p, .appx li { font-size:8.1pt; line-height:1.34; color:var(--body); text-wrap:pretty; }
+  .appx ul { list-style:none; margin-top:2px; }
+  .appx li { margin-top:2px; padding-left:10px; position:relative; }
   .appx li::before { content:""; position:absolute; left:0; top:.55em; width:4px; height:4px; background:var(--accent); border-radius:50%; }
   /* Plain framed callout (matches .crafile), not a left-accent card—the
      colored-left-rail card is a DEMETER-DESIGN AI-slop pattern. */
-  .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:7px 12px; font-size:8.1pt; line-height:1.38; color:var(--body); margin-top:8px; text-wrap:pretty; }
+  .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:6px 12px; font-size:8.1pt; line-height:1.36; color:var(--body); margin-top:6px; text-wrap:pretty; }
   .disclose strong { color:var(--ink); }
   /* Page 3—the platform, as built (annotated real screenshot) */
   .platform-hero { margin-top:6px; margin-left:-0.22in; margin-right:-0.22in; text-align:center; }
@@ -373,47 +377,47 @@
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
   <div class="eyebrow" style="margin-top:20px;">Appendix for your [[regulator]] examination · sample &amp; methodology</div>
-  <h2 class="pagehead" style="margin-top:6px;">Sample quarterly report <span class="chip">Projected · not measured</span></h2>
-  <div class="projwarn">These are projections. A funded pilot replaces them with measured values.</div>
+  <h2 class="pagehead" style="margin-top:6px;">Evidence deliverables <span class="chip">Projected · not measured</span></h2>
+  <div class="projwarn">What you receive each quarter&mdash;these are projections; a funded pilot replaces them with measured values.</div>
   <div class="projected-wrap">
     <table class="report">
       <caption>A single calendar quarter at $[[ask_fmt]] across [[aa_counties_list]].</caption>
-      <thead><tr><th>Quarterly outcome</th><th>Conservative</th><th>Mid-range</th></tr></thead>
+      <thead><tr><th>Deliverable</th><th>Conservative</th><th>Mid-range</th><th class="hm">How measured</th></tr></thead>
       <tbody>
-        <tr class="band"><td colspan="3">Delivery &amp; service · observed in-product</td></tr>
-        <tr><td>Ad clicks delivered in assessment area</td><td>[[low_clicks]]</td><td>[[mid_clicks]]</td></tr>
-        <tr><td>Eligibility-check sessions</td><td>[[low_sessions]]</td><td>[[mid_sessions]]</td></tr>
-        <tr><td>Eligibility checks completed</td><td>[[low_checks]]</td><td>[[mid_checks]]</td></tr>
-        <tr class="band"><td colspan="3">Action · observed in-product</td></tr>
-        <tr><td>Applications started</td><td>[[low_started]]</td><td>[[mid_started]]</td></tr>
-        <tr class="key"><td>Applications submitted (primary metric)</td><td>[[low_submitted]]</td><td>[[mid_submitted]]</td></tr>
-        <tr class="band"><td colspan="3">Outcomes · via consented follow-up panel, response rate disclosed</td></tr>
-        <tr><td>Est. approved households</td><td>[[low_approved]]</td><td>[[mid_approved]]</td></tr>
-        <tr class="key"><td>Est. annual benefits unlocked</td><td>[[low_benefit]]</td><td>[[mid_benefit]]</td></tr>
-        <tr class="band"><td colspan="3">Efficiency</td></tr>
-        <tr><td>Cost per submitted application</td><td>[[low_cps]]</td><td>[[mid_cps]]</td></tr>
+        <tr class="band"><td colspan="4">Outreach reaches LMI tracts</td></tr>
+        <tr><td>Ad clicks delivered in assessment area</td><td>[[low_clicks]]</td><td>[[mid_clicks]]</td><td class="hm">Recorded, reconciled to invoices</td></tr>
+        <tr class="band"><td colspan="4">Engagement</td></tr>
+        <tr><td>Eligibility-check sessions</td><td>[[low_sessions]]</td><td>[[mid_sessions]]</td><td class="hm">Recorded</td></tr>
+        <tr><td>Eligibility checks completed</td><td>[[low_checks]]</td><td>[[mid_checks]]</td><td class="hm">Recorded</td></tr>
+        <tr class="band"><td colspan="4">Applications</td></tr>
+        <tr><td>Applications started</td><td>[[low_started]]</td><td>[[mid_started]]</td><td class="hm">Recorded</td></tr>
+        <tr class="key"><td>Applications submitted (primary metric)</td><td>[[low_submitted]]</td><td>[[mid_submitted]]</td><td class="hm">Recorded</td></tr>
+        <tr class="band"><td colspan="4">Benefits · consented follow-up panel, response rate disclosed</td></tr>
+        <tr><td>Est. approved households</td><td>[[low_approved]]</td><td>[[mid_approved]]</td><td class="hm">Follow-up panel</td></tr>
+        <tr class="key"><td>Est. annual benefits unlocked</td><td>[[low_benefit]]</td><td>[[mid_benefit]]</td><td class="hm">Estimated</td></tr>
+        <tr class="band"><td colspan="4">Efficiency</td></tr>
+        <tr><td>Cost per submitted application</td><td>[[low_cps]]</td><td>[[mid_cps]]</td><td class="hm">Recorded</td></tr>
       </tbody>
     </table>
     <div class="funnel-note">[[funnel_note]]</div>
-    <div class="repnote">Assumptions are drawn from Civica's Baker-grant impact study (N=800): applicants who exchanged five or more queries submitted an application at ~74% and were approved at ~68%&mdash;a positive correlation between assistant engagement and completion. Set version [[assumptions_version]].</div>
+    <div class="repnote">The mid-range uses conservative all-user conversion rates, not engaged-user figures. For reference, in Civica's Baker-grant impact study (N=800) applicants with five or more queries submitted at ~74% and were approved at ~68%. Set version [[assumptions_version]].</div>
   </div>
   <div class="appx">
     <div class="col">
       <h3>Measurement</h3>
       <ul>
-        <li><strong>The engine:</strong> the same assistant shown on page 3. Every number below is a recorded system event from it.</li>
-        <li><strong>What we count:</strong> ad delivery reconciled to invoices, plus sessions, eligibility checks, and applications started and submitted—all recorded system events. This alone carries the CRA documentation.</li>
-        <li><strong>The follow-up:</strong> an opt-in 30/60-day check-in; we disclose the response rate and report outcomes only for those who respond, without extrapolating.</li>
-        <li><strong>The benchmark:</strong> the state's published county caseload for direction rather than attribution; even at pilot scale, a staggered tract rollout so the quarter yields an attributable estimate, not just a funnel count.</li>
+        <li><strong>Attribution:</strong> neighborhoods launch in waves, so each quarter compares reached tracts against not-yet-reached ones&mdash;an attributable estimate, not just a funnel count. Every "recorded" row above is a system event from the assistant on page 3.</li>
+        <li><strong>Follow-up:</strong> an opt-in 30/60-day check-in; we disclose the response rate and report outcomes only for those who respond, without extrapolating.</li>
+        <li><strong>Payment:</strong> never tied to enrollment counts&mdash;you fund the outreach and the auditable record, not outcomes.</li>
       </ul>
     </div>
     <div class="col">
       <h3>Methodology &amp; disclosures</h3>
       <ul>
-        <li>[[method_bullet]]</li>
+        <li><strong>Need model:</strong> who is income-eligible for SNAP, modeled from 2023 Census (ACS) microdata at neighborhood resolution (technical method in the footer).</li>
         <li>[[recon_method_bullet]]</li>
         <li><strong>Known bias, disclosed:</strong> a gross-income proxy and ACS under-reporting push the estimate <em>upward</em>, so read it as an upper range of unmet need.</li>
-        <li>County estimates carry 1-Year ACS sampling uncertainty; the page-1 dollar range reflects household size, not a confidence interval.</li>
+        <li>[[hr1_bullet]]</li>
       </ul>
       <h3 class="n2">Geography &amp; vintages</h3>
       <ul>
@@ -422,8 +426,8 @@
       </ul>
     </div>
   </div>
-  <div class="disclose"><strong>Reporting.</strong> Payment is never tied to enrollment counts. You receive an auditable quarterly record of activity in your assessment area&mdash;documentation built to demonstrate a qualified community-development investment under the CRA investment test.</div>
-  <div class="pagefoot">[[org_name]] · [[status_line]] · Contact: [[contact_name]], [[contact_email]][[contact_phone_line]] · Determination letter and full methodology available on request.</div>
+  <div class="disclose"><strong>Reporting.</strong> You receive an auditable quarterly record of activity in your assessment area&mdash;documentation built to demonstrate a qualified community-development investment under the CRA investment test.</div>
+  <div class="pagefoot"><strong>Method &amp; provenance.</strong> Need estimate&mdash;[[method_bullet]] Corpus: eCFR + 53 dated state/territory packs, re-graded on every rules change. Civica is in the Harvard Innovation Labs incubator. &nbsp;·&nbsp; [[org_name]], [[status_line]] Contact: [[contact_name]], [[contact_email]][[contact_phone_line]]. Determination letter available on request.</div>
   <div class="pagenum">4 / 4</div>
 </div>
 </body></html>

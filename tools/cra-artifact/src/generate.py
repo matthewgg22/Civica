@@ -396,22 +396,29 @@ def build_values(bank, assumptions, org, metrics, meta):
     # CA brand ("CalFresh"/"CDSS"/"California") leaks onto a non-CA artifact.
     if need.get("caseload_anchored"):
         recon_method_bullet = (
-            "<strong>Reconciled to the state caseload:</strong> the eligible base "
-            "is anchored on CDSS's actual CalFresh enrollment in the assessment "
-            "area, then divided by USDA's published California participation rate "
-            "(81%, FY2022), so the page-1 count reconciles with the state's own "
-            "enrollment rather than a federal-rules model base that sits below it.")
+            "<strong>Reconciled to the state caseload:</strong> the eligible base is "
+            "actual CDSS CalFresh enrollment &divide; USDA's California participation "
+            "rate (81%, FY2022), so the page-1 count reconciles with the state's own "
+            "enrollment (a federal-rules model base sits below it).")
     else:
         recon_method_bullet = (
             "<strong>Reconciled to a federal series:</strong> the "
             "eligible-not-enrolled count is held to USDA's published participation "
             "rate (81%, FY2022) rather than the model's raw non-enrollment rate, "
             "which survey under-reporting inflates.")
+    # H.R.1 methodology bullet — state-correct source (CA LAO only for CA; no
+    # state cite elsewhere, so "California" never leaks onto a non-CA artifact).
+    _hr1_src = " (California LAO, Feb 2026)" if state == "CA" else ""
+    hr1_bullet = (
+        "<strong>H.R.1 (2026):</strong> SNAP changes to noncitizen eligibility and "
+        "ABAWD work rules shrink the eligible pool going forward" + _hr1_src
+        + "; the rules corpus reflects law through 2025.")
     v = {
         "why_this_bank": why_this_bank,
         "credibility_line": credibility_line,
         "cra_rule_cite": cra_rule_cite,
         "cra_invest_cite": cra_invest_cite,
+        "hr1_bullet": hr1_bullet,
         "funnel_note": funnel_note,
         "org_name": org["org_name"],
         "program_name": org["program_name"],
