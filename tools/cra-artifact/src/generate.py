@@ -196,7 +196,7 @@ def build_values(bank, assumptions, org, metrics, meta):
             "The need and access figures here are Civica's own work: a "
             "reproducible model of 2023 federal ACS microdata, and a review of "
             "38 California county CalFresh Management Evaluation reports "
-            "(FFY 2024–2025), obtained by public-records request."
+            "(FFY 2024–2025), obtained by public-records (FOIA/CPRA) requests."
         )
     else:
         credibility_line = (
@@ -310,8 +310,7 @@ def build_values(bank, assumptions, org, metrics, meta):
             '<li><b>Aimed at need:</b> geo-targeted to LMI tracts—the targeting the CRA LMI test rewards.</li>'
             '<li><b>Where people are:</b> 16% of U.S. adults are smartphone-only, far more among households under $30k (Pew).</li>'
             '<li><b>Into help, not an ad:</b> an LA trial found social-media ads alone didn’t lift enrollment (Rogers, 2024), so every contact opens straight into the assistant.</li>'
-            '</ul><div class="why-try"><b>Try it:</b> civica-applicant.vercel.app/chat</div>'
-            '</div></div>')
+            '</ul></div></div>')
         safeguards_line = (
             '<div class="safeguards"><b>Safeguards:</b> estimates, never decides; no '
             'SSN/DOB/account number; crisis &amp; DV lines; nothing shared with the bank; '
@@ -346,7 +345,11 @@ def build_values(bank, assumptions, org, metrics, meta):
             '<div class="demo-row"><div class="demo-col">' + _shot
             + f'<div class="chatshot-cap">{chat_cap}</div></div>'
             '<div class="legend-col"><div class="legend-head">Five recorded '
-            'features, keyed on the screenshot</div>' + chat_legend + '</div></div>')
+            'features, keyed on the screenshot</div>' + chat_legend
+            + '<div class="qrbox legend-qr"><div class="qr">' + qr_svg + '</div>'
+            '<div class="qr-txt"><strong>Try it.</strong> Scan, or visit<br>'
+            '<span class="url">civica-applicant.vercel.app/chat</span></div></div>'
+            '</div></div>')
     else:
         demo_section = ('<div class="platform-hero">' + _shot
                         + f'<div class="chatshot-cap">{chat_cap}</div></div>')
@@ -373,8 +376,8 @@ def build_values(bank, assumptions, org, metrics, meta):
                 f"~{_enr} enrolled) &divide; USDA's California participation rate (81%, "
                 "FY2022), so the count reconciles with the state's own enrollment "
                 "(a federal-rules model base understates it because California's "
-                "Broad-Based Categorical Eligibility reaches 200% FPL). H.R.1 changes "
-                "(2026) shrink this pool further (California LAO, Feb 2026). &nbsp;·&nbsp; ")
+                "Broad-Based Categorical Eligibility reaches 200% FPL). H.R.1 (2025) "
+                "changes shrink this pool further (California LAO, Feb 2026). &nbsp;·&nbsp; ")
         elif state == "CA":
             recon_note = (
                 "<strong>How we count unmet need:</strong> our eligible-population "
@@ -410,8 +413,8 @@ def build_values(bank, assumptions, org, metrics, meta):
     # state cite elsewhere, so "California" never leaks onto a non-CA artifact).
     _hr1_src = " (California LAO, Feb 2026)" if state == "CA" else ""
     hr1_bullet = (
-        "<strong>H.R.1 (2026):</strong> SNAP changes to noncitizen eligibility and "
-        "ABAWD work rules shrink the eligible pool going forward" + _hr1_src
+        "<strong>H.R.1 (2025 law):</strong> SNAP changes to noncitizen eligibility "
+        "and ABAWD work rules shrink the eligible pool going forward" + _hr1_src
         + "; the rules corpus reflects law through 2025.")
     v = {
         "why_this_bank": why_this_bank,

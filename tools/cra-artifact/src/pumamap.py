@@ -20,6 +20,7 @@ state falls back to the county-bar breakdown in generate.py.
 import csv
 import json
 import math
+import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -144,16 +145,25 @@ def _short_name(raw: str) -> str:
     """Census PUMA name -> a compact, recognizable neighborhood label.
 
     Census PUMA names are verbose ("Los Angeles County (Central)--LA City (East
-    Central/Central City) PUMA"). Keep the specific place (the part after "--"),
-    drop the redundant "City"/"County" scaffolding, and abbreviate Los Angeles.
+    Central/Central City & Boyle Heights) PUMA"). For city-of-LA PUMAs the
+    neighborhood lives in the parenthetical after the last "/", so surface that
+    ("Central City & Boyle Heights", "Watts"); for other cities the city name is
+    the label, keeping any directional qualifier ("San Bernardino (West)"). Aim
+    for a clean, un-truncated label rather than a cut-off Census string.
     """
     s = raw.replace(" PUMA", "").strip()
     if "--" in s:
-        s = s.split("--", 1)[1].strip()          # the specific place
-    s = (s.replace("Los Angeles", "LA")
-          .replace(" Cities", "").replace(" City", "")
-          .replace(" County", " Co.").strip())
-    return s if len(s) <= 30 else s[:29] + "…"
+        s = s.split("--", 1)[1].strip()          # the city-level part
+    m = re.search(r"\(([^)]*)\)", s)
+    if m and "/" in m.group(1):                  # LA-city block: neighborhood in ()
+        s = m.group(1).rsplit("/", 1)[1].strip()
+    else:                                        # named city (+ any qualifier)
+        s = re.sub(r"\b(City|Cities|County)\b", "", s)
+        s = re.sub(r"\s{2,}", " ", s).strip()
+    s = s.replace("Los Angeles", "LA").strip(" -–—")
+    if len(s) > 28:                              # keep the first named place
+        s = re.split(r"[,&]", s)[0].strip()
+    return s if len(s) <= 28 else s[:27] + "…"
 
 
 def ranked_bar_svg(aa_counties, state, reconcile_rate=None,
