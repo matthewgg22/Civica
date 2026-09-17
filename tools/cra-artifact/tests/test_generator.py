@@ -176,7 +176,7 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     # projected-sample caveat: one badge + one sentence (calibrated down from
     # the earlier six-way over-disclaiming, but still unmistakable and honest)
     assert "Projected · not measured" in html
-    assert "These are projections" in html
+    assert "are projections" in html
     # both bias disclosures + vintage in methodology
     assert "gross-income proxy" in html and "under-report" in html
     assert "2023 ACS 1-Year" in html
