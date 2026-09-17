@@ -316,13 +316,13 @@ def build_values(bank, assumptions, org, metrics, meta):
             '<td>Plain-language answers, cited rules, a correctable running record</td>'
             '<td class="m">Applications submitted</td></tr>'
             '<tr><td class="b">Language</td>'
-            '<td class="ev">Reaches the largest limited-English-proficient populations California outreach must serve</td>'
+            '<td class="ev">The state’s own county reviews flag wrong-language forms as a denial reason (page 1)</td>'
             '<td>Answers in Spanish, Vietnamese, Chinese and English</td>'
             '<td class="m">Sessions by language</td></tr>'
             '</tbody></table>'
             '<div class="barriers-note"><sup>*</sup> Take-up figures: a randomized trial of '
-            'elderly SNAP applicants in Pennsylvania (Finkelstein &amp; Notowidigdo, QJE 2019); '
-            'the pilot tests whether they hold for the general CalFresh population. The process '
+            'older adults likely eligible but not enrolled in Pennsylvania (Finkelstein &amp; '
+            'Notowidigdo, QJE 2019); the pilot tests whether they hold for the general CalFresh population. The process '
             'barriers the state’s own county reviews document (page 1)—wrong-language '
             'forms, information wrongly requested—are a further target; post-submission '
             'reminders are a planned addition.</div>'
@@ -331,16 +331,18 @@ def build_values(bank, assumptions, org, metrics, meta):
             '<p>Human application help has the strongest evidence, but it’s capped by staff '
             'hours and cost per case. The assistant offers that kind of help around the clock, in '
             'four languages, at near-zero marginal cost—the pilot tests whether it reproduces '
-            'those results. An LA trial found social-media ads alone didn’t lift enrollment '
-            '(Rogers, 2024), so every contact opens straight into the assistant, not an ad.</p></div>'
+            'those results. An LA trial found social-media outreach alone didn’t lift enrollment '
+            '(Rogers, Management Science 2026), so every contact opens straight into the '
+            'assistant, not a dead end.</p></div>'
             '<div class="why-out"><div class="why-h">The outreach channel</div><ul>'
-            '<li><b>Targeted reach:</b> digital ads deliver to the highest-need LMI tracts at low cost, measurably—the geo-targeting the CRA LMI test rewards.</li>'
-            '<li><b>Phone-first:</b> 16% of U.S. adults are smartphone-only—27% of those under $30k (Pew).</li>'
+            '<li><b>Targeted reach:</b> digital outreach delivers to the highest-need LMI tracts at low cost, measurably—the geo-targeting the CRA LMI test rewards.</li>'
+            '<li><b>Phone-first:</b> 16% of U.S. adults are smartphone-only—28% of those under $30k (Pew, 2024).</li>'
             '</ul></div></div>')
         safeguards_line = (
-            '<div class="safeguards"><b>Safeguards:</b> estimates, never decides; no '
-            'SSN/DOB/account number; crisis &amp; DV lines; nothing shared with the bank; '
-            'text auto-purges.</div>')
+            '<div class="safeguards"><b>Safeguards:</b> estimates, never decides; asks '
+            'immigration status only because SNAP eligibility depends on it&mdash;never '
+            'documents, an SSN/DOB, or an account number; crisis &amp; DV lines; nothing '
+            'shared with the bank; text auto-purges.</div>')
         p3_detail_foot = (
             '<div class="p3foot"><b>Independently checkable:</b> a graded ~600-question '
             'set across all 53 jurisdictions (adversarial and crisis cases included), '
@@ -425,23 +427,34 @@ def build_values(bank, assumptions, org, metrics, meta):
     # CA brand ("CalFresh"/"CDSS"/"California") leaks onto a non-CA artifact.
     if need.get("caseload_anchored"):
         recon_method_bullet = (
-            "<strong>Reconciled to the state caseload:</strong> the eligible base is "
-            "actual CDSS CalFresh enrollment &divide; USDA's California participation "
-            "rate (81%, FY2022), so the page-1 count reconciles with the state's own "
-            "enrollment (a federal-rules model base sits below it).")
+            "<strong>The total comes from enrollment, not a model:</strong> the "
+            "eligible-but-unenrolled count is actual CDSS CalFresh enrollment "
+            "&divide; USDA's participation rate (81%, FY2022)&mdash;the state's own "
+            "numbers.")
+        _enr_n = need["aa_enrolled"]
+        _lo = fmt_int(round(_enr_n * (1 / 0.85 - 1) / 1e4) * 1e4)
+        _hi = fmt_int(round(_enr_n * (1 / 0.78 - 1) / 1e4) * 1e4)
+        sensitivity_bullet = (
+            "<strong>Rate uncertainty, disclosed:</strong> USDA's participation "
+            f"rate is a point estimate. At an 85% rate the count is about {_lo}; "
+            f"at 78%, about {_hi}. Page&nbsp;1 uses USDA's 81% figure.")
     else:
         recon_method_bullet = (
-            "<strong>Reconciled to a federal series:</strong> the "
-            "eligible-not-enrolled count is held to USDA's published participation "
-            "rate (81%, FY2022) rather than the model's raw non-enrollment rate, "
-            "which survey under-reporting inflates.")
+            "<strong>The total comes from a published rate:</strong> the "
+            "eligible-not-enrolled count is actual enrollment held to USDA's "
+            "published participation rate (81%, FY2022), not the model's raw "
+            "non-enrollment rate, which survey under-reporting inflates.")
+        sensitivity_bullet = (
+            "<strong>Rate uncertainty, disclosed:</strong> USDA's published "
+            "participation rate is a point estimate; the unmet-need count moves "
+            "inversely with it.")
     # H.R.1 methodology bullet — state-correct source (CA LAO only for CA; no
     # state cite elsewhere, so "California" never leaks onto a non-CA artifact).
     _hr1_src = " (California LAO, Feb 2026)" if state == "CA" else ""
     hr1_bullet = (
         "<strong>H.R.1 (2025 law):</strong> SNAP changes to noncitizen eligibility "
         "and ABAWD work rules shrink the eligible pool going forward" + _hr1_src
-        + "; the rules corpus reflects law through 2025.")
+        + "; the assistant's rules corpus includes these H.R.1 changes.")
     v = {
         "font_faces": _font_faces(),
         "why_this_bank": why_this_bank,
@@ -468,8 +481,15 @@ def build_values(bank, assumptions, org, metrics, meta):
         "aa_label": aa_label,
         "prepared_date": datetime.date.today().strftime("%B %Y"),
         "headline_unenrolled": fmt_int(round(need["unenrolled"])),
+        # Headline display is rounded to the nearest 10,000 with a "~": USDA's
+        # participation rate is a point estimate with real uncertainty, so a
+        # six-digit figure would imply precision we don't have (see the
+        # sensitivity range on page 4). The precise point estimate still drives
+        # every derived figure and the ORACLE CHECK.
+        "headline_round": "~" + fmt_int(round(need["unenrolled"] / 1e4) * 1e4),
         "recon_note": recon_note,
         "recon_method_bullet": recon_method_bullet,
+        "sensitivity_bullet": sensitivity_bullet,
         "bank_specific_block": bank_specific_block,
         # Static QR to the live assistant (same URL for every bank); pre-generated
         # asset, so the generator stays stdlib-only. See assets/qr-chat.svg.

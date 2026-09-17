@@ -185,7 +185,7 @@
   .funnel-note { font-size:8.8pt; line-height:1.4; color:var(--ink); font-weight:500; margin-top:9px; text-wrap:pretty; }
   table.report th { background:var(--tint); border-bottom:2px solid var(--rule-strong); font-size:8.4pt; font-weight:600; text-align:right; padding:4px 9px; color:var(--ink); }
   table.report th:first-child { text-align:left; }
-  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:4.1px 9px; }
+  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:2.9px 9px; }
   table.report td:first-child { text-align:left; color:var(--body); }
   table.report tbody tr:not(.band) td:first-child { padding-left:20px; }
   table.report tr.band td { background:var(--tint); font-size:7.2pt; letter-spacing:.07em; text-transform:uppercase; text-align:left; color:var(--muted); font-weight:600; padding:2px 9px; }
@@ -195,19 +195,19 @@
   table.report th.hm, table.report td.hm { text-align:left; }
   table.report td.hm { font-size:7.5pt; font-weight:400; color:var(--muted); padding-left:14px; }
   .repnote { font-size:7.8pt; color:var(--body); margin-top:9px; line-height:1.42; max-width:6.8in; text-wrap:pretty; }
-  .appx { display:flex; gap:.34in; margin-top:12px; }
+  .appx { display:flex; gap:.34in; margin-top:9px; }
   .appx .col { flex:1; }
   .appx h3 { font-family:'Newsreader',serif; font-size:11pt; font-weight:600; color:var(--ink); margin:0 0 5px; }
   .appx h3.n2 { margin-top:9px; }
   /* text-wrap:pretty keeps the last line of each layer bullet from stranding a
      single word (the "one-word bleed"); the renderer rebalances the tail. */
-  .appx p, .appx li { font-size:8.1pt; line-height:1.5; color:var(--body); text-wrap:pretty; }
+  .appx p, .appx li { font-size:8.1pt; line-height:1.42; color:var(--body); text-wrap:pretty; }
   .appx ul { list-style:none; margin-top:3px; }
   .appx li { margin-top:3px; padding-left:10px; position:relative; }
   .appx li::before { content:""; position:absolute; left:0; top:.55em; width:4px; height:4px; background:var(--accent); border-radius:50%; }
   /* Plain framed callout (matches .crafile), not a left-accent card—the
      colored-left-rail card is a DEMETER-DESIGN AI-slop pattern. */
-  .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:10px 14px; font-size:8.1pt; line-height:1.42; color:var(--body); margin-top:12px; text-wrap:pretty; }
+  .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:10px 14px; font-size:8.1pt; line-height:1.4; color:var(--body); margin-top:8px; text-wrap:pretty; }
   .disclose strong { color:var(--ink); }
   /* Page 3—the platform, as built (annotated real screenshot) */
   .platform-hero { margin-top:6px; margin-left:-0.22in; margin-right:-0.22in; text-align:center; }
@@ -285,7 +285,7 @@
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
   <div class="body-zone">
     <div class="zone-head">
-      <div class="big serif">[[headline_unenrolled]]</div>
+      <div class="big serif">[[headline_round]]</div>
       <div class="head-sentence">eligible residents of <em>your assessment area</em> are not enrolled in [[program_ref]]&mdash;an estimated <em>[[benefit_range]] a year</em> in unclaimed federal nutrition dollars that would be spent in [[aa_label]] grocery stores.</div>
       [[ratio_line]]
     </div>
@@ -294,7 +294,7 @@
         <div class="core-cap">Unmet need in your CRA assessment area</div>
         <table class="core">
           <tr><td class="k">Eligible residents (est.)</td><td class="v">[[eligible_fmt]]<small>income-eligible for SNAP</small></td></tr>
-          <tr><td class="k">Eligible, not enrolled</td><td class="v">[[headline_unenrolled]]<small>[[aa_unenrolled_pct]]% at USDA's participation rate</small></td></tr>
+          <tr><td class="k">Eligible, not enrolled</td><td class="v">[[headline_round]]<small>[[aa_unenrolled_pct]]% at USDA's participation rate</small></td></tr>
           <tr><td class="k">Benefit per household</td><td class="v">$[[benefit_monthly]]/mo<small>per eligible household</small></td></tr>
           <tr class="ask"><td class="k">Campaign funding ask</td><td class="v">$[[ask_fmt]]</td></tr>
         </table>
@@ -302,7 +302,7 @@
       <div class="colbrk">[[aa_geo_visual]]</div>
     </div>
     <div class="why">
-      <div class="why-cap">What is the Supplemental Nutrition Assistance Program (SNAP)?</div>
+      <div class="why-cap">What SNAP is, and why eligible residents miss out</div>
       <p>SNAP (food stamps) is monthly grocery money for low- and moderate-income households. Most who qualify but never enroll are stopped by the process, not the rules&mdash;so Demeter, Civica Torrey's free online platform for [[program_ref]], answers their questions in plain language and guides them through the application.</p>
     </div>
     <div class="chain">
@@ -314,14 +314,14 @@
         <div class="carr solid"></div>
         <div class="cnode">Applications<small>submitted</small></div>
         <div class="carr dash"></div>
-        <div class="cnode">Fewer denials<small>(paperwork)</small></div>
+        <div class="cnode">Complete apps<small>fewer denials</small></div>
         <div class="carr dash"></div>
         <div class="cnode">Enrolled<small>benefits received</small></div>
         <div class="carr dash"></div>
         <div class="cnode end">Household<small>finances</small></div>
       </div>
       <div class="fin-wrap"><svg class="fin-arrow" viewBox="0 0 64 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13 4 C52 4 52 79 18 79" fill="none" stroke="#E8C547" stroke-width="2.4" stroke-linecap="round"/><path d="M18 74 L10 79 L18 84 Z" fill="#E8C547"/></svg><div class="fin-box">
-        <div class="fin-title">Impact of SNAP enrollment to household finances</div>
+        <div class="fin-title">What losing access costs households (research)</div>
         <div class="fin-stats">
           <div><b>$2,436</b>less credit-card debt by year three</div>
           <div><b>10.1 pts</b>lower likelihood of a delinquent account</div>
@@ -347,17 +347,17 @@
     <div class="crafile-cap">For [[bank_name]]'s community-reinvestment file</div>
     <table class="cra-dl">
       <tr><td class="l">Primary purpose</td><td>The grant funds only [[program_ref]] application assistance&mdash;a community-development service to LMI individuals ([[cra_rule_cite]]). It qualifies on the activity itself; the results below only strengthen the file.</td></tr>
-      <tr><td class="l">LMI targeting</td><td>Two independent tests. <b>Delivery:</b> the share of digital-outreach delivery and eligibility-check sessions in LMI tracts, reported quarterly. <b>Eligibility:</b> the program's gross-income ceiling (200% of the federal poverty level) sits within the LMI band (80% or less of area median income) in all four counties. The Interagency Q&amp;A (§&#8239;__.12(g)(2)&#8211;1; 81 FR 48506, 2016) is cited only as backup&mdash;it addresses SNAP <em>recipients</em>, not <em>applicants</em> like ours.</td></tr>
+      <tr><td class="l">LMI targeting</td><td>Two independent tests. <b>Delivery:</b> the share of digital-outreach delivery and eligibility-check sessions in LMI tracts, reported quarterly. <b>Eligibility:</b> the program's gross-income ceiling (200% of the federal poverty level) sits within the LMI band (80% or less of area median income) for households of up to five in all four counties. The federal Interagency Q&amp;A (§&#8239;__.12(g)(2)&#8211;1; 81 FR 48506, 2016) also treats SNAP <em>recipients</em> as LMI, and applicants become recipients on enrollment.</td></tr>
       <tr><td class="l">Geographic nexus</td><td>Delivered and measured within [[bank_name]]'s delineated assessment area, documented by county. Where banks share geography, credit is allocated by each bank's share of dollars in each county, so nothing is claimed twice.</td></tr>
-      <tr><td class="l">Investment-test criteria</td><td>Scored on the qualitative factors at [[cra_invest_cite]]. <b>Innovativeness/complexity (e)(2):</b> measured, attributable results, not activity counts. <b>Responsiveness (e)(3):</b> addresses the counties' documented application-access barriers.</td></tr>
+      <tr><td class="l">Investment-test criteria</td><td>Relevant to the qualitative factors at [[cra_invest_cite]]. <b>Innovativeness (e)(2):</b> measured, attributable results, not activity counts. <b>Responsiveness (e)(3):</b> addresses the counties' documented access barriers. <b>(e)(4):</b> not routinely provided by private investors.</td></tr>
       <tr><td class="l">Documentation</td><td>A quarterly report of outreach delivery, eligibility checks, and applications started and submitted (all by county; the sample on page 4 shows the format), plus a one-page qualification memo and an annual exam-file summary. Prepared for your file.</td></tr>
     </table>
     <div class="cra-foot">Treatment under the CRA framework remains subject to your institution's compliance team and examiners.</div>
   </div>
   <div class="tiers">
-    <div class="tier"><div class="name">Community Sponsor</div><div class="amt">$5,000–10,000</div><div class="desc">Outreach in selected high-need tracts, plus the quarterly report (page 4).</div></div>
-    <div class="tier lead"><div class="name">Pilot Grant · proposed</div><div class="amt">$[[ask_fmt]]</div><div class="desc">Assessment-area outreach at the highest-need tracts, plus the full quarterly report (page 4).</div></div>
-    <div class="tier"><div class="name">Program Grant</div><div class="amt">$30,000–50,000</div><div class="desc">Everything in the pilot, plus added reach and consented outcome follow-up.</div></div>
+    <div class="tier"><div class="name">Community Sponsor</div><div class="amt">$5,000–10,000</div><div class="desc">Outreach in a few of the highest-need tracts; the quarterly report (page 4).</div></div>
+    <div class="tier lead"><div class="name">Pilot Grant · proposed</div><div class="amt">$[[ask_fmt]]</div><div class="desc">Outreach across your whole assessment area, the quarterly report, and a consented outcome follow-up panel (page 4).</div></div>
+    <div class="tier"><div class="name">Program Grant</div><div class="amt">$30,000–50,000</div><div class="desc">Everything in the pilot at greater outreach volume, with a larger follow-up panel.</div></div>
   </div>
   <div class="close">
     <div class="close-line">A 30-minute call covers the program, how the grant applies, and the exam-file documentation.</div>
@@ -390,29 +390,31 @@
       <thead><tr><th>Deliverable</th><th>Conservative</th><th>Mid-range</th><th class="hm">How measured</th></tr></thead>
       <tbody>
         <tr class="band"><td colspan="4">Outreach reaches LMI tracts</td></tr>
-        <tr><td>Ad clicks delivered in assessment area</td><td>[[low_clicks]]</td><td>[[mid_clicks]]</td><td class="hm">Recorded, reconciled to invoices</td></tr>
+        <tr><td>Outreach clicks delivered in assessment area</td><td>[[low_clicks]]</td><td>[[mid_clicks]]</td><td class="hm">Recorded, reconciled to invoices</td></tr>
+        <tr><td>Share of delivery in LMI tracts</td><td>&mdash;</td><td>&mdash;</td><td class="hm">Reported each quarter</td></tr>
         <tr class="band"><td colspan="4">Engagement</td></tr>
         <tr><td>Eligibility-check sessions</td><td>[[low_sessions]]</td><td>[[mid_sessions]]</td><td class="hm">Recorded</td></tr>
         <tr><td>Eligibility checks completed</td><td>[[low_checks]]</td><td>[[mid_checks]]</td><td class="hm">Recorded</td></tr>
+        <tr><td>Sessions by language</td><td>&mdash;</td><td>&mdash;</td><td class="hm">Recorded</td></tr>
         <tr class="band"><td colspan="4">Applications</td></tr>
         <tr><td>Applications started</td><td>[[low_started]]</td><td>[[mid_started]]</td><td class="hm">Recorded</td></tr>
         <tr class="key"><td>Applications submitted (primary metric)</td><td>[[low_submitted]]</td><td>[[mid_submitted]]</td><td class="hm">Recorded</td></tr>
         <tr class="band"><td colspan="4">Benefits · consented follow-up panel</td></tr>
-        <tr><td>Est. approved households</td><td>[[low_approved]]</td><td>[[mid_approved]]</td><td class="hm">Follow-up panel</td></tr>
+        <tr><td>Approved households (follow-up respondents)</td><td>[[low_approved]]</td><td>[[mid_approved]]</td><td class="hm">Follow-up panel</td></tr>
         <tr class="key"><td>Est. annual benefits unlocked</td><td>[[low_benefit]]</td><td>[[mid_benefit]]</td><td class="hm">Estimated</td></tr>
         <tr class="band"><td colspan="4">Efficiency</td></tr>
         <tr><td>Cost per submitted application</td><td>[[low_cps]]</td><td>[[mid_cps]]</td><td class="hm">Recorded</td></tr>
       </tbody>
     </table>
     <div class="funnel-note">[[funnel_note]]</div>
-    <div class="repnote">The mid-range uses conservative all-user conversion rates, not engaged-user figures. In Civica Torrey's Baker-grant impact study (N=800), applicants with 5+ queries submitted at ~74% and were approved at ~68%. Set version [[assumptions_version]].</div>
+    <div class="repnote">The mid-range uses all-user conversion rates, not engaged-user figures. In Civica Torrey's Baker-grant impact study (N=800), applicants with 5+ queries submitted at ~74% and were approved at ~68%. Set version [[assumptions_version]].</div>
   </div>
   <div class="appx">
     <div class="col">
       <h3>Measurement</h3>
       <ul>
         <li><strong>Attribution:</strong> neighborhoods launch in waves, so each quarter compares reached tracts against not-yet-reached ones&mdash;an attributable estimate, not just a funnel count. Every "recorded" row above is a system event from the assistant on page 3.</li>
-        <li><strong>Follow-up:</strong> an opt-in 30/60-day check-in; we disclose the response rate and report outcomes only for those who respond, without extrapolating.</li>
+        <li><strong>Follow-up:</strong> the figures above model a full quarter; the delivered report measures approvals only among opt-in follow-up respondents, discloses the response rate, and never extrapolates to non-respondents.</li>
         <li><strong>Payment:</strong> never tied to enrollment counts&mdash;you fund the outreach and the auditable record, not outcomes.</li>
       </ul>
       <h3 class="n2">Geography &amp; vintages</h3>
@@ -424,9 +426,9 @@
     <div class="col">
       <h3>Methodology &amp; disclosures</h3>
       <ul>
-        <li><strong>Need model:</strong> who is income-eligible for SNAP, modeled from 2023 Census (ACS) microdata at neighborhood resolution (technical method in the footer).</li>
         <li>[[recon_method_bullet]]</li>
-        <li><strong>Known bias, disclosed:</strong> a gross-income proxy and ACS under-reporting push the estimate <em>upward</em>, so read it as an upper range of unmet need.</li>
+        <li><strong>Neighborhood split:</strong> a gradient-boosted model of who is income-eligible (2023 ACS microdata) only distributes that county total across neighborhoods&mdash;it does not set the total. Those tract-level shares use a gross-income proxy, so read them as approximate.</li>
+        <li>[[sensitivity_bullet]]</li>
         <li>[[hr1_bullet]]</li>
       </ul>
     </div>

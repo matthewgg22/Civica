@@ -63,7 +63,7 @@ def evidence_html(aa_counties, state="CA", counties=None, max_entries=MAX_ENTRIE
         '<div class="me-evidence">'
         '<div class="me-label">Documented in your assessment area · CDSS CalFresh reviews</div>'
         f'<div class="qcards">{"".join(cards)}</div>'
-        '<div class="me-frame">The state’s own county reviews, verbatim, offered as '
-        'performance context on documented need, not a representation about outcomes.</div>'
+        '<div class="me-frame">From the state’s own reviews of these counties&mdash;'
+        'documented need, not a claim about our results.</div>'
         '</div>'
     )
