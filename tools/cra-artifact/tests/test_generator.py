@@ -1020,13 +1020,13 @@ def test_bank_specific_block_renders_only_when_present():
     abb_v, _ = generate.build_values(banks["american_business_bank"], assumptions,
                                      org, metrics, meta)
     abb = generate.render(tpl, abb_v)
-    assert "Why American Business Bank." in abb
+    assert "The American Business Bank fit." in abb
     assert "almost no retail footprint" in abb and "investment test" in abb
     # bank_irvine carries no note -> no per-bank block, and the label never leaks
     irv_v, _ = generate.build_values(banks["bank_irvine"], assumptions, org,
                                      metrics, meta)
     irv = generate.render(tpl, irv_v)
-    assert "Why Bank Irvine" not in irv
+    assert "Bank Irvine fit" not in irv
 
 
 def test_platform_evidence_page_present_and_state_aware():
@@ -1050,7 +1050,7 @@ def test_platform_evidence_page_present_and_state_aware():
     assert 'class="chat-legend"' in ca                          # the five-item event key below it
     # barrier table drives the page (evidence -> how addressed -> what's measured)
     assert 'class="barriers"' in ca
-    assert "Why a chatbot" in ca and "Why digital outreach" in ca
+    assert "The chatbot" in ca and "The outreach channel" in ca
     # take-up evidence carries its population caveat (elderly SNAP, PA)
     assert "Finkelstein" in ca and "Pennsylvania" in ca
     # verified outreach evidence: Pew smartphone-only + the LA social-ads null result
