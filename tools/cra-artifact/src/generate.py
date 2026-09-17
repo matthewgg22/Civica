@@ -246,6 +246,7 @@ def build_values(bank, assumptions, org, metrics, meta):
             (24, 44),    # 3  WHERE THIS LANDS—the live $494 estimate
             (24, 59),    # 4  FROM WHAT YOU'VE TOLD ME—the correctable record
             (70, 85),    # 5  the CERTAIN badge + citation—rule cited, dated
+            (13, 86),    # 6  EN/ES/VI/中文 selector—answered in four languages
         ]
         chat_overlay = "".join(
             f'<div class="cmark" style="left:{x}%;top:{y}%">{i + 1}</div>'
@@ -256,6 +257,7 @@ def build_values(bank, assumptions, org, metrics, meta):
             ("A live estimate", "an estimated benefit fills in as the applicant talks—recorded as an eligibility check."),
             ("A correctable record", "it shows back what you’ve told it, so nothing is re-asked and the applicant can fix it."),
             ("Rule cited, dated", "shows the rule and the fiscal year under each answer, so a reviewer can check it."),
+            ("Four languages", "answers in Spanish, Vietnamese, Chinese and English—the session language is recorded (page 4)."),
         ]
         chat_legend = ('<div class="chat-legend">' + "".join(
             f'<div class="leg"><span class="leg-n">{i + 1}</span>'
@@ -344,7 +346,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         demo_section = (
             '<div class="demo-row"><div class="demo-col">' + _shot
             + f'<div class="chatshot-cap">{chat_cap}</div></div>'
-            '<div class="legend-col"><div class="legend-head">Five recorded '
+            '<div class="legend-col"><div class="legend-head">Six recorded '
             'features, keyed on the screenshot</div>' + chat_legend
             + '<div class="qrbox legend-qr"><div class="qr">' + qr_svg + '</div>'
             '<div class="qr-txt"><strong>Try it.</strong> Scan, or visit<br>'

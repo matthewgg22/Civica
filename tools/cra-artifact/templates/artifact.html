@@ -143,7 +143,7 @@
   /* wheat connector: the flow exits the RIGHT of the Household-finances node,
      makes a sideways U-turn, and drops back down into the impact box. Inline SVG
      positioned at the top-right so the loop sits in the right margin. */
-  .fin-arrow { position:absolute; top:-18px; right:-30px; width:48px; height:28px; overflow:visible; }
+  .fin-arrow { position:absolute; top:-50px; right:-50px; width:64px; height:90px; overflow:visible; }
   .fin-box { border:1.6px solid var(--wheat); border-radius:3px; background:rgba(232,197,71,.10); padding:7px 13px; }
   .fin-title { font-size:7.6pt; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:6px; }
   .fin-stats { display:flex; gap:20px; align-items:center; }
@@ -180,10 +180,10 @@
   table.report thead th { background:rgba(192,85,59,.09); }
   table.report { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; border:1px solid var(--rule-strong); }
   table.report caption { text-align:left; font-size:8.4pt; color:var(--muted); margin-bottom:6px; caption-side:top; line-height:1.4; text-wrap:pretty; }
-  .funnel-note { font-size:8.8pt; line-height:1.4; color:var(--ink); font-weight:500; margin-top:5px; text-wrap:pretty; }
+  .funnel-note { font-size:8.8pt; line-height:1.4; color:var(--ink); font-weight:500; margin-top:9px; text-wrap:pretty; }
   table.report th { background:var(--tint); border-bottom:2px solid var(--rule-strong); font-size:8.4pt; font-weight:600; text-align:right; padding:4px 9px; color:var(--ink); }
   table.report th:first-child { text-align:left; }
-  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:3.4px 9px; }
+  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:4.1px 9px; }
   table.report td:first-child { text-align:left; color:var(--body); }
   table.report tbody tr:not(.band) td:first-child { padding-left:20px; }
   table.report tr.band td { background:var(--tint); font-size:7.2pt; letter-spacing:.07em; text-transform:uppercase; text-align:left; color:var(--muted); font-weight:600; padding:2px 9px; }
@@ -192,20 +192,20 @@
      Follow-up), replacing the old "observed in-product" band labels */
   table.report th.hm, table.report td.hm { text-align:left; }
   table.report td.hm { font-size:7.5pt; font-weight:400; color:var(--muted); padding-left:14px; }
-  .repnote { font-size:7.8pt; color:var(--body); margin-top:5px; line-height:1.38; max-width:6.8in; text-wrap:pretty; }
-  .appx { display:flex; gap:.34in; margin-top:8px; }
+  .repnote { font-size:7.8pt; color:var(--body); margin-top:9px; line-height:1.42; max-width:6.8in; text-wrap:pretty; }
+  .appx { display:flex; gap:.34in; margin-top:12px; }
   .appx .col { flex:1; }
-  .appx h3 { font-family:'Newsreader',serif; font-size:11pt; font-weight:600; color:var(--ink); margin:0 0 3px; }
-  .appx h3.n2 { margin-top:6px; }
+  .appx h3 { font-family:'Newsreader',serif; font-size:11pt; font-weight:600; color:var(--ink); margin:0 0 5px; }
+  .appx h3.n2 { margin-top:9px; }
   /* text-wrap:pretty keeps the last line of each layer bullet from stranding a
      single word (the "one-word bleed"); the renderer rebalances the tail. */
-  .appx p, .appx li { font-size:8.1pt; line-height:1.34; color:var(--body); text-wrap:pretty; }
-  .appx ul { list-style:none; margin-top:2px; }
-  .appx li { margin-top:2px; padding-left:10px; position:relative; }
+  .appx p, .appx li { font-size:8.1pt; line-height:1.5; color:var(--body); text-wrap:pretty; }
+  .appx ul { list-style:none; margin-top:3px; }
+  .appx li { margin-top:3px; padding-left:10px; position:relative; }
   .appx li::before { content:""; position:absolute; left:0; top:.55em; width:4px; height:4px; background:var(--accent); border-radius:50%; }
   /* Plain framed callout (matches .crafile), not a left-accent card—the
      colored-left-rail card is a DEMETER-DESIGN AI-slop pattern. */
-  .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:6px 12px; font-size:8.1pt; line-height:1.36; color:var(--body); margin-top:6px; text-wrap:pretty; }
+  .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:10px 14px; font-size:8.1pt; line-height:1.42; color:var(--body); margin-top:12px; text-wrap:pretty; }
   .disclose strong { color:var(--ink); }
   /* Page 3—the platform, as built (annotated real screenshot) */
   .platform-hero { margin-top:6px; margin-left:-0.22in; margin-right:-0.22in; text-align:center; }
@@ -317,19 +317,18 @@
         <div class="carr dash"></div>
         <div class="cnode end">Household<small>finances</small></div>
       </div>
-      <div class="fin-wrap"><svg class="fin-arrow" viewBox="0 0 48 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 4 H28 Q42 4 42 13 Q42 23 28 23 H20" fill="none" stroke="#E8C547" stroke-width="2.4" stroke-linecap="round"/><path d="M25 18 L17 23 L25 28 Z" fill="#E8C547"/></svg><div class="fin-box">
+      <div class="fin-wrap"><svg class="fin-arrow" viewBox="0 0 64 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13 4 C52 4 52 79 18 79" fill="none" stroke="#E8C547" stroke-width="2.4" stroke-linecap="round"/><path d="M18 74 L10 79 L18 84 Z" fill="#E8C547"/></svg><div class="fin-box">
         <div class="fin-title">Impact of SNAP enrollment to household finances</div>
         <div class="fin-stats">
           <div><b>$2,436</b>less credit-card debt by year three</div>
           <div><b>10.1 pts</b>lower likelihood of a delinquent account</div>
           <div><b>~17 pts</b>higher credit score, from 634</div>
         </div>
-        <div class="fin-src">Research on procedurally-denied SNAP applicants (~62,000 Los Angeles applicants, admin records linked to credit reports; Homonoff, Lee &amp; Meckel, NBER WP 34434, 2025 draft)&mdash;the debt and delinquency effects are the firmest. Not a measurement of [[org_name]]'s program.</div>
       </div></div>
     </div>
     [[me_evidence_block]]
   </div>
-  <div class="pagefoot">[[data_gaps_note]][[recon_note]]<strong>Sources:</strong> eligibility [[model_note]]; USDA FNA participation rates (Reaching Those in Need, FY2022) &amp; FY2024 benefits. Assessment area: [[bank_name]]'s [[pe_date]] CRA PE ([[regulator]]). [[org_name]], 501(c)(3).</div>
+  <div class="pagefoot">[[data_gaps_note]][[recon_note]]<strong>Sources:</strong> eligibility [[model_note]]; USDA FNA participation rates (Reaching Those in Need, FY2022) &amp; FY2024 benefits. Assessment area: [[bank_name]]'s [[pe_date]] CRA PE ([[regulator]]). Household-finance effects: ~62,000 procedurally-denied L.A. SNAP applicants, admin records linked to credit reports (Homonoff, Lee &amp; Meckel, NBER WP 34434, 2025 draft); not a measurement of [[org_name]]'s program. [[org_name]], 501(c)(3).</div>
   <div class="pagenum">1 / 4</div>
 </div>
 
@@ -337,7 +336,7 @@
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
   <h2 class="pagehead">A benefits-access campaign for [[bank_name]]</h2>
-  <div class="body-block" style="margin-top:12px;"><b class="run-in">The campaign.</b> It combines the reach of digital outreach with the accuracy of a one-on-one assister, and every answer traces to the governing rule. Demeter provides free [[program_ref]] application assistance&mdash;the same service a county-designated assister or food-bank navigator provides&mdash;available across your whole assessment area, with geo-targeted outreach aimed at the highest-need tracts. It answers from [[state_name]]'s SNAP rules and guides residents to a submitted, accurate application; because its marginal cost is near zero, one grant can fund the campaign area-wide.
+  <div class="body-block" style="margin-top:12px;"><b class="run-in">The campaign.</b> It combines the reach of digital outreach with the accuracy of a one-on-one assister, and every answer traces to the governing rule. Demeter provides free [[program_ref]] application assistance&mdash;the same service a county-designated assister or food-bank navigator gives&mdash;across your whole assessment area, with outreach geo-targeted to the highest-need tracts. Its marginal cost is near zero, so one grant can fund the campaign area-wide.
   </div>
   <div class="provenance"><b>Why these numbers.</b> [[credibility_line]]</div>
   [[bank_specific_block]]
