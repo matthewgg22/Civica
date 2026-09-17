@@ -177,8 +177,8 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     # the earlier six-way over-disclaiming, but still unmistakable and honest)
     assert "Projected · not measured" in html
     assert "are projections" in html
-    # both bias disclosures + vintage in methodology
-    assert "gross-income proxy" in html and "under-report" in html
+    # split-proxy caveat + rate-uncertainty disclosure + vintage in methodology
+    assert "gross-income proxy" in html and "Rate uncertainty" in html
     assert "2023 ACS 1-Year" in html
     # ratio suppressed for Irvine (1.12 < 1.15)
     assert not need["show_ratio"] and 'class="ratio-line"' not in html
@@ -197,17 +197,17 @@ def test_bank_irvine_html_builds_with_policy_invariants(tmp_path):
     # the CDSS ME review that only exists for California banks)
     assert "Why these numbers" in html and "Management Evaluation" in html
     # SNAP explainer header carries the full program name; the ask block breathes
-    assert "What is the Supplemental Nutrition Assistance Program (SNAP)?" in html
+    assert "What SNAP is, and why eligible residents miss out" in html
     # page 1 leads the evidence with the deliverable chain (measured vs estimated)
     assert "What the grant sets in motion" in html and 'class="chain"' in html
     # investment-test criteria named on page 2 (the exam's own rubric)
     assert ".23(e)" in html and "Innovativeness" in html and "Responsiveness" in html
-    # LMI proxy Q&A is backup only (it is about recipients; our users are applicants)
-    assert "cited only as backup" in html
+    # LMI proxy Q&A supports the file: recipients are LMI, and applicants become recipients
+    assert "applicants become recipients on enrollment" in html
     # page 4: sample & methodology, Baker-grant assumption note, reconciliation
     assert "sample &amp; methodology" in html or "sample & methodology" in html
     assert "Baker-grant impact study" in html
-    assert "Reconciled to the state caseload" in html
+    assert "The total comes from enrollment, not a model" in html
     assert "community-development investment under the CRA investment test" in html
     # page 1 headline is anchored on actual CalFresh enrollment, so it reconciles
     # with the state caseload (eligible must exceed the enrolled count, never sit
@@ -1061,7 +1061,7 @@ def test_platform_evidence_page_present_and_state_aware():
     assert "Rule cited, dated" in ca
     assert "running record" in ca                               # in the barrier table
     assert "self-select out" in ca                              # intent copy, not a screen caption
-    assert "limited-English-proficient" in ca                   # languages barrier row
+    assert "wrong-language forms" in ca                         # languages barrier row (documented evidence)
     assert "estimates, never decides" in ca                     # the safeguards rail (county decides)
     assert "general chatbot" not in ca                           # thesis no longer contrasts against a chatbot
     assert "3 / 4" in ca and "4 / 4" in ca                       # renumbered
