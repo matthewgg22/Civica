@@ -217,10 +217,10 @@ def build_values(bank, assumptions, org, metrics, meta):
     state = bank.get("state", "CA")
     if state == "CA":
         credibility_line = (
-            "The need and access figures here are Civica Torrey's own work: a "
-            "reproducible model of 2023 federal ACS microdata, and a review of "
-            "38 California county CalFresh Management Evaluation reports "
-            "(FFY 2024–2025), obtained by public-records (FOIA/CPRA) requests."
+            "The figures here are Civica Torrey's own work: a reproducible model "
+            "of 2023 ACS microdata and a review of 38 California county CalFresh "
+            "Management Evaluation reports (FFY 2024–2025), via public-records "
+            "(FOIA/CPRA) requests."
         )
     else:
         credibility_line = (
@@ -316,7 +316,7 @@ def build_values(bank, assumptions, org, metrics, meta):
             '<td>Plain-language answers, cited rules, a correctable running record</td>'
             '<td class="m">Applications submitted</td></tr>'
             '<tr><td class="b">Language</td>'
-            '<td class="ev">The state’s own county reviews flag wrong-language forms as a denial reason (page 1)</td>'
+            '<td class="ev">State reviews found verification requests not sent in the applicant’s language (page 1)</td>'
             '<td>Answers in Spanish, Vietnamese, Chinese and English</td>'
             '<td class="m">Sessions by language</td></tr>'
             '</tbody></table>'
@@ -336,7 +336,7 @@ def build_values(bank, assumptions, org, metrics, meta):
             'assistant, not a dead end.</p></div>'
             '<div class="why-out"><div class="why-h">The outreach channel</div><ul>'
             '<li><b>Targeted reach:</b> digital outreach delivers to the highest-need LMI tracts at low cost, measurably—the geo-targeting the CRA LMI test rewards.</li>'
-            '<li><b>Phone-first:</b> 16% of U.S. adults are smartphone-only—28% of those under $30k (Pew, 2024).</li>'
+            '<li><b>Phone-first:</b> 16% of U.S. adults are smartphone-only—34% of those under $30k (Pew, 2025).</li>'
             '</ul></div></div>')
         safeguards_line = (
             '<div class="safeguards"><b>Safeguards:</b> estimates, never decides; asks '
@@ -346,9 +346,8 @@ def build_values(bank, assumptions, org, metrics, meta):
         p3_detail_foot = (
             '<div class="p3foot"><b>Independently checkable:</b> a graded ~600-question '
             'set across all 53 jurisdictions (adversarial and crisis cases included), '
-            're-run on every rules change and open to your compliance team. Civica Torrey is in '
-            'the Harvard Innovation Labs incubator; the impact study is available '
-            'on request.</div>')
+            're-run on every rules change and open to your compliance team; the impact '
+            'study is available on request.</div>')
     else:
         evidence_block = (
             '<div class="evidence-foot" style="border-top:none;margin-top:7px;padding-top:0;">'
@@ -481,12 +480,6 @@ def build_values(bank, assumptions, org, metrics, meta):
         "aa_label": aa_label,
         "prepared_date": datetime.date.today().strftime("%B %Y"),
         "headline_unenrolled": fmt_int(round(need["unenrolled"])),
-        # Headline display is rounded to the nearest 10,000 with a "~": USDA's
-        # participation rate is a point estimate with real uncertainty, so a
-        # six-digit figure would imply precision we don't have (see the
-        # sensitivity range on page 4). The precise point estimate still drives
-        # every derived figure and the ORACLE CHECK.
-        "headline_round": "~" + fmt_int(round(need["unenrolled"] / 1e4) * 1e4),
         "recon_note": recon_note,
         "recon_method_bullet": recon_method_bullet,
         "sensitivity_bullet": sensitivity_bullet,

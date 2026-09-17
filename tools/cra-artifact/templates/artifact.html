@@ -218,7 +218,7 @@
   /* CA page 3: demo bleeds left, the five explainers stack in a column to its right */
   .demo-row { display:flex; gap:.24in; margin-top:8px; margin-left:-0.46in; align-items:flex-start; }
   .demo-col { flex:0 0 auto; }
-  .demo-col .chatshot { height:4.28in; }
+  .demo-col .chatshot { height:4.12in; }
   .legend-col { flex:1; min-width:0; padding-top:2px; }
   .legend-head { font-size:7.4pt; letter-spacing:.07em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:8px; line-height:1.3; }
   .legend-col .chat-legend { display:block; margin-top:0; }
@@ -285,7 +285,7 @@
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
   <div class="body-zone">
     <div class="zone-head">
-      <div class="big serif">[[headline_round]]</div>
+      <div class="big serif">[[headline_unenrolled]]</div>
       <div class="head-sentence">eligible residents of <em>your assessment area</em> are not enrolled in [[program_ref]]&mdash;an estimated <em>[[benefit_range]] a year</em> in unclaimed federal nutrition dollars that would be spent in [[aa_label]] grocery stores.</div>
       [[ratio_line]]
     </div>
@@ -294,7 +294,7 @@
         <div class="core-cap">Unmet need in your CRA assessment area</div>
         <table class="core">
           <tr><td class="k">Eligible residents (est.)</td><td class="v">[[eligible_fmt]]<small>income-eligible for SNAP</small></td></tr>
-          <tr><td class="k">Eligible, not enrolled</td><td class="v">[[headline_round]]<small>[[aa_unenrolled_pct]]% at USDA's participation rate</small></td></tr>
+          <tr><td class="k">Eligible, not enrolled</td><td class="v">[[headline_unenrolled]]<small>[[aa_unenrolled_pct]]% at USDA's participation rate</small></td></tr>
           <tr><td class="k">Benefit per household</td><td class="v">$[[benefit_monthly]]/mo<small>per eligible household</small></td></tr>
           <tr class="ask"><td class="k">Campaign funding ask</td><td class="v">$[[ask_fmt]]</td></tr>
         </table>
@@ -314,7 +314,7 @@
         <div class="carr solid"></div>
         <div class="cnode">Applications<small>submitted</small></div>
         <div class="carr dash"></div>
-        <div class="cnode">Complete apps<small>fewer denials</small></div>
+        <div class="cnode">Complete apps<small>accurate</small></div>
         <div class="carr dash"></div>
         <div class="cnode">Enrolled<small>benefits received</small></div>
         <div class="carr dash"></div>
@@ -400,7 +400,7 @@
         <tr><td>Applications started</td><td>[[low_started]]</td><td>[[mid_started]]</td><td class="hm">Recorded</td></tr>
         <tr class="key"><td>Applications submitted (primary metric)</td><td>[[low_submitted]]</td><td>[[mid_submitted]]</td><td class="hm">Recorded</td></tr>
         <tr class="band"><td colspan="4">Benefits · consented follow-up panel</td></tr>
-        <tr><td>Approved households (follow-up respondents)</td><td>[[low_approved]]</td><td>[[mid_approved]]</td><td class="hm">Follow-up panel</td></tr>
+        <tr><td>Approved households (projected, all submitters)</td><td>[[low_approved]]</td><td>[[mid_approved]]</td><td class="hm">Follow-up panel, respondents only</td></tr>
         <tr class="key"><td>Est. annual benefits unlocked</td><td>[[low_benefit]]</td><td>[[mid_benefit]]</td><td class="hm">Estimated</td></tr>
         <tr class="band"><td colspan="4">Efficiency</td></tr>
         <tr><td>Cost per submitted application</td><td>[[low_cps]]</td><td>[[mid_cps]]</td><td class="hm">Recorded</td></tr>
@@ -434,7 +434,7 @@
     </div>
   </div>
   <div class="disclose"><strong>Reporting.</strong> You receive an auditable quarterly record of activity in your assessment area&mdash;documentation built to demonstrate a qualified community-development investment under the CRA investment test.</div>
-  <div class="pagefoot"><strong>Method &amp; provenance.</strong> Need estimate&mdash;[[method_bullet]] Corpus: eCFR + 53 dated state/territory packs, re-graded on every rules change. Civica Torrey is in the Harvard Innovation Labs incubator. &nbsp;·&nbsp; [[org_name]], [[status_line]] Contact: [[contact_name]], [[contact_email]][[contact_phone_line]]. Determination letter available on request.</div>
+  <div class="pagefoot"><strong>Method &amp; provenance.</strong> Need estimate&mdash;[[method_bullet]] Corpus: eCFR + 53 dated state/territory packs, re-graded on every rules change. Civica Torrey is in the Harvard Innovation Labs incubator. &nbsp;·&nbsp; [[org_name]], [[status_line]] Contact: [[contact_name]], [[contact_email]][[contact_phone_line]].</div>
   <div class="pagenum">4 / 4</div>
 </div>
 </body></html>
