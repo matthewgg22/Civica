@@ -1061,7 +1061,7 @@ def test_platform_evidence_page_present_and_state_aware():
     assert "Rule cited, dated" in ca
     assert "running record" in ca                               # in the barrier table
     assert "self-select out" in ca                              # intent copy, not a screen caption
-    assert "wrong-language forms" in ca                         # languages barrier row (documented evidence)
+    assert "not sent in the applicant" in ca                    # languages barrier row (documented evidence)
     assert "estimates, never decides" in ca                     # the safeguards rail (county decides)
     assert "general chatbot" not in ca                           # thesis no longer contrasts against a chatbot
     assert "3 / 4" in ca and "4 / 4" in ca                       # renumbered
