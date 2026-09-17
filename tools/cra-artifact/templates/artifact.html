@@ -24,7 +24,7 @@
   .letterhead .org { font-size:9pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent); white-space:nowrap; }
   .letterhead .doc { font-size:8pt; color:var(--muted); white-space:nowrap; padding-left:12px; }
   h2.pagehead { font-family:'Newsreader',serif; font-size:21pt; font-weight:600; letter-spacing:-.01em; color:var(--ink); margin-top:22px; }
-  .pagefoot { border-top:1px solid var(--rule); margin-top:auto; padding-top:7px; font-size:6.3pt; line-height:1.46; color:var(--muted); }
+  .pagefoot { border-top:1px solid var(--rule); margin-top:auto; padding-top:7px; font-size:6.3pt; line-height:1.46; color:var(--muted); text-wrap:pretty; }
   .pagenum { position:absolute; bottom:.18in; left:.7in; right:.7in; text-align:center; font-size:7pt; letter-spacing:.12em; color:var(--muted); }
 
   /* ---------- Page 1—the need ---------- */
@@ -100,12 +100,12 @@
 
   /* ---------- Page 2—program + ask ---------- */
   .cred { font-family:'Newsreader',serif; font-size:12.5pt; line-height:1.5; color:var(--ink); margin-top:14px; max-width:6.4in; }
-  .thesis { font-family:'Newsreader',serif; font-size:11.5pt; line-height:1.34; color:var(--ink); margin-top:6px; max-width:6.7in; }
-  .body-block { font-size:10pt; line-height:1.52; color:var(--body); margin-top:14px; max-width:6.5in; }
+  .thesis { font-family:'Newsreader',serif; font-size:11.5pt; line-height:1.34; color:var(--ink); margin-top:6px; max-width:6.7in; text-wrap:pretty; }
+  .body-block { font-size:10pt; line-height:1.52; color:var(--body); margin-top:14px; max-width:6.5in; text-wrap:pretty; }
   .body-block h3 { font-family:'Newsreader',serif; font-size:13pt; font-weight:600; color:var(--ink); margin-bottom:4px; }
   /* Provenance line—one quiet, substantiable statement of why the analysis
-     here is Civica's own work (reviewer ask). No traction claim. */
-  .provenance { font-size:9pt; line-height:1.46; color:var(--body); margin-top:15px; max-width:6.5in; text-wrap:pretty; }
+     here is Civica Torrey's own work (reviewer ask). No traction claim. */
+  .provenance { font-size:9pt; line-height:1.46; color:var(--body); margin-top:10px; max-width:6.5in; text-wrap:pretty; }
   .body-block .run-in { color:var(--ink); font-weight:600; }
   .provenance b { color:var(--ink); font-weight:600; }
   /* Causal chain as DELIVERABLES: a horizontal flow the bank receives. Solid
@@ -119,6 +119,7 @@
   .chain-key i { display:inline-block; width:15px; height:0; vertical-align:middle; margin:0 3px 0 8px; }
   .chain-key .k-solid { border-top:2px solid var(--accent); }
   .chain-key .k-dash { border-top:2px dashed var(--muted); }
+  .chain-key .k-wheat { border-top:2.5px solid var(--wheat); }
   .chain-row { display:flex; align-items:stretch; gap:0; }
   .cnode { flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; text-align:center;
     font-size:8pt; font-weight:600; color:var(--ink); line-height:1.12; padding:7px 5px;
@@ -138,36 +139,36 @@
   /* The chain's final link drops (a wheat connector) into a highlighted payoff
      box that states the household-finances impact, so the research pays the chain
      off visually instead of hiding in a footnote. */
-  .fin-wrap { position:relative; margin-top:14px; }
-  /* wheat connector: the chain's flow turns down from the Household-finances node
-     into the impact box (a curved elbow arrow, drawn as inline SVG for clean
-     alignment rather than fussy pseudo-elements) */
-  .fin-arrow { position:absolute; top:-15px; right:5.5%; width:46px; height:17px; overflow:visible; }
+  .fin-wrap { position:relative; margin-top:16px; }
+  /* wheat connector: the flow exits the RIGHT of the Household-finances node,
+     makes a sideways U-turn, and drops back down into the impact box. Inline SVG
+     positioned at the top-right so the loop sits in the right margin. */
+  .fin-arrow { position:absolute; top:-18px; right:-30px; width:48px; height:28px; overflow:visible; }
   .fin-box { border:1.6px solid var(--wheat); border-radius:3px; background:rgba(232,197,71,.10); padding:7px 13px; }
   .fin-title { font-size:7.6pt; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:6px; }
-  .fin-stats { display:flex; gap:20px; }
-  .fin-stats > div { flex:1; font-size:7.8pt; line-height:1.28; color:var(--muted); }
+  .fin-stats { display:flex; gap:20px; align-items:center; }
+  .fin-stats > div { flex:1; font-size:7.8pt; line-height:1.28; color:var(--muted); text-align:center; }
   .fin-stats b { display:block; font-family:'Newsreader',serif; font-size:14pt; font-weight:600; color:var(--ink); line-height:1; margin-bottom:3px; }
   .fin-src { font-size:6.8pt; line-height:1.35; color:var(--muted); margin-top:7px; text-wrap:pretty; }
-  .tiers { display:flex; gap:.22in; margin-top:17px; }
-  .tier { flex:1; border:1px solid var(--rule); border-top:3px solid var(--accent); border-radius:2px; padding:15px 12px; }
+  .tiers { display:flex; gap:.22in; margin-top:11px; }
+  .tier { flex:1; border:1px solid var(--rule); border-top:3px solid var(--accent); border-radius:2px; padding:11px 12px; }
   .tier.lead { background:var(--tint); }
   .tier .name { font-size:8pt; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; }
   .tier .amt { font-family:'Newsreader',serif; font-size:15.5pt; font-weight:600; color:var(--ink); margin-top:3px; white-space:nowrap; }
   .tier .desc { font-size:8.6pt; line-height:1.45; color:var(--muted); margin-top:6px; }
   .split { margin-top:7px; font-size:9pt; line-height:1.45; color:var(--body); max-width:6.6in; }
   .split strong { color:var(--ink); }
-  .close { margin-top:auto; margin-bottom:4px; padding-top:7px; border-top:2px solid var(--accent); display:flex; justify-content:space-between; align-items:baseline; gap:16px; }
+  .close { margin-top:auto; margin-bottom:2px; padding-top:6px; border-top:2px solid var(--accent); display:flex; justify-content:space-between; align-items:baseline; gap:16px; }
   .close .close-line { font-family:'Newsreader',serif; font-size:12.5pt; font-weight:500; color:var(--ink); max-width:4.6in; line-height:1.3; }
   .close .who { font-size:9.5pt; color:var(--body); text-align:right; white-space:nowrap; }
   .brightline { font-size:8pt; color:var(--muted); max-width:6.6in; }
-  .crafile { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:9px 14px; margin-top:16px; }
+  .crafile { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:8px 14px; margin-top:11px; }
   .crafile-cap { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:5px; }
   .cra-dl { width:100%; border-collapse:collapse; }
-  .cra-dl td { font-size:8.4pt; line-height:1.38; color:var(--body); padding:3px 0; vertical-align:middle; border-bottom:1px solid var(--rule); }
+  .cra-dl td { font-size:8.4pt; line-height:1.36; color:var(--body); padding:2px 0; vertical-align:middle; border-bottom:1px solid var(--rule); text-wrap:pretty; }
   .cra-dl tr:last-child td { border-bottom:none; }
   .cra-dl td.l { width:1.25in; font-weight:600; color:var(--ink); padding-right:12px; white-space:nowrap; }
-  .cra-foot { font-size:7.4pt; line-height:1.4; color:var(--muted); margin-top:7px; }
+  .cra-foot { font-size:7.4pt; line-height:1.4; color:var(--muted); margin-top:7px; text-wrap:pretty; }
   /* page-3 projection banner */
   .projwarn { font-size:9pt; letter-spacing:.06em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-top:10px; }
 
@@ -179,7 +180,7 @@
   table.report thead th { background:rgba(192,85,59,.09); }
   table.report { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; border:1px solid var(--rule-strong); }
   table.report caption { text-align:left; font-size:8.4pt; color:var(--muted); margin-bottom:6px; caption-side:top; line-height:1.4; text-wrap:pretty; }
-  .funnel-note { font-size:8.8pt; line-height:1.4; color:var(--ink); font-weight:500; margin-top:5px; }
+  .funnel-note { font-size:8.8pt; line-height:1.4; color:var(--ink); font-weight:500; margin-top:5px; text-wrap:pretty; }
   table.report th { background:var(--tint); border-bottom:2px solid var(--rule-strong); font-size:8.4pt; font-weight:600; text-align:right; padding:4px 9px; color:var(--ink); }
   table.report th:first-child { text-align:left; }
   table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:3.4px 9px; }
@@ -191,7 +192,7 @@
      Follow-up), replacing the old "observed in-product" band labels */
   table.report th.hm, table.report td.hm { text-align:left; }
   table.report td.hm { font-size:7.5pt; font-weight:400; color:var(--muted); padding-left:14px; }
-  .repnote { font-size:7.8pt; color:var(--body); margin-top:5px; line-height:1.38; max-width:6.8in; }
+  .repnote { font-size:7.8pt; color:var(--body); margin-top:5px; line-height:1.38; max-width:6.8in; text-wrap:pretty; }
   .appx { display:flex; gap:.34in; margin-top:8px; }
   .appx .col { flex:1; }
   .appx h3 { font-family:'Newsreader',serif; font-size:11pt; font-weight:600; color:var(--ink); margin:0 0 3px; }
@@ -246,7 +247,8 @@
   .qrbox .qr svg { width:100%; height:auto; display:block; }
   .qr-txt { font-size:7.8pt; line-height:1.4; color:var(--body); }
   .qr-txt strong { color:var(--ink); }
-  .qr-txt .url { white-space:nowrap; }
+  .qr-txt .url { white-space:nowrap; font-size:7.0pt; letter-spacing:-.01em; }
+  .legend-qr .url { font-size:6.4pt; }
   /* Page 3 v2: barrier table + why-chatbot/why-outreach + safeguards + detail foot */
   .barriers { width:100%; border-collapse:collapse; margin-top:9px; }
   .barriers th { text-align:left; font-size:6.9pt; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); font-weight:600; border-bottom:1.5px solid var(--accent); padding:0 9px 4px 0; vertical-align:bottom; }
@@ -298,10 +300,10 @@
     </div>
     <div class="why">
       <div class="why-cap">What is the Supplemental Nutrition Assistance Program (SNAP)?</div>
-      <p>SNAP (food stamps) is monthly grocery money for low- and moderate-income households. Most who qualify but never enroll are stopped by the process, not the rules&mdash;so Civica's free assistant answers their questions in plain language and guides them through the application.</p>
+      <p>SNAP (food stamps) is monthly grocery money for low- and moderate-income households. Most who qualify but never enroll are stopped by the process, not the rules&mdash;so Demeter, Civica Torrey's free online platform for [[program_ref]], answers their questions in plain language and guides them through the application.</p>
     </div>
     <div class="chain">
-      <div class="chain-cap"><span>What the grant sets in motion</span><span class="chain-key"><i class="k-solid"></i>recorded &amp; reported quarterly<i class="k-dash"></i>estimated / research</span></div>
+      <div class="chain-cap"><span>What the grant sets in motion</span><span class="chain-key"><i class="k-solid"></i>recorded &amp; reported quarterly<i class="k-dash"></i>estimated / research<i class="k-wheat"></i>financial impact</span></div>
       <div class="chain-row">
         <div class="cnode start">Grant</div>
         <div class="carr solid"></div>
@@ -315,12 +317,12 @@
         <div class="carr dash"></div>
         <div class="cnode end">Household<small>finances</small></div>
       </div>
-      <div class="fin-wrap"><svg class="fin-arrow" viewBox="0 0 46 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 4 H26 Q36 4 36 13 V15" fill="none" stroke="#E8C547" stroke-width="2.4" stroke-linecap="round"/><path d="M31.5 14 L36 20 L40.5 14 Z" fill="#E8C547"/></svg><div class="fin-box">
+      <div class="fin-wrap"><svg class="fin-arrow" viewBox="0 0 48 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 4 H28 Q42 4 42 13 Q42 23 28 23 H20" fill="none" stroke="#E8C547" stroke-width="2.4" stroke-linecap="round"/><path d="M25 18 L17 23 L25 28 Z" fill="#E8C547"/></svg><div class="fin-box">
         <div class="fin-title">Impact of SNAP enrollment to household finances</div>
         <div class="fin-stats">
           <div><b>$2,436</b>less credit-card debt by year three</div>
           <div><b>10.1 pts</b>lower likelihood of a delinquent account</div>
-          <div><b>~17 pts</b>higher credit score, from 634 (the softest of the three effects)</div>
+          <div><b>~17 pts</b>higher credit score, from 634</div>
         </div>
         <div class="fin-src">Research on procedurally-denied SNAP applicants (~62,000 Los Angeles applicants, admin records linked to credit reports; Homonoff, Lee &amp; Meckel, NBER WP 34434, 2025 draft)&mdash;the debt and delinquency effects are the firmest. Not a measurement of [[org_name]]'s program.</div>
       </div></div>
@@ -334,8 +336,8 @@
 <!-- PAGE 2—the program + the ask -->
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
-  <h2 class="pagehead">A benefits-access pilot for [[bank_name]]</h2>
-  <div class="body-block" style="margin-top:12px;"><b class="run-in">The program.</b> It combines the reach of digital outreach with the accuracy of a one-on-one assister, and every answer traces to the governing rule. Civica provides free [[program_ref]] application assistance&mdash;the same service a county-designated assister or food-bank navigator provides&mdash;available across your whole assessment area, with geo-targeted outreach aimed at the highest-need tracts. It answers from [[state_name]]'s SNAP rules and guides residents to a submitted, accurate application; because its marginal cost is near zero, one grant can fund the campaign area-wide.
+  <h2 class="pagehead">A benefits-access campaign for [[bank_name]]</h2>
+  <div class="body-block" style="margin-top:12px;"><b class="run-in">The campaign.</b> It combines the reach of digital outreach with the accuracy of a one-on-one assister, and every answer traces to the governing rule. Demeter provides free [[program_ref]] application assistance&mdash;the same service a county-designated assister or food-bank navigator provides&mdash;available across your whole assessment area, with geo-targeted outreach aimed at the highest-need tracts. It answers from [[state_name]]'s SNAP rules and guides residents to a submitted, accurate application; because its marginal cost is near zero, one grant can fund the campaign area-wide.
   </div>
   <div class="provenance"><b>Why these numbers.</b> [[credibility_line]]</div>
   [[bank_specific_block]]
@@ -393,7 +395,7 @@
         <tr class="band"><td colspan="4">Applications</td></tr>
         <tr><td>Applications started</td><td>[[low_started]]</td><td>[[mid_started]]</td><td class="hm">Recorded</td></tr>
         <tr class="key"><td>Applications submitted (primary metric)</td><td>[[low_submitted]]</td><td>[[mid_submitted]]</td><td class="hm">Recorded</td></tr>
-        <tr class="band"><td colspan="4">Benefits · consented follow-up panel, response rate disclosed</td></tr>
+        <tr class="band"><td colspan="4">Benefits · consented follow-up panel</td></tr>
         <tr><td>Est. approved households</td><td>[[low_approved]]</td><td>[[mid_approved]]</td><td class="hm">Follow-up panel</td></tr>
         <tr class="key"><td>Est. annual benefits unlocked</td><td>[[low_benefit]]</td><td>[[mid_benefit]]</td><td class="hm">Estimated</td></tr>
         <tr class="band"><td colspan="4">Efficiency</td></tr>
@@ -401,7 +403,7 @@
       </tbody>
     </table>
     <div class="funnel-note">[[funnel_note]]</div>
-    <div class="repnote">The mid-range uses conservative all-user conversion rates, not engaged-user figures. For reference, in Civica's Baker-grant impact study (N=800) applicants with five or more queries submitted at ~74% and were approved at ~68%. Set version [[assumptions_version]].</div>
+    <div class="repnote">The mid-range uses conservative all-user conversion rates, not engaged-user figures. For reference, in Civica Torrey's Baker-grant impact study (N=800) applicants with five or more queries submitted at ~74% and were approved at ~68%. Set version [[assumptions_version]].</div>
   </div>
   <div class="appx">
     <div class="col">
@@ -410,6 +412,11 @@
         <li><strong>Attribution:</strong> neighborhoods launch in waves, so each quarter compares reached tracts against not-yet-reached ones&mdash;an attributable estimate, not just a funnel count. Every "recorded" row above is a system event from the assistant on page 3.</li>
         <li><strong>Follow-up:</strong> an opt-in 30/60-day check-in; we disclose the response rate and report outcomes only for those who respond, without extrapolating.</li>
         <li><strong>Payment:</strong> never tied to enrollment counts&mdash;you fund the outreach and the auditable record, not outcomes.</li>
+      </ul>
+      <h3 class="n2">Geography &amp; vintages</h3>
+      <ul>
+        <li>Assessment area: the [[pe_date]] CRA PE ([[regulator]]); [[aa_counties_list]].</li>
+        <li>2023 ACS 1-Year PUMS; 2020 tract-to-PUMA crosswalk; USDA FNA FY2024 benefits; generated [[prepared_date]].</li>
       </ul>
     </div>
     <div class="col">
@@ -420,15 +427,10 @@
         <li><strong>Known bias, disclosed:</strong> a gross-income proxy and ACS under-reporting push the estimate <em>upward</em>, so read it as an upper range of unmet need.</li>
         <li>[[hr1_bullet]]</li>
       </ul>
-      <h3 class="n2">Geography &amp; vintages</h3>
-      <ul>
-        <li>Assessment area: the [[pe_date]] CRA PE ([[regulator]]); [[aa_counties_list]].</li>
-        <li>2023 ACS 1-Year PUMS; 2020 tract-to-PUMA crosswalk; USDA FNA FY2024 benefits; generated [[prepared_date]].</li>
-      </ul>
     </div>
   </div>
   <div class="disclose"><strong>Reporting.</strong> You receive an auditable quarterly record of activity in your assessment area&mdash;documentation built to demonstrate a qualified community-development investment under the CRA investment test.</div>
-  <div class="pagefoot"><strong>Method &amp; provenance.</strong> Need estimate&mdash;[[method_bullet]] Corpus: eCFR + 53 dated state/territory packs, re-graded on every rules change. Civica is in the Harvard Innovation Labs incubator. &nbsp;·&nbsp; [[org_name]], [[status_line]] Contact: [[contact_name]], [[contact_email]][[contact_phone_line]]. Determination letter available on request.</div>
+  <div class="pagefoot"><strong>Method &amp; provenance.</strong> Need estimate&mdash;[[method_bullet]] Corpus: eCFR + 53 dated state/territory packs, re-graded on every rules change. Civica Torrey is in the Harvard Innovation Labs incubator. &nbsp;·&nbsp; [[org_name]], [[status_line]] Contact: [[contact_name]], [[contact_email]][[contact_phone_line]]. Determination letter available on request.</div>
   <div class="pagenum">4 / 4</div>
 </div>
 </body></html>

@@ -193,14 +193,14 @@ def build_values(bank, assumptions, org, metrics, meta):
     state = bank.get("state", "CA")
     if state == "CA":
         credibility_line = (
-            "The need and access figures here are Civica's own work: a "
+            "The need and access figures here are Civica Torrey's own work: a "
             "reproducible model of 2023 federal ACS microdata, and a review of "
             "38 California county CalFresh Management Evaluation reports "
             "(FFY 2024–2025), obtained by public-records (FOIA/CPRA) requests."
         )
     else:
         credibility_line = (
-            "The need estimate here is Civica's own analysis: a survey-weighted "
+            "The need estimate here is Civica Torrey's own analysis: a survey-weighted "
             "estimate built directly from 2023 federal ACS microdata, "
             "reproducible from public sources."
         )
@@ -213,7 +213,7 @@ def build_values(bank, assumptions, org, metrics, meta):
     # every other bank renders nothing here.
     _bank_note = bank.get("bank_specific_note", "").strip()
     bank_specific_block = (
-        f'<div class="provenance" style="margin-top:11px;"><b>Why {bank["name"]}.'
+        f'<div class="provenance" style="margin-top:8px;"><b>The {bank["name"]} fit.'
         f'</b> {_bank_note}</div>' if _bank_note else "")
     # Page-3 hero: a REAL captured screenshot of the live assistant, referenced by
     # file:// URI so Chrome embeds it into the PDF without a giant base64 blob in
@@ -301,14 +301,14 @@ def build_values(bank, assumptions, org, metrics, meta):
             'forms, information wrongly requested—are a further target; post-submission '
             'reminders are a planned addition.</div>'
             '<div class="whyrow"><div class="why-chat">'
-            '<div class="why-h">Why a chatbot</div>'
+            '<div class="why-h">The chatbot&rsquo;s role</div>'
             '<p>Human application help has the strongest evidence, but it’s capped by staff '
             'hours and cost per case. The assistant offers that kind of help around the clock, in '
             'four languages, at near-zero marginal cost—the pilot tests whether it reproduces '
             'those results.</p></div>'
-            '<div class="why-out"><div class="why-h">Why digital outreach</div><ul>'
+            '<div class="why-out"><div class="why-h">The outreach channel</div><ul>'
             '<li><b>Aimed at need:</b> geo-targeted to LMI tracts—the targeting the CRA LMI test rewards.</li>'
-            '<li><b>Where people are:</b> 16% of U.S. adults are smartphone-only, far more among households under $30k (Pew).</li>'
+            '<li><b>Phone-first:</b> 16% of U.S. adults are smartphone-only, far more among households under $30k (Pew).</li>'
             '<li><b>Into help, not an ad:</b> an LA trial found social-media ads alone didn’t lift enrollment (Rogers, 2024), so every contact opens straight into the assistant.</li>'
             '</ul></div></div>')
         safeguards_line = (
@@ -318,7 +318,7 @@ def build_values(bank, assumptions, org, metrics, meta):
         p3_detail_foot = (
             '<div class="p3foot"><b>Independently checkable:</b> a graded ~600-question '
             'set across all 53 jurisdictions (adversarial and crisis cases included), '
-            're-run on every rules change and open to your compliance team. Civica is in '
+            're-run on every rules change and open to your compliance team. Civica Torrey is in '
             'the Harvard Innovation Labs incubator; the impact study behind these figures '
             'is available on request.</div>')
     else:
