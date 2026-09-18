@@ -23,7 +23,8 @@ from pathlib import Path
 
 TOOL_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOL_ROOT))
-from src import access_evidence, mapsvg, pumamap, report, score, states  # noqa: E402
+from src import (access_evidence, institution, mapsvg, pumamap,  # noqa: E402
+                 report, score, states)
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
@@ -66,6 +67,20 @@ class UnverifiedBankError(Exception):
 def load_inputs():
     inputs = TOOL_ROOT / "inputs"
     banks = json.loads((inputs / "assessment_areas.json").read_text())["banks"]
+    # Drop-in institutions: every inputs/banks/<key>.json is one institution,
+    # keyed by its filename. This is the "save a file to add a bank" path — no
+    # edit to the shared roster required. Keys starting with "_" (e.g. _README)
+    # are stripped so a scaffolded stub round-trips cleanly.
+    drop_in = inputs / "banks"
+    if drop_in.is_dir():
+        for f in sorted(drop_in.glob("*.json")):
+            obj = json.loads(f.read_text())
+            obj = {k: v for k, v in obj.items() if not k.startswith("_")}
+            if f.stem in banks:
+                raise ValueError(
+                    f"institution key {f.stem!r} defined in both "
+                    f"assessment_areas.json and inputs/banks/{f.name}")
+            banks[f.stem] = obj
     assumptions = json.loads((inputs / "funnel_assumptions.json").read_text())
     org = json.loads((inputs / "org.json").read_text())
     missing = REQUIRED_ASSUMPTION_KEYS - set(assumptions)
@@ -563,17 +578,74 @@ def html_to_pdf(html_path: Path, pdf_path: Path):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--bank", required=True)
+    ap = argparse.ArgumentParser(
+        description="Generate a personalized CRA memo for a bank or financial "
+                    "institution. Add one by dropping inputs/banks/<key>.json "
+                    "(scaffold it with --scaffold) or editing assessment_areas.json.")
+    ap.add_argument("--bank", help="institution key to render (see --list)")
     ap.add_argument("--send", action="store_true",
                     help="content-hash archive the PDF into sent/")
     ap.add_argument("--html-only", action="store_true")
+    ap.add_argument("--scaffold", metavar="KEY",
+                    help="write a ready-to-fill inputs/banks/<KEY>.json stub and exit")
+    ap.add_argument("--state", default="CA",
+                    help="state code for --scaffold (default CA)")
+    ap.add_argument("--validate", metavar="KEY",
+                    help="report whether an institution is ready to render, and exit")
+    ap.add_argument("--list", action="store_true",
+                    help="list every institution with its state and readiness, and exit")
+    ap.add_argument("--fields", action="store_true",
+                    help="print the per-institution field reference and exit")
     args = ap.parse_args(argv)
 
+    if args.fields:
+        print(institution.field_reference())
+        return 0
+
+    if args.scaffold:
+        dest = TOOL_ROOT / "inputs" / "banks" / f"{args.scaffold}.json"
+        if dest.exists():
+            raise SystemExit(f"refusing to overwrite existing {dest}")
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(json.dumps(institution.scaffold(args.scaffold, args.state),
+                                   indent=2, ensure_ascii=False) + "\n")
+        print(f"Scaffolded {dest}\n"
+              f"Fill the TODOs, then: python3 -m src.generate --validate {args.scaffold}")
+        return 0
+
     banks, assumptions, org = load_inputs()
+
+    if args.list:
+        for key in sorted(banks):
+            b = banks[key]
+            problems = institution.validate(key, b)
+            status = "ready" if not problems else f"{len(problems)} issue(s)"
+            print(f"  {key:26} {b.get('state', 'CA'):3} {status}")
+        return 0
+
+    if args.validate:
+        if args.validate not in banks:
+            raise SystemExit(f"unknown institution {args.validate!r}; "
+                             f"known: {sorted(banks)}")
+        problems = institution.validate(args.validate, banks[args.validate])
+        if not problems:
+            print(f"{args.validate}: ready to render.")
+            return 0
+        print(f"{args.validate}: not ready —")
+        for p in problems:
+            print(f"  - {p}")
+        return 1
+
+    if not args.bank:
+        ap.error("one of --bank, --scaffold, --validate, --list, or --fields is required")
     if args.bank not in banks:
-        raise KeyError(f"unknown bank key {args.bank!r}; known: {sorted(banks)}")
+        raise SystemExit(f"unknown institution {args.bank!r}; known: {sorted(banks)}")
     bank = banks[args.bank]
+    problems = institution.validate(args.bank, bank)
+    if problems:
+        msg = "\n".join(f"  - {p}" for p in problems)
+        raise SystemExit(f"{args.bank} is not ready to render:\n{msg}\n"
+                         f"(run `--validate {args.bank}` any time to re-check)")
     meta = states.state_meta(bank.get("state", "CA"))
     metrics = score.load_county_metrics(meta["metrics"])
     values, need = build_values(bank, assumptions, org, metrics, meta)

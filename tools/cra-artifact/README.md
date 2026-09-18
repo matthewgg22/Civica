@@ -13,10 +13,26 @@ python3 -m src.generate --bank bank_irvine --send     # + content-hash copy in s
 python3 -m pytest tests/ -q                           # 19 tests: golden fixture + edge cases + PDF smoke
 ```
 
-## Adding a bank
-1. Read the bank's public CRA Performance Evaluation (FFIEC/regulator site); find its assessment-area counties.
-2. Add an entry to `inputs/assessment_areas.json` (CERT, counties, PE date/URL, ask). Leave `verified: false` until Matthew re-reads the PE — `--send` enforces this.
-3. Run the generator. If an AA county has no metrics coverage it renders gray and is excluded from figures (listed in the p1 footer); if NO county is covered, the build fails.
+## Adding a bank or financial institution
+
+Every value on the page is either shared org copy (`inputs/org.json`), state-driven copy (`src/states.py`, chosen by the institution's `state`), or computed from its assessment-area counties. So personalizing the memo for a new institution is **just filling a small per-institution config** — nothing in the template changes. The full field list, with what each one drives, is `src/institution.py` (or `--fields`).
+
+```bash
+python3 -m src.generate --fields                 # every per-institution field + what it controls
+python3 -m src.generate --list                   # the whole roster with each institution's readiness
+python3 -m src.generate --scaffold preferred_bank --state CA   # writes inputs/banks/preferred_bank.json stub
+#   ... read the PE, fill name / aa_counties / ask_usd / pe_date / regulator ...
+python3 -m src.generate --validate preferred_bank             # exactly what (if anything) is still missing
+python3 -m src.generate --bank preferred_bank                 # out/preferred_bank.{html,pdf} + oracle numbers
+```
+
+**Two ways to define an institution** (identical schema):
+- drop a JSON file at `inputs/banks/<key>.json` (the filename is the key — this is the "save a file to add a bank" path), or
+- add an object under `"banks"` in `inputs/assessment_areas.json` (the original roster).
+
+**Required fields:** `name`, `aa_counties`, `ask_usd`, `pe_date`, `regulator` (FDIC/OCC/FRB — selects the CRA rule part). `state` defaults to CA and **must be wired in `src/states.py`** (its SNAP fact base + participation rate); the currently wired states are CA/FL/TX/NY/AZ/KY/TN/AR/SC/MS. Leave `verified: false` until the PE is re-read — `--send` refuses to archive an unverified institution.
+
+`--validate` (and the preflight that runs before every render) fails loudly with an actionable list: missing/mistyped required fields, an unrecognized regulator, an unwired state, a county not in that state's metrics, or leftover scaffold placeholders. If an AA county has no metrics coverage it renders gray and is excluded from figures (listed in the p1 footer); if NO county is covered, the build fails.
 
 ## Invariants the tests enforce
 - Score math matches a hand-computable golden fixture (tolerance 1e-9); the CLI prints ORACLE CHECK numbers for the independent spreadsheet verification that gates any send (T5e).
