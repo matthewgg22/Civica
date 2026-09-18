@@ -11,7 +11,8 @@ import pytest
 TOOL_ROOT = Path(__file__).resolve().parents[1]
 import sys
 sys.path.insert(0, str(TOOL_ROOT))
-from src import access_evidence, generate, mapsvg, report, score, states  # noqa: E402
+from src import (access_evidence, generate, institution, mapsvg,  # noqa: E402
+                 report, score, states)
 
 TOL = 1e-9
 
@@ -117,7 +118,8 @@ def test_high_scenario_never_computed(assumptions):
 
 # ---- generator: strict template + input validation --------------------------
 def test_unknown_bank_key_raises():
-    with pytest.raises(KeyError):
+    # unknown key fails the build loudly with an actionable message (the roster)
+    with pytest.raises(SystemExit, match="unknown institution"):
         generate.main(["--bank", "no_such_bank", "--html-only"])
 
 def test_missing_template_field_fails_build():
@@ -1075,3 +1077,81 @@ def test_platform_evidence_page_present_and_state_aware():
     assert 'aspect-ratio:2760/2360' in fl                       # FL uncropped aspect
     assert 'class="cmark"' not in fl and 'class="chat-legend"' not in fl  # no markers/legend on FL
     assert "California" not in fl and "38 county" not in fl      # no CA framing leaks
+
+
+# ---------------------------------------------------------------------------
+# Per-institution config: schema, validation, scaffolding, drop-in files.
+# Adding "any bank or financial institution" must stay a fill-the-fields task
+# that fails loudly when a field, a wired state, or a county is missing.
+# ---------------------------------------------------------------------------
+def test_every_roster_institution_validates():
+    """Every shipped institution renders — no missing field, unwired state, or
+    uncovered county slips into the roster."""
+    banks, _, _ = generate.load_inputs()
+    for key, bank in banks.items():
+        problems = institution.validate(key, bank)
+        assert not problems, f"{key}: {problems}"
+
+
+def test_validate_flags_each_class_of_problem():
+    bad = {"name": "X", "aa_counties": ["Nowhere County"], "ask_usd": "lots",
+           "pe_date": "2024-01-01", "regulator": "SEC", "state": "ZZ"}
+    problems = " | ".join(institution.validate("bad", bad))
+    assert "ask_usd" in problems                       # mistyped number
+    assert "regulator" in problems                     # unknown regulator
+    assert "not wired" in problems                     # unwired state short-circuits county check
+
+
+def test_validate_flags_missing_required_and_bad_county():
+    missing = {"regulator": "FDIC", "state": "CA"}     # no name/counties/ask/date
+    problems = " | ".join(institution.validate("m", missing))
+    assert "missing required field 'name'" in problems
+    assert "missing required field 'aa_counties'" in problems
+    bad_county = {"name": "Y", "aa_counties": ["Los Angeles", "Atlantis"],
+                  "ask_usd": 25000, "pe_date": "2024-01-01", "regulator": "FDIC"}
+    assert any("Atlantis" in p for p in institution.validate("y", bad_county))
+
+
+def test_scaffold_is_complete_but_flagged_until_filled():
+    stub = institution.scaffold("demo", state="CA")
+    for f in institution.REQUIRED:
+        assert f in stub                               # every required field present
+    # a raw scaffold must not validate clean — its placeholders are caught
+    assert any("placeholder" in p for p in institution.validate("demo", stub))
+
+
+def test_dropin_file_is_loaded_and_rendered(tmp_path):
+    """A JSON dropped in inputs/banks/ becomes a renderable institution keyed by
+    its filename, and its per-institution fields personalize the page."""
+    dropin = TOOL_ROOT / "inputs" / "banks" / "__pytest_tmp__.json"
+    dropin.parent.mkdir(parents=True, exist_ok=True)
+    dropin.write_text(json.dumps({
+        "name": "Pytest Example Bank",
+        "aa_counties": ["Los Angeles", "Orange"],
+        "ask_usd": 15000, "pe_date": "2023-06-12",
+        "regulator": "OCC", "state": "CA", "verified": False,
+    }))
+    try:
+        banks, assumptions, org = generate.load_inputs()
+        assert "__pytest_tmp__" in banks
+        assert not institution.validate("__pytest_tmp__", banks["__pytest_tmp__"])
+        meta = states.state_meta("CA")
+        metrics = score.load_county_metrics(meta["metrics"])
+        v, _ = generate.build_values(banks["__pytest_tmp__"], assumptions, org,
+                                     metrics, meta)
+        html = generate.render((TOOL_ROOT / "templates/artifact.html").read_text(), v)
+        assert "Pytest Example Bank" in html
+        assert "12 CFR Part 25" in html                # OCC -> part 25, not FDIC 345
+    finally:
+        dropin.unlink(missing_ok=True)
+
+
+def test_dropin_key_collision_is_an_error():
+    """A drop-in file may not shadow an assessment_areas.json key silently."""
+    dropin = TOOL_ROOT / "inputs" / "banks" / "american_business_bank.json"
+    dropin.write_text('{"name": "dup"}')
+    try:
+        with pytest.raises(ValueError):
+            generate.load_inputs()
+    finally:
+        dropin.unlink(missing_ok=True)
