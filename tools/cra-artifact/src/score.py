@@ -40,13 +40,23 @@ def state_average(metrics):
     return tot_non / tot_e
 
 
-def bank_need(aa_counties, metrics, assumptions):
+def bank_need(aa_counties, metrics, assumptions, reconcile_rate=None, caseload=None):
     """Compute the artifact's numbers for a bank's assessment-area counties.
 
     Returns a dict with absolute-need headline numbers, the (possibly
     suppressed) disproportionality ratio, and data-gap notes. Counties present
     in the AA but absent from the metrics are recorded as gaps (rendered gray,
     never zero) — but if ALL AA counties are missing, that's a hard error.
+
+    `reconcile_rate` is a state's USDA-published SNAP PARTICIPATION rate (e.g.
+    0.81 for CA/FL, FY2022). When supplied, the headline eligible-but-unenrolled
+    count is reported as eligible x (1 - participation_rate) rather than the raw
+    ACS/model non-enrollment rate. The eligible base is unchanged — it matches
+    USDA's independent state estimate within ~1% — but the model's raw
+    non-enrollment rate is inflated by well-documented survey under-reporting of
+    SNAP receipt, so USDA's published rate is the defensible figure. The raw
+    modeled values are still returned (model_unenrolled / model_aa_rate) so the
+    reconciliation can be disclosed rather than hidden.
     """
     covered, gaps = [], []
     for c in aa_counties:
@@ -54,10 +64,37 @@ def bank_need(aa_counties, metrics, assumptions):
     if not covered:
         raise DataGapError(f"no metrics coverage for any AA county: {aa_counties}")
 
-    eligible = sum(metrics[c]["eligible_pop"] for c in covered)
-    unenrolled = sum(metrics[c]["eligible_pop"] * metrics[c]["non_enroll_rate"] for c in covered)
-    aa_rate = unenrolled / eligible
+    model_eligible = sum(metrics[c]["eligible_pop"] for c in covered)
+    model_unenrolled = sum(metrics[c]["eligible_pop"] * metrics[c]["non_enroll_rate"]
+                           for c in covered)
+    model_aa_rate = model_unenrolled / model_eligible
     state_rate = state_average(metrics)
+
+    # Anchor the eligible base on the state's ACTUAL enrolled caseload when it is
+    # available (CA). A model-only eligible base is drawn on federal SNAP rules
+    # (~130% FPL) and comes out BELOW real enrollment, because California runs
+    # Broad-Based Categorical Eligibility (200% FPL) — so "eligible < enrolled"
+    # and the headline can't be reconciled against CDSS. Anchoring eligible =
+    # enrolled / participation_rate makes it reconcile with the caseload by
+    # construction. Requires caseload for every covered county; otherwise the
+    # model base is used (FL, and any AA the caseload file does not cover).
+    aa_enrolled = None
+    caseload_anchored = bool(
+        reconcile_rate is not None and caseload
+        and all(c in caseload for c in covered))
+    if caseload_anchored:
+        aa_enrolled = sum(caseload[c] for c in covered)
+        eligible = aa_enrolled / reconcile_rate
+    else:
+        eligible = model_eligible
+
+    reconciled = reconcile_rate is not None
+    if reconciled:
+        aa_rate = 1 - reconcile_rate
+        unenrolled = eligible * aa_rate
+    else:
+        aa_rate = model_aa_rate
+        unenrolled = model_unenrolled
     ratio = aa_rate / state_rate
 
     hh = assumptions["household_size_eligible"]
@@ -72,12 +109,20 @@ def bank_need(aa_counties, metrics, assumptions):
         "gap_counties": gaps,
         "eligible": eligible,
         "unenrolled": unenrolled,
+        "reconciled": reconciled,
+        "caseload_anchored": caseload_anchored,
+        "aa_enrolled": aa_enrolled,
+        "model_eligible": model_eligible,
+        "model_unenrolled": model_unenrolled,
+        "model_aa_rate": model_aa_rate,
         "aa_enrolled_pct": (1 - aa_rate) * 100,
         "state_enrolled_pct": (1 - state_rate) * 100,
         "ratio": ratio,
         # Ratio suppression rule (design review Pass 2 / eng tension T2):
         # show only where favorable AND robust; threshold lives in assumptions.
-        "show_ratio": ratio >= threshold,
+        # A reconciled AA carries a flat USDA rate (no county disproportionality
+        # to claim), so the ratio line is suppressed there by design.
+        "show_ratio": (not reconciled) and ratio >= threshold,
         "benefit_low_usd": benefit_low,
         "benefit_high_usd": benefit_high,
         "avg_household_monthly_usd": monthly,

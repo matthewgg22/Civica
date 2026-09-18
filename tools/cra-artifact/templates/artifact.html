@@ -1,8 +1,9 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><title>[[org_name]] — [[bank_name]]</title>
+<html><head><meta charset="utf-8"><title>[[org_name]]—[[bank_name]]</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+[[font_faces]]
 <style>
   /* Demeter design system (apps/web/DEMETER-DESIGN.md): terracotta accent,
      Newsreader speaks, Be Vietnam Pro labels, true-white ground, hue-neutral
@@ -20,18 +21,19 @@
   .page { width:8.5in; height:11in; padding:.7in .7in .4in; display:flex; flex-direction:column; page-break-after:always; position:relative; overflow:hidden; }
   .page:last-child { page-break-after:auto; }
   .eyebrow { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); }
+  .scope { font-size:8.4pt; color:var(--muted); margin-top:5px; text-wrap:pretty; }
   .letterhead { display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid var(--accent); padding-bottom:8px; }
   .letterhead .org { font-size:9pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent); white-space:nowrap; }
   .letterhead .doc { font-size:8pt; color:var(--muted); white-space:nowrap; padding-left:12px; }
   h2.pagehead { font-family:'Newsreader',serif; font-size:21pt; font-weight:600; letter-spacing:-.01em; color:var(--ink); margin-top:22px; }
-  .pagefoot { border-top:1px solid var(--rule); margin-top:auto; padding-top:8px; font-size:6.8pt; line-height:1.5; color:var(--muted); }
+  .pagefoot { border-top:1px solid var(--rule); margin-top:auto; padding-top:7px; font-size:6.3pt; line-height:1.46; color:var(--muted); text-wrap:pretty; }
   .pagenum { position:absolute; bottom:.18in; left:.7in; right:.7in; text-align:center; font-size:7pt; letter-spacing:.12em; color:var(--muted); }
 
-  /* ---------- Page 1 — the need ---------- */
+  /* ---------- Page 1—the need ---------- */
   /* body-zone fills the space between letterhead and footer and distributes the
      three blocks (head cluster, numbers, evidence) so slack spreads evenly
      instead of pooling at the bottom. */
-  .body-zone { flex:1; display:flex; flex-direction:column; justify-content:space-between; padding:18px 0 4px; }
+  .body-zone { flex:1; display:flex; flex-direction:column; justify-content:space-between; padding:13px 0 4px; }
   .big { font-family:'Newsreader',serif; font-size:58pt; line-height:.95; letter-spacing:-.015em; color:var(--ink); }
   .head-sentence { font-family:'Newsreader',serif; font-size:15pt; line-height:1.34; color:var(--ink); margin-top:7px; max-width:6.7in; }
   .head-sentence em { font-style:normal; box-shadow:inset 0 -0.13em 0 var(--wheat); }
@@ -47,14 +49,14 @@
   table.core { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
   table.core caption { text-align:left; }
   .core-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:4px; }
-  table.core td { padding:6px 2px; border-bottom:1px solid var(--rule); vertical-align:baseline; }
+  table.core td { padding:8px 2px; border-bottom:1px solid var(--rule); vertical-align:baseline; }
   table.core tr:last-child td { border-bottom:none; }
   table.core td.k { font-size:9.5pt; color:var(--body); white-space:nowrap; }
   table.core td.v { text-align:right; font-family:'Newsreader',serif; font-size:14pt; font-weight:600; color:var(--ink); white-space:nowrap; padding-left:8px; }
   table.core td.v small { font-family:'Be Vietnam Pro',sans-serif; font-size:8pt; font-weight:500; color:var(--muted); display:block; margin-top:1px; }
-  table.core tr.ask td { border-top:2px solid var(--accent); padding-top:9px; }
+  table.core tr.ask td { border-top:2px solid var(--accent); padding-top:11px; }
   table.core tr.ask td.k { color:var(--accent-deep); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:8.4pt; white-space:normal; padding-right:10px; }
-  table.core tr.ask td.v { color:var(--accent-deep); }
+  table.core tr.ask td.v { color:var(--accent-deep); font-size:18.5pt; }
   /* per-county unmet-need breakdown (replaces the flat AA choropleth):
      county + count on one line, a full-width proportional bar beneath. */
   .brk-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:8px; }
@@ -67,21 +69,20 @@
   .brk .n { font-family:'Newsreader',serif; font-size:11.5pt; font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums; }
   .brk .track { height:7px; background:var(--tint); border-radius:2px; overflow:hidden; }
   .brk .bar { display:block; height:100%; background:var(--accent); border-radius:2px; }
-  /* Sub-county PUMA choropleth (replaces the county bars where we have geometry) */
-  .geo-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:7px; }
+  /* Ranked bar chart of the highest-need neighborhoods (PUMAs) + a small locator */
+  .geo-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--muted); margin-bottom:5px; }
   .geomap svg { width:100%; height:auto; display:block; }
-  .geo-legend { margin-top:8px; font-size:6.8pt; color:var(--body); }
-  .geo-scale { width:100%; height:7px; border-radius:2px; display:block;
-    background:linear-gradient(90deg,#F3D9CF,#E3AE9A,#D08466,#B9613F,#8E3A26); }
-  .geo-ticks { display:flex; justify-content:space-between; margin-top:3px; color:var(--body); font-variant-numeric:tabular-nums; }
-  .geo-legcap { margin-top:2px; color:var(--muted); }
-  .geo-src { font-size:6.6pt; line-height:1.4; color:var(--muted); margin-top:6px; }
+  .geo-bars svg { width:100%; height:auto; display:block; }
+  .geo-loc { display:flex; align-items:center; gap:7px; margin-top:5px; }
+  .geo-loc svg { width:150px; height:auto; flex:none; }
+  .geo-loc span { font-size:6.6pt; line-height:1.35; color:var(--muted); }
+  .geo-src { font-size:6.6pt; line-height:1.4; color:var(--muted); margin-top:5px; }
   /* Inside .aa-context the CDSS quotes are a sub-part of the geographic-focus
      section, so a light hairline links them rather than the heavy accent rule
      that used to read as a separate section. */
   .me-evidence { border-top:1px solid var(--rule); padding-top:7px; margin-top:7px; }
   .me-evidence .me-label { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-deep); font-weight:600; }
-  .me-evidence .qcards { display:flex; gap:.38in; margin-top:9px; align-items:stretch; }
+  .me-evidence .qcards { display:flex; gap:.38in; margin-top:6px; align-items:stretch; }
   /* equal-height cards + margin-top:auto on the source line so the two source
      credits sit on one shared baseline regardless of quote length */
   .me-evidence .qcard { flex:1; display:flex; flex-direction:column; }
@@ -94,92 +95,198 @@
   /* Geographic focus + the CDSS evidence read as one assessment-area section:
      a single accent rule opens the group, both parts sit beneath it. */
   .aa-context { border-top:1.5px solid var(--accent); margin-top:8px; padding-top:7px; }
-  /* "What SNAP is" — plain explainer, its own section above the research box */
-  .why { border-top:1.5px solid var(--accent); margin-top:9px; padding-top:8px; }
-  .why-cap { font-size:7.6pt; letter-spacing:.11em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:5px; }
+  /* "What SNAP is"—plain explainer, its own section above the research box */
+  .why { border-top:1.5px solid var(--accent); margin-top:7px; padding-top:6px; }
+  .why-cap { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:5px; }
   .why p { font-family:'Newsreader',serif; font-size:11pt; line-height:1.4; color:var(--ink); max-width:6.7in; }
 
-  /* ---------- Page 2 — program + ask ---------- */
+  /* ---------- Page 2—program + ask ---------- */
   .cred { font-family:'Newsreader',serif; font-size:12.5pt; line-height:1.5; color:var(--ink); margin-top:14px; max-width:6.4in; }
-  .body-block { font-size:10pt; line-height:1.5; color:var(--body); margin-top:10px; max-width:6.5in; }
+  .thesis { font-family:'Newsreader',serif; font-size:11.5pt; line-height:1.34; color:var(--ink); margin-top:6px; max-width:6.7in; text-wrap:pretty; }
+  .body-block { font-size:10pt; line-height:1.52; color:var(--body); margin-top:14px; max-width:6.5in; text-wrap:pretty; }
   .body-block h3 { font-family:'Newsreader',serif; font-size:13pt; font-weight:600; color:var(--ink); margin-bottom:4px; }
-  /* Provenance line — one quiet, substantiable statement of why the analysis
-     here is Civica's own work (reviewer ask). No traction claim. */
-  .provenance { font-size:9pt; line-height:1.45; color:var(--body); margin-top:9px; max-width:6.5in; }
+  /* Provenance line—one quiet, substantiable statement of why the analysis
+     here is Civica Torrey's own work (reviewer ask). No traction claim. */
+  .provenance { font-size:9pt; line-height:1.46; color:var(--body); margin-top:13px; max-width:6.5in; text-wrap:pretty; }
+  .body-block .run-in { color:var(--ink); font-weight:600; }
   .provenance b { color:var(--ink); font-weight:600; }
-  /* Research aside: a shaded box marks it as supporting external evidence,
-     visually distinct from the page's own need figures. Tint fill, not a
-     left-accent border (DEMETER-DESIGN flags the colored-left-rail card). */
-  .research { background:var(--tint); border:1px solid var(--rule); border-radius:3px; margin-top:9px; padding:8px 13px; }
-  .research .rlabel { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-deep); font-weight:600; }
-  .rstats { display:flex; gap:.36in; margin-top:8px; }
-  .rstats > div { flex:1; }
-  /* Subordinated: these are external research figures, not Civica's own
-     outcomes, so the numerals sit below the page's need hero in weight. */
-  .rstats b { display:block; font-family:'Newsreader',serif; font-size:13.5pt; font-weight:600; line-height:1; color:var(--body); font-variant-numeric:tabular-nums; }
-  .rstats span { display:block; font-size:8pt; line-height:1.4; color:var(--muted); margin-top:6px; text-wrap:balance; }
-  .rsrc { font-size:7.4pt; line-height:1.45; color:var(--muted); margin-top:9px; max-width:6.6in; }
-  .tiers { display:flex; gap:.22in; margin-top:12px; }
-  .tier { flex:1; border:1px solid var(--rule); border-top:3px solid var(--accent); border-radius:2px; padding:12px; }
+  /* Causal chain as DELIVERABLES: a horizontal flow the bank receives. Solid
+     arrows are links recorded and reported quarterly; dashed arrows are
+     estimated or research-based. Honest by construction — the reader sees which
+     links are measured. Replaces the old external-research stat box. */
+  .chain { margin-top:9px; }
+  .chain-cap { display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+    font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:9px; }
+  .chain-key { font-size:6.8pt; letter-spacing:0; text-transform:none; font-weight:500; color:var(--muted); white-space:nowrap; }
+  .chain-key i { display:inline-block; width:15px; height:0; vertical-align:middle; margin:0 3px 0 8px; }
+  .chain-key .k-solid { border-top:2px solid var(--accent); }
+  .chain-key .k-dash { border-top:2px dashed var(--muted); }
+  .chain-key .k-wheat { border-top:2.5px solid var(--wheat); }
+  .chain-row { display:flex; align-items:stretch; gap:0; }
+  .cnode { flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; text-align:center;
+    font-size:8pt; font-weight:600; color:var(--ink); line-height:1.12; padding:7px 5px;
+    border:1px solid var(--rule-strong); border-radius:3px; background:var(--tint); }
+  .cnode small { display:block; font-weight:500; font-size:6.8pt; color:var(--muted); margin-top:1px; }
+  .cnode.start { background:var(--accent); color:#fff; border-color:var(--accent); }
+  /* the enrolled/outcome endpoint is wheat, tying the chain to the yellow impact box below */
+  .cnode.end { background:var(--wheat); color:#3a2a08; border-color:var(--wheat); }
+  .cnode.end small { color:#6b5410; }
+  .carr { flex:1 1 auto; align-self:center; height:0; position:relative; margin:0 1px; min-width:12px; }
+  .carr.solid { border-top:2px solid var(--accent); }
+  .carr.dash { border-top:2px dashed var(--muted); }
+  .carr::after { content:""; position:absolute; right:-1px; top:-4.5px; width:0; height:0;
+    border-top:4.5px solid transparent; border-bottom:4.5px solid transparent; border-left:6px solid; }
+  .carr.solid::after { border-left-color:var(--accent); }
+  .carr.dash::after { border-left-color:var(--muted); }
+  /* The chain's final link drops (a wheat connector) into a highlighted payoff
+     box that states the household-finances impact, so the research pays the chain
+     off visually instead of hiding in a footnote. */
+  .fin-wrap { position:relative; margin-top:16px; }
+  /* wheat connector: the flow exits the RIGHT of the Household-finances node,
+     makes a sideways U-turn, and drops back down into the impact box. Inline SVG
+     positioned at the top-right so the loop sits in the right margin. */
+  .fin-arrow { position:absolute; top:-50px; right:-50px; width:64px; height:90px; overflow:visible; }
+  .fin-box { border:1.6px solid var(--wheat); border-radius:3px; background:rgba(232,197,71,.10); padding:7px 13px; }
+  .fin-title { font-size:7.6pt; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:6px; }
+  .fin-stats { display:flex; gap:20px; align-items:center; }
+  .fin-stats > div { flex:1; font-size:7.8pt; line-height:1.28; color:var(--muted); text-align:center; }
+  .fin-stats b { display:block; font-family:'Newsreader',serif; font-size:14pt; font-weight:600; color:var(--ink); line-height:1; margin-bottom:3px; }
+  .fin-src { font-size:6.8pt; line-height:1.35; color:var(--muted); margin-top:7px; text-wrap:pretty; }
+  .tiers { display:flex; gap:.22in; margin-top:17px; }
+  .tier { flex:1; border:1px solid var(--rule); border-top:3px solid var(--accent); border-radius:2px; padding:13px 12px; }
   .tier.lead { background:var(--tint); }
   .tier .name { font-size:8pt; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; }
   .tier .amt { font-family:'Newsreader',serif; font-size:15.5pt; font-weight:600; color:var(--ink); margin-top:3px; white-space:nowrap; }
   .tier .desc { font-size:8.6pt; line-height:1.45; color:var(--muted); margin-top:6px; }
-  .split { margin-top:10px; font-size:9pt; line-height:1.45; color:var(--body); max-width:6.6in; }
+  .split { margin-top:7px; font-size:9pt; line-height:1.45; color:var(--body); max-width:6.6in; }
   .split strong { color:var(--ink); }
-  .close { margin-top:auto; margin-bottom:8px; padding-top:9px; border-top:2px solid var(--accent); display:flex; justify-content:space-between; align-items:baseline; gap:16px; }
+  .close { margin-top:auto; margin-bottom:2px; padding-top:6px; border-top:2px solid var(--accent); display:flex; justify-content:space-between; align-items:baseline; gap:16px; }
   .close .close-line { font-family:'Newsreader',serif; font-size:12.5pt; font-weight:500; color:var(--ink); max-width:4.6in; line-height:1.3; }
   .close .who { font-size:9.5pt; color:var(--body); text-align:right; white-space:nowrap; }
   .brightline { font-size:8pt; color:var(--muted); max-width:6.6in; }
-  .crafile { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:9px 14px; margin-top:9px; }
-  .crafile-cap { font-size:8pt; letter-spacing:.1em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:7px; }
+  .crafile { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:9px 14px; margin-top:15px; }
+  .crafile-cap { font-size:7.8pt; letter-spacing:.09em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:5px; }
   .cra-dl { width:100%; border-collapse:collapse; }
-  .cra-dl td { font-size:8.4pt; line-height:1.4; color:var(--body); padding:4px 0; vertical-align:middle; border-bottom:1px solid var(--rule); }
+  .cra-dl td { font-size:8.4pt; line-height:1.42; color:var(--body); padding:5px 0; vertical-align:top; border-bottom:1px solid var(--rule); text-wrap:pretty; }
   .cra-dl tr:last-child td { border-bottom:none; }
   .cra-dl td.l { width:1.25in; font-weight:600; color:var(--ink); padding-right:12px; white-space:nowrap; }
-  .cra-foot { font-size:7.4pt; line-height:1.4; color:var(--muted); margin-top:7px; }
+  .cra-foot { font-size:7.4pt; line-height:1.4; color:var(--muted); margin-top:9px; text-align:center; text-wrap:pretty; }
   /* page-3 projection banner */
   .projwarn { font-size:9pt; letter-spacing:.06em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-top:10px; }
 
-  /* ---------- Page 3 — appendix (PROJECTED sample + methodology) ---------- */
+  /* ---------- Page 3—appendix (PROJECTED sample + methodology) ---------- */
   .chip { display:inline-block; background:var(--accent); color:#fff; font-size:8pt; font-weight:600; letter-spacing:.08em; padding:3px 9px; border-radius:2px; text-transform:uppercase; vertical-align:middle; margin-left:8px; }
-  .projected-wrap { position:relative; margin-top:9px; }
-  .watermark { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
-  .watermark span { font-family:'Be Vietnam Pro',sans-serif; font-weight:600; font-size:52pt; letter-spacing:.18em; color:var(--accent); opacity:.07; transform:rotate(-24deg); }
-  table.report { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+  .projected-wrap { position:relative; margin-top:10px; }
+  /* projected sample table header reads as a tinted band; the "· projected"
+     marker lives in the header row rather than a diagonal wash over the numbers */
+  table.report thead th { background:rgba(192,85,59,.09); }
+  table.report { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; border:1px solid var(--rule-strong); }
   table.report caption { text-align:left; font-size:8.4pt; color:var(--muted); margin-bottom:6px; caption-side:top; line-height:1.4; text-wrap:pretty; }
-  .funnel-note { font-size:8.8pt; line-height:1.4; color:var(--ink); font-weight:500; margin-top:5px; }
-  table.report th { background:var(--tint); border-bottom:2px solid var(--rule-strong); font-size:8.4pt; font-weight:600; text-align:right; padding:5px 9px; color:var(--ink); }
+  .funnel-note { font-size:8.8pt; line-height:1.4; color:var(--ink); font-weight:500; margin-top:9px; text-wrap:pretty; }
+  table.report th { background:var(--tint); border-bottom:2px solid var(--rule-strong); font-size:8.4pt; font-weight:600; text-align:right; padding:4px 9px; color:var(--ink); }
   table.report th:first-child { text-align:left; }
-  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:2px 9px; }
+  table.report td { border-bottom:1px solid var(--rule); font-size:8.8pt; text-align:right; padding:2.9px 9px; }
   table.report td:first-child { text-align:left; color:var(--body); }
   table.report tbody tr:not(.band) td:first-child { padding-left:20px; }
-  table.report tr.band td { background:var(--tint); font-size:7.2pt; letter-spacing:.07em; text-transform:uppercase; text-align:left; color:var(--muted); font-weight:600; padding:2.4px 9px; }
+  table.report tr.band td { background:var(--tint); font-size:7.2pt; letter-spacing:.07em; text-transform:uppercase; text-align:left; color:var(--muted); font-weight:600; padding:2px 9px; }
   table.report tr.key td { font-weight:600; color:var(--ink); }
-  .repnote { font-size:7.8pt; color:var(--body); margin-top:5px; line-height:1.4; max-width:6.8in; }
-  .appx { display:flex; gap:.34in; margin-top:8px; }
+  /* the "how measured" column is left-aligned muted text (Recorded / Estimated /
+     Follow-up), replacing the old "observed in-product" band labels */
+  table.report th.hm, table.report td.hm { text-align:left; }
+  table.report td.hm { font-size:7.5pt; font-weight:400; color:var(--muted); padding-left:14px; }
+  .repnote { font-size:7.8pt; color:var(--body); margin-top:9px; line-height:1.42; max-width:6.8in; text-wrap:pretty; }
+  .appx { display:flex; gap:.34in; margin-top:9px; }
   .appx .col { flex:1; }
-  .appx h3 { font-family:'Newsreader',serif; font-size:11pt; font-weight:600; color:var(--ink); margin:0 0 3px; }
-  .appx h3.n2 { margin-top:5px; }
+  .appx h3 { font-family:'Newsreader',serif; font-size:11pt; font-weight:600; color:var(--ink); margin:0 0 5px; }
+  .appx h3.n2 { margin-top:9px; }
   /* text-wrap:pretty keeps the last line of each layer bullet from stranding a
      single word (the "one-word bleed"); the renderer rebalances the tail. */
-  .appx p, .appx li { font-size:8.1pt; line-height:1.45; color:var(--body); text-wrap:pretty; }
+  .appx p, .appx li { font-size:8.1pt; line-height:1.42; color:var(--body); text-wrap:pretty; }
   .appx ul { list-style:none; margin-top:3px; }
-  .appx li { margin-top:2px; padding-left:10px; position:relative; }
+  .appx li { margin-top:3px; padding-left:10px; position:relative; }
   .appx li::before { content:""; position:absolute; left:0; top:.55em; width:4px; height:4px; background:var(--accent); border-radius:50%; }
-  /* Plain framed callout (matches .crafile), not a left-accent card — the
+  /* Plain framed callout (matches .crafile), not a left-accent card—the
      colored-left-rail card is a DEMETER-DESIGN AI-slop pattern. */
-  .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:6px 11px; font-size:8.1pt; line-height:1.38; color:var(--body); margin-top:5px; text-wrap:pretty; }
+  .disclose { border:1px solid var(--rule-strong); border-radius:2px; background:var(--tint); padding:10px 14px; font-size:8.1pt; line-height:1.4; color:var(--body); margin-top:8px; text-wrap:pretty; }
   .disclose strong { color:var(--ink); }
+  /* Page 3—the platform, as built (annotated real screenshot) */
+  .platform-hero { margin-top:6px; margin-left:-0.22in; margin-right:-0.22in; text-align:center; }
+  /* The composited demo is the real landscape product view; sized by HEIGHT so it
+     cannot overflow the page, its width fills the text column and bleeds slightly
+     past it (the negative side margins above). Caption and legend below. */
+  .chatshot { position:relative; display:inline-block; height:4.15in; aspect-ratio:[[chat_aspect]]; margin:0 auto; vertical-align:top; max-width:100%; }
+  /* CA page 3: demo bleeds left, the five explainers stack in a column to its right */
+  .demo-row { display:flex; gap:.24in; margin-top:8px; margin-left:-0.46in; align-items:flex-start; }
+  .demo-col { flex:0 0 auto; }
+  .demo-col .chatshot { height:4.12in; }
+  .legend-col { flex:1; min-width:0; padding-top:2px; }
+  .legend-head { font-size:7.4pt; letter-spacing:.07em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:8px; line-height:1.3; }
+  .legend-col .chat-legend { display:block; margin-top:0; }
+  .legend-col .leg { margin-bottom:9px; font-size:7pt; line-height:1.28; }
+  .legend-qr { margin-top:11px; }
+  .chatshot > img { width:100%; height:100%; display:block; border:1px solid var(--rule-strong); border-radius:5px; object-fit:fill; }
+  /* Numbered markers sit ON the screenshot; the legend below explains the intent.
+     A crisp ring (border only—no blurred shadow, which a PDF rasterizes as a
+     gray square) keeps the badge circular on any background. */
+  .chatshot .cmark { position:absolute; width:19px; height:19px; margin:-9.5px 0 0 -9.5px;
+    border-radius:50%; background:var(--wheat); color:#3a2a08;
+    font:700 10.5px/19px 'Be Vietnam Pro',sans-serif; text-align:center;
+    border:1.5px solid var(--accent-deep); }
+  .chatshot-cap { font-size:7pt; color:var(--muted); margin-top:4px; text-align:center; }
+  .chat-legend { display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px 14px; margin-top:5px; }
+  .leg { display:flex; gap:5px; font-size:6.6pt; line-height:1.18; color:var(--body); break-inside:avoid; }
+  .leg-n { flex:0 0 auto; width:12px; height:12px; margin-top:1px; border-radius:50%;
+    background:var(--wheat); color:#3a2a08; font:700 7.5px/12px 'Be Vietnam Pro',sans-serif; text-align:center; }
+  .leg-t b { color:var(--accent-deep); }
+  .evidence-foot { display:flex; gap:.3in; margin-top:6px; border-top:2px solid var(--accent); padding-top:7px; align-items:flex-start; }
+  .ev-text { flex:1.55; min-width:0; }
+  .ev-text p { font-size:8.4pt; line-height:1.46; color:var(--body); text-wrap:pretty; margin-bottom:6px; }
+  .ev-text p:last-child { margin-bottom:0; }
+  .ev-text strong { color:var(--ink); }
+  .ev-side { flex:1; min-width:0; }
+  .qrbox { display:flex; align-items:center; gap:8px; padding:6px 8px; border:1px solid var(--rule-strong); border-radius:3px; background:var(--tint); }
+  .qrbox .qr { width:50px; flex:none; }
+  .qrbox .qr svg { width:100%; height:auto; display:block; }
+  .qr-txt { font-size:7.8pt; line-height:1.4; color:var(--body); }
+  .qr-txt strong { color:var(--ink); }
+  .qr-txt .url { white-space:nowrap; font-size:7.0pt; letter-spacing:-.01em; }
+  .legend-qr .url { font-size:5.9pt; letter-spacing:-.015em; }
+  .legend-qr .qr { width:44px; }
+  /* Page 3 v2: barrier table + why-chatbot/why-outreach + safeguards + detail foot */
+  .barriers { width:100%; border-collapse:collapse; margin-top:9px; }
+  .barriers th { text-align:left; font-size:6.9pt; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); font-weight:600; border-bottom:1.5px solid var(--accent); padding:0 9px 4px 0; vertical-align:bottom; }
+  .barriers th:last-child, .barriers td:last-child { padding-right:0; }
+  .barriers td { font-size:8pt; line-height:1.24; color:var(--body); border-bottom:1px solid var(--rule); padding:5px 9px 5px 0; vertical-align:middle; text-wrap:pretty; }
+  .barriers tr:last-child td { border-bottom:none; }
+  .barriers td.b { font-weight:600; color:var(--ink); }
+  .barriers td.m { color:var(--muted); font-size:7.4pt; }
+  .barriers .ev sup { color:var(--accent-deep); font-weight:700; }
+  .barriers-note { font-size:6.8pt; line-height:1.34; color:var(--muted); margin-top:5px; text-wrap:pretty; }
+  .barriers-note sup { color:var(--accent-deep); font-weight:700; }
+  .whyrow { display:flex; gap:.34in; margin-top:8px; align-items:flex-start; }
+  .why-chat { flex:1.45; } .why-out { flex:1; }
+  .why-h { font-size:7.6pt; letter-spacing:.09em; text-transform:uppercase; font-weight:600; color:var(--accent-deep); margin-bottom:4px; }
+  .why-chat p { font-size:8.4pt; line-height:1.44; color:var(--body); text-wrap:pretty; }
+  .why-out ul { list-style:none; }
+  .why-out li { font-size:7.6pt; line-height:1.3; color:var(--body); margin-bottom:4px; padding-left:9px; position:relative; text-wrap:pretty; }
+  .why-out li::before { content:""; position:absolute; left:0; top:.5em; width:3.5px; height:3.5px; background:var(--accent); border-radius:50%; }
+  .why-out li b { color:var(--ink); }
+  .why-try { font-size:8pt; line-height:1.3; color:var(--body); margin-top:6px; }
+  .why-try b { color:var(--accent-deep); }
+  .safeguards { font-size:7.4pt; line-height:1.4; color:var(--muted); margin-top:7px; text-align:center; text-wrap:pretty; }
+  .safeguards b { color:var(--body); }
+  .p3foot { font-size:6.9pt; line-height:1.4; color:var(--muted); margin-top:8px; border-top:1px solid var(--rule); padding-top:6px; text-wrap:pretty; }
+  .p3foot b { color:var(--body); }
+  .affil { margin-top:7px; font-size:8pt; line-height:1.4; color:var(--muted); text-wrap:pretty; }
 </style></head><body>
 
-<!-- PAGE 1 — the need -->
+<!-- PAGE 1—the need -->
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
   <div class="body-zone">
     <div class="zone-head">
       <div class="big serif">[[headline_unenrolled]]</div>
-      <div class="head-sentence">eligible residents of <em>your assessment area</em> are not receiving [[program_ref]] benefits they qualify for. That is an estimated <em>[[benefit_range]] a year</em> in unclaimed federal nutrition dollars, spent in [[aa_label]] grocery stores.</div>
+      <div class="head-sentence">eligible residents of <em>your assessment area</em> are not enrolled in [[program_ref]]&mdash;an estimated <em>[[benefit_range]] a year</em> in unclaimed federal nutrition dollars that would be spent in [[aa_label]] grocery stores.</div>
       [[ratio_line]]
     </div>
     <div class="needrow">
@@ -187,122 +294,147 @@
         <div class="core-cap">Unmet need in your CRA assessment area</div>
         <table class="core">
           <tr><td class="k">Eligible residents (est.)</td><td class="v">[[eligible_fmt]]<small>income-eligible for SNAP</small></td></tr>
-          <tr><td class="k">Not receiving benefits</td><td class="v">[[headline_unenrolled]]<small>[[aa_unenrolled_pct]]% of those eligible</small></td></tr>
-          <tr><td class="k">Unclaimed benefits / year</td><td class="v">[[benefit_range]]<small>in federal SNAP funds</small></td></tr>
+          <tr><td class="k">Eligible, not enrolled</td><td class="v">[[headline_unenrolled]]<small>[[aa_unenrolled_pct]]% at USDA's participation rate</small></td></tr>
           <tr><td class="k">Benefit per household</td><td class="v">$[[benefit_monthly]]/mo<small>per eligible household</small></td></tr>
-          <tr class="ask"><td class="k">Our ask &middot; [[bank_name]]</td><td class="v">$[[ask_fmt]]</td></tr>
+          <tr class="ask"><td class="k">Campaign funding ask</td><td class="v">$[[ask_fmt]]</td></tr>
         </table>
       </div>
       <div class="colbrk">[[aa_geo_visual]]</div>
     </div>
     <div class="why">
-      <div class="why-cap">What SNAP is</div>
-      <p>SNAP is the federal food-benefit program: monthly grocery money for low- and moderate-income households, spent at neighborhood stores. Most people who qualify but never enroll are stopped by the process, not the rules. Civica's free assistant, a chatbot grounded in your state's own SNAP rules, answers their questions in plain language and guides them through the application.</p>
+      <div class="why-cap">What SNAP is, and why eligible residents miss out</div>
+      <p>SNAP (food stamps) is monthly grocery money for low- and moderate-income households. Most who qualify but never enroll are stopped by the process, not the rules&mdash;so Demeter, Civica Torrey's free online platform for [[program_ref]], answers their questions in plain language and guides them through the application.</p>
     </div>
-    <div class="research">
-      <div class="rlabel">SNAP access and household finances</div>
-      <div class="rstats">
-        <div><b class="serif">$2,436</b><span>less credit-card debt by year three (down 51%)</span></div>
-        <div><b class="serif">10.1 pts</b><span>lower odds of a delinquent account (off a 41% baseline)</span></div>
-        <div><b class="serif">+17 pts</b><span>higher credit score, up from 634 (subprime)</span></div>
+    <div class="chain">
+      <div class="chain-cap"><span>What the grant sets in motion</span><span class="chain-key"><i class="k-solid"></i>recorded &amp; reported quarterly<i class="k-dash"></i>estimated / research<i class="k-wheat"></i>financial impact</span></div>
+      <div class="chain-row">
+        <div class="cnode start">Grant</div>
+        <div class="carr solid"></div>
+        <div class="cnode">Digital outreach<small>in LMI tracts</small></div>
+        <div class="carr solid"></div>
+        <div class="cnode">Applications<small>submitted</small></div>
+        <div class="carr dash"></div>
+        <div class="cnode">Complete apps<small>accurate</small></div>
+        <div class="carr dash"></div>
+        <div class="cnode">Enrolled<small>benefits received</small></div>
+        <div class="carr dash"></div>
+        <div class="cnode end">Household<small>finances</small></div>
       </div>
+      <div class="fin-wrap"><svg class="fin-arrow" viewBox="0 0 64 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13 4 C52 4 52 79 18 79" fill="none" stroke="#E8C547" stroke-width="2.4" stroke-linecap="round"/><path d="M18 74 L10 79 L18 84 Z" fill="#E8C547"/></svg><div class="fin-box">
+        <div class="fin-title">What losing access costs households (research)</div>
+        <div class="fin-stats">
+          <div><b>$2,436</b>less credit-card debt by year three</div>
+          <div><b>10.1 pts</b>lower likelihood of a delinquent account</div>
+          <div><b>~17 pts</b>higher credit score, from 634</div>
+        </div>
+      </div></div>
     </div>
     [[me_evidence_block]]
   </div>
-  <div class="pagefoot"><strong>Household outcomes:</strong> ~65,000 Los Angeles SNAP applicants, admin records linked to credit reports; Homonoff, Lee &amp; Meckel, NBER WP 34434 (preliminary draft, November 2025; subject to revision). Research on SNAP access, not a measurement of [[org_name]]'s program. &nbsp;·&nbsp; [[data_gaps_note]]<strong>Sources:</strong> eligibility [[model_note]]; proxy and under-reporting biases may overstate the estimate (appendix). Assessment area: [[bank_name]]'s [[pe_date]] CRA PE ([[regulator]]). Benefits: USDA FNS FY2024. [[org_name]], 501(c)(3).</div>
-  <div class="pagenum">1 / 3</div>
+  <div class="pagefoot">[[data_gaps_note]][[recon_note]]<strong>Sources:</strong> eligibility [[model_note]]; USDA FNA participation rates (Reaching Those in Need, FY2022) &amp; FY2024 benefits. Assessment area: [[bank_name]]'s [[pe_date]] CRA PE ([[regulator]]). Household-finance effects: ~62,000 procedurally-denied L.A. SNAP applicants, admin records linked to credit reports (Homonoff, Lee &amp; Meckel, NBER WP 34434, 2025 draft); not a measurement of [[org_name]]'s program. [[org_name]], 501(c)(3).</div>
+  <div class="pagenum">1 / 4</div>
 </div>
 
-<!-- PAGE 2 — the program + the ask -->
+<!-- PAGE 2—the program + the ask -->
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
-  <h2 class="pagehead">A benefits-access pilot for [[bank_name]]</h2>
-  <div class="body-block" style="margin-top:12px;">
-    <h3>The program</h3>
-    Factual, geo-targeted outreach ("You may qualify for [[program_ref]]. Check in 5 minutes.") across your assessment area sends residents to Civica's free eligibility assistant, a conversational chatbot grounded in your state's own SNAP rules that answers their questions in plain language, shows the rule behind each answer, and guides them into an application. We take no per-enrollment compensation.
+  <h2 class="pagehead">A benefits-access campaign for [[bank_name]]</h2>
+  <div class="body-block" style="margin-top:12px;"><b class="run-in">The campaign.</b> It pairs the reach of digital outreach with the accuracy of a one-on-one assister, and every answer traces to the governing rule. Demeter provides free [[program_ref]] application assistance&mdash;what a county-designated assister or food-bank navigator gives&mdash;across your whole assessment area, geo-targeted to the highest-need tracts. At near-zero marginal cost, one grant funds it area-wide.
   </div>
-  <div class="provenance"><b>Why Civica.</b> [[credibility_line]]</div>
+  <div class="provenance"><b>Why these numbers.</b> [[credibility_line]]</div>
+  [[bank_specific_block]]
   <div class="crafile">
     <div class="crafile-cap">For [[bank_name]]'s community-reinvestment file</div>
     <table class="cra-dl">
-      <tr><td class="l">Activity</td><td>[[program_ref]] benefits-access outreach and application assistance in your assessment area. A community-development activity: community services targeted to low- and moderate-income individuals under [[cra_rule_cite]]; funded as a grant, it is evaluated as community development, not on the lending test.</td></tr>
-      <tr><td class="l">Beneficiaries</td><td>Low- and moderate-income residents. The federal Interagency Q&amp;A names USDA's Supplemental Nutrition Assistance programs as an accepted LMI proxy (Q&amp;A §&#8239;__.12(g)(2)&#8211;1), so no household-level income documentation is required.</td></tr>
-      <tr><td class="l">Geographic nexus</td><td>Delivered and measured within [[bank_name]]'s delineated assessment area, reconciled to invoices.</td></tr>
-      <tr><td class="l">Documentation</td><td>A quarterly report of ad delivery, eligibility checks, and applications started and submitted (all by county), plus a one-page qualification memo citing the CRA category and the governing rule, and an annual exam-file summary. Prepared for your file.</td></tr>
+      <tr><td class="l">Primary purpose</td><td>The grant funds only [[program_ref]] application assistance&mdash;a community-development service to LMI individuals ([[cra_rule_cite]]). It qualifies on the activity itself; the results below only strengthen the file.</td></tr>
+      <tr><td class="l">LMI targeting</td><td>Two independent tests. <b>Delivery:</b> the share of digital-outreach delivery and eligibility-check sessions in LMI tracts, reported quarterly. <b>Eligibility:</b> the program's gross-income ceiling (200% of the federal poverty level) sits within the LMI band (80% or less of area median income) for households of up to five in all four counties. The federal Interagency Q&amp;A (§&#8239;__.12(g)(2)&#8211;1; 81 FR 48506, 2016) also treats SNAP <em>recipients</em> as LMI, and applicants become recipients on enrollment.</td></tr>
+      <tr><td class="l">Geographic nexus</td><td>Delivered and measured within [[bank_name]]'s delineated assessment area, documented by county. Where banks share geography, credit is allocated by each bank's share of dollars in each county, so nothing is claimed twice.</td></tr>
+      <tr><td class="l">Investment-test criteria</td><td>Relevant to the qualitative factors at [[cra_invest_cite]]. <b>Innovativeness (e)(2):</b> measured, attributable results, not activity counts. <b>Responsiveness (e)(3):</b> addresses the counties' documented access barriers. <b>(e)(4):</b> not routinely provided by private investors.</td></tr>
+      <tr><td class="l">Documentation</td><td>A quarterly report of outreach delivery, eligibility checks, and applications started and submitted (all by county; the sample on page 4 shows the format), plus a one-page qualification memo and an annual exam-file summary. Prepared for your file.</td></tr>
     </table>
     <div class="cra-foot">Treatment under the CRA framework remains subject to your institution's compliance team and examiners.</div>
   </div>
   <div class="tiers">
-    <div class="tier"><div class="name">Community Sponsor</div><div class="amt">$5,000–10,000</div><div class="desc">One quarter of outreach in selected tracts. Designed for sponsorship budgets.</div></div>
-    <div class="tier lead"><div class="name">Pilot Grant · proposed</div><div class="amt">$[[ask_fmt]]</div><div class="desc">A full quarter across the assessment area, with the complete measurement program and quarterly report.</div></div>
-    <div class="tier"><div class="name">Program Grant</div><div class="amt">$30,000–50,000</div><div class="desc">Two or more quarters; adds funnel depth and a year-end exam-file summary.</div></div>
+    <div class="tier"><div class="name">Community Sponsor</div><div class="amt">$5,000–10,000</div><div class="desc">Outreach in a few of the highest-need tracts; the quarterly report (page 4).</div></div>
+    <div class="tier lead"><div class="name">Pilot Grant · proposed</div><div class="amt">$[[ask_fmt]]</div><div class="desc">Area-wide outreach, the quarterly report, and a consented follow-up panel.</div></div>
+    <div class="tier"><div class="name">Program Grant</div><div class="amt">$30,000–50,000</div><div class="desc">Everything in the pilot at greater outreach volume, with a larger follow-up panel.</div></div>
   </div>
-  <div class="split"><strong>Pro-rata allocation.</strong> Every grant dollar is applied in the same proportions: 60¢ assessment-area outreach · 15¢ measurement &amp; reporting · 10¢ creative &amp; Spanish localization · 15¢ indirect (the 2 CFR 200.414(f) de minimis rate). The same split for every bank; only the geography changes.</div>
   <div class="close">
-    <div class="close-line">A 30-minute call covers the program, the measurement, and the exam-file documentation.</div>
+    <div class="close-line">A 30-minute call covers the program, how the grant applies, and the exam-file documentation.</div>
     <div class="who">[[contact_name]], [[contact_title]]<br>[[contact_email]][[contact_phone_line]]</div>
   </div>
-  <div class="pagenum">2 / 3</div>
+  <div class="pagenum">2 / 4</div>
 </div>
 
-<!-- PAGE 3 — appendix: PROJECTED sample report + methodology (detach as needed) -->
+<!-- PAGE 3—the platform, as built (product evidence) -->
 <div class="page">
   <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
-  <div class="eyebrow" style="margin-top:20px;">Appendix · for your [[regulator]] examination · PROJECTED sample + methodology</div>
-  <h2 class="pagehead" style="margin-top:6px;">Sample quarterly report <span class="chip">Projected · not measured</span></h2>
-  <div class="projwarn">These are projections. A funded pilot replaces them with measured values.</div>
+  <h2 class="pagehead" style="margin-top:9px;">The assistant at work</h2>
+  <div class="thesis" style="margin-top:4px;">The working system behind the pilot&mdash;a rules-grounded assistant built on the same SNAP policy a county caseworker applies.</div>
+  [[evidence_block]]
+  [[demo_section]]
+  [[safeguards_line]]
+  [[p3_detail_foot]]
+  <div class="pagenum">3 / 4</div>
+</div>
+
+<!-- PAGE 4—appendix: PROJECTED sample report + methodology (detach as needed) -->
+<div class="page">
+  <div class="letterhead"><div class="org">[[org_name]] · [[program_name]]</div><div class="doc">Prepared for [[bank_name]] · [[prepared_date]]</div></div>
+  <div class="eyebrow" style="margin-top:20px;">Appendix for your [[regulator]] examination · deliverables sample &amp; methodology</div>
+  <div class="scope">Modeled scenario &middot; a single calendar quarter at $[[ask_fmt]] across [[aa_counties_list]].</div>
+  <h2 class="pagehead" style="margin-top:6px;">Evidence deliverables <span class="chip">Projected · not measured</span></h2>
+  <div class="projwarn">What you receive each quarter&mdash;these are projections; a funded pilot replaces them with measured values.</div>
   <div class="projected-wrap">
-    <div class="watermark"><span>PROJECTED</span></div>
     <table class="report">
-      <caption>Illustrative single calendar quarter at $[[ask_fmt]] across [[aa_counties_list]]. Conservative and mid-range scenarios.</caption>
-      <thead><tr><th>Quarterly outcome</th><th>Conservative</th><th>Mid-range</th></tr></thead>
+      <thead><tr><th>Deliverable</th><th>Conservative</th><th>Mid-range</th><th class="hm">How measured</th></tr></thead>
       <tbody>
-        <tr class="band"><td colspan="3">Delivery &amp; service · observed in-product</td></tr>
-        <tr><td>Ad clicks delivered in assessment area</td><td>[[low_clicks]]</td><td>[[mid_clicks]]</td></tr>
-        <tr><td>Eligibility-check sessions</td><td>[[low_sessions]]</td><td>[[mid_sessions]]</td></tr>
-        <tr><td>Eligibility checks completed</td><td>[[low_checks]]</td><td>[[mid_checks]]</td></tr>
-        <tr class="band"><td colspan="3">Action · observed in-product</td></tr>
-        <tr><td>Applications started</td><td>[[low_started]]</td><td>[[mid_started]]</td></tr>
-        <tr class="key"><td>Applications submitted (primary metric)</td><td>[[low_submitted]]</td><td>[[mid_submitted]]</td></tr>
-        <tr class="band"><td colspan="3">Outcomes · via consented follow-up panel, response rate disclosed</td></tr>
-        <tr><td>Est. approved households</td><td>[[low_approved]]</td><td>[[mid_approved]]</td></tr>
-        <tr class="key"><td>Est. annual benefits unlocked</td><td>[[low_benefit]]</td><td>[[mid_benefit]]</td></tr>
-        <tr class="band"><td colspan="3">Downstream household effects · published research, not measured here</td></tr>
-        <tr><td>Total credit-card debt reduced (over 3 yrs)</td><td>[[low_debt]]</td><td>[[mid_debt]]</td></tr>
-        <tr><td>Credit-score points gained, cumulative (+17 per household)</td><td>[[low_cspts]]</td><td>[[mid_cspts]]</td></tr>
-        <tr class="band"><td colspan="3">Efficiency</td></tr>
-        <tr><td>Cost per submitted application</td><td>[[low_cps]]</td><td>[[mid_cps]]</td></tr>
+        <tr class="band"><td colspan="4">Outreach reaches LMI tracts</td></tr>
+        <tr><td>Outreach clicks delivered in assessment area</td><td>[[low_clicks]]</td><td>[[mid_clicks]]</td><td class="hm">Recorded, reconciled to invoices</td></tr>
+        <tr><td>Share of delivery in LMI tracts</td><td>&mdash;</td><td>&mdash;</td><td class="hm">Reported each quarter</td></tr>
+        <tr class="band"><td colspan="4">Engagement</td></tr>
+        <tr><td>Eligibility-check sessions</td><td>[[low_sessions]]</td><td>[[mid_sessions]]</td><td class="hm">Recorded</td></tr>
+        <tr><td>Eligibility checks completed</td><td>[[low_checks]]</td><td>[[mid_checks]]</td><td class="hm">Recorded</td></tr>
+        <tr><td>Sessions by language</td><td>&mdash;</td><td>&mdash;</td><td class="hm">Recorded</td></tr>
+        <tr class="band"><td colspan="4">Applications</td></tr>
+        <tr><td>Applications started</td><td>[[low_started]]</td><td>[[mid_started]]</td><td class="hm">Recorded</td></tr>
+        <tr class="key"><td>Applications submitted (primary metric)</td><td>[[low_submitted]]</td><td>[[mid_submitted]]</td><td class="hm">Recorded</td></tr>
+        <tr class="band"><td colspan="4">Benefits · consented follow-up panel</td></tr>
+        <tr><td>Approved households (projected, all submitters)</td><td>[[low_approved]]</td><td>[[mid_approved]]</td><td class="hm">Follow-up panel, respondents only</td></tr>
+        <tr class="key"><td>Est. annual benefits unlocked</td><td>[[low_benefit]]</td><td>[[mid_benefit]]</td><td class="hm">Estimated</td></tr>
+        <tr class="band"><td colspan="4">Efficiency</td></tr>
+        <tr><td>Cost per submitted application</td><td>[[low_cps]]</td><td>[[mid_cps]]</td><td class="hm">Recorded</td></tr>
       </tbody>
     </table>
     <div class="funnel-note">[[funnel_note]]</div>
-    <div class="repnote">Downstream effects apply published SNAP research (Homonoff, Lee &amp; Meckel) to projected approvals; not measured here. A funded report replaces projections with measured values. Assumption set: version [[assumptions_version]].</div>
+    <div class="repnote">The mid-range uses all-user conversion rates, not engaged-user figures. In Civica Torrey's Baker-grant impact study (N=800), applicants with 5+ queries submitted at ~74% and were approved at ~68%. Set version [[assumptions_version]].</div>
   </div>
   <div class="appx">
     <div class="col">
       <h3>Measurement</h3>
       <ul>
-        <li><strong>The engine:</strong> a conversational assistant grounded in your state's SNAP rules answers questions, cites the governing rule, and routes to an application; everything below is measured from it.</li>
-        <li><strong>Layer 1 · observed:</strong> ad delivery reconciled to invoices; sessions, checks, applications started and submitted are recorded system events. This layer alone carries the CRA documentation.</li>
-        <li><strong>Layer 2 · consented panel:</strong> opt-in 30/60-day check-in; response rates disclosed, outcomes reported among respondents only, never extrapolated.</li>
-        <li><strong>Layer 3 · corroboration:</strong> the state's published county caseload as directional context, not attribution; holdout testing at multi-county scale.</li>
-      </ul>
-      <div class="disclose"><strong>Reporting.</strong> Payment is never tied to enrollment counts, and projections stay labeled until they are measured. You receive an auditable record of activity in your assessment area.</div>
-    </div>
-    <div class="col">
-      <h3>Methodology &amp; disclosures</h3>
-      <ul>
-        <li>[[method_bullet]]</li>
-        <li><strong>Known bias, disclosed:</strong> a gross-income proxy and ACS under-reporting push the estimate <em>upward</em>, so read it as an upper range of unmet need.</li>
-        <li>County estimates carry 1-Year ACS sampling uncertainty; the page-1 dollar range reflects household size, not a confidence interval.</li>
+        <li><strong>Attribution:</strong> neighborhoods launch in waves, so each quarter compares reached tracts against not-yet-reached ones&mdash;an attributable estimate, not just a funnel count. Every "recorded" row above is a system event from the assistant on page 3.</li>
+        <li><strong>Follow-up:</strong> the figures above model a full quarter; the delivered report measures approvals only among opt-in follow-up respondents, discloses the response rate, and never extrapolates to non-respondents.</li>
+        <li><strong>Payment:</strong> never tied to enrollment counts&mdash;you fund the outreach and the auditable record, not outcomes.</li>
       </ul>
       <h3 class="n2">Geography &amp; vintages</h3>
       <ul>
         <li>Assessment area: the [[pe_date]] CRA PE ([[regulator]]); [[aa_counties_list]].</li>
-        <li>2023 ACS 1-Year PUMS; 2020 tract-to-PUMA crosswalk; USDA FNS FY2024 benefits; generated [[prepared_date]].</li>
+        <li>2023 ACS 1-Year PUMS; 2020 tract-to-PUMA crosswalk; USDA FNA FY2024 benefits; generated [[prepared_date]].</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Methodology &amp; disclosures</h3>
+      <ul>
+        <li>[[recon_method_bullet]]</li>
+        <li><strong>Neighborhood split:</strong> a gradient-boosted model of who is income-eligible (2023 ACS microdata) only distributes that county total across neighborhoods&mdash;it does not set the total. Those tract-level shares use a gross-income proxy, so read them as approximate.</li>
+        <li>[[sensitivity_bullet]]</li>
+        <li>[[hr1_bullet]]</li>
       </ul>
     </div>
   </div>
-  <div class="pagefoot">[[org_name]] · [[status_line]] · Contact: [[contact_name]], [[contact_email]][[contact_phone_line]] · Determination letter and full methodology available on request. All page-3 figures are projections labeled as such; none represent measured performance.</div>
-  <div class="pagenum">3 / 3</div>
+  <div class="disclose"><strong>Reporting.</strong> You receive an auditable quarterly record of activity in your assessment area&mdash;documentation built to demonstrate a qualified community-development investment under the CRA investment test.</div>
+  <div class="pagefoot"><strong>Method &amp; provenance.</strong> Need estimate&mdash;[[method_bullet]] Corpus: eCFR + 53 dated state/territory packs, re-graded on every rules change. Civica Torrey is in the Harvard Innovation Labs incubator. &nbsp;·&nbsp; [[org_name]], [[status_line]] Contact: [[contact_name]], [[contact_email]][[contact_phone_line]].</div>
+  <div class="pagenum">4 / 4</div>
 </div>
 </body></html>
